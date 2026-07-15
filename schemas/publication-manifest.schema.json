@@ -1,0 +1,163 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:odeya:schema:publication-manifest:0.1.0",
+  "title": "Odeya PublicationManifest",
+  "description": "An immutable, sealed disclosure package at an exact ledger position. Release settlement is tracked by events and is not embedded in the manifest.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "manifest_id",
+    "version",
+    "mission_id",
+    "source_ledger_position",
+    "visibility",
+    "audience",
+    "claim_versions",
+    "evidence_package",
+    "rendered_artifacts",
+    "redactions",
+    "decision_refs",
+    "publication_grant_ref",
+    "canonical_payload_digest",
+    "channel_targets",
+    "expires_at",
+    "sealed_at",
+    "sealed_by"
+  ],
+  "properties": {
+    "schema_version": { "const": "0.1.0" },
+    "manifest_id": { "$ref": "#/$defs/identifier" },
+    "version": { "type": "integer", "minimum": 1 },
+    "mission_id": { "$ref": "#/$defs/identifier" },
+    "source_ledger_position": { "type": "integer", "minimum": 0 },
+    "visibility": { "enum": ["private", "restricted", "embargoed", "public"] },
+    "audience": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "claim_versions": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/claim_reference" }
+    },
+    "evidence_package": { "$ref": "#/$defs/artifact_reference" },
+    "rendered_artifacts": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/artifact_reference" }
+    },
+    "redactions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["target", "reason_code", "decision_ref"],
+        "properties": {
+          "target": { "type": "string", "minLength": 1 },
+          "reason_code": { "$ref": "#/$defs/identifier" },
+          "decision_ref": { "$ref": "#/$defs/artifact_reference" }
+        }
+      }
+    },
+    "decision_refs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["evidence", "rights", "privacy", "safety", "security", "contributors", "wording"],
+      "properties": {
+        "evidence": { "$ref": "#/$defs/artifact_reference" },
+        "rights": { "$ref": "#/$defs/artifact_reference" },
+        "privacy": { "$ref": "#/$defs/artifact_reference" },
+        "safety": { "$ref": "#/$defs/artifact_reference" },
+        "security": { "$ref": "#/$defs/artifact_reference" },
+        "contributors": { "$ref": "#/$defs/artifact_reference" },
+        "wording": { "$ref": "#/$defs/artifact_reference" }
+      }
+    },
+    "publication_grant_ref": { "$ref": "#/$defs/identifier" },
+    "canonical_payload_digest": { "$ref": "#/$defs/digest" },
+    "channel_targets": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["channel_id", "adapter_version", "destination", "idempotency_key"],
+        "properties": {
+          "channel_id": { "$ref": "#/$defs/identifier" },
+          "adapter_version": { "type": "string", "minLength": 1 },
+          "destination": { "type": "string", "minLength": 1 },
+          "idempotency_key": { "$ref": "#/$defs/identifier" }
+        }
+      }
+    },
+    "expires_at": {
+      "oneOf": [
+        { "type": "string", "format": "date-time" },
+        { "type": "null" }
+      ]
+    },
+    "sealed_at": { "type": "string", "format": "date-time" },
+    "sealed_by": { "$ref": "#/$defs/principal" }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "visibility": { "const": "public" } },
+        "required": ["visibility"]
+      },
+      "then": {
+        "properties": {
+          "audience": { "contains": { "const": "public" } },
+          "expires_at": { "type": "null" },
+          "sealed_by": {
+            "properties": { "principal_type": { "const": "human" } }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$"
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "artifact_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifact_id", "digest", "media_type"],
+      "properties": {
+        "artifact_id": { "$ref": "#/$defs/identifier" },
+        "digest": { "$ref": "#/$defs/digest" },
+        "media_type": { "type": "string", "minLength": 1 }
+      }
+    },
+    "claim_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["claim_id", "version"],
+      "properties": {
+        "claim_id": { "$ref": "#/$defs/identifier" },
+        "version": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "principal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["principal_id", "principal_type"],
+      "properties": {
+        "principal_id": { "$ref": "#/$defs/identifier" },
+        "principal_type": { "enum": ["human", "service", "organization"] }
+      }
+    }
+  }
+}

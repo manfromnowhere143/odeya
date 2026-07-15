@@ -1,0 +1,130 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:odeya:schema:blocker:0.1.0",
+  "title": "Odeya Blocker",
+  "description": "An immutable blocker version, separate from scientific outcome.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "blocker_id",
+    "version",
+    "mission_id",
+    "scope_type",
+    "scope_id",
+    "class",
+    "reason_code",
+    "opened_by_event",
+    "evidence_refs",
+    "resolution_requirement",
+    "status",
+    "resolved_by_event"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.1.0"
+    },
+    "blocker_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "mission_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "scope_type": {
+      "enum": ["mission", "protocol", "stage", "work_item", "run", "verification", "claim", "publication"]
+    },
+    "scope_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "class": {
+      "enum": ["contract", "protocol", "rights", "policy", "budget", "infrastructure", "evidence", "security", "verification", "publication"]
+    },
+    "reason_code": {
+      "type": "string",
+      "minLength": 1
+    },
+    "opened_by_event": {
+      "$ref": "#/$defs/identifier"
+    },
+    "evidence_refs": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/artifact_reference"
+      }
+    },
+    "resolution_requirement": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "enum": ["open", "resolved", "superseded"]
+    },
+    "resolved_by_event": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/identifier"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "enum": ["resolved", "superseded"]
+          }
+        },
+        "required": ["status"]
+      },
+      "then": {
+        "properties": {
+          "resolved_by_event": {
+            "$ref": "#/$defs/identifier"
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "resolved_by_event": {
+            "type": "null"
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$"
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "artifact_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifact_id", "digest", "media_type"],
+      "properties": {
+        "artifact_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  }
+}

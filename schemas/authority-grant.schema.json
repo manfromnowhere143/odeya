@@ -1,0 +1,447 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:odeya:schema:authority-grant:0.1.0",
+  "title": "Odeya AuthorityGrant",
+  "description": "An immutable, bounded permission. Status is derived from issue, use, expiry, and revocation events.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "grant_id",
+    "version",
+    "mission_id",
+    "role",
+    "issuer_assignment_ref",
+    "subject",
+    "scope",
+    "limits",
+    "replay",
+    "dependencies",
+    "delegation",
+    "decision_evidence",
+    "issued_at"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.1.0"
+    },
+    "grant_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "mission_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "role": {
+      "enum": [
+        "proposal",
+        "protocol",
+        "safety",
+        "data_rights",
+        "resource",
+        "execution",
+        "verification",
+        "outcome",
+        "publication"
+      ]
+    },
+    "issuer_assignment_ref": {
+      "$ref": "#/$defs/digest"
+    },
+    "subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["principal_id", "principal_type", "execution_identity_selector", "authentication_binding_ref"],
+      "properties": {
+        "principal_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "principal_type": {
+          "enum": ["human", "service", "organization", "model_run", "tool", "instrument"]
+        },
+        "execution_identity_selector": {
+          "type": "string",
+          "minLength": 1
+        },
+        "authentication_binding_ref": {
+          "$ref": "#/$defs/digest"
+        }
+      }
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "command_types",
+        "capability_ids",
+        "action_classes",
+        "resource_selectors",
+        "protocol_digest",
+        "run_manifest_digest",
+        "stage_id",
+        "purpose",
+        "maximum_risk_tier",
+        "data_classes",
+        "publication_manifest_digest"
+      ],
+      "properties": {
+        "command_types": {
+          "$ref": "#/$defs/nonempty_unique_strings"
+        },
+        "capability_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "action_classes": {
+          "$ref": "#/$defs/nonempty_unique_strings"
+        },
+        "resource_selectors": {
+          "$ref": "#/$defs/nonempty_unique_strings"
+        },
+        "protocol_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "run_manifest_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "stage_id": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/identifier"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "purpose": {
+          "type": "string",
+          "minLength": 3
+        },
+        "maximum_risk_tier": {
+          "enum": ["R0", "R1", "R2", "R3", "R4"]
+        },
+        "data_classes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "publication_manifest_digest": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/digest"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "not_before",
+        "expires_at",
+        "max_uses",
+        "max_concurrency",
+        "resource_budget",
+        "spend_limit_usd",
+        "egress_allowlist",
+        "allowed_methods",
+        "sandbox_tier"
+      ],
+      "properties": {
+        "not_before": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "expires_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "max_uses": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_concurrency": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "resource_budget": {
+          "$ref": "#/$defs/resource_budget"
+        },
+        "spend_limit_usd": {
+          "$ref": "#/$defs/nonnegative_decimal"
+        },
+        "egress_allowlist": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "allowed_methods": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "sandbox_tier": {
+          "enum": ["trusted_fixture", "hardened_container", "kernel_isolated", "microvm", "external_controlled_system"]
+        }
+      }
+    },
+    "replay": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "idempotency_scope"],
+      "properties": {
+        "mode": {
+          "enum": ["single_use", "bounded_use", "reusable"]
+        },
+        "idempotency_scope": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "dependencies": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "required_grant_refs",
+        "authorization_request_digest",
+        "quorum",
+        "distinct_principals",
+        "forbidden_role_overlap"
+      ],
+      "properties": {
+        "required_grant_refs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "authorization_request_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "quorum": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "distinct_principals": {
+          "type": "boolean"
+        },
+        "forbidden_role_overlap": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "proposal",
+              "protocol",
+              "safety",
+              "data_rights",
+              "resource",
+              "execution",
+              "verification",
+              "outcome",
+              "publication"
+            ]
+          }
+        }
+      }
+    },
+    "delegation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["allowed", "maximum_depth", "child_scope_rule"],
+      "properties": {
+        "allowed": {
+          "type": "boolean"
+        },
+        "maximum_depth": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "child_scope_rule": {
+          "enum": ["none", "strict_subset"]
+        }
+      }
+    },
+    "decision_evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "policy_decision_id",
+        "policy_bundle_digest",
+        "policy_input_digest",
+        "approval_refs",
+        "issued_by"
+      ],
+      "properties": {
+        "policy_decision_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "policy_bundle_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "policy_input_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "approval_refs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/artifact_reference"
+          }
+        },
+        "issued_by": {
+          "$ref": "#/$defs/principal"
+        }
+      }
+    },
+    "issued_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "role": {
+            "const": "publication"
+          }
+        },
+        "required": ["role"]
+      },
+      "then": {
+        "properties": {
+          "scope": {
+            "properties": {
+              "publication_manifest_digest": {
+                "$ref": "#/$defs/digest"
+              }
+            }
+          },
+          "decision_evidence": {
+            "properties": {
+              "issued_by": {
+                "properties": {
+                  "principal_type": {
+                    "const": "human"
+                  }
+                }
+              }
+            }
+          },
+          "replay": {
+            "properties": {
+              "mode": {
+                "const": "single_use"
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$"
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "nonnegative_decimal": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?$"
+    },
+    "nonempty_unique_strings": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "principal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["principal_id", "principal_type"],
+      "properties": {
+        "principal_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "principal_type": {
+          "enum": ["human", "service", "organization"]
+        }
+      }
+    },
+    "artifact_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifact_id", "digest", "media_type"],
+      "properties": {
+        "artifact_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "resource_budget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["wall_time_seconds", "model_tokens", "cpu_seconds", "memory_gib_seconds", "accelerator_seconds", "storage_bytes", "network_bytes", "human_hours"],
+      "properties": {
+        "wall_time_seconds": {
+          "$ref": "#/$defs/nonnegative_decimal"
+        },
+        "model_tokens": {
+          "$ref": "#/$defs/nonnegative_decimal"
+        },
+        "cpu_seconds": {
+          "$ref": "#/$defs/nonnegative_decimal"
+        },
+        "memory_gib_seconds": {
+          "$ref": "#/$defs/nonnegative_decimal"
+        },
+        "accelerator_seconds": {
+          "$ref": "#/$defs/nonnegative_decimal"
+        },
+        "storage_bytes": {
+          "$ref": "#/$defs/nonnegative_decimal"
+        },
+        "network_bytes": {
+          "$ref": "#/$defs/nonnegative_decimal"
+        },
+        "human_hours": {
+          "$ref": "#/$defs/nonnegative_decimal"
+        }
+      }
+    }
+  }
+}

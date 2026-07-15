@@ -1,0 +1,327 @@
+{
+  "manifest_version": "0.1.0",
+  "description": "Architecture-only valid fixtures and adversarial mutations. Passing these cases is structural evidence, not Gate A acceptance.",
+  "cases": [
+    {
+      "name": "authority-grant-valid-execution",
+      "schema": "schemas/authority-grant.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/authority-grant.valid.json",
+      "expect": "valid"
+    },
+    {
+      "name": "authority-grant-publication-fails-closed-without-publication-bounds",
+      "schema": "schemas/authority-grant.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/authority-grant.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/role", "value": "publication"}
+      ]
+    },
+    {
+      "name": "authority-grant-rejects-malformed-date-time",
+      "schema": "schemas/authority-grant.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/authority-grant.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/limits/expires_at", "value": "tomorrow"}
+      ]
+    },
+    {
+      "name": "blocker-valid-open",
+      "schema": "schemas/blocker.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/blocker.valid.json",
+      "expect": "valid"
+    },
+    {
+      "name": "blocker-open-cannot-have-resolution-event",
+      "schema": "schemas/blocker.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/blocker.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/resolved_by_event", "value": "event.002"}
+      ]
+    },
+    {
+      "name": "blocker-resolved-requires-resolution-event",
+      "schema": "schemas/blocker.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/blocker.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/status", "value": "resolved"}
+      ]
+    },
+    {
+      "name": "claim-proposal-valid-exploratory",
+      "schema": "schemas/claim-proposal.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/claim-proposal.valid.json",
+      "expect": "valid"
+    },
+    {
+      "name": "claim-proposal-confirmatory-requires-frozen-protocol-and-blinding",
+      "schema": "schemas/claim-proposal.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/claim-proposal.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/mode", "value": "confirmatory"}
+      ]
+    },
+    {
+      "name": "claim-proposal-rejects-malformed-date-time",
+      "schema": "schemas/claim-proposal.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/claim-proposal.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/created_at", "value": "not-a-date"}
+      ]
+    },
+    {
+      "name": "adjudication-valid-refusal",
+      "schema": "schemas/adjudication.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/adjudication.valid.json",
+      "expect": "valid"
+    },
+    {
+      "name": "adjudication-valid-determined-null",
+      "schema": "schemas/adjudication.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/adjudication-determined.valid.json",
+      "expect": "valid"
+    },
+    {
+      "name": "adjudication-invalid-measurement-cannot-be-determined",
+      "schema": "schemas/adjudication.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/adjudication.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/status", "value": "determined"}
+      ]
+    },
+    {
+      "name": "adjudication-refusal-cannot-carry-scientific-outcome",
+      "schema": "schemas/adjudication.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/adjudication.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/scientific_outcome", "value": "null_result"}
+      ]
+    },
+    {
+      "name": "claim-version-valid-initial-ineligible",
+      "schema": "schemas/claim.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/claim.valid.json",
+      "expect": "valid"
+    },
+    {
+      "name": "claim-version-initial-must-be-version-one",
+      "schema": "schemas/claim.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/claim.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/version", "value": 2}
+      ]
+    },
+    {
+      "name": "claim-version-eligible-requires-approved-language",
+      "schema": "schemas/claim.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/claim.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/eligibility/eligible_language", "value": []}
+      ]
+    },
+    {
+      "name": "claim-version-supported-requires-supporting-edge",
+      "schema": "schemas/claim.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/claim.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/scientific_outcome", "value": "supported_within_scope"}
+      ]
+    },
+    {
+      "name": "claim-version-unmeasured-channel-cannot-retain-estimate-or-interval",
+      "schema": "schemas/claim.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/claim.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/uncertainty/0/missingness", "value": "unmeasured"}
+      ]
+    },
+    {
+      "name": "publication-manifest-valid-private",
+      "schema": "schemas/publication-manifest.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/publication-manifest.valid.json",
+      "expect": "valid"
+    },
+    {
+      "name": "publication-manifest-public-requires-public-audience-no-expiry-and-human-seal",
+      "schema": "schemas/publication-manifest.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/publication-manifest.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/visibility", "value": "public"}
+      ]
+    },
+    {
+      "name": "publication-manifest-rejects-malformed-seal-time",
+      "schema": "schemas/publication-manifest.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/publication-manifest.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/sealed_at", "value": "not-a-date"}
+      ]
+    },
+    {
+      "name": "research-event-valid-proposal-submission",
+      "schema": "schemas/research-event.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/research-event.valid.json",
+      "expect": "valid"
+    },
+    {
+      "name": "research-event-valid-human-release-decision",
+      "schema": "schemas/research-event.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/release-event.valid.json",
+      "expect": "valid"
+    },
+    {
+      "name": "research-event-release-decision-rejects-model-actor",
+      "schema": "schemas/research-event.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/release-event.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/actor/principal_type", "value": "model_run"}
+      ]
+    },
+    {
+      "name": "research-event-rejects-null-authority",
+      "schema": "schemas/research-event.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/research-event.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/authority_ref", "value": null}
+      ]
+    },
+    {
+      "name": "research-event-rejects-empty-typed-payload",
+      "schema": "schemas/research-event.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/research-event.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/payload", "value": {}}
+      ]
+    },
+    {
+      "name": "research-event-rejects-malformed-date-time",
+      "schema": "schemas/research-event.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/research-event.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/occurred_at", "value": "not-a-date"}
+      ]
+    },
+    {
+      "name": "research-mission-valid-private-r0",
+      "schema": "schemas/research-mission.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/research-mission.valid.json",
+      "expect": "valid"
+    },
+    {
+      "name": "research-mission-rejects-arbitrary-claim-outcome-key",
+      "schema": "schemas/research-mission.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/research-mission.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "add",
+          "path": "/claim_boundary/eligible_by_scientific_outcome/banana",
+          "value": ["This key is not a registered scientific outcome."]
+        }
+      ]
+    },
+    {
+      "name": "research-mission-between-comparator-rejects-scalar-threshold",
+      "schema": "schemas/research-mission.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/research-mission.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/metrics/0/comparator", "value": "between"}
+      ]
+    },
+    {
+      "name": "research-mission-r4-rejects-unknown-budgets",
+      "schema": "schemas/research-mission.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/research-mission.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/risk/tier", "value": "R4"},
+        {
+          "op": "replace",
+          "path": "/risk/approval_requirements",
+          "value": [
+            {"action_class": "safety.review", "authority_role": "safety", "timeout_behavior": "deny"},
+            {"action_class": "resource.approve", "authority_role": "resource", "timeout_behavior": "deny"},
+            {"action_class": "stage.authorize", "authority_role": "execution", "timeout_behavior": "deny"},
+            {"action_class": "outcome.adjudicate", "authority_role": "outcome", "timeout_behavior": "deny"}
+          ]
+        }
+      ]
+    },
+    {
+      "name": "research-mission-public-candidate-rejects-unresolved-digests",
+      "schema": "schemas/research-mission.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/research-mission.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/publication/default_visibility", "value": "public_candidate"},
+        {
+          "op": "replace",
+          "path": "/risk/approval_requirements",
+          "value": [
+            {"action_class": "publication.decide", "authority_role": "publication", "timeout_behavior": "deny"}
+          ]
+        }
+      ]
+    },
+    {
+      "name": "research-mission-requires-every-authority-role",
+      "schema": "schemas/research-mission.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/research-mission.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "remove", "path": "/authorities/outcome"}
+      ]
+    },
+    {
+      "name": "research-mission-rejects-malformed-date-time",
+      "schema": "schemas/research-mission.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/research-mission.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/created_at", "value": "not-a-date"}
+      ]
+    },
+    {
+      "name": "verification-run-valid-confirmed-clean-reproduction",
+      "schema": "schemas/verification-run.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/verification-run.valid.json",
+      "expect": "valid"
+    },
+    {
+      "name": "verification-run-confirmed-cannot-accept-known-bad",
+      "schema": "schemas/verification-run.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/verification-run.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/known_bad_results/0/observed", "value": "accept"}
+      ]
+    },
+    {
+      "name": "verification-run-rejects-malformed-date-time",
+      "schema": "schemas/verification-run.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/verification-run.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/recorded_at", "value": "not-a-date"}
+      ]
+    }
+  ]
+}

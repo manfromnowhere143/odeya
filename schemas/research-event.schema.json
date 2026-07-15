@@ -1,0 +1,1381 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:odeya:schema:research-event:0.2.0",
+  "title": "Odeya ResearchEvent",
+  "description": "An immutable, mission-scoped, hash-linked event with a closed payload selected by event type.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "event_id",
+    "mission_id",
+    "mission_sequence",
+    "event_type",
+    "event_version",
+    "payload_schema_id",
+    "payload_schema_digest",
+    "command_id",
+    "aggregate_type",
+    "aggregate_id",
+    "commit_id",
+    "batch_index",
+    "batch_size",
+    "occurred_at",
+    "recorded_at",
+    "actor",
+    "correlation_id",
+    "causation_id",
+    "authority_ref",
+    "policy_decision_refs",
+    "grant_use_refs",
+    "inputs",
+    "outputs",
+    "system_identity",
+    "payload",
+    "integrity"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.2.0"
+    },
+    "event_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "mission_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "mission_sequence": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "event_type": {
+      "$ref": "#/$defs/event_type"
+    },
+    "event_version": {
+      "const": "0.2.0"
+    },
+    "payload_schema_id": {
+      "type": "string",
+      "pattern": "^urn:odeya:event-payload:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "payload_schema_digest": {
+      "$ref": "#/$defs/digest"
+    },
+    "command_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "aggregate_type": {
+      "enum": [
+        "proposal",
+        "mission",
+        "protocol",
+        "stage",
+        "work_item",
+        "attempt",
+        "artifact",
+        "verification",
+        "claim",
+        "publication",
+        "authority",
+        "incident",
+        "learning"
+      ]
+    },
+    "aggregate_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "commit_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "batch_index": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "batch_size": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "occurred_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "recorded_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "actor": {
+      "$ref": "#/$defs/actor"
+    },
+    "correlation_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "causation_id": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/identifier"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "authority_ref": {
+      "$ref": "#/$defs/identifier"
+    },
+    "policy_decision_refs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/identifier"
+      }
+    },
+    "grant_use_refs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/identifier"
+      }
+    },
+    "inputs": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/artifact_reference"
+      }
+    },
+    "outputs": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/artifact_reference"
+      }
+    },
+    "system_identity": {
+      "$ref": "#/$defs/system_identity"
+    },
+    "payload": {
+      "type": "object"
+    },
+    "integrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["canonicalization", "payload_digest", "previous_event_digest", "event_digest"],
+      "properties": {
+        "canonicalization": {
+          "const": "odeya-jcs-draft-0.1"
+        },
+        "payload_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "previous_event_digest": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/digest"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "event_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "signature_ref": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/artifact_reference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "oneOf": [
+    {
+      "properties": {
+        "event_type": {
+          "const": "proposal.submitted"
+        },
+        "payload": {
+          "$ref": "#/$defs/proposal_submitted_payload"
+        }
+      }
+    },
+    {
+      "properties": {
+        "event_type": {
+          "const": "proposal.decided"
+        },
+        "payload": {
+          "$ref": "#/$defs/proposal_decided_payload"
+        }
+      }
+    },
+    {
+      "properties": {
+        "event_type": {
+          "const": "mission.compiled"
+        },
+        "payload": {
+          "$ref": "#/$defs/mission_compiled_payload"
+        }
+      }
+    },
+    {
+      "properties": {
+        "event_type": {
+          "const": "protocol.frozen"
+        },
+        "payload": {
+          "$ref": "#/$defs/protocol_frozen_payload"
+        }
+      }
+    },
+    {
+      "properties": {
+        "event_type": {
+          "const": "protocol.amended"
+        },
+        "payload": {
+          "$ref": "#/$defs/protocol_amended_payload"
+        }
+      }
+    },
+    {
+      "properties": {
+        "event_type": {
+          "const": "stage.authorized"
+        },
+        "payload": {
+          "$ref": "#/$defs/stage_authorized_payload"
+        }
+      }
+    },
+    {
+      "properties": {
+        "event_type": {
+          "const": "stage.transitioned"
+        },
+        "payload": {
+          "$ref": "#/$defs/stage_transitioned_payload"
+        }
+      }
+    },
+    {
+      "properties": {
+        "event_type": {
+          "const": "work.leased"
+        },
+        "payload": {
+          "$ref": "#/$defs/work_leased_payload"
+        }
+      }
+    },
+    {
+      "properties": {
+        "event_type": {
+          "const": "attempt.recorded"
+        },
+        "payload": {
+          "$ref": "#/$defs/attempt_recorded_payload"
+        }
+      }
+    },
+    {
+      "properties": {
+        "event_type": {
+          "const": "resource.observed"
+        },
+        "payload": {
+          "$ref": "#/$defs/resource_observed_payload"
+        }
+      }
+    },
+    {
+      "properties": {
+        "event_type": {
+          "enum": ["artifact.recorded", "artifact.promoted"]
+        },
+        "payload": {
+          "$ref": "#/$defs/artifact_payload"
+        }
+      }
+    },
+    {
+      "properties": {
+        "event_type": {
+          "const": "metric.observed"
+        },
+        "payload": {
+          "$ref": "#/$defs/metric_observed_payload"
+        }
+      }
+    },
+    {
+      "properties": {
+        "event_type": {
+          "const": "falsifier.adjudicated"
+        },
+        "payload": {
+          "$ref": "#/$defs/falsifier_payload"
+        }
+      }
+    },
+    {
+      "properties": {
+        "event_type": {
+          "const": "verification.requested"
+        },
+        "payload": {
+          "$ref": "#/$defs/verification_requested_payload"
+        }
+      }
+    },
+    {
+      "properties": {
+        "event_type": {
+          "const": "verification.completed"
+        },
+        "payload": {
+          "$ref": "#/$defs/verification_completed_payload"
+        }
+      }
+    },
+    {
+      "properties": {
+        "event_type": {
+          "const": "review.recorded"
+        },
+        "payload": {
+          "$ref": "#/$defs/review_payload"
+        }
+      }
+    },
+    {
+      "properties": {
+        "event_type": {
+          "enum": ["claim.proposed", "claim.adjudicated", "claim.corrected", "claim.retracted"]
+        },
+        "payload": {
+          "$ref": "#/$defs/claim_payload"
+        }
+      }
+    },
+    {
+      "properties": {
+        "event_type": {
+          "enum": ["release.requested", "release.decided"]
+        },
+        "payload": {
+          "$ref": "#/$defs/release_payload"
+        }
+      }
+    },
+    {
+      "properties": {
+        "event_type": {
+          "enum": ["publication.sealed", "publication.withdrawn"]
+        },
+        "payload": {
+          "$ref": "#/$defs/publication_payload"
+        }
+      }
+    },
+    {
+      "properties": {
+        "event_type": {
+          "const": "handoff.recorded"
+        },
+        "payload": {
+          "$ref": "#/$defs/handoff_payload"
+        }
+      }
+    },
+    {
+      "properties": {
+        "event_type": {
+          "enum": ["grounded_outcome.recorded", "strategy_candidate.recorded", "strategy.promoted"]
+        },
+        "payload": {
+          "$ref": "#/$defs/learning_payload"
+        }
+      }
+    },
+    {
+      "properties": {
+        "event_type": {
+          "enum": ["authority.granted", "authority.revoked"]
+        },
+        "payload": {
+          "$ref": "#/$defs/authority_payload"
+        }
+      }
+    },
+    {
+      "properties": {
+        "event_type": {
+          "const": "incident.recorded"
+        },
+        "payload": {
+          "$ref": "#/$defs/incident_payload"
+        }
+      }
+    },
+    {
+      "properties": {
+        "event_type": {
+          "const": "mission.closed"
+        },
+        "payload": {
+          "$ref": "#/$defs/mission_closed_payload"
+        }
+      }
+    }
+  ],
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "event_type": {
+            "const": "artifact.recorded"
+          }
+        },
+        "required": ["event_type"]
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "properties": {
+              "state": {
+                "enum": ["recorded", "quarantined"]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "event_type": {
+            "const": "artifact.promoted"
+          }
+        },
+        "required": ["event_type"]
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "properties": {
+              "state": {
+                "const": "promoted"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "event_type": {
+            "enum": ["claim.proposed", "claim.adjudicated", "claim.corrected", "claim.retracted"]
+          }
+        },
+        "required": ["event_type"]
+      },
+      "then": {
+        "oneOf": [
+          {
+            "properties": {
+              "event_type": {
+                "const": "claim.proposed"
+              },
+              "payload": {
+                "properties": {
+                  "operation": {
+                    "const": "propose"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "properties": {
+              "event_type": {
+                "const": "claim.adjudicated"
+              },
+              "payload": {
+                "properties": {
+                  "operation": {
+                    "const": "adjudicate"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "properties": {
+              "event_type": {
+                "const": "claim.corrected"
+              },
+              "payload": {
+                "properties": {
+                  "operation": {
+                    "const": "correct"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "properties": {
+              "event_type": {
+                "const": "claim.retracted"
+              },
+              "payload": {
+                "properties": {
+                  "operation": {
+                    "const": "retract"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "event_type": {
+            "enum": ["release.requested", "release.decided"]
+          }
+        },
+        "required": ["event_type"]
+      },
+      "then": {
+        "oneOf": [
+          {
+            "properties": {
+              "event_type": {
+                "const": "release.requested"
+              },
+              "payload": {
+                "properties": {
+                  "decision": {
+                    "const": "requested"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "properties": {
+              "event_type": {
+                "const": "release.decided"
+              },
+              "payload": {
+                "properties": {
+                  "decision": {
+                    "enum": ["authorized", "denied"]
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "event_type": {
+            "enum": ["publication.sealed", "publication.withdrawn"]
+          }
+        },
+        "required": ["event_type"]
+      },
+      "then": {
+        "oneOf": [
+          {
+            "properties": {
+              "event_type": {
+                "const": "publication.sealed"
+              },
+              "payload": {
+                "properties": {
+                  "action": {
+                    "const": "seal"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "properties": {
+              "event_type": {
+                "const": "publication.withdrawn"
+              },
+              "payload": {
+                "properties": {
+                  "action": {
+                    "const": "withdraw"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "event_type": {
+            "enum": ["authority.granted", "authority.revoked"]
+          }
+        },
+        "required": ["event_type"]
+      },
+      "then": {
+        "oneOf": [
+          {
+            "properties": {
+              "event_type": {
+                "const": "authority.granted"
+              },
+              "payload": {
+                "properties": {
+                  "action": {
+                    "const": "grant"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "properties": {
+              "event_type": {
+                "const": "authority.revoked"
+              },
+              "payload": {
+                "properties": {
+                  "action": {
+                    "const": "revoke"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "event_type": {
+            "enum": [
+              "protocol.frozen",
+              "protocol.amended",
+              "release.decided",
+              "publication.sealed",
+              "publication.withdrawn",
+              "strategy.promoted"
+            ]
+          }
+        },
+        "required": ["event_type"]
+      },
+      "then": {
+        "properties": {
+          "actor": {
+            "properties": {
+              "principal_type": {
+                "const": "human"
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$"
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "decimal_string": {
+      "type": "string",
+      "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?([eE][+-]?[0-9]+)?$"
+    },
+    "event_type": {
+      "enum": [
+        "proposal.submitted",
+        "proposal.decided",
+        "mission.compiled",
+        "protocol.frozen",
+        "protocol.amended",
+        "stage.authorized",
+        "stage.transitioned",
+        "work.leased",
+        "attempt.recorded",
+        "resource.observed",
+        "artifact.recorded",
+        "artifact.promoted",
+        "metric.observed",
+        "falsifier.adjudicated",
+        "verification.requested",
+        "verification.completed",
+        "review.recorded",
+        "claim.proposed",
+        "claim.adjudicated",
+        "claim.corrected",
+        "claim.retracted",
+        "release.requested",
+        "release.decided",
+        "publication.sealed",
+        "publication.withdrawn",
+        "handoff.recorded",
+        "grounded_outcome.recorded",
+        "strategy_candidate.recorded",
+        "strategy.promoted",
+        "authority.granted",
+        "authority.revoked",
+        "incident.recorded",
+        "mission.closed"
+      ]
+    },
+    "actor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["principal_id", "principal_type", "execution_identity"],
+      "properties": {
+        "principal_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "principal_type": {
+          "enum": ["human", "service", "model_run", "tool", "instrument", "organization"]
+        },
+        "execution_identity": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "versioned_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["provider", "name", "version"],
+      "properties": {
+        "provider": {
+          "type": "string",
+          "minLength": 1
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "system_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "environment", "model", "harness", "tools"],
+      "properties": {
+        "code": {
+          "$ref": "#/$defs/digest_or_not_applicable"
+        },
+        "environment": {
+          "$ref": "#/$defs/digest_or_not_applicable"
+        },
+        "model": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/versioned_identity"
+            },
+            {
+              "const": "not_applicable"
+            }
+          ]
+        },
+        "harness": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/versioned_identity"
+            },
+            {
+              "const": "not_applicable"
+            }
+          ]
+        },
+        "tools": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/versioned_identity"
+          }
+        }
+      }
+    },
+    "digest_or_not_applicable": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/digest"
+        },
+        {
+          "const": "not_applicable"
+        }
+      ]
+    },
+    "artifact_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifact_id", "digest", "media_type"],
+      "properties": {
+        "artifact_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "nullable_artifact": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/artifact_reference"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "proposal_submitted_payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["proposal_ref", "disclosure_state"],
+      "properties": {
+        "proposal_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        },
+        "disclosure_state": {
+          "enum": ["private", "restricted", "public_candidate"]
+        }
+      }
+    },
+    "proposal_decided_payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["proposal_id", "decision", "rationale_ref", "decided_by"],
+      "properties": {
+        "proposal_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "decision": {
+          "enum": ["accept", "request_revision", "defer", "decline"]
+        },
+        "rationale_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        },
+        "decided_by": {
+          "$ref": "#/$defs/identifier"
+        }
+      }
+    },
+    "mission_compiled_payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mission_spec_digest", "compiler_identity", "validation_report"],
+      "properties": {
+        "mission_spec_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "compiler_identity": {
+          "$ref": "#/$defs/versioned_identity"
+        },
+        "validation_report": {
+          "$ref": "#/$defs/artifact_reference"
+        }
+      }
+    },
+    "protocol_frozen_payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["protocol_digest", "mission_spec_digest", "data_exposure_cutoff", "mode"],
+      "properties": {
+        "protocol_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "mission_spec_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "data_exposure_cutoff": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "mode": {
+          "enum": ["exploratory", "confirmatory", "mixed_with_separate_branches"]
+        }
+      }
+    },
+    "protocol_amended_payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["prior_protocol_digest", "new_protocol_digest", "reason_ref", "exposure_state", "claim_consequence"],
+      "properties": {
+        "prior_protocol_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "new_protocol_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "reason_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        },
+        "exposure_state": {
+          "enum": ["outcome_blind", "partial_outcome_exposure", "full_outcome_exposure"]
+        },
+        "claim_consequence": {
+          "enum": ["confirmatory_preserved", "exploratory_only", "new_prospective_fork_required"]
+        }
+      }
+    },
+    "stage_authorized_payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["stage", "run_manifest_digest", "grant_id"],
+      "properties": {
+        "stage": {
+          "$ref": "#/$defs/stage"
+        },
+        "run_manifest_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "grant_id": {
+          "$ref": "#/$defs/identifier"
+        }
+      }
+    },
+    "stage_transitioned_payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["stage", "from", "to", "reason_code", "checkpoint_ref"],
+      "properties": {
+        "stage": {
+          "$ref": "#/$defs/stage"
+        },
+        "from": {
+          "$ref": "#/$defs/stage_state"
+        },
+        "to": {
+          "$ref": "#/$defs/stage_state"
+        },
+        "reason_code": {
+          "type": "string",
+          "minLength": 1
+        },
+        "checkpoint_ref": {
+          "$ref": "#/$defs/nullable_artifact"
+        }
+      }
+    },
+    "stage": {
+      "enum": [
+        "intake",
+        "orient",
+        "contract",
+        "preregister",
+        "preflight",
+        "execute",
+        "verify",
+        "adversarial_review",
+        "adjudicate",
+        "handoff",
+        "learn"
+      ]
+    },
+    "stage_state": {
+      "enum": ["pending", "authorized", "running", "interrupted", "blocked", "completed"]
+    },
+    "work_leased_payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["work_item_id", "lease_id", "subject_id", "expires_at", "capabilities", "budget_ref"],
+      "properties": {
+        "work_item_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "lease_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "subject_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "expires_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "capabilities": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "budget_ref": {
+          "$ref": "#/$defs/digest"
+        }
+      }
+    },
+    "attempt_recorded_payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["work_item_id", "attempt_id", "lease_id", "status", "usage_ref", "result_manifest_ref", "error_code"],
+      "properties": {
+        "work_item_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "attempt_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "lease_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "status": {
+          "enum": ["started", "completed", "failed", "completion_unknown", "cancelled"]
+        },
+        "usage_ref": {
+          "$ref": "#/$defs/nullable_artifact"
+        },
+        "result_manifest_ref": {
+          "$ref": "#/$defs/nullable_artifact"
+        },
+        "error_code": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "resource_observed_payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["attempt_id", "resource", "value", "unit", "source"],
+      "properties": {
+        "attempt_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "resource": {
+          "enum": ["wall_time", "model_tokens", "cpu", "memory", "accelerator", "storage", "network", "external_cost", "human_time"]
+        },
+        "value": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/decimal_string"
+            },
+            {
+              "const": "unknown"
+            }
+          ]
+        },
+        "unit": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "artifact_payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifact", "state", "validation_report"],
+      "properties": {
+        "artifact": {
+          "$ref": "#/$defs/artifact_reference"
+        },
+        "state": {
+          "enum": ["recorded", "promoted", "quarantined"]
+        },
+        "validation_report": {
+          "$ref": "#/$defs/artifact_reference"
+        }
+      }
+    },
+    "metric_observed_payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["metric_id", "observation_ref", "method_registry_digest"],
+      "properties": {
+        "metric_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "observation_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        },
+        "method_registry_digest": {
+          "$ref": "#/$defs/digest"
+        }
+      }
+    },
+    "falsifier_payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["falsifier_id", "verdict", "evidence_ref", "known_bad_passed"],
+      "properties": {
+        "falsifier_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "verdict": {
+          "enum": ["passed", "triggered", "inconclusive", "invalid", "unmeasured"]
+        },
+        "evidence_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        },
+        "known_bad_passed": {
+          "type": "boolean"
+        }
+      }
+    },
+    "verification_requested_payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["verification_id", "protocol_digest", "evidence_manifest_ref", "independence_requirement_ref"],
+      "properties": {
+        "verification_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "protocol_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "evidence_manifest_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        },
+        "independence_requirement_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        }
+      }
+    },
+    "verification_completed_payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["verification_id", "verifier_principal", "verdict", "verification_ref"],
+      "properties": {
+        "verification_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "verifier_principal": {
+          "$ref": "#/$defs/identifier"
+        },
+        "verdict": {
+          "enum": ["confirmed", "rejected", "inconclusive", "invalid", "blocked"]
+        },
+        "verification_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        }
+      }
+    },
+    "review_payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["review_type", "reviewer_principal", "report_ref", "material_findings"],
+      "properties": {
+        "review_type": {
+          "enum": ["adversarial", "domain", "statistical", "security", "rights", "publication"]
+        },
+        "reviewer_principal": {
+          "$ref": "#/$defs/identifier"
+        },
+        "report_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        },
+        "material_findings": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "claim_payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["claim_id", "claim_version", "claim_digest", "operation", "reason_ref"],
+      "properties": {
+        "claim_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "claim_version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "claim_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "operation": {
+          "enum": ["propose", "adjudicate", "correct", "retract"]
+        },
+        "reason_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        }
+      }
+    },
+    "release_payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["publication_candidate_digest", "decision", "reason_ref", "publication_grant_id"],
+      "properties": {
+        "publication_candidate_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "decision": {
+          "enum": ["requested", "authorized", "denied"]
+        },
+        "reason_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        },
+        "publication_grant_id": {
+          "$ref": "#/$defs/identifier"
+        }
+      }
+    },
+    "publication_payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["manifest_ref", "channel", "action", "receipt_ref"],
+      "properties": {
+        "manifest_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        },
+        "channel": {
+          "type": "string",
+          "minLength": 1
+        },
+        "action": {
+          "enum": ["seal", "withdraw"]
+        },
+        "receipt_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        }
+      }
+    },
+    "handoff_payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["handoff_ref", "ledger_position", "next_legal_actions"],
+      "properties": {
+        "handoff_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        },
+        "ledger_position": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "next_legal_actions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "learning_payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["record_id", "record_type", "evidence_ref", "promotion_state"],
+      "properties": {
+        "record_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "record_type": {
+          "enum": ["grounded_outcome", "strategy_candidate", "strategy_promotion"]
+        },
+        "evidence_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        },
+        "promotion_state": {
+          "enum": ["not_applicable", "candidate", "shadow", "canary", "promoted", "rejected", "rolled_back"]
+        }
+      }
+    },
+    "authority_payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["grant_id", "action", "role", "subject_id", "decision_ref"],
+      "properties": {
+        "grant_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "action": {
+          "enum": ["grant", "revoke"]
+        },
+        "role": {
+          "enum": ["proposal", "protocol", "safety", "data_rights", "resource", "execution", "verification", "outcome", "publication"]
+        },
+        "subject_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "decision_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        }
+      }
+    },
+    "incident_payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["incident_id", "severity", "report_ref", "control_action"],
+      "properties": {
+        "incident_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "severity": {
+          "enum": ["low", "medium", "high", "critical"]
+        },
+        "report_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        },
+        "control_action": {
+          "enum": ["observe", "quarantine", "pause", "kill", "revoke", "withdraw"]
+        }
+      }
+    },
+    "mission_closed_payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["closure_reason", "final_handoff_ref", "terminal_lifecycle"],
+      "properties": {
+        "closure_reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "final_handoff_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        },
+        "terminal_lifecycle": {
+          "enum": ["completed", "declined", "deferred", "cancelled", "superseded"]
+        }
+      }
+    }
+  }
+}

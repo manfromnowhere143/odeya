@@ -1,0 +1,353 @@
+{
+  "schema_version": "0.2.0",
+  "mission_id": "mission.001",
+  "version": 1,
+  "title": "Architecture schema conformance fixture",
+  "research_question": "Does the architecture contract reject structurally inadmissible research records?",
+  "decision_consequence": "The architecture gate remains closed if the contract accepts a known-invalid record.",
+  "claim_type": "measurement",
+  "estimand": {
+    "estimand_id": "estimand.001",
+    "population": "synthetic architecture schema cases",
+    "unit_of_analysis": "schema instance",
+    "intervention": "validation against the pinned contract",
+    "comparator": "declared expected validity",
+    "outcome": "schema acceptance or rejection",
+    "horizon": "single architecture validation run",
+    "summary_measure": "case-level conformance",
+    "effect_scale": "binary",
+    "intercurrent_event_strategy": "mark infrastructure failures separately"
+  },
+  "uncertainty_contract": {
+    "channels": ["infrastructure_operational"],
+    "interval_policy": "No statistical interval is claimed by structural validation.",
+    "calibration_policy": "Known-valid and known-invalid cases are both required.",
+    "unknown_policy": "explicit_never_zero"
+  },
+  "statistical_regime": {
+    "inference_family": "measurement",
+    "monitoring_regime": "fixed_horizon",
+    "error_criterion": "Every declared case must match its expected structural verdict.",
+    "multiplicity_family": "not_applicable_to_deterministic_schema_checks",
+    "power_or_precision_plan": {
+      "artifact_id": "precision-plan.001",
+      "expected_media_type": "text/markdown",
+      "expected_digest": "unresolved"
+    },
+    "simulation_conformance_ref": {
+      "artifact_id": "conformance-plan.001",
+      "expected_media_type": "application/json",
+      "expected_digest": "unresolved"
+    }
+  },
+  "origin": {
+    "proposal_id": "proposal.001",
+    "provenance": "Odeya architecture design review",
+    "rights_basis": "original synthetic fixture",
+    "conflicts": []
+  },
+  "scope": {
+    "included": ["JSON Schema 2020-12 structural conformance"],
+    "excluded": ["runtime correctness", "scientific validity"],
+    "populations": ["Odeya architecture contract fixtures"],
+    "environments": ["offline pinned validator"]
+  },
+  "hypotheses": [
+    {
+      "hypothesis_id": "hypothesis.001",
+      "statement": "The pinned schema contract rejects each registered adversarial mutation.",
+      "expected_observations": ["Every invalid case produces at least one validation error"],
+      "alternative_explanations": ["The fixture mutation or harness is defective"],
+      "falsification_consequence": "Keep the architecture gate closed and revise the contract or test."
+    }
+  ],
+  "sources": [
+    {
+      "source_id": "source.001",
+      "role": "evaluation",
+      "locator": "fixture://architecture-schema/manifest",
+      "rights": "original synthetic fixture",
+      "integrity": "unresolved"
+    }
+  ],
+  "datasets": [],
+  "baseline_ladder": [
+    {
+      "baseline_id": "baseline.001",
+      "description": "Parse JSON without schema validation",
+      "resource_budget_ref": "budget.fixture"
+    }
+  ],
+  "metrics": [
+    {
+      "metric_id": "metric.case-conformance",
+      "estimator": {
+        "method_id": "method.exact-case-match",
+        "version": "0.1.0",
+        "registry_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "unit": {
+        "system": "dimensionless",
+        "code": "1"
+      },
+      "dataset_or_population": "registered architecture schema cases",
+      "comparator": "gte",
+      "threshold": {
+        "value": "1",
+        "unit": {
+          "system": "dimensionless",
+          "code": "1"
+        }
+      },
+      "confidence_rule": {
+        "interval_type": "not_applicable",
+        "level": "not_applicable",
+        "coverage_scope": "deterministic registered cases"
+      },
+      "missing_data_policy": {
+        "mechanism_assumption": "none_expected",
+        "treatment": "Fail validation if a registered fixture cannot be loaded.",
+        "sensitivity_analysis": "not_applicable_to_structural_validation"
+      },
+      "evaluator": {
+        "evaluator_id": "evaluator.jsonschema-2020-12",
+        "version": "4.26.0",
+        "execution_mode": "deterministic"
+      }
+    }
+  ],
+  "falsifiers": [
+    {
+      "falsifier_id": "falsifier.accepts-unknown-field",
+      "statement": "A fail-closed object accepts an undeclared property.",
+      "test": "Add an undeclared property to a closed object.",
+      "evaluator": {
+        "evaluator_id": "evaluator.jsonschema-2020-12",
+        "version": "4.26.0",
+        "execution_mode": "deterministic"
+      },
+      "known_bad_fixture": {
+        "artifact_id": "known-bad.unknown-field",
+        "expected_media_type": "application/json",
+        "expected_digest": "unresolved"
+      },
+      "claim_consequence": "The structural contract is not fail closed."
+    },
+    {
+      "falsifier_id": "falsifier.accepts-invalid-transition",
+      "statement": "A lifecycle record accepts an impossible conditional state.",
+      "test": "Mutate a state without the evidence required by its conditional.",
+      "evaluator": {
+        "evaluator_id": "evaluator.jsonschema-2020-12",
+        "version": "4.26.0",
+        "execution_mode": "deterministic"
+      },
+      "known_bad_fixture": {
+        "artifact_id": "known-bad.invalid-transition",
+        "expected_media_type": "application/json",
+        "expected_digest": "unresolved"
+      },
+      "claim_consequence": "The structural state guard is incomplete."
+    },
+    {
+      "falsifier_id": "falsifier.ignores-format",
+      "statement": "A malformed date-time passes architecture validation.",
+      "test": "Replace a date-time with a malformed string under format checking.",
+      "evaluator": {
+        "evaluator_id": "evaluator.jsonschema-2020-12",
+        "version": "4.26.0",
+        "execution_mode": "deterministic"
+      },
+      "known_bad_fixture": {
+        "artifact_id": "known-bad.invalid-date-time",
+        "expected_media_type": "application/json",
+        "expected_digest": "unresolved"
+      },
+      "claim_consequence": "The validator does not assert declared formats."
+    }
+  ],
+  "protocol": {
+    "mode": "confirmatory",
+    "analysis_plan": "Load each immutable fixture, apply only its declared mutation, and compare the structural verdict with the registered expectation.",
+    "multiplicity_policy": "All registered cases must pass; there is no selective reporting.",
+    "data_exposure_cutoff": "2026-07-15T09:00:00Z",
+    "stop_rules": ["Stop on malformed manifest", "Stop on dependency version drift"],
+    "amendment_policy": "prospective_version_or_fork_only",
+    "correction_policy": "Correct fixtures and record the failed validation before rerunning."
+  },
+  "verification": {
+    "independence_requirement": {
+      "principal": "separate_preferred",
+      "process": "separate_required",
+      "host": "not_required",
+      "code_path": "separate_preferred",
+      "evaluator_implementation": "separate_preferred",
+      "model_family": "not_applicable",
+      "data_exposure": "not_required",
+      "operator": "separate_preferred",
+      "institution": "not_required"
+    },
+    "replay_commands": ["python3 scripts/validate.py"],
+    "required_artifacts": [
+      {
+        "artifact_id": "schema-case-manifest.001",
+        "expected_media_type": "application/json",
+        "expected_digest": "unresolved"
+      }
+    ],
+    "adversarial_checks": ["unknown field", "invalid conditional state", "malformed date-time"],
+    "replication_rule": "A clean environment using the exact pinned dependency must reproduce every case verdict."
+  },
+  "resource_budget": {
+    "wall_time_seconds": "unknown",
+    "model_tokens": "unknown",
+    "cpu_seconds": "unknown",
+    "memory_gib_seconds": "unknown",
+    "accelerator_seconds": "unknown",
+    "storage_bytes": "unknown",
+    "network_bytes": "unknown",
+    "external_cost_usd": "unknown",
+    "human_hours": "unknown"
+  },
+  "risk": {
+    "tier": "R0",
+    "domains": ["architecture_validation"],
+    "prohibited_actions": ["external_side_effects"],
+    "approval_requirements": []
+  },
+  "authorities": {
+    "proposal": {
+      "principal_id": "authority.proposal",
+      "principal_type": "human",
+      "policy_ref": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+      "delegation": "none",
+      "constraints": {
+        "maximum_risk_tier": "R0",
+        "allowed_actions": ["proposal.submit"],
+        "prohibited_actions": []
+      }
+    },
+    "protocol": {
+      "principal_id": "authority.protocol",
+      "principal_type": "human",
+      "policy_ref": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+      "delegation": "none",
+      "constraints": {
+        "maximum_risk_tier": "R0",
+        "allowed_actions": ["protocol.freeze"],
+        "prohibited_actions": []
+      }
+    },
+    "safety": {
+      "principal_id": "authority.safety",
+      "principal_type": "human",
+      "policy_ref": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+      "delegation": "none",
+      "constraints": {
+        "maximum_risk_tier": "R0",
+        "allowed_actions": ["safety.review"],
+        "prohibited_actions": []
+      }
+    },
+    "data_rights": {
+      "principal_id": "authority.data-rights",
+      "principal_type": "human",
+      "policy_ref": "sha256:9999999999999999999999999999999999999999999999999999999999999999",
+      "delegation": "none",
+      "constraints": {
+        "maximum_risk_tier": "R0",
+        "allowed_actions": [
+          "data-rights.approve"
+        ],
+        "prohibited_actions": []
+      }
+    },
+    "resource": {
+      "principal_id": "authority.resource",
+      "principal_type": "human",
+      "policy_ref": "sha256:4444444444444444444444444444444444444444444444444444444444444444",
+      "delegation": "none",
+      "constraints": {
+        "maximum_risk_tier": "R0",
+        "allowed_actions": ["resource.approve"],
+        "prohibited_actions": []
+      }
+    },
+    "execution": {
+      "principal_id": "authority.execution",
+      "principal_type": "human",
+      "policy_ref": "sha256:5555555555555555555555555555555555555555555555555555555555555555",
+      "delegation": "none",
+      "constraints": {
+        "maximum_risk_tier": "R0",
+        "allowed_actions": ["stage.authorize"],
+        "prohibited_actions": []
+      }
+    },
+    "verification": {
+      "principal_id": "authority.verification",
+      "principal_type": "human",
+      "policy_ref": "sha256:6666666666666666666666666666666666666666666666666666666666666666",
+      "delegation": "none",
+      "constraints": {
+        "maximum_risk_tier": "R0",
+        "allowed_actions": ["verification.adjudicate"],
+        "prohibited_actions": []
+      }
+    },
+    "outcome": {
+      "principal_id": "authority.outcome",
+      "principal_type": "human",
+      "policy_ref": "sha256:7777777777777777777777777777777777777777777777777777777777777777",
+      "delegation": "none",
+      "constraints": {
+        "maximum_risk_tier": "R0",
+        "allowed_actions": ["outcome.adjudicate"],
+        "prohibited_actions": []
+      }
+    },
+    "publication": {
+      "principal_id": "authority.publication",
+      "principal_type": "human",
+      "policy_ref": "sha256:8888888888888888888888888888888888888888888888888888888888888888",
+      "delegation": "none",
+      "constraints": {
+        "maximum_risk_tier": "R0",
+        "allowed_actions": ["publication.decide"],
+        "prohibited_actions": []
+      }
+    }
+  },
+  "claim_boundary": {
+    "eligible_by_scientific_outcome": {
+      "supported_within_scope": ["The registered structural cases conform to the pinned schema contract."],
+      "contradicted": ["At least one registered case contradicts the structural contract."],
+      "falsified": ["The registered structural claim was falsified within scope."],
+      "null_result": ["The structural comparison produced no directional result."],
+      "inconclusive": ["The structural verdict is inconclusive."]
+    },
+    "refusal_language_by_reason": {
+      "invalid": ["The validation run is invalid."],
+      "blocked": ["The validation run is blocked."],
+      "rights_blocked": ["The validation run is rights-blocked."],
+      "infrastructure_failure": ["The validator infrastructure failed before adjudication."],
+      "verification_disagreement": ["Independent verification did not reach agreement."]
+    },
+    "forbidden": ["Architecture accepted", "Runtime verified", "Scientifically valid"]
+  },
+  "publication": {
+    "default_visibility": "private",
+    "allowed_scientific_outcomes": ["supported_within_scope", "contradicted", "inconclusive"],
+    "allowed_nonclaim_reports": ["invalid_run_report", "blocker_report", "verification_disagreement_report"],
+    "rights_review": "Required before any fixture disclosure.",
+    "safety_review": "Required before any fixture disclosure.",
+    "authorship_policy": "Preserve human and machine contribution provenance.",
+    "correction_endpoint": "private://architecture-corrections"
+  },
+  "handoff": {
+    "required_fields": ["schema versions", "dependency version", "case manifest", "validation output"],
+    "recovery_test": "A new session can run the pinned validator and reproduce every registered verdict."
+  },
+  "created_at": "2026-07-15T10:00:00Z",
+  "created_by": "architect.001"
+}

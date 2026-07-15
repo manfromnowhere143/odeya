@@ -1,0 +1,344 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:odeya:schema:verification-run:0.1.0",
+  "title": "Odeya VerificationRun",
+  "description": "An immutable verification result with observed multidimensional independence.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "verification_id",
+    "mission_id",
+    "protocol_digest",
+    "producer_identity",
+    "verifier_identity",
+    "status",
+    "replay_level",
+    "relations",
+    "exposure_event_refs",
+    "conflict_declaration_refs",
+    "evidence_refs",
+    "known_bad_results",
+    "dimensions",
+    "assessment_rule",
+    "assessed_by",
+    "derived_profiles",
+    "recorded_at"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.1.0"
+    },
+    "verification_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "mission_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "protocol_digest": {
+      "$ref": "#/$defs/digest"
+    },
+    "producer_identity": {
+      "$ref": "#/$defs/execution_identity"
+    },
+    "verifier_identity": {
+      "$ref": "#/$defs/execution_identity"
+    },
+    "status": {
+      "enum": ["requested", "running", "confirmed", "rejected", "inconclusive", "invalid", "blocked", "disputed"]
+    },
+    "replay_level": {
+      "enum": ["integrity_only", "same_evidence_reexecution", "clean_reproduction", "independent_reimplementation", "independent_replication"]
+    },
+    "relations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "principal",
+        "execution_identity",
+        "process",
+        "host",
+        "environment",
+        "code",
+        "evaluator",
+        "model",
+        "data",
+        "context",
+        "operator",
+        "institution",
+        "artifact_selection",
+        "conflict"
+      ],
+      "properties": {
+        "principal": {
+          "enum": ["same", "different", "organizationally_independent", "unknown"]
+        },
+        "execution_identity": {
+          "enum": ["same", "different", "unknown"]
+        },
+        "process": {
+          "enum": ["same", "separate", "unknown"]
+        },
+        "host": {
+          "enum": ["same", "separate", "separate_admin_domain", "unknown"]
+        },
+        "environment": {
+          "enum": ["same_image", "clean_rebuild", "independently_built", "unknown"]
+        },
+        "code": {
+          "enum": ["same_artifact", "clean_rebuild", "independent_implementation", "different_method", "unknown"]
+        },
+        "evaluator": {
+          "enum": ["same", "independent_instance", "independent_implementation", "human_expert", "unknown"]
+        },
+        "model": {
+          "enum": ["not_applicable", "same_instance", "same_family", "different_family", "independent_provider", "unknown"]
+        },
+        "data": {
+          "enum": ["same_bytes", "fresh_split", "new_sample", "new_dataset", "new_measurement", "unknown"]
+        },
+        "context": {
+          "enum": ["producer_trace", "producer_summary", "evidence_only", "blinded", "sealed_truth_blinded", "unknown"]
+        },
+        "operator": {
+          "enum": ["same", "different", "unknown"]
+        },
+        "institution": {
+          "enum": ["same", "different", "external", "unknown"]
+        },
+        "artifact_selection": {
+          "enum": ["producer_selected", "complete_manifest", "blinded_selection", "unknown"]
+        },
+        "conflict": {
+          "enum": ["none_disclosed", "present", "unknown"]
+        }
+      }
+    },
+    "exposure_event_refs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/identifier"
+      }
+    },
+    "conflict_declaration_refs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/artifact_reference"
+      }
+    },
+    "evidence_refs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/artifact_reference"
+      }
+    },
+    "known_bad_results": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["fixture", "expected", "observed", "report_ref"],
+        "properties": {
+          "fixture": {
+            "$ref": "#/$defs/artifact_reference"
+          },
+          "expected": {
+            "const": "reject"
+          },
+          "observed": {
+            "enum": ["reject", "accept", "error"]
+          },
+          "report_ref": {
+            "$ref": "#/$defs/artifact_reference"
+          }
+        }
+      }
+    },
+    "dimensions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_integrity",
+        "computational_reproducibility",
+        "code_verification",
+        "method_validity",
+        "calibration",
+        "causal_identification",
+        "external_validation",
+        "transport",
+        "safety_case"
+      ],
+      "properties": {
+        "artifact_integrity": {
+          "$ref": "#/$defs/dimension_result"
+        },
+        "computational_reproducibility": {
+          "$ref": "#/$defs/dimension_result"
+        },
+        "code_verification": {
+          "$ref": "#/$defs/dimension_result"
+        },
+        "method_validity": {
+          "$ref": "#/$defs/dimension_result"
+        },
+        "calibration": {
+          "$ref": "#/$defs/dimension_result"
+        },
+        "causal_identification": {
+          "$ref": "#/$defs/dimension_result"
+        },
+        "external_validation": {
+          "$ref": "#/$defs/dimension_result"
+        },
+        "transport": {
+          "$ref": "#/$defs/dimension_result"
+        },
+        "safety_case": {
+          "$ref": "#/$defs/dimension_result"
+        }
+      }
+    },
+    "assessment_rule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rule_id", "version", "registry_digest"],
+      "properties": {
+        "rule_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "registry_digest": {
+          "$ref": "#/$defs/digest"
+        }
+      }
+    },
+    "assessed_by": {
+      "$ref": "#/$defs/execution_identity"
+    },
+    "derived_profiles": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "enum": ["IV0_integrity", "IV1_reexecution", "IV2_clean_reproduction", "IV3_independent_reimplementation", "IV4_replication"]
+      }
+    },
+    "recorded_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "confirmed"
+          }
+        },
+        "required": ["status"]
+      },
+      "then": {
+        "properties": {
+          "known_bad_results": {
+            "items": {
+              "properties": {
+                "observed": {
+                  "const": "reject"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$"
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "execution_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["principal_id", "execution_id", "process_id", "host_identity", "code_digest", "environment_digest"],
+      "properties": {
+        "principal_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "execution_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "process_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "host_identity": {
+          "type": "string",
+          "minLength": 1
+        },
+        "code_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "environment_digest": {
+          "$ref": "#/$defs/digest"
+        }
+      }
+    },
+    "artifact_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifact_id", "digest", "media_type"],
+      "properties": {
+        "artifact_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "dimension_result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["verdict", "scope", "evidence_refs", "limitations"],
+      "properties": {
+        "verdict": {
+          "enum": ["pass", "fail", "indeterminate", "not_applicable"]
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/artifact_reference"
+          }
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,215 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:odeya:schema:adjudication:0.1.0",
+  "title": "Odeya Adjudication",
+  "description": "An immutable application of a frozen consequence rule to retained evidence. Refusal, invalidity, missing measurement, and scientific outcomes remain distinct.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "adjudication_id",
+    "mission_id",
+    "claim_proposal_id",
+    "protocol_digest",
+    "status",
+    "scientific_validity",
+    "measurement_status",
+    "scientific_outcome",
+    "refusal",
+    "operational_blocker_ids",
+    "metric_result_refs",
+    "falsifier_result_refs",
+    "verification_run_ids",
+    "consequence_rule_ref",
+    "input_set_digest",
+    "reason_codes",
+    "limitations",
+    "adjudicated_at_ledger_position",
+    "adjudicated_at",
+    "adjudicated_by"
+  ],
+  "properties": {
+    "schema_version": { "const": "0.1.0" },
+    "adjudication_id": { "$ref": "#/$defs/identifier" },
+    "mission_id": { "$ref": "#/$defs/identifier" },
+    "claim_proposal_id": { "$ref": "#/$defs/identifier" },
+    "protocol_digest": { "$ref": "#/$defs/digest" },
+    "status": { "enum": ["determined", "refused"] },
+    "scientific_validity": { "enum": ["valid", "invalid", "not_assessed"] },
+    "measurement_status": {
+      "enum": ["valid_measurement", "no_valid_measurement", "not_applicable", "not_assessed"]
+    },
+    "scientific_outcome": {
+      "oneOf": [
+        { "$ref": "#/$defs/scientific_outcome" },
+        { "type": "null" }
+      ]
+    },
+    "refusal": {
+      "oneOf": [
+        { "$ref": "#/$defs/refusal" },
+        { "type": "null" }
+      ]
+    },
+    "operational_blocker_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/identifier" }
+    },
+    "metric_result_refs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/artifact_reference" }
+    },
+    "falsifier_result_refs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/artifact_reference" }
+    },
+    "verification_run_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/identifier" }
+    },
+    "consequence_rule_ref": { "$ref": "#/$defs/method_reference" },
+    "input_set_digest": { "$ref": "#/$defs/digest" },
+    "reason_codes": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/identifier" }
+    },
+    "limitations": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "adjudicated_at_ledger_position": { "type": "integer", "minimum": 0 },
+    "adjudicated_at": { "type": "string", "format": "date-time" },
+    "adjudicated_by": { "$ref": "#/$defs/execution_identity" }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "status": { "const": "determined" } },
+        "required": ["status"]
+      },
+      "then": {
+        "properties": {
+          "scientific_validity": { "const": "valid" },
+          "scientific_outcome": { "$ref": "#/$defs/scientific_outcome" },
+          "refusal": { "type": "null" },
+          "operational_blocker_ids": { "maxItems": 0 },
+          "metric_result_refs": { "minItems": 1 },
+          "verification_run_ids": { "minItems": 1 }
+        }
+      },
+      "else": {
+        "properties": {
+          "scientific_outcome": { "type": "null" },
+          "refusal": { "$ref": "#/$defs/refusal" }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "scientific_validity": { "const": "invalid" } },
+        "required": ["scientific_validity"]
+      },
+      "then": {
+        "properties": {
+          "status": { "const": "refused" },
+          "scientific_outcome": { "type": "null" }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "measurement_status": { "const": "no_valid_measurement" } },
+        "required": ["measurement_status"]
+      },
+      "then": {
+        "properties": {
+          "status": { "const": "refused" },
+          "scientific_outcome": { "type": "null" }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "scientific_outcome": { "const": "null_result" } },
+        "required": ["scientific_outcome"]
+      },
+      "then": {
+        "properties": {
+          "status": { "const": "determined" },
+          "scientific_validity": { "const": "valid" },
+          "measurement_status": { "const": "valid_measurement" }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$"
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "scientific_outcome": {
+      "enum": ["supported_within_scope", "contradicted", "falsified", "null_result", "inconclusive"]
+    },
+    "artifact_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifact_id", "digest", "media_type"],
+      "properties": {
+        "artifact_id": { "$ref": "#/$defs/identifier" },
+        "digest": { "$ref": "#/$defs/digest" },
+        "media_type": { "type": "string", "minLength": 1 }
+      }
+    },
+    "method_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["method_id", "version", "registry_digest"],
+      "properties": {
+        "method_id": { "$ref": "#/$defs/identifier" },
+        "version": { "type": "string", "minLength": 1 },
+        "registry_digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "refusal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["class", "reason_code", "evidence_refs", "next_legal_actions"],
+      "properties": {
+        "class": {
+          "enum": ["invalid", "blocked", "rights", "infrastructure", "verification_disagreement", "insufficient_evidence"]
+        },
+        "reason_code": { "$ref": "#/$defs/identifier" },
+        "evidence_refs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/artifact_reference" }
+        },
+        "next_legal_actions": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/identifier" }
+        }
+      }
+    },
+    "execution_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["principal_id", "execution_id", "code_digest", "environment_digest"],
+      "properties": {
+        "principal_id": { "$ref": "#/$defs/identifier" },
+        "execution_id": { "$ref": "#/$defs/identifier" },
+        "code_digest": { "$ref": "#/$defs/digest" },
+        "environment_digest": { "$ref": "#/$defs/digest" }
+      }
+    }
+  }
+}
