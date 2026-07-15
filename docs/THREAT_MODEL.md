@@ -138,8 +138,18 @@ A weaker tier cannot be selected because it is cheaper. The isolation claim must
 | T18 | Model writes persuasive false memory that affects later work | Provenance-typed memory, assertion/evidence separation, verification before promotion | Candidate memory quarantined or superseded |
 | T19 | Colluding reviewer appears “independent” | Multidimensional independence vector, conflict declarations, institutional/exposure requirements | Independence unknown/insufficient; no eligible claim |
 | T20 | Safety filter or redaction silently alters scientific input/output | Raw retained bytes where lawful, transformation activity, before/after digest, validity review | Result marked altered; claim scope narrowed or invalidated |
+| T21 | Sealed truth influences retrieval ranking, summaries, embeddings, cache, or omission even though final text is redacted | End-to-end information-flow policy, role/purpose cache partitioning, compilation receipt, canary and noninterference fixtures | Affected producer view/attempt invalidated; holdout rotated prospectively |
+| T22 | Agent produces a plausible result while silently ignoring material contradictory or refuting evidence | Material-evidence inventory, one retained disposition per item, epistemic transition checks, known-refutation cases | Transition rejected or retained unresolved; no claim promotion |
+| T23 | Cheap hypothesis/artifact generation overwhelms scarce verification and creates a de facto unverified knowledge base | Multidimensional verification reservation, backlog ceilings, quarantine, no memory/claim promotion from repetition | Generation throttled; overflow remains visibly unverified or is discarded under policy |
+| T24 | Debate, Elo rank, repeated agents, or model consensus is presented as scientific support | Ranking/evidence type separation, correlation groups, external oracle and verification requirements | Ranking may guide exploration only; evidence gate remains unsatisfied |
+| T25 | Agent fabricates or games the observable epistemic record while optimizing process metrics | Evidence/tool receipt binding, exact graph predecessor/successor digests, anti-gaming controls, outcome axis kept separate | Candidate record quarantined; process evaluator invalidated where affected |
+| T26 | Provider/model fallback silently changes a confirmatory attempt or its data behavior | Exact model/harness/provider/retention identity, fallback as new attempt, protocol comparability rule | Original attempt stops; new attempt is separately classified and adjudicated |
+| T27 | A contributor supplies a polished pseudoscientific or false premise and the engine optimizes for a persuasive compliant report | Premise/evidence-class challenge, rival and falsifier generation, admissibility rules, refusal benchmark, human/domain escalation | Mission is refused, reframed, or retained as an explicitly adversarial test; no eligible claim or publication |
+| T28 | A research benchmark appears strong because the agent retrieves the reference answer, evaluator artifact, derivative summary, or contaminated cache instead of synthesizing evidence | Exact contamination frontier, clean-room blocked-reference manifest, cache/index/embedding taint, ordinary-versus-clean-room comparison, atomic-fact audit | Evaluation is invalidated or reported as contaminated; no capability promotion |
 
 Every row needs at least one known-bad architecture fixture before Gate A and executable containment/fault evidence in its authorized implementation increment.
+
+The exact non-authoritative cognition records and invariants used to close T21–T26 are specified in [Cognitive Control Contracts](COGNITIVE_CONTROL_CONTRACTS.md).
 
 ## Model and memory boundary
 

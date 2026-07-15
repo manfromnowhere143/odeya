@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:odeya:schema:legal-hold-issue-command:0.1.0",
+  "title": "Odeya legal_hold.issue command payload",
+  "description": "Architecture-only closed command payload. Structural validity does not establish referenced evidence, authority, time, signature, quorum, or execution truth.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "legal_hold_record_ref",
+    "scope_digest",
+    "basis_evidence_ref",
+    "issuer_assignment_ref",
+    "destruction_effect",
+    "access_authority_effect"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.1.0"
+    },
+    "destruction_effect": {
+      "const": "pause_covered_destruction_only"
+    },
+    "access_authority_effect": {
+      "const": "no_new_access_processing_training_verification_or_disclosure"
+    },
+    "legal_hold_record_ref": {
+      "$ref": "#/$defs/canonical_record_reference"
+    },
+    "scope_digest": {
+      "$ref": "#/$defs/digest"
+    },
+    "basis_evidence_ref": {
+      "$ref": "#/$defs/artifact_reference"
+    },
+    "issuer_assignment_ref": {
+      "$ref": "#/$defs/canonical_record_reference"
+    }
+  },
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$"
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "artifact_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "digest",
+        "media_type"
+      ],
+      "properties": {
+        "artifact_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "canonical_record_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "object_id",
+        "version",
+        "schema_id",
+        "digest"
+      ],
+      "properties": {
+        "object_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "schema_id": {
+          "type": "string",
+          "pattern": "^urn:odeya:schema:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        }
+      }
+    },
+    "service_scope": {
+      "enum": [
+        "incident_cockpit",
+        "canonical_reads",
+        "reconciliation_commands",
+        "ordinary_research_writes",
+        "publication",
+        "spending",
+        "r2_plus_effects",
+        "physical_actions"
+      ]
+    }
+  }
+}

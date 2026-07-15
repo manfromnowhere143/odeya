@@ -87,6 +87,8 @@ A durable supervisor owns the mission DAG. It may launch parallel workers when b
 
 Multi-agent debate, tournament ranking, and model consensus prioritize candidates. They do not verify truth.
 
+The model-facing boundary is specified in [Cognitive Architecture](COGNITIVE_ARCHITECTURE.md) and [Cognitive Control Contracts](COGNITIVE_CONTROL_CONTRACTS.md). Every role receives an exact exposure-bounded `ResearchStateView`; every material evidence item receives a retained disposition before claim-bearing promotion; generation cannot outrun the separately reserved capacity to verify it. Private chain-of-thought is neither canonical state nor evidence.
+
 ### 4. Tool and execution plane
 
 Research actions run through typed capability adapters behind Odeya's own policy gateway. MCP, OpenAPI, CLIs, browser automation, notebooks, simulators, clusters, and laboratories are interoperability mechanisms—not trust boundaries.
@@ -118,7 +120,7 @@ The evidence plane contains:
 
 PostgreSQL is the provisional transactional-store candidate. An S3-compatible object store is the candidate for immutable blobs. Git preserves reviewed source and protocol-authoring provenance, but an accepted protocol is the canonicalized snapshot whose digest is sealed in the Odeya ledger and whose exact bytes are retained as an artifact. Arrow/Parquet and DuckDB are candidates for local scientific analysis. A dedicated graph database is not justified initially; indexed relational edges and recursive queries are enough until measured workloads say otherwise. Product choices remain provisional until their Gate A contracts and any authorized Gate B probes pass.
 
-See [Evidence and memory](EVIDENCE_AND_MEMORY.md).
+See [Evidence and memory](EVIDENCE_AND_MEMORY.md), the [canonical identity profile](CANONICALIZATION_PROFILE.md), and the [ledger integrity and recovery contract](LEDGER_INTEGRITY_AND_RECOVERY.md).
 
 The exact commit/transaction/crash semantics are specified separately in the [transaction and recovery model](TRANSACTION_MODEL.md); that document governs wherever shorthand here could imply cross-system atomicity.
 
@@ -151,7 +153,7 @@ The policy plane resolves who may do what, with which resource, under which cont
 | Outcome | What happened in the external system? |
 | Publication | What may be disclosed, to whom, under which wording? |
 
-One human can hold several authorities during the founding phase, but the system records distinct decisions and prevents a worker from implicitly inheriting them.
+One human can hold several authorities during the founding phase, but the system records distinct decisions and prevents a worker from implicitly inheriting them. Data acquisition, model exposure, reuse, retention, deletion, and disclosure additionally follow the [data-governance lifecycle](DATA_GOVERNANCE.md).
 
 ### 8. Evaluation and learning plane
 
@@ -165,7 +167,7 @@ There is no direct production self-modification path. See [Evaluation and learni
 
 The private cockpit renders canonical state without becoming canonical state. It shows the mission contract, protocol freeze, work graph, evidence, bars and falsifiers, authority, compute, uncertainty, corrections, and next legal action.
 
-The later public surface and contribution surface are separate projections with separate authorization and redaction. See [UI/UX](UI_UX.md).
+The later public surface and contribution surface are separate projections with separate authorization and redaction. The engine-side truth/freshness boundary is [Projection Contracts](PROJECTION_CONTRACTS.md); Daniel's product direction remains in [UI/UX](UI_UX.md).
 
 ## Mission lifecycle
 
@@ -196,7 +198,7 @@ The scientific lifecycle stages are:
 
 `intake -> orient -> contract -> preregister -> preflight -> execute -> verify -> adversarial_review -> adjudicate -> handoff -> learn`
 
-Release is a separate aggregate that may be requested after adjudication and may proceed, be denied, time out ambiguously, be withdrawn, or be corrected without changing the scientific phase history. `handoff` is mandatory. Interruptions are resumable states, not null findings. Amendments, corrections, and replications form linked prospective branches.
+Release is a separate aggregate governed by the [noncircular publication protocol](PUBLICATION_PROTOCOL.md). It may be requested after adjudication and may proceed, be denied, time out ambiguously, be withdrawn, or be corrected without changing the scientific phase history. `handoff` is mandatory. Interruptions are resumable states, not null findings. Amendments, corrections, and replications form linked prospective branches.
 
 ```mermaid
 stateDiagram-v2
@@ -276,7 +278,7 @@ Leading reversible candidates (not frozen products):
 
 The first implementation should not require Kubernetes, a graph database, WebGPU, a Rust kernel, or many microservices. Add them only against a measured bottleneck or security need.
 
-The selection/evidence/exit requirements for every row are in [Technology decisions and reversibility](TECHNOLOGY_DECISIONS.md). A candidate name here is not Gate A acceptance or implementation authorization.
+The selection/evidence/exit requirements for every row are in [Technology decisions and reversibility](TECHNOLOGY_DECISIONS.md), and logical ownership/import direction is frozen separately in the [module dependency manifest](MODULE_DEPENDENCY_MANIFEST.md). A candidate name here is not Gate A acceptance or implementation authorization.
 
 ## Reliability semantics
 
@@ -295,7 +297,9 @@ Odeya should own scientific semantics, evidence lineage, authority, claim compil
 
 ## First vertical slice
 
-Use one settled, low-risk proof-project cycle and committed artifacts. The slice is complete only when it can:
+Use the exact committed composite selected in [the first vertical-slice specification](FIRST_VERTICAL_SLICE.md): Sentinel provides the primary bounded positive and interval-crossing-zero replay, Telos provides correction/replay-discrepancy/invalid-protocol controls, and Inbar provides blocked/refusal/rights controls. The numbered proof that each mission lesson maps to an Odeya contract and a still-visible closure test is [Proof-Mission Requirements Traceability](PROOF_MISSION_REQUIREMENTS_TRACEABILITY.md).
+
+No source bytes enter Odeya until their per-artifact rights decisions and final import manifest settle. The future authorized slice is complete only when it can:
 
 - validate a typed mission contract;
 - freeze and hash a protocol;

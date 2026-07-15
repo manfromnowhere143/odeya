@@ -1,0 +1,494 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:odeya:schema:context-compilation-receipt:0.1.0",
+  "title": "Odeya ContextCompilationReceipt",
+  "description": "A reproducible, fail-closed account of how one ResearchStateView was compiled. Structural validity does not prove noninterference or that referenced bytes and coverage claims are true.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "record_status", "receipt_id", "version", "compilation_result", "view",
+    "compiler", "source_checkpoint_ref", "policy_digests", "request",
+    "dependency_traversal_rule_ref", "retrieval_rule_ref", "input_identity",
+    "search_index_snapshot", "cache_scope", "embedding_and_ranking", "clean_room",
+    "taint_and_visibility", "contamination_frontier", "retrieval_candidate_set_digest",
+    "derived_summaries", "candidate_dispositions",
+    "omission_search", "required_evidence_coverage", "contradiction_coverage",
+    "negative_checks", "budget_accounting", "replay_determinism",
+    "authority_semantics", "compiled_at"
+  ],
+  "properties": {
+    "schema_version": { "const": "0.1.0" },
+    "record_status": { "const": "derived_non_authoritative" },
+    "receipt_id": { "$ref": "#/$defs/identifier" },
+    "version": { "type": "integer", "minimum": 1 },
+    "compilation_result": {
+      "type": "object", "additionalProperties": false,
+      "required": ["status", "reason_codes", "evidence_refs"],
+      "properties": {
+        "status": { "enum": ["pass", "fail", "indeterminate", "not_run"] },
+        "reason_codes": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/identifier" } },
+        "evidence_refs": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/artifact_reference" } }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "status": { "const": "pass" } }, "required": ["status"] },
+          "then": { "properties": { "reason_codes": { "maxItems": 0 } } },
+          "else": { "properties": { "reason_codes": { "minItems": 1 } } }
+        }
+      ]
+    },
+    "view": { "$ref": "#/$defs/research_state_view_reference" },
+    "compiler": {
+      "type": "object", "additionalProperties": false,
+      "required": ["implementation_ref", "build_digest", "environment_ref"],
+      "properties": {
+        "implementation_ref": { "$ref": "#/$defs/versioned_reference" },
+        "build_digest": { "$ref": "#/$defs/digest" },
+        "environment_ref": { "$ref": "#/$defs/artifact_reference" }
+      }
+    },
+    "source_checkpoint_ref": { "$ref": "#/$defs/immutable_reference" },
+    "policy_digests": {
+      "type": "object", "additionalProperties": false,
+      "required": ["compilation", "exposure", "purpose", "freshness", "omission"],
+      "properties": {
+        "compilation": { "$ref": "#/$defs/digest" },
+        "exposure": { "$ref": "#/$defs/digest" },
+        "purpose": { "$ref": "#/$defs/digest" },
+        "freshness": { "$ref": "#/$defs/digest" },
+        "omission": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "request": {
+      "type": "object", "additionalProperties": false,
+      "required": ["role", "objective", "purpose", "context_budget", "exposure_ceiling"],
+      "properties": {
+        "role": { "$ref": "#/$defs/identifier" },
+        "objective": { "type": "string", "minLength": 1 },
+        "purpose": { "$ref": "#/$defs/identifier" },
+        "context_budget": {
+          "type": "object", "additionalProperties": false,
+          "required": ["bytes", "tokens", "references"],
+          "properties": {
+            "bytes": { "type": "integer", "minimum": 0 },
+            "tokens": { "type": "integer", "minimum": 0 },
+            "references": { "type": "integer", "minimum": 0 }
+          }
+        },
+        "exposure_ceiling": { "enum": ["public", "internal", "confidential", "restricted_allowed"] }
+      }
+    },
+    "dependency_traversal_rule_ref": { "$ref": "#/$defs/versioned_reference" },
+    "retrieval_rule_ref": { "$ref": "#/$defs/versioned_reference" },
+    "input_identity": {
+      "type": "object", "additionalProperties": false,
+      "required": ["dependency_set_digest", "input_set_digest", "input_refs"],
+      "properties": {
+        "dependency_set_digest": { "$ref": "#/$defs/digest" },
+        "input_set_digest": { "$ref": "#/$defs/digest" },
+        "input_refs": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/artifact_reference" } }
+      }
+    },
+    "search_index_snapshot": {
+      "type": "object", "additionalProperties": false,
+      "required": ["index_ref", "source_checkpoint_ref", "build_ref", "entry_set_digest"],
+      "properties": {
+        "index_ref": { "$ref": "#/$defs/immutable_reference" },
+        "source_checkpoint_ref": { "$ref": "#/$defs/immutable_reference" },
+        "build_ref": { "$ref": "#/$defs/versioned_reference" },
+        "entry_set_digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "cache_scope": {
+      "type": "object", "additionalProperties": false,
+      "required": ["namespace", "namespace_binding", "mission_id", "role", "purpose", "data_classes", "snapshot_ref", "cross_boundary_reuse_result"],
+      "properties": {
+        "namespace": { "$ref": "#/$defs/identifier" },
+        "namespace_binding": { "const": "mission_role_purpose_data_class" },
+        "mission_id": { "$ref": "#/$defs/identifier" },
+        "role": { "$ref": "#/$defs/identifier" },
+        "purpose": { "$ref": "#/$defs/identifier" },
+        "data_classes": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "enum": ["public", "internal", "confidential", "restricted_allowed"] } },
+        "snapshot_ref": { "$ref": "#/$defs/artifact_reference" },
+        "cross_boundary_reuse_result": { "enum": ["absent", "detected", "indeterminate", "not_run"] }
+      }
+    },
+    "embedding_and_ranking": {
+      "type": "object", "additionalProperties": false,
+      "required": ["embedding_used", "embedding_model_ref", "ranking_model_ref", "ranking_rule_ref", "forbidden_data_influence_result", "final_redaction_treated_as_noninterference_proof", "evidence_ref"],
+      "properties": {
+        "embedding_used": { "type": "boolean" },
+        "embedding_model_ref": { "oneOf": [{ "$ref": "#/$defs/versioned_reference" }, { "type": "null" }] },
+        "ranking_model_ref": { "oneOf": [{ "$ref": "#/$defs/versioned_reference" }, { "type": "null" }] },
+        "ranking_rule_ref": { "$ref": "#/$defs/versioned_reference" },
+        "forbidden_data_influence_result": { "enum": ["absent", "detected", "indeterminate", "not_run"] },
+        "final_redaction_treated_as_noninterference_proof": { "const": false },
+        "evidence_ref": { "$ref": "#/$defs/artifact_reference" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "embedding_used": { "const": true } }, "required": ["embedding_used"] },
+          "then": { "properties": { "embedding_model_ref": { "$ref": "#/$defs/versioned_reference" } } },
+          "else": { "properties": { "embedding_model_ref": { "type": "null" } } }
+        }
+      ]
+    },
+    "clean_room": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "mode", "profile_ref", "blocked_reference_manifest_ref",
+        "blocked_derivative_manifest_ref", "negative_checks", "reason_code",
+        "evidence_ref"
+      ],
+      "properties": {
+        "mode": { "enum": ["enabled", "not_required"] },
+        "profile_ref": { "$ref": "#/$defs/versioned_reference" },
+        "blocked_reference_manifest_ref": { "oneOf": [{ "$ref": "#/$defs/artifact_reference" }, { "type": "null" }] },
+        "blocked_derivative_manifest_ref": { "oneOf": [{ "$ref": "#/$defs/artifact_reference" }, { "type": "null" }] },
+        "negative_checks": {
+          "type": "object", "additionalProperties": false,
+          "required": [
+            "blocked_references_absent_from_index", "blocked_references_absent_from_cache",
+            "blocked_references_absent_from_embeddings", "blocked_references_absent_from_summaries"
+          ],
+          "properties": {
+            "blocked_references_absent_from_index": { "$ref": "#/$defs/check_result" },
+            "blocked_references_absent_from_cache": { "$ref": "#/$defs/check_result" },
+            "blocked_references_absent_from_embeddings": { "$ref": "#/$defs/check_result" },
+            "blocked_references_absent_from_summaries": { "$ref": "#/$defs/check_result" }
+          }
+        },
+        "reason_code": { "$ref": "#/$defs/identifier" },
+        "evidence_ref": { "$ref": "#/$defs/artifact_reference" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "mode": { "const": "enabled" } }, "required": ["mode"] },
+          "then": {
+            "properties": {
+              "blocked_reference_manifest_ref": { "$ref": "#/$defs/artifact_reference" },
+              "blocked_derivative_manifest_ref": { "$ref": "#/$defs/artifact_reference" }
+            }
+          },
+          "else": {
+            "properties": {
+              "blocked_reference_manifest_ref": { "type": "null" },
+              "blocked_derivative_manifest_ref": { "type": "null" },
+              "negative_checks": {
+                "properties": {
+                  "blocked_references_absent_from_index": { "const": "not_run" },
+                  "blocked_references_absent_from_cache": { "const": "not_run" },
+                  "blocked_references_absent_from_embeddings": { "const": "not_run" },
+                  "blocked_references_absent_from_summaries": { "const": "not_run" }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "taint_and_visibility": {
+      "type": "object", "additionalProperties": false,
+      "required": ["label_profile_ref", "propagation_rule_ref", "visibility_ceiling", "unresolved_taint_refs"],
+      "properties": {
+        "label_profile_ref": { "$ref": "#/$defs/versioned_reference" },
+        "propagation_rule_ref": { "$ref": "#/$defs/versioned_reference" },
+        "visibility_ceiling": { "enum": ["public", "internal", "confidential", "restricted_allowed"] },
+        "unresolved_taint_refs": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/artifact_reference" } }
+      }
+    },
+    "contamination_frontier": {
+      "type": "object", "additionalProperties": false,
+      "required": ["frontier_ref", "candidate_set_check_status", "contamination_result", "evidence_ref"],
+      "properties": {
+        "frontier_ref": { "$ref": "#/$defs/immutable_reference" },
+        "candidate_set_check_status": { "enum": ["complete", "incomplete", "indeterminate", "not_run"] },
+        "contamination_result": { "enum": ["clear", "detected", "indeterminate", "not_run"] },
+        "evidence_ref": { "$ref": "#/$defs/artifact_reference" }
+      }
+    },
+    "retrieval_candidate_set_digest": { "$ref": "#/$defs/digest" },
+    "derived_summaries": {
+      "type": "array", "uniqueItems": true,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["summary_ref", "source_set_digest", "summarizer_ref", "visibility_label", "taint_labels", "sealed_truth_derivation_result", "forbidden_data_derivation_result"],
+        "properties": {
+          "summary_ref": { "$ref": "#/$defs/artifact_reference" },
+          "source_set_digest": { "$ref": "#/$defs/digest" },
+          "summarizer_ref": { "$ref": "#/$defs/versioned_reference" },
+          "visibility_label": { "enum": ["public", "internal", "confidential", "restricted_allowed"] },
+          "taint_labels": { "type": "array", "uniqueItems": true, "items": { "enum": ["none", "untrusted_source", "derived_from_confidential", "contamination_risk"] } },
+          "sealed_truth_derivation_result": { "enum": ["absent", "detected", "indeterminate"] },
+          "forbidden_data_derivation_result": { "enum": ["absent", "detected", "indeterminate"] }
+        }
+      }
+    },
+    "candidate_dispositions": {
+      "type": "array", "uniqueItems": true,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["reference", "source_class", "visibility_label", "taint_labels", "ranking_position", "obligation", "disposition", "reason_code", "rule_evidence_ref"],
+        "properties": {
+          "reference": { "$ref": "#/$defs/artifact_reference" },
+          "source_class": { "enum": ["public", "internal", "confidential", "restricted_allowed"] },
+          "visibility_label": { "enum": ["public", "internal", "confidential", "restricted_allowed"] },
+          "taint_labels": { "type": "array", "uniqueItems": true, "items": { "enum": ["none", "untrusted_source", "derived_from_confidential", "contamination_risk"] } },
+          "ranking_position": { "type": "integer", "minimum": 1 },
+          "obligation": { "enum": ["material_contradiction", "required_evidence", "control", "falsifier", "context"] },
+          "disposition": { "enum": ["selected", "omitted_by_budget", "forbidden_by_policy", "unavailable", "stale", "superseded", "not_relevant", "redacted"] },
+          "reason_code": { "$ref": "#/$defs/identifier" },
+          "rule_evidence_ref": { "$ref": "#/$defs/artifact_reference" }
+        },
+        "allOf": [
+          {
+            "if": { "properties": { "obligation": { "const": "material_contradiction" } }, "required": ["obligation"] },
+            "then": { "properties": { "disposition": { "const": "selected" } } }
+          },
+          {
+            "if": { "properties": { "obligation": { "enum": ["required_evidence", "control", "falsifier"] } }, "required": ["obligation"] },
+            "then": { "properties": { "disposition": { "not": { "enum": ["omitted_by_budget", "not_relevant"] } } } }
+          }
+        ]
+      }
+    },
+    "omission_search": {
+      "type": "object", "additionalProperties": false,
+      "required": ["status", "search_rule_ref", "coverage_result", "evidence_ref"],
+      "properties": {
+        "status": { "enum": ["complete", "incomplete", "indeterminate", "not_run"] },
+        "search_rule_ref": { "$ref": "#/$defs/versioned_reference" },
+        "coverage_result": { "enum": ["complete", "incomplete", "indeterminate", "not_run"] },
+        "evidence_ref": { "$ref": "#/$defs/artifact_reference" }
+      }
+    },
+    "required_evidence_coverage": { "$ref": "#/$defs/coverage_result" },
+    "contradiction_coverage": { "$ref": "#/$defs/coverage_result" },
+    "negative_checks": {
+      "type": "object", "additionalProperties": false,
+      "required": ["sealed_truth_absent_from_candidates", "sealed_truth_absent_from_derived_features", "forbidden_exposure_absent", "cross_boundary_cache_absent", "evidence_ref"],
+      "properties": {
+        "sealed_truth_absent_from_candidates": { "$ref": "#/$defs/check_result" },
+        "sealed_truth_absent_from_derived_features": { "$ref": "#/$defs/check_result" },
+        "forbidden_exposure_absent": { "$ref": "#/$defs/check_result" },
+        "cross_boundary_cache_absent": { "$ref": "#/$defs/check_result" },
+        "evidence_ref": { "$ref": "#/$defs/artifact_reference" }
+      }
+    },
+    "budget_accounting": {
+      "type": "object", "additionalProperties": false,
+      "required": ["candidate_count", "selected_count", "omitted_count", "redacted_count", "unavailable_count", "input_bytes", "output_bytes", "estimated_tokens", "budget_result", "accounting_evidence_ref"],
+      "properties": {
+        "candidate_count": { "type": "integer", "minimum": 0 },
+        "selected_count": { "type": "integer", "minimum": 0 },
+        "omitted_count": { "type": "integer", "minimum": 0 },
+        "redacted_count": { "type": "integer", "minimum": 0 },
+        "unavailable_count": { "type": "integer", "minimum": 0 },
+        "input_bytes": { "type": "integer", "minimum": 0 },
+        "output_bytes": { "type": "integer", "minimum": 0 },
+        "estimated_tokens": { "type": "integer", "minimum": 0 },
+        "budget_result": { "enum": ["within", "exceeded", "indeterminate", "not_run"] },
+        "accounting_evidence_ref": { "$ref": "#/$defs/artifact_reference" }
+      }
+    },
+    "replay_determinism": {
+      "type": "object", "additionalProperties": false,
+      "required": ["profile_ref", "selected_reference_set_digest", "replay_result", "replay_evidence_ref"],
+      "properties": {
+        "profile_ref": { "$ref": "#/$defs/versioned_reference" },
+        "selected_reference_set_digest": { "$ref": "#/$defs/digest" },
+        "replay_result": { "enum": ["pass", "fail", "indeterminate", "not_run"] },
+        "replay_evidence_ref": { "$ref": "#/$defs/artifact_reference" }
+      }
+    },
+    "authority_semantics": {
+      "type": "object", "additionalProperties": false,
+      "required": ["receipt_is_authority", "receipt_proves_noninterference"],
+      "properties": {
+        "receipt_is_authority": { "const": false },
+        "receipt_proves_noninterference": { "const": false }
+      }
+    },
+    "compiled_at": { "$ref": "#/$defs/timestamp" }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "compilation_result": { "properties": { "status": { "const": "pass" } }, "required": ["status"] } },
+        "required": ["compilation_result"]
+      },
+      "then": {
+        "properties": {
+          "cache_scope": { "properties": { "cross_boundary_reuse_result": { "const": "absent" } } },
+          "embedding_and_ranking": { "properties": { "forbidden_data_influence_result": { "const": "absent" } } },
+          "clean_room": {
+            "oneOf": [
+              {
+                "properties": {
+                  "mode": { "const": "enabled" },
+                  "negative_checks": {
+                    "properties": {
+                      "blocked_references_absent_from_index": { "const": "pass" },
+                      "blocked_references_absent_from_cache": { "const": "pass" },
+                      "blocked_references_absent_from_embeddings": { "const": "pass" },
+                      "blocked_references_absent_from_summaries": { "const": "pass" }
+                    }
+                  }
+                },
+                "required": ["mode", "negative_checks"]
+              },
+              {
+                "properties": {
+                  "mode": { "const": "not_required" },
+                  "negative_checks": {
+                    "properties": {
+                      "blocked_references_absent_from_index": { "const": "not_run" },
+                      "blocked_references_absent_from_cache": { "const": "not_run" },
+                      "blocked_references_absent_from_embeddings": { "const": "not_run" },
+                      "blocked_references_absent_from_summaries": { "const": "not_run" }
+                    }
+                  }
+                },
+                "required": ["mode", "negative_checks"]
+              }
+            ]
+          },
+          "taint_and_visibility": { "properties": { "unresolved_taint_refs": { "maxItems": 0 } } },
+          "contamination_frontier": {
+            "properties": {
+              "candidate_set_check_status": { "const": "complete" },
+              "contamination_result": { "const": "clear" }
+            }
+          },
+          "derived_summaries": {
+            "items": {
+              "properties": {
+                "sealed_truth_derivation_result": { "const": "absent" },
+                "forbidden_data_derivation_result": { "const": "absent" }
+              }
+            }
+          },
+          "omission_search": {
+            "properties": {
+              "status": { "const": "complete" },
+              "coverage_result": { "const": "complete" }
+            }
+          },
+          "required_evidence_coverage": { "properties": { "result": { "const": "complete" } } },
+          "contradiction_coverage": { "properties": { "result": { "const": "complete" } } },
+          "negative_checks": {
+            "properties": {
+              "sealed_truth_absent_from_candidates": { "const": "pass" },
+              "sealed_truth_absent_from_derived_features": { "const": "pass" },
+              "forbidden_exposure_absent": { "const": "pass" },
+              "cross_boundary_cache_absent": { "const": "pass" }
+            }
+          },
+          "budget_accounting": { "properties": { "budget_result": { "const": "within" } } },
+          "replay_determinism": { "properties": { "replay_result": { "const": "pass" } } }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "compilation_result": { "properties": { "status": { "const": "not_run" } }, "required": ["status"] } },
+        "required": ["compilation_result"]
+      },
+      "then": {
+        "properties": {
+          "cache_scope": { "properties": { "cross_boundary_reuse_result": { "const": "not_run" } } },
+          "embedding_and_ranking": { "properties": { "forbidden_data_influence_result": { "const": "not_run" } } },
+          "clean_room": { "properties": { "mode": { "const": "not_required" } } },
+          "contamination_frontier": {
+            "properties": {
+              "candidate_set_check_status": { "const": "not_run" },
+              "contamination_result": { "const": "not_run" }
+            }
+          },
+          "derived_summaries": { "maxItems": 0 },
+          "candidate_dispositions": { "maxItems": 0 },
+          "omission_search": {
+            "properties": {
+              "status": { "const": "not_run" },
+              "coverage_result": { "const": "not_run" }
+            }
+          },
+          "required_evidence_coverage": { "properties": { "result": { "const": "not_run" } } },
+          "contradiction_coverage": { "properties": { "result": { "const": "not_run" } } },
+          "negative_checks": {
+            "properties": {
+              "sealed_truth_absent_from_candidates": { "const": "not_run" },
+              "sealed_truth_absent_from_derived_features": { "const": "not_run" },
+              "forbidden_exposure_absent": { "const": "not_run" },
+              "cross_boundary_cache_absent": { "const": "not_run" }
+            }
+          },
+          "budget_accounting": { "properties": { "budget_result": { "const": "not_run" } } },
+          "replay_determinism": { "properties": { "replay_result": { "const": "not_run" } } }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "identifier": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$" },
+    "digest": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+    "timestamp": { "type": "string", "format": "date-time", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$" },
+    "artifact_reference": {
+      "type": "object", "additionalProperties": false,
+      "required": ["artifact_id", "digest", "media_type"],
+      "properties": { "artifact_id": { "$ref": "#/$defs/identifier" }, "digest": { "$ref": "#/$defs/digest" }, "media_type": { "type": "string", "minLength": 1 } }
+    },
+    "immutable_reference": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "version", "digest"],
+      "properties": { "id": { "$ref": "#/$defs/identifier" }, "version": { "type": "integer", "minimum": 1 }, "digest": { "$ref": "#/$defs/digest" } }
+    },
+    "research_state_view_reference": {
+      "type": "object", "additionalProperties": false,
+      "required": ["record_type", "id", "version", "schema_id", "digest"],
+      "properties": {
+        "record_type": { "const": "research_state_view" },
+        "id": { "$ref": "#/$defs/identifier" },
+        "version": { "type": "integer", "minimum": 1 },
+        "schema_id": { "const": "urn:odeya:schema:research-state-view:0.1.0" },
+        "digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "versioned_reference": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "version", "digest"],
+      "properties": { "id": { "$ref": "#/$defs/identifier" }, "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" }, "digest": { "$ref": "#/$defs/digest" } }
+    },
+    "check_result": { "enum": ["pass", "fail", "indeterminate", "not_run"] },
+    "coverage_result": {
+      "type": "object", "additionalProperties": false,
+      "required": ["result", "missing_refs", "unknown_reason_codes", "rule_ref", "evidence_ref"],
+      "properties": {
+        "result": { "enum": ["complete", "incomplete", "indeterminate", "not_run"] },
+        "missing_refs": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/artifact_reference" } },
+        "unknown_reason_codes": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/identifier" } },
+        "rule_ref": { "$ref": "#/$defs/versioned_reference" },
+        "evidence_ref": { "$ref": "#/$defs/artifact_reference" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "result": { "const": "complete" } }, "required": ["result"] },
+          "then": { "properties": { "missing_refs": { "maxItems": 0 }, "unknown_reason_codes": { "maxItems": 0 } } }
+        },
+        {
+          "if": { "properties": { "result": { "const": "incomplete" } }, "required": ["result"] },
+          "then": {
+            "anyOf": [
+              { "properties": { "missing_refs": { "minItems": 1 } } },
+              { "properties": { "unknown_reason_codes": { "minItems": 1 } } }
+            ]
+          }
+        },
+        {
+          "if": { "properties": { "result": { "enum": ["indeterminate", "not_run"] } }, "required": ["result"] },
+          "then": { "properties": { "unknown_reason_codes": { "minItems": 1 } } }
+        }
+      ]
+    }
+  }
+}

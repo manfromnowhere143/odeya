@@ -1,0 +1,102 @@
+{
+  "schema_version": "0.3.0",
+  "trace_id": "trace.resource-unavailable-usage-not-zero.001",
+  "purpose": "Replay an unavailable actual-usage observation after claim; unavailable remains unknown, the full ceiling stays held, and settlement is forbidden.",
+  "stream_id": "mission.resource-accounting.001",
+  "stream_type": "mission",
+  "mission_scope": "mission.resource-accounting.001",
+  "reducer_set": {
+    "name": "odeya-resource-budget-reducer",
+    "version": "0.1.0",
+    "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "steps": [
+    {
+      "ordinal": 0,
+      "event_id": "event.resource-reservation-created.004",
+      "event_type": "resource.reservation_created",
+      "event_version": "1.0.0",
+      "stream_position": 50,
+      "aggregate_type": "resource_budget",
+      "aggregate_id": "resource-budget.mission.001",
+      "aggregate_version": 13,
+      "event_digest": "sha256:9999999999999999999999999999999999999999999999999999999999999999",
+      "expected_axis_changes": [
+        {
+          "axis": "resource_reservation",
+          "from": "none",
+          "to": "active"
+        }
+      ]
+    },
+    {
+      "ordinal": 1,
+      "event_id": "event.resource-reservation-claimed.004",
+      "event_type": "resource.reservation_claimed",
+      "event_version": "1.0.0",
+      "stream_position": 51,
+      "aggregate_type": "resource_budget",
+      "aggregate_id": "resource-budget.mission.001",
+      "aggregate_version": 14,
+      "event_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "expected_axis_changes": [
+        {
+          "axis": "resource_reservation",
+          "from": "active",
+          "to": "claimed"
+        }
+      ]
+    },
+    {
+      "ordinal": 2,
+      "event_id": "event.resource-usage-unavailable.004",
+      "event_type": "resource.usage_observed",
+      "event_version": "1.0.0",
+      "stream_position": 52,
+      "aggregate_type": "resource_budget",
+      "aggregate_id": "resource-budget.mission.001",
+      "aggregate_version": 15,
+      "event_digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "expected_axis_changes": [
+        {
+          "axis": "resource_actual_usage",
+          "from": "unknown",
+          "to": "unavailable"
+        }
+      ]
+    }
+  ],
+  "expected_state": {
+    "run_validity": "not_applicable",
+    "measurement": "not_applicable",
+    "scientific_outcome": "not_adjudicated",
+    "verification_status": "not_applicable",
+    "claim_eligibility": "not_applicable",
+    "publication_release": "not_applicable",
+    "external_effect_settlement": "not_applicable",
+    "grant_use_reservation": "not_applicable",
+    "dispatch_claim": "not_applicable",
+    "retry_disposition": "not_applicable",
+    "channel_observation_refs": [],
+    "resource_accounting": {
+      "reservation_id": "resource-reservation.004",
+      "reservation_state": "claimed",
+      "ceiling_hold": "full_reserved_ceiling",
+      "actual_usage_status": "unknown",
+      "observation_axes": [
+        "actual_usage"
+      ],
+      "settlement": "unsettled",
+      "conversion_policy": "forbidden_componentwise",
+      "dimension_compensation": "forbidden",
+      "verification_capacity": "claimed"
+    }
+  },
+  "forbidden_inferences": [
+    "resource.unavailable_usage_as_zero",
+    "resource.unavailable_usage_as_actual",
+    "resource.settle_unknown_usage",
+    "resource.release_ceiling_from_partial_observation",
+    "resource.cross_dimension_conversion"
+  ]
+}

@@ -1,0 +1,262 @@
+{
+  "schema_version": "0.1.0",
+  "uncertainty_budget_id": "uncertainty.force",
+  "version": 1,
+  "subject_quantity_refs": [
+    {
+      "record_id": "quantity.force",
+      "version": 1,
+      "schema_id": "urn:odeya:schema:physical-quantity:0.1.0",
+      "digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+    }
+  ],
+  "evaluation_method_ref": {
+    "method_id": "gum-linear-propagation",
+    "version": "1.0.0",
+    "registry_digest": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+  },
+  "evaluation_origin": {
+    "type_a": [
+      {
+        "contribution_id": "u-repeatability",
+        "source_kind": "repeatability",
+        "standard_uncertainty_ref": {
+          "record_id": "quantity.u-u-repeatability",
+          "version": 1,
+          "schema_id": "urn:odeya:schema:physical-quantity:0.1.0",
+          "digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "degrees_of_freedom": 30,
+        "sensitivity_coefficient_ref": {
+          "record_id": "quantity.sensitivity-u-repeatability",
+          "version": 1,
+          "schema_id": "urn:odeya:schema:physical-quantity:0.1.0",
+          "digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "source_provenance_ref": {
+          "artifact_id": "provenance.u-repeatability",
+          "digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+          "media_type": "application/json"
+        },
+        "calibration_chain_member_refs": [
+          {
+            "artifact_id": "calibration-chain.u-repeatability",
+            "digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+            "media_type": "application/json"
+          }
+        ]
+      }
+    ],
+    "type_b": [
+      {
+        "contribution_id": "u-calibration",
+        "source_kind": "calibration",
+        "standard_uncertainty_ref": {
+          "record_id": "quantity.u-u-calibration",
+          "version": 1,
+          "schema_id": "urn:odeya:schema:physical-quantity:0.1.0",
+          "digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "degrees_of_freedom": 30,
+        "sensitivity_coefficient_ref": {
+          "record_id": "quantity.sensitivity-u-calibration",
+          "version": 1,
+          "schema_id": "urn:odeya:schema:physical-quantity:0.1.0",
+          "digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "source_provenance_ref": {
+          "artifact_id": "provenance.u-calibration",
+          "digest": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+          "media_type": "application/json"
+        },
+        "calibration_chain_member_refs": [
+          {
+            "artifact_id": "calibration-chain.u-calibration",
+            "digest": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+            "media_type": "application/json"
+          }
+        ]
+      }
+    ]
+  },
+  "nature_classification": [
+    {
+      "contribution_id": "u-repeatability",
+      "nature": "aleatory",
+      "classification_method_ref": {
+        "method_id": "uncertainty-nature-classification",
+        "version": "1.0.0",
+        "registry_digest": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      },
+      "classification_evidence_ref": {
+        "artifact_id": "classification.repeatability",
+        "digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+        "media_type": "application/json"
+      }
+    },
+    {
+      "contribution_id": "u-calibration",
+      "nature": "epistemic",
+      "classification_method_ref": {
+        "method_id": "uncertainty-nature-classification",
+        "version": "1.0.0",
+        "registry_digest": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      },
+      "classification_evidence_ref": {
+        "artifact_id": "classification.calibration",
+        "digest": "sha256:4444444444444444444444444444444444444444444444444444444444444444",
+        "media_type": "application/json"
+      }
+    }
+  ],
+  "dependence_model": {
+    "representation": "covariance_and_correlation",
+    "variable_quantity_refs": [
+      {
+        "record_id": "quantity.u-repeatability",
+        "version": 1,
+        "schema_id": "urn:odeya:schema:physical-quantity:0.1.0",
+        "digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+      },
+      {
+        "record_id": "quantity.u-calibration",
+        "version": 1,
+        "schema_id": "urn:odeya:schema:physical-quantity:0.1.0",
+        "digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+      }
+    ],
+    "covariance_matrix": [
+      [
+        "0.04",
+        "0.01"
+      ],
+      [
+        "0.01",
+        "0.09"
+      ]
+    ],
+    "correlation_matrix": [
+      [
+        "1",
+        "0.1666666667"
+      ],
+      [
+        "0.1666666667",
+        "1"
+      ]
+    ],
+    "matrix_unit_rule_ref": {
+      "artifact_id": "matrix-unit-rule.force",
+      "digest": "sha256:5555555555555555555555555555555555555555555555555555555555555555",
+      "media_type": "application/json"
+    },
+    "shared_source_groups": [
+      {
+        "group_id": "shared.load-chain",
+        "contribution_ids": [
+          "u-repeatability",
+          "u-calibration"
+        ],
+        "source_provenance_ref": {
+          "artifact_id": "shared-source.load-chain",
+          "digest": "sha256:6666666666666666666666666666666666666666666666666666666666666666",
+          "media_type": "application/json"
+        },
+        "calibration_provenance_refs": [
+          {
+            "artifact_id": "calibration-provenance.load-chain",
+            "digest": "sha256:7777777777777777777777777777777777777777777777777777777777777777",
+            "media_type": "application/json"
+          }
+        ]
+      }
+    ],
+    "provenance_ref": {
+      "artifact_id": "dependence-model.provenance",
+      "digest": "sha256:8888888888888888888888888888888888888888888888888888888888888888",
+      "media_type": "application/json"
+    }
+  },
+  "calibration_traceability": {
+    "status": "complete",
+    "certificate_refs": [
+      {
+        "artifact_id": "certificate.load-cell",
+        "digest": "sha256:9999999999999999999999999999999999999999999999999999999999999999",
+        "media_type": "application/json"
+      }
+    ],
+    "chain_refs": [
+      {
+        "artifact_id": "traceability-chain.load-cell",
+        "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "media_type": "application/json"
+      }
+    ],
+    "root_standard_ref": {
+      "artifact_id": "root-standard.force",
+      "digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "media_type": "application/json"
+    },
+    "uncertainty_contribution_ids": [
+      "u-calibration"
+    ],
+    "reason_codes": []
+  },
+  "propagation": {
+    "method_ref": {
+      "method_id": "gum-linear-propagation",
+      "version": "1.0.0",
+      "registry_digest": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+    },
+    "regime": "linear_first_order",
+    "linearization_used": true,
+    "jacobian_ref": {
+      "artifact_id": "jacobian.force",
+      "digest": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "media_type": "application/json"
+    },
+    "distribution_propagation_ref": null,
+    "assumption_refs": [
+      {
+        "artifact_id": "assumption.local-linearity",
+        "digest": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "media_type": "application/json"
+      }
+    ]
+  },
+  "combined_result": {
+    "status": "computed",
+    "combined_standard_uncertainty_ref": {
+      "record_id": "quantity.u-combined",
+      "version": 1,
+      "schema_id": "urn:odeya:schema:physical-quantity:0.1.0",
+      "digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+    },
+    "expanded_uncertainty_ref": {
+      "record_id": "quantity.u-expanded",
+      "version": 1,
+      "schema_id": "urn:odeya:schema:physical-quantity:0.1.0",
+      "digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+    },
+    "coverage_factor": "2",
+    "coverage_probability": "0.95",
+    "distribution_ref": {
+      "record_id": "distribution.force",
+      "version": 1,
+      "schema_id": "urn:odeya:schema:distribution-record:1.0.0",
+      "digest": "sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+    },
+    "reason_codes": []
+  },
+  "disposition": "pass",
+  "reason_codes": [],
+  "evidence_refs": [
+    {
+      "artifact_id": "uncertainty-evidence.force",
+      "digest": "sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "media_type": "application/json"
+    }
+  ],
+  "budget_digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+}

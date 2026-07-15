@@ -1,0 +1,267 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:odeya:schema:protocol-snapshot:0.1.0",
+  "title": "Odeya ProtocolSnapshot",
+  "description": "An immutable compilation of prospective scientific meaning. Structural conformance does not prove digest correctness, reference existence, temporal order, or scientific admissibility; those are semantic rules.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "protocol_snapshot_id",
+    "version",
+    "mission_id",
+    "mission_spec",
+    "branch",
+    "mode",
+    "scientific_contract",
+    "exposure_at_freeze",
+    "amendment_policy",
+    "authority_decision_refs",
+    "canonicalization_profile",
+    "canonical_payload_digest",
+    "frozen_at_ledger_position",
+    "frozen_at",
+    "frozen_by"
+  ],
+  "properties": {
+    "schema_version": { "const": "0.1.0" },
+    "protocol_snapshot_id": { "$ref": "#/$defs/identifier" },
+    "version": { "type": "integer", "minimum": 1 },
+    "mission_id": { "$ref": "#/$defs/identifier" },
+    "mission_spec": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mission_id", "version", "digest"],
+      "properties": {
+        "mission_id": { "$ref": "#/$defs/identifier" },
+        "version": { "type": "integer", "minimum": 1 },
+        "digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "branch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["branch_id", "origin", "parent_protocol_snapshot"],
+      "properties": {
+        "branch_id": { "$ref": "#/$defs/identifier" },
+        "origin": { "enum": ["initial", "prospective_amendment", "exploratory_fork"] },
+        "parent_protocol_snapshot": {
+          "oneOf": [
+            { "$ref": "#/$defs/protocol_reference" },
+            { "type": "null" }
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "origin": { "const": "initial" } },
+            "required": ["origin"]
+          },
+          "then": { "properties": { "parent_protocol_snapshot": { "type": "null" } } },
+          "else": { "properties": { "parent_protocol_snapshot": { "$ref": "#/$defs/protocol_reference" } } }
+        }
+      ]
+    },
+    "mode": { "enum": ["exploratory", "confirmatory"] },
+    "mathematical_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "estimand_contract_ref",
+        "claim_type",
+        "decision_rule_ref",
+        "uncertainty_plan_ref",
+        "multiplicity_plan_ref",
+        "missingness_plan_ref",
+        "sequential_plan_ref",
+        "data_role_plan_ref",
+        "physical_evidence_rule_ref",
+        "exact_binding_required",
+        "legacy_loose_fields_are_not_estimand_authority",
+        "scientific_result_envelope_schema_id"
+      ],
+      "properties": {
+        "estimand_contract_ref": { "$ref": "#/$defs/estimand_contract_reference" },
+        "claim_type": { "$ref": "#/$defs/mathematical_claim_type" },
+        "decision_rule_ref": { "$ref": "#/$defs/artifact_reference" },
+        "uncertainty_plan_ref": { "$ref": "#/$defs/artifact_reference" },
+        "multiplicity_plan_ref": { "$ref": "#/$defs/artifact_reference" },
+        "missingness_plan_ref": { "$ref": "#/$defs/artifact_reference" },
+        "sequential_plan_ref": { "$ref": "#/$defs/artifact_reference" },
+        "data_role_plan_ref": { "$ref": "#/$defs/artifact_reference" },
+        "physical_evidence_rule_ref": { "$ref": "#/$defs/artifact_reference" },
+        "exact_binding_required": { "const": true },
+        "legacy_loose_fields_are_not_estimand_authority": { "const": true },
+        "scientific_result_envelope_schema_id": {
+          "const": "urn:odeya:schema:scientific-result-envelope:0.1.0"
+        }
+      }
+    },
+    "scientific_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "hypothesis_ids",
+        "dataset_manifest_refs",
+        "split_spec_ref",
+        "metric_spec_refs",
+        "falsifier_spec_refs",
+        "control_spec_refs",
+        "analysis_plan_ref",
+        "stopping_rule_ref",
+        "multiplicity_rule_ref",
+        "missingness_rule_ref",
+        "consequence_table_ref",
+        "verification_profile_ref",
+        "handoff_requirements_ref"
+      ],
+      "properties": {
+        "hypothesis_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/identifier" }
+        },
+        "dataset_manifest_refs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/artifact_reference" }
+        },
+        "split_spec_ref": { "$ref": "#/$defs/artifact_reference" },
+        "metric_spec_refs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/artifact_reference" }
+        },
+        "falsifier_spec_refs": {
+          "type": "array",
+          "minItems": 3,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/artifact_reference" }
+        },
+        "control_spec_refs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/artifact_reference" }
+        },
+        "analysis_plan_ref": { "$ref": "#/$defs/artifact_reference" },
+        "stopping_rule_ref": { "$ref": "#/$defs/artifact_reference" },
+        "multiplicity_rule_ref": { "$ref": "#/$defs/artifact_reference" },
+        "missingness_rule_ref": { "$ref": "#/$defs/artifact_reference" },
+        "consequence_table_ref": { "$ref": "#/$defs/artifact_reference" },
+        "verification_profile_ref": { "$ref": "#/$defs/artifact_reference" },
+        "handoff_requirements_ref": { "$ref": "#/$defs/artifact_reference" }
+      }
+    },
+    "exposure_at_freeze": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["level", "cutoff_at", "exposure_event_refs"],
+      "properties": {
+        "level": { "enum": ["outcome_blind", "partial_outcome_exposure", "full_outcome_exposure"] },
+        "cutoff_at": { "type": "string", "format": "date-time" },
+        "exposure_event_refs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/identifier" }
+        }
+      }
+    },
+    "amendment_policy": {
+      "enum": ["prospective_version_or_fork_only", "fork_only_after_relevant_exposure"]
+    },
+    "authority_decision_refs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/identifier" }
+    },
+    "canonicalization_profile": { "$ref": "#/$defs/identifier" },
+    "canonical_payload_digest": { "$ref": "#/$defs/digest" },
+    "frozen_at_ledger_position": { "type": "integer", "minimum": 0 },
+    "frozen_at": { "type": "string", "format": "date-time" },
+    "frozen_by": { "$ref": "#/$defs/human_principal" }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "mode": { "const": "confirmatory" } },
+        "required": ["mode"]
+      },
+      "then": {
+        "properties": {
+          "exposure_at_freeze": {
+            "properties": { "level": { "const": "outcome_blind" } }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$"
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "mathematical_claim_type": {
+      "enum": [
+        "descriptive", "associational", "predictive", "causal",
+        "equivalence", "noninferiority", "safety", "optimization",
+        "physical_validation"
+      ]
+    },
+    "estimand_contract_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "record_type", "estimand_id", "version", "mission_id",
+        "claim_type", "schema_id", "digest"
+      ],
+      "properties": {
+        "record_type": { "const": "estimand_contract" },
+        "estimand_id": { "$ref": "#/$defs/identifier" },
+        "version": { "type": "integer", "minimum": 1 },
+        "mission_id": { "$ref": "#/$defs/identifier" },
+        "claim_type": { "$ref": "#/$defs/mathematical_claim_type" },
+        "schema_id": { "const": "urn:odeya:schema:estimand-contract:0.1.0" },
+        "digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "artifact_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifact_id", "digest", "media_type"],
+      "properties": {
+        "artifact_id": { "$ref": "#/$defs/identifier" },
+        "digest": { "$ref": "#/$defs/digest" },
+        "media_type": { "type": "string", "minLength": 1 }
+      }
+    },
+    "protocol_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["protocol_snapshot_id", "version", "digest"],
+      "properties": {
+        "protocol_snapshot_id": { "$ref": "#/$defs/identifier" },
+        "version": { "type": "integer", "minimum": 1 },
+        "digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "human_principal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["principal_id", "principal_type", "authority_grant_ref"],
+      "properties": {
+        "principal_id": { "$ref": "#/$defs/identifier" },
+        "principal_type": { "const": "human" },
+        "authority_grant_ref": { "$ref": "#/$defs/identifier" }
+      }
+    }
+  }
+}

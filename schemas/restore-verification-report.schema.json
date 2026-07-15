@@ -1,0 +1,317 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:odeya:schema:restore-verification-report:0.1.0",
+  "title": "Odeya RestoreVerificationReport",
+  "description": "An immutable semantic verification report for one isolated restore case. A report may recommend only a bounded service state; it does not itself reopen service or authorize external effects.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "restore_verification_report_id",
+    "version",
+    "incident_ref",
+    "recovery_case_ref",
+    "isolated_environment",
+    "source_selection",
+    "restored_frontier",
+    "truth_plane_results",
+    "current_security_frontier",
+    "invariant_results",
+    "test_results",
+    "unresolved_findings",
+    "overall_disposition",
+    "recommended_service_state",
+    "review_determinations",
+    "generated_at",
+    "digest_scope",
+    "report_digest",
+    "sealed_by"
+  ],
+  "properties": {
+    "schema_version": { "const": "0.1.0" },
+    "restore_verification_report_id": { "$ref": "#/$defs/identifier" },
+    "version": { "type": "integer", "minimum": 1 },
+    "incident_ref": { "$ref": "#/$defs/artifact_reference" },
+    "recovery_case_ref": { "$ref": "#/$defs/artifact_reference" },
+    "isolated_environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["environment_ref", "toolchain_ref", "network_isolation_ref", "production_effect_credentials_present"],
+      "properties": {
+        "environment_ref": { "$ref": "#/$defs/artifact_reference" },
+        "toolchain_ref": { "$ref": "#/$defs/artifact_reference" },
+        "network_isolation_ref": { "$ref": "#/$defs/artifact_reference" },
+        "production_effect_credentials_present": { "const": false }
+      }
+    },
+    "source_selection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["backup_manifest_refs", "checkpoint_refs", "witness_observation_refs", "client_receipt_evidence_refs", "selection_rule_ref", "known_alternate_branch_refs"],
+      "properties": {
+        "backup_manifest_refs": { "$ref": "#/$defs/nonempty_artifact_array" },
+        "checkpoint_refs": { "$ref": "#/$defs/nonempty_artifact_array" },
+        "witness_observation_refs": { "$ref": "#/$defs/nonempty_artifact_array" },
+        "client_receipt_evidence_refs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/artifact_reference" }
+        },
+        "selection_rule_ref": { "$ref": "#/$defs/artifact_reference" },
+        "known_alternate_branch_refs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/artifact_reference" }
+        }
+      }
+    },
+    "restored_frontier": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ledger_epoch", "inclusive_global_position", "checkpoint_digest", "aggregate_head_set_digest", "projection_position"],
+      "properties": {
+        "ledger_epoch": { "$ref": "#/$defs/identifier" },
+        "inclusive_global_position": { "type": "integer", "minimum": 0 },
+        "checkpoint_digest": { "$ref": "#/$defs/digest" },
+        "aggregate_head_set_digest": { "$ref": "#/$defs/digest" },
+        "projection_position": {
+          "oneOf": [
+            { "type": "integer", "minimum": 0 },
+            { "type": "null" }
+          ]
+        }
+      }
+    },
+    "truth_plane_results": {
+      "type": "array",
+      "minItems": 7,
+      "maxItems": 7,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["recoverability_class", "disposition", "verified_scope_ref", "missing_or_corrupt_set_ref", "reason_codes"],
+        "properties": {
+          "recoverability_class": { "enum": ["C0", "C1", "C2", "C3", "C4", "C5", "C6"] },
+          "disposition": { "$ref": "#/$defs/disposition" },
+          "verified_scope_ref": { "$ref": "#/$defs/artifact_reference" },
+          "missing_or_corrupt_set_ref": {
+            "oneOf": [
+              { "$ref": "#/$defs/artifact_reference" },
+              { "type": "null" }
+            ]
+          },
+          "reason_codes": { "$ref": "#/$defs/nonempty_identifier_array" }
+        }
+      }
+    },
+    "current_security_frontier": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["frontier_position", "completeness", "set_commitments", "verification_ref"],
+      "properties": {
+        "frontier_position": { "type": "integer", "minimum": 0 },
+        "completeness": { "enum": ["proven_complete", "incomplete", "indeterminate"] },
+        "set_commitments": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["root_policy_schema", "key_identity_revocations", "authority_revocations_expiries", "deletion_restriction_holds", "incident_quarantines", "claim_corrections_retractions", "publication_withdrawals_settlements"],
+          "properties": {
+            "root_policy_schema": { "$ref": "#/$defs/digest" },
+            "key_identity_revocations": { "$ref": "#/$defs/digest" },
+            "authority_revocations_expiries": { "$ref": "#/$defs/digest" },
+            "deletion_restriction_holds": { "$ref": "#/$defs/digest" },
+            "incident_quarantines": { "$ref": "#/$defs/digest" },
+            "claim_corrections_retractions": { "$ref": "#/$defs/digest" },
+            "publication_withdrawals_settlements": { "$ref": "#/$defs/digest" }
+          }
+        },
+        "verification_ref": { "$ref": "#/$defs/artifact_reference" }
+      }
+    },
+    "invariant_results": {
+      "type": "array",
+      "minItems": 11,
+      "maxItems": 11,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["invariant_id", "disposition", "rule_ref", "result_ref", "affected_scopes", "reason_codes"],
+        "properties": {
+          "invariant_id": {
+            "enum": [
+              "aggregate-head-reduction",
+              "command-id-receipt-uniqueness",
+              "transaction-cohort-completeness",
+              "grant-lifecycle-reconciliation",
+              "resource-lifecycle-reconciliation",
+              "eligible-claim-evidence-traversal",
+              "external-effect-next-action",
+              "anti-resurrection-frontier",
+              "checkpoint-witness-consistency",
+              "projection-position-authority-fence",
+              "no-mutable-or-secret-alias-trust"
+            ]
+          },
+          "disposition": { "$ref": "#/$defs/disposition" },
+          "rule_ref": { "$ref": "#/$defs/artifact_reference" },
+          "result_ref": { "$ref": "#/$defs/artifact_reference" },
+          "affected_scopes": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": { "$ref": "#/$defs/service_scope" }
+          },
+          "reason_codes": { "$ref": "#/$defs/nonempty_identifier_array" }
+        }
+      }
+    },
+    "test_results": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["known_answer", "known_bad", "reducer_equivalence", "authorization", "publication", "deletion_resurrection", "effect_retry"],
+      "properties": {
+        "known_answer": { "$ref": "#/$defs/evidenced_disposition" },
+        "known_bad": { "$ref": "#/$defs/evidenced_disposition" },
+        "reducer_equivalence": { "$ref": "#/$defs/evidenced_disposition" },
+        "authorization": { "$ref": "#/$defs/evidenced_disposition" },
+        "publication": { "$ref": "#/$defs/evidenced_disposition" },
+        "deletion_resurrection": { "$ref": "#/$defs/evidenced_disposition" },
+        "effect_retry": { "$ref": "#/$defs/evidenced_disposition" }
+      }
+    },
+    "unresolved_findings": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/artifact_reference" }
+    },
+    "overall_disposition": { "enum": ["accepted_bounded", "quarantined", "rejected"] },
+    "recommended_service_state": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["incident_cockpit", "canonical_reads", "reconciliation_commands", "ordinary_research_writes", "publication", "spending", "r2_plus_effects", "physical_actions"],
+      "properties": {
+        "incident_cockpit": { "$ref": "#/$defs/scope_decision" },
+        "canonical_reads": { "$ref": "#/$defs/scope_decision" },
+        "reconciliation_commands": { "$ref": "#/$defs/scope_decision" },
+        "ordinary_research_writes": { "$ref": "#/$defs/scope_decision" },
+        "publication": { "$ref": "#/$defs/scope_decision" },
+        "spending": { "$ref": "#/$defs/scope_decision" },
+        "r2_plus_effects": { "$ref": "#/$defs/scope_decision" },
+        "physical_actions": { "$ref": "#/$defs/scope_decision" }
+      }
+    },
+    "review_determinations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["reviewer_id", "assignment_ref", "disposition", "determination_ref", "reviewed_report_digest"],
+        "properties": {
+          "reviewer_id": { "$ref": "#/$defs/identifier" },
+          "assignment_ref": { "$ref": "#/$defs/digest" },
+          "disposition": { "enum": ["accept_bounded", "reject", "unable_to_determine"] },
+          "determination_ref": { "$ref": "#/$defs/artifact_reference" },
+          "reviewed_report_digest": { "$ref": "#/$defs/digest" }
+        }
+      }
+    },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "digest_scope": { "const": "canonical-object:odeya-jcs-0.1:exclude(report_digest,sealed_by)" },
+    "report_digest": { "$ref": "#/$defs/digest" },
+    "sealed_by": { "$ref": "#/$defs/human_principal" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "overall_disposition": { "enum": ["quarantined", "rejected"] } }, "required": ["overall_disposition"] },
+      "then": {
+        "properties": {
+          "recommended_service_state": {
+            "properties": {
+              "canonical_reads": { "properties": { "state": { "const": "disabled" } } },
+              "reconciliation_commands": { "properties": { "state": { "const": "disabled" } } },
+              "ordinary_research_writes": { "properties": { "state": { "const": "disabled" } } },
+              "publication": { "properties": { "state": { "const": "disabled" } } },
+              "spending": { "properties": { "state": { "const": "disabled" } } },
+              "r2_plus_effects": { "properties": { "state": { "const": "disabled" } } },
+              "physical_actions": { "properties": { "state": { "const": "disabled" } } }
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "recommended_service_state": {
+          "properties": {
+            "publication": { "properties": { "state": { "const": "disabled" } } },
+            "spending": { "properties": { "state": { "const": "disabled" } } },
+            "r2_plus_effects": { "properties": { "state": { "const": "disabled" } } },
+            "physical_actions": { "properties": { "state": { "const": "disabled" } } }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "identifier": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$" },
+    "digest": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+    "disposition": { "enum": ["pass", "fail", "indeterminate", "not_applicable"] },
+    "service_scope": { "enum": ["incident_cockpit", "canonical_reads", "reconciliation_commands", "ordinary_research_writes", "publication", "spending", "r2_plus_effects", "physical_actions"] },
+    "artifact_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifact_id", "digest", "media_type"],
+      "properties": {
+        "artifact_id": { "$ref": "#/$defs/identifier" },
+        "digest": { "$ref": "#/$defs/digest" },
+        "media_type": { "type": "string", "minLength": 1 }
+      }
+    },
+    "nonempty_artifact_array": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/artifact_reference" }
+    },
+    "nonempty_identifier_array": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/identifier" }
+    },
+    "evidenced_disposition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["disposition", "result_ref"],
+      "properties": {
+        "disposition": { "$ref": "#/$defs/disposition" },
+        "result_ref": { "$ref": "#/$defs/artifact_reference" }
+      }
+    },
+    "scope_decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "reason_codes", "evidence_refs"],
+      "properties": {
+        "state": { "enum": ["enabled", "disabled"] },
+        "reason_codes": { "$ref": "#/$defs/nonempty_identifier_array" },
+        "evidence_refs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/artifact_reference" }
+        }
+      }
+    },
+    "human_principal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["principal_id", "principal_type", "authority_assignment_ref"],
+      "properties": {
+        "principal_id": { "$ref": "#/$defs/identifier" },
+        "principal_type": { "const": "human" },
+        "authority_assignment_ref": { "$ref": "#/$defs/digest" }
+      }
+    }
+  }
+}

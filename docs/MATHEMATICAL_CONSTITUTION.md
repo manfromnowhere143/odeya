@@ -32,16 +32,21 @@ A domain adapter can add stronger obligations but cannot weaken the constitution
 
 | Claim type | Minimum contract | Evidence that can support it | Forbidden shortcut |
 |---|---|---|---|
-| Measurement | measurand, unit, calibration chain, measurement model, uncertainty budget | traceable measurement with propagated uncertainty | model probability called physical uncertainty |
 | Descriptive | target population, sampling frame, unit, estimand | estimate plus sampling/design uncertainty | convenience sample generalized silently |
+| Associational | exposure and outcome variables, adjustment set, temporal order, association measure | design-aligned association estimate with uncertainty and named adjustment scope | association phrased causally or absence inferred from a crossing interval |
 | Predictive | target, horizon, information set, loss, split and shift scope | held-out/external proper score, calibration, uncertainty set | training score or model self-confidence |
 | Causal | intervention, comparator, outcome, population, horizon, DAG/SCM, identification assumptions | randomized intervention or identified observational estimate with sensitivity analysis | correlation phrased causally |
-| Agent comparison | task distribution, system configuration, resource vector, environment, grader | paired repeated externally verified trials and resource curves | one run or unmatched budgets |
-| Safety/reliability | hazard, exposure denominator, operating domain, tolerated bound | upper risk bound, stress and negative controls, independent verification | zero observed failures called zero risk |
-| Value | stakeholder, comparator, utility, costs, harms, horizon, assignment | incremental net benefit with positive held-out lower bound | activity, tokens, or papers called value |
-| Evidence synthesis | search protocol, eligibility, dependency, effect scale | systematic evidence and hierarchical synthesis | pooled mean without heterogeneity or missing-evidence analysis |
+| Equivalence | active comparator, prospectively frozen lower/upper margins, compatible design and two-sided interval rule | the complete method-valid interval lies inside both frozen margins | failure to reject, a small point estimate, or an interval crossing zero |
+| Noninferiority | active comparator, prospective loss margin, benefit direction, one-sided compatible design | the correct one-sided bound clears the frozen margin | post-outcome margin choice or the wrong-sided bound |
+| Safety | hazard, exposure denominator, operating domain, tolerated upper bound | upper risk bound, stress and negative controls, independent verification | zero observed failures called zero risk |
+| Optimization | decision space, objective, constraints, baseline policy, feasibility and optimality rules | held-out feasible improvement under the exact constraint set | activity, search score, or infeasible objective gain called value |
+| Physical validation | physical system/configuration/model, measurement plan, validation partition, discrepancy and acceptance rules | retained physical-world measurements with metrology and VVUQ provenance | simulation, calibration data, or code verification substituted for physical validation |
 
-If a thesis cannot be routed to a claim type and operationalized, execution is refused or remains exploratory.
+Atomic measurements remain typed evidence records rather than a tenth estimand
+claim type. Agent comparison, value analysis, and evidence synthesis remain
+important mission/domain profiles, but each output must compile into one or
+more of the nine closed primitive claim types above. If a thesis cannot be
+routed and operationalized, execution is refused or remains exploratory.
 
 ## Sealed statistical contract
 
@@ -68,6 +73,114 @@ Amendments are append-only and prospective. Exposure-aware logic determines whet
 A result includes estimand, estimate, unit, interval type and level, evidence-measure type, uncertainty decomposition, assumptions, diagnostics, multiplicity and sequential accounting, data/code/method/harness/environment identities, actual resource use, deviations, independent recomputation, and eligible/forbidden claim language.
 
 A bare number, score, or prose conclusion is not a scientific result object.
+
+### Candidate machine-record topology and Gate A boundary
+
+The existing mission, protocol, atomic metric, and claim records cover
+important common fields, but they must not be stretched until loose strings or
+a single atomic metric silently carry every claim type. The candidate adds
+[`EstimandContract` 0.1.0](../schemas/estimand-contract.schema.json) and
+[`ScientificResultEnvelope` 0.1.0](../schemas/scientific-result-envelope.schema.json).
+Optional strict bindings were added to
+[`ProtocolSnapshot` 0.1.0](../schemas/protocol-snapshot.schema.json) and
+[`MetricResult` 0.1.0](../schemas/metric-result.schema.json), so their legacy
+records remain structurally valid while legacy loose fields cannot become
+estimand or claim authority. No missing `ResearchMissionSpec` or `ClaimVersion`
+path alias was invented. The dependency order is:
+
+```text
+ResearchMissionSpec
+  -> immutable claim-type-specific EstimandContract
+  -> ProtocolSnapshot freezes estimand + design/accounting rules
+  -> RunManifest + atomic MetricResult records
+  -> immutable ScientificResultEnvelope composes the exact result set
+  -> VerificationPackage + governed adjudication
+  -> ClaimVersion compiles only the eligible scoped language
+```
+
+References are one-way. The estimand and protocol cannot reference later runs,
+results, verification, adjudication, or claims. Atomic metrics do not declare a
+scientific outcome. A result envelope cannot reference its later verification,
+adjudication, claim version, or publication event. Those later records bind the
+result's externally issued immutable identity.
+
+The estimand contract uses the closed discriminator `descriptive`,
+`associational`, `predictive`, `causal`, `equivalence`, `noninferiority`,
+`safety`, `optimization`, or `physical_validation`. Every branch fixes the
+exact population, unit of analysis, exposure, comparator, outcome, time
+horizon, intercurrent-event strategy, summary functional, contrast, and effect
+scale, plus branch-specific elements:
+
+| Claim branch | Irreducible typed content |
+|---|---|
+| Descriptive | target population, sampling frame/design, variable and summary functional |
+| Associational | exposure/outcome variables, association measure, adjustment set and temporal ordering |
+| Predictive | target, horizon, information set, loss, split/shift/calibration scope |
+| Causal | intervention policy, comparator, outcome, population, horizon, intercurrent-event strategy, graph/SCM and identification argument |
+| Equivalence | lower/upper margins, rationale, compatible design, test method and prospective freeze |
+| Noninferiority | positive loss margin, benefit direction, rationale, compatible one-sided design and prospective freeze |
+| Safety | hazard, exposure denominator, operating domain, risk functional, tolerated upper bound, stress and negative controls |
+| Optimization | decision space, objective, constraint set, baseline policy, optimality criterion and feasibility rule |
+| Physical validation | physical system and asset configuration, physical model, measurement/validation partitions, discrepancy and acceptance rules |
+
+The result envelope retains completed, incomplete, invalid, indeterminate,
+inconclusive, and blocked paths without manufacturing an estimate. A measured path binds exact
+decimal/distribution representations, registered units, interval or set
+semantics, evidence-measure semantics, uncertainty components and correlation,
+diagnostics, controls, data roles, contamination assessment, sequential and
+multiplicity accounting, deviations, actual configuration/resources, and
+recomputation evidence. `unknown`, `unavailable`, and `withheld` remain typed
+states and cannot carry a numeric zero.
+
+Deterministic semantic validation must additionally establish:
+
+- interval/set bounds, levels, sidedness, units, and simultaneous/time-uniform
+  scope are internally and method-registry consistent;
+- a fixed-horizon evidence measure is not reused after unprotected peeking, and
+  a sequential result binds the exact process/look/stopping record;
+- every selected or arriving hypothesis is assigned exactly once to its frozen
+  multiplicity family and accounting state;
+- calibration, test, transfer, verifier-only, and physical-validation evidence
+  partitions do not overlap beyond an explicitly admitted dependency model;
+- an interval crossing the directional null cannot satisfy a directional claim
+  under an interval-based rule, and is never renamed a “null result”;
+- equivalence requires a prospectively frozen margin and a method-valid result
+  inside it; failure to reject, a small point estimate, or an interval merely
+  crossing zero is not equivalence;
+- p-values, e-values, confidence intervals/sequences, posterior probabilities,
+  Bayes factors, predictive distributions, calibration scores, risk bounds,
+  and utility estimates retain their distinct interpretations;
+- comparison and value results bind the complete configuration/resource vector
+  and cannot hide unequal budgets or convert activity into value;
+- eligible and forbidden language is derived from the exact frozen consequence
+  rule, verification package, and adjudication, never copied from a producer;
+  and
+- the result/claim path has no self digest, successor digest, or circular
+  result-verification-claim identity.
+
+Sentinel's HUGSIM transfer interval that crosses zero is a mandatory known-bad
+vector: the machine path must retain it as inconclusive for the directional
+claim under that frozen rule and must reject mutations labeling it `null`,
+`equivalent`, zero effect, or supported improvement. This one case is necessary
+but not sufficient evidence for the broader mathematical contract.
+
+The candidate enforces exact decimal strings and fixed UTC timestamps with six
+fractional digits. Its isolated suite currently passes **57 cases**: **38**
+structurally valid, **19** structurally invalid, and **38** with bounded local
+semantic expectations. The vectors cover all nine estimand branches, exact
+mission/estimand/protocol/run/metric identity, typed unknowns, interval
+ordering and null inclusion, equivalence and noninferiority margins,
+multiplicity, missingness, fixed-horizon peeking, recomputation, and physical
+provenance. These checks do not establish registry admission, digest/reference
+resolution, method validity, scientific truth, physical validity, claim
+authority, or Gate A acceptance.
+
+Remaining work is explicit: enroll both schemas and compatibility bindings in
+the governed registry/manifest; define migration from the retained legacy
+mission and claim shapes; resolve cross-record identities and unit/method
+records against retained bytes; add reducers, replay and runtime integration;
+extend property-based and independent recomputation vectors; and obtain
+accountable independent statistical and physical-science review.
 
 ## Prediction and calibration
 
@@ -247,6 +360,45 @@ pass@k=1-(1-p)^k,\qquad pass^k=p^k.
 
 Actual attempts are often correlated, so bundled reliability is measured empirically. Report success-budget curve, repeat consistency, verified quality, latency, total cost, cost per verified success, safety-event upper bound and exposure, and recovery within a fixed total budget. Zero observed safety events never means zero risk.
 
+## Resource reservation algebra
+
+Let `D` be a closed basis of registered dimensions:
+
+\[
+D=D_{execution}\;\dot\cup\;D_{money}\;\dot\cup\;
+\{v_{det},v_{compute},v_{expert},v_{physical},v_{safety}\}.
+\]
+
+Each currency is a distinct money basis element measured in minor units. A resource vector is an element of \(\mathbb R_{\ge0}^{D}\) with unique dimension keys. Admission is componentwise. If estimate \(e\), ceiling \(c\), and available capacity \(a\) describe a proposed reservation, then
+
+\[
+0\le e_d\le c_d\le a_d\quad\forall d\in D.
+\]
+
+No conversion matrix, exchange rate, scalar score, or surplus in one coordinate may establish feasibility in another. In particular, \(c_d>a_d\) is a rejection even when \(\sum_j c_j\le\sum_j a_j\); those sums are generally dimensionally meaningless.
+
+Reservation creation moves \(c\) from available capacity to an active hold. Claim moves the same \(c\) from active hold to claimed hold without changing total held capacity and without assigning an actual-use value. A pre-claim release or expiry returns exactly \(c\). After claim, crash/recovery preserves \(c\) until retained observations permit settlement.
+
+For settlement, let \(n\) be net use, \(q\) the ceiling-backed consumed vector, \(o\) overage, and \(u\) unused capacity. Componentwise:
+
+\[
+n=q+o,\qquad c=q+u,
+\]
+
+with all vectors non-negative. For money, \(n=billed-refunded\) and \(0\le refunded\le billed\); for non-money resources, \(n=actual\). Settlement returns only \(u\), retains \(q\) as consumed, and records \(o\) as an explicit breach/liability. Missing or unavailable usage is an epistemic state, not the numeric vector zero, so it cannot satisfy these equations or release a claimed hold.
+
+## Verification-capacity constraint
+
+Generation and verification are different resources. For a candidate class `r`, retain a conservative demand vector
+
+\[
+d_r=(d_{\mathrm{det}},d_{\mathrm{compute}},d_{\mathrm{expert}},d_{\mathrm{physical}},d_{\mathrm{safety}})
+\]
+
+and compare outstanding demand with separately reserved capacity in the same dimensions. Claim-bearing admission requires every required dimension to remain feasible under the registered packing rule. The vector is intentionally not reduced to one scalar: compute cannot substitute for absent domain expertise, a physical test, or a safety case. Unknown demand fails closed for confirmatory and high-consequence work.
+
+Estimates and actual use remain separate and are reconciled. Verification assignment atomically creates the exact five-dimensional reservation, `verification.started` claims the same vector with the complete start cohort, and settlement requires exact retained observations in that basis. A missing required coordinate cannot be marked optional after outcome exposure or compensated by another coordinate. Exploratory overflow may be retained only as a bounded quarantined backlog with no claim, memory-promotion, or publication authority. The complete control contract is in [Cognitive Control Contracts](COGNITIVE_CONTROL_CONTRACTS.md).
+
 ## Claim progression without axis collapse
 
 ```text
@@ -281,6 +433,8 @@ Each admitted method declares:
 - synthetic-null, known-effect, dependence, leakage, optional-stopping, missingness, and broken-artifact conformance results.
 
 Do not write custom statistical algorithms when mature audited libraries exist. Odeya owns the contract, evidence, authority, orchestration, verification, and learning semantics—not reinventions of numerical statistics.
+
+The closed structural contract is [`method-registry` 0.1.0](../schemas/method-registry.schema.json). It deliberately distinguishes a proposed record from an admitted method. A structurally valid record remains unusable for claim-bearing work until its guarantee and assumptions are semantically reviewed, every applicable known-bad vector partition is populated, the required independent implementations agree under a frozen numerical profile, rights are settled, and an accountable admission decision is retained. A registry digest identifies those exact records; it is not an endorsement of every method it contains.
 
 ## Mathematical implementation dependency
 

@@ -1,0 +1,399 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:odeya:schema:engine-contract-root:0.1.0",
+  "title": "Odeya EngineContractRoot",
+  "description": "An immutable, acyclic subject binding one compatible set of Odeya semantic registries. Structural validity does not prove component availability, digest equality, graph closure, review independence, checkpoint inclusion, or runtime activation.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "root_id",
+    "version",
+    "closure_id",
+    "supersedes_root_ref",
+    "components",
+    "component_order",
+    "component_set_commitment",
+    "admitted_closure",
+    "compatibility_profile_ref",
+    "reader_requirements",
+    "source_manifest_ref",
+    "generator_identity_ref",
+    "independent_validation_refs",
+    "review_evidence_refs",
+    "known_limitations",
+    "root_digest_contract",
+    "root_digest"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.1.0"
+    },
+    "root_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "version": {
+      "$ref": "#/$defs/semantic_version"
+    },
+    "closure_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "supersedes_root_ref": {
+      "oneOf": [
+        { "$ref": "#/$defs/subject_reference" },
+        { "type": "null" }
+      ]
+    },
+    "components": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_registry",
+        "command_contract_registry",
+        "event_contract_registry",
+        "reducer_registry",
+        "aggregate_state_subject_registry",
+        "resource_unit_profile_registry",
+        "semantic_rule_registry",
+        "policy_registry",
+        "method_registry",
+        "module_dependency_manifest",
+        "canonicalization_profile",
+        "trust_bootstrap_manifest"
+      ],
+      "properties": {
+        "schema_registry": {
+          "allOf": [
+            { "$ref": "#/$defs/component_reference" },
+            { "properties": { "component_kind": { "const": "schema_registry" } } }
+          ]
+        },
+        "command_contract_registry": {
+          "allOf": [
+            { "$ref": "#/$defs/component_reference" },
+            { "properties": { "component_kind": { "const": "command_contract_registry" } } }
+          ]
+        },
+        "event_contract_registry": {
+          "allOf": [
+            { "$ref": "#/$defs/component_reference" },
+            { "properties": { "component_kind": { "const": "event_contract_registry" } } }
+          ]
+        },
+        "reducer_registry": {
+          "allOf": [
+            { "$ref": "#/$defs/component_reference" },
+            { "properties": { "component_kind": { "const": "reducer_registry" } } }
+          ]
+        },
+        "aggregate_state_subject_registry": {
+          "allOf": [
+            { "$ref": "#/$defs/component_reference" },
+            { "properties": { "component_kind": { "const": "aggregate_state_subject_registry" } } }
+          ]
+        },
+        "resource_unit_profile_registry": {
+          "allOf": [
+            { "$ref": "#/$defs/component_reference" },
+            { "properties": { "component_kind": { "const": "resource_unit_profile_registry" } } }
+          ]
+        },
+        "semantic_rule_registry": {
+          "allOf": [
+            { "$ref": "#/$defs/component_reference" },
+            { "properties": { "component_kind": { "const": "semantic_rule_registry" } } }
+          ]
+        },
+        "policy_registry": {
+          "allOf": [
+            { "$ref": "#/$defs/component_reference" },
+            { "properties": { "component_kind": { "const": "policy_registry" } } }
+          ]
+        },
+        "method_registry": {
+          "allOf": [
+            { "$ref": "#/$defs/component_reference" },
+            { "properties": { "component_kind": { "const": "method_registry" } } }
+          ]
+        },
+        "module_dependency_manifest": {
+          "allOf": [
+            { "$ref": "#/$defs/component_reference" },
+            { "properties": { "component_kind": { "const": "module_dependency_manifest" } } }
+          ]
+        },
+        "canonicalization_profile": {
+          "allOf": [
+            { "$ref": "#/$defs/component_reference" },
+            { "properties": { "component_kind": { "const": "canonicalization_profile" } } }
+          ]
+        },
+        "trust_bootstrap_manifest": {
+          "allOf": [
+            { "$ref": "#/$defs/component_reference" },
+            { "properties": { "component_kind": { "const": "trust_bootstrap_manifest" } } }
+          ]
+        }
+      }
+    },
+    "component_order": {
+      "type": "array",
+      "minItems": 12,
+      "maxItems": 12,
+      "prefixItems": [
+        { "const": "schema_registry" },
+        { "const": "command_contract_registry" },
+        { "const": "event_contract_registry" },
+        { "const": "reducer_registry" },
+        { "const": "aggregate_state_subject_registry" },
+        { "const": "resource_unit_profile_registry" },
+        { "const": "semantic_rule_registry" },
+        { "const": "policy_registry" },
+        { "const": "method_registry" },
+        { "const": "module_dependency_manifest" },
+        { "const": "canonicalization_profile" },
+        { "const": "trust_bootstrap_manifest" }
+      ],
+      "items": false
+    },
+    "component_set_commitment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["algorithm", "member_count", "ordered_members_digest"],
+      "properties": {
+        "algorithm": { "const": "odeya-ordered-digest-set-v1" },
+        "member_count": { "const": 12 },
+        "ordered_members_digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "admitted_closure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "command_set_ref",
+        "event_set_ref",
+        "reducer_set_ref",
+        "aggregate_state_set_ref",
+        "design_vocabulary_ref",
+        "command_count",
+        "event_count",
+        "reducer_count",
+        "aggregate_state_count",
+        "graph_digest"
+      ],
+      "properties": {
+        "command_set_ref": { "$ref": "#/$defs/artifact_reference" },
+        "event_set_ref": { "$ref": "#/$defs/artifact_reference" },
+        "reducer_set_ref": { "$ref": "#/$defs/artifact_reference" },
+        "aggregate_state_set_ref": { "$ref": "#/$defs/artifact_reference" },
+        "design_vocabulary_ref": { "$ref": "#/$defs/artifact_reference" },
+        "command_count": { "type": "integer", "minimum": 1 },
+        "event_count": { "type": "integer", "minimum": 1 },
+        "reducer_count": { "type": "integer", "minimum": 1 },
+        "aggregate_state_count": { "type": "integer", "minimum": 1 },
+        "graph_digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "compatibility_profile_ref": {
+      "$ref": "#/$defs/artifact_reference"
+    },
+    "reader_requirements": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "unknown_major_version",
+        "unknown_discriminator",
+        "missing_component",
+        "incompatible_component",
+        "historical_resolution",
+        "mutable_aliases_allowed"
+      ],
+      "properties": {
+        "unknown_major_version": { "const": "block" },
+        "unknown_discriminator": { "const": "block" },
+        "missing_component": { "const": "block" },
+        "incompatible_component": { "const": "block" },
+        "historical_resolution": { "const": "exact_historical_root_required" },
+        "mutable_aliases_allowed": { "const": false }
+      }
+    },
+    "source_manifest_ref": {
+      "$ref": "#/$defs/artifact_reference"
+    },
+    "generator_identity_ref": {
+      "$ref": "#/$defs/artifact_reference"
+    },
+    "independent_validation_refs": {
+      "type": "array",
+      "minItems": 2,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/artifact_reference" }
+    },
+    "review_evidence_refs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/artifact_reference" }
+    },
+    "known_limitations": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/known_limitation" }
+    },
+    "root_digest_contract": {
+      "$ref": "#/$defs/digest_contract"
+    },
+    "root_digest": {
+      "$ref": "#/$defs/digest"
+    }
+  },
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$"
+    },
+    "semantic_version": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "subject_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["subject_id", "version", "schema_id", "canonical_digest"],
+      "properties": {
+        "subject_id": { "$ref": "#/$defs/identifier" },
+        "version": { "$ref": "#/$defs/semantic_version" },
+        "schema_id": { "type": "string", "format": "uri" },
+        "canonical_digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "component_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "component_kind",
+        "subject_id",
+        "version",
+        "schema_id",
+        "canonical_digest"
+      ],
+      "properties": {
+        "component_kind": {
+          "enum": [
+            "schema_registry",
+            "command_contract_registry",
+            "event_contract_registry",
+            "reducer_registry",
+            "aggregate_state_subject_registry",
+            "resource_unit_profile_registry",
+            "semantic_rule_registry",
+            "policy_registry",
+            "method_registry",
+            "module_dependency_manifest",
+            "canonicalization_profile",
+            "trust_bootstrap_manifest"
+          ]
+        },
+        "subject_id": { "$ref": "#/$defs/identifier" },
+        "version": { "$ref": "#/$defs/semantic_version" },
+        "schema_id": { "type": "string", "format": "uri" },
+        "canonical_digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "artifact_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifact_id", "digest", "media_type"],
+      "properties": {
+        "artifact_id": { "$ref": "#/$defs/identifier" },
+        "digest": { "$ref": "#/$defs/digest" },
+        "media_type": { "type": "string", "minLength": 1, "maxLength": 127 }
+      }
+    },
+    "known_limitation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["limitation_id", "severity", "statement", "consequence"],
+      "properties": {
+        "limitation_id": { "$ref": "#/$defs/identifier" },
+        "severity": { "enum": ["low", "moderate", "high", "critical"] },
+        "statement": { "type": "string", "minLength": 1, "maxLength": 2048 },
+        "consequence": { "type": "string", "minLength": 1, "maxLength": 2048 }
+      }
+    },
+    "schema_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_id", "schema_digest"],
+      "properties": {
+        "schema_id": { "type": "string", "format": "uri" },
+        "schema_digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "profile_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["profile_id", "version", "digest"],
+      "properties": {
+        "profile_id": { "$ref": "#/$defs/identifier" },
+        "version": { "$ref": "#/$defs/semantic_version" },
+        "digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "digest_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "algorithm",
+        "domain_separator",
+        "canonicalization_profile_ref",
+        "subject_schema_ref",
+        "included_json_pointers",
+        "excluded_json_pointers"
+      ],
+      "properties": {
+        "algorithm": { "const": "sha256" },
+        "domain_separator": { "const": "odeya-engine-contract-root-v1" },
+        "canonicalization_profile_ref": { "$ref": "#/$defs/profile_reference" },
+        "subject_schema_ref": { "$ref": "#/$defs/schema_reference" },
+        "included_json_pointers": {
+          "type": "array",
+          "minItems": 17,
+          "maxItems": 17,
+          "prefixItems": [
+            { "const": "/schema_version" },
+            { "const": "/root_id" },
+            { "const": "/version" },
+            { "const": "/closure_id" },
+            { "const": "/supersedes_root_ref" },
+            { "const": "/components" },
+            { "const": "/component_order" },
+            { "const": "/component_set_commitment" },
+            { "const": "/admitted_closure" },
+            { "const": "/compatibility_profile_ref" },
+            { "const": "/reader_requirements" },
+            { "const": "/source_manifest_ref" },
+            { "const": "/generator_identity_ref" },
+            { "const": "/independent_validation_refs" },
+            { "const": "/review_evidence_refs" },
+            { "const": "/known_limitations" },
+            { "const": "/root_digest_contract" }
+          ],
+          "items": false
+        },
+        "excluded_json_pointers": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "prefixItems": [
+            { "const": "/root_digest" }
+          ],
+          "items": false
+        }
+      }
+    }
+  }
+}

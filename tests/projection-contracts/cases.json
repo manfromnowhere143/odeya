@@ -1,0 +1,988 @@
+{
+  "manifest_version": "0.1.0",
+  "description": "Isolated structural and bounded local semantic cases for the proposed projection contract family. Passing confers no authority, truth, publication eligibility, release, runtime implementation, noninterference proof, or Gate A acceptance.",
+  "required_adversarial_vectors": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25
+  ],
+  "cases": [
+    {
+      "name": "private-cockpit-valid-current-derived-nonauthoritative",
+      "schema": "schemas/projection-snapshot.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/private-cockpit.valid.json",
+      "expect": "valid",
+      "semantic_expect": "valid"
+    },
+    {
+      "name": "thesis-intake-valid-current-proposal-bounded",
+      "schema": "schemas/projection-snapshot.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/thesis-intake.valid.json",
+      "expect": "valid",
+      "semantic_expect": "valid"
+    },
+    {
+      "name": "public-research-valid-release-settled-only",
+      "schema": "schemas/projection-snapshot.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/public-research.valid.json",
+      "expect": "valid",
+      "semantic_expect": "valid"
+    },
+    {
+      "name": "static-architecture-fixture-valid-nonlive-not-run",
+      "schema": "schemas/projection-snapshot.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/static-architecture-fixture.valid.json",
+      "expect": "valid",
+      "semantic_expect": "valid"
+    },
+    {
+      "name": "projection-redaction-manifest-valid-preserves-limitations",
+      "schema": "schemas/projection-redaction-manifest.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/projection-redaction-manifest.valid.json",
+      "expect": "valid",
+      "semantic_expect": "valid"
+    },
+    {
+      "name": "reducer-equivalence-live-valid-independent-pass",
+      "schema": "schemas/reducer-equivalence-result.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/reducer-equivalence-live.valid.json",
+      "expect": "valid",
+      "semantic_expect": "valid"
+    },
+    {
+      "name": "reducer-equivalence-static-valid-explicit-not-run",
+      "schema": "schemas/reducer-equivalence-result.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/reducer-equivalence-static.valid.json",
+      "expect": "valid",
+      "semantic_expect": "valid"
+    },
+    {
+      "name": "projection-impact-valid-deletion-tombstone-fanout",
+      "schema": "schemas/projection-impact-record.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/projection-impact-record.valid.json",
+      "expect": "valid",
+      "semantic_expect": "valid"
+    },
+    {
+      "name": "vector-01-rejects-interval-crossing-zero-rendered-as-positive-equivalent",
+      "vectors": [
+        1
+      ],
+      "schema": "schemas/projection-snapshot.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/private-cockpit.valid.json",
+      "expect": "valid",
+      "semantic_expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/quantitative_displays/0/interval/lower",
+          "value": "-0.2"
+        },
+        {
+          "op": "replace",
+          "path": "/quantitative_displays/0/interval/upper",
+          "value": "0.2"
+        },
+        {
+          "op": "replace",
+          "path": "/quantitative_displays/0/interval/contains_zero",
+          "value": true
+        }
+      ]
+    },
+    {
+      "name": "vector-02-rejects-invalid-run-rendered-as-null-result",
+      "vectors": [
+        2
+      ],
+      "schema": "schemas/projection-snapshot.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/private-cockpit.valid.json",
+      "expect": "invalid",
+      "semantic_expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/semantic_axes/scientific_validity",
+          "value": "invalid"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_axes/scientific_outcome",
+          "value": "null_result"
+        }
+      ]
+    },
+    {
+      "name": "vector-03-rejects-unmeasured-rendered-as-zero",
+      "vectors": [
+        3
+      ],
+      "schema": "schemas/projection-snapshot.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/private-cockpit.valid.json",
+      "expect": "invalid",
+      "semantic_expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/quantitative_displays/0/measurement_state",
+          "value": "unmeasured"
+        },
+        {
+          "op": "replace",
+          "path": "/quantitative_displays/0/numeric_value",
+          "value": "0"
+        },
+        {
+          "op": "replace",
+          "path": "/quantitative_displays/0/interval",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/quantitative_displays/0/rendered_semantic",
+          "value": "not_measured"
+        }
+      ]
+    },
+    {
+      "name": "vector-04-rejects-source-label-as-odeya-adjudication",
+      "vectors": [
+        4
+      ],
+      "schema": "schemas/projection-snapshot.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/private-cockpit.valid.json",
+      "expect": "invalid",
+      "semantic_expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/semantic_axes/source_label_is_odeya_adjudication",
+          "value": true
+        }
+      ]
+    },
+    {
+      "name": "vector-05-rejects-private-eligible-claim-as-public-release",
+      "vectors": [
+        5
+      ],
+      "schema": "schemas/projection-snapshot.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/private-cockpit.valid.json",
+      "expect": "invalid",
+      "semantic_expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/semantic_axes/publication",
+          "value": "released"
+        }
+      ]
+    },
+    {
+      "name": "vector-06-rejects-seal-as-release-settlement",
+      "vectors": [
+        6
+      ],
+      "schema": "schemas/projection-snapshot.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/public-research.valid.json",
+      "expect": "invalid",
+      "semantic_expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/surface/release_chain/settlement_event_type",
+          "value": "publication.seal_recorded"
+        }
+      ]
+    },
+    {
+      "name": "vector-07a-rejects-provider-2xx-as-confirmed-effect",
+      "vectors": [
+        7
+      ],
+      "schema": "schemas/projection-snapshot.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/public-research.valid.json",
+      "expect": "invalid",
+      "semantic_expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/surface/release_chain/effect_state",
+          "value": "provider_2xx"
+        }
+      ]
+    },
+    {
+      "name": "vector-07b-rejects-exact-visible-without-confirmed-effect",
+      "vectors": [
+        7
+      ],
+      "schema": "schemas/projection-snapshot.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/public-research.valid.json",
+      "expect": "invalid",
+      "semantic_expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/surface/release_chain/effect_state",
+          "value": "completion_unknown"
+        }
+      ]
+    },
+    {
+      "name": "vector-07c-rejects-confirmed-effect-without-release-settlement",
+      "vectors": [
+        7
+      ],
+      "schema": "schemas/projection-snapshot.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/public-research.valid.json",
+      "expect": "invalid",
+      "semantic_expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/surface/release_chain/settlement_to",
+          "value": "releasing"
+        }
+      ]
+    },
+    {
+      "name": "vector-08-rejects-hidden-active-correction",
+      "vectors": [
+        8
+      ],
+      "schema": "schemas/projection-snapshot.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/private-cockpit.valid.json",
+      "expect": "invalid",
+      "semantic_expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/governance_frontier/correction/state",
+          "value": "active"
+        }
+      ]
+    },
+    {
+      "name": "vector-09-rejects-stale-without-position-or-reason",
+      "vectors": [
+        9
+      ],
+      "schema": "schemas/projection-snapshot.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/private-cockpit.valid.json",
+      "expect": "invalid",
+      "semantic_expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/freshness/state",
+          "value": "stale"
+        },
+        {
+          "op": "remove",
+          "path": "/dependency_frontier/included_position"
+        }
+      ]
+    },
+    {
+      "name": "vector-10-rejects-current-serve-before-restore-verification",
+      "vectors": [
+        10
+      ],
+      "schema": "schemas/projection-snapshot.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/private-cockpit.valid.json",
+      "expect": "invalid",
+      "semantic_expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/governance_frontier/recovery/state",
+          "value": "restore_unverified"
+        },
+        {
+          "op": "replace",
+          "path": "/governance_frontier/recovery/restore_verification_ref",
+          "value": null
+        }
+      ]
+    },
+    {
+      "name": "vector-11-rejects-rights-revoked-public-attachment",
+      "vectors": [
+        11
+      ],
+      "schema": "schemas/projection-snapshot.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/public-research.valid.json",
+      "expect": "invalid",
+      "semantic_expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/surface/attachment_rights/all_included_attachments_current_and_permitted",
+          "value": false
+        }
+      ]
+    },
+    {
+      "name": "vector-12-rejects-redaction-that-removes-required-limitation",
+      "vectors": [
+        12
+      ],
+      "schema": "schemas/projection-redaction-manifest.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/projection-redaction-manifest.valid.json",
+      "expect": "invalid",
+      "semantic_expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/scientific_limitation_preservation/all_required_limitations_preserved",
+          "value": false
+        }
+      ]
+    },
+    {
+      "name": "vector-13-rejects-sealed-truth-flow-into-private-cockpit",
+      "vectors": [
+        13
+      ],
+      "schema": "schemas/projection-snapshot.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/private-cockpit.valid.json",
+      "expect": "invalid",
+      "semantic_expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/surface/exposure_boundary/sealed_truth_to_producer_absent",
+          "value": false
+        }
+      ]
+    },
+    {
+      "name": "vector-14-rejects-thesis-admission-as-scientific-acceptance",
+      "vectors": [
+        14
+      ],
+      "schema": "schemas/projection-snapshot.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/thesis-intake.valid.json",
+      "expect": "invalid",
+      "semantic_expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/surface/scientific_semantics/admission_is_scientific_acceptance",
+          "value": true
+        }
+      ]
+    },
+    {
+      "name": "vector-15-rejects-cross-proposal-exact-count-leakage",
+      "vectors": [
+        15
+      ],
+      "schema": "schemas/projection-snapshot.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/thesis-intake.valid.json",
+      "expect": "invalid",
+      "semantic_expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/surface/noninterference/count_policy/cross_proposal_exact_counts_exposed",
+          "value": true
+        }
+      ]
+    },
+    {
+      "name": "vector-16-rejects-derived-next-action-as-current-authority",
+      "vectors": [
+        16
+      ],
+      "schema": "schemas/projection-snapshot.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/private-cockpit.valid.json",
+      "expect": "invalid",
+      "semantic_expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/surface/next_legal_actions/0/is_authority",
+          "value": true
+        }
+      ]
+    },
+    {
+      "name": "vector-17-rejects-silent-delivery-order-reducer-divergence",
+      "vectors": [
+        17
+      ],
+      "schema": "schemas/reducer-equivalence-result.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/reducer-equivalence-live.valid.json",
+      "expect": "invalid",
+      "semantic_expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/perturbations/1/result",
+          "value": "fail"
+        }
+      ]
+    },
+    {
+      "name": "vector-18-rejects-old-reader-ignoring-unknown-safety-enum",
+      "vectors": [
+        18
+      ],
+      "schema": "schemas/reducer-equivalence-result.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/reducer-equivalence-live.valid.json",
+      "expect": "invalid",
+      "semantic_expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/reader_safety/unknown_safety_enum_behavior",
+          "value": "ignore"
+        }
+      ]
+    },
+    {
+      "name": "vector-19-rejects-static-fixture-presented-as-live",
+      "vectors": [
+        19
+      ],
+      "schema": "schemas/projection-snapshot.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/static-architecture-fixture.valid.json",
+      "expect": "invalid",
+      "semantic_expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/surface/live",
+          "value": true
+        }
+      ]
+    },
+    {
+      "name": "vector-20-rejects-color-only-semantic-distinction",
+      "vectors": [
+        20
+      ],
+      "schema": "schemas/projection-snapshot.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/private-cockpit.valid.json",
+      "expect": "invalid",
+      "semantic_expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/accessibility_semantics/color_only_distinctions",
+          "value": true
+        }
+      ]
+    },
+    {
+      "name": "vector-21-rejects-current-live-projection-with-not-run-equivalence",
+      "vectors": [
+        21
+      ],
+      "schema": "schemas/projection-snapshot.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/private-cockpit.valid.json",
+      "expect": "invalid",
+      "semantic_expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/reducer_equivalence/disposition",
+          "value": "not_run"
+        }
+      ]
+    },
+    {
+      "name": "vector-22-rejects-once-current-snapshot-after-serve-lease-expiry",
+      "vectors": [
+        22
+      ],
+      "schema": "schemas/projection-snapshot.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/private-cockpit.valid.json",
+      "expect": "valid",
+      "semantic_expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/governance_frontier/serve_decision/valid_until",
+          "value": "2026-07-15T12:06:00.000000Z"
+        }
+      ]
+    },
+    {
+      "name": "vector-23-rejects-prior-bytes-retained-under-tombstone-only-decision",
+      "vectors": [
+        23
+      ],
+      "schema": "schemas/projection-impact-record.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/projection-impact-record.valid.json",
+      "expect": "invalid",
+      "semantic_expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/selection/affected/0/retention_action",
+          "value": "retain_if_current_policy_allows"
+        },
+        {
+          "op": "replace",
+          "path": "/selection/affected/0/prior_projection_bytes_retained",
+          "value": true
+        }
+      ]
+    },
+    {
+      "name": "vector-24-rejects-projection-self-or-package-digest-field",
+      "vectors": [
+        24
+      ],
+      "schema": "schemas/projection-snapshot.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/private-cockpit.valid.json",
+      "expect": "invalid",
+      "semantic_expect": "invalid",
+      "mutations": [
+        {
+          "op": "add",
+          "path": "/canonical_projection_digest",
+          "value": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      ]
+    },
+    {
+      "name": "vector-25-rejects-thesis-path-crossing-observable-equivalence-policy",
+      "vectors": [
+        25
+      ],
+      "schema": "schemas/projection-snapshot.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/thesis-intake.valid.json",
+      "expect": "invalid",
+      "semantic_expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/surface/noninterference/cross_proposal_policy_applied",
+          "value": false
+        }
+      ]
+    },
+    {
+      "name": "current-rejects-required-included-frontier-mismatch",
+      "schema": "schemas/projection-snapshot.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/private-cockpit.valid.json",
+      "expect": "valid",
+      "semantic_expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/dependency_frontier/included_position/inclusive_global_position",
+          "value": 41
+        }
+      ]
+    },
+    {
+      "name": "rejects-wrong-engine-contract-root-version",
+      "schema": "schemas/projection-snapshot.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/private-cockpit.valid.json",
+      "expect": "invalid",
+      "semantic_expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/canonical_bindings/engine_contract_root_ref/version",
+          "value": "0.2.0"
+        }
+      ]
+    },
+    {
+      "name": "rejects-wrong-c0-registry-schema-binding",
+      "schema": "schemas/projection-snapshot.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/private-cockpit.valid.json",
+      "expect": "invalid",
+      "semantic_expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/canonical_bindings/c0_registry_bundle_ref/schema_id",
+          "value": "urn:odeya:schema:c0-registry-bundle:9.9.9"
+        }
+      ]
+    },
+  {
+    "name": "current-rejects-unacknowledged-checkpoint",
+    "schema": "schemas/projection-snapshot.schema.json",
+    "fixture": "tests/projection-contracts/fixtures/private-cockpit.valid.json",
+    "expect": "invalid",
+    "semantic_expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/canonical_bindings/ledger_checkpoint/witness_status",
+          "value": "unacknowledged"
+        }
+      ]
+    },
+    {
+      "name": "complete-rejects-expected-present-section-mismatch",
+      "schema": "schemas/projection-snapshot.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/private-cockpit.valid.json",
+      "expect": "valid",
+      "semantic_expect": "invalid",
+      "mutations": [
+        {
+          "op": "remove",
+          "path": "/completeness/present_sections/2"
+        }
+      ]
+    },
+    {
+      "name": "serve-rejects-purpose-reference-mismatch",
+      "schema": "schemas/projection-snapshot.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/private-cockpit.valid.json",
+      "expect": "valid",
+      "semantic_expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/governance_frontier/serve_decision/purpose_scope_ref/record_id",
+          "value": "purpose-scope.wrong"
+        },
+        {
+          "op": "replace",
+          "path": "/governance_frontier/serve_decision/purpose_scope_ref/canonical_digest",
+          "value": "sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+        }
+      ]
+    },
+    {
+      "name": "equivalence-rejects-identical-implementation-paths",
+      "schema": "schemas/reducer-equivalence-result.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/reducer-equivalence-live.valid.json",
+      "expect": "invalid",
+      "semantic_expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/path_b",
+          "value": null
+        }
+      ]
+    },
+    {
+      "name": "equivalence-semantically-rejects-distinct-claim-with-identical-path-identity",
+      "schema": "schemas/reducer-equivalence-result.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/reducer-equivalence-live.valid.json",
+      "expect": "valid",
+      "semantic_expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/path_b/implementation_ref/record_id",
+          "value": "projection-reducer.independent-a"
+        },
+        {
+          "op": "replace",
+          "path": "/path_b/implementation_ref/canonical_digest",
+          "value": "sha256:3333333333333333333333333333333333333333333333333333333333333333"
+        },
+        {
+          "op": "replace",
+          "path": "/path_b/build_digest",
+          "value": "sha256:3333333333333333333333333333333333333333333333333333333333333333"
+        }
+      ]
+    },
+    {
+      "name": "equivalence-rejects-passing-semantic-vector-digest-mismatch",
+      "schema": "schemas/reducer-equivalence-result.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/reducer-equivalence-live.valid.json",
+      "expect": "valid",
+      "semantic_expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/comparison/semantic_vector_b_digest",
+          "value": "sha256:9999999999999999999999999999999999999999999999999999999999999999"
+        }
+      ]
+    },
+    {
+      "name": "impact-rejects-selection-count-mismatch",
+      "schema": "schemas/projection-impact-record.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/projection-impact-record.valid.json",
+      "expect": "valid",
+      "semantic_expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/selection/affected_projection_count",
+          "value": 1
+        }
+      ]
+    },
+    {
+      "name": "redaction-rejects-required-limitation-set-not-covered",
+      "schema": "schemas/projection-redaction-manifest.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/projection-redaction-manifest.valid.json",
+      "expect": "valid",
+      "semantic_expect": "invalid",
+      "mutations": [
+        {
+          "op": "remove",
+          "path": "/scientific_limitation_preservation/included_limitation_refs/0"
+        }
+      ]
+    },
+    {
+      "name": "public-rejects-effect-observation-reference-mismatch",
+      "schema": "schemas/projection-snapshot.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/public-research.valid.json",
+      "expect": "valid",
+      "semantic_expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/surface/release_chain/effect_observation_ref/record_id",
+          "value": "event.publication-effect-other"
+        },
+        {
+          "op": "replace",
+          "path": "/surface/release_chain/effect_observation_ref/canonical_digest",
+          "value": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+        }
+      ]
+    },
+    {
+      "name": "public-rejects-disclosure-decision-reference-mismatch",
+      "schema": "schemas/projection-snapshot.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/public-research.valid.json",
+      "expect": "valid",
+      "semantic_expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/surface/release_chain/data_use_decision_ref/record_id",
+          "value": "data-use-decision.other"
+        },
+        {
+          "op": "replace",
+          "path": "/surface/release_chain/data_use_decision_ref/canonical_digest",
+          "value": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+        }
+      ]
+    },
+    {
+      "name": "current-rejects-expired-rights-lease-by-controlled-time",
+      "schema": "schemas/projection-snapshot.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/private-cockpit.valid.json",
+      "expect": "valid",
+      "semantic_expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/governance_frontier/rights/expires_at",
+          "value": "2026-07-15T12:06:00.000000Z"
+        }
+      ]
+    },
+    {
+      "name": "redaction-rejects-expired-compilation-lease",
+      "schema": "schemas/projection-redaction-manifest.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/projection-redaction-manifest.valid.json",
+      "expect": "valid",
+      "semantic_expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/expiry_and_review/valid_until",
+          "value": "2026-07-15T12:08:00.000000Z"
+        }
+      ]
+    },
+    {
+      "name": "equivalence-rejects-completion-before-start",
+      "schema": "schemas/reducer-equivalence-result.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/reducer-equivalence-live.valid.json",
+      "expect": "valid",
+      "semantic_expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/controlled_time/completed_at",
+          "value": "2026-07-15T12:05:00.000000Z"
+        }
+      ]
+    },
+    {
+      "name": "impact-rejects-trigger-position-before-bound-checkpoint",
+      "schema": "schemas/projection-impact-record.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/projection-impact-record.valid.json",
+      "expect": "valid",
+      "semantic_expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/trigger/ledger_position/inclusive_global_position",
+          "value": 41
+        }
+      ]
+    },
+    {
+      "name": "thesis-rejects-namespace-proposal-identity-mismatch",
+      "schema": "schemas/projection-snapshot.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/thesis-intake.valid.json",
+      "expect": "valid",
+      "semantic_expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/surface/noninterference/namespace/proposal_id",
+          "value": "proposal.99"
+        }
+      ]
+    },
+    {
+      "name": "snapshot-rejects-source-axis-mismatch",
+      "schema": "schemas/projection-snapshot.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/private-cockpit.valid.json",
+      "expect": "valid",
+      "semantic_expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/semantic_axes/source_fixture",
+          "value": "pinned_source_snapshot"
+        }
+      ]
+    },
+    {
+      "name": "static-equivalence-rejects-live-source-smuggled-through-static-exception",
+      "schema": "schemas/reducer-equivalence-result.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/reducer-equivalence-static.valid.json",
+      "expect": "invalid",
+      "semantic_expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/source_binding/source_kind",
+          "value": "live_canonical"
+        }
+      ]
+    },
+    {
+      "name": "redaction-rejects-rights-widening-claim",
+      "schema": "schemas/projection-redaction-manifest.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/projection-redaction-manifest.valid.json",
+      "expect": "invalid",
+      "semantic_expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/rights_semantics/redaction_may_widen_rights",
+          "value": true
+        }
+      ]
+    },
+    {
+      "name": "impact-rejects-fanout-phase-reordering",
+      "schema": "schemas/projection-impact-record.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/projection-impact-record.valid.json",
+      "expect": "invalid",
+      "semantic_expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/fanout_protocol/ordered_phases/1",
+          "value": "rebuild_under_current_policy_and_reader"
+        }
+      ]
+    },
+    {
+      "name": "quantity-rejects-binary-json-number",
+      "schema": "schemas/projection-snapshot.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/private-cockpit.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/quantitative_displays/0/interval/lower",
+          "value": 0.2
+        }
+      ]
+    },
+    {
+      "name": "quantity-rejects-negative-zero-integer-spelling",
+      "schema": "schemas/projection-snapshot.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/private-cockpit.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/quantitative_displays/0/interval/lower",
+          "value": "-0"
+        }
+      ]
+    },
+    {
+      "name": "quantity-rejects-negative-zero-fraction-spelling",
+      "schema": "schemas/projection-snapshot.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/private-cockpit.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/quantitative_displays/0/interval/lower",
+          "value": "-0.0"
+        }
+      ]
+    },
+    {
+      "name": "quantity-rejects-exponent-decimal-spelling",
+      "schema": "schemas/projection-snapshot.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/private-cockpit.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/quantitative_displays/0/interval/lower",
+          "value": "2e-1"
+        }
+      ]
+    },
+    {
+      "name": "quantity-rejects-leading-zero-decimal-spelling",
+      "schema": "schemas/projection-snapshot.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/private-cockpit.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/quantitative_displays/0/interval/lower",
+          "value": "00.2"
+        }
+      ]
+    }
+  ]
+}

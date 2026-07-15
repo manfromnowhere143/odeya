@@ -1,0 +1,2690 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:odeya:schema:admission-evidence-bundle:0.1.0",
+  "title": "Odeya AdmissionEvidenceBundle",
+  "description": "A closed immutable index of the exact deterministic evidence used by one post-registry command admission. The CommandContractRecord selects the evidence profile and required families. The bundle retains references and input/frontier digests, never mutable state snapshots. The canonical twelve-stage sequence is structurally ordered exactly once; accepted/noop results admit only pass/not-applicable stages, while a rejected result has one terminal fail/indeterminate stage and an explicit not-run suffix. Structural validity still does not prove reference truth, evidence-profile applicability, evidence-record resolution, rule execution, currentness, digest equality, or that the receipt disposition follows from the underlying evidence.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "bundle_id",
+    "version",
+    "production_boundary",
+    "command_binding",
+    "evidence_profile_ref",
+    "evaluation_frontier",
+    "terminal_disposition",
+    "stage_results",
+    "evidence_records",
+    "created_at",
+    "created_by",
+    "integrity"
+  ],
+  "properties": {
+    "schema_version": { "const": "0.1.0" },
+    "bundle_id": { "$ref": "#/$defs/identifier" },
+    "version": { "type": "integer", "const": 1 },
+    "production_boundary": { "const": "admission_kernel" },
+    "command_binding": { "$ref": "#/$defs/command_binding" },
+    "evidence_profile_ref": { "$ref": "#/$defs/versioned_reference" },
+    "evaluation_frontier": { "$ref": "#/$defs/evaluation_frontier" },
+    "terminal_disposition": { "$ref": "#/$defs/terminal_disposition" },
+    "stage_results": {
+      "$ref": "#/$defs/ordered_stage_results"
+    },
+    "evidence_records": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 256,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/evidence_record" }
+    },
+    "created_at": { "$ref": "#/$defs/timestamp" },
+    "created_by": { "$ref": "#/$defs/kernel_identity" },
+    "integrity": { "$ref": "#/$defs/integrity" }
+  },
+  "allOf":
+  [
+    {
+      "if": {
+        "properties": {
+          "terminal_disposition": {
+            "properties": {
+              "result_kind": {
+                "enum": [
+                  "accepted",
+                  "noop"
+                ]
+              }
+            },
+            "required": [
+              "result_kind"
+            ]
+          }
+        },
+        "required": [
+          "terminal_disposition"
+        ]
+      },
+      "then": {
+        "properties": {
+          "stage_results": {
+            "items": {
+              "properties": {
+                "disposition": {
+                  "enum": [
+                    "pass",
+                    "not_applicable"
+                  ]
+                }
+              },
+              "required": [
+                "disposition"
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "terminal_disposition": {
+            "properties": {
+              "terminal_stage": {
+                "const": "registry"
+              }
+            },
+            "required": [
+              "terminal_stage"
+            ]
+          }
+        },
+        "required": [
+          "terminal_disposition"
+        ]
+      },
+      "then": {
+        "properties": {
+          "stage_results": {
+            "prefixItems": [
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "fail",
+                      "indeterminate"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "terminal_disposition": {
+            "properties": {
+              "terminal_stage": {
+                "const": "idempotency"
+              }
+            },
+            "required": [
+              "terminal_stage"
+            ]
+          }
+        },
+        "required": [
+          "terminal_disposition"
+        ]
+      },
+      "then": {
+        "properties": {
+          "stage_results": {
+            "prefixItems": [
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "fail",
+                      "indeterminate"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "terminal_disposition": {
+            "properties": {
+              "terminal_stage": {
+                "const": "structure"
+              }
+            },
+            "required": [
+              "terminal_stage"
+            ]
+          }
+        },
+        "required": [
+          "terminal_disposition"
+        ]
+      },
+      "then": {
+        "properties": {
+          "stage_results": {
+            "prefixItems": [
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "fail",
+                      "indeterminate"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "terminal_disposition": {
+            "properties": {
+              "terminal_stage": {
+                "const": "concurrency"
+              }
+            },
+            "required": [
+              "terminal_stage"
+            ]
+          }
+        },
+        "required": [
+          "terminal_disposition"
+        ]
+      },
+      "then": {
+        "properties": {
+          "stage_results": {
+            "prefixItems": [
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "fail",
+                      "indeterminate"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "terminal_disposition": {
+            "properties": {
+              "terminal_stage": {
+                "const": "references"
+              }
+            },
+            "required": [
+              "terminal_stage"
+            ]
+          }
+        },
+        "required": [
+          "terminal_disposition"
+        ]
+      },
+      "then": {
+        "properties": {
+          "stage_results": {
+            "prefixItems": [
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "fail",
+                      "indeterminate"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "terminal_disposition": {
+            "properties": {
+              "terminal_stage": {
+                "const": "rights"
+              }
+            },
+            "required": [
+              "terminal_stage"
+            ]
+          }
+        },
+        "required": [
+          "terminal_disposition"
+        ]
+      },
+      "then": {
+        "properties": {
+          "stage_results": {
+            "prefixItems": [
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "fail",
+                      "indeterminate"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "terminal_disposition": {
+            "properties": {
+              "terminal_stage": {
+                "const": "policy"
+              }
+            },
+            "required": [
+              "terminal_stage"
+            ]
+          }
+        },
+        "required": [
+          "terminal_disposition"
+        ]
+      },
+      "then": {
+        "properties": {
+          "stage_results": {
+            "prefixItems": [
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "fail",
+                      "indeterminate"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "terminal_disposition": {
+            "properties": {
+              "terminal_stage": {
+                "const": "authority"
+              }
+            },
+            "required": [
+              "terminal_stage"
+            ]
+          }
+        },
+        "required": [
+          "terminal_disposition"
+        ]
+      },
+      "then": {
+        "properties": {
+          "stage_results": {
+            "prefixItems": [
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "fail",
+                      "indeterminate"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "terminal_disposition": {
+            "properties": {
+              "terminal_stage": {
+                "const": "resources"
+              }
+            },
+            "required": [
+              "terminal_stage"
+            ]
+          }
+        },
+        "required": [
+          "terminal_disposition"
+        ]
+      },
+      "then": {
+        "properties": {
+          "stage_results": {
+            "prefixItems": [
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "fail",
+                      "indeterminate"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "terminal_disposition": {
+            "properties": {
+              "terminal_stage": {
+                "const": "risk"
+              }
+            },
+            "required": [
+              "terminal_stage"
+            ]
+          }
+        },
+        "required": [
+          "terminal_disposition"
+        ]
+      },
+      "then": {
+        "properties": {
+          "stage_results": {
+            "prefixItems": [
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "fail",
+                      "indeterminate"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "terminal_disposition": {
+            "properties": {
+              "terminal_stage": {
+                "const": "state_transition"
+              }
+            },
+            "required": [
+              "terminal_stage"
+            ]
+          }
+        },
+        "required": [
+          "terminal_disposition"
+        ]
+      },
+      "then": {
+        "properties": {
+          "stage_results": {
+            "prefixItems": [
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "fail",
+                      "indeterminate"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "const": "not_run_due_to_prior_failure"
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "terminal_disposition": {
+            "properties": {
+              "terminal_stage": {
+                "const": "external_effect"
+              }
+            },
+            "required": [
+              "terminal_stage"
+            ]
+          }
+        },
+        "required": [
+          "terminal_disposition"
+        ]
+      },
+      "then": {
+        "properties": {
+          "stage_results": {
+            "prefixItems": [
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              },
+              {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "fail",
+                      "indeterminate"
+                    ]
+                  }
+                },
+                "required": [
+                  "disposition"
+                ]
+              }
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 128,
+      "pattern": "^[a-z0-9][a-z0-9._:-]+$"
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "artifact_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifact_id", "digest", "media_type"],
+      "properties": {
+        "artifact_id": { "$ref": "#/$defs/identifier" },
+        "digest": { "$ref": "#/$defs/digest" },
+        "media_type": { "type": "string", "minLength": 1, "maxLength": 255 }
+      }
+    },
+    "versioned_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["object_id", "version", "schema_id", "digest"],
+      "properties": {
+        "object_id": { "$ref": "#/$defs/identifier" },
+        "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+        "schema_id": {
+          "type": "string",
+          "pattern": "^urn:odeya:schema:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "command_contract_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["record_id", "version", "schema_id", "digest", "registry_snapshot_digest"],
+      "properties": {
+        "record_id": { "$ref": "#/$defs/identifier" },
+        "version": { "type": "integer", "minimum": 1 },
+        "schema_id": { "const": "urn:odeya:schema:command-contract-record:0.1.0" },
+        "digest": { "$ref": "#/$defs/digest" },
+        "registry_snapshot_digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "command_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "command_id",
+        "canonical_request_digest",
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "command_schema_digest",
+        "command_contract_record_ref"
+      ],
+      "properties": {
+        "command_id": { "$ref": "#/$defs/identifier" },
+        "canonical_request_digest": { "$ref": "#/$defs/digest" },
+        "command_type": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$"
+        },
+        "command_version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+        "command_schema_id": {
+          "type": "string",
+          "pattern": "^urn:odeya:command-payload:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "command_schema_digest": { "$ref": "#/$defs/digest" },
+        "command_contract_record_ref": { "$ref": "#/$defs/command_contract_reference" }
+      }
+    },
+    "checkpoint_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["checkpoint_id", "version", "schema_id", "ledger_epoch", "inclusive_global_position", "digest"],
+      "properties": {
+        "checkpoint_id": { "$ref": "#/$defs/identifier" },
+        "version": { "type": "integer", "minimum": 1 },
+        "schema_id": { "const": "urn:odeya:schema:ledger-checkpoint:0.2.0" },
+        "ledger_epoch": { "$ref": "#/$defs/identifier" },
+        "inclusive_global_position": { "type": "integer", "minimum": 0 },
+        "digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "evaluation_frontier": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ledger_epoch",
+        "checkpoint_ref",
+        "evaluated_global_position",
+        "target_stream_position",
+        "target_aggregate_version",
+        "reference_set_digest",
+        "controlled_time",
+        "root_authority_manifest_ref",
+        "command_registry_snapshot_ref",
+        "policy_registry_snapshot_ref",
+        "semantic_rule_registry_snapshot_ref"
+      ],
+      "properties": {
+        "ledger_epoch": { "$ref": "#/$defs/identifier" },
+        "checkpoint_ref": { "$ref": "#/$defs/checkpoint_reference" },
+        "evaluated_global_position": { "type": "integer", "minimum": 0 },
+        "target_stream_position": { "type": "integer", "minimum": -1 },
+        "target_aggregate_version": { "type": "integer", "minimum": -1 },
+        "reference_set_digest": { "$ref": "#/$defs/digest" },
+        "controlled_time": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["value", "source_ref", "uncertainty_ms"],
+          "properties": {
+            "value": { "$ref": "#/$defs/timestamp" },
+            "source_ref": { "$ref": "#/$defs/artifact_reference" },
+            "uncertainty_ms": { "type": "integer", "minimum": 0 }
+          }
+        },
+        "root_authority_manifest_ref": { "$ref": "#/$defs/versioned_reference" },
+        "command_registry_snapshot_ref": { "$ref": "#/$defs/versioned_reference" },
+        "policy_registry_snapshot_ref": { "$ref": "#/$defs/versioned_reference" },
+        "semantic_rule_registry_snapshot_ref": { "$ref": "#/$defs/versioned_reference" }
+      }
+    },
+    "terminal_disposition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["result_kind", "terminal_stage", "reason_code"],
+      "properties": {
+        "result_kind": { "enum": ["accepted", "rejected", "noop"] },
+        "terminal_stage": {
+          "enum": [
+            "registry",
+            "idempotency",
+            "structure",
+            "concurrency",
+            "references",
+            "rights",
+            "policy",
+            "authority",
+            "resources",
+            "risk",
+            "state_transition",
+            "external_effect",
+            "complete"
+          ]
+        },
+        "reason_code": { "$ref": "#/$defs/identifier" }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "result_kind": { "enum": ["accepted", "noop"] } },
+            "required": ["result_kind"]
+          },
+          "then": { "properties": { "terminal_stage": { "const": "complete" } } }
+        },
+        {
+          "if": {
+            "properties": { "result_kind": { "const": "rejected" } },
+            "required": ["result_kind"]
+          },
+          "then": {
+            "properties": {
+              "terminal_stage": { "not": { "const": "complete" } }
+            }
+          }
+        }
+      ]
+    },
+    "ordered_stage_results":
+      {
+        "type": "array",
+        "minItems": 12,
+        "maxItems": 12,
+        "uniqueItems": true,
+        "prefixItems": [
+          {
+            "allOf": [
+              {
+                "$ref": "#/$defs/stage_result"
+              },
+              {
+                "properties": {
+                  "stage": {
+                    "const": "registry"
+                  }
+                },
+                "required": [
+                  "stage"
+                ]
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/$defs/stage_result"
+              },
+              {
+                "properties": {
+                  "stage": {
+                    "const": "idempotency"
+                  }
+                },
+                "required": [
+                  "stage"
+                ]
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/$defs/stage_result"
+              },
+              {
+                "properties": {
+                  "stage": {
+                    "const": "structure"
+                  }
+                },
+                "required": [
+                  "stage"
+                ]
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/$defs/stage_result"
+              },
+              {
+                "properties": {
+                  "stage": {
+                    "const": "concurrency"
+                  }
+                },
+                "required": [
+                  "stage"
+                ]
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/$defs/stage_result"
+              },
+              {
+                "properties": {
+                  "stage": {
+                    "const": "references"
+                  }
+                },
+                "required": [
+                  "stage"
+                ]
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/$defs/stage_result"
+              },
+              {
+                "properties": {
+                  "stage": {
+                    "const": "rights"
+                  }
+                },
+                "required": [
+                  "stage"
+                ]
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/$defs/stage_result"
+              },
+              {
+                "properties": {
+                  "stage": {
+                    "const": "policy"
+                  }
+                },
+                "required": [
+                  "stage"
+                ]
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/$defs/stage_result"
+              },
+              {
+                "properties": {
+                  "stage": {
+                    "const": "authority"
+                  }
+                },
+                "required": [
+                  "stage"
+                ]
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/$defs/stage_result"
+              },
+              {
+                "properties": {
+                  "stage": {
+                    "const": "resources"
+                  }
+                },
+                "required": [
+                  "stage"
+                ]
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/$defs/stage_result"
+              },
+              {
+                "properties": {
+                  "stage": {
+                    "const": "risk"
+                  }
+                },
+                "required": [
+                  "stage"
+                ]
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/$defs/stage_result"
+              },
+              {
+                "properties": {
+                  "stage": {
+                    "const": "state_transition"
+                  }
+                },
+                "required": [
+                  "stage"
+                ]
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/$defs/stage_result"
+              },
+              {
+                "properties": {
+                  "stage": {
+                    "const": "external_effect"
+                  }
+                },
+                "required": [
+                  "stage"
+                ]
+              }
+            ]
+          }
+        ],
+        "items": false
+      },
+    "stage_result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["stage", "disposition", "input_digest", "evidence_record_ids", "reason_codes"],
+      "properties": {
+        "stage": {
+          "enum": [
+            "registry",
+            "idempotency",
+            "structure",
+            "concurrency",
+            "references",
+            "rights",
+            "policy",
+            "authority",
+            "resources",
+            "risk",
+            "state_transition",
+            "external_effect"
+          ]
+        },
+        "disposition": { "enum": ["pass", "fail", "indeterminate", "not_run_due_to_prior_failure", "not_applicable"] },
+        "input_digest": { "$ref": "#/$defs/digest" },
+        "evidence_record_ids": {
+          "type": "array",
+          "maxItems": 128,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/identifier" }
+        },
+        "reason_codes": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 32,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/identifier" }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "disposition": {
+                "enum": [
+                  "pass",
+                  "fail",
+                  "indeterminate"
+                ]
+              }
+            },
+            "required": [
+              "disposition"
+            ]
+          },
+          "then": {
+            "properties": {
+              "evidence_record_ids": {
+                "minItems": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "disposition": {
+                "enum": [
+                  "not_run_due_to_prior_failure",
+                  "not_applicable"
+                ]
+              }
+            },
+            "required": [
+              "disposition"
+            ]
+          },
+          "then": {
+            "properties": {
+              "evidence_record_ids": {
+                "maxItems": 0
+              }
+            }
+          }
+        }
+      ]
+    },
+    "evidence_record": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["evidence_kind", "record_id", "version", "schema_id", "digest"],
+      "properties": {
+        "evidence_kind": {
+          "enum": [
+            "registry_resolution",
+            "payload_validation",
+            "reference_resolution",
+            "rights_decision",
+            "policy_decision",
+            "authority_decision",
+            "grant_decision",
+            "resource_decision",
+            "risk_decision",
+            "state_transition_decision",
+            "external_effect_decision",
+            "semantic_validation"
+          ]
+        },
+        "record_id": { "$ref": "#/$defs/identifier" },
+        "version": { "type": "integer", "minimum": 1 },
+        "schema_id": {
+          "type": "string",
+          "pattern": "^urn:odeya:schema:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "digest": { "$ref": "#/$defs/digest" }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "evidence_kind": { "const": "policy_decision" } },
+            "required": ["evidence_kind"]
+          },
+          "then": {
+            "properties": { "schema_id": { "const": "urn:odeya:schema:policy-decision:0.1.0" } }
+          }
+        },
+        {
+          "if": {
+            "properties": { "evidence_kind": { "const": "semantic_validation" } },
+            "required": ["evidence_kind"]
+          },
+          "then": {
+            "properties": { "schema_id": { "const": "urn:odeya:schema:validation-result:0.1.0" } }
+          }
+        }
+      ]
+    },
+    "kernel_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["principal_id", "principal_type", "execution_identity", "build_digest"],
+      "properties": {
+        "principal_id": { "$ref": "#/$defs/identifier" },
+        "principal_type": { "const": "deterministic_service" },
+        "execution_identity": { "$ref": "#/$defs/identifier" },
+        "build_digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "integrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["canonicalization", "digest_contract", "bundle_digest", "signature_ref"],
+      "properties": {
+        "canonicalization": { "const": "odeya-jcs-draft-0.1" },
+        "digest_contract": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["algorithm", "domain_separator", "canonicalization_profile_ref", "schema_binding", "included_json_pointers", "excluded_json_pointers"],
+          "properties": {
+            "algorithm": { "const": "sha-256" },
+            "domain_separator": { "const": "odeya-admission-evidence-bundle-v1" },
+            "canonicalization_profile_ref": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["name", "version", "digest"],
+              "properties": {
+                "name": { "const": "odeya-jcs" },
+                "version": { "const": "0.1.0" },
+                "digest": { "$ref": "#/$defs/digest" }
+              }
+            },
+            "schema_binding": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["schema_id", "schema_digest"],
+              "properties": {
+                "schema_id": { "const": "urn:odeya:schema:admission-evidence-bundle:0.1.0" },
+                "schema_digest": { "$ref": "#/$defs/digest" }
+              }
+            },
+            "included_json_pointers": {
+              "const": [
+                "/schema_version",
+                "/bundle_id",
+                "/version",
+                "/production_boundary",
+                "/command_binding",
+                "/evidence_profile_ref",
+                "/evaluation_frontier",
+                "/terminal_disposition",
+                "/stage_results",
+                "/evidence_records",
+                "/created_at",
+                "/created_by",
+                "/integrity/canonicalization",
+                "/integrity/digest_contract"
+              ]
+            },
+            "excluded_json_pointers": {
+              "const": ["/integrity/bundle_digest", "/integrity/signature_ref"]
+            }
+          }
+        },
+        "bundle_digest": { "$ref": "#/$defs/digest" },
+        "signature_ref": {
+          "oneOf": [
+            { "$ref": "#/$defs/artifact_reference" },
+            { "type": "null" }
+          ]
+        }
+      }
+    }
+  }
+}

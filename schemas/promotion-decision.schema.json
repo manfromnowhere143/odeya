@@ -1,0 +1,237 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:odeya:schema:promotion-decision:0.1.0",
+  "title": "Odeya PromotionDecision",
+  "description": "An immutable human-authorized decision about one exact strategy candidate. It preserves multidimensional results and cannot turn a candidate, model score, or anecdote into unbounded production authority.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "promotion_decision_id",
+    "version",
+    "strategy_candidate",
+    "decision",
+    "evaluation_result_refs",
+    "observed_dimensions",
+    "independent_review_refs",
+    "authority_grant_refs",
+    "deployment_scope",
+    "constraints",
+    "unresolved_risks",
+    "reason_codes",
+    "decision_evidence_ref",
+    "decided_at_ledger_position",
+    "decided_at",
+    "decided_by"
+  ],
+  "properties": {
+    "schema_version": { "const": "0.1.0" },
+    "promotion_decision_id": { "$ref": "#/$defs/identifier" },
+    "version": { "type": "integer", "minimum": 1 },
+    "strategy_candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["strategy_candidate_id", "version", "digest"],
+      "properties": {
+        "strategy_candidate_id": { "$ref": "#/$defs/identifier" },
+        "version": { "type": "integer", "minimum": 1 },
+        "digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "decision": { "enum": ["rejected", "deferred", "approved_shadow", "approved_canary", "approved_rollout", "rollback"] },
+    "evaluation_result_refs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/artifact_reference" }
+    },
+    "observed_dimensions": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["dimension_id", "measurement_status", "baseline", "candidate", "uncertainty_ref", "evidence_refs"],
+        "properties": {
+          "dimension_id": { "enum": ["reproducibility", "information_gain", "falsifier_coverage", "uncertainty_reduction", "claim_validity", "safety", "latency", "compute_cost", "monetary_cost", "human_intervention", "downstream_value"] },
+          "measurement_status": { "enum": ["measured", "missing", "unmeasured", "unavailable", "withheld", "not_applicable"] },
+          "baseline": { "oneOf": [{ "$ref": "#/$defs/quantity" }, { "type": "null" }] },
+          "candidate": { "oneOf": [{ "$ref": "#/$defs/quantity" }, { "type": "null" }] },
+          "uncertainty_ref": { "oneOf": [{ "$ref": "#/$defs/artifact_reference" }, { "type": "null" }] },
+          "evidence_refs": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": { "$ref": "#/$defs/artifact_reference" }
+          }
+        },
+        "allOf": [
+          {
+            "if": { "properties": { "measurement_status": { "const": "measured" } }, "required": ["measurement_status"] },
+            "then": {
+              "properties": {
+                "baseline": { "$ref": "#/$defs/quantity" },
+                "candidate": { "$ref": "#/$defs/quantity" },
+                "evidence_refs": { "minItems": 1 }
+              }
+            },
+            "else": {
+              "properties": {
+                "baseline": { "type": "null" },
+                "candidate": { "type": "null" }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "independent_review_refs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/artifact_reference" }
+    },
+    "authority_grant_refs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/identifier" }
+    },
+    "deployment_scope": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["environment", "mission_classes", "traffic_fraction", "maximum_risk_tier", "expires_at"],
+          "properties": {
+            "environment": { "enum": ["shadow", "canary", "bounded_production"] },
+            "mission_classes": { "$ref": "#/$defs/string_array" },
+            "traffic_fraction": { "$ref": "#/$defs/fraction" },
+            "maximum_risk_tier": { "enum": ["R0", "R1", "R2", "R3", "R4"] },
+            "expires_at": { "type": "string", "format": "date-time" }
+          }
+        },
+        { "type": "null" }
+      ]
+    },
+    "constraints": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["monitoring_profile_ref", "rollback_trigger_ref", "resource_ceiling_ref", "forbidden_actions"],
+      "properties": {
+        "monitoring_profile_ref": { "$ref": "#/$defs/artifact_reference" },
+        "rollback_trigger_ref": { "$ref": "#/$defs/artifact_reference" },
+        "resource_ceiling_ref": { "$ref": "#/$defs/artifact_reference" },
+        "forbidden_actions": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "unresolved_risks": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "reason_codes": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/identifier" }
+    },
+    "decision_evidence_ref": { "$ref": "#/$defs/artifact_reference" },
+    "decided_at_ledger_position": { "type": "integer", "minimum": 0 },
+    "decided_at": { "type": "string", "format": "date-time" },
+    "decided_by": { "$ref": "#/$defs/human_principal" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "decision": { "enum": ["rejected", "deferred"] } }, "required": ["decision"] },
+      "then": {
+        "properties": {
+          "authority_grant_refs": { "maxItems": 0 },
+          "deployment_scope": { "type": "null" }
+        }
+      },
+      "else": {
+        "properties": {
+          "independent_review_refs": { "minItems": 1 },
+          "authority_grant_refs": { "minItems": 1 },
+          "deployment_scope": { "type": "object" }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "decision": { "const": "approved_shadow" } }, "required": ["decision"] },
+      "then": {
+        "properties": {
+          "deployment_scope": { "properties": { "environment": { "const": "shadow" } } }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "decision": { "const": "approved_canary" } }, "required": ["decision"] },
+      "then": {
+        "properties": {
+          "deployment_scope": { "properties": { "environment": { "const": "canary" } } }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "decision": { "const": "approved_rollout" } }, "required": ["decision"] },
+      "then": {
+        "properties": {
+          "deployment_scope": { "properties": { "environment": { "const": "bounded_production" } } }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "identifier": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$" },
+    "digest": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+    "decimal": { "type": "string", "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$" },
+    "fraction": { "type": "string", "pattern": "^(0(?:\\.[0-9]+)?|1(?:\\.0+)?)$" },
+    "unit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["system", "code"],
+      "properties": {
+        "system": { "type": "string", "minLength": 1 },
+        "code": { "type": "string", "minLength": 1 }
+      }
+    },
+    "quantity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "unit"],
+      "properties": {
+        "value": { "$ref": "#/$defs/decimal" },
+        "unit": { "$ref": "#/$defs/unit" }
+      }
+    },
+    "artifact_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifact_id", "digest", "media_type"],
+      "properties": {
+        "artifact_id": { "$ref": "#/$defs/identifier" },
+        "digest": { "$ref": "#/$defs/digest" },
+        "media_type": { "type": "string", "minLength": 1 }
+      }
+    },
+    "string_array": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "human_principal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["principal_id", "principal_type", "authority_grant_ref"],
+      "properties": {
+        "principal_id": { "$ref": "#/$defs/identifier" },
+        "principal_type": { "const": "human" },
+        "authority_grant_ref": { "$ref": "#/$defs/identifier" }
+      }
+    }
+  }
+}

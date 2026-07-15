@@ -40,27 +40,28 @@ Every accepted state-changing command executes through the Odeya kernel applicat
 
 One command transaction performs, in order:
 
-1. decode the command under its pinned schema and canonicalization profile;
-2. bind `command_id` to the canonical command-payload digest;
+1. decode the envelope under its exact pinned schema and resolve the immutable command-registry snapshot, separate activation proof, member record, payload schema bytes, and canonicalization profile—never `latest`;
+2. verify membership, activation branch/scope/position, duplicated record/envelope metadata, and payload schema; recompute the domain-separated request digest and bind `command_id` to the entire canonical request identity;
 3. load the owning aggregate at `expected_ledger_position` from canonical facts or a verified snapshot plus its event suffix;
-4. validate schema, semantic invariants, current state, referenced immutable identities, policy, authority, replay rules, budget, and one-writer lease;
-5. derive the complete event batch with no network, model, filesystem, scheduler, object-store, or provider call inside the transaction;
-6. append the immutable event bytes and advance the aggregate head using compare-and-set;
-7. record authority consumption, resource reservation, command result, and any invariant-bearing canonical relational records implied by that event batch;
-8. insert outbox records for required downstream delivery;
-9. commit once; and
-10. return the retained command result and committed ledger position.
+4. evaluate the exact local policy bundle/rules over the controlled-time and locked reference frontier, producing an immutable `allow | deny | indeterminate` PolicyDecision; callers never supply this record;
+5. validate semantic invariants, current state, referenced immutable identities, authority, replay rules, rights, risk, budget, and one-writer lease, retaining the CommandContractRecord-selected evidence records;
+6. derive the complete event batch and closed AdmissionEvidenceBundle with no network, model, filesystem, scheduler, object-store, or provider call inside the transaction;
+7. append the immutable event bytes and advance the aggregate head using compare-and-set;
+8. record the admission evidence, authority consumption, resource reservation, command result, and any invariant-bearing canonical relational records implied by that event batch;
+9. insert outbox records for required downstream delivery;
+10. commit once; and
+11. return the retained command result and committed ledger position.
 
 The commit is the linearization point. Before it, no domain transition happened. After it, the transition happened even if the process dies before replying.
 
-The event batch, command receipt, aggregate-head advance, authority consumption, resource reservation, and causally required outbox records are one database transaction. A failure rolls them all back. Network calls and long computation never occur while this transaction is open.
+The PolicyDecision, AdmissionEvidenceBundle and referenced decision/result records, event batch, command receipt, aggregate-head advance, authority consumption, resource reservation, and causally required outbox records are one database transaction. A failure rolls them all back. Network calls and long computation never occur while this transaction is open.
 
 ### Command idempotency
 
-`command_id` is globally unique within the command namespace and binds to actor, mission or owning aggregate, command type and version, and canonical payload digest.
+`command_id` is globally unique within the idempotency scope and binds to actor, mission or owning aggregate, command type/version/schema, exact registry snapshot/activation/member record, target positions, authority evidence, causal inputs, complete payload, and canonical request digest.
 
 - Repeating the same ID with the same identity and digest returns the original accepted, rejected, or duplicate result.
-- Reusing the ID with a different identity, aggregate, type, version, or payload digest is a conflict and possible security incident; it never executes as a new command.
+- Reusing the ID with a different identity, aggregate, type, version, or request digest is a pre-receipt conflict and possible security incident; it never executes or creates a second CommandReceipt.
 - A business retry after a genuine failed attempt receives a new `attempt_id`. It may reuse a provider idempotency key only when the external-effect contract explicitly permits it.
 - Rejection is retained as a canonical event only when the rejection is itself evidence-relevant, as defined by the command catalog.
 
@@ -130,6 +131,16 @@ The promotion command is idempotent. A crash after immutable materialization but
 
 If canonical registration commits and bytes are subsequently missing or corrupt, the reconciler marks the artifact unavailable/corrupt through a command, quarantines dependent use, and triggers claim/publication dependency review. It does not synthesize replacement bytes under the old digest.
 
+## Data-governance transaction boundaries
+
+Data possession and rights evidence do not share a transaction with authority by implication. `rights_assertion.record` commits only `rights_assertion.recorded`; that fact is permanently evidence-only. `data_use.decide` or `data_use.revoke` is a separate command against the exact asset and decision aggregate, current policy/frontier, assignment, purpose, recipient, provider/model, operation, and time. Any dependent access or effect still performs its own current-state admission.
+
+`data_exposure.record_intent` records a governed projection and stable external-effect identity but cannot dispatch. The command payload fixes `recording_intent_does_not_dispatch=true`. Actual disclosure follows the external-effect T1/dispatch/T2/T3 protocol. `data_exposure.observation_recorded` is an external observation; `data_exposure.settlement_recorded` is the admitted conclusion over one or more observations. A timeout, retry exhaustion, provider silence, or deletion never writes `confirmed_not_exposed`.
+
+Deletion spans canonical metadata, storage planes, providers, indexes, backups, and publications, so it is not one cross-system transaction. `deletion.open_case` and `deletion.record_progress` retain scope, holds, external observations, residuals, and scientific consequences. `deletion.close_case(completed)` is admitted only after the accepted verification rule reports every covered plane verified, no residual copy, required tombstone facts, and claim/publication consequence facts. The same canonical command cohort may append data-asset tombstone and dependency-invalidation facts when their simultaneous mutation is required. Storage/provider calls remain outside the transaction and are observed through stable effect identities.
+
+A legal hold command changes only the hold/destruction-pause aggregate. It never changes the data-use aggregate, creates a grant, or authorizes access. Release removes only the pause; any later processing still requires current data-use and action authority.
+
 ## Durable workflow substrate
 
 A Temporal-class system is a replaceable scheduler beneath Odeya-owned semantics.
@@ -159,6 +170,20 @@ Workflow callbacks are untrusted transport inputs. They are schema-validated, de
 
 The scheduler's internal retry policy may retry only activity classes that the Odeya work contract marks retryable. It cannot retry policy denial, protocol invalidity, suspected compromise, publication, irreversible physical action, or an ambiguous external write.
 
+## Resource reservation and settlement protocol
+
+A resource reservation is a child state machine owned by one `resource_budget` aggregate. Its vectors use a registered unit profile and are closed over non-fungible execution units, per-currency minor units, and five verification-capacity dimensions. Every transition is a canonical event cohort; a scheduler, worker, provider, or meter cannot mutate a hold directly.
+
+**R0 — reserve.** The admitting transaction rechecks the exact budget head and componentwise availability, then records `resource.reservation_created` with one immutable `reservation_id`, subject binding, estimate, ceiling, expiry, and required future start cohort. The ceiling becomes an active hold in the same commit as the command result and any authorization/assignment/intention facts that depend on it. Estimate is not usage, reservation is not dispatch, and no dimension may fund another.
+
+**R1 — claim at start.** The exact work, external-effect, or verification start transaction revalidates the reservation and atomically records `resource.reservation_claimed` with the complete named start cohort. The entire ceiling moves from active hold to claimed hold before work or exposure begins. Claim is a commitment boundary only: attempted, actual, billed, and refunded use remain unobserved. If cancellation, invalidation, revocation, or controlled-time expiry wins before R1, its cohort may record `resource.reservation_released` or `resource.reservation_expired` and return the exact ceiling. Nothing can claim that terminal reservation.
+
+**R2 — observe.** Meters, providers, instruments, and reviewed operator evidence submit immutable observations that the kernel records as `resource.usage_observed`. Attempted, actual, billed, and refunded axes remain distinct, each with explicit observed/missing/unavailable state. A missing callback, unavailable meter, or provider silence is not zero.
+
+**R3 — settle.** Only a claimed reservation with the required exact observations can record `resource.reservation_settled`. For each dimension, settlement proves `net = reserved_consumed + overage` and `ceiling = reserved_consumed + unused`; only `unused` returns to availability, `reserved_consumed` remains consumed, overage remains an explicit breach/liability, and the hold becomes zero. Money additionally proves `net = billed - refunded`; non-money uses actual use. Unknown usage cannot settle.
+
+A crash or recovery after R1 never rewinds to R0 and never releases capacity. The full ceiling stays held until exact evidence supports R3. This conservative rule prevents a restarted worker or dispatcher from double-claiming budget while the first attempt may still have consumed resources. Verification uses the same lifecycle: assignment/reservation, `verification.started`/claim, observed IV0–IV4 capacity use, and settlement are exact cohorts rather than a separate trust-budget mechanism.
+
 ## External-effect protocol
 
 An external effect is any action whose truth cannot be committed atomically with the Odeya ledger: paid provider invocation, repository write, message, publication, transfer, laboratory action, or physical actuation. Model inference and read-only acquisition may still create charge, privacy, or rate effects and therefore use the same pattern when declared consequential.
@@ -178,9 +203,13 @@ Every intended effect has an immutable `effect_id` bound to:
 
 ### Three-boundary protocol
 
-**T1 — authorize and intend.** A PostgreSQL command transaction validates the latest state, consumes or reserves the necessary grant and budget, creates the effect intent, and inserts a dispatch outbox record. No external call occurs. This commit means “authorized to attempt,” never “applied.”
+**T1 — authorize, reserve, and intend.** The `external_effect.authorize` command transaction validates the latest state, consumes any authority whose declared action ends at intent creation, records one or more exact `authority.grant_use_reserved` facts, reserves the resource/spend ceiling, records `external_effect.authorized`, and inserts a dispatch outbox record. The use reservation binds the grant, effect/request digest, destination, use count, expiry, and resource reservation. No external call occurs. This commit means “authorized and capacity reserved for a later dispatch claim,” never “grant consumed for dispatch” and never “applied.”
 
-**Dispatch — perform outside the database.** A dispatcher atomically claims an unstarted intent only while its dispatch preconditions remain valid, records the dispatch attempt, and calls the provider with the stable effect identity/idempotency key. The database transaction is closed before the network or physical call begins. Revocation prevents an unclaimed intent from dispatching; it cannot retroactively unsend an in-flight call, which remains subject to cancellation and reconciliation.
+For `effect_class=governed_processing_dispatch`, T1 additionally resolves—not merely shape-checks—the exact WorkContract, current authorized DataUseDecision set, non-dispatching DataExposure intent, provider-configuration observation, source/checkpoint frontier, purpose/recipient/provider/model/region/payload binding, and current policy/authority/resource input digests. WorkContract is a deterministic control artifact, never authority. Missing, denied, indeterminate, expired, revoked, stale, scope-incompatible, future-checkpoint, or unverified input rejects the command with no reservation, use, effect, outbox, or spend cohort.
+
+**Dispatch claim, then perform outside the database.** The `external_effect.start` dispatcher transaction claims an unstarted intent only while its exact reservation, assignment, grant, policy, expiry, budget, risk, and destination preconditions remain valid. It atomically records matching `authority.grant_used(consumption_point=dispatch_claim)` facts, marks the named reservations consumed, records `external_effect.started`, and commits before the network or physical call begins. A revocation, expiry, or other invalidation cohort that wins first records `authority.grant_use_reservation_released`, releases unused resource capacity, and prevents the claim; the effect may remain a retained but nondispatchable `authorized` intent until explicitly closed. An `external_effect.cancel` cohort additionally records `external_effect.cancelled_before_dispatch` in the same batch. A dispatch claim that wins first establishes an in-flight historical use; later revocation cannot retroactively unsend it, and the attempt remains subject to provider-native cancellation and reconciliation. A crash after claim but before a known call outcome is conservatively ambiguous.
+
+The governed-processing dispatch claim repeats the complete current governance/frontier/provider/resource check inside its own transaction and proves the authorize/start effect class and all immutable bindings equal. Historical authorization does not freeze a mutable right, policy, provider configuration, resource ceiling, or source frontier. Only after the claim cohort commits may an adapter expose bytes or incur provider spend.
 
 **T2 — record observation.** The adapter retains the provider response, error, charge observation, and receipt as evidence and submits a command. A positive synchronous receipt advances only as far as the provider-specific evidence rule permits. A timeout or lost response becomes `completion_unknown`; it never becomes `confirmed_not_applied`.
 
@@ -191,6 +220,7 @@ Reconciliation is a process axis, not a polarity-free scientific outcome. The fi
 ### Retry and duplicate-cost rules
 
 - A pre-dispatch failure may be retried under the same intent while authority, expiry, lease, and budget remain valid.
+- A failure before dispatch claim may reuse the still-active exact reservation; it cannot create a second reservation or change payload/destination. A reservation released, expired, cancelled, or covered by revocation cannot be revived.
 - After a call may have crossed the provider boundary, automatic retry stops unless the accepted provider contract proves the same idempotency key converges on one effect and the reconciliation rule says replay is safe.
 - A provider that deduplicates writes may still duplicate charges; charge settlement is observed separately.
 - Every dispatch attempt and observed cost remains retained, including failed and duplicate attempts.
@@ -202,12 +232,20 @@ Leases grant temporary proposal/execution opportunity; they do not grant direct 
 
 Grant revocation and dispatch claiming race at a defined database commit point:
 
-- revocation before an intent is claimed prevents dispatch;
-- a claim committed first establishes an in-flight attempt that revocation cannot erase;
+- revocation before the dispatch-bound use reservation is claimed releases/invalidates that reservation and prevents dispatch;
+- a dispatch claim and `authority.grant_used(consumption_point=dispatch_claim)` fact commit together; a claim committed first establishes an in-flight attempt that revocation cannot erase;
 - revocation still blocks subsequent attempts and triggers best-effort cancellation where supported;
 - the actual external outcome remains unknown until observed or reconciled.
 
 High-consequence domains must choose controls that bound the in-flight window, such as short dispatch leases, local interlocks, two-person authorization, provider-native cancellation, or no autonomous dispatch. The transaction model alone is not a physical safety case.
+
+## Recovery-control transaction boundaries
+
+Recovery facts use a dedicated global `recovery` stream and never borrow a mission ID. Checkpoint proposal, checkpoint seal, witness observation, and consistency failure are separate commands/facts. Backup write, verification, and recoverability are separate external observations; a successful earlier axis cannot be copied into a later one.
+
+Restore preparation occurs in an isolated environment without production-effect credentials. `restore.record_report` commits only the immutable report reference and `authority_effect=no_service_reopen`. `recovery.record_decision` is a separate quorum-owned command over the exact report and independently established current-security frontier. Even that decision does not itself mutate service control: `recovery.change_service_scope` performs the current-state compare-and-set and keeps publication, spending, R2+ effects, and physical actions disabled.
+
+If the frontier is incomplete/indeterminate, claim-bearing bytes are missing/corrupt, or checkpoint views diverge, the only legal control transition is isolation/quarantine. `ledger.record_fork` records every known branch without selection. `ledger.begin_epoch` requires a constitutional recovery decision and atomically records the new epoch identity plus non-reuse boundary; no wall clock, mutable alias, or restore-report recommendation participates in branch choice.
 
 ## Crash and ambiguity matrix
 
@@ -227,7 +265,12 @@ High-consequence domains must choose controls that bound the in-flight window, s
 | worker completes but callback dies | staged outputs and/or scheduler history; no Odeya completion event | resend the same completion command; verify staged artifacts | scheduler completion advanced science |
 | object missing after registration | canonical artifact identity but unavailable bytes | fail closed, record corruption/unavailability, inspect dependents, restore only exact verified bytes | metadata proves bytes exist |
 | projection crashes or lags | canonical ledger intact; disclosed projection position stale | replay from checkpoint/event ledger and verify digest | stale UI state is current |
-| effect authorized, before dispatch | committed intent and outbox; no effect evidence | dispatch if still claimable or revoke/cancel intent | authorization means applied |
+| reservation created, before its start claim | active reservation and exact ceiling hold; no start or usage evidence | claim only with the complete current start cohort, or release/expire pre-claim | reservation means work started or resources were used |
+| after reservation claim, before worker/provider action | claimed reservation and full ceiling hold; actual use unobserved | preserve hold, inspect stable attempt/effect identity, then observe and settle | crash permits pre-claim release or actual use is zero |
+| usage meter/callback unavailable | claimed reservation; explicit unavailable/missing observation axis; full hold | obtain admissible evidence or remain blocked/claimed | absent measurement is zero or enough to settle |
+| usage observation committed, before settlement commit | claimed reservation plus immutable observation refs; full hold | retry the same settlement command against exact observations | observation alone released capacity or a partial settlement committed |
+| effect authorized/reserved, before dispatch claim | committed intent, exact active use/resource reservations, and outbox; no dispatch/effect evidence | claim+consume only after current revalidation, or revoke/cancel/release reservation | authorization/reservation means grant consumed, dispatch started, or effect applied |
+| after dispatch claim/use commit, before provider call or observable response | in-flight attempt and consumed grant use; call crossing is uncertain after crash | no blind retry; inspect adapter/provider evidence and reconcile by stable identity | process death means call definitely did or did not cross |
 | provider accepts effect, adapter dies before receipt commit | in-flight/`completion_unknown`; provider may hold effect | stop unsafe retry; reconcile by stable effect/provider identity | timeout means not applied |
 | response recorded, command acknowledgement lost | observation event and command receipt may already exist | repeat same observation command ID | a second effect is required |
 | grant revokes while provider call is in flight | immutable dispatch-before-revoke ordering; outcome unsettled | cancel if possible, reconcile, block further attempts | revocation undid the call |
@@ -258,6 +301,19 @@ Every row in this matrix becomes a transition trace and, after implementation au
 16. Projection position and freshness are visible. A stale projection cannot authorize a consequential command.
 17. Compensation appends facts; committed events and prior publications are never rewritten.
 18. Mission close cannot leave active leases, dispatchable intents, ambiguous external effects, unsealed handoff, or unresolved integrity failures.
+19. A rights assertion changes no data-use authority; only an exact admitted data-use decision can authorize a bounded use.
+20. Exposure intent changes no external world. Unknown exposure remains unknown until separately settled from retained evidence.
+21. Completed deletion cannot retain residual copies or allow the same asset identity to reappear as admitted after restore.
+22. A legal hold changes destruction permission only and never creates read, processing, training, verification, or disclosure authority.
+23. Backup write, verification, and recoverability observations remain separate and cannot be transitively promoted.
+24. A restore report changes no service scope; recovery decision and service-scope application are separate canonical commits.
+25. Incomplete current-policy frontier, missing C2 bytes, or a ledger fork forces isolation/quarantine.
+26. A new epoch is constitutional and identity-non-reusing; wall-clock branch selection and automatic history merge are forbidden.
+27. Reservation creation and claim each bind one exact budget head, subject, ceiling, and complete cohort; neither implies actual use.
+28. Release and expiry are pre-claim only. Crash, recovery, timeout, callback loss, and `completion_unknown` cannot release a claimed ceiling.
+29. Settlement requires exact observations and preserves componentwise net/ceiling conservation; missing or unavailable values never become zero.
+30. Execution units, currencies, and verification-capacity dimensions cannot convert, compensate, or silently net against one another.
+31. A verification start claims the exact five-dimensional reservation selected at assignment; claim-bearing verification cannot begin on unreserved or mismatched capacity.
 
 ## Consistency, backup, and recovery obligations
 

@@ -19,6 +19,7 @@ The evidence argues against one immortal chat context, an unstructured agent swa
 | Orchestration | Supervisor/subagent systems help parallel breadth but cost much more and can harm sequential work | Central mission supervisor; selective parallelism; one writer per mutable stage |
 | Long horizons | Durable logs, checkpoints, progress artifacts, clean context resets, budgets, and stopping conditions | Session is durable state, not a context window |
 | Scientific reasoning | Multi-agent hypothesis generation and ranking are promising | Use debate and tournaments for candidate selection, never truth |
+| Epistemic conduct | Correct-looking outcomes can coexist with ignored evidence and weak refutation response | Retain typed evidence dispositions and belief-state changes; evaluate process and outcome separately |
 | Experiment loops | Generate/execute/score/evolve excels when the objective is executable | Prefer deterministic adapters and oracles; narrow claims when judgment remains |
 | Memory | Structured world models extend horizon but still contain material errors | Claim-evidence graph is useful; independent verification remains mandatory |
 | Evaluation | Outcome, harness, environment, grader, and inference budget all change measured capability | Version and report the whole system plus resource curves |
@@ -60,6 +61,16 @@ Google's ERA and AlphaEvolve show the power of generate-execute-score-evolve whe
 
 ## Evaluation and research validity
 
+A 2026 preprint spanning more than 25,000 scientific-agent runs reports a sharp outcome/process gap: the base model dominated the scaffold in explained variation, material evidence was often ignored, and refutation-driven revision was uncommon. The exact measurements are study-specific, but the architectural falsifier is general: Odeya cannot infer scientific conduct from a successful final artifact or assume that a better scaffold repairs a model's epistemic failures. [AI scientists produce results without reasoning scientifically](https://arxiv.org/abs/2604.18805)
+
+A separate 2026 preprint evaluates scientific-conclusion synthesis against expert systematic-review conclusions. Under its controlled clean-room harness, the best evaluated deep-research agent reached factual F1 `0.337`; performance fell relative to unconstrained access, and incomplete or contradictory conclusions remained common. The benchmark and automated evaluator require their own validation, but the architecture lesson is load-bearing: access to a reference-like artifact can inflate apparent synthesis, so Odeya must separate retrieval success, atomic-fact precision/recall, contradiction rate, coverage, and clean-room leakage. [Can AI Agents Synthesize Scientific Conclusions?](https://arxiv.org/abs/2606.11337)
+
+PseudoBench, also a 2026 preprint, reports that tested auto-research systems often complied with pseudoscientific premises and that the strongest reported resistance was only `27.4%`. Its exact benchmark scope is limited, but it identifies a distinct failure mode: better prose can increase the credibility of a false premise. Odeya therefore treats premise challenge, refusal, and evidence-class admissibility as first-class gates rather than rewarding report persuasiveness. [PseudoBench](https://arxiv.org/abs/2606.18060)
+
+OpenAI's LifeSciBench and GeneBench-Pro independently move evaluation toward incomplete evidence, artifact use, ambiguity, analysis-path revision, and consequential judgment. They are still bounded benchmarks, not proof of end-to-end scientific autonomy. [OpenAI: LifeSciBench](https://openai.com/index/introducing-life-sci-bench/), [OpenAI: GeneBench-Pro](https://openai.com/index/introducing-genebench-pro/)
+
+The 2026 Engineering of Science proposal identifies the verification-cost imbalance created by cheap generation and argues for typed claim/evidence/assumption graphs as a verification interface. It is a position paper and proof of concept rather than validation, but it reinforces Odeya's decision to make the epistemic graph local and challengeable rather than prose-only. [Toward an Engineering of Science](https://arxiv.org/abs/2605.10425)
+
 Anthropic's agent-evaluation guidance emphasizes outcomes over self-report, multiple trials, validated graders, transcript review, and distinct capability and regression suites. Research agents need groundedness, coverage, and source-quality evaluation in addition to task completion. [Anthropic: Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents)
 
 Infrastructure is an experimental variable: Anthropic found material benchmark movement from resource configuration alone. [Anthropic: Quantifying infrastructure noise](https://www.anthropic.com/engineering/infrastructure-noise)
@@ -74,7 +85,7 @@ Relevant task suites include [PaperBench](https://openai.com/index/paperbench/),
 
 Nature's Registered Reports model is a useful institutional precedent: methods and analysis are reviewed before outcomes are known, reducing positive-result selection. [Nature: Registered Reports](https://www.nature.com/nature/for-authors/registered-reports)
 
-**Odeya decision:** evaluate components, stages, missions, scientific value, operations, and safety; use public plus private holdouts, expert baselines, multiple seeds, exact system versions, resource curves, and real replication.
+**Odeya decision:** evaluate components, stages, missions, scientific value, observable epistemic conduct, operations, and safety; use public plus private holdouts, clean-room variants, expert baselines, atomic-fact precision/recall and contradiction/coverage audits, premise-challenge and pseudoscience-refusal cases, multiple seeds, exact system versions, resource curves, and real replication. Reserve verification capacity before admitting claim-bearing generation.
 
 ## Deterministic tools and containment
 
@@ -115,6 +126,7 @@ Relevant external anchors include the [NIST AI Risk Management Framework](https:
 - claim-level provenance and independent re-execution;
 - least-privilege sandboxed workers;
 - private holdouts, human baselines, resource curves, and transcript/artifact audits.
+- typed evidence dispositions, contradiction retention, refutation response, and verification backpressure;
 
 ### Promising but emerging
 

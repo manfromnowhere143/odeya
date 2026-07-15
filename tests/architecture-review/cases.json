@@ -1,0 +1,201 @@
+{
+  "manifest_version": "0.1.0",
+  "description": "Independent-review structural cases. Every base fixture is deliberately non-accepted and conveys no reviewer, operator, Gate A, or implementation authority.",
+  "cases": [
+    {
+      "name": "architecture-candidate-valid-draft-unsigned",
+      "schema": "schemas/architecture-candidate-manifest.schema.json",
+      "fixture": "tests/architecture-review/fixtures/architecture-candidate-manifest.valid.json",
+      "expect": "valid"
+    },
+    {
+      "name": "architecture-candidate-review-ready-requires-complete-passing-signed-evidence",
+      "schema": "schemas/architecture-candidate-manifest.schema.json",
+      "fixture": "tests/architecture-review/fixtures/architecture-candidate-manifest.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/candidate_status", "value": "ready_for_independent_review"}
+      ]
+    },
+    {
+      "name": "architecture-candidate-requires-correction-fixtures",
+      "schema": "schemas/architecture-candidate-manifest.schema.json",
+      "fixture": "tests/architecture-review/fixtures/architecture-candidate-manifest.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "remove", "path": "/fixture_packages/correction"}
+      ]
+    },
+    {
+      "name": "architecture-candidate-requires-all-eight-review-lanes",
+      "schema": "schemas/architecture-candidate-manifest.schema.json",
+      "fixture": "tests/architecture-review/fixtures/architecture-candidate-manifest.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "remove", "path": "/review_scope/required_lanes/7"}
+      ]
+    },
+    {
+      "name": "architecture-finding-valid-open-high",
+      "schema": "schemas/architecture-finding.schema.json",
+      "fixture": "tests/architecture-review/fixtures/architecture-finding.valid.json",
+      "expect": "valid"
+    },
+    {
+      "name": "architecture-finding-high-cannot-be-accepted-limitation",
+      "schema": "schemas/architecture-finding.schema.json",
+      "fixture": "tests/architecture-review/fixtures/architecture-finding.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/disposition/state", "value": "accepted_limitation"},
+        {
+          "op": "replace",
+          "path": "/disposition/accepted_limitation",
+          "value": {
+            "evidence_ref": {"artifact_id": "fixture.false-acceptance", "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "media_type": "application/json"},
+            "residual_consequence": "A high authority defect would remain.",
+            "accepted_by": {"principal_id": "fixture.operator-not-daniel", "principal_type": "human"}
+          }
+        }
+      ]
+    },
+    {
+      "name": "architecture-finding-high-cannot-be-deferred-probe",
+      "schema": "schemas/architecture-finding.schema.json",
+      "fixture": "tests/architecture-review/fixtures/architecture-finding.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/disposition/state", "value": "deferred_probe"},
+        {
+          "op": "replace",
+          "path": "/disposition/deferred_probe",
+          "value": {
+            "probe_ref": {"artifact_id": "fixture.false-deferral", "digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "media_type": "application/json"},
+            "semantics_frozen": true,
+            "product_empirical_only": true
+          }
+        }
+      ]
+    },
+    {
+      "name": "architecture-finding-closure-requires-human-reviewed-evidence",
+      "schema": "schemas/architecture-finding.schema.json",
+      "fixture": "tests/architecture-review/fixtures/architecture-finding.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/disposition/state", "value": "closed"}
+      ]
+    },
+    {
+      "name": "architecture-finding-changed-candidate-requires-new-identity-impact-map-and-evidence",
+      "schema": "schemas/architecture-finding.schema.json",
+      "fixture": "tests/architecture-review/fixtures/architecture-finding.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/disposition/state", "value": "changed_candidate"}
+      ]
+    },
+    {
+      "name": "review-determination-valid-unable-to-determine",
+      "schema": "schemas/review-determination.schema.json",
+      "fixture": "tests/architecture-review/fixtures/review-determination.valid.json",
+      "expect": "valid"
+    },
+    {
+      "name": "review-determination-acceptance-rejects-indeterminate-independence-and-open-high",
+      "schema": "schemas/review-determination.schema.json",
+      "fixture": "tests/architecture-review/fixtures/review-determination.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/result", "value": "accept_for_gate_a"}
+      ]
+    },
+    {
+      "name": "review-determination-high-finding-cannot-be-recorded-as-accepted-limitation",
+      "schema": "schemas/review-determination.schema.json",
+      "fixture": "tests/architecture-review/fixtures/review-determination.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/finding_dispositions/0/state", "value": "accepted_limitation"}
+      ]
+    },
+    {
+      "name": "review-determination-carry-forward-requires-prior-identity-change-evidence-and-human-signature",
+      "schema": "schemas/review-determination.schema.json",
+      "fixture": "tests/architecture-review/fixtures/review-determination.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/carry_forward/mode", "value": "signed_outside_lane"}
+      ]
+    },
+    {
+      "name": "operator-architecture-decision-valid-not-accepted",
+      "schema": "schemas/operator-architecture-decision.schema.json",
+      "fixture": "tests/architecture-review/fixtures/operator-architecture-decision.valid.json",
+      "expect": "valid"
+    },
+    {
+      "name": "operator-architecture-decision-cannot-accept-incomplete-lanes-or-open-high",
+      "schema": "schemas/operator-architecture-decision.schema.json",
+      "fixture": "tests/architecture-review/fixtures/operator-architecture-decision.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/decision", "value": "accepted_for_gate_a"}
+      ]
+    },
+    {
+      "name": "operator-architecture-decision-not-accepted-cannot-advance-to-gate-b",
+      "schema": "schemas/operator-architecture-decision.schema.json",
+      "fixture": "tests/architecture-review/fixtures/operator-architecture-decision.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/authorized_next_state", "value": "gate_b_probes_only"}
+      ]
+    },
+    {
+      "name": "operator-architecture-decision-lane-result-must-bind-common-candidate",
+      "schema": "schemas/operator-architecture-decision.schema.json",
+      "fixture": "tests/architecture-review/fixtures/operator-architecture-decision.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/lane_results/security_authority_cryptography/candidate_binding", "value": "different_candidate"}
+      ]
+    },
+    {
+      "name": "operator-architecture-decision-never-authorizes-runtime-implementation",
+      "schema": "schemas/operator-architecture-decision.schema.json",
+      "fixture": "tests/architecture-review/fixtures/operator-architecture-decision.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/implementation_lock/runtime_product_implementation_authorized", "value": true}
+      ]
+    },
+    {
+      "name": "operator-architecture-decision-never-authorizes-gate-c-increment",
+      "schema": "schemas/operator-architecture-decision.schema.json",
+      "fixture": "tests/architecture-review/fixtures/operator-architecture-decision.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/implementation_lock/gate_c_increment_authorized", "value": true}
+      ]
+    },
+    {
+      "name": "operator-architecture-decision-rejects-high-accepted-limitation",
+      "schema": "schemas/operator-architecture-decision.schema.json",
+      "fixture": "tests/architecture-review/fixtures/operator-architecture-decision.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "add",
+          "path": "/review_compilation/accepted_limitations/0",
+          "value": {
+            "finding_ref": {"id": "finding.fixture.open-high", "version": 1, "digest": "sha256:c000000000000000000000000000000000000000000000000000000000000000"},
+            "severity": "high",
+            "limitation_text": "A high defect cannot be accepted at Gate A.",
+            "evidence_ref": {"artifact_id": "fixture.false-acceptance", "digest": "sha256:d000000000000000000000000000000000000000000000000000000000000000", "media_type": "application/json"}
+          }
+        }
+      ]
+    }
+  ]
+}

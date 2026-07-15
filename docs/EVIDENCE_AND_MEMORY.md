@@ -27,6 +27,8 @@ Derived state:
 
 Derived state can be deleted and rebuilt. It never becomes more authoritative because it is easier to retrieve.
 
+Private cockpit, thesis intake, public research, and static architecture fixtures use separate [projection contracts](PROJECTION_CONTRACTS.md). Sharing a renderer or component cannot merge their audience, rights, freshness, or authority boundaries.
+
 ## Event ledger
 
 Each event includes:
@@ -77,7 +79,7 @@ bounded_to
 withheld_by
 ```
 
-Every edge names the activity, scope, confidence or decision rule, and evidence responsible for it. A graph path is inspectable; a similarity score is not a proof path.
+Every edge names the activity, scope, typed evidence-measure or decision-rule identity, and evidence responsible for it. Generic confidence is forbidden. A graph path is inspectable; a similarity score is not a proof path.
 
 ## Claim objects and orthogonal projections
 
@@ -109,6 +111,8 @@ Artifacts are stored by digest and media type with:
 - links to every claim and publication that depends on them.
 
 Large scientific tables use Arrow or Parquet where suitable. RO-Crate packages export the minimum coherent research object: protocol, code, data references, workflow, results, provenance, and license metadata.
+
+The non-lossy mapping and export boundary are specified in [Provenance and Research-Package Export Profile](PROVENANCE_EXPORT_PROFILE.md).
 
 ## Research memory layers
 

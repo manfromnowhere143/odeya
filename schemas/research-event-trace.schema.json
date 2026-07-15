@@ -1,0 +1,1824 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:odeya:schema:research-event-trace:0.3.0",
+  "title": "Odeya ResearchEvent Replay Trace",
+  "description": "Architecture-time replay vector binding an ordered event sequence to expected scientific, authority, data-governance, and recovery axes plus forbidden inferences. Relational ordering, event identity, and reducer correctness still require independent semantic validators.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "trace_id",
+    "purpose",
+    "stream_id",
+    "stream_type",
+    "mission_scope",
+    "reducer_set",
+    "steps",
+    "expected_state",
+    "forbidden_inferences"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.3.0"
+    },
+    "trace_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "purpose": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1000
+    },
+    "stream_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "stream_type": {
+      "enum": [
+        "portfolio",
+        "proposal",
+        "mission",
+        "authority_root",
+        "incident",
+        "learning",
+        "data_governance",
+        "recovery"
+      ]
+    },
+    "mission_scope": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/identifier"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "reducer_set": {
+      "$ref": "#/$defs/versioned_identity"
+    },
+    "steps": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/step"
+      }
+    },
+    "command_attempts": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/command_attempt_observation"
+      }
+    },
+    "expected_state": {
+      "$ref": "#/$defs/expected_state"
+    },
+    "forbidden_inferences": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/identifier"
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "stream_type": {
+            "enum": [
+              "mission",
+              "incident",
+              "learning",
+              "data_governance"
+            ]
+          }
+        },
+        "required": [
+          "stream_type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "mission_scope": {
+            "$ref": "#/$defs/identifier"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "expected_state": {
+            "properties": {
+              "run_validity": {
+                "const": "invalid"
+              }
+            }
+          }
+        },
+        "required": [
+          "expected_state"
+        ]
+      },
+      "then": {
+        "properties": {
+          "expected_state": {
+            "properties": {
+              "scientific_outcome": {
+                "const": "not_adjudicated"
+              },
+              "claim_eligibility": {
+                "enum": [
+                  "not_applicable",
+                  "ineligible"
+                ]
+              },
+              "publication_release": {
+                "not": {
+                  "const": "released"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "expected_state": {
+            "properties": {
+              "measurement": {
+                "const": "no_valid_measurement"
+              }
+            }
+          }
+        },
+        "required": [
+          "expected_state"
+        ]
+      },
+      "then": {
+        "properties": {
+          "expected_state": {
+            "properties": {
+              "scientific_outcome": {
+                "const": "not_adjudicated"
+              },
+              "claim_eligibility": {
+                "enum": [
+                  "not_applicable",
+                  "ineligible"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "expected_state": {
+            "properties": {
+              "scientific_outcome": {
+                "const": "null_result"
+              }
+            }
+          }
+        },
+        "required": [
+          "expected_state"
+        ]
+      },
+      "then": {
+        "properties": {
+          "expected_state": {
+            "properties": {
+              "run_validity": {
+                "const": "valid"
+              },
+              "measurement": {
+                "const": "valid_measurement"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "expected_state": {
+            "properties": {
+              "verification_status": {
+                "const": "disputed"
+              }
+            }
+          }
+        },
+        "required": [
+          "expected_state"
+        ]
+      },
+      "then": {
+        "properties": {
+          "expected_state": {
+            "properties": {
+              "claim_eligibility": {
+                "enum": [
+                  "not_applicable",
+                  "ineligible"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "expected_state": {
+            "properties": {
+              "external_effect_settlement": {
+                "const": "completion_unknown"
+              }
+            }
+          }
+        },
+        "required": [
+          "expected_state"
+        ]
+      },
+      "then": {
+        "properties": {
+          "expected_state": {
+            "properties": {
+              "publication_release": {
+                "not": {
+                  "const": "released"
+                }
+              },
+              "retry_disposition": {
+                "const": "forbidden_until_reconciled"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "expected_state": {
+            "properties": {
+              "publication_release": {
+                "const": "released"
+              }
+            }
+          }
+        },
+        "required": [
+          "expected_state"
+        ]
+      },
+      "then": {
+        "properties": {
+          "expected_state": {
+            "properties": {
+              "claim_eligibility": {
+                "const": "eligible"
+              },
+              "external_effect_settlement": {
+                "const": "confirmed_applied"
+              },
+              "channel_observation_refs": {
+                "minItems": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "expected_state": {
+            "properties": {
+              "dispatch_claim": {
+                "const": "claimed"
+              }
+            }
+          }
+        },
+        "required": [
+          "expected_state"
+        ]
+      },
+      "then": {
+        "properties": {
+          "expected_state": {
+            "properties": {
+              "grant_use_reservation": {
+                "const": "consumed"
+              },
+              "external_effect_settlement": {
+                "enum": [
+                  "started",
+                  "confirmed_applied",
+                  "confirmed_not_applied",
+                  "completion_unknown"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "expected_state": {
+            "properties": {
+              "grant_use_reservation": {
+                "const": "consumed"
+              }
+            }
+          }
+        },
+        "required": [
+          "expected_state"
+        ]
+      },
+      "then": {
+        "properties": {
+          "expected_state": {
+            "properties": {
+              "dispatch_claim": {
+                "const": "claimed"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "expected_state": {
+            "properties": {
+              "grant_use_reservation": {
+                "enum": [
+                  "released",
+                  "expired",
+                  "cancelled"
+                ]
+              }
+            }
+          }
+        },
+        "required": [
+          "expected_state"
+        ]
+      },
+      "then": {
+        "properties": {
+          "expected_state": {
+            "properties": {
+              "dispatch_claim": {
+                "const": "not_claimed"
+              },
+              "external_effect_settlement": {
+                "enum": [
+                  "authorized",
+                  "cancelled_before_dispatch"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "expected_state": {
+            "properties": {
+              "external_effect_settlement": {
+                "const": "cancelled_before_dispatch"
+              }
+            }
+          }
+        },
+        "required": [
+          "expected_state"
+        ]
+      },
+      "then": {
+        "properties": {
+          "expected_state": {
+            "properties": {
+              "grant_use_reservation": {
+                "enum": [
+                  "released",
+                  "expired",
+                  "cancelled"
+                ]
+              },
+              "dispatch_claim": {
+                "const": "not_claimed"
+              },
+              "retry_disposition": {
+                "const": "not_applicable"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "expected_state": {
+            "properties": {
+              "grant_use_reservation": {
+                "const": "active"
+              }
+            }
+          }
+        },
+        "required": [
+          "expected_state"
+        ]
+      },
+      "then": {
+        "properties": {
+          "expected_state": {
+            "properties": {
+              "dispatch_claim": {
+                "const": "not_claimed"
+              },
+              "external_effect_settlement": {
+                "const": "authorized"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "expected_state": {
+            "properties": {
+              "data_use_authority": {
+                "enum": [
+                  "missing",
+                  "denied",
+                  "indeterminate",
+                  "revoked",
+                  "expired"
+                ]
+              }
+            },
+            "required": [
+              "data_use_authority"
+            ]
+          }
+        },
+        "required": [
+          "expected_state"
+        ]
+      },
+      "then": {
+        "properties": {
+          "expected_state": {
+            "properties": {
+              "exposure_state": {
+                "enum": [
+                  "not_applicable",
+                  "not_intended"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "expected_state": {
+            "properties": {
+              "exposure_state": {
+                "const": "completion_unknown"
+              }
+            },
+            "required": [
+              "exposure_state"
+            ]
+          }
+        },
+        "required": [
+          "expected_state"
+        ]
+      },
+      "then": {
+        "properties": {
+          "expected_state": {
+            "properties": {
+              "data_use_authority": {
+                "not": {
+                  "const": "missing"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "expected_state": {
+            "properties": {
+              "deletion_state": {
+                "const": "completed"
+              }
+            },
+            "required": [
+              "deletion_state"
+            ]
+          }
+        },
+        "required": [
+          "expected_state"
+        ]
+      },
+      "then": {
+        "properties": {
+          "expected_state": {
+            "properties": {
+              "data_lifecycle": {
+                "const": "tombstoned"
+              },
+              "data_use_authority": {
+                "enum": [
+                  "missing",
+                  "denied",
+                  "revoked",
+                  "expired"
+                ]
+              },
+              "artifact_recovery": {
+                "not": {
+                  "const": "verified_present"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "expected_state": {
+            "properties": {
+              "security_frontier": {
+                "enum": [
+                  "missing",
+                  "incomplete",
+                  "indeterminate"
+                ]
+              }
+            },
+            "required": [
+              "security_frontier"
+            ]
+          }
+        },
+        "required": [
+          "expected_state"
+        ]
+      },
+      "then": {
+        "properties": {
+          "expected_state": {
+            "properties": {
+              "recovery_control": {
+                "enum": [
+                  "isolated",
+                  "quarantined"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "expected_state": {
+            "properties": {
+              "artifact_recovery": {
+                "const": "missing_or_corrupt"
+              }
+            },
+            "required": [
+              "artifact_recovery"
+            ]
+          }
+        },
+        "required": [
+          "expected_state"
+        ]
+      },
+      "then": {
+        "properties": {
+          "expected_state": {
+            "properties": {
+              "recovery_control": {
+                "enum": [
+                  "isolated",
+                  "quarantined"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "expected_state": {
+            "properties": {
+              "ledger_integrity": {
+                "const": "fork_detected"
+              }
+            },
+            "required": [
+              "ledger_integrity"
+            ]
+          }
+        },
+        "required": [
+          "expected_state"
+        ]
+      },
+      "then": {
+        "properties": {
+          "expected_state": {
+            "properties": {
+              "recovery_control": {
+                "const": "quarantined"
+              },
+              "recovery_decision": {
+                "enum": [
+                  "not_applicable",
+                  "reject_restore",
+                  "remain_quarantined",
+                  "constitutional_new_epoch"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "expected_state": {
+            "properties": {
+              "ledger_integrity": {
+                "const": "new_epoch"
+              }
+            },
+            "required": [
+              "ledger_integrity"
+            ]
+          }
+        },
+        "required": [
+          "expected_state"
+        ]
+      },
+      "then": {
+        "properties": {
+          "expected_state": {
+            "properties": {
+              "recovery_decision": {
+                "const": "constitutional_new_epoch"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "expected_state": {
+            "properties": {
+              "restore_report": {
+                "enum": [
+                  "recorded_pass",
+                  "recorded_fail",
+                  "recorded_indeterminate"
+                ]
+              },
+              "recovery_decision": {
+                "const": "not_applicable"
+              }
+            },
+            "required": [
+              "restore_report",
+              "recovery_decision"
+            ]
+          }
+        },
+        "required": [
+          "expected_state"
+        ]
+      },
+      "then": {
+        "properties": {
+          "expected_state": {
+            "properties": {
+              "recovery_control": {
+                "enum": [
+                  "isolated",
+                  "quarantined"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "expected_state": {
+            "properties": {
+              "governed_processing_dispatch_admission": {
+                "enum": [
+                  "refused_missing_work_contract",
+                  "refused_stale_data_use",
+                  "refused_missing_exposure_intent",
+                  "refused_provider_configuration",
+                  "refused_policy",
+                  "refused_authority",
+                  "refused_resource",
+                  "refused_stale_frontier"
+                ]
+              }
+            },
+            "required": [
+              "governed_processing_dispatch_admission"
+            ]
+          }
+        },
+        "required": [
+          "expected_state"
+        ]
+      },
+      "then": {
+        "properties": {
+          "command_attempts": {
+            "contains": {
+              "properties": {
+                "command_type": {
+                  "enum": [
+                    "external_effect.authorize",
+                    "external_effect.start"
+                  ]
+                },
+                "admission_result": {
+                  "const": "rejected"
+                },
+                "grant_use_reservation_committed": {
+                  "const": false
+                },
+                "grant_use_committed": {
+                  "const": false
+                },
+                "external_effect_authorization_committed": {
+                  "const": false
+                },
+                "external_effect_start_committed": {
+                  "const": false
+                },
+                "resource_spend_committed": {
+                  "const": false
+                }
+              },
+              "required": [
+                "command_type",
+                "admission_result",
+                "grant_use_reservation_committed",
+                "grant_use_committed",
+                "external_effect_authorization_committed",
+                "external_effect_start_committed",
+                "resource_spend_committed"
+              ]
+            },
+            "minContains": 1
+          },
+          "expected_state": {
+            "properties": {
+              "external_effect_settlement": {
+                "enum": [
+                  "not_applicable",
+                  "not_intended",
+                  "cancelled_before_dispatch"
+                ]
+              },
+              "grant_use_reservation": {
+                "enum": [
+                  "not_applicable",
+                  "released",
+                  "expired",
+                  "cancelled"
+                ]
+              },
+              "dispatch_claim": {
+                "enum": [
+                  "not_applicable",
+                  "not_claimed"
+                ]
+              }
+            }
+          }
+        },
+        "required": [
+          "command_attempts"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "expected_state": {
+            "properties": {
+              "resource_accounting": {
+                "properties": {
+                  "reservation_state": {
+                    "const": "claimed"
+                  }
+                },
+                "required": [
+                  "reservation_state"
+                ]
+              }
+            },
+            "required": [
+              "resource_accounting"
+            ]
+          }
+        },
+        "required": [
+          "expected_state"
+        ]
+      },
+      "then": {
+        "properties": {
+          "expected_state": {
+            "properties": {
+              "resource_accounting": {
+                "properties": {
+                  "ceiling_hold": {
+                    "const": "full_reserved_ceiling"
+                  },
+                  "settlement": {
+                    "const": "unsettled"
+                  },
+                  "conversion_policy": {
+                    "const": "forbidden_componentwise"
+                  },
+                  "dimension_compensation": {
+                    "const": "forbidden"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "expected_state": {
+            "properties": {
+              "resource_accounting": {
+                "properties": {
+                  "reservation_state": {
+                    "enum": [
+                      "released",
+                      "expired"
+                    ]
+                  }
+                },
+                "required": [
+                  "reservation_state"
+                ]
+              }
+            },
+            "required": [
+              "resource_accounting"
+            ]
+          }
+        },
+        "required": [
+          "expected_state"
+        ]
+      },
+      "then": {
+        "properties": {
+          "expected_state": {
+            "properties": {
+              "resource_accounting": {
+                "properties": {
+                  "ceiling_hold": {
+                    "const": "zero"
+                  },
+                  "actual_usage_status": {
+                    "const": "not_observed_preclaim"
+                  },
+                  "settlement": {
+                    "const": "not_applicable"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "expected_state": {
+            "properties": {
+              "resource_accounting": {
+                "properties": {
+                  "reservation_state": {
+                    "const": "settled"
+                  }
+                },
+                "required": [
+                  "reservation_state"
+                ]
+              }
+            },
+            "required": [
+              "resource_accounting"
+            ]
+          }
+        },
+        "required": [
+          "expected_state"
+        ]
+      },
+      "then": {
+        "properties": {
+          "expected_state": {
+            "properties": {
+              "resource_accounting": {
+                "properties": {
+                  "ceiling_hold": {
+                    "const": "zero"
+                  },
+                  "actual_usage_status": {
+                    "const": "observed"
+                  },
+                  "observation_axes": {
+                    "contains": {
+                      "const": "actual_usage"
+                    }
+                  },
+                  "settlement": {
+                    "const": "settled_exact"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "expected_state": {
+            "properties": {
+              "resource_accounting": {
+                "properties": {
+                  "actual_usage_status": {
+                    "const": "unknown"
+                  }
+                },
+                "required": [
+                  "actual_usage_status"
+                ]
+              }
+            },
+            "required": [
+              "resource_accounting"
+            ]
+          }
+        },
+        "required": [
+          "expected_state"
+        ]
+      },
+      "then": {
+        "properties": {
+          "expected_state": {
+            "properties": {
+              "resource_accounting": {
+                "properties": {
+                  "reservation_state": {
+                    "const": "claimed"
+                  },
+                  "ceiling_hold": {
+                    "const": "full_reserved_ceiling"
+                  },
+                  "settlement": {
+                    "const": "unsettled"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "expected_state": {
+            "properties": {
+              "resource_accounting": {
+                "properties": {
+                  "verification_capacity": {
+                    "const": "claimed"
+                  }
+                },
+                "required": [
+                  "verification_capacity"
+                ]
+              }
+            },
+            "required": [
+              "resource_accounting"
+            ]
+          }
+        },
+        "required": [
+          "expected_state"
+        ]
+      },
+      "then": {
+        "properties": {
+          "expected_state": {
+            "properties": {
+              "resource_accounting": {
+                "properties": {
+                  "reservation_state": {
+                    "const": "claimed"
+                  },
+                  "ceiling_hold": {
+                    "const": "full_reserved_ceiling"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "expected_state": {
+            "properties": {
+              "resource_accounting": {
+                "properties": {
+                  "verification_capacity": {
+                    "const": "settled"
+                  }
+                },
+                "required": [
+                  "verification_capacity"
+                ]
+              }
+            },
+            "required": [
+              "resource_accounting"
+            ]
+          }
+        },
+        "required": [
+          "expected_state"
+        ]
+      },
+      "then": {
+        "properties": {
+          "expected_state": {
+            "properties": {
+              "resource_accounting": {
+                "properties": {
+                  "reservation_state": {
+                    "const": "settled"
+                  },
+                  "settlement": {
+                    "const": "settled_exact"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]*$"
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "versioned_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "version",
+        "digest"
+      ],
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        }
+      }
+    },
+    "step": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ordinal",
+        "event_id",
+        "event_type",
+        "event_version",
+        "stream_position",
+        "aggregate_type",
+        "aggregate_id",
+        "aggregate_version",
+        "event_digest",
+        "expected_axis_changes"
+      ],
+      "properties": {
+        "ordinal": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "event_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "event_type": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$"
+        },
+        "event_version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "stream_position": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "aggregate_type": {
+          "$ref": "#/$defs/identifier"
+        },
+        "aggregate_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "aggregate_version": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "event_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "expected_axis_changes": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "axis",
+              "from",
+              "to"
+            ],
+            "properties": {
+              "axis": {
+                "$ref": "#/$defs/identifier"
+              },
+              "from": {
+                "$ref": "#/$defs/identifier"
+              },
+              "to": {
+                "$ref": "#/$defs/identifier"
+              }
+            }
+          }
+        }
+      }
+    },
+    "command_attempt_observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "command_id",
+        "command_type",
+        "command_schema_id",
+        "canonical_request_digest",
+        "source_stream_position",
+        "receipt_ref",
+        "admission_result",
+        "rejection_code",
+        "grant_use_reservation_committed",
+        "grant_use_committed",
+        "external_effect_authorization_committed",
+        "external_effect_start_committed",
+        "resource_spend_committed"
+      ],
+      "properties": {
+        "command_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "command_type": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$"
+        },
+        "command_schema_id": {
+          "type": "string",
+          "pattern": "^urn:odeya:command-payload:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "canonical_request_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "source_stream_position": {
+          "type": "integer",
+          "minimum": -1
+        },
+        "receipt_ref": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "receipt_id",
+            "schema_id",
+            "digest"
+          ],
+          "properties": {
+            "receipt_id": {
+              "$ref": "#/$defs/identifier"
+            },
+            "schema_id": {
+              "const": "urn:odeya:schema:command-receipt:0.3.0"
+            },
+            "digest": {
+              "$ref": "#/$defs/digest"
+            }
+          }
+        },
+        "admission_result": {
+          "enum": [
+            "accepted",
+            "rejected",
+            "noop"
+          ]
+        },
+        "rejection_code": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/identifier"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "grant_use_reservation_committed": {
+          "type": "boolean"
+        },
+        "grant_use_committed": {
+          "type": "boolean"
+        },
+        "external_effect_authorization_committed": {
+          "type": "boolean"
+        },
+        "external_effect_start_committed": {
+          "type": "boolean"
+        },
+        "resource_spend_committed": {
+          "type": "boolean"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "admission_result": {
+                "const": "rejected"
+              }
+            },
+            "required": [
+              "admission_result"
+            ]
+          },
+          "then": {
+            "properties": {
+              "rejection_code": {
+                "$ref": "#/$defs/identifier"
+              },
+              "grant_use_reservation_committed": {
+                "const": false
+              },
+              "grant_use_committed": {
+                "const": false
+              },
+              "external_effect_authorization_committed": {
+                "const": false
+              },
+              "external_effect_start_committed": {
+                "const": false
+              },
+              "resource_spend_committed": {
+                "const": false
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "rejection_code": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "expected_state": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "run_validity",
+        "measurement",
+        "scientific_outcome",
+        "verification_status",
+        "claim_eligibility",
+        "publication_release",
+        "external_effect_settlement",
+        "grant_use_reservation",
+        "dispatch_claim",
+        "retry_disposition",
+        "channel_observation_refs",
+        "resource_accounting"
+      ],
+      "properties": {
+        "run_validity": {
+          "enum": [
+            "not_applicable",
+            "pending",
+            "valid",
+            "invalid"
+          ]
+        },
+        "measurement": {
+          "enum": [
+            "not_applicable",
+            "not_observed",
+            "valid_measurement",
+            "no_valid_measurement"
+          ]
+        },
+        "scientific_outcome": {
+          "enum": [
+            "not_adjudicated",
+            "supported_within_scope",
+            "contradicted",
+            "falsified",
+            "null_result",
+            "inconclusive"
+          ]
+        },
+        "verification_status": {
+          "enum": [
+            "not_applicable",
+            "not_requested",
+            "requested",
+            "running",
+            "confirmed",
+            "rejected",
+            "inconclusive",
+            "invalid",
+            "blocked",
+            "disputed"
+          ]
+        },
+        "claim_eligibility": {
+          "enum": [
+            "not_applicable",
+            "ineligible",
+            "eligible"
+          ]
+        },
+        "publication_release": {
+          "enum": [
+            "not_applicable",
+            "not_requested",
+            "requested",
+            "denied",
+            "authorized",
+            "sealed",
+            "releasing",
+            "completion_unknown",
+            "released",
+            "withdrawn"
+          ]
+        },
+        "external_effect_settlement": {
+          "enum": [
+            "not_applicable",
+            "not_intended",
+            "authorized",
+            "started",
+            "cancelled_before_dispatch",
+            "confirmed_applied",
+            "confirmed_not_applied",
+            "completion_unknown"
+          ]
+        },
+        "grant_use_reservation": {
+          "enum": [
+            "not_applicable",
+            "active",
+            "released",
+            "expired",
+            "cancelled",
+            "consumed"
+          ]
+        },
+        "dispatch_claim": {
+          "enum": [
+            "not_applicable",
+            "not_claimed",
+            "claimed"
+          ]
+        },
+        "retry_disposition": {
+          "enum": [
+            "not_applicable",
+            "forbidden_until_reconciled",
+            "safe_same_key"
+          ]
+        },
+        "channel_observation_refs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "rights_assertion_effect": {
+          "enum": [
+            "not_applicable",
+            "evidence_only_no_permission"
+          ]
+        },
+        "data_use_authority": {
+          "enum": [
+            "not_applicable",
+            "missing",
+            "authorized",
+            "denied",
+            "indeterminate",
+            "revoked",
+            "expired"
+          ]
+        },
+        "exposure_state": {
+          "enum": [
+            "not_applicable",
+            "not_intended",
+            "authorized",
+            "confirmed_exposed",
+            "confirmed_not_exposed",
+            "completion_unknown"
+          ]
+        },
+        "data_lifecycle": {
+          "enum": [
+            "not_applicable",
+            "proposed",
+            "admitted",
+            "quarantined",
+            "held",
+            "deletion_pending",
+            "tombstoned",
+            "unavailable",
+            "prohibited",
+            "indeterminate"
+          ]
+        },
+        "deletion_state": {
+          "enum": [
+            "not_applicable",
+            "requested",
+            "scoping",
+            "blocked_by_hold",
+            "authorized",
+            "in_progress",
+            "limited",
+            "completed",
+            "denied",
+            "indeterminate"
+          ]
+        },
+        "backup_write": {
+          "enum": [
+            "not_applicable",
+            "not_run",
+            "pass",
+            "fail",
+            "indeterminate"
+          ]
+        },
+        "backup_verification": {
+          "enum": [
+            "not_applicable",
+            "not_run",
+            "pass",
+            "fail",
+            "indeterminate"
+          ]
+        },
+        "backup_recoverability": {
+          "enum": [
+            "not_applicable",
+            "not_run",
+            "pass",
+            "fail",
+            "indeterminate"
+          ]
+        },
+        "security_frontier": {
+          "enum": [
+            "not_applicable",
+            "missing",
+            "incomplete",
+            "indeterminate",
+            "proven_complete"
+          ]
+        },
+        "restore_report": {
+          "enum": [
+            "not_applicable",
+            "recorded_pass",
+            "recorded_fail",
+            "recorded_indeterminate"
+          ]
+        },
+        "recovery_decision": {
+          "enum": [
+            "not_applicable",
+            "reject_restore",
+            "remain_quarantined",
+            "open_read_only",
+            "open_reconciliation",
+            "open_bounded_research_writes",
+            "constitutional_new_epoch"
+          ]
+        },
+        "recovery_control": {
+          "enum": [
+            "not_applicable",
+            "isolated",
+            "quarantined",
+            "read_only",
+            "reconciliation_only",
+            "bounded_research_writes"
+          ]
+        },
+        "ledger_integrity": {
+          "enum": [
+            "not_applicable",
+            "continuous",
+            "fork_detected",
+            "quarantined",
+            "new_epoch"
+          ]
+        },
+        "artifact_recovery": {
+          "enum": [
+            "not_applicable",
+            "verified_present",
+            "missing_or_corrupt"
+          ]
+        },
+        "governed_processing_dispatch_admission": {
+          "enum": [
+            "not_applicable",
+            "admission_pending",
+            "authorized",
+            "started",
+            "refused_missing_work_contract",
+            "refused_stale_data_use",
+            "refused_missing_exposure_intent",
+            "refused_provider_configuration",
+            "refused_policy",
+            "refused_authority",
+            "refused_resource",
+            "refused_stale_frontier"
+          ]
+        },
+        "resource_accounting": {
+          "$ref": "#/$defs/resource_accounting_state"
+        }
+      }
+    },
+    "resource_accounting_state": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reservation_id",
+        "reservation_state",
+        "ceiling_hold",
+        "actual_usage_status",
+        "observation_axes",
+        "settlement",
+        "conversion_policy",
+        "dimension_compensation",
+        "verification_capacity"
+      ],
+      "properties": {
+        "reservation_id": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/identifier"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "reservation_state": {
+          "enum": [
+            "not_applicable",
+            "active",
+            "claimed",
+            "released",
+            "expired",
+            "settled"
+          ]
+        },
+        "ceiling_hold": {
+          "enum": [
+            "not_applicable",
+            "none",
+            "full_reserved_ceiling",
+            "zero"
+          ]
+        },
+        "actual_usage_status": {
+          "enum": [
+            "not_applicable",
+            "estimate_only",
+            "unknown",
+            "not_observed_preclaim",
+            "observed"
+          ]
+        },
+        "observation_axes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "attempted_usage",
+              "actual_usage",
+              "billed",
+              "refunded"
+            ]
+          }
+        },
+        "settlement": {
+          "enum": [
+            "not_applicable",
+            "unsettled",
+            "settled_exact"
+          ]
+        },
+        "conversion_policy": {
+          "enum": [
+            "not_applicable",
+            "forbidden_componentwise"
+          ]
+        },
+        "dimension_compensation": {
+          "enum": [
+            "not_applicable",
+            "forbidden"
+          ]
+        },
+        "verification_capacity": {
+          "enum": [
+            "not_applicable",
+            "reserved",
+            "claimed",
+            "released",
+            "expired",
+            "settled"
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "reservation_state": {
+                "const": "not_applicable"
+              }
+            },
+            "required": [
+              "reservation_state"
+            ]
+          },
+          "then": {
+            "properties": {
+              "reservation_id": {
+                "type": "null"
+              },
+              "ceiling_hold": {
+                "const": "not_applicable"
+              },
+              "actual_usage_status": {
+                "const": "not_applicable"
+              },
+              "observation_axes": {
+                "maxItems": 0
+              },
+              "settlement": {
+                "const": "not_applicable"
+              },
+              "conversion_policy": {
+                "const": "not_applicable"
+              },
+              "dimension_compensation": {
+                "const": "not_applicable"
+              },
+              "verification_capacity": {
+                "const": "not_applicable"
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "reservation_id": {
+                "$ref": "#/$defs/identifier"
+              },
+              "conversion_policy": {
+                "const": "forbidden_componentwise"
+              },
+              "dimension_compensation": {
+                "const": "forbidden"
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

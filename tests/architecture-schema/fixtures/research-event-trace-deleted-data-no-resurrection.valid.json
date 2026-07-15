@@ -1,0 +1,103 @@
+{
+  "schema_version": "0.3.0",
+  "trace_id": "trace.deleted-data-no-resurrection.001",
+  "purpose": "A completed deletion tombstones governed data and a later replay cannot restore bytes or stale permission.",
+  "stream_id": "data-governance.mission-001",
+  "stream_type": "data_governance",
+  "mission_scope": "mission.001",
+  "reducer_set": {
+    "name": "odeya-founding-reducers",
+    "version": "0.2.0",
+    "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "steps": [
+    {
+      "ordinal": 0,
+      "event_id": "event.data_use-revoked.0",
+      "event_type": "data_use.revoked",
+      "event_version": "1.0.0",
+      "stream_position": 100,
+      "aggregate_type": "data_use_decision",
+      "aggregate_id": "data_use_decision.001",
+      "aggregate_version": 0,
+      "event_digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+      "expected_axis_changes": [
+        {
+          "axis": "data_use_authority",
+          "from": "authorized",
+          "to": "revoked"
+        }
+      ]
+    },
+    {
+      "ordinal": 1,
+      "event_id": "event.deletion-case_closed.1",
+      "event_type": "deletion.case_closed",
+      "event_version": "1.0.0",
+      "stream_position": 101,
+      "aggregate_type": "deletion_case",
+      "aggregate_id": "deletion_case.001",
+      "aggregate_version": 1,
+      "event_digest": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+      "expected_axis_changes": [
+        {
+          "axis": "deletion_state",
+          "from": "in_progress",
+          "to": "completed"
+        }
+      ]
+    },
+    {
+      "ordinal": 2,
+      "event_id": "event.data_asset-lifecycle_changed.2",
+      "event_type": "data_asset.lifecycle_changed",
+      "event_version": "1.0.0",
+      "stream_position": 102,
+      "aggregate_type": "data_asset",
+      "aggregate_id": "data_asset.001",
+      "aggregate_version": 2,
+      "event_digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+      "expected_axis_changes": [
+        {
+          "axis": "data_lifecycle",
+          "from": "deletion_pending",
+          "to": "tombstoned"
+        }
+      ]
+    }
+  ],
+  "expected_state": {
+    "run_validity": "not_applicable",
+    "measurement": "not_applicable",
+    "scientific_outcome": "not_adjudicated",
+    "verification_status": "not_applicable",
+    "claim_eligibility": "not_applicable",
+    "publication_release": "not_applicable",
+    "external_effect_settlement": "not_applicable",
+    "grant_use_reservation": "not_applicable",
+    "dispatch_claim": "not_applicable",
+    "retry_disposition": "not_applicable",
+    "channel_observation_refs": [],
+    "data_use_authority": "revoked",
+    "exposure_state": "not_intended",
+    "data_lifecycle": "tombstoned",
+    "deletion_state": "completed",
+    "artifact_recovery": "missing_or_corrupt",
+    "resource_accounting": {
+      "reservation_id": null,
+      "reservation_state": "not_applicable",
+      "ceiling_hold": "not_applicable",
+      "actual_usage_status": "not_applicable",
+      "observation_axes": [],
+      "settlement": "not_applicable",
+      "conversion_policy": "not_applicable",
+      "dimension_compensation": "not_applicable",
+      "verification_capacity": "not_applicable"
+    }
+  },
+  "forbidden_inferences": [
+    "deleted-data-resurrection",
+    "old-digest-as-byte-availability",
+    "old-verification-as-current-eligibility"
+  ]
+}

@@ -1,0 +1,4428 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:odeya:schema:command-envelope:0.4.0",
+  "title": "Odeya CommandEnvelope",
+  "description": "Language-neutral, fail-closed request envelope for a registered Odeya command across research, data-governance, and recovery streams. It binds the exact command-registry snapshot, separate activation proof, and exact member record resolved by admission; mutable aliases such as latest are unrepresentable. Payload semantics are fixed by the referenced command schema and registry record. Presented authority hints are explicitly untrusted inputs to resolve; callers cannot select an authority mode, submit a derivation rule or PolicyDecision, or manufacture authority. Kernel admission evidence determines the evaluated authority basis. JSON Schema does not prove snapshot activation, membership, scope approval, digest equality, or currentness.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "command_id",
+    "command_type",
+    "command_version",
+    "command_schema_id",
+    "command_schema_digest",
+    "command_registry_snapshot_ref",
+    "command_registry_activation_ref",
+    "command_contract_record_ref",
+    "idempotency_scope",
+    "target",
+    "mission_scope",
+    "actor",
+    "presented_authority_hints",
+    "correlation_id",
+    "causation_refs",
+    "input_artifact_refs",
+    "payload",
+    "request_digest_contract",
+    "canonical_request_digest",
+    "client_observed_at",
+    "signature_ref"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.4.0"
+    },
+    "command_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "command_type": {
+      "$ref": "#/$defs/command_type"
+    },
+    "command_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "command_schema_id": {
+      "type": "string",
+      "pattern": "^urn:odeya:command-payload:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "command_schema_digest": {
+      "$ref": "#/$defs/digest"
+    },
+    "command_registry_snapshot_ref": {
+      "$ref": "#/$defs/command_registry_snapshot_reference"
+    },
+    "command_registry_activation_ref": {
+      "$ref": "#/$defs/command_registry_activation_reference"
+    },
+    "command_contract_record_ref": {
+      "$ref": "#/$defs/command_contract_record_reference"
+    },
+    "idempotency_scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tenant_id",
+        "namespace"
+      ],
+      "properties": {
+        "tenant_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "namespace": {
+          "enum": [
+            "portfolio",
+            "authority",
+            "research",
+            "publication",
+            "operations",
+            "learning",
+            "data_governance",
+            "recovery"
+          ]
+        }
+      }
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "stream_id",
+        "stream_type",
+        "expected_stream_position",
+        "aggregate_type",
+        "aggregate_id",
+        "expected_aggregate_version"
+      ],
+      "properties": {
+        "stream_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "stream_type": {
+          "$ref": "#/$defs/stream_type"
+        },
+        "expected_stream_position": {
+          "type": "integer",
+          "minimum": -1
+        },
+        "aggregate_type": {
+          "$ref": "#/$defs/aggregate_type"
+        },
+        "aggregate_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "expected_aggregate_version": {
+          "type": "integer",
+          "minimum": -1
+        }
+      }
+    },
+    "mission_scope": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/identifier"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "actor": {
+      "$ref": "#/$defs/actor"
+    },
+    "presented_authority_hints": {
+      "$ref": "#/$defs/presented_authority_hints"
+    },
+    "correlation_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "causation_refs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "kind",
+          "id"
+        ],
+        "properties": {
+          "kind": {
+            "enum": [
+              "command",
+              "event",
+              "external_observation"
+            ]
+          },
+          "id": {
+            "$ref": "#/$defs/identifier"
+          }
+        }
+      }
+    },
+    "input_artifact_refs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/artifact_reference"
+      }
+    },
+    "payload": {
+      "type": "object"
+    },
+    "request_digest_contract": {
+      "$ref": "#/$defs/request_digest_contract"
+    },
+    "canonical_request_digest": {
+      "$ref": "#/$defs/digest"
+    },
+    "client_observed_at": {
+      "oneOf": [
+        {
+          "type": "string",
+          "format": "date-time"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "signature_ref": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/artifact_reference"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "target": {
+            "properties": {
+              "stream_type": {
+                "enum": [
+                  "portfolio",
+                  "proposal",
+                  "authority_root",
+                  "data_governance",
+                  "recovery"
+                ]
+              }
+            }
+          }
+        },
+        "required": [
+          "target"
+        ]
+      },
+      "then": {},
+      "else": {
+        "properties": {
+          "mission_scope": {
+            "$ref": "#/$defs/identifier"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "target": {
+            "properties": {
+              "stream_type": {
+                "const": "recovery"
+              }
+            }
+          }
+        },
+        "required": [
+          "target"
+        ]
+      },
+      "then": {
+        "properties": {
+          "mission_scope": {
+            "type": "null"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "command_type": {
+            "const": "authority.record_root_assignment"
+          }
+        },
+        "required": [
+          "command_type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "presented_authority_hints": {
+            "properties": {
+              "presented_constitutional_artifact_refs": {
+                "minItems": 1
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "oneOf": [
+    {
+      "properties": {
+        "command_type": {
+          "const": "proposal.submit"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:proposal.submit:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "enum": [
+                "portfolio",
+                "proposal"
+              ]
+            },
+            "aggregate_type": {
+              "const": "proposal"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "proposal.decide"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:proposal.decide:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "enum": [
+                "portfolio",
+                "proposal"
+              ]
+            },
+            "aggregate_type": {
+              "const": "proposal"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "proposal.withdraw"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:proposal.withdraw:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "enum": [
+                "portfolio",
+                "proposal"
+              ]
+            },
+            "aggregate_type": {
+              "const": "proposal"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "mission.create_origin"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:mission.create_origin:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "mission"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "mission.compile_contract"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:mission.compile_contract:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "mission"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "mission.advance_phase"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:mission.advance_phase:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "mission"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "mission.change_control"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:mission.change_control:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "mission"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "mission.close"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:mission.close:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "mission"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "mission.record_handoff"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:mission.record_handoff:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "handoff"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "protocol.record_exposure"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:protocol.record_exposure:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "protocol"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "protocol.freeze"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:protocol.freeze:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "protocol"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "protocol.amend"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:protocol.amend:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "protocol"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "protocol.fork"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:protocol.fork:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "protocol"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "protocol.supersede"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:protocol.supersede:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "protocol"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "work_graph.compile"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:work_graph.compile:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "work_graph"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "stage.set_readiness"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:stage.set_readiness:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "stage"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "stage.set_authorization"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:stage.set_authorization:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "stage"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "work.acquire_lease"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:work.acquire_lease:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "work_item"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "work.renew_lease"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:work.renew_lease:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "work_item"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "work.release_lease"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:work.release_lease:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "work_item"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "work.revoke_lease"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:work.revoke_lease:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "work_item"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "attempt.start"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:attempt.start:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "attempt"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "attempt.report"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:attempt.report:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "attempt"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "resource.record_observation"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:resource.record_observation:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "resource_budget"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "budget.record_exhaustion"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:budget.record_exhaustion:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "resource_budget"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "blocker.open"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:blocker.open:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "blocker"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "blocker.resolve"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:blocker.resolve:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "blocker"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "blocker.supersede"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:blocker.supersede:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "blocker"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "artifact.record"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:artifact.record:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "artifact"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "artifact.record_validation"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:artifact.record_validation:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "artifact"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "artifact.promote"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:artifact.promote:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "artifact"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "artifact.quarantine"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:artifact.quarantine:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "artifact"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "artifact.record_corruption"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:artifact.record_corruption:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "artifact"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "artifact.record_unavailability"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:artifact.record_unavailability:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "artifact"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "artifact.tombstone"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:artifact.tombstone:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "artifact"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "run.determine_validity"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:run.determine_validity:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "run"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "measurement.determine_disposition"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:measurement.determine_disposition:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "measurement"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "metric.record_observation"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:metric.record_observation:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "metric"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "falsifier.adjudicate"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:falsifier.adjudicate:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "falsifier"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "verification.request"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:verification.request:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "verification"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "verification.assign"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:verification.assign:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "verification"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "verification.start"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:verification.start:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "verification"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "verification.complete"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:verification.complete:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "verification"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "verification.dispute"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:verification.dispute:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "verification"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "verification.resolve_dispute"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:verification.resolve_dispute:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "verification"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "verification.invalidate"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:verification.invalidate:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "verification"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "reproducibility.determine"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:reproducibility.determine:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "verification"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "replication.start"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:replication.start:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "verification"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "replication.determine"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:replication.determine:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "verification"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "transport.start"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:transport.start:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "verification"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "transport.determine"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:transport.determine:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "verification"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "review.record"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:review.record:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "review"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "adjudication.record"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:adjudication.record:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "adjudication"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "claim.propose"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:claim.propose:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "claim_proposal"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "claim.record_disposition"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:claim.record_disposition:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "claim_proposal"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "claim.compile_version"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:claim.compile_version:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "claim_version"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "claim.supersede"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:claim.supersede:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "claim_version"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "claim.retract"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:claim.retract:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "claim_version"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "dependency.record_invalidation"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:dependency.record_invalidation:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "dependency"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "authority.record_root_assignment"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:authority.record_root_assignment:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "enum": [
+                "authority_root",
+                "mission"
+              ]
+            },
+            "aggregate_type": {
+              "const": "authority_assignment"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "authority.record_assignment"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:authority.record_assignment:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "enum": [
+                "authority_root",
+                "mission"
+              ]
+            },
+            "aggregate_type": {
+              "const": "authority_assignment"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "authority.issue_grant"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:authority.issue_grant:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "enum": [
+                "authority_root",
+                "mission"
+              ]
+            },
+            "aggregate_type": {
+              "const": "authority_grant"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "authority.observe_activation"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:authority.observe_activation:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "enum": [
+                "authority_root",
+                "mission"
+              ]
+            },
+            "aggregate_type": {
+              "const": "authority_grant"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "authority.observe_expiry"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:authority.observe_expiry:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "enum": [
+                "authority_root",
+                "mission"
+              ]
+            },
+            "aggregate_type": {
+              "const": "authority_grant"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "authority.revoke_grant"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:authority.revoke_grant:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "enum": [
+                "authority_root",
+                "mission"
+              ]
+            },
+            "aggregate_type": {
+              "const": "authority_grant"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "publication.compile_candidate"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:publication.compile_candidate:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "publication"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "release.request"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:release.request:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "publication"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "release.decide"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:release.decide:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "publication"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "publication.seal"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:publication.seal:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "publication"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "publication.start_release"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:publication.start_release:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "publication"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "publication.record_release_settlement"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:publication.record_release_settlement:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "publication"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "publication.correct"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:publication.correct:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "publication"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "publication.withdraw"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:publication.withdraw:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "publication"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "external_effect.authorize"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:external_effect.authorize:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "external_effect"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "external_effect.start"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:external_effect.start:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "external_effect"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "external_effect.cancel"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:external_effect.cancel:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "external_effect"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "external_effect.report_completion"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:external_effect.report_completion:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "external_effect"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "external_effect.start_reconciliation"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:external_effect.start_reconciliation:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "external_effect"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "external_effect.complete_reconciliation"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:external_effect.complete_reconciliation:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "external_effect"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "external_effect.fail_reconciliation"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:external_effect.fail_reconciliation:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "mission"
+            },
+            "aggregate_type": {
+              "const": "external_effect"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "incident.open"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:incident.open:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "enum": [
+                "portfolio",
+                "mission",
+                "incident"
+              ]
+            },
+            "aggregate_type": {
+              "const": "incident"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "incident.transition"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:incident.transition:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "enum": [
+                "portfolio",
+                "mission",
+                "incident"
+              ]
+            },
+            "aggregate_type": {
+              "const": "incident"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "grounded_outcome.record"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:grounded_outcome.record:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "enum": [
+                "mission",
+                "learning"
+              ]
+            },
+            "aggregate_type": {
+              "const": "grounded_outcome"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "strategy.record_candidate"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:strategy.record_candidate:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "enum": [
+                "mission",
+                "learning"
+              ]
+            },
+            "aggregate_type": {
+              "const": "strategy_candidate"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "data_asset.record"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:data_asset.record:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "enum": [
+                "mission",
+                "data_governance"
+              ]
+            },
+            "aggregate_type": {
+              "const": "data_asset"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "data_asset.change_lifecycle"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:data_asset.change_lifecycle:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "enum": [
+                "mission",
+                "data_governance"
+              ]
+            },
+            "aggregate_type": {
+              "const": "data_asset"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "rights_assertion.record"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:rights_assertion.record:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "enum": [
+                "mission",
+                "data_governance"
+              ]
+            },
+            "aggregate_type": {
+              "const": "rights_assertion"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "data_use.decide"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:data_use.decide:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "enum": [
+                "mission",
+                "data_governance"
+              ]
+            },
+            "aggregate_type": {
+              "const": "data_use_decision"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "strategy.authorize_shadow"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:strategy.authorize_shadow:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "enum": [
+                "mission",
+                "learning"
+              ]
+            },
+            "aggregate_type": {
+              "const": "strategy_candidate"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "strategy.record_shadow"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:strategy.record_shadow:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "enum": [
+                "mission",
+                "learning"
+              ]
+            },
+            "aggregate_type": {
+              "const": "strategy_candidate"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "strategy.authorize_canary"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:strategy.authorize_canary:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "enum": [
+                "mission",
+                "learning"
+              ]
+            },
+            "aggregate_type": {
+              "const": "strategy_candidate"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "strategy.decide_promotion"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:strategy.decide_promotion:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "enum": [
+                "mission",
+                "learning"
+              ]
+            },
+            "aggregate_type": {
+              "const": "strategy_candidate"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "strategy.rollback"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:strategy.rollback:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "enum": [
+                "mission",
+                "learning"
+              ]
+            },
+            "aggregate_type": {
+              "const": "strategy_candidate"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "data_use.revoke"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:data_use.revoke:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "enum": [
+                "mission",
+                "data_governance"
+              ]
+            },
+            "aggregate_type": {
+              "const": "data_use_decision"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "data_exposure.record_intent"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:data_exposure.record_intent:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "enum": [
+                "mission",
+                "data_governance"
+              ]
+            },
+            "aggregate_type": {
+              "const": "data_exposure"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "data_exposure.record_observation"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:data_exposure.record_observation:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "enum": [
+                "mission",
+                "data_governance"
+              ]
+            },
+            "aggregate_type": {
+              "const": "data_exposure"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "data_exposure.record_settlement"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:data_exposure.record_settlement:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "enum": [
+                "mission",
+                "data_governance"
+              ]
+            },
+            "aggregate_type": {
+              "const": "data_exposure"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "transformation.record"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:transformation.record:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "enum": [
+                "mission",
+                "data_governance"
+              ]
+            },
+            "aggregate_type": {
+              "const": "transformation"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "retention.record_schedule"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:retention.record_schedule:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "enum": [
+                "mission",
+                "data_governance"
+              ]
+            },
+            "aggregate_type": {
+              "const": "retention_schedule"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "deletion.open_case"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:deletion.open_case:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "enum": [
+                "mission",
+                "data_governance"
+              ]
+            },
+            "aggregate_type": {
+              "const": "deletion_case"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "deletion.record_progress"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:deletion.record_progress:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "enum": [
+                "mission",
+                "data_governance"
+              ]
+            },
+            "aggregate_type": {
+              "const": "deletion_case"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "deletion.close_case"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:deletion.close_case:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "enum": [
+                "mission",
+                "data_governance"
+              ]
+            },
+            "aggregate_type": {
+              "const": "deletion_case"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "legal_hold.issue"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:legal_hold.issue:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "enum": [
+                "mission",
+                "data_governance"
+              ]
+            },
+            "aggregate_type": {
+              "const": "legal_hold"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "legal_hold.release"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:legal_hold.release:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "enum": [
+                "mission",
+                "data_governance"
+              ]
+            },
+            "aggregate_type": {
+              "const": "legal_hold"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "legal_hold.observe_expiry"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:legal_hold.observe_expiry:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "enum": [
+                "mission",
+                "data_governance"
+              ]
+            },
+            "aggregate_type": {
+              "const": "legal_hold"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "ledger_checkpoint.propose"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:ledger_checkpoint.propose:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "recovery"
+            },
+            "aggregate_type": {
+              "const": "ledger_checkpoint"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "ledger_checkpoint.seal"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:ledger_checkpoint.seal:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "recovery"
+            },
+            "aggregate_type": {
+              "const": "ledger_checkpoint"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "ledger_checkpoint.record_witness_observation"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:ledger_checkpoint.record_witness_observation:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "recovery"
+            },
+            "aggregate_type": {
+              "const": "ledger_checkpoint"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "ledger_checkpoint.record_consistency_failure"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:ledger_checkpoint.record_consistency_failure:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "recovery"
+            },
+            "aggregate_type": {
+              "const": "ledger_checkpoint"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "backup.record_write_observation"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:backup.record_write_observation:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "recovery"
+            },
+            "aggregate_type": {
+              "const": "backup"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "backup.record_verification_observation"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:backup.record_verification_observation:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "recovery"
+            },
+            "aggregate_type": {
+              "const": "backup"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "backup.record_recoverability_observation"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:backup.record_recoverability_observation:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "recovery"
+            },
+            "aggregate_type": {
+              "const": "backup"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "restore.open_case"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:restore.open_case:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "recovery"
+            },
+            "aggregate_type": {
+              "const": "restore_case"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "recovery.record_current_policy_frontier"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:recovery.record_current_policy_frontier:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "recovery"
+            },
+            "aggregate_type": {
+              "const": "recovery_control"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "restore.record_report"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:restore.record_report:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "recovery"
+            },
+            "aggregate_type": {
+              "const": "restore_case"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "recovery.record_decision"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:recovery.record_decision:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "recovery"
+            },
+            "aggregate_type": {
+              "const": "recovery_decision"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "recovery.enter_quarantine"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:recovery.enter_quarantine:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "recovery"
+            },
+            "aggregate_type": {
+              "const": "recovery_control"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "ledger.record_fork"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:ledger.record_fork:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "recovery"
+            },
+            "aggregate_type": {
+              "const": "ledger_epoch"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "ledger.begin_epoch"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:ledger.begin_epoch:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "recovery"
+            },
+            "aggregate_type": {
+              "const": "ledger_epoch"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "restore.close_case"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:restore.close_case:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "recovery"
+            },
+            "aggregate_type": {
+              "const": "restore_case"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    },
+    {
+      "properties": {
+        "command_type": {
+          "const": "recovery.change_service_scope"
+        },
+        "command_version": {
+          "const": "1.0.0"
+        },
+        "command_schema_id": {
+          "const": "urn:odeya:command-payload:recovery.change_service_scope:1.0.0"
+        },
+        "target": {
+          "properties": {
+            "stream_type": {
+              "const": "recovery"
+            },
+            "aggregate_type": {
+              "const": "recovery_control"
+            }
+          }
+        }
+      },
+      "required": [
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "target"
+      ]
+    }
+  ],
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]*$"
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "artifact_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "digest",
+        "media_type"
+      ],
+      "properties": {
+        "artifact_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        }
+      }
+    },
+    "checkpoint_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "checkpoint_id",
+        "version",
+        "inclusive_global_position",
+        "digest"
+      ],
+      "properties": {
+        "checkpoint_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "inclusive_global_position": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        }
+      }
+    },
+    "command_registry_snapshot_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "registry_id",
+        "version",
+        "schema_id",
+        "digest"
+      ],
+      "properties": {
+        "registry_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "schema_id": {
+          "const": "urn:odeya:schema:command-registry-snapshot:0.1.0"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        }
+      }
+    },
+    "command_registry_activation_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "activation_id",
+        "schema_id",
+        "snapshot_digest",
+        "checkpoint_ref",
+        "activation_position",
+        "tenant_id",
+        "mission_scope",
+        "activation_proof_ref"
+      ],
+      "properties": {
+        "activation_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "schema_id": {
+          "const": "urn:odeya:schema:command-registry-activation:0.1.0"
+        },
+        "snapshot_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "checkpoint_ref": {
+          "$ref": "#/$defs/checkpoint_reference"
+        },
+        "activation_position": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "tenant_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "mission_scope": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/identifier"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "activation_proof_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        }
+      }
+    },
+    "command_contract_record_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "record_id",
+        "version",
+        "schema_id",
+        "digest",
+        "registry_snapshot_digest",
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "command_schema_digest",
+        "membership_proof_ref"
+      ],
+      "properties": {
+        "record_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "schema_id": {
+          "const": "urn:odeya:schema:command-contract-record:0.1.0"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "registry_snapshot_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "command_type": {
+          "$ref": "#/$defs/command_type"
+        },
+        "command_version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "command_schema_id": {
+          "type": "string",
+          "pattern": "^urn:odeya:command-payload:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "command_schema_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "membership_proof_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        }
+      }
+    },
+    "request_digest_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "algorithm",
+        "domain_separator",
+        "canonicalization_profile_ref",
+        "included_json_pointers",
+        "excluded_json_pointers"
+      ],
+      "properties": {
+        "algorithm": {
+          "const": "sha-256"
+        },
+        "domain_separator": {
+          "const": "odeya-command-request-v1"
+        },
+        "canonicalization_profile_ref": {
+          "$ref": "#/$defs/versioned_identity"
+        },
+        "included_json_pointers": {
+          "const": [
+            "/schema_version",
+            "/command_id",
+            "/command_type",
+            "/command_version",
+            "/command_schema_id",
+            "/command_schema_digest",
+            "/command_registry_snapshot_ref",
+            "/command_registry_activation_ref",
+            "/command_contract_record_ref",
+            "/idempotency_scope",
+            "/target",
+            "/mission_scope",
+            "/actor",
+            "/presented_authority_hints",
+            "/correlation_id",
+            "/causation_refs",
+            "/input_artifact_refs",
+            "/payload",
+            "/request_digest_contract",
+            "/client_observed_at"
+          ]
+        },
+        "excluded_json_pointers": {
+          "const": [
+            "/canonical_request_digest",
+            "/signature_ref"
+          ]
+        }
+      }
+    },
+    "actor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "principal_id",
+        "principal_type",
+        "execution_identity"
+      ],
+      "properties": {
+        "principal_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "principal_type": {
+          "enum": [
+            "human",
+            "service",
+            "model_run",
+            "instrument",
+            "external_system"
+          ]
+        },
+        "execution_identity": {
+          "$ref": "#/$defs/identifier"
+        }
+      }
+    },
+    "presented_authority_hints": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "trust_level",
+        "presented_assignment_refs",
+        "presented_grant_refs",
+        "presented_constitutional_artifact_refs",
+        "presented_external_observation_refs"
+      ],
+      "properties": {
+        "trust_level": {
+          "const": "untrusted_resolve_only"
+        },
+        "presented_assignment_refs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/presented_record_hint"
+          }
+        },
+        "presented_grant_refs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/presented_record_hint"
+          }
+        },
+        "presented_constitutional_artifact_refs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/artifact_reference"
+          }
+        },
+        "presented_external_observation_refs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/artifact_reference"
+          }
+        }
+      }
+    },
+    "presented_record_hint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "record_id",
+        "claimed_digest"
+      ],
+      "properties": {
+        "record_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "claimed_digest": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/digest"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "versioned_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "version",
+        "digest"
+      ],
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        }
+      }
+    },
+    "stream_type": {
+      "enum": [
+        "portfolio",
+        "proposal",
+        "mission",
+        "authority_root",
+        "incident",
+        "learning",
+        "data_governance",
+        "recovery"
+      ]
+    },
+    "aggregate_type": {
+      "enum": [
+        "proposal",
+        "mission",
+        "protocol",
+        "work_graph",
+        "stage",
+        "work_item",
+        "attempt",
+        "resource_budget",
+        "blocker",
+        "artifact",
+        "run",
+        "measurement",
+        "metric",
+        "falsifier",
+        "verification",
+        "review",
+        "adjudication",
+        "claim_proposal",
+        "claim_version",
+        "dependency",
+        "external_effect",
+        "publication",
+        "authority_assignment",
+        "authority_grant",
+        "incident",
+        "handoff",
+        "grounded_outcome",
+        "strategy_candidate",
+        "data_asset",
+        "rights_assertion",
+        "data_use_decision",
+        "data_exposure",
+        "transformation",
+        "retention_schedule",
+        "deletion_case",
+        "legal_hold",
+        "ledger_checkpoint",
+        "backup",
+        "restore_case",
+        "recovery_decision",
+        "ledger_epoch",
+        "recovery_control"
+      ]
+    },
+    "command_type": {
+      "enum": [
+        "proposal.submit",
+        "proposal.decide",
+        "proposal.withdraw",
+        "mission.create_origin",
+        "mission.compile_contract",
+        "mission.advance_phase",
+        "mission.change_control",
+        "mission.record_handoff",
+        "mission.close",
+        "protocol.record_exposure",
+        "protocol.freeze",
+        "protocol.amend",
+        "protocol.fork",
+        "protocol.supersede",
+        "work_graph.compile",
+        "stage.set_readiness",
+        "stage.set_authorization",
+        "work.acquire_lease",
+        "work.renew_lease",
+        "work.release_lease",
+        "work.revoke_lease",
+        "attempt.start",
+        "attempt.report",
+        "resource.record_observation",
+        "budget.record_exhaustion",
+        "blocker.open",
+        "blocker.resolve",
+        "blocker.supersede",
+        "artifact.record",
+        "artifact.record_validation",
+        "artifact.promote",
+        "artifact.quarantine",
+        "artifact.record_corruption",
+        "artifact.record_unavailability",
+        "artifact.tombstone",
+        "run.determine_validity",
+        "measurement.determine_disposition",
+        "metric.record_observation",
+        "falsifier.adjudicate",
+        "verification.request",
+        "verification.assign",
+        "verification.start",
+        "verification.complete",
+        "verification.dispute",
+        "verification.resolve_dispute",
+        "verification.invalidate",
+        "reproducibility.determine",
+        "replication.start",
+        "replication.determine",
+        "transport.start",
+        "transport.determine",
+        "review.record",
+        "adjudication.record",
+        "claim.propose",
+        "claim.record_disposition",
+        "claim.compile_version",
+        "claim.supersede",
+        "claim.retract",
+        "dependency.record_invalidation",
+        "authority.record_root_assignment",
+        "authority.record_assignment",
+        "authority.issue_grant",
+        "authority.observe_activation",
+        "authority.observe_expiry",
+        "authority.revoke_grant",
+        "publication.compile_candidate",
+        "release.request",
+        "release.decide",
+        "publication.seal",
+        "publication.start_release",
+        "publication.record_release_settlement",
+        "publication.correct",
+        "publication.withdraw",
+        "external_effect.authorize",
+        "external_effect.start",
+        "external_effect.cancel",
+        "external_effect.report_completion",
+        "external_effect.start_reconciliation",
+        "external_effect.complete_reconciliation",
+        "external_effect.fail_reconciliation",
+        "incident.open",
+        "incident.transition",
+        "grounded_outcome.record",
+        "strategy.record_candidate",
+        "strategy.authorize_shadow",
+        "strategy.record_shadow",
+        "strategy.authorize_canary",
+        "strategy.decide_promotion",
+        "strategy.rollback",
+        "data_asset.record",
+        "data_asset.change_lifecycle",
+        "rights_assertion.record",
+        "data_use.decide",
+        "data_use.revoke",
+        "data_exposure.record_intent",
+        "data_exposure.record_observation",
+        "data_exposure.record_settlement",
+        "transformation.record",
+        "retention.record_schedule",
+        "deletion.open_case",
+        "deletion.record_progress",
+        "deletion.close_case",
+        "legal_hold.issue",
+        "legal_hold.release",
+        "legal_hold.observe_expiry",
+        "ledger_checkpoint.propose",
+        "ledger_checkpoint.seal",
+        "ledger_checkpoint.record_witness_observation",
+        "ledger_checkpoint.record_consistency_failure",
+        "backup.record_write_observation",
+        "backup.record_verification_observation",
+        "backup.record_recoverability_observation",
+        "restore.open_case",
+        "recovery.record_current_policy_frontier",
+        "restore.record_report",
+        "recovery.record_decision",
+        "recovery.enter_quarantine",
+        "ledger.record_fork",
+        "ledger.begin_epoch",
+        "restore.close_case",
+        "recovery.change_service_scope"
+      ]
+    }
+  }
+}

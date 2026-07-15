@@ -1,0 +1,117 @@
+{
+  "schema_version": "0.3.0",
+  "trace_id": "trace.resource-claimed-crash-holds.001",
+  "purpose": "Replay a claimed verification reservation through worker crash and a restore report; unknown use keeps the full ceiling held and neither fact authorizes release.",
+  "stream_id": "mission.resource-accounting.001",
+  "stream_type": "mission",
+  "mission_scope": "mission.resource-accounting.001",
+  "reducer_set": {
+    "name": "odeya-resource-budget-reducer",
+    "version": "0.1.0",
+    "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "steps": [
+    {
+      "ordinal": 0,
+      "event_id": "event.resource-reservation-created.001",
+      "event_type": "resource.reservation_created",
+      "event_version": "1.0.0",
+      "stream_position": 10,
+      "aggregate_type": "resource_budget",
+      "aggregate_id": "resource-budget.mission.001",
+      "aggregate_version": 1,
+      "event_digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+      "expected_axis_changes": [
+        {
+          "axis": "resource_reservation",
+          "from": "none",
+          "to": "active"
+        }
+      ]
+    },
+    {
+      "ordinal": 1,
+      "event_id": "event.resource-reservation-claimed.001",
+      "event_type": "resource.reservation_claimed",
+      "event_version": "1.0.0",
+      "stream_position": 11,
+      "aggregate_type": "resource_budget",
+      "aggregate_id": "resource-budget.mission.001",
+      "aggregate_version": 2,
+      "event_digest": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+      "expected_axis_changes": [
+        {
+          "axis": "resource_reservation",
+          "from": "active",
+          "to": "claimed"
+        }
+      ]
+    },
+    {
+      "ordinal": 2,
+      "event_id": "event.attempt-interrupted.001",
+      "event_type": "attempt.interrupted",
+      "event_version": "1.0.0",
+      "stream_position": 12,
+      "aggregate_type": "attempt",
+      "aggregate_id": "attempt.verification.001",
+      "aggregate_version": 2,
+      "event_digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+      "expected_axis_changes": [
+        {
+          "axis": "attempt_execution",
+          "from": "running",
+          "to": "interrupted"
+        }
+      ]
+    },
+    {
+      "ordinal": 3,
+      "event_id": "event.restore-report-recorded.001",
+      "event_type": "restore.report_recorded",
+      "event_version": "1.0.0",
+      "stream_position": 13,
+      "aggregate_type": "restore_case",
+      "aggregate_id": "restore-case.001",
+      "aggregate_version": 2,
+      "event_digest": "sha256:4444444444444444444444444444444444444444444444444444444444444444",
+      "expected_axis_changes": [
+        {
+          "axis": "restore_report",
+          "from": "not_recorded",
+          "to": "recorded_indeterminate"
+        }
+      ]
+    }
+  ],
+  "expected_state": {
+    "run_validity": "not_applicable",
+    "measurement": "not_applicable",
+    "scientific_outcome": "not_adjudicated",
+    "verification_status": "not_applicable",
+    "claim_eligibility": "not_applicable",
+    "publication_release": "not_applicable",
+    "external_effect_settlement": "not_applicable",
+    "grant_use_reservation": "not_applicable",
+    "dispatch_claim": "not_applicable",
+    "retry_disposition": "not_applicable",
+    "channel_observation_refs": [],
+    "resource_accounting": {
+      "reservation_id": "resource-reservation.001",
+      "reservation_state": "claimed",
+      "ceiling_hold": "full_reserved_ceiling",
+      "actual_usage_status": "unknown",
+      "observation_axes": [],
+      "settlement": "unsettled",
+      "conversion_policy": "forbidden_componentwise",
+      "dimension_compensation": "forbidden",
+      "verification_capacity": "claimed"
+    }
+  },
+  "forbidden_inferences": [
+    "resource.release_from_crash",
+    "resource.release_from_restore_report",
+    "resource.unknown_usage_as_zero",
+    "resource.cross_dimension_conversion"
+  ]
+}

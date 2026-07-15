@@ -1,0 +1,242 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:odeya:schema:artifact-manifest:0.1.0",
+  "title": "Odeya ArtifactManifest",
+  "description": "An immutable description of exact artifact bytes, origin, lineage, rights, sensitivity, retention, and storage binding. Promotion and later custody are separate observations.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "artifact_id",
+    "version",
+    "mission_id",
+    "content",
+    "representation",
+    "lineage",
+    "source",
+    "production",
+    "rights",
+    "sensitivity",
+    "retention",
+    "encryption",
+    "storage_binding",
+    "validation_result_refs",
+    "canonical_payload_digest",
+    "created_at_ledger_position",
+    "created_at",
+    "created_by"
+  ],
+  "properties": {
+    "schema_version": { "const": "0.1.0" },
+    "artifact_id": { "$ref": "#/$defs/identifier" },
+    "version": { "type": "integer", "minimum": 1 },
+    "mission_id": {
+      "oneOf": [
+        { "$ref": "#/$defs/identifier" },
+        { "type": "null" }
+      ]
+    },
+    "content": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["digest", "size_bytes", "media_type", "schema_id", "encoding"],
+      "properties": {
+        "digest": { "$ref": "#/$defs/digest" },
+        "size_bytes": { "type": "integer", "minimum": 0 },
+        "media_type": { "type": "string", "minLength": 1 },
+        "schema_id": {
+          "oneOf": [
+            { "type": "string", "format": "uri" },
+            { "type": "null" }
+          ]
+        },
+        "encoding": { "enum": ["identity", "gzip", "zstd", "zip", "other"] }
+      }
+    },
+    "representation": { "enum": ["original", "normalized", "derived", "package"] },
+    "lineage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["parent_artifacts", "transformation_activity_id"],
+      "properties": {
+        "parent_artifacts": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/artifact_reference" }
+        },
+        "transformation_activity_id": {
+          "oneOf": [
+            { "$ref": "#/$defs/identifier" },
+            { "type": "null" }
+          ]
+        }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["origin_type", "source_identity", "locator", "captured_at", "observed_at", "capture_method_ref"],
+      "properties": {
+        "origin_type": { "enum": ["external_source", "instrument", "human_submission", "model_output", "tool_output", "execution_output", "derived"] },
+        "source_identity": { "type": "string", "minLength": 1 },
+        "locator": {
+          "oneOf": [
+            { "type": "string", "minLength": 1 },
+            { "type": "null" }
+          ]
+        },
+        "captured_at": { "type": "string", "format": "date-time" },
+        "observed_at": {
+          "oneOf": [
+            { "type": "string", "format": "date-time" },
+            { "type": "null" }
+          ]
+        },
+        "capture_method_ref": { "$ref": "#/$defs/artifact_reference" }
+      }
+    },
+    "production": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["activity_id", "command_id", "run_manifest_id", "attempt_id", "code_digest", "environment_digest"],
+      "properties": {
+        "activity_id": { "$ref": "#/$defs/identifier" },
+        "command_id": {
+          "oneOf": [{ "$ref": "#/$defs/identifier" }, { "type": "null" }]
+        },
+        "run_manifest_id": {
+          "oneOf": [{ "$ref": "#/$defs/identifier" }, { "type": "null" }]
+        },
+        "attempt_id": {
+          "oneOf": [{ "$ref": "#/$defs/identifier" }, { "type": "null" }]
+        },
+        "code_digest": {
+          "oneOf": [{ "$ref": "#/$defs/digest" }, { "type": "null" }]
+        },
+        "environment_digest": {
+          "oneOf": [{ "$ref": "#/$defs/digest" }, { "type": "null" }]
+        }
+      }
+    },
+    "rights": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["basis", "license_expression", "decision_ref", "permitted_uses", "expires_at"],
+      "properties": {
+        "basis": { "type": "string", "minLength": 1 },
+        "license_expression": {
+          "oneOf": [{ "type": "string", "minLength": 1 }, { "type": "null" }]
+        },
+        "decision_ref": { "$ref": "#/$defs/identifier" },
+        "permitted_uses": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "enum": ["orientation", "hypothesis_generation", "protocol_design", "execution", "evaluation", "verification", "learning", "publication"] }
+        },
+        "expires_at": {
+          "oneOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }]
+        }
+      }
+    },
+    "sensitivity": { "enum": ["public", "internal", "confidential", "restricted", "sealed_truth"] },
+    "retention": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["policy_id", "retain_until", "legal_hold"],
+      "properties": {
+        "policy_id": { "$ref": "#/$defs/identifier" },
+        "retain_until": {
+          "oneOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }]
+        },
+        "legal_hold": { "type": "boolean" }
+      }
+    },
+    "encryption": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["at_rest", "key_policy_ref"],
+      "properties": {
+        "at_rest": { "type": "boolean" },
+        "key_policy_ref": {
+          "oneOf": [{ "$ref": "#/$defs/identifier" }, { "type": "null" }]
+        }
+      }
+    },
+    "storage_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["store_id", "object_key", "immutability_mode"],
+      "properties": {
+        "store_id": { "$ref": "#/$defs/identifier" },
+        "object_key": { "type": "string", "minLength": 1 },
+        "immutability_mode": { "enum": ["content_addressed", "object_lock", "content_addressed_and_object_lock"] }
+      }
+    },
+    "validation_result_refs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/identifier" }
+    },
+    "canonical_payload_digest": { "$ref": "#/$defs/digest" },
+    "created_at_ledger_position": { "type": "integer", "minimum": 0 },
+    "created_at": { "type": "string", "format": "date-time" },
+    "created_by": { "$ref": "#/$defs/principal" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "representation": { "const": "original" } }, "required": ["representation"] },
+      "then": {
+        "properties": {
+          "lineage": {
+            "properties": {
+              "parent_artifacts": { "maxItems": 0 },
+              "transformation_activity_id": { "type": "null" }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "lineage": {
+            "properties": {
+              "parent_artifacts": { "minItems": 1 },
+              "transformation_activity_id": { "$ref": "#/$defs/identifier" }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "encryption": { "properties": { "at_rest": { "const": true } }, "required": ["at_rest"] } }
+      },
+      "then": {
+        "properties": { "encryption": { "properties": { "key_policy_ref": { "$ref": "#/$defs/identifier" } } } }
+      }
+    }
+  ],
+  "$defs": {
+    "identifier": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$" },
+    "digest": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+    "artifact_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifact_id", "digest", "media_type"],
+      "properties": {
+        "artifact_id": { "$ref": "#/$defs/identifier" },
+        "digest": { "$ref": "#/$defs/digest" },
+        "media_type": { "type": "string", "minLength": 1 }
+      }
+    },
+    "principal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["principal_id", "principal_type"],
+      "properties": {
+        "principal_id": { "$ref": "#/$defs/identifier" },
+        "principal_type": { "enum": ["human", "service", "organization", "model_run", "instrument"] }
+      }
+    }
+  }
+}

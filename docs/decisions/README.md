@@ -12,3 +12,8 @@ Decision records preserve why Odeya chose a boundary and which evidence could ch
 | [0005](0005-selective-multi-agent.md) | Central supervisor and selective parallel specialists | Accepted |
 | [0006](0006-architecture-before-implementation.md) | Freeze architecture before runtime implementation | Accepted |
 | [0007](0007-canonical-transaction-and-effects.md) | Canonical transaction authority and recoverable cross-plane effects | Proposed |
+| [0009](0009-witnessed-ledger-recovery.md) | Witnessed ledger checkpoints and integrity-first recovery | Proposed |
+| [0010](0010-purpose-bound-data-lifecycle.md) | Purpose-bound data authority and dependency-aware deletion | Proposed |
+| [0011](0011-governed-cognitive-system-not-monolithic-model.md) | Governed cognitive system, not a monolithic foundation model | Proposed |
+| [0012](0012-minimal-canonical-epistemic-graph.md) | One minimal canonical epistemic graph | Proposed |
+| [0013](0013-admitted-only-command-ingress.md) | Admit only registry-complete commands at ingress | Proposed |

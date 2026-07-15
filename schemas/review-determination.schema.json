@@ -1,0 +1,326 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:odeya:schema:review-determination:0.1.0",
+  "title": "Odeya ReviewDetermination",
+  "description": "One accountable lane determination over one exact architecture-candidate manifest digest. Silence, partial review, model output, or indeterminate independence cannot satisfy acceptance.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "determination_id", "version", "candidate", "lane",
+    "result", "reviewer", "independence", "review_passes",
+    "claim_boundary_results", "finding_dispositions", "finding_summary",
+    "accepted_limitations", "missing_evidence", "carry_forward",
+    "determination_evidence_ref", "signature", "determined_at"
+  ],
+  "properties": {
+    "schema_version": { "const": "0.1.0" },
+    "determination_id": { "$ref": "#/$defs/identifier" },
+    "version": { "type": "integer", "minimum": 1 },
+    "candidate": { "$ref": "#/$defs/candidate_reference" },
+    "lane": { "$ref": "#/$defs/review_lane" },
+    "result": { "enum": ["accept_for_gate_a", "reject", "unable_to_determine"] },
+    "reviewer": {
+      "type": "object", "additionalProperties": false,
+      "required": ["principal_id", "principal_type", "organization_id", "authentication_binding_ref"],
+      "properties": {
+        "principal_id": { "$ref": "#/$defs/identifier" },
+        "principal_type": { "const": "human" },
+        "organization_id": { "oneOf": [{ "$ref": "#/$defs/identifier" }, { "type": "null" }] },
+        "authentication_binding_ref": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "independence": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "identity_verification", "competence", "conflicts", "prior_access",
+        "reviewed_artifacts", "tools_and_models", "review_window",
+        "compensation_and_incentives", "dimensions", "overall_disposition"
+      ],
+      "properties": {
+        "identity_verification": { "enum": ["verified", "not_verified", "unknown"] },
+        "competence": {
+          "type": "object", "additionalProperties": false,
+          "required": ["claimed_basis", "evidence_refs", "disposition"],
+          "properties": {
+            "claimed_basis": { "type": "string", "minLength": 1 },
+            "evidence_refs": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/artifact_reference" } },
+            "disposition": { "enum": ["sufficient_for_lane", "insufficient", "indeterminate"] }
+          }
+        },
+        "conflicts": {
+          "type": "object", "additionalProperties": false,
+          "required": ["employment", "funding", "authorship", "family", "investment", "customer", "other"],
+          "properties": {
+            "employment": { "$ref": "#/$defs/conflict_disclosure" },
+            "funding": { "$ref": "#/$defs/conflict_disclosure" },
+            "authorship": { "$ref": "#/$defs/conflict_disclosure" },
+            "family": { "$ref": "#/$defs/conflict_disclosure" },
+            "investment": { "$ref": "#/$defs/conflict_disclosure" },
+            "customer": { "$ref": "#/$defs/conflict_disclosure" },
+            "other": { "$ref": "#/$defs/conflict_disclosure" }
+          }
+        },
+        "prior_access": {
+          "type": "object", "additionalProperties": false,
+          "required": ["proof_truth", "producer_narrative", "candidate_construction", "shared_hidden_context"],
+          "properties": {
+            "proof_truth": { "$ref": "#/$defs/access_disposition" },
+            "producer_narrative": { "$ref": "#/$defs/access_disposition" },
+            "candidate_construction": { "$ref": "#/$defs/access_disposition" },
+            "shared_hidden_context": { "$ref": "#/$defs/access_disposition" }
+          }
+        },
+        "reviewed_artifacts": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/artifact_reference" } },
+        "tools_and_models": {
+          "type": "array", "uniqueItems": true,
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["kind", "identity_ref", "purpose", "output_independently_checked", "checked_by"],
+            "properties": {
+              "kind": { "enum": ["tool", "model", "formal_checker", "validator"] },
+              "identity_ref": { "$ref": "#/$defs/versioned_reference" },
+              "purpose": { "type": "string", "minLength": 1 },
+              "output_independently_checked": { "enum": ["yes", "no", "unknown"] },
+              "checked_by": { "oneOf": [{ "$ref": "#/$defs/human_principal" }, { "type": "null" }] }
+            }
+          }
+        },
+        "review_window": {
+          "type": "object", "additionalProperties": false,
+          "required": ["started_at", "ended_at"],
+          "properties": { "started_at": { "$ref": "#/$defs/timestamp" }, "ended_at": { "$ref": "#/$defs/timestamp" } }
+        },
+        "compensation_and_incentives": {
+          "type": "object", "additionalProperties": false,
+          "required": ["compensation_basis", "success_contingent", "incentive_notes"],
+          "properties": {
+            "compensation_basis": { "type": "string", "minLength": 1 },
+            "success_contingent": { "enum": ["yes", "no", "unknown"] },
+            "incentive_notes": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+          }
+        },
+        "dimensions": {
+          "type": "array", "minItems": 8, "maxItems": 8, "uniqueItems": true,
+          "items": { "$ref": "#/$defs/independence_dimension" },
+          "allOf": [
+            { "contains": { "properties": { "dimension": { "const": "principal" } }, "required": ["dimension"] } },
+            { "contains": { "properties": { "dimension": { "const": "organization" } }, "required": ["dimension"] } },
+            { "contains": { "properties": { "dimension": { "const": "data_and_truth_exposure" } }, "required": ["dimension"] } },
+            { "contains": { "properties": { "dimension": { "const": "code_and_tooling" } }, "required": ["dimension"] } },
+            { "contains": { "properties": { "dimension": { "const": "evaluator_and_method" } }, "required": ["dimension"] } },
+            { "contains": { "properties": { "dimension": { "const": "operator_and_authorship" } }, "required": ["dimension"] } },
+            { "contains": { "properties": { "dimension": { "const": "incentives_and_funding" } }, "required": ["dimension"] } },
+            { "contains": { "properties": { "dimension": { "const": "hidden_context" } }, "required": ["dimension"] } }
+          ]
+        },
+        "overall_disposition": { "enum": ["sufficient", "insufficient", "indeterminate"] }
+      }
+    },
+    "review_passes": {
+      "type": "object", "additionalProperties": false,
+      "required": ["completeness", "internal_consistency", "adversarial_execution", "claim_boundary"],
+      "properties": {
+        "completeness": { "$ref": "#/$defs/review_pass" },
+        "internal_consistency": { "$ref": "#/$defs/review_pass" },
+        "adversarial_execution": { "$ref": "#/$defs/review_pass" },
+        "claim_boundary": { "$ref": "#/$defs/review_pass" }
+      }
+    },
+    "claim_boundary_results": {
+      "type": "array", "minItems": 1, "uniqueItems": true,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["claim_id", "evidence_class", "evidence_ref"],
+        "properties": {
+          "claim_id": { "$ref": "#/$defs/identifier" },
+          "evidence_class": { "enum": ["defined", "structurally_validated", "semantically_traced", "bounded_model_checked", "product_probed", "independently_reproduced", "operationally_observed", "unproven"] },
+          "evidence_ref": { "$ref": "#/$defs/artifact_reference" }
+        }
+      }
+    },
+    "finding_dispositions": {
+      "type": "array", "uniqueItems": true,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["finding_ref", "severity", "state", "blocking"],
+        "properties": {
+          "finding_ref": { "$ref": "#/$defs/immutable_reference" },
+          "severity": { "enum": ["critical", "high", "medium", "low", "note"] },
+          "state": { "enum": ["open", "remedy_proposed", "changed_candidate", "closure_reviewed", "closed", "duplicate", "invalid_with_evidence", "accepted_limitation", "deferred_probe"] },
+          "blocking": { "type": "boolean" }
+        },
+        "allOf": [
+          {
+            "if": { "properties": { "severity": { "enum": ["critical", "high"] }, "state": { "enum": ["accepted_limitation", "deferred_probe"] } }, "required": ["severity", "state"] },
+            "then": false
+          }
+        ]
+      }
+    },
+    "finding_summary": {
+      "type": "object", "additionalProperties": false,
+      "required": ["open_critical", "open_high", "open_medium", "open_low", "accepted_limitation_medium", "accepted_limitation_low"],
+      "properties": {
+        "open_critical": { "type": "integer", "minimum": 0 },
+        "open_high": { "type": "integer", "minimum": 0 },
+        "open_medium": { "type": "integer", "minimum": 0 },
+        "open_low": { "type": "integer", "minimum": 0 },
+        "accepted_limitation_medium": { "type": "integer", "minimum": 0 },
+        "accepted_limitation_low": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "accepted_limitations": {
+      "type": "array", "uniqueItems": true,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["finding_ref", "severity", "limitation_text", "evidence_ref"],
+        "properties": {
+          "finding_ref": { "$ref": "#/$defs/immutable_reference" },
+          "severity": { "enum": ["medium", "low"] },
+          "limitation_text": { "type": "string", "minLength": 1 },
+          "evidence_ref": { "$ref": "#/$defs/artifact_reference" }
+        }
+      }
+    },
+    "missing_evidence": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+    "carry_forward": {
+      "type": "object", "additionalProperties": false,
+      "required": ["mode", "previous_determination_ref", "previous_candidate_digest", "change_impact_map_ref", "change_set_digest", "to_candidate_binding", "reviewed_change_artifact_refs", "signed_by"],
+      "properties": {
+        "mode": { "enum": ["fresh_review", "signed_outside_lane", "signed_rechecked"] },
+        "previous_determination_ref": { "oneOf": [{ "$ref": "#/$defs/immutable_reference" }, { "type": "null" }] },
+        "previous_candidate_digest": { "oneOf": [{ "$ref": "#/$defs/digest" }, { "type": "null" }] },
+        "change_impact_map_ref": { "$ref": "#/$defs/artifact_reference" },
+        "change_set_digest": { "$ref": "#/$defs/digest" },
+        "to_candidate_binding": { "const": "current_determination_candidate" },
+        "reviewed_change_artifact_refs": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/artifact_reference" } },
+        "signed_by": { "oneOf": [{ "$ref": "#/$defs/human_principal" }, { "type": "null" }] }
+      }
+    },
+    "determination_evidence_ref": { "$ref": "#/$defs/artifact_reference" },
+    "signature": {
+      "type": "object", "additionalProperties": false,
+      "required": ["signed_body_digest", "body_projection_rule_ref", "signature_ref", "signer"],
+      "properties": {
+        "signed_body_digest": { "$ref": "#/$defs/digest" },
+        "body_projection_rule_ref": { "$ref": "#/$defs/versioned_reference" },
+        "signature_ref": { "$ref": "#/$defs/artifact_reference" },
+        "signer": { "$ref": "#/$defs/human_principal" }
+      }
+    },
+    "determined_at": { "$ref": "#/$defs/timestamp" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "result": { "const": "accept_for_gate_a" } }, "required": ["result"] },
+      "then": {
+        "properties": {
+          "independence": {
+            "properties": {
+              "identity_verification": { "const": "verified" },
+              "competence": { "properties": { "disposition": { "const": "sufficient_for_lane" } } },
+              "dimensions": { "not": { "contains": { "properties": { "status": { "enum": ["not_satisfied", "unknown"] } }, "required": ["status"] } } },
+              "overall_disposition": { "const": "sufficient" }
+            }
+          },
+          "review_passes": {
+            "properties": {
+              "completeness": { "properties": { "result": { "const": "pass" } } },
+              "internal_consistency": { "properties": { "result": { "const": "pass" } } },
+              "adversarial_execution": { "properties": { "result": { "const": "pass" } } },
+              "claim_boundary": { "properties": { "result": { "const": "pass" } } }
+            }
+          },
+          "finding_dispositions": { "not": { "contains": { "properties": { "blocking": { "const": true } }, "required": ["blocking"] } } },
+          "finding_summary": { "properties": { "open_critical": { "const": 0 }, "open_high": { "const": 0 } } },
+          "missing_evidence": { "maxItems": 0 }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "result": { "const": "reject" } }, "required": ["result"] },
+      "then": { "properties": { "finding_dispositions": { "contains": { "properties": { "blocking": { "const": true } }, "required": ["blocking"] } } } }
+    },
+    {
+      "if": { "properties": { "result": { "const": "unable_to_determine" } }, "required": ["result"] },
+      "then": { "properties": { "missing_evidence": { "minItems": 1 } } }
+    },
+    {
+      "if": { "properties": { "carry_forward": { "properties": { "mode": { "const": "fresh_review" } }, "required": ["mode"] } } },
+      "then": { "properties": { "carry_forward": { "properties": { "previous_determination_ref": { "type": "null" }, "previous_candidate_digest": { "type": "null" }, "reviewed_change_artifact_refs": { "maxItems": 0 }, "signed_by": { "type": "null" } } } } },
+      "else": { "properties": { "carry_forward": { "properties": { "previous_determination_ref": { "$ref": "#/$defs/immutable_reference" }, "previous_candidate_digest": { "$ref": "#/$defs/digest" }, "reviewed_change_artifact_refs": { "minItems": 1 }, "signed_by": { "$ref": "#/$defs/human_principal" } } } } }
+    }
+  ],
+  "$defs": {
+    "identifier": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$" },
+    "digest": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+    "timestamp": { "type": "string", "format": "date-time", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$" },
+    "review_lane": { "enum": ["mission_product_boundary", "statistical_scientific", "physical_domain", "distributed_systems_recovery", "security_authority_cryptography", "data_rights_privacy", "human_factors_accessibility", "adversarial_scientific_integrity"] },
+    "human_principal": {
+      "type": "object", "additionalProperties": false,
+      "required": ["principal_id", "principal_type"],
+      "properties": { "principal_id": { "$ref": "#/$defs/identifier" }, "principal_type": { "const": "human" } }
+    },
+    "artifact_reference": {
+      "type": "object", "additionalProperties": false,
+      "required": ["artifact_id", "digest", "media_type"],
+      "properties": { "artifact_id": { "$ref": "#/$defs/identifier" }, "digest": { "$ref": "#/$defs/digest" }, "media_type": { "type": "string", "minLength": 1 } }
+    },
+    "immutable_reference": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "version", "digest"],
+      "properties": { "id": { "$ref": "#/$defs/identifier" }, "version": { "type": "integer", "minimum": 1 }, "digest": { "$ref": "#/$defs/digest" } }
+    },
+    "versioned_reference": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "version", "digest"],
+      "properties": { "id": { "$ref": "#/$defs/identifier" }, "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" }, "digest": { "$ref": "#/$defs/digest" } }
+    },
+    "candidate_reference": {
+      "type": "object", "additionalProperties": false,
+      "required": ["manifest_id", "version", "manifest_digest"],
+      "properties": { "manifest_id": { "$ref": "#/$defs/identifier" }, "version": { "type": "integer", "minimum": 1 }, "manifest_digest": { "$ref": "#/$defs/digest" } }
+    },
+    "conflict_disclosure": {
+      "type": "object", "additionalProperties": false,
+      "required": ["status", "disclosure_ref"],
+      "properties": {
+        "status": { "enum": ["none_declared", "present", "unknown"] },
+        "disclosure_ref": { "oneOf": [{ "$ref": "#/$defs/artifact_reference" }, { "type": "null" }] }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "status": { "const": "none_declared" } }, "required": ["status"] },
+          "then": { "properties": { "disclosure_ref": { "type": "null" } } },
+          "else": { "properties": { "disclosure_ref": { "$ref": "#/$defs/artifact_reference" } } }
+        }
+      ]
+    },
+    "access_disposition": {
+      "type": "object", "additionalProperties": false,
+      "required": ["level", "evidence_ref"],
+      "properties": {
+        "level": { "enum": ["none", "bounded", "full", "unknown"] },
+        "evidence_ref": { "$ref": "#/$defs/artifact_reference" }
+      }
+    },
+    "independence_dimension": {
+      "type": "object", "additionalProperties": false,
+      "required": ["dimension", "status", "evidence_refs"],
+      "properties": {
+        "dimension": { "enum": ["principal", "organization", "data_and_truth_exposure", "code_and_tooling", "evaluator_and_method", "operator_and_authorship", "incentives_and_funding", "hidden_context"] },
+        "status": { "enum": ["satisfied", "not_satisfied", "unknown"] },
+        "evidence_refs": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/artifact_reference" } }
+      }
+    },
+    "review_pass": {
+      "type": "object", "additionalProperties": false,
+      "required": ["result", "evidence_refs", "limitations"],
+      "properties": {
+        "result": { "enum": ["pass", "fail", "indeterminate"] },
+        "evidence_refs": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/artifact_reference" } },
+        "limitations": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+      }
+    }
+  }
+}

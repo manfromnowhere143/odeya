@@ -1,0 +1,124 @@
+{
+  "schema_version": "0.3.0",
+  "trace_id": "trace.stale-grant-restore-fenced.001",
+  "purpose": "A restored historical grant cannot reopen access when the independently witnessed current-security frontier is incomplete.",
+  "stream_id": "recovery.founding",
+  "stream_type": "recovery",
+  "mission_scope": null,
+  "reducer_set": {
+    "name": "odeya-founding-reducers",
+    "version": "0.2.0",
+    "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "steps": [
+    {
+      "ordinal": 0,
+      "event_id": "event.restore-case_opened.0",
+      "event_type": "restore.case_opened",
+      "event_version": "1.0.0",
+      "stream_position": 100,
+      "aggregate_type": "restore_case",
+      "aggregate_id": "restore_case.001",
+      "aggregate_version": 0,
+      "event_digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+      "expected_axis_changes": [
+        {
+          "axis": "recovery_control",
+          "from": "not_opened",
+          "to": "isolated"
+        }
+      ]
+    },
+    {
+      "ordinal": 1,
+      "event_id": "event.recovery-current_policy_frontier_recorded.1",
+      "event_type": "recovery.current_policy_frontier_recorded",
+      "event_version": "1.0.0",
+      "stream_position": 101,
+      "aggregate_type": "recovery_control",
+      "aggregate_id": "recovery_control.001",
+      "aggregate_version": 1,
+      "event_digest": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+      "expected_axis_changes": [
+        {
+          "axis": "security_frontier",
+          "from": "missing",
+          "to": "incomplete"
+        }
+      ]
+    },
+    {
+      "ordinal": 2,
+      "event_id": "event.recovery-quarantine_entered.2",
+      "event_type": "recovery.quarantine_entered",
+      "event_version": "1.0.0",
+      "stream_position": 102,
+      "aggregate_type": "recovery_control",
+      "aggregate_id": "recovery_control.001",
+      "aggregate_version": 2,
+      "event_digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+      "expected_axis_changes": [
+        {
+          "axis": "recovery_control",
+          "from": "isolated",
+          "to": "quarantined"
+        }
+      ]
+    },
+    {
+      "ordinal": 3,
+      "event_id": "event.recovery-decision_recorded.3",
+      "event_type": "recovery.decision_recorded",
+      "event_version": "1.0.0",
+      "stream_position": 103,
+      "aggregate_type": "recovery_decision",
+      "aggregate_id": "recovery_decision.001",
+      "aggregate_version": 3,
+      "event_digest": "sha256:4444444444444444444444444444444444444444444444444444444444444444",
+      "expected_axis_changes": [
+        {
+          "axis": "recovery_decision",
+          "from": "not_applicable",
+          "to": "remain_quarantined"
+        }
+      ]
+    }
+  ],
+  "expected_state": {
+    "run_validity": "not_applicable",
+    "measurement": "not_applicable",
+    "scientific_outcome": "not_adjudicated",
+    "verification_status": "not_applicable",
+    "claim_eligibility": "not_applicable",
+    "publication_release": "not_applicable",
+    "external_effect_settlement": "not_applicable",
+    "grant_use_reservation": "not_applicable",
+    "dispatch_claim": "not_applicable",
+    "retry_disposition": "not_applicable",
+    "channel_observation_refs": [],
+    "data_use_authority": "revoked",
+    "exposure_state": "not_intended",
+    "security_frontier": "incomplete",
+    "restore_report": "recorded_indeterminate",
+    "recovery_decision": "remain_quarantined",
+    "recovery_control": "quarantined",
+    "ledger_integrity": "continuous",
+    "artifact_recovery": "not_applicable",
+    "resource_accounting": {
+      "reservation_id": null,
+      "reservation_state": "not_applicable",
+      "ceiling_hold": "not_applicable",
+      "actual_usage_status": "not_applicable",
+      "observation_axes": [],
+      "settlement": "not_applicable",
+      "conversion_policy": "not_applicable",
+      "dimension_compensation": "not_applicable",
+      "verification_capacity": "not_applicable"
+    }
+  },
+  "forbidden_inferences": [
+    "stale-grant-restore",
+    "historical-credential-reenable",
+    "incomplete-frontier-as-current"
+  ]
+}

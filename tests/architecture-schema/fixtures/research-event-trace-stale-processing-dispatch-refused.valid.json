@@ -1,0 +1,128 @@
+{
+  "schema_version": "0.3.0",
+  "trace_id": "trace.stale-processing-dispatch-refused.001",
+  "purpose": "A WorkContract and historical exposure intent do not authorize provider bytes or spend after the bound DataUseDecision is stale or revoked; dispatch admission rechecks the current frontier and refuses before reservation consumption.",
+  "stream_id": "mission.001",
+  "stream_type": "mission",
+  "mission_scope": "mission.001",
+  "reducer_set": {
+    "name": "odeya-founding-reducers",
+    "version": "0.2.0",
+    "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "steps": [
+    {
+      "ordinal": 0,
+      "event_id": "event.data-use-decided.processing.001",
+      "event_type": "data_use.decided",
+      "event_version": "1.0.0",
+      "stream_position": 201,
+      "aggregate_type": "data_use_decision",
+      "aggregate_id": "data-use-decision.processing.001",
+      "aggregate_version": 0,
+      "event_digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+      "expected_axis_changes": [
+        {
+          "axis": "data_use_authority",
+          "from": "missing",
+          "to": "authorized"
+        }
+      ]
+    },
+    {
+      "ordinal": 1,
+      "event_id": "event.exposure-intent.processing.001",
+      "event_type": "data_exposure.intent_recorded",
+      "event_version": "1.0.0",
+      "stream_position": 202,
+      "aggregate_type": "data_exposure",
+      "aggregate_id": "exposure-intent.processing.001",
+      "aggregate_version": 0,
+      "event_digest": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+      "expected_axis_changes": [
+        {
+          "axis": "exposure_state",
+          "from": "not_intended",
+          "to": "authorized"
+        }
+      ]
+    },
+    {
+      "ordinal": 2,
+      "event_id": "event.data-use-revoked.processing.001",
+      "event_type": "data_use.revoked",
+      "event_version": "1.0.0",
+      "stream_position": 203,
+      "aggregate_type": "data_use_decision",
+      "aggregate_id": "data-use-decision.processing.001",
+      "aggregate_version": 1,
+      "event_digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+      "expected_axis_changes": [
+        {
+          "axis": "data_use_authority",
+          "from": "authorized",
+          "to": "revoked"
+        },
+        {
+          "axis": "exposure_state",
+          "from": "authorized",
+          "to": "not_intended"
+        }
+      ]
+    }
+  ],
+  "command_attempts": [
+    {
+      "command_id": "command.effect-processing-authorize.001",
+      "command_type": "external_effect.authorize",
+      "command_schema_id": "urn:odeya:command-payload:external_effect.authorize:1.0.0",
+      "canonical_request_digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "source_stream_position": 203,
+      "receipt_ref": {
+        "receipt_id": "receipt.effect-processing-authorize.rejected.001",
+        "schema_id": "urn:odeya:schema:command-receipt:0.3.0",
+        "digest": "sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+      },
+      "admission_result": "rejected",
+      "rejection_code": "data_use_revoked",
+      "grant_use_reservation_committed": false,
+      "grant_use_committed": false,
+      "external_effect_authorization_committed": false,
+      "external_effect_start_committed": false,
+      "resource_spend_committed": false
+    }
+  ],
+  "expected_state": {
+    "run_validity": "not_applicable",
+    "measurement": "not_applicable",
+    "scientific_outcome": "not_adjudicated",
+    "verification_status": "not_applicable",
+    "claim_eligibility": "not_applicable",
+    "publication_release": "not_applicable",
+    "external_effect_settlement": "not_intended",
+    "grant_use_reservation": "not_applicable",
+    "dispatch_claim": "not_claimed",
+    "retry_disposition": "not_applicable",
+    "channel_observation_refs": [],
+    "data_use_authority": "revoked",
+    "exposure_state": "not_intended",
+    "governed_processing_dispatch_admission": "refused_stale_data_use",
+    "resource_accounting": {
+      "reservation_id": null,
+      "reservation_state": "not_applicable",
+      "ceiling_hold": "not_applicable",
+      "actual_usage_status": "not_applicable",
+      "observation_axes": [],
+      "settlement": "not_applicable",
+      "conversion_policy": "not_applicable",
+      "dimension_compensation": "not_applicable",
+      "verification_capacity": "not_applicable"
+    }
+  },
+  "forbidden_inferences": [
+    "work-contract-as-dispatch-authority",
+    "stale-data-use-decision-as-current",
+    "provider-bytes-before-dispatch-claim",
+    "resource-spend-before-current-dispatch-admission"
+  ]
+}

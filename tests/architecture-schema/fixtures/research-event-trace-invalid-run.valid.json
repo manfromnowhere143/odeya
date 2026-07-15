@@ -1,0 +1,98 @@
+{
+  "schema_version": "0.3.0",
+  "trace_id": "trace.invalid-run-no-measurement.001",
+  "purpose": "Prove that infrastructure failure and absence of a valid measurement replay to refusal, never to a scientific null.",
+  "stream_id": "mission.001",
+  "stream_type": "mission",
+  "mission_scope": "mission.001",
+  "reducer_set": {
+    "name": "odeya-founding-reducers",
+    "version": "0.1.0",
+    "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "steps": [
+    {
+      "ordinal": 0,
+      "event_id": "event.run-validity.001",
+      "event_type": "run.validity_determined",
+      "event_version": "1.0.0",
+      "stream_position": 14,
+      "aggregate_type": "run",
+      "aggregate_id": "run.001",
+      "aggregate_version": 2,
+      "event_digest": "sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "expected_axis_changes": [
+        {
+          "axis": "run_validity",
+          "from": "pending",
+          "to": "invalid"
+        }
+      ]
+    },
+    {
+      "ordinal": 1,
+      "event_id": "event.measurement.001",
+      "event_type": "measurement.disposition_determined",
+      "event_version": "1.0.0",
+      "stream_position": 15,
+      "aggregate_type": "measurement",
+      "aggregate_id": "measurement.001",
+      "aggregate_version": 0,
+      "event_digest": "sha256:6666666666666666666666666666666666666666666666666666666666666666",
+      "expected_axis_changes": [
+        {
+          "axis": "measurement",
+          "from": "not_observed",
+          "to": "no_valid_measurement"
+        }
+      ]
+    },
+    {
+      "ordinal": 2,
+      "event_id": "event.adjudication-refusal.001",
+      "event_type": "adjudication.recorded",
+      "event_version": "1.0.0",
+      "stream_position": 16,
+      "aggregate_type": "adjudication",
+      "aggregate_id": "adjudication.001",
+      "aggregate_version": 0,
+      "event_digest": "sha256:7777777777777777777777777777777777777777777777777777777777777777",
+      "expected_axis_changes": [
+        {
+          "axis": "scientific_outcome",
+          "from": "not_adjudicated",
+          "to": "not_adjudicated"
+        }
+      ]
+    }
+  ],
+  "expected_state": {
+    "run_validity": "invalid",
+    "measurement": "no_valid_measurement",
+    "scientific_outcome": "not_adjudicated",
+    "verification_status": "not_requested",
+    "claim_eligibility": "ineligible",
+    "publication_release": "not_requested",
+    "external_effect_settlement": "not_intended",
+    "grant_use_reservation": "not_applicable",
+    "dispatch_claim": "not_applicable",
+    "retry_disposition": "not_applicable",
+    "channel_observation_refs": [],
+    "resource_accounting": {
+      "reservation_id": null,
+      "reservation_state": "not_applicable",
+      "ceiling_hold": "not_applicable",
+      "actual_usage_status": "not_applicable",
+      "observation_axes": [],
+      "settlement": "not_applicable",
+      "conversion_policy": "not_applicable",
+      "dimension_compensation": "not_applicable",
+      "verification_capacity": "not_applicable"
+    }
+  },
+  "forbidden_inferences": [
+    "derive.null_result",
+    "compile.eligible_claim",
+    "authorize.publication"
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "schema_version": "0.3.0",
+  "trace_id": "trace.exposure-unknown-not-zero.001",
+  "purpose": "An ambiguous provider disclosure remains completion_unknown and cannot become confirmed_not_exposed or zero exposure.",
+  "stream_id": "data-governance.mission-001",
+  "stream_type": "data_governance",
+  "mission_scope": "mission.001",
+  "reducer_set": {
+    "name": "odeya-founding-reducers",
+    "version": "0.2.0",
+    "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "steps": [
+    {
+      "ordinal": 0,
+      "event_id": "event.data_exposure-intent_recorded.0",
+      "event_type": "data_exposure.intent_recorded",
+      "event_version": "1.0.0",
+      "stream_position": 100,
+      "aggregate_type": "data_exposure",
+      "aggregate_id": "data_exposure.001",
+      "aggregate_version": 0,
+      "event_digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+      "expected_axis_changes": [
+        {
+          "axis": "exposure_state",
+          "from": "not_intended",
+          "to": "authorized"
+        }
+      ]
+    },
+    {
+      "ordinal": 1,
+      "event_id": "event.data_exposure-observation_recorded.1",
+      "event_type": "data_exposure.observation_recorded",
+      "event_version": "1.0.0",
+      "stream_position": 101,
+      "aggregate_type": "data_exposure",
+      "aggregate_id": "data_exposure.001",
+      "aggregate_version": 1,
+      "event_digest": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+      "expected_axis_changes": [
+        {
+          "axis": "exposure_state",
+          "from": "authorized",
+          "to": "completion_unknown"
+        }
+      ]
+    },
+    {
+      "ordinal": 2,
+      "event_id": "event.data_exposure-settlement_recorded.2",
+      "event_type": "data_exposure.settlement_recorded",
+      "event_version": "1.0.0",
+      "stream_position": 102,
+      "aggregate_type": "data_exposure",
+      "aggregate_id": "data_exposure.001",
+      "aggregate_version": 2,
+      "event_digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+      "expected_axis_changes": [
+        {
+          "axis": "exposure_state",
+          "from": "completion_unknown",
+          "to": "completion_unknown"
+        }
+      ]
+    }
+  ],
+  "expected_state": {
+    "run_validity": "not_applicable",
+    "measurement": "not_applicable",
+    "scientific_outcome": "not_adjudicated",
+    "verification_status": "not_applicable",
+    "claim_eligibility": "not_applicable",
+    "publication_release": "not_applicable",
+    "external_effect_settlement": "not_applicable",
+    "grant_use_reservation": "not_applicable",
+    "dispatch_claim": "not_applicable",
+    "retry_disposition": "not_applicable",
+    "channel_observation_refs": [],
+    "data_use_authority": "authorized",
+    "exposure_state": "completion_unknown",
+    "data_lifecycle": "admitted",
+    "resource_accounting": {
+      "reservation_id": null,
+      "reservation_state": "not_applicable",
+      "ceiling_hold": "not_applicable",
+      "actual_usage_status": "not_applicable",
+      "observation_axes": [],
+      "settlement": "not_applicable",
+      "conversion_policy": "not_applicable",
+      "dimension_compensation": "not_applicable",
+      "verification_capacity": "not_applicable"
+    }
+  },
+  "forbidden_inferences": [
+    "unknown-exposure-to-zero",
+    "timeout-as-not-disclosed",
+    "deletion-as-unexposure"
+  ]
+}

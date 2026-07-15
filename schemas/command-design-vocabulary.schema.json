@@ -1,0 +1,205 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:odeya:schema:command-design-vocabulary:0.1.0",
+  "title": "Odeya CommandDesignVocabulary",
+  "description": "A non-executable planning artifact extracted from one exact command-envelope candidate. Every entry is explicitly not contract-admitted and carries no payload, handler, event, authority, grant, compatibility, activation, or execution promise.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "vocabulary_id",
+    "version",
+    "artifact_class",
+    "source_envelope_candidate_ref",
+    "extraction_contract",
+    "entries",
+    "prohibited_promises",
+    "known_limitations",
+    "vocabulary_digest_contract",
+    "vocabulary_digest",
+    "external_attestations"
+  ],
+  "properties": {
+    "schema_version": { "const": "0.1.0" },
+    "vocabulary_id": { "$ref": "#/$defs/identifier" },
+    "version": { "$ref": "#/$defs/semantic_version" },
+    "artifact_class": { "const": "non_executable_planning_vocabulary" },
+    "source_envelope_candidate_ref": { "$ref": "#/$defs/schema_bytes_reference" },
+    "extraction_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["selector", "deduplication_key", "ordering", "duplicate_selector", "entry_count"],
+      "properties": {
+        "selector": { "const": "command_envelope_payload_branches.command_type.const+command_version.const" },
+        "deduplication_key": { "const": "command_type@command_version" },
+        "ordering": { "const": "source_branch_order" },
+        "duplicate_selector": { "const": "reject" },
+        "entry_count": { "const": 121 }
+      }
+    },
+    "entries": {
+      "type": "array",
+      "minItems": 121,
+      "maxItems": 121,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/design_entry" }
+    },
+    "prohibited_promises": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "payload_schema",
+        "handler_or_decider",
+        "event_or_cohort",
+        "aggregate_or_reducer",
+        "authority_or_grant",
+        "compatibility",
+        "activation",
+        "execution"
+      ],
+      "properties": {
+        "payload_schema": { "const": false },
+        "handler_or_decider": { "const": false },
+        "event_or_cohort": { "const": false },
+        "aggregate_or_reducer": { "const": false },
+        "authority_or_grant": { "const": false },
+        "compatibility": { "const": false },
+        "activation": { "const": false },
+        "execution": { "const": false }
+      }
+    },
+    "known_limitations": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/known_limitation" }
+    },
+    "vocabulary_digest_contract": { "$ref": "#/$defs/digest_contract" },
+    "vocabulary_digest": { "$ref": "#/$defs/digest" },
+    "external_attestations": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/attestation" }
+    }
+  },
+  "$defs": {
+    "identifier": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$" },
+    "semantic_version": { "type": "string", "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$" },
+    "digest": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+    "schema_bytes_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_id", "semantic_version", "byte_digest", "byte_count", "media_type", "encoding", "dialect"],
+      "properties": {
+        "schema_id": { "const": "urn:odeya:schema:command-envelope:0.4.0" },
+        "semantic_version": { "const": "0.4.0" },
+        "byte_digest": { "$ref": "#/$defs/digest" },
+        "byte_count": { "type": "integer", "minimum": 2 },
+        "media_type": { "const": "application/schema+json" },
+        "encoding": { "const": "utf-8" },
+        "dialect": { "const": "https://json-schema.org/draft/2020-12/schema" }
+      }
+    },
+    "design_entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["command_type", "command_version", "disposition"],
+      "properties": {
+        "command_type": { "$ref": "#/$defs/identifier" },
+        "command_version": { "$ref": "#/$defs/semantic_version" },
+        "disposition": { "const": "not_contract_admitted" }
+      }
+    },
+    "known_limitation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["limitation_id", "severity", "statement", "consequence"],
+      "properties": {
+        "limitation_id": { "$ref": "#/$defs/identifier" },
+        "severity": { "enum": ["low", "moderate", "high", "critical"] },
+        "statement": { "type": "string", "minLength": 1, "maxLength": 2048 },
+        "consequence": { "type": "string", "minLength": 1, "maxLength": 2048 }
+      }
+    },
+    "profile_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["profile_id", "version", "digest"],
+      "properties": {
+        "profile_id": { "$ref": "#/$defs/identifier" },
+        "version": { "$ref": "#/$defs/semantic_version" },
+        "digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "schema_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_id", "schema_digest"],
+      "properties": {
+        "schema_id": { "type": "string", "format": "uri" },
+        "schema_digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "artifact_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifact_id", "digest", "media_type"],
+      "properties": {
+        "artifact_id": { "$ref": "#/$defs/identifier" },
+        "digest": { "$ref": "#/$defs/digest" },
+        "media_type": { "type": "string", "minLength": 1, "maxLength": 127 }
+      }
+    },
+    "attestation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["attestation_id", "subject_digest", "signer_id", "algorithm", "signature_ref"],
+      "properties": {
+        "attestation_id": { "$ref": "#/$defs/identifier" },
+        "subject_digest": { "$ref": "#/$defs/digest" },
+        "signer_id": { "$ref": "#/$defs/identifier" },
+        "algorithm": { "type": "string", "minLength": 1, "maxLength": 127 },
+        "signature_ref": { "$ref": "#/$defs/artifact_reference" }
+      }
+    },
+    "digest_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["algorithm", "domain_separator", "canonicalization_profile_ref", "subject_schema_ref", "included_json_pointers", "excluded_json_pointers"],
+      "properties": {
+        "algorithm": { "const": "sha256" },
+        "domain_separator": { "const": "odeya-command-design-vocabulary-v1" },
+        "canonicalization_profile_ref": { "$ref": "#/$defs/profile_reference" },
+        "subject_schema_ref": { "$ref": "#/$defs/schema_reference" },
+        "included_json_pointers": {
+          "type": "array",
+          "minItems": 10,
+          "maxItems": 10,
+          "prefixItems": [
+            { "const": "/schema_version" },
+            { "const": "/vocabulary_id" },
+            { "const": "/version" },
+            { "const": "/artifact_class" },
+            { "const": "/source_envelope_candidate_ref" },
+            { "const": "/extraction_contract" },
+            { "const": "/entries" },
+            { "const": "/prohibited_promises" },
+            { "const": "/known_limitations" },
+            { "const": "/vocabulary_digest_contract" }
+          ],
+          "items": false
+        },
+        "excluded_json_pointers": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "prefixItems": [
+            { "const": "/vocabulary_digest" },
+            { "const": "/external_attestations" }
+          ],
+          "items": false
+        }
+      }
+    }
+  }
+}

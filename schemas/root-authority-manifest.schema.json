@@ -1,0 +1,240 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:odeya:schema:root-authority-manifest:0.1.0",
+  "title": "Odeya RootAuthorityManifest",
+  "description": "The non-self-issued constitutional bootstrap declaration. Its canonical digest is bound externally after canonicalization; this object declares assignments but contains no operational grant.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "manifest_id", "version", "manifest_kind",
+    "repository_candidate", "founding_operator", "initial_assignments",
+    "role_overlap_disclosures", "constitutional_scope",
+    "prohibited_self_approvals", "recovery", "trust_roots", "temporal",
+    "signed_decision_evidence", "created_at"
+  ],
+  "properties": {
+    "schema_version": { "const": "0.1.0" },
+    "manifest_id": { "$ref": "#/$defs/identifier" },
+    "version": { "type": "integer", "minimum": 1 },
+    "manifest_kind": { "enum": ["architecture_fixture", "operational_root"] },
+    "repository_candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repository_id", "visibility", "candidate_commit", "architecture_digest"],
+      "properties": {
+        "repository_id": { "$ref": "#/$defs/identifier" },
+        "visibility": { "enum": ["private", "public"] },
+        "candidate_commit": {
+          "type": "string",
+          "pattern": "^git:(sha1:[a-f0-9]{40}|sha256:[a-f0-9]{64})$"
+        },
+        "architecture_digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "founding_operator": { "$ref": "#/$defs/human_principal_binding" },
+    "initial_assignments": {
+      "type": "array",
+      "minItems": 9,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/assignment_declaration" },
+      "allOf": [
+        { "contains": { "properties": { "role": { "const": "proposal" } }, "required": ["role"] } },
+        { "contains": { "properties": { "role": { "const": "protocol" } }, "required": ["role"] } },
+        { "contains": { "properties": { "role": { "const": "safety" } }, "required": ["role"] } },
+        { "contains": { "properties": { "role": { "const": "data_rights" } }, "required": ["role"] } },
+        { "contains": { "properties": { "role": { "const": "resource" } }, "required": ["role"] } },
+        { "contains": { "properties": { "role": { "const": "execution" } }, "required": ["role"] } },
+        { "contains": { "properties": { "role": { "const": "verification" } }, "required": ["role"] } },
+        { "contains": { "properties": { "role": { "const": "outcome" } }, "required": ["role"] } },
+        { "contains": { "properties": { "role": { "const": "publication" } }, "required": ["role"] } }
+      ]
+    },
+    "role_overlap_disclosures": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["principal_id", "roles", "risk_accepted_by", "limitations"],
+        "properties": {
+          "principal_id": { "$ref": "#/$defs/identifier" },
+          "roles": {
+            "type": "array", "minItems": 2, "uniqueItems": true,
+            "items": { "$ref": "#/$defs/role" }
+          },
+          "risk_accepted_by": { "$ref": "#/$defs/human_principal" },
+          "limitations": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } }
+        }
+      }
+    },
+    "constitutional_scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "maximum_risk_tier", "maximum_data_class", "maximum_publication_visibility",
+        "external_effects_allowed", "real_capital_allowed", "customer_data_allowed",
+        "public_release_allowed", "permitted_action_classes", "forbidden_action_classes"
+      ],
+      "properties": {
+        "maximum_risk_tier": { "enum": ["R0", "R1", "R2", "R3", "R4"] },
+        "maximum_data_class": { "enum": ["D0", "D1", "D2", "D3", "D4"] },
+        "maximum_publication_visibility": { "enum": ["private", "restricted", "embargoed", "public"] },
+        "external_effects_allowed": { "type": "boolean" },
+        "real_capital_allowed": { "type": "boolean" },
+        "customer_data_allowed": { "type": "boolean" },
+        "public_release_allowed": { "type": "boolean" },
+        "permitted_action_classes": { "$ref": "#/$defs/unique_strings" },
+        "forbidden_action_classes": { "$ref": "#/$defs/nonempty_unique_strings" }
+      }
+    },
+    "prohibited_self_approvals": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "root_rotation_by_incoming_assignee_only", "producer_terminal_verification",
+          "producer_publication_approval", "single_principal_r3_r4_safety_execution",
+          "model_or_tool_human_only_decision", "timeout_or_silence_as_approval",
+          "retroactive_authorization", "evidence_rewrite"
+        ]
+      },
+      "contains": { "const": "root_rotation_by_incoming_assignee_only" }
+    },
+    "recovery": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["principals", "quorum", "rotation_rule_ref", "recovery_rule_ref", "external_witness_required"],
+      "properties": {
+        "principals": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/human_principal_binding" } },
+        "quorum": { "type": "integer", "minimum": 1 },
+        "rotation_rule_ref": { "$ref": "#/$defs/versioned_reference" },
+        "recovery_rule_ref": { "$ref": "#/$defs/versioned_reference" },
+        "external_witness_required": { "type": "boolean" }
+      }
+    },
+    "trust_roots": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["canonicalization_profile", "schema_registry", "policy_bundle", "checkpoint_profile", "key_profile"],
+      "properties": {
+        "canonicalization_profile": { "$ref": "#/$defs/versioned_reference" },
+        "schema_registry": { "$ref": "#/$defs/versioned_reference" },
+        "policy_bundle": { "$ref": "#/$defs/versioned_reference" },
+        "checkpoint_profile": { "$ref": "#/$defs/versioned_reference" },
+        "key_profile": { "$ref": "#/$defs/versioned_reference" }
+      }
+    },
+    "temporal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["effective_at", "review_at", "expires_at", "revocation_route_ref"],
+      "properties": {
+        "effective_at": { "$ref": "#/$defs/timestamp" },
+        "review_at": { "$ref": "#/$defs/timestamp" },
+        "expires_at": { "oneOf": [{ "$ref": "#/$defs/timestamp" }, { "type": "null" }] },
+        "revocation_route_ref": { "$ref": "#/$defs/versioned_reference" }
+      }
+    },
+    "signed_decision_evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["decision_artifact", "signatures"],
+      "properties": {
+        "decision_artifact": { "$ref": "#/$defs/artifact_reference" },
+        "signatures": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/signature" } }
+      }
+    },
+    "created_at": { "$ref": "#/$defs/timestamp" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "manifest_kind": { "const": "architecture_fixture" } }, "required": ["manifest_kind"] },
+      "then": {
+        "properties": {
+          "constitutional_scope": {
+            "properties": {
+              "maximum_risk_tier": { "const": "R0" },
+              "maximum_data_class": { "const": "D0" },
+              "maximum_publication_visibility": { "const": "private" },
+              "external_effects_allowed": { "const": false },
+              "real_capital_allowed": { "const": false },
+              "customer_data_allowed": { "const": false },
+              "public_release_allowed": { "const": false }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "recovery": {
+            "properties": {
+              "principals": { "minItems": 2 },
+              "quorum": { "minimum": 2 },
+              "external_witness_required": { "const": true }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "identifier": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$" },
+    "digest": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+    "timestamp": { "type": "string", "format": "date-time", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$" },
+    "role": { "enum": ["proposal", "protocol", "safety", "data_rights", "resource", "execution", "verification", "outcome", "publication"] },
+    "human_principal": {
+      "type": "object", "additionalProperties": false,
+      "required": ["principal_id", "principal_type"],
+      "properties": { "principal_id": { "$ref": "#/$defs/identifier" }, "principal_type": { "const": "human" } }
+    },
+    "human_principal_binding": {
+      "type": "object", "additionalProperties": false,
+      "required": ["principal_id", "principal_type", "authentication_binding_ref"],
+      "properties": {
+        "principal_id": { "$ref": "#/$defs/identifier" },
+        "principal_type": { "const": "human" },
+        "authentication_binding_ref": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "assignment_declaration": {
+      "type": "object", "additionalProperties": false,
+      "required": ["declaration_id", "role", "assignee", "decision_ceiling", "prohibited_actions"],
+      "properties": {
+        "declaration_id": { "$ref": "#/$defs/identifier" },
+        "role": { "$ref": "#/$defs/role" },
+        "assignee": { "$ref": "#/$defs/human_principal_binding" },
+        "decision_ceiling": { "enum": ["architecture_only", "bounded_r0_r1", "human_discretionary_within_scope"] },
+        "prohibited_actions": { "$ref": "#/$defs/nonempty_unique_strings" }
+      }
+    },
+    "versioned_reference": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "version", "digest"],
+      "properties": {
+        "id": { "$ref": "#/$defs/identifier" },
+        "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+        "digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "artifact_reference": {
+      "type": "object", "additionalProperties": false,
+      "required": ["artifact_id", "digest", "media_type"],
+      "properties": {
+        "artifact_id": { "$ref": "#/$defs/identifier" },
+        "digest": { "$ref": "#/$defs/digest" },
+        "media_type": { "type": "string", "minLength": 1 }
+      }
+    },
+    "signature": {
+      "type": "object", "additionalProperties": false,
+      "required": ["signer", "key_id", "signature_artifact"],
+      "properties": {
+        "signer": { "$ref": "#/$defs/human_principal" },
+        "key_id": { "$ref": "#/$defs/identifier" },
+        "signature_artifact": { "$ref": "#/$defs/artifact_reference" }
+      }
+    },
+    "unique_strings": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+    "nonempty_unique_strings": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "minLength": 1 } }
+  }
+}

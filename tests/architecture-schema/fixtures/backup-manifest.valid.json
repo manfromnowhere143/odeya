@@ -1,0 +1,154 @@
+{
+  "schema_version": "0.1.0",
+  "backup_manifest_id": "backup.epoch-1.full.0001",
+  "version": 1,
+  "source_frontier": {
+    "ledger_epoch": "ledger-epoch.1",
+    "begin_global_position": 0,
+    "end_global_position": 42,
+    "begin_commit_time": "2026-07-15T00:00:00Z",
+    "end_commit_time": "2026-07-15T12:00:00Z"
+  },
+  "backup_chain": {
+    "backup_kind": "full",
+    "base_backup_ref": null,
+    "incremental_parent_refs": [],
+    "chain_order": 0
+  },
+  "format_profile": {
+    "database_engine": "deployment-neutral-logical-export",
+    "database_engine_version": "gate-b-profile-required",
+    "logical_format_version": "0.1.0",
+    "restore_prerequisite_ref": {
+      "artifact_id": "profile.restore-prerequisites.1",
+      "digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+      "media_type": "application/vnd.odeya.restore-prerequisites+json"
+    }
+  },
+  "components": [
+    {
+      "component_id": "component.c0-registries",
+      "recoverability_class": "C0",
+      "component_kind": "constitutional_registry",
+      "shard_or_scope": "all exact constitutional registry versions referenced through position 42",
+      "byte_length": 8192,
+      "commitment_ref": {
+        "artifact_id": "commitment.backup.c0",
+        "digest": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+        "media_type": "application/vnd.odeya.backup-component-commitment+json"
+      },
+      "required_for_restore": true
+    },
+    {
+      "component_id": "component.c1-ledger",
+      "recoverability_class": "C1",
+      "component_kind": "ledger_snapshot",
+      "shard_or_scope": "ledger epoch 1 positions 0 through 42 inclusive",
+      "byte_length": 65536,
+      "commitment_ref": {
+        "artifact_id": "commitment.backup.c1",
+        "digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+        "media_type": "application/vnd.odeya.backup-component-commitment+json"
+      },
+      "required_for_restore": true
+    },
+    {
+      "component_id": "component.c2-artifacts",
+      "recoverability_class": "C2",
+      "component_kind": "artifact_shard",
+      "shard_or_scope": "promoted artifact registry shard 0",
+      "byte_length": 1048576,
+      "commitment_ref": {
+        "artifact_id": "commitment.backup.c2.shard-0",
+        "digest": "sha256:4444444444444444444444444444444444444444444444444444444444444444",
+        "media_type": "application/vnd.odeya.backup-component-commitment+json"
+      },
+      "required_for_restore": true
+    }
+  ],
+  "encryption": {
+    "encryption_profile_ref": {
+      "artifact_id": "profile.backup-encryption.1",
+      "digest": "sha256:5555555555555555555555555555555555555555555555555555555555555555",
+      "media_type": "application/vnd.odeya.encryption-profile+json"
+    },
+    "encryption_key_id": "key.backup.1",
+    "key_version": "1",
+    "recovery_policy_ref": {
+      "artifact_id": "policy.backup-key-recovery.1",
+      "digest": "sha256:6666666666666666666666666666666666666666666666666666666666666666",
+      "media_type": "application/vnd.odeya.key-recovery-policy+json"
+    },
+    "key_material_embedded": false
+  },
+  "creation": {
+    "activity_id": "activity.backup.0001",
+    "actor": { "principal_id": "service.backup-writer", "principal_type": "service" },
+    "tool_ref": {
+      "artifact_id": "tool.backup-exporter.1",
+      "digest": "sha256:7777777777777777777777777777777777777777777777777777777777777777",
+      "media_type": "application/vnd.odeya.tool-manifest+json"
+    },
+    "image_ref": {
+      "artifact_id": "image.backup-exporter.1",
+      "digest": "sha256:8888888888888888888888888888888888888888888888888888888888888888",
+      "media_type": "application/vnd.oci.image.manifest.v1+json"
+    },
+    "config_ref": {
+      "artifact_id": "config.backup.0001",
+      "digest": "sha256:9999999999999999999999999999999999999999999999999999999999999999",
+      "media_type": "application/vnd.odeya.backup-config+json"
+    },
+    "started_at": "2026-07-15T12:05:00Z",
+    "completed_at": "2026-07-15T12:10:00Z"
+  },
+  "state": {
+    "write_completion": {
+      "disposition": "pass",
+      "evidence_ref": { "artifact_id": "result.backup-write.0001", "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "media_type": "application/vnd.odeya.backup-result+json" },
+      "observed_at": "2026-07-15T12:10:00Z"
+    },
+    "verification": {
+      "disposition": "pass",
+      "evidence_ref": { "artifact_id": "result.backup-verification.0001", "digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "media_type": "application/vnd.odeya.backup-verification+json" },
+      "observed_at": "2026-07-15T12:15:00Z"
+    },
+    "recoverability": {
+      "disposition": "not_run",
+      "evidence_ref": null,
+      "observed_at": null
+    }
+  },
+  "governance": {
+    "residency_regions": ["profile-region.pending-gate-b"],
+    "data_classes": ["D0", "D1"],
+    "retention_schedule_ref": { "artifact_id": "retention.backup.1", "digest": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "media_type": "application/vnd.odeya.retention-schedule+json" },
+    "legal_hold_refs": [],
+    "destruction_profile_ref": { "artifact_id": "profile.backup-destruction.1", "digest": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", "media_type": "application/vnd.odeya.destruction-profile+json" }
+  },
+  "checkpoint_contract": {
+    "prior_checkpoint_ref": { "checkpoint_id": "checkpoint.epoch-1.0000042", "ledger_epoch": "ledger-epoch.1", "inclusive_global_position": 42, "digest": "sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee" },
+    "first_expected_post_restore_checkpoint_rule_ref": { "artifact_id": "rule.first-post-restore-checkpoint.1", "digest": "sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "media_type": "application/vnd.odeya.recovery-rule+json" }
+  },
+  "catalog_observation": {
+    "catalog_id": "catalog.backup-independent.1",
+    "observer": { "principal_id": "service.backup-catalog-observer", "principal_type": "service" },
+    "observation_time": "2026-07-15T12:16:00Z",
+    "manifest_digest_observed": "sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+    "immutability_control_ref": { "artifact_id": "control.backup-immutability.1", "digest": "sha256:123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0", "media_type": "application/vnd.odeya.control-profile+json" },
+    "observation_evidence_ref": { "artifact_id": "observation.backup-catalog.0001", "digest": "sha256:23456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef01", "media_type": "application/vnd.odeya.catalog-observation+json" }
+  },
+  "digest_scope": "canonical-object:odeya-jcs-0.1:exclude(manifest_digest,signatures)",
+  "manifest_digest": "sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+  "signatures": [
+    {
+      "signer_id": "service.backup-manifest-signer",
+      "key_id": "key.backup-signing.1",
+      "algorithm_profile_ref": { "artifact_id": "profile.backup-signature.1", "digest": "sha256:3456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef012", "media_type": "application/vnd.odeya.signature-profile+json" },
+      "signature_purpose": "odeya-backup-manifest-v1",
+      "signed_digest": "sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+      "signature_ref": { "artifact_id": "signature.backup.0001", "digest": "sha256:456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123", "media_type": "application/cose" },
+      "signed_at": "2026-07-15T12:15:30Z"
+    }
+  ]
+}

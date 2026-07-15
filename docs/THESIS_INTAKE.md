@@ -80,7 +80,7 @@ proposal
   -> independent verification
   -> bounded adjudication
   -> optional replication
-  -> versioned world-model update
+  -> versioned claim/epistemic-graph update
 ```
 
 Negative, null, invalid, and blocked outcomes remain part of the mission record. Contributor reputation can prioritize review attention, but it cannot replace evidence.

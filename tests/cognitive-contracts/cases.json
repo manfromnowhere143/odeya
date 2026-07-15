@@ -1,0 +1,1324 @@
+{
+  "manifest_version": "0.1.0",
+  "description": "Isolated structural cases for proposed cognitive-control records. Passing cases confer no authority and do not establish semantic correctness, noninterference, review, or Gate A acceptance.",
+  "cases": [
+    {"name": "research-state-view-valid-derived-nonauthoritative", "schema": "schemas/research-state-view.schema.json", "fixture": "tests/cognitive-contracts/fixtures/research-state-view.valid.json", "expect": "valid"},
+    {
+      "name": "research-state-view-rejects-sealed-truth-context",
+      "schema": "schemas/research-state-view.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/research-state-view.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "replace", "path": "/selected_context/0/content_class", "value": "sealed_evaluator_truth"}]
+    },
+    {
+      "name": "research-state-view-rejects-false-negative-flow-check",
+      "schema": "schemas/research-state-view.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/research-state-view.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "replace", "path": "/exposure_policy/negative_checks/sealed_truth_absent", "value": false}]
+    },
+    {
+      "name": "research-state-view-rejects-enclosing-self-digest",
+      "schema": "schemas/research-state-view.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/research-state-view.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "add", "path": "/canonical_view_digest", "value": "sha256:e000000000000000000000000000000000000000000000000000000000000000"}]
+    },
+    {
+      "name": "research-state-view-rejects-digest-bearing-receipt-back-reference",
+      "schema": "schemas/research-state-view.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/research-state-view.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "add", "path": "/compilation_receipt_ref", "value": {"id": "compilation-receipt.fixture", "version": 1, "digest": "sha256:e100000000000000000000000000000000000000000000000000000000000000"}}]
+    },
+    {
+      "name": "research-state-view-rejects-free-form-claim-type",
+      "schema": "schemas/research-state-view.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/research-state-view.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "replace", "path": "/permitted_claim_surface/claim_types/0", "value": "interesting_claim"}]
+    },
+    {
+      "name": "research-state-view-rejects-uncontrolled-compiled-at-field",
+      "schema": "schemas/research-state-view.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/research-state-view.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "add", "path": "/compiled_at", "value": "2026-07-15T12:00:00.000000Z"}]
+    },
+    {
+      "name": "research-state-view-allows-indeterminate-contradiction-search-without-invented-reference",
+      "schema": "schemas/research-state-view.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/research-state-view.valid.json",
+      "expect": "valid",
+      "mutations": [
+        {"op": "replace", "path": "/contradiction_inventory/search_result", "value": "indeterminate"},
+        {"op": "remove", "path": "/contradiction_inventory/included_refs/0"},
+        {"op": "add", "path": "/contradiction_inventory/unknown_identity_reason_codes/0", "value": "search-frontier-unavailable"}
+      ]
+    },
+    {
+      "name": "research-state-view-rejects-mutable-active-registry-label",
+      "schema": "schemas/research-state-view.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/research-state-view.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "add", "path": "/legal_command_frontier/0/registry_member_status", "value": "active"}]
+    },
+    {
+      "name": "research-state-view-rejects-command-frontier-without-exact-registry-activation",
+      "schema": "schemas/research-state-view.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/research-state-view.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "remove", "path": "/legal_command_frontier/0/registry_activation_ref"}]
+    },
+    {
+      "name": "research-state-view-rejects-unverified-command-membership-proof",
+      "schema": "schemas/research-state-view.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/research-state-view.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "replace", "path": "/legal_command_frontier/0/membership_proof/proof_result", "value": "fail"}]
+    },
+    {
+      "name": "research-state-view-allows-proven-absent-genesis-without-canonical-v0-state",
+      "schema": "schemas/research-state-view.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/research-state-view.valid.json",
+      "expect": "valid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/epistemic_graph_binding",
+          "value": {
+            "graph_aggregate_id": "epistemic-graph.fixture",
+            "protocol_branch_ref": {"id": "protocol-branch.fixture", "version": 1, "digest": "sha256:4a00000000000000000000000000000000000000000000000000000000000000"},
+            "aggregate_presence": "absent_genesis",
+            "graph_version": null,
+            "graph_root_digest": null,
+            "head_event_ref": null,
+            "origin_delta_event_ref": null,
+            "absence_evidence_ref": {"artifact_id": "graph-absence-evidence.fixture", "digest": "sha256:6200000000000000000000000000000000000000000000000000000000000000", "media_type": "application/json"},
+            "genesis_state_fabrication_allowed": false,
+            "reducer_snapshot_ref": {"id": "epistemic-graph-reducer.fixture", "version": 1, "digest": "sha256:4c00000000000000000000000000000000000000000000000000000000000000"},
+            "source_ledger_position": 10,
+            "subgraph_projection_ref": {"artifact_id": "empty-subgraph.fixture", "digest": "sha256:6300000000000000000000000000000000000000000000000000000000000000", "media_type": "application/json"},
+            "projection_rule_ref": {"id": "subgraph-projection.fixture", "version": "0.1.0", "digest": "sha256:1700000000000000000000000000000000000000000000000000000000000000"}
+          }
+        },
+        {"op": "remove", "path": "/competing_hypotheses/1"},
+        {"op": "remove", "path": "/competing_hypotheses/0"}
+      ]
+    },
+    {
+      "name": "research-state-view-rejects-fabricated-version-zero-before-first-admitted-delta",
+      "schema": "schemas/research-state-view.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/research-state-view.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/epistemic_graph_binding",
+          "value": {
+            "graph_aggregate_id": "epistemic-graph.fixture",
+            "protocol_branch_ref": {"id": "protocol-branch.fixture", "version": 1, "digest": "sha256:4a00000000000000000000000000000000000000000000000000000000000000"},
+            "aggregate_presence": "absent_genesis",
+            "graph_version": 0,
+            "graph_root_digest": "sha256:6400000000000000000000000000000000000000000000000000000000000000",
+            "head_event_ref": null,
+            "origin_delta_event_ref": null,
+            "absence_evidence_ref": {"artifact_id": "graph-absence-evidence.fixture", "digest": "sha256:6200000000000000000000000000000000000000000000000000000000000000", "media_type": "application/json"},
+            "genesis_state_fabrication_allowed": false,
+            "reducer_snapshot_ref": {"id": "epistemic-graph-reducer.fixture", "version": 1, "digest": "sha256:4c00000000000000000000000000000000000000000000000000000000000000"},
+            "source_ledger_position": 10,
+            "subgraph_projection_ref": {"artifact_id": "empty-subgraph.fixture", "digest": "sha256:6300000000000000000000000000000000000000000000000000000000000000", "media_type": "application/json"},
+            "projection_rule_ref": {"id": "subgraph-projection.fixture", "version": "0.1.0", "digest": "sha256:1700000000000000000000000000000000000000000000000000000000000000"}
+          }
+        },
+        {"op": "remove", "path": "/competing_hypotheses/1"},
+        {"op": "remove", "path": "/competing_hypotheses/0"}
+      ]
+    },
+    {"name": "context-compilation-receipt-valid-derived-nonauthoritative", "schema": "schemas/context-compilation-receipt.schema.json", "fixture": "tests/cognitive-contracts/fixtures/context-compilation-receipt.valid.json", "expect": "valid"},
+    {
+      "name": "context-compilation-receipt-rejects-omitted-material-contradiction",
+      "schema": "schemas/context-compilation-receipt.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/context-compilation-receipt.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "replace", "path": "/candidate_dispositions/0/disposition", "value": "omitted_by_budget"}]
+    },
+    {
+      "name": "context-compilation-receipt-complete-coverage-cannot-list-missing-evidence",
+      "schema": "schemas/context-compilation-receipt.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/context-compilation-receipt.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "add", "path": "/contradiction_coverage/missing_refs/0", "value": {"artifact_id": "contradiction.omitted", "digest": "sha256:c000000000000000000000000000000000000000000000000000000000000000", "media_type": "application/json"}}
+      ]
+    },
+    {
+      "name": "context-compilation-receipt-rejects-enclosing-or-redundant-output-digest",
+      "schema": "schemas/context-compilation-receipt.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/context-compilation-receipt.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "add", "path": "/canonical_output_digest", "value": "sha256:e200000000000000000000000000000000000000000000000000000000000000"}]
+    },
+    {
+      "name": "context-compilation-receipt-rejects-cache-boundary-crossing",
+      "schema": "schemas/context-compilation-receipt.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/context-compilation-receipt.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "replace", "path": "/cache_scope/cross_boundary_reuse_result", "value": "detected"}]
+    },
+    {
+      "name": "context-compilation-receipt-rejects-forbidden-datum-ranking-influence-despite-redaction",
+      "schema": "schemas/context-compilation-receipt.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/context-compilation-receipt.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "replace", "path": "/embedding_and_ranking/forbidden_data_influence_result", "value": "detected"}]
+    },
+    {
+      "name": "context-compilation-receipt-rejects-clean-room-embedding-leak",
+      "schema": "schemas/context-compilation-receipt.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/context-compilation-receipt.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "replace", "path": "/clean_room/negative_checks/blocked_references_absent_from_embeddings", "value": "fail"}]
+    },
+    {
+      "name": "context-compilation-receipt-records-observed-failure",
+      "schema": "schemas/context-compilation-receipt.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/context-compilation-receipt.valid.json",
+      "expect": "valid",
+      "mutations": [
+        {"op": "replace", "path": "/compilation_result/status", "value": "fail"},
+        {"op": "add", "path": "/compilation_result/reason_codes/0", "value": "contamination-detected"},
+        {"op": "replace", "path": "/contamination_frontier/contamination_result", "value": "detected"}
+      ]
+    },
+    {
+      "name": "context-compilation-receipt-records-indeterminate-coverage-without-invented-reference",
+      "schema": "schemas/context-compilation-receipt.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/context-compilation-receipt.valid.json",
+      "expect": "valid",
+      "mutations": [
+        {"op": "replace", "path": "/compilation_result/status", "value": "indeterminate"},
+        {"op": "add", "path": "/compilation_result/reason_codes/0", "value": "coverage-identity-indeterminate"},
+        {"op": "replace", "path": "/required_evidence_coverage/result", "value": "indeterminate"},
+        {"op": "add", "path": "/required_evidence_coverage/unknown_reason_codes/0", "value": "required-evidence-identity-unknown"}
+      ]
+    },
+    {
+      "name": "context-compilation-receipt-records-not-run-with-explicit-observation-statuses",
+      "schema": "schemas/context-compilation-receipt.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/context-compilation-receipt.valid.json",
+      "expect": "valid",
+      "mutations": [
+        {"op": "replace", "path": "/compilation_result/status", "value": "not_run"},
+        {"op": "add", "path": "/compilation_result/reason_codes/0", "value": "compiler-not-started"},
+        {"op": "replace", "path": "/cache_scope/cross_boundary_reuse_result", "value": "not_run"},
+        {"op": "replace", "path": "/embedding_and_ranking/forbidden_data_influence_result", "value": "not_run"},
+        {"op": "replace", "path": "/clean_room/mode", "value": "not_required"},
+        {"op": "replace", "path": "/clean_room/blocked_reference_manifest_ref", "value": null},
+        {"op": "replace", "path": "/clean_room/blocked_derivative_manifest_ref", "value": null},
+        {"op": "replace", "path": "/clean_room/negative_checks/blocked_references_absent_from_index", "value": "not_run"},
+        {"op": "replace", "path": "/clean_room/negative_checks/blocked_references_absent_from_cache", "value": "not_run"},
+        {"op": "replace", "path": "/clean_room/negative_checks/blocked_references_absent_from_embeddings", "value": "not_run"},
+        {"op": "replace", "path": "/clean_room/negative_checks/blocked_references_absent_from_summaries", "value": "not_run"},
+        {"op": "replace", "path": "/contamination_frontier/candidate_set_check_status", "value": "not_run"},
+        {"op": "replace", "path": "/contamination_frontier/contamination_result", "value": "not_run"},
+        {"op": "remove", "path": "/derived_summaries/0"},
+        {"op": "remove", "path": "/candidate_dispositions/1"},
+        {"op": "remove", "path": "/candidate_dispositions/0"},
+        {"op": "replace", "path": "/omission_search/status", "value": "not_run"},
+        {"op": "replace", "path": "/omission_search/coverage_result", "value": "not_run"},
+        {"op": "replace", "path": "/required_evidence_coverage/result", "value": "not_run"},
+        {"op": "add", "path": "/required_evidence_coverage/unknown_reason_codes/0", "value": "coverage-not-run"},
+        {"op": "replace", "path": "/contradiction_coverage/result", "value": "not_run"},
+        {"op": "add", "path": "/contradiction_coverage/unknown_reason_codes/0", "value": "coverage-not-run"},
+        {"op": "replace", "path": "/negative_checks/sealed_truth_absent_from_candidates", "value": "not_run"},
+        {"op": "replace", "path": "/negative_checks/sealed_truth_absent_from_derived_features", "value": "not_run"},
+        {"op": "replace", "path": "/negative_checks/forbidden_exposure_absent", "value": "not_run"},
+        {"op": "replace", "path": "/negative_checks/cross_boundary_cache_absent", "value": "not_run"},
+        {"op": "replace", "path": "/budget_accounting/budget_result", "value": "not_run"},
+        {"op": "replace", "path": "/replay_determinism/replay_result", "value": "not_run"}
+      ]
+    },
+    {
+      "name": "context-compilation-receipt-pass-cannot-hide-detected-contamination",
+      "schema": "schemas/context-compilation-receipt.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/context-compilation-receipt.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "replace", "path": "/contamination_frontier/contamination_result", "value": "detected"}]
+    },
+    {"name": "epistemic-node-version-valid-proposed", "schema": "schemas/epistemic-node-version.schema.json", "fixture": "tests/cognitive-contracts/fixtures/epistemic-node-version.valid.json", "expect": "valid"},
+    {
+      "name": "epistemic-node-version-rejects-embedded-evidence-relations",
+      "schema": "schemas/epistemic-node-version.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/epistemic-node-version.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "add", "path": "/evidence_groups", "value": {"supporting": []}}]
+    },
+    {
+      "name": "epistemic-node-version-rejects-embedded-lifecycle-validity",
+      "schema": "schemas/epistemic-node-version.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/epistemic-node-version.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "add", "path": "/validity", "value": "admitted"}]
+    },
+    {
+      "name": "epistemic-node-version-rejects-unsubstantiated-causal-identification",
+      "schema": "schemas/epistemic-node-version.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/epistemic-node-version.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "replace", "path": "/interpretation/causal_status", "value": "identified"}]
+    },
+    {"name": "epistemic-graph-delta-valid-proposed-additive", "schema": "schemas/epistemic-graph-delta.schema.json", "fixture": "tests/cognitive-contracts/fixtures/epistemic-graph-delta.valid.json", "expect": "valid"},
+    {
+      "name": "epistemic-graph-delta-rejects-history-deletion",
+      "schema": "schemas/epistemic-graph-delta.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/epistemic-graph-delta.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "replace", "path": "/edge_changes/0/operation", "value": "delete_existing_edge"}]
+    },
+    {
+      "name": "epistemic-graph-delta-rejects-existing-version-mutation-authority",
+      "schema": "schemas/epistemic-graph-delta.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/epistemic-graph-delta.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "replace", "path": "/proposal_boundary/existing_version_mutation_authorized", "value": true}]
+    },
+    {
+      "name": "epistemic-graph-delta-rejects-evidence-edge-from-epistemic-node",
+      "schema": "schemas/epistemic-graph-delta.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/epistemic-graph-delta.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/edge_changes/0/from_endpoint", "value": {"endpoint_type": "epistemic_node", "node_ref": {"id": "hypothesis.fixture-b", "version": 1, "digest": "sha256:0a00000000000000000000000000000000000000000000000000000000000000"}}}
+      ]
+    },
+    {
+      "name": "epistemic-graph-delta-rejects-empty-change-set",
+      "schema": "schemas/epistemic-graph-delta.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/epistemic-graph-delta.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "remove", "path": "/node_version_additions/0"},
+        {"op": "remove", "path": "/edge_changes/0"}
+      ]
+    },
+    {
+      "name": "epistemic-graph-delta-rejects-canonical-supersession-effect-inside-proposed-lineage",
+      "schema": "schemas/epistemic-graph-delta.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/epistemic-graph-delta.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "replace", "path": "/node_version_additions/0/proposed_lineage/canonical_supersession_effect", "value": "superseded_immediately"}]
+    },
+    {
+      "name": "epistemic-graph-delta-allows-proven-absent-genesis-predecessor",
+      "schema": "schemas/epistemic-graph-delta.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/epistemic-graph-delta.valid.json",
+      "expect": "valid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/expected_predecessor",
+          "value": {
+            "kind": "absent_genesis",
+            "graph_version": null,
+            "graph_root_digest": null,
+            "head_event_ref": null,
+            "origin_delta_event_ref": null,
+            "absence_evidence_ref": {"artifact_id": "graph-absence-evidence.fixture", "digest": "sha256:6200000000000000000000000000000000000000000000000000000000000000", "media_type": "application/json"},
+            "genesis_state_fabrication_allowed": false,
+            "reducer_snapshot_ref": {"id": "epistemic-graph-reducer.fixture", "version": 1, "digest": "sha256:4c00000000000000000000000000000000000000000000000000000000000000"},
+            "source_ledger_position": 10
+          }
+        },
+        {"op": "remove", "path": "/expected_predecessor_nodes/0"},
+        {"op": "replace", "path": "/edge_changes/0/to_endpoint/node_ref", "value": {"id": "contradiction.fixture", "version": 1, "digest": "sha256:5100000000000000000000000000000000000000000000000000000000000000"}}
+      ]
+    },
+    {
+      "name": "epistemic-graph-delta-rejects-fabricated-version-zero-genesis-predecessor",
+      "schema": "schemas/epistemic-graph-delta.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/epistemic-graph-delta.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/expected_predecessor",
+          "value": {
+            "kind": "absent_genesis",
+            "graph_version": 0,
+            "graph_root_digest": "sha256:6400000000000000000000000000000000000000000000000000000000000000",
+            "head_event_ref": null,
+            "origin_delta_event_ref": null,
+            "absence_evidence_ref": {"artifact_id": "graph-absence-evidence.fixture", "digest": "sha256:6200000000000000000000000000000000000000000000000000000000000000", "media_type": "application/json"},
+            "genesis_state_fabrication_allowed": false,
+            "reducer_snapshot_ref": {"id": "epistemic-graph-reducer.fixture", "version": 1, "digest": "sha256:4c00000000000000000000000000000000000000000000000000000000000000"},
+            "source_ledger_position": 10
+          }
+        },
+        {"op": "remove", "path": "/expected_predecessor_nodes/0"},
+        {"op": "replace", "path": "/edge_changes/0/to_endpoint/node_ref", "value": {"id": "contradiction.fixture", "version": 1, "digest": "sha256:5100000000000000000000000000000000000000000000000000000000000000"}}
+      ]
+    },
+    {"name": "epistemic-graph-delta-valid-correction-with-rule-derived-no-adjudication", "schema": "schemas/epistemic-graph-delta.schema.json", "fixture": "tests/cognitive-contracts/fixtures/epistemic-graph-delta.correction.valid.json", "expect": "valid"},
+    {
+      "name": "epistemic-graph-delta-rejects-correction-without-explicit-supersession-edge",
+      "schema": "schemas/epistemic-graph-delta.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/epistemic-graph-delta.correction.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "remove", "path": "/edge_changes/0"}]
+    },
+    {
+      "name": "epistemic-graph-delta-rejects-correction-profile-requirement-mismatch",
+      "schema": "schemas/epistemic-graph-delta.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/epistemic-graph-delta.correction.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "replace", "path": "/admission_controls/adjudication_requirement", "value": "required"}]
+    },
+    {
+      "name": "epistemic-graph-delta-rejects-correction-that-allows-prior-version-resurrection",
+      "schema": "schemas/epistemic-graph-delta.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/epistemic-graph-delta.correction.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "replace", "path": "/correction_obligations/prior_version_resurrection_forbidden", "value": false}]
+    },
+    {
+      "name": "epistemic-graph-delta-rejects-correction-without-dependency-fanout",
+      "schema": "schemas/epistemic-graph-delta.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/epistemic-graph-delta.correction.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "replace", "path": "/correction_obligations/dependency_fanout_required", "value": false}]
+    },
+    {
+      "name": "epistemic-graph-delta-rejects-caller-selected-admission-requirements",
+      "schema": "schemas/epistemic-graph-delta.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/epistemic-graph-delta.correction.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "replace", "path": "/admission_controls/caller_selected", "value": true}]
+    },
+    {"name": "experiment-candidate-valid-proposed-identifiable", "schema": "schemas/experiment-candidate.schema.json", "fixture": "tests/cognitive-contracts/fixtures/experiment-candidate.valid.json", "expect": "valid"},
+    {
+      "name": "experiment-candidate-rejects-unidentifiable-promotion",
+      "schema": "schemas/experiment-candidate.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/experiment-candidate.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "replace", "path": "/feasibility/status", "value": "not_identifiable"}]
+    },
+    {
+      "name": "experiment-candidate-rejects-proceeding-on-unsupported-premise",
+      "schema": "schemas/experiment-candidate.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/experiment-candidate.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "replace", "path": "/premise_challenge/result", "value": "unsupported"}]
+    },
+    {
+      "name": "experiment-candidate-rejects-cross-dimension-verification-compensation",
+      "schema": "schemas/experiment-candidate.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/experiment-candidate.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "replace", "path": "/resources/reserved_verification_demand/dimension_compensation_allowed", "value": true}]
+    },
+    {
+      "name": "experiment-candidate-allows-explicitly-indeterminate-feasibility-when-blocked",
+      "schema": "schemas/experiment-candidate.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/experiment-candidate.valid.json",
+      "expect": "valid",
+      "mutations": [
+        {"op": "replace", "path": "/feasibility/status", "value": "indeterminate"},
+        {"op": "replace", "path": "/promotion/status", "value": "blocked"}
+      ]
+    },
+    {
+      "name": "experiment-candidate-allows-indeterminate-resource-demand-only-when-blocked",
+      "schema": "schemas/experiment-candidate.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/experiment-candidate.valid.json",
+      "expect": "valid",
+      "mutations": [
+        {"op": "replace", "path": "/resources/execution_demand_status", "value": "indeterminate"},
+        {"op": "replace", "path": "/promotion/status", "value": "blocked"}
+      ]
+    },
+    {"name": "planning-epoch-valid-proposed", "schema": "schemas/planning-epoch.schema.json", "fixture": "tests/cognitive-contracts/fixtures/planning-epoch.valid.json", "expect": "valid"},
+    {
+      "name": "planning-epoch-rejects-consensus-ranking-as-hypothesis-evidence",
+      "schema": "schemas/planning-epoch.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/planning-epoch.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "replace", "path": "/ranking_signals/0/hypothesis_evidence_credit", "value": true}]
+    },
+    {
+      "name": "planning-epoch-rejects-selected-hard-filter-failure",
+      "schema": "schemas/planning-epoch.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/planning-epoch.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "replace", "path": "/candidate_set/0/hard_filter/identifiability", "value": "fail"}]
+    },
+    {
+      "name": "planning-epoch-rejects-selected-candidate-with-incomplete-objective-evaluation",
+      "schema": "schemas/planning-epoch.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/planning-epoch.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "replace", "path": "/candidate_set/0/dimension_evaluation_status", "value": "incomplete"}]
+    },
+    {
+      "name": "planning-epoch-rejects-generation-consuming-cross-resource-conversion",
+      "schema": "schemas/planning-epoch.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/planning-epoch.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "replace", "path": "/resource_allocation/generation/cross_resource_conversion_allowed", "value": true}]
+    },
+    {
+      "name": "planning-epoch-allows-explicit-empty-generation-and-replan",
+      "schema": "schemas/planning-epoch.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/planning-epoch.valid.json",
+      "expect": "valid",
+      "mutations": [
+        {"op": "replace", "path": "/generation_outcome/status", "value": "empty"},
+        {"op": "add", "path": "/generation_outcome/reason_codes/0", "value": "no-admissible-candidate-generated"},
+        {"op": "remove", "path": "/candidate_set/0"},
+        {"op": "replace", "path": "/terminal_condition/action", "value": "replan"}
+      ]
+    },
+    {
+      "name": "planning-epoch-rejects-empty-generation-without-reason",
+      "schema": "schemas/planning-epoch.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/planning-epoch.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/generation_outcome/status", "value": "empty"},
+        {"op": "remove", "path": "/candidate_set/0"},
+        {"op": "replace", "path": "/terminal_condition/action", "value": "replan"}
+      ]
+    },
+    {
+      "name": "planning-epoch-rejects-hard-filter-aggregate-without-failed-dimension",
+      "schema": "schemas/planning-epoch.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/planning-epoch.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/candidate_set/0/hard_filter/result", "value": "fail"},
+        {"op": "replace", "path": "/candidate_set/0/disposition", "value": "retained"},
+        {"op": "replace", "path": "/terminal_condition/action", "value": "stop"}
+      ]
+    },
+    {
+      "name": "planning-epoch-rejects-dominated-selected-candidate",
+      "schema": "schemas/planning-epoch.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/planning-epoch.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "replace", "path": "/candidate_set/0/pareto_status", "value": "dominated"}]
+    },
+    {
+      "name": "planning-epoch-rejects-work-proposal-when-resource-packing-does-not-fit",
+      "schema": "schemas/planning-epoch.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/planning-epoch.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "replace", "path": "/resource_allocation/packing_result", "value": "does_not_fit"}]
+    },
+    {"name": "work-contract-valid-deterministic-control-artifact", "schema": "schemas/work-contract.schema.json", "fixture": "tests/cognitive-contracts/fixtures/work-contract.valid.json", "expect": "valid"},
+    {
+      "name": "work-contract-rejects-copied-lease-fields-without-exact-canonical-record",
+      "schema": "schemas/work-contract.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/work-contract.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "remove", "path": "/lease/lease_record_ref"}]
+    },
+    {
+      "name": "work-contract-rejects-unbound-lease-constraint-snapshot",
+      "schema": "schemas/work-contract.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/work-contract.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "replace", "path": "/lease/constraints_snapshot_must_equal_record", "value": false}]
+    },
+    {
+      "name": "work-contract-rejects-dispatch-without-exact-lease-recheck",
+      "schema": "schemas/work-contract.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/work-contract.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "remove", "path": "/dispatch_boundary/lease_recheck"}]
+    },
+    {
+      "name": "work-contract-rejects-disabled-dispatch-lease-recheck",
+      "schema": "schemas/work-contract.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/work-contract.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "replace", "path": "/dispatch_boundary/lease_recheck/lease_recheck_required", "value": false}]
+    },
+    {
+      "name": "work-contract-rejects-dispatch-frontier-that-need-not-match-bound-lease",
+      "schema": "schemas/work-contract.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/work-contract.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "replace", "path": "/dispatch_boundary/lease_recheck/exact_record_and_frontier_match_required", "value": false}]
+    },
+    {
+      "name": "work-contract-rejects-lease-omitted-from-dispatch-recheck-dimensions",
+      "schema": "schemas/work-contract.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/work-contract.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "remove", "path": "/dispatch_boundary/recheck_dimensions/7"}]
+    },
+    {
+      "name": "work-contract-rejects-caller-supplied-authority",
+      "schema": "schemas/work-contract.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/work-contract.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "replace", "path": "/authority_boundary/caller_supplied_authority_accepted", "value": true}]
+    },
+    {
+      "name": "work-contract-rejects-silent-same-attempt-fallback",
+      "schema": "schemas/work-contract.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/work-contract.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "replace", "path": "/fallback_and_retry/same_attempt_identity_reuse_allowed", "value": true}]
+    },
+    {
+      "name": "work-contract-rejects-enclosing-self-digest",
+      "schema": "schemas/work-contract.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/work-contract.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "add", "path": "/canonical_payload_digest", "value": "sha256:e300000000000000000000000000000000000000000000000000000000000000"}]
+    },
+    {
+      "name": "work-contract-rejects-bytes-crossing-before-separate-dispatch-admission",
+      "schema": "schemas/work-contract.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/work-contract.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "replace", "path": "/dispatch_boundary/bytes_may_cross_before_dispatch_admission", "value": true}]
+    },
+    {
+      "name": "work-contract-rejects-stale-or-revoked-dispatch-continuation",
+      "schema": "schemas/work-contract.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/work-contract.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "replace", "path": "/dispatch_boundary/stale_or_revoked_disposition", "value": "continue"}]
+    },
+    {
+      "name": "work-contract-rejects-revoked-data-use-at-bound-frontier",
+      "schema": "schemas/work-contract.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/work-contract.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "replace", "path": "/dispatch_boundary/data_use_decisions/0/state_at_frontier", "value": "revoked"}]
+    },
+    {
+      "name": "work-contract-rejects-missing-state-compilation-bundle",
+      "schema": "schemas/work-contract.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/work-contract.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "remove", "path": "/state_compilation_bundle"}]
+    },
+    {
+      "name": "work-contract-rejects-unreplayed-state-compilation-receipt",
+      "schema": "schemas/work-contract.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/work-contract.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "replace", "path": "/state_compilation_bundle/receipt_replay_result", "value": "not_run"}]
+    },
+    {
+      "name": "work-contract-rejects-local-external-mode-mismatch",
+      "schema": "schemas/work-contract.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/work-contract.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/dispatch_boundary/governed_external_processing",
+          "value": {
+            "provider_configuration_observation_ref": {"artifact_id": "provider-configuration.fixture", "digest": "sha256:ed00000000000000000000000000000000000000000000000000000000000000", "media_type": "application/json"},
+            "exposure_intent_ref": {"id": "exposure-intent.fixture", "version": 1, "digest": "sha256:ee00000000000000000000000000000000000000000000000000000000000000"},
+            "egress_recipient": "provider.fixture",
+            "egress_region": "region.fixture",
+            "external_effect_dispatch_required": true,
+            "external_effect_profile_ref": {"id": "external-effect-profile.fixture", "version": 1, "digest": "sha256:ef00000000000000000000000000000000000000000000000000000000000000"}
+          }
+        }
+      ]
+    },
+    {
+      "name": "work-contract-rejects-external-effect-command-for-local-dispatch",
+      "schema": "schemas/work-contract.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/work-contract.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "replace", "path": "/dispatch_boundary/dispatch_command_type", "value": "external_effect.start"}]
+    },
+    {
+      "name": "work-contract-rejects-cross-resource-budget-conversion",
+      "schema": "schemas/work-contract.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/work-contract.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "replace", "path": "/limits/execution_budget/cross_resource_conversion_allowed", "value": true}]
+    },
+    {
+      "name": "work-contract-rejects-nonpassing-compilation-receipt",
+      "schema": "schemas/work-contract.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/work-contract.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "replace", "path": "/state_compilation_bundle/receipt_compilation_result", "value": "fail"}]
+    },
+    {
+      "name": "work-contract-rejects-canonical-state-in-worker-checkpoint",
+      "schema": "schemas/work-contract.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/work-contract.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "replace", "path": "/checkpoint/canonical_state_included", "value": true}]
+    },
+    {
+      "name": "work-contract-rejects-nonledger-canonical-reconstruction-source",
+      "schema": "schemas/work-contract.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/work-contract.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "replace", "path": "/checkpoint/canonical_reconstruction_source", "value": "worker_checkpoint"}]
+    },
+    {"name": "candidate-artifact-valid-untrusted", "schema": "schemas/candidate-artifact.schema.json", "fixture": "tests/cognitive-contracts/fixtures/candidate-artifact.valid.json", "expect": "valid"},
+    {
+      "name": "candidate-artifact-rejects-fabricated-tool-receipt-claim",
+      "schema": "schemas/candidate-artifact.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/candidate-artifact.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "replace", "path": "/observable_receipts/0/producer_asserted", "value": true}]
+    },
+    {
+      "name": "candidate-artifact-rejects-private-chain-of-thought-as-evidence",
+      "schema": "schemas/candidate-artifact.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/candidate-artifact.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "replace", "path": "/reasoning_boundary/private_chain_of_thought_evidence_eligible", "value": true}]
+    },
+    {
+      "name": "candidate-artifact-allows-deterministic-failure-package-with-zero-outputs",
+      "schema": "schemas/candidate-artifact.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/candidate-artifact.valid.json",
+      "expect": "valid",
+      "mutations": [
+        {"op": "replace", "path": "/producer/producer_kind", "value": "deterministic_service"},
+        {"op": "replace", "path": "/producer/principal/principal_type", "value": "deterministic_service"},
+        {"op": "replace", "path": "/producer/model_ref", "value": null},
+        {"op": "remove", "path": "/output_artifact_refs/0"},
+        {"op": "remove", "path": "/methods/0"},
+        {"op": "replace", "path": "/observable_receipts/0/integrity_result", "value": "fail"},
+        {"op": "replace", "path": "/observable_receipts/0/evidence_eligibility", "value": "untrusted_non_evidence"}
+      ]
+    },
+    {
+      "name": "candidate-artifact-rejects-failed-receipt-as-eligible-evidence",
+      "schema": "schemas/candidate-artifact.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/candidate-artifact.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "replace", "path": "/observable_receipts/0/integrity_result", "value": "fail"}]
+    },
+    {
+      "name": "candidate-artifact-rejects-nonempty-failure-state-without-evidence",
+      "schema": "schemas/candidate-artifact.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/candidate-artifact.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "remove", "path": "/failure_state/failure_evidence_refs/0"}]
+    },
+    {
+      "name": "candidate-artifact-allows-unknown-resource-observation-only-as-null-with-reason",
+      "schema": "schemas/candidate-artifact.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/candidate-artifact.valid.json",
+      "expect": "valid",
+      "mutations": [
+        {"op": "replace", "path": "/resource_use/dimensions/0/status", "value": "unknown"},
+        {"op": "replace", "path": "/resource_use/dimensions/0/value", "value": null},
+        {"op": "add", "path": "/resource_use/dimensions/0/reason_codes/0", "value": "meter-unavailable"}
+      ]
+    },
+    {
+      "name": "candidate-artifact-rejects-coercing-unknown-resource-to-zero-or-number",
+      "schema": "schemas/candidate-artifact.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/candidate-artifact.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/resource_use/dimensions/0/status", "value": "unknown"},
+        {"op": "add", "path": "/resource_use/dimensions/0/reason_codes/0", "value": "meter-unavailable"}
+      ]
+    },
+    {
+      "name": "candidate-artifact-rejects-incomplete-resource-observation-vector",
+      "schema": "schemas/candidate-artifact.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/candidate-artifact.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "remove", "path": "/resource_use/dimensions/8"}]
+    },
+    {"name": "epistemic-transition-record-valid-proposed", "schema": "schemas/epistemic-transition-record.schema.json", "fixture": "tests/cognitive-contracts/fixtures/epistemic-transition-record.valid.json", "expect": "valid"},
+    {
+      "name": "epistemic-transition-record-rejects-evidence-without-disposition",
+      "schema": "schemas/epistemic-transition-record.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/epistemic-transition-record.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "remove", "path": "/material_evidence/0/disposition"}]
+    },
+    {
+      "name": "epistemic-transition-record-rejects-private-chain-of-thought-evidence-kind",
+      "schema": "schemas/epistemic-transition-record.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/epistemic-transition-record.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "replace", "path": "/material_evidence/0/evidence_kind", "value": "private_chain_of_thought"}]
+    },
+    {
+      "name": "epistemic-transition-record-rejects-continue-under-incomplete-coverage",
+      "schema": "schemas/epistemic-transition-record.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/epistemic-transition-record.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/coverage/result", "value": "incomplete"},
+        {"op": "replace", "path": "/coverage/material_evidence_search_completed", "value": false},
+        {"op": "add", "path": "/coverage/missing_material_evidence_refs/0", "value": {"artifact_id": "evidence.missing", "digest": "sha256:f000000000000000000000000000000000000000000000000000000000000000", "media_type": "application/json"}},
+        {"op": "add", "path": "/coverage/unresolved_coverage_reasons/0", "value": "material-evidence-search-incomplete"},
+        {"op": "replace", "path": "/response/kind", "value": "continue"}
+      ]
+    },
+    {
+      "name": "epistemic-transition-record-rejects-legacy-successor-state-digest",
+      "schema": "schemas/epistemic-transition-record.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/epistemic-transition-record.valid.json",
+      "expect": "invalid",
+      "mutations": [{"op": "add", "path": "/successor_state_digest", "value": "sha256:cc00000000000000000000000000000000000000000000000000000000000000"}]
+    },
+    {
+      "name": "epistemic-transition-record-rejects-changed-summary-without-graph-delta",
+      "schema": "schemas/epistemic-transition-record.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/epistemic-transition-record.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/graph_delta/status", "value": "not_produced"},
+        {"op": "replace", "path": "/graph_delta/graph_delta_ref", "value": null},
+        {"op": "add", "path": "/graph_delta/reason_codes/0", "value": "delta-not-produced"}
+      ]
+    },
+    {
+      "name": "epistemic-transition-record-allows-changed-edge-only-transition",
+      "schema": "schemas/epistemic-transition-record.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/epistemic-transition-record.valid.json",
+      "expect": "valid",
+      "mutations": [
+        {"op": "remove", "path": "/material_evidence/0"},
+        {"op": "remove", "path": "/hypothesis_changes/0"},
+        {"op": "remove", "path": "/new_contradiction_refs/0"},
+        {"op": "remove", "path": "/residual_unknown_refs/0"},
+        {"op": "remove", "path": "/falsifier_outcomes/0"},
+        {"op": "replace", "path": "/typed_change_classes", "value": ["edge_relation"]},
+        {"op": "replace", "path": "/change_summary/reason_codes/0", "value": "edge-relation-change"},
+        {"op": "replace", "path": "/response/reason_codes/0", "value": "edge-relation-change"},
+        {"op": "replace", "path": "/responsibility/0/change_ref", "value": {"id": "graph-delta.fixture", "version": 1, "digest": "sha256:5500000000000000000000000000000000000000000000000000000000000000"}}
+      ]
+    },
+    {
+      "name": "epistemic-transition-record-allows-changed-material-evidence-only-transition",
+      "schema": "schemas/epistemic-transition-record.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/epistemic-transition-record.valid.json",
+      "expect": "valid",
+      "mutations": [
+        {"op": "remove", "path": "/hypothesis_changes/0"},
+        {"op": "remove", "path": "/new_contradiction_refs/0"},
+        {"op": "remove", "path": "/residual_unknown_refs/0"},
+        {"op": "remove", "path": "/falsifier_outcomes/0"},
+        {"op": "replace", "path": "/typed_change_classes", "value": ["material_evidence_disposition"]},
+        {"op": "replace", "path": "/change_summary/reason_codes/0", "value": "material-evidence-disposition-change"},
+        {"op": "replace", "path": "/response/reason_codes/0", "value": "material-evidence-disposition-change"},
+        {"op": "replace", "path": "/responsibility/0/change_ref", "value": {"id": "graph-delta.fixture", "version": 1, "digest": "sha256:5500000000000000000000000000000000000000000000000000000000000000"}}
+      ]
+    },
+    {
+      "name": "epistemic-transition-record-allows-changed-contract-only-transition",
+      "schema": "schemas/epistemic-transition-record.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/epistemic-transition-record.valid.json",
+      "expect": "valid",
+      "mutations": [
+        {"op": "remove", "path": "/material_evidence/0"},
+        {"op": "remove", "path": "/hypothesis_changes/0"},
+        {"op": "remove", "path": "/new_contradiction_refs/0"},
+        {"op": "remove", "path": "/residual_unknown_refs/0"},
+        {"op": "remove", "path": "/falsifier_outcomes/0"},
+        {
+          "op": "add",
+          "path": "/contract_changes/0",
+          "value": {
+            "change_kind": "scope",
+            "from_ref": {"id": "scope.fixture", "version": 1, "digest": "sha256:6500000000000000000000000000000000000000000000000000000000000000"},
+            "to_ref": {"id": "scope.fixture", "version": 2, "digest": "sha256:6600000000000000000000000000000000000000000000000000000000000000"},
+            "reason_code": "material-scope-correction",
+            "approved_by_ref": {"id": "scope-change-approval.fixture", "version": 1, "digest": "sha256:6700000000000000000000000000000000000000000000000000000000000000"}
+          }
+        },
+        {"op": "replace", "path": "/typed_change_classes", "value": ["contract"]},
+        {"op": "replace", "path": "/change_summary/reason_codes/0", "value": "material-scope-correction"},
+        {"op": "replace", "path": "/response/reason_codes/0", "value": "material-scope-correction"},
+        {"op": "replace", "path": "/responsibility/0/change_ref", "value": {"id": "scope.fixture", "version": 2, "digest": "sha256:6600000000000000000000000000000000000000000000000000000000000000"}}
+      ]
+    },
+    {
+      "name": "epistemic-transition-record-rejects-changed-result-with-empty-typed-change-set",
+      "schema": "schemas/epistemic-transition-record.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/epistemic-transition-record.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "remove", "path": "/hypothesis_changes/0"},
+        {"op": "remove", "path": "/new_contradiction_refs/0"},
+        {"op": "remove", "path": "/residual_unknown_refs/0"},
+        {"op": "remove", "path": "/falsifier_outcomes/0"},
+        {"op": "replace", "path": "/typed_change_classes", "value": []}
+      ]
+    },
+    {
+      "name": "epistemic-transition-record-rejects-proposed-delta-under-no-change-result",
+      "schema": "schemas/epistemic-transition-record.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/epistemic-transition-record.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "remove", "path": "/hypothesis_changes/0"},
+        {"op": "remove", "path": "/new_contradiction_refs/0"},
+        {"op": "remove", "path": "/residual_unknown_refs/0"},
+        {"op": "remove", "path": "/falsifier_outcomes/0"},
+        {"op": "replace", "path": "/typed_change_classes", "value": []},
+        {"op": "replace", "path": "/change_summary/result", "value": "no_change"}
+      ]
+    },
+    {
+      "name": "epistemic-transition-record-rejects-proposed-delta-under-incomplete-result",
+      "schema": "schemas/epistemic-transition-record.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/epistemic-transition-record.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "remove", "path": "/hypothesis_changes/0"},
+        {"op": "remove", "path": "/new_contradiction_refs/0"},
+        {"op": "remove", "path": "/residual_unknown_refs/0"},
+        {"op": "remove", "path": "/falsifier_outcomes/0"},
+        {"op": "replace", "path": "/typed_change_classes", "value": []},
+        {"op": "replace", "path": "/change_summary/result", "value": "incomplete"},
+        {"op": "replace", "path": "/response/kind", "value": "block"}
+      ]
+    },
+    {
+      "name": "epistemic-transition-record-rejects-typed-change-under-no-change-result",
+      "schema": "schemas/epistemic-transition-record.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/epistemic-transition-record.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "remove", "path": "/material_evidence/0"},
+        {"op": "remove", "path": "/hypothesis_changes/0"},
+        {"op": "remove", "path": "/new_contradiction_refs/0"},
+        {"op": "remove", "path": "/residual_unknown_refs/0"},
+        {"op": "remove", "path": "/falsifier_outcomes/0"},
+        {"op": "replace", "path": "/typed_change_classes", "value": ["edge_relation"]},
+        {"op": "replace", "path": "/graph_delta/status", "value": "not_produced"},
+        {"op": "replace", "path": "/graph_delta/graph_delta_ref", "value": null},
+        {"op": "add", "path": "/graph_delta/reason_codes/0", "value": "no-change"},
+        {"op": "replace", "path": "/change_summary/result", "value": "no_change"}
+      ]
+    },
+    {
+      "name": "epistemic-transition-record-allows-explicit-incomplete-no-change-package",
+      "schema": "schemas/epistemic-transition-record.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/epistemic-transition-record.valid.json",
+      "expect": "valid",
+      "mutations": [
+        {"op": "remove", "path": "/material_evidence/0"},
+        {"op": "replace", "path": "/coverage/result", "value": "incomplete"},
+        {"op": "replace", "path": "/coverage/material_evidence_search_completed", "value": false},
+        {"op": "add", "path": "/coverage/unresolved_coverage_reasons/0", "value": "material-evidence-search-incomplete"},
+        {"op": "remove", "path": "/hypothesis_changes/0"},
+        {"op": "remove", "path": "/new_contradiction_refs/0"},
+        {"op": "remove", "path": "/residual_unknown_refs/0"},
+        {"op": "remove", "path": "/falsifier_outcomes/0"},
+        {"op": "replace", "path": "/typed_change_classes", "value": []},
+        {"op": "replace", "path": "/graph_delta/status", "value": "not_produced"},
+        {"op": "replace", "path": "/graph_delta/graph_delta_ref", "value": null},
+        {"op": "add", "path": "/graph_delta/reason_codes/0", "value": "no-admissible-delta-produced"},
+        {"op": "replace", "path": "/change_summary/result", "value": "incomplete"},
+        {"op": "replace", "path": "/response/kind", "value": "block"}
+      ]
+    },
+    {
+      "name": "epistemic-transition-record-rejects-continue-while-required-verification-missing",
+      "schema": "schemas/epistemic-transition-record.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/epistemic-transition-record.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/verification/disposition", "value": "missing"},
+        {"op": "replace", "path": "/verification/record_ref", "value": null},
+        {"op": "add", "path": "/verification/reason_codes/0", "value": "verification-record-missing"},
+        {"op": "replace", "path": "/response/kind", "value": "continue"}
+      ]
+    },
+    {
+      "name": "model-configuration-record-valid-observed-candidate",
+      "schema": "schemas/model-configuration-record.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/model-configuration-record.valid.json",
+      "expect": "valid",
+      "semantic_expect": "valid"
+    },
+    {
+      "name": "model-configuration-record-rejects-embedded-secret-claim",
+      "schema": "schemas/model-configuration-record.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/model-configuration-record.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/invocation_configuration/secrets_embedded", "value": true}
+      ]
+    },
+    {
+      "name": "model-configuration-record-rejects-unknown-training-use-without-reason",
+      "schema": "schemas/model-configuration-record.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/model-configuration-record.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/data_handling/provider_training_use", "value": "unknown"}
+      ]
+    },
+    {
+      "name": "model-configuration-record-rejects-evaluated-status-without-metrics",
+      "schema": "schemas/model-configuration-record.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/model-configuration-record.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "remove", "path": "/evaluation_evidence/metric_observations/0"}
+      ]
+    },
+    {
+      "name": "model-configuration-record-rejects-self-certified-independence",
+      "schema": "schemas/model-configuration-record.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/model-configuration-record.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/correlation_profile/independence_conclusion_permitted", "value": true}
+      ]
+    },
+    {
+      "name": "model-configuration-record-rejects-identity-on-unknown-correlation-axis",
+      "schema": "schemas/model-configuration-record.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/model-configuration-record.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "add", "path": "/correlation_profile/weights_lineage/identity_refs/0", "value": {"id": "fabricated.weights-lineage", "version": 1, "digest": "sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"}}
+      ]
+    },
+    {
+      "name": "model-configuration-record-rejects-dispatch-authority",
+      "schema": "schemas/model-configuration-record.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/model-configuration-record.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/authority_boundary/dispatch_authorized", "value": true}
+      ]
+    },
+    {
+      "name": "model-configuration-record-rejects-observed-provider-without-observed-region",
+      "schema": "schemas/model-configuration-record.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/model-configuration-record.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/provider_identity/observed_region", "value": null}
+      ]
+    },
+    {
+      "name": "model-configuration-record-rejects-attested-model-without-version",
+      "schema": "schemas/model-configuration-record.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/model-configuration-record.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/model_identity/provider_model_version", "value": null}
+      ]
+    },
+    {
+      "name": "model-configuration-record-rejects-nonzero-no-retention",
+      "schema": "schemas/model-configuration-record.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/model-configuration-record.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/data_handling/provider_retention/maximum_seconds", "value": 60}
+      ]
+    },
+    {
+      "name": "model-configuration-record-rejects-contaminated-evaluation-for-selection",
+      "schema": "schemas/model-configuration-record.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/model-configuration-record.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/evaluation_evidence/contamination_assessment/disposition", "value": "material_overlap_observed"}
+      ]
+    },
+    {
+      "name": "model-configuration-record-rejects-not-evaluated-with-retained-metric-claims",
+      "schema": "schemas/model-configuration-record.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/model-configuration-record.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/evaluation_evidence/disposition", "value": "not_evaluated"},
+        {"op": "replace", "path": "/evaluation_evidence/selection_use", "value": "forbidden"},
+        {"op": "add", "path": "/evaluation_evidence/reason_codes/0", "value": "evaluation-not-run"}
+      ]
+    },
+    {
+      "name": "model-configuration-record-rejects-duplicate-operating-dimension",
+      "schema": "schemas/model-configuration-record.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/model-configuration-record.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/operational_observations/3/dimension", "value": "performance"}
+      ]
+    },
+    {
+      "name": "model-configuration-record-semantically-rejects-reversed-metric-interval",
+      "schema": "schemas/model-configuration-record.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/model-configuration-record.valid.json",
+      "expect": "valid",
+      "semantic_expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/evaluation_evidence/metric_observations/0/estimate/lower", "value": "0.9"}
+      ]
+    },
+    {
+      "name": "model-configuration-record-semantically-rejects-contradictory-current-validity",
+      "schema": "schemas/model-configuration-record.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/model-configuration-record.valid.json",
+      "expect": "valid",
+      "semantic_expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/recorded_at/value", "value": "2026-09-15T10:00:00.000000Z"}
+      ]
+    },
+    {
+      "name": "model-configuration-record-semantically-rejects-intended-task-without-capability-evidence",
+      "schema": "schemas/model-configuration-record.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/model-configuration-record.valid.json",
+      "expect": "valid",
+      "semantic_expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/eligibility_boundary/intended_task_family_refs/0/id", "value": "task-family.unobserved"},
+        {"op": "replace", "path": "/eligibility_boundary/intended_task_family_refs/0/digest", "value": "sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"}
+      ]
+    },
+    {
+      "name": "model-configuration-record-semantically-rejects-data-class-both-permitted-and-disallowed",
+      "schema": "schemas/model-configuration-record.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/model-configuration-record.valid.json",
+      "expect": "valid",
+      "semantic_expect": "invalid",
+      "mutations": [
+        {"op": "add", "path": "/limitations/disallowed_data_classes/0", "value": "internal"}
+      ]
+    },
+    {
+      "name": "routing-decision-valid-selected-candidate",
+      "schema": "schemas/routing-decision.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/routing-decision.valid.json",
+      "expect": "valid",
+      "semantic_expect": "valid"
+    },
+    {
+      "name": "routing-decision-rejects-selected-result-without-selected-candidate",
+      "schema": "schemas/routing-decision.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/routing-decision.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/candidate_set/0/selection_disposition", "value": "eligible_not_selected"}
+      ]
+    },
+    {
+      "name": "routing-decision-rejects-no-selection-method-on-selected-result",
+      "schema": "schemas/routing-decision.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/routing-decision.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/decision/selection_method", "value": "no_selection"}
+      ]
+    },
+    {
+      "name": "routing-decision-rejects-eligible-candidate-with-failed-hard-constraint",
+      "schema": "schemas/routing-decision.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/routing-decision.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/candidate_set/0/constraint_results/6/disposition", "value": "fail"},
+        {"op": "add", "path": "/candidate_set/0/constraint_results/6/reason_codes/0", "value": "risk-rule-failed"}
+      ]
+    },
+    {
+      "name": "routing-decision-rejects-fallback-inside-same-attempt",
+      "schema": "schemas/routing-decision.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/routing-decision.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/fallback/same_attempt_identity_reuse_allowed", "value": true}
+      ]
+    },
+    {
+      "name": "routing-decision-rejects-routing-as-dispatch-authority",
+      "schema": "schemas/routing-decision.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/routing-decision.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/dispatch_boundary/routing_decision_is_dispatch_authority", "value": true}
+      ]
+    },
+    {
+      "name": "routing-decision-rejects-unknown-dimension-coerced-to-bounds",
+      "schema": "schemas/routing-decision.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/routing-decision.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/candidate_set/0/dimension_observations/1/disposition", "value": "unknown"},
+        {"op": "add", "path": "/candidate_set/0/dimension_observations/1/reason_codes/0", "value": "measurement-unavailable"}
+      ]
+    },
+    {
+      "name": "routing-decision-semantically-rejects-selected-reference-mismatch",
+      "schema": "schemas/routing-decision.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/routing-decision.valid.json",
+      "expect": "valid",
+      "semantic_expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/decision/selected_configuration_ref/digest", "value": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"}
+      ]
+    },
+    {
+      "name": "routing-decision-semantically-rejects-candidate-count-mismatch",
+      "schema": "schemas/routing-decision.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/routing-decision.valid.json",
+      "expect": "valid",
+      "semantic_expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/candidate_search/considered_count", "value": 2}
+      ]
+    },
+    {
+      "name": "routing-decision-semantically-rejects-hard-constraint-rule-mismatch",
+      "schema": "schemas/routing-decision.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/routing-decision.valid.json",
+      "expect": "valid",
+      "semantic_expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/candidate_set/0/constraint_results/0/rule_ref/id", "value": "route-rule.wrong-task-family"},
+        {"op": "replace", "path": "/candidate_set/0/constraint_results/0/rule_ref/digest", "value": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"}
+      ]
+    },
+    {
+      "name": "routing-decision-semantically-rejects-reversed-decision-bound",
+      "schema": "schemas/routing-decision.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/routing-decision.valid.json",
+      "expect": "valid",
+      "semantic_expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/candidate_set/0/dimension_observations/1/lower_bound", "value": "0.95"}
+      ]
+    },
+    {
+      "name": "routing-decision-semantically-rejects-selected-candidate-with-unknown-dimension",
+      "schema": "schemas/routing-decision.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/routing-decision.valid.json",
+      "expect": "valid",
+      "semantic_expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/candidate_set/0/dimension_observations/7/disposition", "value": "unknown"},
+        {"op": "add", "path": "/candidate_set/0/dimension_observations/7/reason_codes/0", "value": "correlation-unresolved"}
+      ]
+    },
+    {
+      "name": "routing-decision-semantically-rejects-selected-configuration-as-own-fallback",
+      "schema": "schemas/routing-decision.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/routing-decision.valid.json",
+      "expect": "valid",
+      "semantic_expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/fallback/candidate_configuration_refs/0", "value": {"id": "model-config.synthetic-a", "version": 1, "digest": "sha256:100000000000000000000000000000000000000000000000000000000000002b"}}
+      ]
+    },
+    {
+      "name": "routing-decision-allows-explicit-no-candidate-refusal",
+      "schema": "schemas/routing-decision.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/routing-decision.valid.json",
+      "expect": "valid",
+      "semantic_expect": "valid",
+      "mutations": [
+        {"op": "remove", "path": "/candidate_set/0"},
+        {"op": "replace", "path": "/candidate_search/registry_member_count", "value": 0},
+        {"op": "replace", "path": "/candidate_search/considered_count", "value": 0},
+        {"op": "replace", "path": "/decision/result", "value": "no_candidate_discovered"},
+        {"op": "replace", "path": "/decision/selection_method", "value": "no_selection"},
+        {"op": "replace", "path": "/decision/selected_configuration_ref", "value": null},
+        {"op": "replace", "path": "/fallback/permitted", "value": false},
+        {"op": "remove", "path": "/fallback/candidate_configuration_refs/0"},
+        {"op": "replace", "path": "/semantic_assertions/selected_ref_equals_selected_candidate", "value": "not_applicable"},
+        {"op": "replace", "path": "/semantic_assertions/selected_candidate_is_eligible", "value": "not_applicable"},
+        {"op": "replace", "path": "/semantic_assertions/selected_candidate_on_pareto_frontier", "value": "not_applicable"},
+        {"op": "replace", "path": "/semantic_assertions/selected_configuration_current_at_decision", "value": "not_applicable"}
+      ]
+    },
+    {
+      "name": "model-configuration-record-rejects-binary-json-number-estimate",
+      "schema": "schemas/model-configuration-record.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/model-configuration-record.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/evaluation_evidence/metric_observations/0/estimate/point", "value": 0.81}
+      ]
+    },
+    {
+      "name": "model-configuration-record-rejects-lexical-negative-zero",
+      "schema": "schemas/model-configuration-record.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/model-configuration-record.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/evaluation_evidence/metric_observations/0/estimate/lower", "value": "-0"}
+      ]
+    },
+    {
+      "name": "model-configuration-record-rejects-exponent-decimal",
+      "schema": "schemas/model-configuration-record.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/model-configuration-record.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/evaluation_evidence/metric_observations/0/estimate/upper", "value": "8.7e-1"}
+      ]
+    },
+    {
+      "name": "model-configuration-record-allows-legitimate-negative-nonzero-interval",
+      "schema": "schemas/model-configuration-record.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/model-configuration-record.valid.json",
+      "expect": "valid",
+      "semantic_expect": "valid",
+      "mutations": [
+        {"op": "replace", "path": "/evaluation_evidence/metric_observations/0/estimate/lower", "value": "-0.01"},
+        {"op": "replace", "path": "/evaluation_evidence/metric_observations/0/estimate/point", "value": "0"},
+        {"op": "replace", "path": "/evaluation_evidence/metric_observations/0/estimate/upper", "value": "0.01"}
+      ]
+    },
+    {
+      "name": "routing-decision-rejects-binary-json-number-resource-amount",
+      "schema": "schemas/routing-decision.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/routing-decision.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/work_profile/execution_budget/spend/value", "value": 1.5}
+      ]
+    },
+    {
+      "name": "routing-decision-rejects-lexical-negative-zero-resource-amount",
+      "schema": "schemas/routing-decision.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/routing-decision.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/work_profile/execution_budget/gpu_time/value", "value": "-0.0"}
+      ]
+    },
+    {
+      "name": "routing-decision-rejects-leading-zero-bound",
+      "schema": "schemas/routing-decision.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/routing-decision.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/candidate_set/0/dimension_observations/1/lower_bound", "value": "00.73"}
+      ]
+    },
+    {
+      "name": "routing-decision-rejects-exponent-bound",
+      "schema": "schemas/routing-decision.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/routing-decision.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/candidate_set/0/dimension_observations/1/upper_bound", "value": "8.7e-1"}
+      ]
+    }
+  ]
+}

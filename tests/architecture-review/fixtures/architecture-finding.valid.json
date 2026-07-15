@@ -1,0 +1,92 @@
+{
+  "schema_version": "0.1.0",
+  "finding_id": "finding.fixture.open-high",
+  "version": 1,
+  "candidate": {
+    "manifest_id": "candidate.fixture.nonaccepted",
+    "version": 1,
+    "manifest_digest": "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "lane": "security_authority_cryptography",
+  "discovery": {
+    "source_type": "deterministic_validator",
+    "source_principal": {
+      "principal_id": "fixture.validator",
+      "principal_type": "deterministic_service"
+    },
+    "accountable_human_ref": null,
+    "method": "formal_counterexample",
+    "evidence_ref": {
+      "artifact_id": "finding.discovery-evidence",
+      "digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+      "media_type": "application/json"
+    }
+  },
+  "affected_artifacts": [
+    {
+      "artifact_id": "schema.affected",
+      "digest": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+      "media_type": "application/schema+json"
+    }
+  ],
+  "severity": "high",
+  "likelihood": "observed",
+  "finding_confidence": "high",
+  "violated_requirement": {
+    "requirement_id": "gate-a.no-unbounded-authority",
+    "requirement_ref": {
+      "artifact_id": "requirement.gate-a",
+      "digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+      "media_type": "text/markdown"
+    },
+    "invariant_text": "Gate A cannot authorize runtime implementation.",
+    "missing_proof": false
+  },
+  "reproducer": {
+    "trace_ref": {
+      "artifact_id": "trace.finding",
+      "digest": "sha256:4444444444444444444444444444444444444444444444444444444444444444",
+      "media_type": "application/json"
+    },
+    "minimal_mutation": "Set an implementation authorization bit to true.",
+    "observed_result": "The candidate accepted an authority escalation.",
+    "required_result": "The candidate must reject every Gate A runtime authorization."
+  },
+  "consequences": ["authority", "safety"],
+  "scope": {
+    "description": "The defect blocks the security and authority lane.",
+    "affected_lane_refs": ["security_authority_cryptography"],
+    "dependent_finding_refs": []
+  },
+  "proposed_remedies": [
+    {
+      "remedy_id": "remedy.const-false",
+      "description": "Encode the implementation lock as a constant false value.",
+      "failure_modes": ["A permissive union could still admit true."],
+      "verification_ref": {
+        "artifact_id": "verification.adversarial-lock",
+        "digest": "sha256:5555555555555555555555555555555555555555555555555555555555555555",
+        "media_type": "application/json"
+      }
+    }
+  ],
+  "disposition": {
+    "state": "open",
+    "owner": {
+      "principal_id": "fixture.owner",
+      "principal_type": "human"
+    },
+    "due_gate": "gate_a",
+    "duplicate_of": null,
+    "accepted_limitation": null,
+    "deferred_probe": null
+  },
+  "closure": {
+    "changed_candidate": null,
+    "change_impact_map_ref": null,
+    "closure_evidence_refs": [],
+    "closure_reviewer": null,
+    "closure_reviewed_at": null
+  },
+  "created_at": "2026-07-15T12:00:00.000000Z"
+}

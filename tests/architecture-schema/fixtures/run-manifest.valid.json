@@ -1,0 +1,128 @@
+{
+  "schema_version": "0.1.0",
+  "run_manifest_id": "run-manifest.001",
+  "version": 1,
+  "mission_id": "mission.001",
+  "protocol_snapshot": {
+    "protocol_snapshot_id": "protocol.001",
+    "version": 1,
+    "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "stage_id": "stage.execute.001",
+  "run_class": "producer",
+  "source_run_manifest": null,
+  "independence_profile_ref": null,
+  "inputs": [
+    {
+      "role": "fixture",
+      "artifact": {
+        "artifact_id": "input.001",
+        "digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "media_type": "application/json"
+      },
+      "exposure_class": "worker_visible"
+    }
+  ],
+  "execution": {
+    "entrypoint": "validate-fixture",
+    "code_ref": {
+      "artifact_id": "code.001",
+      "digest": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "media_type": "application/vnd.oci.image.manifest.v1+json"
+    },
+    "environment_ref": {
+      "artifact_id": "environment.001",
+      "digest": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "media_type": "application/vnd.oci.image.manifest.v1+json"
+    },
+    "harness_ref": {
+      "artifact_id": "harness.001",
+      "digest": "sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "media_type": "application/json"
+    },
+    "model_bindings": [],
+    "tool_bindings": [
+      {
+        "tool_id": "tool.jsonschema",
+        "version": "4.26.0",
+        "interface_digest": "sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+      }
+    ],
+    "randomness_policy": "deterministic_seeded",
+    "seed_set": [1],
+    "sandbox_profile_ref": {
+      "artifact_id": "sandbox-profile.001",
+      "digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+      "media_type": "application/json"
+    },
+    "network_profile_ref": {
+      "artifact_id": "network-profile.offline",
+      "digest": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+      "media_type": "application/json"
+    },
+    "resource_request": {
+      "wall_time_seconds": "60",
+      "model_tokens": "0",
+      "cpu_seconds": "60",
+      "memory_gib_seconds": "120",
+      "accelerator_seconds": "0",
+      "storage_bytes": "1048576",
+      "network_bytes": "0",
+      "external_cost_usd": "0",
+      "human_hours": "0.1"
+    }
+  },
+  "evaluator_bindings": [
+    {
+      "method_id": "method.schema-conformance",
+      "version": "0.1.0",
+      "registry_digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333"
+    }
+  ],
+  "expected_outputs": [
+    {
+      "output_id": "output.validation-result",
+      "role": "report",
+      "media_type": "application/json",
+      "schema_id": "urn:odeya:schema:validation-result:0.1.0",
+      "required": true
+    }
+  ],
+  "known_bad_controls": [
+    {
+      "control_id": "control.unknown-field",
+      "fixture": {
+        "artifact_id": "known-bad.001",
+        "digest": "sha256:4444444444444444444444444444444444444444444444444444444444444444",
+        "media_type": "application/json"
+      },
+      "evaluator_id": "evaluator.schema",
+      "expected_verdict": "reject"
+    }
+  ],
+  "preflight_validation_results": [
+    {
+      "validation_result_id": "validation.preflight.001",
+      "digest": "sha256:5555555555555555555555555555555555555555555555555555555555555555",
+      "disposition": "pass"
+    }
+  ],
+  "authority_grant_refs": ["grant.execution.001", "grant.resource.001"],
+  "recovery": {
+    "checkpoint_policy_ref": {
+      "artifact_id": "checkpoint-policy.001",
+      "digest": "sha256:6666666666666666666666666666666666666666666666666666666666666666",
+      "media_type": "application/json"
+    },
+    "idempotency_scope": "run-manifest.001",
+    "resume_strategy": "restart_attempt"
+  },
+  "canonical_payload_digest": "sha256:7777777777777777777777777777777777777777777777777777777777777777",
+  "sealed_at_ledger_position": 30,
+  "sealed_at": "2026-07-15T12:00:00Z",
+  "sealed_by": {
+    "principal_id": "authority.execution",
+    "principal_type": "human",
+    "authority_grant_ref": "grant.execution.001"
+  }
+}

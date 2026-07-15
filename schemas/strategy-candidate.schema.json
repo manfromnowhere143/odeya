@@ -1,0 +1,175 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:odeya:schema:strategy-candidate:0.1.0",
+  "title": "Odeya StrategyCandidate",
+  "description": "An immutable, quarantined proposal for changing a workflow, component, policy, prompt, tool, model configuration, or retrieval rule. It grants no production authority and cannot promote itself.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "strategy_candidate_id",
+    "version",
+    "candidate_kind",
+    "change_target",
+    "change_set_ref",
+    "hypothesis",
+    "mechanism",
+    "origin_grounded_outcomes",
+    "recurrence_contract",
+    "applicability",
+    "objective_dimensions",
+    "regression_fixtures",
+    "evaluation_plan_ref",
+    "shadow_plan_ref",
+    "rollback_plan_ref",
+    "risk",
+    "quarantine",
+    "created_at_ledger_position",
+    "created_at",
+    "created_by"
+  ],
+  "properties": {
+    "schema_version": { "const": "0.1.0" },
+    "strategy_candidate_id": { "$ref": "#/$defs/identifier" },
+    "version": { "type": "integer", "minimum": 1 },
+    "candidate_kind": { "enum": ["workflow", "prompt", "tool", "model_configuration", "retrieval_policy", "validation_rule", "architecture", "operational_policy"] },
+    "change_target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["target_id", "target_version", "target_digest"],
+      "properties": {
+        "target_id": { "$ref": "#/$defs/identifier" },
+        "target_version": { "type": "string", "minLength": 1 },
+        "target_digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "change_set_ref": { "$ref": "#/$defs/artifact_reference" },
+    "hypothesis": { "type": "string", "minLength": 1 },
+    "mechanism": { "type": "string", "minLength": 1 },
+    "origin_grounded_outcomes": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["grounded_outcome_id", "version", "digest"],
+        "properties": {
+          "grounded_outcome_id": { "$ref": "#/$defs/identifier" },
+          "version": { "type": "integer", "minimum": 1 },
+          "digest": { "$ref": "#/$defs/digest" }
+        }
+      }
+    },
+    "recurrence_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["required_independent_observations", "observed_outcome_ids", "transfer_requirement"],
+      "properties": {
+        "required_independent_observations": { "type": "integer", "minimum": 1 },
+        "observed_outcome_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/identifier" }
+        },
+        "transfer_requirement": { "enum": ["not_required", "required_before_shadow", "required_before_canary", "required_before_rollout"] }
+      }
+    },
+    "applicability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["domains", "mission_classes", "risk_tiers", "exclusions"],
+      "properties": {
+        "domains": { "$ref": "#/$defs/string_array" },
+        "mission_classes": { "$ref": "#/$defs/string_array" },
+        "risk_tiers": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "enum": ["R0", "R1", "R2", "R3", "R4"] }
+        },
+        "exclusions": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+      }
+    },
+    "objective_dimensions": {
+      "type": "array",
+      "minItems": 2,
+      "uniqueItems": true,
+      "items": { "enum": ["reproducibility", "information_gain", "falsifier_coverage", "uncertainty_reduction", "claim_validity", "safety", "latency", "compute_cost", "monetary_cost", "human_intervention", "downstream_value"] }
+    },
+    "regression_fixtures": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["positive", "negative"],
+      "properties": {
+        "positive": { "$ref": "#/$defs/nonempty_artifact_array" },
+        "negative": { "$ref": "#/$defs/nonempty_artifact_array" }
+      }
+    },
+    "evaluation_plan_ref": { "$ref": "#/$defs/artifact_reference" },
+    "shadow_plan_ref": { "$ref": "#/$defs/artifact_reference" },
+    "rollback_plan_ref": { "$ref": "#/$defs/artifact_reference" },
+    "risk": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["maximum_candidate_risk_tier", "possible_harms", "irreversible_effects_allowed"],
+      "properties": {
+        "maximum_candidate_risk_tier": { "enum": ["R0", "R1", "R2", "R3", "R4"] },
+        "possible_harms": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "irreversible_effects_allowed": { "const": false }
+      }
+    },
+    "quarantine": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["environment_ref", "production_credentials", "production_write_authority", "external_effect_authority", "network_profile_ref", "resource_ceiling_ref"],
+      "properties": {
+        "environment_ref": { "$ref": "#/$defs/artifact_reference" },
+        "production_credentials": { "const": false },
+        "production_write_authority": { "const": false },
+        "external_effect_authority": { "const": false },
+        "network_profile_ref": { "$ref": "#/$defs/artifact_reference" },
+        "resource_ceiling_ref": { "$ref": "#/$defs/artifact_reference" }
+      }
+    },
+    "created_at_ledger_position": { "type": "integer", "minimum": 0 },
+    "created_at": { "type": "string", "format": "date-time" },
+    "created_by": { "$ref": "#/$defs/principal" }
+  },
+  "$defs": {
+    "identifier": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$" },
+    "digest": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+    "artifact_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifact_id", "digest", "media_type"],
+      "properties": {
+        "artifact_id": { "$ref": "#/$defs/identifier" },
+        "digest": { "$ref": "#/$defs/digest" },
+        "media_type": { "type": "string", "minLength": 1 }
+      }
+    },
+    "nonempty_artifact_array": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/artifact_reference" }
+    },
+    "string_array": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "principal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["principal_id", "principal_type"],
+      "properties": {
+        "principal_id": { "$ref": "#/$defs/identifier" },
+        "principal_type": { "enum": ["human", "service", "model_run"] }
+      }
+    }
+  }
+}

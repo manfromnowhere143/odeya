@@ -1,258 +1,445 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:verification-run:0.1.0",
-  "title": "Odeya VerificationRun",
-  "description": "An immutable verification result with observed multidimensional independence.",
+  "$id": "urn:odeya:schema:verification-run:0.2.0",
+  "title": "Odeya VerificationPackage",
+  "description": "An immutable terminal package for one VerificationRun. It binds an exact subject set and frozen assignment, preserves completed, failed, not-started, and completion-unknown paths, and records multidimensional results without granting claim, dispatch, publication, or dispute authority. Lifecycle and dispute state are event-derived; this record never references its successor completion event.",
   "type": "object",
   "additionalProperties": false,
   "required": [
     "schema_version",
-    "verification_id",
+    "record_class",
+    "verification_package_id",
+    "verification_run_id",
+    "version",
     "mission_id",
-    "protocol_digest",
-    "producer_identity",
+    "protocol_branch_id",
+    "subject_set",
+    "frozen_assignment",
+    "execution",
     "verifier_identity",
-    "status",
-    "replay_level",
-    "relations",
-    "exposure_event_refs",
-    "conflict_declaration_refs",
-    "evidence_refs",
-    "known_bad_results",
+    "correlation_axes",
+    "independence_assessment",
+    "observed_exposure",
+    "controls",
     "dimensions",
-    "assessment_rule",
+    "verification_evidence_refs",
+    "findings",
+    "resource_reconciliation",
+    "assessment_summary",
+    "terminal_assessment",
+    "eligible_next_actions",
+    "assessment_rule_ref",
     "assessed_by",
-    "derived_profiles",
-    "recorded_at"
+    "recorded_at",
+    "recorded_at_ledger_position"
   ],
   "properties": {
-    "schema_version": {
-      "const": "0.1.0"
-    },
-    "verification_id": {
-      "$ref": "#/$defs/identifier"
-    },
-    "mission_id": {
-      "$ref": "#/$defs/identifier"
-    },
-    "protocol_digest": {
-      "$ref": "#/$defs/digest"
-    },
-    "producer_identity": {
-      "$ref": "#/$defs/execution_identity"
-    },
-    "verifier_identity": {
-      "$ref": "#/$defs/execution_identity"
-    },
-    "status": {
-      "enum": ["requested", "running", "confirmed", "rejected", "inconclusive", "invalid", "blocked", "disputed"]
-    },
-    "replay_level": {
-      "enum": ["integrity_only", "same_evidence_reexecution", "clean_reproduction", "independent_reimplementation", "independent_replication"]
-    },
-    "relations": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "principal",
-        "execution_identity",
-        "process",
-        "host",
-        "environment",
-        "code",
-        "evaluator",
-        "model",
-        "data",
-        "context",
-        "operator",
-        "institution",
-        "artifact_selection",
-        "conflict"
-      ],
-      "properties": {
-        "principal": {
-          "enum": ["same", "different", "organizationally_independent", "unknown"]
-        },
-        "execution_identity": {
-          "enum": ["same", "different", "unknown"]
-        },
-        "process": {
-          "enum": ["same", "separate", "unknown"]
-        },
-        "host": {
-          "enum": ["same", "separate", "separate_admin_domain", "unknown"]
-        },
-        "environment": {
-          "enum": ["same_image", "clean_rebuild", "independently_built", "unknown"]
-        },
-        "code": {
-          "enum": ["same_artifact", "clean_rebuild", "independent_implementation", "different_method", "unknown"]
-        },
-        "evaluator": {
-          "enum": ["same", "independent_instance", "independent_implementation", "human_expert", "unknown"]
-        },
-        "model": {
-          "enum": ["not_applicable", "same_instance", "same_family", "different_family", "independent_provider", "unknown"]
-        },
-        "data": {
-          "enum": ["same_bytes", "fresh_split", "new_sample", "new_dataset", "new_measurement", "unknown"]
-        },
-        "context": {
-          "enum": ["producer_trace", "producer_summary", "evidence_only", "blinded", "sealed_truth_blinded", "unknown"]
-        },
-        "operator": {
-          "enum": ["same", "different", "unknown"]
-        },
-        "institution": {
-          "enum": ["same", "different", "external", "unknown"]
-        },
-        "artifact_selection": {
-          "enum": ["producer_selected", "complete_manifest", "blinded_selection", "unknown"]
-        },
-        "conflict": {
-          "enum": ["none_disclosed", "present", "unknown"]
-        }
-      }
-    },
-    "exposure_event_refs": {
+    "schema_version": { "const": "0.2.0" },
+    "record_class": { "const": "immutable_terminal_verification_package" },
+    "verification_package_id": { "$ref": "#/$defs/identifier" },
+    "verification_run_id": { "$ref": "#/$defs/identifier" },
+    "version": { "type": "integer", "const": 1 },
+    "mission_id": { "$ref": "#/$defs/identifier" },
+    "protocol_branch_id": { "$ref": "#/$defs/identifier" },
+    "subject_set": { "$ref": "#/$defs/subject_set" },
+    "frozen_assignment": { "$ref": "#/$defs/frozen_assignment" },
+    "execution": { "$ref": "#/$defs/execution" },
+    "verifier_identity": { "$ref": "#/$defs/verifier_identity" },
+    "correlation_axes": { "$ref": "#/$defs/correlation_axes" },
+    "independence_assessment": { "$ref": "#/$defs/independence_assessment" },
+    "observed_exposure": { "$ref": "#/$defs/observed_exposure" },
+    "controls": { "$ref": "#/$defs/controls" },
+    "dimensions": { "$ref": "#/$defs/dimensions" },
+    "verification_evidence_refs": {
       "type": "array",
+      "maxItems": 256,
       "uniqueItems": true,
-      "items": {
-        "$ref": "#/$defs/identifier"
-      }
+      "items": { "$ref": "#/$defs/artifact_reference" }
     },
-    "conflict_declaration_refs": {
-      "type": "array",
-      "uniqueItems": true,
-      "items": {
-        "$ref": "#/$defs/artifact_reference"
-      }
-    },
-    "evidence_refs": {
-      "type": "array",
-      "minItems": 1,
-      "uniqueItems": true,
-      "items": {
-        "$ref": "#/$defs/artifact_reference"
-      }
-    },
-    "known_bad_results": {
-      "type": "array",
-      "minItems": 1,
-      "items": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": ["fixture", "expected", "observed", "report_ref"],
-        "properties": {
-          "fixture": {
-            "$ref": "#/$defs/artifact_reference"
-          },
-          "expected": {
-            "const": "reject"
-          },
-          "observed": {
-            "enum": ["reject", "accept", "error"]
-          },
-          "report_ref": {
-            "$ref": "#/$defs/artifact_reference"
-          }
-        }
-      }
-    },
-    "dimensions": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "artifact_integrity",
-        "computational_reproducibility",
-        "code_verification",
-        "method_validity",
-        "calibration",
-        "causal_identification",
-        "external_validation",
-        "transport",
-        "safety_case"
-      ],
-      "properties": {
-        "artifact_integrity": {
-          "$ref": "#/$defs/dimension_result"
-        },
-        "computational_reproducibility": {
-          "$ref": "#/$defs/dimension_result"
-        },
-        "code_verification": {
-          "$ref": "#/$defs/dimension_result"
-        },
-        "method_validity": {
-          "$ref": "#/$defs/dimension_result"
-        },
-        "calibration": {
-          "$ref": "#/$defs/dimension_result"
-        },
-        "causal_identification": {
-          "$ref": "#/$defs/dimension_result"
-        },
-        "external_validation": {
-          "$ref": "#/$defs/dimension_result"
-        },
-        "transport": {
-          "$ref": "#/$defs/dimension_result"
-        },
-        "safety_case": {
-          "$ref": "#/$defs/dimension_result"
-        }
-      }
-    },
-    "assessment_rule": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["rule_id", "version", "registry_digest"],
-      "properties": {
-        "rule_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "version": {
-          "type": "string",
-          "minLength": 1
-        },
-        "registry_digest": {
-          "$ref": "#/$defs/digest"
-        }
-      }
-    },
-    "assessed_by": {
-      "$ref": "#/$defs/execution_identity"
-    },
-    "derived_profiles": {
-      "type": "array",
-      "uniqueItems": true,
-      "items": {
-        "enum": ["IV0_integrity", "IV1_reexecution", "IV2_clean_reproduction", "IV3_independent_reimplementation", "IV4_replication"]
-      }
-    },
-    "recorded_at": {
-      "type": "string",
-      "format": "date-time"
-    }
+    "findings": { "$ref": "#/$defs/findings" },
+    "resource_reconciliation": { "$ref": "#/$defs/resource_reconciliation" },
+    "assessment_summary": { "$ref": "#/$defs/assessment_summary" },
+    "terminal_assessment": { "$ref": "#/$defs/terminal_assessment" },
+    "eligible_next_actions": { "$ref": "#/$defs/eligible_next_actions" },
+    "assessment_rule_ref": { "$ref": "#/$defs/immutable_reference" },
+    "assessed_by": { "$ref": "#/$defs/execution_identity" },
+    "recorded_at": { "$ref": "#/$defs/timestamp" },
+    "recorded_at_ledger_position": { "type": "integer", "minimum": 0 }
   },
   "allOf": [
     {
+      "properties": {
+        "dimensions": { "$ref": "#/$defs/dimensions_has_required" }
+      }
+    },
+    {
+      "if": { "properties": { "terminal_assessment": { "properties": { "status": { "const": "confirmed" } }, "required": ["status"] } }, "required": ["terminal_assessment"] },
+      "then": {
+        "properties": {
+          "execution": { "properties": { "path": { "const": "completed" }, "plan_comparison": { "const": "match" } } },
+          "independence_assessment": { "properties": { "requirement_satisfaction": { "const": "pass" } } },
+          "observed_exposure": { "properties": { "disposition": { "enum": ["observed", "none_permitted"] } } },
+          "controls": { "properties": { "known_answer": { "items": { "properties": { "status": { "const": "pass" } } } }, "known_bad": { "items": { "properties": { "status": { "const": "pass" } } } } } },
+          "dimensions": {
+            "properties": {
+              "artifact_integrity": { "allOf": [{ "$ref": "#/$defs/confirmed_dimension_result" }, { "properties": { "requirement": { "const": "required" } } }] },
+              "schema_conformance": { "allOf": [{ "$ref": "#/$defs/confirmed_dimension_result" }, { "properties": { "requirement": { "const": "required" } } }] },
+              "computational_reproducibility": { "$ref": "#/$defs/confirmed_dimension_result" },
+              "code_verification": { "$ref": "#/$defs/confirmed_dimension_result" },
+              "method_validity": { "$ref": "#/$defs/confirmed_dimension_result" },
+              "statistical_validity": { "$ref": "#/$defs/confirmed_dimension_result" },
+              "calibration": { "$ref": "#/$defs/confirmed_dimension_result" },
+              "causal_identification": { "$ref": "#/$defs/confirmed_dimension_result" },
+              "physical_validity": { "$ref": "#/$defs/confirmed_dimension_result" },
+              "external_validation": { "$ref": "#/$defs/confirmed_dimension_result" },
+              "transportability": { "$ref": "#/$defs/confirmed_dimension_result" },
+              "claim_boundary": { "$ref": "#/$defs/confirmed_dimension_result" },
+              "safety": { "$ref": "#/$defs/confirmed_dimension_result" }
+            }
+          },
+          "verification_evidence_refs": { "minItems": 1 },
+          "resource_reconciliation": { "properties": { "actual_usage_status": { "const": "measured" }, "reconciliation_status": { "const": "reconciled" } } },
+          "assessment_summary": { "properties": { "dimension_disposition": { "const": "all_required_passed" }, "control_disposition": { "const": "all_passed" }, "execution_validity": { "const": "valid" }, "decisive_basis": { "const": "all_required_passed" } } }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "terminal_assessment": { "properties": { "status": { "const": "rejected" } }, "required": ["status"] } }, "required": ["terminal_assessment"] },
+      "then": {
+        "properties": {
+          "execution": { "properties": { "path": { "const": "completed" } } },
+          "assessment_summary": { "properties": { "execution_validity": { "const": "valid" } } },
+          "findings": { "anyOf": [{ "properties": { "discrepancies": { "minItems": 1 } } }, { "properties": { "counterexamples": { "minItems": 1 } } }] }
+        },
+        "anyOf": [
+          { "properties": { "dimensions": { "$ref": "#/$defs/dimensions_has_fail" }, "assessment_summary": { "properties": { "dimension_disposition": { "const": "one_or_more_failed" }, "decisive_basis": { "const": "dimension_failure" } } } } },
+          { "properties": { "controls": { "$ref": "#/$defs/controls_has_fail" }, "assessment_summary": { "properties": { "control_disposition": { "const": "one_or_more_failed" }, "decisive_basis": { "const": "control_failure" } } } } }
+        ]
+      }
+    },
+    {
+      "if": { "properties": { "terminal_assessment": { "properties": { "status": { "const": "inconclusive" } }, "required": ["status"] } }, "required": ["terminal_assessment"] },
+      "then": {
+        "properties": {
+          "execution": { "properties": { "path": { "const": "completed" } } },
+          "dimensions": { "$ref": "#/$defs/dimensions_has_indeterminate" },
+          "findings": { "properties": { "unknowns": { "minItems": 1 } } },
+          "assessment_summary": { "properties": { "dimension_disposition": { "const": "one_or_more_indeterminate" }, "execution_validity": { "enum": ["valid", "indeterminate"] }, "decisive_basis": { "const": "unresolved_unknown" } } }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "terminal_assessment": { "properties": { "status": { "const": "invalid" } }, "required": ["status"] } }, "required": ["terminal_assessment"] },
+      "then": {
+        "properties": {
+          "execution": { "properties": { "path": { "enum": ["completed", "failed"] } } },
+          "assessment_summary": { "properties": { "execution_validity": { "const": "invalid" } } },
+          "findings": { "properties": { "discrepancies": { "minItems": 1 } } }
+        },
+        "anyOf": [
+          { "properties": { "execution": { "properties": { "path": { "const": "failed" } } }, "assessment_summary": { "properties": { "decisive_basis": { "const": "execution_invalid" } } } } },
+          { "properties": { "dimensions": { "$ref": "#/$defs/dimensions_has_fail_or_indeterminate" }, "assessment_summary": { "properties": { "dimension_disposition": { "enum": ["one_or_more_failed", "one_or_more_indeterminate"] }, "decisive_basis": { "const": "dimension_failure" } } } } },
+          { "properties": { "controls": { "$ref": "#/$defs/controls_has_fail_or_indeterminate" }, "assessment_summary": { "properties": { "control_disposition": { "enum": ["one_or_more_failed", "one_or_more_indeterminate"] }, "decisive_basis": { "const": "control_failure" } } } } }
+        ]
+      }
+    },
+    {
+      "if": { "properties": { "terminal_assessment": { "properties": { "status": { "const": "blocked" } }, "required": ["status"] } }, "required": ["terminal_assessment"] },
+      "then": {
+        "properties": {
+          "execution": { "properties": { "path": { "enum": ["failed", "not_started", "completion_unknown"] } } },
+          "assessment_summary": { "properties": { "execution_validity": { "enum": ["indeterminate", "not_run"] }, "decisive_basis": { "enum": ["operational_blocker", "completion_unknown"] } } }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "execution": { "properties": { "path": { "const": "not_started" } }, "required": ["path"] } }, "required": ["execution"] },
+      "then": {
+        "properties": {
+          "terminal_assessment": { "properties": { "status": { "const": "blocked" } } },
+          "independence_assessment": { "properties": { "disposition": { "enum": ["not_assessed", "unknown"] }, "requirement_satisfaction": { "const": "not_run" } } },
+          "observed_exposure": { "properties": { "disposition": { "const": "not_started" } } },
+          "controls": { "properties": { "known_answer": { "items": { "properties": { "status": { "const": "not_run" } } } }, "known_bad": { "items": { "properties": { "status": { "const": "not_run" } } } } } },
+          "dimensions": { "properties": {
+            "artifact_integrity": { "properties": { "verdict": { "const": "not_run" } } }, "schema_conformance": { "properties": { "verdict": { "const": "not_run" } } }, "computational_reproducibility": { "properties": { "verdict": { "const": "not_run" } } }, "code_verification": { "properties": { "verdict": { "const": "not_run" } } }, "method_validity": { "properties": { "verdict": { "const": "not_run" } } }, "statistical_validity": { "properties": { "verdict": { "const": "not_run" } } }, "calibration": { "properties": { "verdict": { "const": "not_run" } } }, "causal_identification": { "properties": { "verdict": { "const": "not_run" } } }, "physical_validity": { "properties": { "verdict": { "const": "not_run" } } }, "external_validation": { "properties": { "verdict": { "const": "not_run" } } }, "transportability": { "properties": { "verdict": { "const": "not_run" } } }, "claim_boundary": { "properties": { "verdict": { "const": "not_run" } } }, "safety": { "properties": { "verdict": { "const": "not_run" } } }
+          } },
+          "verification_evidence_refs": { "maxItems": 0 },
+          "resource_reconciliation": { "properties": { "actual_usage_status": { "const": "not_run" }, "reconciliation_status": { "const": "not_required" } } },
+          "assessment_summary": { "properties": { "dimension_disposition": { "const": "not_run" }, "control_disposition": { "const": "not_run" }, "execution_validity": { "const": "not_run" }, "decisive_basis": { "const": "operational_blocker" } } }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "execution": { "properties": { "path": { "const": "completion_unknown" } }, "required": ["path"] } }, "required": ["execution"] },
+      "then": {
+        "properties": {
+          "terminal_assessment": { "properties": { "status": { "const": "blocked" } } },
+          "independence_assessment": { "properties": { "requirement_satisfaction": { "enum": ["indeterminate", "not_run"] } } },
+          "dimensions": { "properties": {
+            "artifact_integrity": { "properties": { "verdict": { "enum": ["indeterminate", "not_run"] } } }, "schema_conformance": { "properties": { "verdict": { "enum": ["indeterminate", "not_run"] } } }, "computational_reproducibility": { "properties": { "verdict": { "enum": ["indeterminate", "not_run"] } } }, "code_verification": { "properties": { "verdict": { "enum": ["indeterminate", "not_run"] } } }, "method_validity": { "properties": { "verdict": { "enum": ["indeterminate", "not_run"] } } }, "statistical_validity": { "properties": { "verdict": { "enum": ["indeterminate", "not_run"] } } }, "calibration": { "properties": { "verdict": { "enum": ["indeterminate", "not_run"] } } }, "causal_identification": { "properties": { "verdict": { "enum": ["indeterminate", "not_run"] } } }, "physical_validity": { "properties": { "verdict": { "enum": ["indeterminate", "not_run"] } } }, "external_validation": { "properties": { "verdict": { "enum": ["indeterminate", "not_run"] } } }, "transportability": { "properties": { "verdict": { "enum": ["indeterminate", "not_run"] } } }, "claim_boundary": { "properties": { "verdict": { "enum": ["indeterminate", "not_run"] } } }, "safety": { "properties": { "verdict": { "enum": ["indeterminate", "not_run"] } } }
+          } },
+          "resource_reconciliation": { "properties": { "actual_usage_status": { "enum": ["partially_measured", "unknown"] }, "reconciliation_status": { "enum": ["partial", "unknown"] } } },
+          "assessment_summary": { "properties": { "dimension_disposition": { "enum": ["one_or_more_indeterminate", "not_run"] }, "control_disposition": { "enum": ["one_or_more_indeterminate", "not_run"] }, "execution_validity": { "const": "indeterminate" }, "decisive_basis": { "const": "completion_unknown" } } }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "execution": { "properties": { "path": { "const": "failed" } }, "required": ["path"] }, "terminal_assessment": { "properties": { "status": { "const": "blocked" } }, "required": ["status"] } }, "required": ["execution", "terminal_assessment"] },
+      "then": {
+        "anyOf": [
+          { "properties": { "dimensions": { "$ref": "#/$defs/dimensions_has_nonpass" }, "assessment_summary": { "properties": { "dimension_disposition": { "enum": ["one_or_more_failed", "one_or_more_indeterminate", "not_run"] } } } } },
+          { "properties": { "controls": { "$ref": "#/$defs/controls_has_nonpass" }, "assessment_summary": { "properties": { "control_disposition": { "enum": ["one_or_more_failed", "one_or_more_indeterminate", "not_run"] } } } } }
+        ]
+      }
+    },
+    {
+      "if": { "properties": { "independence_assessment": { "properties": { "disposition": { "const": "independent_under_profile" } }, "required": ["disposition"] } }, "required": ["independence_assessment"] },
+      "then": { "properties": { "correlation_axes": { "properties": {
+        "principal": { "properties": { "relation": { "const": "different" }, "evidence_refs": { "minItems": 1 } } }, "organization": { "properties": { "relation": { "enum": ["different", "external"] }, "evidence_refs": { "minItems": 1 } } }, "incentive": { "properties": { "relation": { "const": "distinct" }, "evidence_refs": { "minItems": 1 } } }, "context": { "properties": { "relation": { "enum": ["independently_compiled", "blinded", "sealed_truth_blinded", "not_applicable"] }, "evidence_refs": { "minItems": 1 } } }, "selection": { "properties": { "relation": { "enum": ["complete_preregistered_manifest", "blinded_selection", "independent_selector", "not_applicable"] }, "evidence_refs": { "minItems": 1 } } }
+      } }, "independence_assessment": { "properties": { "assessment_evidence_refs": { "minItems": 1 } } } } }
+    },
+    {
+      "if": { "properties": { "frozen_assignment": { "properties": { "required_independence_disposition": { "const": "independent_under_profile" } }, "required": ["required_independence_disposition"] }, "independence_assessment": { "properties": { "requirement_satisfaction": { "const": "pass" } }, "required": ["requirement_satisfaction"] } }, "required": ["frozen_assignment", "independence_assessment"] },
+      "then": { "properties": { "independence_assessment": { "properties": { "disposition": { "const": "independent_under_profile" } } } } }
+    },
+    {
+      "if": { "properties": { "frozen_assignment": { "properties": { "required_independence_disposition": { "const": "partially_independent" } }, "required": ["required_independence_disposition"] }, "independence_assessment": { "properties": { "requirement_satisfaction": { "const": "pass" } }, "required": ["requirement_satisfaction"] } }, "required": ["frozen_assignment", "independence_assessment"] },
+      "then": { "properties": { "independence_assessment": { "properties": { "disposition": { "enum": ["partially_independent", "independent_under_profile"] } } } } }
+    },
+    {
       "if": {
         "properties": {
-          "status": {
-            "const": "confirmed"
+          "frozen_assignment": {
+            "properties": {
+              "required_verification_class": {
+                "const": "IV0_integrity"
+              }
+            },
+            "required": [
+              "required_verification_class"
+            ]
+          },
+          "independence_assessment": {
+            "properties": {
+              "requirement_satisfaction": {
+                "const": "pass"
+              }
+            },
+            "required": [
+              "requirement_satisfaction"
+            ]
           }
         },
-        "required": ["status"]
+        "required": [
+          "frozen_assignment",
+          "independence_assessment"
+        ]
       },
       "then": {
         "properties": {
-          "known_bad_results": {
-            "items": {
-              "properties": {
-                "observed": {
-                  "const": "reject"
-                }
+          "independence_assessment": {
+            "properties": {
+              "observed_verification_class": {
+                "enum": [
+                  "IV0_integrity",
+                  "IV1_reexecution",
+                  "IV2_clean_reproduction",
+                  "IV3_independent_reimplementation",
+                  "IV4_independent_replication"
+                ]
+              },
+              "assessment_evidence_refs": {
+                "minItems": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "frozen_assignment": {
+            "properties": {
+              "required_verification_class": {
+                "const": "IV1_reexecution"
+              }
+            },
+            "required": [
+              "required_verification_class"
+            ]
+          },
+          "independence_assessment": {
+            "properties": {
+              "requirement_satisfaction": {
+                "const": "pass"
+              }
+            },
+            "required": [
+              "requirement_satisfaction"
+            ]
+          }
+        },
+        "required": [
+          "frozen_assignment",
+          "independence_assessment"
+        ]
+      },
+      "then": {
+        "properties": {
+          "independence_assessment": {
+            "properties": {
+              "observed_verification_class": {
+                "enum": [
+                  "IV1_reexecution",
+                  "IV2_clean_reproduction",
+                  "IV3_independent_reimplementation",
+                  "IV4_independent_replication"
+                ]
+              },
+              "assessment_evidence_refs": {
+                "minItems": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "frozen_assignment": {
+            "properties": {
+              "required_verification_class": {
+                "const": "IV2_clean_reproduction"
+              }
+            },
+            "required": [
+              "required_verification_class"
+            ]
+          },
+          "independence_assessment": {
+            "properties": {
+              "requirement_satisfaction": {
+                "const": "pass"
+              }
+            },
+            "required": [
+              "requirement_satisfaction"
+            ]
+          }
+        },
+        "required": [
+          "frozen_assignment",
+          "independence_assessment"
+        ]
+      },
+      "then": {
+        "properties": {
+          "independence_assessment": {
+            "properties": {
+              "observed_verification_class": {
+                "enum": [
+                  "IV2_clean_reproduction",
+                  "IV3_independent_reimplementation",
+                  "IV4_independent_replication"
+                ]
+              },
+              "assessment_evidence_refs": {
+                "minItems": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "frozen_assignment": {
+            "properties": {
+              "required_verification_class": {
+                "const": "IV3_independent_reimplementation"
+              }
+            },
+            "required": [
+              "required_verification_class"
+            ]
+          },
+          "independence_assessment": {
+            "properties": {
+              "requirement_satisfaction": {
+                "const": "pass"
+              }
+            },
+            "required": [
+              "requirement_satisfaction"
+            ]
+          }
+        },
+        "required": [
+          "frozen_assignment",
+          "independence_assessment"
+        ]
+      },
+      "then": {
+        "properties": {
+          "independence_assessment": {
+            "properties": {
+              "observed_verification_class": {
+                "enum": [
+                  "IV3_independent_reimplementation",
+                  "IV4_independent_replication"
+                ]
+              },
+              "assessment_evidence_refs": {
+                "minItems": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "frozen_assignment": {
+            "properties": {
+              "required_verification_class": {
+                "const": "IV4_independent_replication"
+              }
+            },
+            "required": [
+              "required_verification_class"
+            ]
+          },
+          "independence_assessment": {
+            "properties": {
+              "requirement_satisfaction": {
+                "const": "pass"
+              }
+            },
+            "required": [
+              "requirement_satisfaction"
+            ]
+          }
+        },
+        "required": [
+          "frozen_assignment",
+          "independence_assessment"
+        ]
+      },
+      "then": {
+        "properties": {
+          "independence_assessment": {
+            "properties": {
+              "observed_verification_class": {
+                "enum": [
+                  "IV4_independent_replication"
+                ]
+              },
+              "assessment_evidence_refs": {
+                "minItems": 1
               }
             }
           }
@@ -261,83 +448,551 @@
     }
   ],
   "$defs": {
-    "identifier": {
-      "type": "string",
-      "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$"
+    "identifier": { "type": "string", "minLength": 2, "maxLength": 128, "pattern": "^[a-z0-9][a-z0-9._:-]+$" },
+    "digest": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "artifact_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifact_id", "digest", "media_type"],
+      "properties": {
+        "artifact_id": { "$ref": "#/$defs/identifier" },
+        "digest": { "$ref": "#/$defs/digest" },
+        "media_type": { "type": "string", "minLength": 1, "maxLength": 255 }
+      }
     },
-    "digest": {
-      "type": "string",
-      "pattern": "^sha256:[a-f0-9]{64}$"
+    "immutable_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["record_id", "version", "schema_id", "digest"],
+      "properties": {
+        "record_id": { "$ref": "#/$defs/identifier" },
+        "version": { "type": "integer", "minimum": 1 },
+        "schema_id": { "type": "string", "pattern": "^urn:odeya:schema:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$" },
+        "digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "event_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["event_id", "event_type", "event_version", "digest"],
+      "properties": {
+        "event_id": { "$ref": "#/$defs/identifier" },
+        "event_type": { "type": "string", "pattern": "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$" },
+        "event_version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+        "digest": { "$ref": "#/$defs/digest" }
+      }
     },
     "execution_identity": {
       "type": "object",
       "additionalProperties": false,
       "required": ["principal_id", "execution_id", "process_id", "host_identity", "code_digest", "environment_digest"],
       "properties": {
-        "principal_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "execution_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "process_id": {
-          "type": "string",
-          "minLength": 1
-        },
-        "host_identity": {
-          "type": "string",
-          "minLength": 1
-        },
-        "code_digest": {
-          "$ref": "#/$defs/digest"
-        },
-        "environment_digest": {
-          "$ref": "#/$defs/digest"
-        }
+        "principal_id": { "$ref": "#/$defs/identifier" },
+        "execution_id": { "$ref": "#/$defs/identifier" },
+        "process_id": { "type": "string", "minLength": 1, "maxLength": 255 },
+        "host_identity": { "type": "string", "minLength": 1, "maxLength": 255 },
+        "code_digest": { "$ref": "#/$defs/digest" },
+        "environment_digest": { "$ref": "#/$defs/digest" }
       }
     },
-    "artifact_reference": {
+    "subject_reference": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["artifact_id", "digest", "media_type"],
+      "required": ["subject_type", "subject_id", "version", "schema_id", "digest"],
       "properties": {
-        "artifact_id": {
-          "$ref": "#/$defs/identifier"
+        "subject_type": { "enum": ["artifact", "result", "claim"] },
+        "subject_id": { "$ref": "#/$defs/identifier" },
+        "version": { "type": "integer", "minimum": 1 },
+        "schema_id": { "type": "string", "pattern": "^urn:odeya:schema:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$" },
+        "digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "subject_set": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["subject_set_id", "subject_manifest_ref", "subject_members_root_digest", "canonicalization_profile_ref", "selection_rule_ref", "complete_manifest", "subjects"],
+      "properties": {
+        "subject_set_id": { "$ref": "#/$defs/identifier" },
+        "subject_manifest_ref": { "$ref": "#/$defs/artifact_reference" },
+        "subject_members_root_digest": { "$ref": "#/$defs/digest" },
+        "canonicalization_profile_ref": { "$ref": "#/$defs/immutable_reference" },
+        "selection_rule_ref": { "$ref": "#/$defs/immutable_reference" },
+        "complete_manifest": { "const": true },
+        "subjects": { "type": "array", "minItems": 1, "maxItems": 256, "uniqueItems": true, "items": { "$ref": "#/$defs/subject_reference" } }
+      }
+    },
+    "frozen_assignment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "assignment_event_ref", "verification_plan_ref", "protocol_snapshot_ref", "method_profile_ref",
+        "producer_identity_ref", "verification_requirement_profile_ref", "required_verification_class",
+        "required_independence_disposition", "independence_profile_ref", "verification_capacity_reservation_ref",
+        "operational_resource_reservation_refs", "exposure_plan_ref", "input_manifest_ref",
+        "environment_manifest_ref", "control_plan_ref", "assignment_ledger_position"
+      ],
+      "properties": {
+        "assignment_event_ref": {
+          "allOf": [
+            { "$ref": "#/$defs/event_reference" },
+            { "properties": { "event_type": { "const": "verification.assigned" } } }
+          ]
         },
-        "digest": {
-          "$ref": "#/$defs/digest"
+        "verification_plan_ref": { "$ref": "#/$defs/immutable_reference" },
+        "protocol_snapshot_ref": { "$ref": "#/$defs/immutable_reference" },
+        "method_profile_ref": { "$ref": "#/$defs/immutable_reference" },
+        "producer_identity_ref": { "$ref": "#/$defs/immutable_reference" },
+        "verification_requirement_profile_ref": { "$ref": "#/$defs/immutable_reference" },
+        "required_verification_class": { "enum": ["IV0_integrity", "IV1_reexecution", "IV2_clean_reproduction", "IV3_independent_reimplementation", "IV4_independent_replication"] },
+        "required_independence_disposition": { "enum": ["no_independence_required", "partially_independent", "independent_under_profile"] },
+        "independence_profile_ref": { "$ref": "#/$defs/immutable_reference" },
+        "verification_capacity_reservation_ref": { "$ref": "#/$defs/immutable_reference" },
+        "operational_resource_reservation_refs": { "type": "array", "maxItems": 32, "uniqueItems": true, "items": { "$ref": "#/$defs/immutable_reference" } },
+        "exposure_plan_ref": { "$ref": "#/$defs/immutable_reference" },
+        "input_manifest_ref": { "$ref": "#/$defs/artifact_reference" },
+        "environment_manifest_ref": { "$ref": "#/$defs/artifact_reference" },
+        "control_plan_ref": { "$ref": "#/$defs/immutable_reference" },
+        "assignment_ledger_position": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "execution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path", "start_event_ref", "started_at", "ended_at", "actual_run_manifest_ref",
+        "actual_input_manifest_ref", "actual_environment_manifest_ref", "actual_code_manifest_ref",
+        "plan_comparison", "plan_comparison_report_ref", "deviation_refs",
+        "completion_observation_refs", "failure_or_blocker_refs"
+      ],
+      "properties": {
+        "path": { "enum": ["completed", "failed", "not_started", "completion_unknown"] },
+        "start_event_ref": { "oneOf": [{ "$ref": "#/$defs/event_reference" }, { "type": "null" }] },
+        "started_at": { "oneOf": [{ "$ref": "#/$defs/timestamp" }, { "type": "null" }] },
+        "ended_at": { "oneOf": [{ "$ref": "#/$defs/timestamp" }, { "type": "null" }] },
+        "actual_run_manifest_ref": { "oneOf": [{ "$ref": "#/$defs/artifact_reference" }, { "type": "null" }] },
+        "actual_input_manifest_ref": { "oneOf": [{ "$ref": "#/$defs/artifact_reference" }, { "type": "null" }] },
+        "actual_environment_manifest_ref": { "oneOf": [{ "$ref": "#/$defs/artifact_reference" }, { "type": "null" }] },
+        "actual_code_manifest_ref": { "oneOf": [{ "$ref": "#/$defs/artifact_reference" }, { "type": "null" }] },
+        "plan_comparison": { "enum": ["match", "deviation", "indeterminate", "not_run"] },
+        "plan_comparison_report_ref": { "oneOf": [{ "$ref": "#/$defs/artifact_reference" }, { "type": "null" }] },
+        "deviation_refs": { "type": "array", "maxItems": 64, "uniqueItems": true, "items": { "$ref": "#/$defs/artifact_reference" } },
+        "completion_observation_refs": { "type": "array", "maxItems": 64, "uniqueItems": true, "items": { "$ref": "#/$defs/artifact_reference" } },
+        "failure_or_blocker_refs": { "type": "array", "maxItems": 64, "uniqueItems": true, "items": { "$ref": "#/$defs/artifact_reference" } }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "path": { "const": "completed" } }, "required": ["path"] },
+          "then": {
+            "properties": {
+              "start_event_ref": { "$ref": "#/$defs/event_reference" },
+              "started_at": { "$ref": "#/$defs/timestamp" },
+              "ended_at": { "$ref": "#/$defs/timestamp" },
+              "actual_run_manifest_ref": { "$ref": "#/$defs/artifact_reference" },
+              "actual_input_manifest_ref": { "$ref": "#/$defs/artifact_reference" },
+              "actual_environment_manifest_ref": { "$ref": "#/$defs/artifact_reference" },
+              "actual_code_manifest_ref": { "$ref": "#/$defs/artifact_reference" },
+              "plan_comparison": { "enum": ["match", "deviation", "indeterminate"] },
+              "plan_comparison_report_ref": { "$ref": "#/$defs/artifact_reference" },
+              "completion_observation_refs": { "minItems": 1 }
+            }
+          }
         },
-        "media_type": {
-          "type": "string",
-          "minLength": 1
+        {
+          "if": { "properties": { "path": { "const": "failed" } }, "required": ["path"] },
+          "then": {
+            "properties": {
+              "start_event_ref": { "$ref": "#/$defs/event_reference" },
+              "started_at": { "$ref": "#/$defs/timestamp" },
+              "ended_at": { "$ref": "#/$defs/timestamp" },
+              "actual_run_manifest_ref": { "$ref": "#/$defs/artifact_reference" },
+              "actual_input_manifest_ref": { "$ref": "#/$defs/artifact_reference" },
+              "actual_environment_manifest_ref": { "$ref": "#/$defs/artifact_reference" },
+              "actual_code_manifest_ref": { "$ref": "#/$defs/artifact_reference" },
+              "plan_comparison": { "enum": ["match", "deviation", "indeterminate"] },
+              "plan_comparison_report_ref": { "$ref": "#/$defs/artifact_reference" },
+              "failure_or_blocker_refs": { "minItems": 1 }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "path": { "const": "not_started" } }, "required": ["path"] },
+          "then": {
+            "properties": {
+              "start_event_ref": { "type": "null" },
+              "started_at": { "type": "null" },
+              "ended_at": { "type": "null" },
+              "actual_run_manifest_ref": { "type": "null" },
+              "actual_input_manifest_ref": { "type": "null" },
+              "actual_environment_manifest_ref": { "type": "null" },
+              "actual_code_manifest_ref": { "type": "null" },
+              "plan_comparison": { "const": "not_run" },
+              "plan_comparison_report_ref": { "type": "null" },
+              "deviation_refs": { "maxItems": 0 },
+              "completion_observation_refs": { "maxItems": 0 },
+              "failure_or_blocker_refs": { "minItems": 1 }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "path": { "const": "completion_unknown" } }, "required": ["path"] },
+          "then": {
+            "properties": {
+              "start_event_ref": { "$ref": "#/$defs/event_reference" },
+              "started_at": { "$ref": "#/$defs/timestamp" },
+              "ended_at": { "type": "null" },
+              "actual_run_manifest_ref": { "$ref": "#/$defs/artifact_reference" },
+              "actual_input_manifest_ref": { "$ref": "#/$defs/artifact_reference" },
+              "actual_environment_manifest_ref": { "$ref": "#/$defs/artifact_reference" },
+              "actual_code_manifest_ref": { "$ref": "#/$defs/artifact_reference" },
+              "plan_comparison": { "enum": ["match", "deviation", "indeterminate"] },
+              "plan_comparison_report_ref": { "$ref": "#/$defs/artifact_reference" },
+              "failure_or_blocker_refs": { "minItems": 1 }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "plan_comparison": { "const": "deviation" } }, "required": ["plan_comparison"] },
+          "then": { "properties": { "deviation_refs": { "minItems": 1 } } }
+        },
+        {
+          "if": { "properties": { "plan_comparison": { "const": "match" } }, "required": ["plan_comparison"] },
+          "then": { "properties": { "deviation_refs": { "maxItems": 0 } } }
         }
+      ]
+    },
+    "nullable_immutable_reference": { "oneOf": [{ "$ref": "#/$defs/immutable_reference" }, { "type": "null" }] },
+    "verifier_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "principal_ref", "organization_ref", "incentive_declaration_ref", "execution_identity",
+        "provider_configuration_ref", "model_configuration_ref", "training_lineage_declaration_ref",
+        "toolchain_manifest_ref", "source_corpus_manifest_ref", "implementation_manifest_ref",
+        "data_manifest_ref", "context_manifest_ref", "selection_decision_ref", "conflict_declaration_refs"
+      ],
+      "properties": {
+        "principal_ref": { "$ref": "#/$defs/immutable_reference" },
+        "organization_ref": { "$ref": "#/$defs/immutable_reference" },
+        "incentive_declaration_ref": { "$ref": "#/$defs/immutable_reference" },
+        "execution_identity": { "$ref": "#/$defs/execution_identity" },
+        "provider_configuration_ref": { "$ref": "#/$defs/nullable_immutable_reference" },
+        "model_configuration_ref": { "$ref": "#/$defs/nullable_immutable_reference" },
+        "training_lineage_declaration_ref": { "$ref": "#/$defs/nullable_immutable_reference" },
+        "toolchain_manifest_ref": { "$ref": "#/$defs/artifact_reference" },
+        "source_corpus_manifest_ref": { "$ref": "#/$defs/artifact_reference" },
+        "implementation_manifest_ref": { "$ref": "#/$defs/artifact_reference" },
+        "data_manifest_ref": { "$ref": "#/$defs/artifact_reference" },
+        "context_manifest_ref": { "$ref": "#/$defs/artifact_reference" },
+        "selection_decision_ref": { "$ref": "#/$defs/immutable_reference" },
+        "conflict_declaration_refs": { "type": "array", "maxItems": 32, "uniqueItems": true, "items": { "$ref": "#/$defs/artifact_reference" } }
+      }
+    },
+    "axis_observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["relation", "evidence_refs"],
+      "properties": {
+        "relation": { "type": "string", "minLength": 2, "maxLength": 64 },
+        "evidence_refs": { "type": "array", "maxItems": 32, "uniqueItems": true, "items": { "$ref": "#/$defs/artifact_reference" } }
+      }
+    },
+    "correlation_axes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["principal", "organization", "incentive", "provider", "model_family", "training_lineage", "tools", "source_corpus", "implementation", "data", "context", "selection"],
+      "properties": {
+        "principal": { "allOf": [{ "$ref": "#/$defs/axis_observation" }, { "properties": { "relation": { "enum": ["same", "different", "unknown"] } } }] },
+        "organization": { "allOf": [{ "$ref": "#/$defs/axis_observation" }, { "properties": { "relation": { "enum": ["same", "different", "external", "unknown"] } } }] },
+        "incentive": { "allOf": [{ "$ref": "#/$defs/axis_observation" }, { "properties": { "relation": { "enum": ["aligned", "distinct", "conflicted", "unknown"] } } }] },
+        "provider": { "allOf": [{ "$ref": "#/$defs/axis_observation" }, { "properties": { "relation": { "enum": ["same", "different", "not_applicable", "unknown"] } } }] },
+        "model_family": { "allOf": [{ "$ref": "#/$defs/axis_observation" }, { "properties": { "relation": { "enum": ["same", "different", "not_applicable", "unknown"] } } }] },
+        "training_lineage": { "allOf": [{ "$ref": "#/$defs/axis_observation" }, { "properties": { "relation": { "enum": ["same_or_overlapping", "disjoint_documented", "not_applicable", "unknown"] } } }] },
+        "tools": { "allOf": [{ "$ref": "#/$defs/axis_observation" }, { "properties": { "relation": { "enum": ["same", "different", "independently_selected", "not_applicable", "unknown"] } } }] },
+        "source_corpus": { "allOf": [{ "$ref": "#/$defs/axis_observation" }, { "properties": { "relation": { "enum": ["same", "overlapping", "disjoint", "independently_selected", "not_applicable", "unknown"] } } }] },
+        "implementation": { "allOf": [{ "$ref": "#/$defs/axis_observation" }, { "properties": { "relation": { "enum": ["same", "clean_rebuild", "independent_implementation", "different_method", "not_applicable", "unknown"] } } }] },
+        "data": { "allOf": [{ "$ref": "#/$defs/axis_observation" }, { "properties": { "relation": { "enum": ["same_bytes", "fresh_split", "new_sample", "new_dataset", "new_measurement", "not_applicable", "unknown"] } } }] },
+        "context": { "allOf": [{ "$ref": "#/$defs/axis_observation" }, { "properties": { "relation": { "enum": ["producer_trace", "producer_summary", "same_inputs_different_prompt", "evidence_only", "independently_compiled", "blinded", "sealed_truth_blinded", "not_applicable", "unknown"] } } }] },
+        "selection": { "allOf": [{ "$ref": "#/$defs/axis_observation" }, { "properties": { "relation": { "enum": ["producer_selected", "complete_preregistered_manifest", "blinded_selection", "independent_selector", "not_applicable", "unknown"] } } }] }
+      }
+    },
+    "independence_assessment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["disposition", "observed_verification_class", "requirement_satisfaction", "profile_ref", "satisfaction_rule_ref", "assessment_evidence_refs", "limitations"],
+      "properties": {
+        "disposition": { "enum": ["independent_under_profile", "partially_independent", "correlated", "unknown", "not_assessed"] },
+        "observed_verification_class": { "enum": ["IV0_integrity", "IV1_reexecution", "IV2_clean_reproduction", "IV3_independent_reimplementation", "IV4_independent_replication", "indeterminate", "not_run"] },
+        "requirement_satisfaction": { "enum": ["pass", "fail", "indeterminate", "not_run"] },
+        "profile_ref": { "$ref": "#/$defs/immutable_reference" },
+        "satisfaction_rule_ref": { "$ref": "#/$defs/immutable_reference" },
+        "assessment_evidence_refs": { "type": "array", "maxItems": 64, "uniqueItems": true, "items": { "$ref": "#/$defs/artifact_reference" } },
+        "limitations": { "type": "array", "maxItems": 64, "uniqueItems": true, "items": { "type": "string", "minLength": 1, "maxLength": 1024 } }
+      }
+    },
+    "observed_exposure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["disposition", "exposure_audit_ref", "observation_refs", "unknown_or_not_started_reason_codes"],
+      "properties": {
+        "disposition": { "enum": ["observed", "none_permitted", "unknown", "not_started"] },
+        "exposure_audit_ref": { "$ref": "#/$defs/artifact_reference" },
+        "observation_refs": { "type": "array", "maxItems": 64, "uniqueItems": true, "items": { "$ref": "#/$defs/artifact_reference" } },
+        "unknown_or_not_started_reason_codes": { "type": "array", "maxItems": 32, "uniqueItems": true, "items": { "$ref": "#/$defs/identifier" } }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "disposition": { "enum": ["observed", "unknown"] } }, "required": ["disposition"] },
+          "then": { "properties": { "observation_refs": { "minItems": 1 } } }
+        },
+        {
+          "if": { "properties": { "disposition": { "enum": ["none_permitted", "not_started"] } }, "required": ["disposition"] },
+          "then": { "properties": { "observation_refs": { "maxItems": 0 } } }
+        },
+        {
+          "if": { "properties": { "disposition": { "enum": ["unknown", "not_started"] } }, "required": ["disposition"] },
+          "then": { "properties": { "unknown_or_not_started_reason_codes": { "minItems": 1 } } }
+        }
+      ]
+    },
+    "control_result_base": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["control_id", "fixture_ref", "status", "observed", "report_ref", "evidence_refs", "reason_codes"],
+      "properties": {
+        "control_id": { "$ref": "#/$defs/identifier" },
+        "fixture_ref": { "$ref": "#/$defs/artifact_reference" },
+        "status": { "enum": ["pass", "fail", "indeterminate", "not_run"] },
+        "observed": { "type": ["string", "null"] },
+        "report_ref": { "oneOf": [{ "$ref": "#/$defs/artifact_reference" }, { "type": "null" }] },
+        "evidence_refs": { "type": "array", "maxItems": 64, "uniqueItems": true, "items": { "$ref": "#/$defs/artifact_reference" } },
+        "reason_codes": { "type": "array", "maxItems": 32, "uniqueItems": true, "items": { "$ref": "#/$defs/identifier" } }
+      }
+    },
+    "known_answer_result": {
+      "allOf": [
+        { "$ref": "#/$defs/control_result_base" },
+        { "properties": { "observed": { "enum": ["match", "mismatch", "error", null] } } },
+        {
+          "if": { "properties": { "status": { "const": "pass" } }, "required": ["status"] },
+          "then": { "properties": { "observed": { "const": "match" }, "report_ref": { "$ref": "#/$defs/artifact_reference" }, "evidence_refs": { "minItems": 1 } } }
+        },
+        {
+          "if": { "properties": { "status": { "const": "fail" } }, "required": ["status"] },
+          "then": { "properties": { "observed": { "enum": ["mismatch", "error"] }, "report_ref": { "$ref": "#/$defs/artifact_reference" }, "evidence_refs": { "minItems": 1 } } }
+        },
+        {
+          "if": { "properties": { "status": { "const": "indeterminate" } }, "required": ["status"] },
+          "then": { "properties": { "evidence_refs": { "minItems": 1 }, "reason_codes": { "minItems": 1 } } }
+        },
+        {
+          "if": { "properties": { "status": { "const": "not_run" } }, "required": ["status"] },
+          "then": { "properties": { "observed": { "type": "null" }, "report_ref": { "type": "null" }, "evidence_refs": { "maxItems": 0 }, "reason_codes": { "minItems": 1 } } }
+        }
+      ]
+    },
+    "known_bad_result": {
+      "allOf": [
+        { "$ref": "#/$defs/control_result_base" },
+        { "properties": { "observed": { "enum": ["reject", "accept", "error", null] } } },
+        {
+          "if": { "properties": { "status": { "const": "pass" } }, "required": ["status"] },
+          "then": { "properties": { "observed": { "const": "reject" }, "report_ref": { "$ref": "#/$defs/artifact_reference" }, "evidence_refs": { "minItems": 1 } } }
+        },
+        {
+          "if": { "properties": { "status": { "const": "fail" } }, "required": ["status"] },
+          "then": { "properties": { "observed": { "const": "accept" }, "report_ref": { "$ref": "#/$defs/artifact_reference" }, "evidence_refs": { "minItems": 1 } } }
+        },
+        {
+          "if": { "properties": { "status": { "const": "indeterminate" } }, "required": ["status"] },
+          "then": { "properties": { "evidence_refs": { "minItems": 1 }, "reason_codes": { "minItems": 1 } } }
+        },
+        {
+          "if": { "properties": { "status": { "const": "not_run" } }, "required": ["status"] },
+          "then": { "properties": { "observed": { "type": "null" }, "report_ref": { "type": "null" }, "evidence_refs": { "maxItems": 0 }, "reason_codes": { "minItems": 1 } } }
+        }
+      ]
+    },
+    "controls": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["known_answer", "known_bad"],
+      "properties": {
+        "known_answer": { "type": "array", "minItems": 1, "maxItems": 64, "uniqueItems": true, "items": { "$ref": "#/$defs/known_answer_result" } },
+        "known_bad": { "type": "array", "minItems": 1, "maxItems": 64, "uniqueItems": true, "items": { "$ref": "#/$defs/known_bad_result" } }
       }
     },
     "dimension_result": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["verdict", "scope", "evidence_refs", "limitations"],
+      "required": ["requirement", "verdict", "criterion_ref", "scope", "evidence_refs", "limitation_codes", "not_run_reason_codes"],
       "properties": {
-        "verdict": {
-          "enum": ["pass", "fail", "indeterminate", "not_applicable"]
+        "requirement": { "enum": ["required", "not_required"] },
+        "verdict": { "enum": ["pass", "fail", "indeterminate", "not_applicable", "not_run"] },
+        "criterion_ref": { "$ref": "#/$defs/immutable_reference" },
+        "scope": { "type": "string", "minLength": 1, "maxLength": 2048 },
+        "evidence_refs": { "type": "array", "maxItems": 128, "uniqueItems": true, "items": { "$ref": "#/$defs/artifact_reference" } },
+        "limitation_codes": { "type": "array", "maxItems": 32, "uniqueItems": true, "items": { "$ref": "#/$defs/identifier" } },
+        "not_run_reason_codes": { "type": "array", "maxItems": 32, "uniqueItems": true, "items": { "$ref": "#/$defs/identifier" } }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "requirement": { "const": "required" } }, "required": ["requirement"] },
+          "then": { "properties": { "verdict": { "not": { "const": "not_applicable" } } } }
         },
-        "scope": {
-          "type": "string",
-          "minLength": 1
+        {
+          "if": { "properties": { "verdict": { "enum": ["pass", "fail"] } }, "required": ["verdict"] },
+          "then": { "properties": { "evidence_refs": { "minItems": 1 }, "not_run_reason_codes": { "maxItems": 0 } } }
         },
-        "evidence_refs": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/artifact_reference"
-          }
+        {
+          "if": { "properties": { "verdict": { "enum": ["indeterminate", "not_applicable"] } }, "required": ["verdict"] },
+          "then": { "properties": { "limitation_codes": { "minItems": 1 }, "not_run_reason_codes": { "maxItems": 0 } } }
         },
-        "limitations": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "minLength": 1
-          }
+        {
+          "if": { "properties": { "verdict": { "const": "not_run" } }, "required": ["verdict"] },
+          "then": { "properties": { "evidence_refs": { "maxItems": 0 }, "not_run_reason_codes": { "minItems": 1 } } }
         }
+      ]
+    },
+    "confirmed_dimension_result": {
+      "allOf": [
+        { "$ref": "#/$defs/dimension_result" },
+        {
+          "if": { "properties": { "requirement": { "const": "required" } }, "required": ["requirement"] },
+          "then": { "properties": { "verdict": { "const": "pass" } } },
+          "else": { "properties": { "verdict": { "enum": ["pass", "not_applicable"] } } }
+        }
+      ]
+    },
+    "dimensions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifact_integrity", "schema_conformance", "computational_reproducibility", "code_verification", "method_validity", "statistical_validity", "calibration", "causal_identification", "physical_validity", "external_validation", "transportability", "claim_boundary", "safety"],
+      "properties": {
+        "artifact_integrity": { "$ref": "#/$defs/dimension_result" },
+        "schema_conformance": { "$ref": "#/$defs/dimension_result" },
+        "computational_reproducibility": { "$ref": "#/$defs/dimension_result" },
+        "code_verification": { "$ref": "#/$defs/dimension_result" },
+        "method_validity": { "$ref": "#/$defs/dimension_result" },
+        "statistical_validity": { "$ref": "#/$defs/dimension_result" },
+        "calibration": { "$ref": "#/$defs/dimension_result" },
+        "causal_identification": { "$ref": "#/$defs/dimension_result" },
+        "physical_validity": { "$ref": "#/$defs/dimension_result" },
+        "external_validation": { "$ref": "#/$defs/dimension_result" },
+        "transportability": { "$ref": "#/$defs/dimension_result" },
+        "claim_boundary": { "$ref": "#/$defs/dimension_result" },
+        "safety": { "$ref": "#/$defs/dimension_result" }
+      }
+    },
+    "dimensions_has_fail": {"anyOf":[{"properties":{"artifact_integrity":{"properties":{"requirement":{"const":"required"},"verdict":{"const":"fail"}},"required":["requirement","verdict"]}},"required":["artifact_integrity"]},{"properties":{"schema_conformance":{"properties":{"requirement":{"const":"required"},"verdict":{"const":"fail"}},"required":["requirement","verdict"]}},"required":["schema_conformance"]},{"properties":{"computational_reproducibility":{"properties":{"requirement":{"const":"required"},"verdict":{"const":"fail"}},"required":["requirement","verdict"]}},"required":["computational_reproducibility"]},{"properties":{"code_verification":{"properties":{"requirement":{"const":"required"},"verdict":{"const":"fail"}},"required":["requirement","verdict"]}},"required":["code_verification"]},{"properties":{"method_validity":{"properties":{"requirement":{"const":"required"},"verdict":{"const":"fail"}},"required":["requirement","verdict"]}},"required":["method_validity"]},{"properties":{"statistical_validity":{"properties":{"requirement":{"const":"required"},"verdict":{"const":"fail"}},"required":["requirement","verdict"]}},"required":["statistical_validity"]},{"properties":{"calibration":{"properties":{"requirement":{"const":"required"},"verdict":{"const":"fail"}},"required":["requirement","verdict"]}},"required":["calibration"]},{"properties":{"causal_identification":{"properties":{"requirement":{"const":"required"},"verdict":{"const":"fail"}},"required":["requirement","verdict"]}},"required":["causal_identification"]},{"properties":{"physical_validity":{"properties":{"requirement":{"const":"required"},"verdict":{"const":"fail"}},"required":["requirement","verdict"]}},"required":["physical_validity"]},{"properties":{"external_validation":{"properties":{"requirement":{"const":"required"},"verdict":{"const":"fail"}},"required":["requirement","verdict"]}},"required":["external_validation"]},{"properties":{"transportability":{"properties":{"requirement":{"const":"required"},"verdict":{"const":"fail"}},"required":["requirement","verdict"]}},"required":["transportability"]},{"properties":{"claim_boundary":{"properties":{"requirement":{"const":"required"},"verdict":{"const":"fail"}},"required":["requirement","verdict"]}},"required":["claim_boundary"]},{"properties":{"safety":{"properties":{"requirement":{"const":"required"},"verdict":{"const":"fail"}},"required":["requirement","verdict"]}},"required":["safety"]}]},
+    "dimensions_has_indeterminate": {"anyOf":[{"properties":{"artifact_integrity":{"properties":{"requirement":{"const":"required"},"verdict":{"const":"indeterminate"}},"required":["requirement","verdict"]}},"required":["artifact_integrity"]},{"properties":{"schema_conformance":{"properties":{"requirement":{"const":"required"},"verdict":{"const":"indeterminate"}},"required":["requirement","verdict"]}},"required":["schema_conformance"]},{"properties":{"computational_reproducibility":{"properties":{"requirement":{"const":"required"},"verdict":{"const":"indeterminate"}},"required":["requirement","verdict"]}},"required":["computational_reproducibility"]},{"properties":{"code_verification":{"properties":{"requirement":{"const":"required"},"verdict":{"const":"indeterminate"}},"required":["requirement","verdict"]}},"required":["code_verification"]},{"properties":{"method_validity":{"properties":{"requirement":{"const":"required"},"verdict":{"const":"indeterminate"}},"required":["requirement","verdict"]}},"required":["method_validity"]},{"properties":{"statistical_validity":{"properties":{"requirement":{"const":"required"},"verdict":{"const":"indeterminate"}},"required":["requirement","verdict"]}},"required":["statistical_validity"]},{"properties":{"calibration":{"properties":{"requirement":{"const":"required"},"verdict":{"const":"indeterminate"}},"required":["requirement","verdict"]}},"required":["calibration"]},{"properties":{"causal_identification":{"properties":{"requirement":{"const":"required"},"verdict":{"const":"indeterminate"}},"required":["requirement","verdict"]}},"required":["causal_identification"]},{"properties":{"physical_validity":{"properties":{"requirement":{"const":"required"},"verdict":{"const":"indeterminate"}},"required":["requirement","verdict"]}},"required":["physical_validity"]},{"properties":{"external_validation":{"properties":{"requirement":{"const":"required"},"verdict":{"const":"indeterminate"}},"required":["requirement","verdict"]}},"required":["external_validation"]},{"properties":{"transportability":{"properties":{"requirement":{"const":"required"},"verdict":{"const":"indeterminate"}},"required":["requirement","verdict"]}},"required":["transportability"]},{"properties":{"claim_boundary":{"properties":{"requirement":{"const":"required"},"verdict":{"const":"indeterminate"}},"required":["requirement","verdict"]}},"required":["claim_boundary"]},{"properties":{"safety":{"properties":{"requirement":{"const":"required"},"verdict":{"const":"indeterminate"}},"required":["requirement","verdict"]}},"required":["safety"]}]},
+    "dimensions_has_fail_or_indeterminate": {"anyOf":[{"properties":{"artifact_integrity":{"properties":{"requirement":{"const":"required"},"verdict":{"enum":["fail","indeterminate"]}},"required":["requirement","verdict"]}},"required":["artifact_integrity"]},{"properties":{"schema_conformance":{"properties":{"requirement":{"const":"required"},"verdict":{"enum":["fail","indeterminate"]}},"required":["requirement","verdict"]}},"required":["schema_conformance"]},{"properties":{"computational_reproducibility":{"properties":{"requirement":{"const":"required"},"verdict":{"enum":["fail","indeterminate"]}},"required":["requirement","verdict"]}},"required":["computational_reproducibility"]},{"properties":{"code_verification":{"properties":{"requirement":{"const":"required"},"verdict":{"enum":["fail","indeterminate"]}},"required":["requirement","verdict"]}},"required":["code_verification"]},{"properties":{"method_validity":{"properties":{"requirement":{"const":"required"},"verdict":{"enum":["fail","indeterminate"]}},"required":["requirement","verdict"]}},"required":["method_validity"]},{"properties":{"statistical_validity":{"properties":{"requirement":{"const":"required"},"verdict":{"enum":["fail","indeterminate"]}},"required":["requirement","verdict"]}},"required":["statistical_validity"]},{"properties":{"calibration":{"properties":{"requirement":{"const":"required"},"verdict":{"enum":["fail","indeterminate"]}},"required":["requirement","verdict"]}},"required":["calibration"]},{"properties":{"causal_identification":{"properties":{"requirement":{"const":"required"},"verdict":{"enum":["fail","indeterminate"]}},"required":["requirement","verdict"]}},"required":["causal_identification"]},{"properties":{"physical_validity":{"properties":{"requirement":{"const":"required"},"verdict":{"enum":["fail","indeterminate"]}},"required":["requirement","verdict"]}},"required":["physical_validity"]},{"properties":{"external_validation":{"properties":{"requirement":{"const":"required"},"verdict":{"enum":["fail","indeterminate"]}},"required":["requirement","verdict"]}},"required":["external_validation"]},{"properties":{"transportability":{"properties":{"requirement":{"const":"required"},"verdict":{"enum":["fail","indeterminate"]}},"required":["requirement","verdict"]}},"required":["transportability"]},{"properties":{"claim_boundary":{"properties":{"requirement":{"const":"required"},"verdict":{"enum":["fail","indeterminate"]}},"required":["requirement","verdict"]}},"required":["claim_boundary"]},{"properties":{"safety":{"properties":{"requirement":{"const":"required"},"verdict":{"enum":["fail","indeterminate"]}},"required":["requirement","verdict"]}},"required":["safety"]}]},
+    "dimensions_has_nonpass": {"anyOf":[{"properties":{"artifact_integrity":{"properties":{"requirement":{"const":"required"},"verdict":{"enum":["fail","indeterminate","not_run"]}},"required":["requirement","verdict"]}},"required":["artifact_integrity"]},{"properties":{"schema_conformance":{"properties":{"requirement":{"const":"required"},"verdict":{"enum":["fail","indeterminate","not_run"]}},"required":["requirement","verdict"]}},"required":["schema_conformance"]},{"properties":{"computational_reproducibility":{"properties":{"requirement":{"const":"required"},"verdict":{"enum":["fail","indeterminate","not_run"]}},"required":["requirement","verdict"]}},"required":["computational_reproducibility"]},{"properties":{"code_verification":{"properties":{"requirement":{"const":"required"},"verdict":{"enum":["fail","indeterminate","not_run"]}},"required":["requirement","verdict"]}},"required":["code_verification"]},{"properties":{"method_validity":{"properties":{"requirement":{"const":"required"},"verdict":{"enum":["fail","indeterminate","not_run"]}},"required":["requirement","verdict"]}},"required":["method_validity"]},{"properties":{"statistical_validity":{"properties":{"requirement":{"const":"required"},"verdict":{"enum":["fail","indeterminate","not_run"]}},"required":["requirement","verdict"]}},"required":["statistical_validity"]},{"properties":{"calibration":{"properties":{"requirement":{"const":"required"},"verdict":{"enum":["fail","indeterminate","not_run"]}},"required":["requirement","verdict"]}},"required":["calibration"]},{"properties":{"causal_identification":{"properties":{"requirement":{"const":"required"},"verdict":{"enum":["fail","indeterminate","not_run"]}},"required":["requirement","verdict"]}},"required":["causal_identification"]},{"properties":{"physical_validity":{"properties":{"requirement":{"const":"required"},"verdict":{"enum":["fail","indeterminate","not_run"]}},"required":["requirement","verdict"]}},"required":["physical_validity"]},{"properties":{"external_validation":{"properties":{"requirement":{"const":"required"},"verdict":{"enum":["fail","indeterminate","not_run"]}},"required":["requirement","verdict"]}},"required":["external_validation"]},{"properties":{"transportability":{"properties":{"requirement":{"const":"required"},"verdict":{"enum":["fail","indeterminate","not_run"]}},"required":["requirement","verdict"]}},"required":["transportability"]},{"properties":{"claim_boundary":{"properties":{"requirement":{"const":"required"},"verdict":{"enum":["fail","indeterminate","not_run"]}},"required":["requirement","verdict"]}},"required":["claim_boundary"]},{"properties":{"safety":{"properties":{"requirement":{"const":"required"},"verdict":{"enum":["fail","indeterminate","not_run"]}},"required":["requirement","verdict"]}},"required":["safety"]}]},
+    "dimensions_has_required": {"anyOf":[{"properties":{"artifact_integrity":{"properties":{"requirement":{"const":"required"}},"required":["requirement"]}},"required":["artifact_integrity"]},{"properties":{"schema_conformance":{"properties":{"requirement":{"const":"required"}},"required":["requirement"]}},"required":["schema_conformance"]},{"properties":{"computational_reproducibility":{"properties":{"requirement":{"const":"required"}},"required":["requirement"]}},"required":["computational_reproducibility"]},{"properties":{"code_verification":{"properties":{"requirement":{"const":"required"}},"required":["requirement"]}},"required":["code_verification"]},{"properties":{"method_validity":{"properties":{"requirement":{"const":"required"}},"required":["requirement"]}},"required":["method_validity"]},{"properties":{"statistical_validity":{"properties":{"requirement":{"const":"required"}},"required":["requirement"]}},"required":["statistical_validity"]},{"properties":{"calibration":{"properties":{"requirement":{"const":"required"}},"required":["requirement"]}},"required":["calibration"]},{"properties":{"causal_identification":{"properties":{"requirement":{"const":"required"}},"required":["requirement"]}},"required":["causal_identification"]},{"properties":{"physical_validity":{"properties":{"requirement":{"const":"required"}},"required":["requirement"]}},"required":["physical_validity"]},{"properties":{"external_validation":{"properties":{"requirement":{"const":"required"}},"required":["requirement"]}},"required":["external_validation"]},{"properties":{"transportability":{"properties":{"requirement":{"const":"required"}},"required":["requirement"]}},"required":["transportability"]},{"properties":{"claim_boundary":{"properties":{"requirement":{"const":"required"}},"required":["requirement"]}},"required":["claim_boundary"]},{"properties":{"safety":{"properties":{"requirement":{"const":"required"}},"required":["requirement"]}},"required":["safety"]}]},
+    "controls_has_fail": {"anyOf":[{"properties":{"known_answer":{"contains":{"properties":{"status":{"const":"fail"}},"required":["status"]}}},"required":["known_answer"]},{"properties":{"known_bad":{"contains":{"properties":{"status":{"const":"fail"}},"required":["status"]}}},"required":["known_bad"]}]},
+    "controls_has_fail_or_indeterminate": {"anyOf":[{"properties":{"known_answer":{"contains":{"properties":{"status":{"enum":["fail","indeterminate"]}},"required":["status"]}}},"required":["known_answer"]},{"properties":{"known_bad":{"contains":{"properties":{"status":{"enum":["fail","indeterminate"]}},"required":["status"]}}},"required":["known_bad"]}]},
+    "controls_has_nonpass": {"anyOf":[{"properties":{"known_answer":{"contains":{"properties":{"status":{"enum":["fail","indeterminate","not_run"]}},"required":["status"]}}},"required":["known_answer"]},{"properties":{"known_bad":{"contains":{"properties":{"status":{"enum":["fail","indeterminate","not_run"]}},"required":["status"]}}},"required":["known_bad"]}]},
+    "finding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["finding_id", "dimension", "statement", "evidence_refs", "disposition", "rule_ref"],
+      "properties": {
+        "finding_id": { "$ref": "#/$defs/identifier" },
+        "dimension": { "enum": ["artifact_integrity", "schema_conformance", "computational_reproducibility", "code_verification", "method_validity", "statistical_validity", "calibration", "causal_identification", "physical_validity", "external_validation", "transportability", "claim_boundary", "safety", "cross_cutting"] },
+        "statement": { "type": "string", "minLength": 1, "maxLength": 4096 },
+        "evidence_refs": { "type": "array", "maxItems": 64, "uniqueItems": true, "items": { "$ref": "#/$defs/artifact_reference" } },
+        "disposition": { "enum": ["unresolved", "resolved_in_package", "not_applicable"] },
+        "rule_ref": { "$ref": "#/$defs/immutable_reference" }
+      }
+    },
+    "findings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["discrepancies", "counterexamples", "unknowns"],
+      "properties": {
+        "discrepancies": { "type": "array", "maxItems": 256, "uniqueItems": true, "items": { "$ref": "#/$defs/finding" } },
+        "counterexamples": { "type": "array", "maxItems": 256, "uniqueItems": true, "items": { "$ref": "#/$defs/finding" } },
+        "unknowns": { "type": "array", "maxItems": 256, "uniqueItems": true, "items": { "$ref": "#/$defs/finding" } }
+      }
+    },
+    "resource_reconciliation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reservation_binding_source", "actual_usage_status", "actual_usage_observation_refs", "reconciliation_status", "reservation_settlement", "reconciliation_ref"],
+      "properties": {
+        "reservation_binding_source": { "const": "frozen_assignment_reservation_refs" },
+        "actual_usage_status": { "enum": ["measured", "partially_measured", "unknown", "not_run"] },
+        "actual_usage_observation_refs": { "type": "array", "maxItems": 64, "uniqueItems": true, "items": { "$ref": "#/$defs/artifact_reference" } },
+        "reconciliation_status": { "enum": ["reconciled", "partial", "unknown", "not_required"] },
+        "reservation_settlement": { "enum": ["reconciled_released", "partially_settled_held", "unsettled_held", "not_claimed"] },
+        "reconciliation_ref": { "oneOf": [{ "$ref": "#/$defs/immutable_reference" }, { "type": "null" }] }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "actual_usage_status": { "enum": ["measured", "partially_measured", "unknown"] } }, "required": ["actual_usage_status"] },
+          "then": { "properties": { "actual_usage_observation_refs": { "minItems": 1 } } }
+        },
+        {
+          "if": { "properties": { "actual_usage_status": { "const": "not_run" } }, "required": ["actual_usage_status"] },
+          "then": { "properties": { "actual_usage_observation_refs": { "maxItems": 0 } } }
+        },
+        {
+          "if": { "properties": { "reconciliation_status": { "const": "reconciled" } }, "required": ["reconciliation_status"] },
+          "then": { "properties": { "reservation_settlement": { "const": "reconciled_released" }, "reconciliation_ref": { "$ref": "#/$defs/immutable_reference" } } }
+        },
+        {
+          "if": { "properties": { "reconciliation_status": { "const": "partial" } }, "required": ["reconciliation_status"] },
+          "then": { "properties": { "reservation_settlement": { "const": "partially_settled_held" }, "reconciliation_ref": { "$ref": "#/$defs/immutable_reference" } } }
+        },
+        {
+          "if": { "properties": { "reconciliation_status": { "const": "unknown" } }, "required": ["reconciliation_status"] },
+          "then": { "properties": { "reservation_settlement": { "const": "unsettled_held" }, "reconciliation_ref": { "$ref": "#/$defs/immutable_reference" } } }
+        },
+        {
+          "if": { "properties": { "reconciliation_status": { "const": "not_required" } }, "required": ["reconciliation_status"] },
+          "then": { "properties": { "reservation_settlement": { "const": "not_claimed" }, "reconciliation_ref": { "type": "null" } } }
+        }
+      ]
+    },
+    "assessment_summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dimension_disposition", "control_disposition", "execution_validity", "decisive_basis", "basis_evidence_refs", "summary_rule_ref"],
+      "properties": {
+        "dimension_disposition": { "enum": ["all_required_passed", "one_or_more_failed", "one_or_more_indeterminate", "not_run"] },
+        "control_disposition": { "enum": ["all_passed", "one_or_more_failed", "one_or_more_indeterminate", "not_run"] },
+        "execution_validity": { "enum": ["valid", "invalid", "indeterminate", "not_run"] },
+        "decisive_basis": { "enum": ["all_required_passed", "dimension_failure", "control_failure", "execution_invalid", "unresolved_unknown", "operational_blocker", "completion_unknown"] },
+        "basis_evidence_refs": { "type": "array", "minItems": 1, "maxItems": 64, "uniqueItems": true, "items": { "$ref": "#/$defs/artifact_reference" } },
+        "summary_rule_ref": { "$ref": "#/$defs/immutable_reference" }
+      }
+    },
+    "terminal_assessment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "scope_statement", "reason_codes"],
+      "properties": {
+        "status": { "enum": ["confirmed", "rejected", "inconclusive", "invalid", "blocked"] },
+        "scope_statement": { "type": "string", "minLength": 1, "maxLength": 4096 },
+        "reason_codes": { "type": "array", "minItems": 1, "maxItems": 64, "uniqueItems": true, "items": { "$ref": "#/$defs/identifier" } }
+      }
+    },
+    "eligible_next_actions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["advisory_only", "actions", "rule_ref", "authority_granted", "dispatch_authorized", "publication_authorized"],
+      "properties": {
+        "advisory_only": { "const": true },
+        "actions": {
+          "type": "array",
+          "maxItems": 16,
+          "uniqueItems": true,
+          "items": { "enum": ["compile_candidate_claim", "repeat_verification", "independent_replication", "revise_method", "revise_subject", "collect_evidence", "resolve_dispute", "stop"] }
+        },
+        "rule_ref": { "$ref": "#/$defs/immutable_reference" },
+        "authority_granted": { "const": false },
+        "dispatch_authorized": { "const": false },
+        "publication_authorized": { "const": false }
       }
     }
   }

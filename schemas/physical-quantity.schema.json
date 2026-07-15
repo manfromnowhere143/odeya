@@ -1,0 +1,242 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:odeya:schema:physical-quantity:0.1.0",
+  "title": "Odeya PhysicalQuantity",
+  "description": "An immutable typed physical quantity. It closes value representation, registered unit, seven-base SI dimension vector, semantic kind, conversion class, and conditional frame/time/spatial support. Structural validity does not resolve the unit registry, execute conversions, or prove frame transforms or uncertainty propagation.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "quantity_id", "version", "quantity_kind", "value",
+    "unit", "support", "correlation_group_ids", "provenance_ref", "quantity_digest"
+  ],
+  "properties": {
+    "schema_version": { "const": "0.1.0" },
+    "quantity_id": { "$ref": "#/$defs/identifier" },
+    "version": { "type": "integer", "minimum": 1 },
+    "quantity_kind": { "$ref": "#/$defs/identifier" },
+    "value": { "$ref": "#/$defs/value_alternative" },
+    "unit": { "$ref": "#/$defs/unit_binding" },
+    "support": { "$ref": "#/$defs/support" },
+    "correlation_group_ids": {
+      "type": "array", "maxItems": 32, "uniqueItems": true,
+      "items": { "$ref": "#/$defs/identifier" }
+    },
+    "provenance_ref": { "$ref": "#/$defs/artifact_reference" },
+    "quantity_digest": { "$ref": "#/$defs/digest" }
+  },
+  "$defs": {
+    "identifier": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$" },
+    "digest": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+    "decimal": { "type": "string", "pattern": "^(0(?:\\.[0-9]+)?|[1-9][0-9]*(?:\\.[0-9]+)?|-(?:[1-9][0-9]*(?:\\.[0-9]+)?|0\\.[0-9]*[1-9][0-9]*))$" },
+    "utc_timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
+    },
+    "artifact_reference": {
+      "type": "object", "additionalProperties": false,
+      "required": ["artifact_id", "digest", "media_type"],
+      "properties": {
+        "artifact_id": { "$ref": "#/$defs/identifier" },
+        "digest": { "$ref": "#/$defs/digest" },
+        "media_type": { "type": "string", "minLength": 1, "maxLength": 255 }
+      }
+    },
+    "immutable_reference": {
+      "type": "object", "additionalProperties": false,
+      "required": ["record_id", "version", "schema_id", "digest"],
+      "properties": {
+        "record_id": { "$ref": "#/$defs/identifier" },
+        "version": { "type": "integer", "minimum": 1 },
+        "schema_id": { "type": "string", "pattern": "^urn:odeya:(schema|registry|profile):[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$" },
+        "digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "value_alternative": {
+      "oneOf": [
+        {
+          "type": "object", "additionalProperties": false,
+          "required": ["representation", "exact_decimal"],
+          "properties": {
+            "representation": { "const": "exact_decimal" },
+            "exact_decimal": { "$ref": "#/$defs/decimal" }
+          }
+        },
+        {
+          "type": "object", "additionalProperties": false,
+          "required": ["representation", "distribution_ref"],
+          "properties": {
+            "representation": { "const": "distribution_reference" },
+            "distribution_ref": { "$ref": "#/$defs/immutable_reference" }
+          }
+        }
+      ]
+    },
+    "dimension_vector": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "length", "mass", "time", "electric_current", "thermodynamic_temperature",
+        "amount_of_substance", "luminous_intensity"
+      ],
+      "properties": {
+        "length": { "type": "integer", "minimum": -16, "maximum": 16 },
+        "mass": { "type": "integer", "minimum": -16, "maximum": 16 },
+        "time": { "type": "integer", "minimum": -16, "maximum": 16 },
+        "electric_current": { "type": "integer", "minimum": -16, "maximum": 16 },
+        "thermodynamic_temperature": { "type": "integer", "minimum": -16, "maximum": 16 },
+        "amount_of_substance": { "type": "integer", "minimum": -16, "maximum": 16 },
+        "luminous_intensity": { "type": "integer", "minimum": -16, "maximum": 16 }
+      }
+    },
+    "semantic_kind": {
+      "type": "object", "additionalProperties": false,
+      "required": ["kind", "semantic_definition_ref"],
+      "properties": {
+        "kind": {
+          "enum": [
+            "ordinary_physical", "plane_angle", "solid_angle", "strain", "count", "ratio",
+            "absolute_temperature", "temperature_interval", "logarithmic_level", "registered_special"
+          ]
+        },
+        "semantic_definition_ref": { "$ref": "#/$defs/immutable_reference" }
+      }
+    },
+    "conversion": {
+      "oneOf": [
+        {
+          "type": "object", "additionalProperties": false,
+          "required": ["conversion_class", "scale", "offset", "ordinary_multiplication_permitted", "conversion_method_ref"],
+          "properties": {
+            "conversion_class": { "const": "multiplicative" },
+            "scale": { "$ref": "#/$defs/decimal" },
+            "offset": { "const": "0" },
+            "ordinary_multiplication_permitted": { "const": true },
+            "conversion_method_ref": { "$ref": "#/$defs/immutable_reference" }
+          }
+        },
+        {
+          "type": "object", "additionalProperties": false,
+          "required": ["conversion_class", "scale", "offset", "ordinary_multiplication_permitted", "conversion_method_ref"],
+          "properties": {
+            "conversion_class": { "const": "affine" },
+            "scale": { "$ref": "#/$defs/decimal" },
+            "offset": { "$ref": "#/$defs/decimal" },
+            "ordinary_multiplication_permitted": { "const": false },
+            "conversion_method_ref": { "$ref": "#/$defs/immutable_reference" }
+          }
+        },
+        {
+          "type": "object", "additionalProperties": false,
+          "required": ["conversion_class", "ordinary_multiplication_permitted", "conversion_method_ref", "reference_quantity_ref"],
+          "properties": {
+            "conversion_class": { "const": "logarithmic" },
+            "ordinary_multiplication_permitted": { "const": false },
+            "conversion_method_ref": { "$ref": "#/$defs/immutable_reference" },
+            "reference_quantity_ref": { "$ref": "#/$defs/immutable_reference" }
+          }
+        }
+      ]
+    },
+    "unit_binding": {
+      "type": "object", "additionalProperties": false,
+      "required": ["unit_id", "registry_ref", "symbol", "dimension_vector", "semantic_kind", "conversion_to_si"],
+      "properties": {
+        "unit_id": { "$ref": "#/$defs/identifier" },
+        "registry_ref": { "$ref": "#/$defs/immutable_reference" },
+        "symbol": { "type": "string", "minLength": 1, "maxLength": 64 },
+        "dimension_vector": { "$ref": "#/$defs/dimension_vector" },
+        "semantic_kind": { "$ref": "#/$defs/semantic_kind" },
+        "conversion_to_si": { "$ref": "#/$defs/conversion" }
+      }
+    },
+    "reference_frame": {
+      "type": "object", "additionalProperties": false,
+      "required": ["frame_ref", "origin_ref", "axes_convention_ref", "handedness", "epoch", "time_scale", "transform_uncertainty_ref"],
+      "properties": {
+        "frame_ref": { "$ref": "#/$defs/immutable_reference" },
+        "origin_ref": { "$ref": "#/$defs/artifact_reference" },
+        "axes_convention_ref": { "$ref": "#/$defs/artifact_reference" },
+        "handedness": { "enum": ["right_handed", "left_handed", "not_applicable"] },
+        "epoch": { "oneOf": [{ "$ref": "#/$defs/utc_timestamp" }, { "type": "null" }] },
+        "time_scale": { "enum": ["tai", "utc", "gps", "tt", "proper_time", "not_applicable"] },
+        "transform_uncertainty_ref": { "oneOf": [{ "$ref": "#/$defs/immutable_reference" }, { "type": "null" }] }
+      }
+    },
+    "frame_support": {
+      "type": "object", "additionalProperties": false,
+      "required": ["applicability", "frame"],
+      "properties": {
+        "applicability": { "enum": ["required", "not_applicable"] },
+        "frame": { "oneOf": [{ "$ref": "#/$defs/reference_frame" }, { "type": "null" }] }
+      },
+      "allOf": [{
+        "if": { "properties": { "applicability": { "const": "required" } }, "required": ["applicability"] },
+        "then": { "properties": { "frame": { "$ref": "#/$defs/reference_frame" } } },
+        "else": { "properties": { "frame": { "type": "null" } } }
+      }]
+    },
+    "time_support": {
+      "type": "object", "additionalProperties": false,
+      "required": ["kind", "start", "end", "clock_ref", "time_scale"],
+      "properties": {
+        "kind": { "enum": ["instant", "interval", "not_applicable"] },
+        "start": { "oneOf": [{ "$ref": "#/$defs/utc_timestamp" }, { "type": "null" }] },
+        "end": { "oneOf": [{ "$ref": "#/$defs/utc_timestamp" }, { "type": "null" }] },
+        "clock_ref": { "oneOf": [{ "$ref": "#/$defs/immutable_reference" }, { "type": "null" }] },
+        "time_scale": { "enum": ["tai", "utc", "gps", "tt", "proper_time", "not_applicable"] }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "kind": { "const": "instant" } }, "required": ["kind"] },
+          "then": {
+            "properties": {
+              "start": { "$ref": "#/$defs/utc_timestamp" }, "end": { "type": "null" },
+              "clock_ref": { "$ref": "#/$defs/immutable_reference" },
+              "time_scale": { "not": { "const": "not_applicable" } }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "kind": { "const": "interval" } }, "required": ["kind"] },
+          "then": {
+            "properties": {
+              "start": { "$ref": "#/$defs/utc_timestamp" },
+              "end": { "$ref": "#/$defs/utc_timestamp" },
+              "clock_ref": { "$ref": "#/$defs/immutable_reference" },
+              "time_scale": { "not": { "const": "not_applicable" } }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "kind": { "const": "not_applicable" } }, "required": ["kind"] },
+          "then": {
+            "properties": { "start": { "type": "null" }, "end": { "type": "null" }, "clock_ref": { "type": "null" }, "time_scale": { "const": "not_applicable" } }
+          }
+        }
+      ]
+    },
+    "spatial_support": {
+      "type": "object", "additionalProperties": false,
+      "required": ["kind", "support_ref", "resolution_ref"],
+      "properties": {
+        "kind": { "enum": ["point", "line", "surface", "volume", "field", "not_applicable"] },
+        "support_ref": { "oneOf": [{ "$ref": "#/$defs/artifact_reference" }, { "type": "null" }] },
+        "resolution_ref": { "oneOf": [{ "$ref": "#/$defs/artifact_reference" }, { "type": "null" }] }
+      },
+      "allOf": [{
+        "if": { "properties": { "kind": { "const": "not_applicable" } }, "required": ["kind"] },
+        "then": { "properties": { "support_ref": { "type": "null" }, "resolution_ref": { "type": "null" } } },
+        "else": { "properties": { "support_ref": { "$ref": "#/$defs/artifact_reference" } } }
+      }]
+    },
+    "support": {
+      "type": "object", "additionalProperties": false,
+      "required": ["frame", "time", "spatial"],
+      "properties": {
+        "frame": { "$ref": "#/$defs/frame_support" },
+        "time": { "$ref": "#/$defs/time_support" },
+        "spatial": { "$ref": "#/$defs/spatial_support" }
+      }
+    }
+  }
+}

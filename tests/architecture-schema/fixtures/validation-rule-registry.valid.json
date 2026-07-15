@@ -1,0 +1,134 @@
+{
+  "schema_version": "0.1.0",
+  "registry_id": "validation-registry.001",
+  "version": "0.1.0",
+  "status": "active",
+  "previous_registry": null,
+  "canonicalization_profile": "odeya-jcs-draft-0.1",
+  "rules": [
+    {
+      "rule_id": "rep-001",
+      "version": "0.1.0",
+      "layer": "V0",
+      "owning_module": "module.representation",
+      "subjects": ["json-document"],
+      "supported_schema_ranges": [
+        {
+          "schema_id": "urn:odeya:schema:validation-result:0.1.0",
+          "version_range": ">=0.1.0 <0.2.0"
+        }
+      ],
+      "predicate": {
+        "kind": "deterministic_algorithm",
+        "specification": "Reject invalid UTF-8, duplicate object members, forbidden numeric forms, and undeclared normalization.",
+        "reference_algorithm_ref": {
+          "artifact_id": "algorithm.rep-001",
+          "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "media_type": "text/markdown"
+        }
+      },
+      "required_inputs": ["subject", "rule_registry"],
+      "outcomes": ["pass", "fail", "indeterminate"],
+      "reason_codes": ["rep.valid", "rep.invalid", "rep.indeterminate"],
+      "severity": "blocking",
+      "consequences": [
+        {
+          "context": "object.admission",
+          "on_fail": "block",
+          "on_indeterminate": "block"
+        }
+      ],
+      "assumptions": ["The byte stream is retained without preprocessing"],
+      "numerical_profile": {
+        "arithmetic": "not_applicable",
+        "tolerance_ref": null,
+        "overflow_policy": "not_applicable"
+      },
+      "complexity_bounds": {
+        "max_input_bytes": 1048576,
+        "max_reference_nodes": 0,
+        "timeout_milliseconds": 1000
+      },
+      "vector_refs": {
+        "positive": [
+          {
+            "artifact_id": "vectors.rep-001.positive",
+            "digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "media_type": "application/json"
+          }
+        ],
+        "boundary": [
+          {
+            "artifact_id": "vectors.rep-001.boundary",
+            "digest": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "media_type": "application/json"
+          }
+        ],
+        "negative": [
+          {
+            "artifact_id": "vectors.rep-001.negative",
+            "digest": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+            "media_type": "application/json"
+          }
+        ],
+        "metamorphic": [
+          {
+            "artifact_id": "vectors.rep-001.metamorphic",
+            "digest": "sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+            "media_type": "application/json"
+          }
+        ],
+        "race": [],
+        "compatibility": [
+          {
+            "artifact_id": "vectors.rep-001.compatibility",
+            "digest": "sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+            "media_type": "application/json"
+          }
+        ]
+      },
+      "independent_implementation_required": true,
+      "implementation_refs": [
+        {
+          "artifact_id": "implementation.rep-001.a",
+          "digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+          "media_type": "application/vnd.oci.image.manifest.v1+json"
+        },
+        {
+          "artifact_id": "implementation.rep-001.b",
+          "digest": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+          "media_type": "application/vnd.oci.image.manifest.v1+json"
+        }
+      ],
+      "supersedes": [],
+      "backward_reading_policy": "exact_version_only",
+      "owner": "owner.representation",
+      "effective_at": "2026-07-15T12:00:00Z",
+      "expires_at": null
+    }
+  ],
+  "vector_manifest_refs": [
+    {
+      "artifact_id": "vector-manifest.001",
+      "digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+      "media_type": "application/json"
+    }
+  ],
+  "review_evidence_refs": [
+    {
+      "artifact_id": "review.registry.001",
+      "digest": "sha256:4444444444444444444444444444444444444444444444444444444444444444",
+      "media_type": "application/json"
+    }
+  ],
+  "effective_at": "2026-07-15T12:00:00Z",
+  "expires_at": null,
+  "registry_digest": "sha256:5555555555555555555555555555555555555555555555555555555555555555",
+  "sealed_at_ledger_position": 40,
+  "sealed_at": "2026-07-15T12:00:00Z",
+  "sealed_by": {
+    "principal_id": "authority.validation",
+    "principal_type": "human",
+    "authority_grant_ref": "grant.validation-registry.001"
+  }
+}

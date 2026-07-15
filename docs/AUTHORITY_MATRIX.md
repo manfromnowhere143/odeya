@@ -113,6 +113,12 @@ Bootstrap steps:
 
 Rotation adds a new root-manifest version and checkpoint. It cannot delete the prior root or re-sign old events.
 
+## PolicyDecision admission record
+
+[`PolicyDecision` 0.1.0](../schemas/policy-decision.schema.json) is a pure immutable admission-cohort record, not an authority aggregate and not a caller field. The deterministic kernel produces it from the canonical request digest; exact CommandContractRecord; controlled time; locked aggregate/reference frontier; root, checkpoint, and policy-registry snapshot; exact policy bundle/rules; retained policy-input bytes; and engine build/configuration identity. Its disposition is `allow | deny | indeterminate`; outage, timeout, unsupported input, engine error, or conflicting rules can never become allow. Typed obligations name their exact enforcement point.
+
+The policy result is a filter only. It cannot create an assignment, issue a grant, satisfy quorum, reserve resources, widen data rights, or prove scientific validity. `CommandEnvelope` structurally carries no policy-decision reference. The kernel persists the PolicyDecision, CommandContractRecord-selected validation/reference/authority/resource records, [`AdmissionEvidenceBundle` 0.1.0](../schemas/admission-evidence-bundle.schema.json), receipt, and accepted event cohort in one transaction. Every checkpoint commits the separate admission-evidence set so replay retains why a result occurred. JSON Schema proves only shape; semantic validation must prove inputs, activation, deterministic evaluation, obligation enforcement, evidence-profile completeness, receipt/event equality, and digest/signature correctness.
+
 ## Grant lifecycle and time
 
 ```text
@@ -120,13 +126,21 @@ assignment recorded
   -> authorization request
   -> policy decision
   -> grant issued
-  -> use reserved
-  -> command/effect committed + use consumed
-     | command rolled back -> reservation released
+  -> ordinary in-ledger command: reserve + commit + consume atomically
+     OR
+  -> cross-boundary effect: exact use reserved at intent commit
+       -> dispatch claim revalidates grant + consumes use atomically
+       | revoke / expiry / cancellation wins first -> reservation released, dispatch denied
   -> exhausted | expired | revoked
 ```
 
-- Grant issue, reserve/use, release, exhaustion, expiry observation, and revocation are immutable facts.
+- Every grant declares its legal consumption point: `domain_commit` or `dispatch_claim`. A caller or adapter cannot choose it per attempt.
+- Grant issue, `authority.grant_use_reserved`, `authority.grant_use_reservation_released`, `authority.grant_used`, exhaustion, expiry observation, and revocation are immutable facts.
+- A reservation binds one reservation ID to the exact grant, command/effect, request/payload digest, target/destination, use count, resource reservation, not-after time, and causal intent. It reduces available use/concurrency while active but is not historical consumption.
+- Ordinary commands with no cross-boundary effect reserve and consume in their one canonical transaction; no durable intermediate reservation exists.
+- A cross-boundary effect that must remain revocable before dispatch creates `authority.grant_use_reserved` with `external_effect.authorized` in T1. The later dispatch-claim transaction rechecks assignment/grant/revocation/expiry and atomically records `authority.grant_used(consumption_point=dispatch_claim)` with `external_effect.started`. Network/physical dispatch begins only after that commit.
+- Revocation, expiry, cancellation, or reservation expiry committed before dispatch claim prevents consumption and records `authority.grant_use_reservation_released` with its typed terminal state/reason. Effect cancellation closes `authorized -> cancelled_before_dispatch` in the same batch. A dispatch claim committed first remains an in-flight historical use; later revocation blocks subsequent attempts but cannot erase it.
+- Releasing an unused reservation restores only the reserved capacity allowed by the original grant. It never authorizes a different payload, effect, destination, time, or command.
 - Admission evaluates `not_before <= controlled_time < expires_at` from canonical grant bytes even if an expiry projection lags.
 - `issued_at`, `not_before`, and `expires_at` order is a semantic invariant, not merely a timestamp format check.
 - A revocation committed before dispatch claim prevents dispatch. A dispatch claim committed first remains an in-flight historical fact and must be cancelled/reconciled.
@@ -146,7 +160,7 @@ Before a command consumes authority, the validator must prove:
 - forbidden role overlap and producer/verifier/publication separation pass;
 - delegation is a strict subset at every edge;
 - command-request digest matches the grant’s authorization request;
-- reserve/use/revoke ordering can commit atomically with the event/effect intent.
+- reserve/use/release/revoke ordering and the grant's declared consumption point are compatible with the command/effect transition; effect intent and its reservation commit together, and dispatch claim plus use consumption commit together.
 
 JSON Schema cannot prove these relations. They require a pinned pure semantic rule registry, reference graph, controlled clock input, and race fixtures.
 
@@ -160,6 +174,7 @@ This matrix fails Gate A if any trace can:
 - let a producer select or become its required independent verifier;
 - let a timeout, policy outage, expiry projection lag, or missing human approve;
 - revoke a grant while losing the retained fact that an effect was already in flight;
+- consume a dispatch-bound grant at intent time, dispatch from an unconsumed/unrevalidated reservation, or release a reservation after its dispatch claim won;
 - allow a service or model to widen a human-approved ceiling;
 - publish bytes not identical to the human-approved manifest;
 - apply a new policy or grant retroactively; or

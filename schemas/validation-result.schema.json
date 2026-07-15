@@ -1,0 +1,225 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:odeya:schema:validation-result:0.1.0",
+  "title": "Odeya ValidationResult",
+  "description": "An immutable application of an exact semantic rule registry to an exact subject and reference set. It never repairs or mutates the subject. Rule correctness and evidence authenticity remain independently verifiable claims.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "validation_result_id",
+    "mission_id",
+    "subject",
+    "validator_identity",
+    "rule_registry",
+    "reference_set",
+    "controlled_time",
+    "rule_results",
+    "aggregate_disposition",
+    "unsupported_checks",
+    "known_bad_results",
+    "input_set_digest",
+    "created_at_ledger_position",
+    "created_at"
+  ],
+  "properties": {
+    "schema_version": { "const": "0.1.0" },
+    "validation_result_id": { "$ref": "#/$defs/identifier" },
+    "mission_id": {
+      "oneOf": [{ "$ref": "#/$defs/identifier" }, { "type": "null" }]
+    },
+    "subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["subject_type", "subject_id", "version", "schema_id", "digest"],
+      "properties": {
+        "subject_type": { "$ref": "#/$defs/identifier" },
+        "subject_id": { "$ref": "#/$defs/identifier" },
+        "version": { "type": "string", "minLength": 1 },
+        "schema_id": { "type": "string", "format": "uri" },
+        "digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "validator_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["principal_id", "execution_id", "implementation_id", "code_digest", "environment_digest"],
+      "properties": {
+        "principal_id": { "$ref": "#/$defs/identifier" },
+        "execution_id": { "$ref": "#/$defs/identifier" },
+        "implementation_id": { "$ref": "#/$defs/identifier" },
+        "code_digest": { "$ref": "#/$defs/digest" },
+        "environment_digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "rule_registry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["registry_id", "version", "digest"],
+      "properties": {
+        "registry_id": { "$ref": "#/$defs/identifier" },
+        "version": { "type": "string", "minLength": 1 },
+        "digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "reference_set": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["digest", "ledger_position", "reference_count"],
+      "properties": {
+        "digest": { "$ref": "#/$defs/digest" },
+        "ledger_position": { "type": "integer", "minimum": 0 },
+        "reference_count": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "controlled_time": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["value", "source", "uncertainty_milliseconds"],
+          "properties": {
+            "value": { "type": "string", "format": "date-time" },
+            "source": { "$ref": "#/$defs/identifier" },
+            "uncertainty_milliseconds": { "type": "integer", "minimum": 0 }
+          }
+        },
+        { "type": "null" }
+      ]
+    },
+    "rule_results": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["rule_id", "rule_version", "required", "verdict", "reason_code", "subject_path", "evidence_refs", "limitations"],
+        "properties": {
+          "rule_id": { "$ref": "#/$defs/identifier" },
+          "rule_version": { "type": "string", "minLength": 1 },
+          "required": { "type": "boolean" },
+          "verdict": { "enum": ["pass", "fail", "indeterminate"] },
+          "reason_code": { "$ref": "#/$defs/identifier" },
+          "subject_path": { "type": "string", "pattern": "^(?:|(?:/(?:[^~/]|~0|~1)*)+)$" },
+          "evidence_refs": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": { "$ref": "#/$defs/artifact_reference" }
+          },
+          "limitations": {
+            "type": "array",
+            "items": { "type": "string", "minLength": 1 }
+          }
+        }
+      }
+    },
+    "aggregate_disposition": { "enum": ["pass", "fail", "indeterminate"] },
+    "unsupported_checks": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/identifier" }
+    },
+    "known_bad_results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["fixture", "expected", "observed", "report_ref"],
+        "properties": {
+          "fixture": { "$ref": "#/$defs/artifact_reference" },
+          "expected": { "const": "reject" },
+          "observed": { "enum": ["reject", "accept", "indeterminate"] },
+          "report_ref": { "$ref": "#/$defs/artifact_reference" }
+        }
+      }
+    },
+    "input_set_digest": { "$ref": "#/$defs/digest" },
+    "created_at_ledger_position": { "type": "integer", "minimum": 0 },
+    "created_at": { "type": "string", "format": "date-time" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "aggregate_disposition": { "const": "pass" } }, "required": ["aggregate_disposition"] },
+      "then": {
+        "properties": {
+          "rule_results": {
+            "not": {
+              "contains": {
+                "type": "object",
+                "required": ["required", "verdict"],
+                "properties": {
+                  "required": { "const": true },
+                  "verdict": { "enum": ["fail", "indeterminate"] }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "aggregate_disposition": { "const": "fail" } }, "required": ["aggregate_disposition"] },
+      "then": {
+        "properties": {
+          "rule_results": {
+            "contains": {
+              "type": "object",
+              "required": ["required", "verdict"],
+              "properties": {
+                "required": { "const": true },
+                "verdict": { "const": "fail" }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "aggregate_disposition": { "const": "indeterminate" } }, "required": ["aggregate_disposition"] },
+      "then": {
+        "properties": {
+          "rule_results": {
+            "allOf": [
+              {
+                "not": {
+                  "contains": {
+                    "type": "object",
+                    "required": ["required", "verdict"],
+                    "properties": {
+                      "required": { "const": true },
+                      "verdict": { "const": "fail" }
+                    }
+                  }
+                }
+              },
+              {
+                "contains": {
+                  "type": "object",
+                  "required": ["required", "verdict"],
+                  "properties": {
+                    "required": { "const": true },
+                    "verdict": { "const": "indeterminate" }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "identifier": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$" },
+    "digest": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+    "artifact_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifact_id", "digest", "media_type"],
+      "properties": {
+        "artifact_id": { "$ref": "#/$defs/identifier" },
+        "digest": { "$ref": "#/$defs/digest" },
+        "media_type": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

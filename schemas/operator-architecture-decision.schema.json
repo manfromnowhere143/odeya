@@ -1,0 +1,235 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:odeya:schema:operator-architecture-decision:0.1.0",
+  "title": "Odeya OperatorArchitectureDecision",
+  "description": "Daniel's explicit Gate A decision over one common candidate digest and eight lane determinations. Every outcome preserves the runtime implementation lock; Gate A can authorize only continued architecture work or separately governed Gate B consideration/probes.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "decision_id", "version", "candidate", "decision",
+    "lane_results", "review_compilation", "constitutional_decisions",
+    "root_and_role_overlap_ref", "authorized_next_state", "implementation_lock",
+    "decision_basis", "operator", "signature", "decided_at", "review_trigger",
+    "expires_at", "supersession_route_ref"
+  ],
+  "properties": {
+    "schema_version": { "const": "0.1.0" },
+    "decision_id": { "$ref": "#/$defs/identifier" },
+    "version": { "type": "integer", "minimum": 1 },
+    "candidate": { "$ref": "#/$defs/candidate_reference" },
+    "decision": { "enum": ["accepted_for_gate_a", "not_accepted", "superseded"] },
+    "lane_results": {
+      "type": "object", "additionalProperties": false,
+      "required": ["mission_product_boundary", "statistical_scientific", "physical_domain", "distributed_systems_recovery", "security_authority_cryptography", "data_rights_privacy", "human_factors_accessibility", "adversarial_scientific_integrity"],
+      "properties": {
+        "mission_product_boundary": { "$ref": "#/$defs/lane_result" },
+        "statistical_scientific": { "$ref": "#/$defs/lane_result" },
+        "physical_domain": { "$ref": "#/$defs/lane_result" },
+        "distributed_systems_recovery": { "$ref": "#/$defs/lane_result" },
+        "security_authority_cryptography": { "$ref": "#/$defs/lane_result" },
+        "data_rights_privacy": { "$ref": "#/$defs/lane_result" },
+        "human_factors_accessibility": { "$ref": "#/$defs/lane_result" },
+        "adversarial_scientific_integrity": { "$ref": "#/$defs/lane_result" }
+      }
+    },
+    "review_compilation": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "common_candidate_digest_check", "lane_set_complete", "determination_set_digest",
+        "open_critical", "open_high", "open_medium", "open_low",
+        "accepted_limitations", "deferred_gate_b_probe_refs", "change_impact",
+        "compiler_rule_ref", "compiler_result_ref"
+      ],
+      "properties": {
+        "common_candidate_digest_check": { "$ref": "#/$defs/check_result" },
+        "lane_set_complete": { "$ref": "#/$defs/check_result" },
+        "determination_set_digest": { "$ref": "#/$defs/digest" },
+        "open_critical": { "type": "integer", "minimum": 0 },
+        "open_high": { "type": "integer", "minimum": 0 },
+        "open_medium": { "type": "integer", "minimum": 0 },
+        "open_low": { "type": "integer", "minimum": 0 },
+        "accepted_limitations": {
+          "type": "array", "uniqueItems": true,
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["finding_ref", "severity", "limitation_text", "evidence_ref"],
+            "properties": {
+              "finding_ref": { "$ref": "#/$defs/immutable_reference" },
+              "severity": { "enum": ["medium", "low"] },
+              "limitation_text": { "type": "string", "minLength": 1 },
+              "evidence_ref": { "$ref": "#/$defs/artifact_reference" }
+            }
+          }
+        },
+        "deferred_gate_b_probe_refs": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/artifact_reference" } },
+        "change_impact": {
+          "type": "object", "additionalProperties": false,
+          "required": ["change_impact_map_ref", "carry_forward_registry_ref", "current_candidate_binding", "carry_forward_check"],
+          "properties": {
+            "change_impact_map_ref": { "$ref": "#/$defs/artifact_reference" },
+            "carry_forward_registry_ref": { "$ref": "#/$defs/artifact_reference" },
+            "current_candidate_binding": { "const": "operator_decision_candidate" },
+            "carry_forward_check": { "$ref": "#/$defs/check_result" }
+          }
+        },
+        "compiler_rule_ref": { "$ref": "#/$defs/versioned_reference" },
+        "compiler_result_ref": { "$ref": "#/$defs/artifact_reference" }
+      }
+    },
+    "constitutional_decisions": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/artifact_reference" } },
+    "root_and_role_overlap_ref": { "$ref": "#/$defs/artifact_reference" },
+    "authorized_next_state": { "enum": ["remain_architecture", "gate_b_probes_only", "gate_c_consideration_only"] },
+    "implementation_lock": {
+      "type": "object", "additionalProperties": false,
+      "required": ["runtime_product_implementation_authorized", "gate_c_increment_authorized", "external_effects_authorized", "gate_b_probes_require_separate_authority", "prohibited_actions"],
+      "properties": {
+        "runtime_product_implementation_authorized": { "const": false },
+        "gate_c_increment_authorized": { "const": false },
+        "external_effects_authorized": { "const": false },
+        "gate_b_probes_require_separate_authority": { "const": true },
+        "prohibited_actions": {
+          "type": "array", "minItems": 3, "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 },
+          "allOf": [
+            { "contains": { "const": "runtime_product_implementation" } },
+            { "contains": { "const": "production_deployment" } },
+            { "contains": { "const": "external_effect_without_separate_grant" } }
+          ]
+        }
+      }
+    },
+    "decision_basis": {
+      "type": "object", "additionalProperties": false,
+      "required": ["reason_codes", "evidence_refs", "limitations"],
+      "properties": {
+        "reason_codes": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/identifier" } },
+        "evidence_refs": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/artifact_reference" } },
+        "limitations": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+      }
+    },
+    "operator": {
+      "type": "object", "additionalProperties": false,
+      "required": ["principal_id", "principal_type", "role", "authentication_binding_ref"],
+      "properties": {
+        "principal_id": { "$ref": "#/$defs/identifier" },
+        "principal_type": { "const": "human" },
+        "role": { "const": "operator" },
+        "authentication_binding_ref": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "signature": {
+      "type": "object", "additionalProperties": false,
+      "required": ["signed_body_digest", "body_projection_rule_ref", "signature_ref", "signer_binding"],
+      "properties": {
+        "signed_body_digest": { "$ref": "#/$defs/digest" },
+        "body_projection_rule_ref": { "$ref": "#/$defs/versioned_reference" },
+        "signature_ref": { "$ref": "#/$defs/artifact_reference" },
+        "signer_binding": { "const": "operator" }
+      }
+    },
+    "decided_at": { "$ref": "#/$defs/timestamp" },
+    "review_trigger": { "type": "string", "minLength": 1 },
+    "expires_at": { "oneOf": [{ "$ref": "#/$defs/timestamp" }, { "type": "null" }] },
+    "supersession_route_ref": { "$ref": "#/$defs/versioned_reference" }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "decision": { "const": "accepted_for_gate_a" }
+        },
+        "required": ["decision"]
+      },
+      "then": {
+        "properties": {
+          "lane_results": {
+            "properties": {
+              "mission_product_boundary": { "properties": { "result": { "const": "accept_for_gate_a" } } },
+              "statistical_scientific": { "properties": { "result": { "const": "accept_for_gate_a" } } },
+              "physical_domain": { "properties": { "result": { "const": "accept_for_gate_a" } } },
+              "distributed_systems_recovery": { "properties": { "result": { "const": "accept_for_gate_a" } } },
+              "security_authority_cryptography": { "properties": { "result": { "const": "accept_for_gate_a" } } },
+              "data_rights_privacy": { "properties": { "result": { "const": "accept_for_gate_a" } } },
+              "human_factors_accessibility": { "properties": { "result": { "const": "accept_for_gate_a" } } },
+              "adversarial_scientific_integrity": { "properties": { "result": { "const": "accept_for_gate_a" } } }
+            }
+          },
+          "review_compilation": {
+            "properties": {
+              "common_candidate_digest_check": { "properties": { "result": { "const": "pass" } } },
+              "lane_set_complete": { "properties": { "result": { "const": "pass" } } },
+              "open_critical": { "const": 0 },
+              "open_high": { "const": 0 },
+              "open_medium": { "const": 0 },
+              "open_low": { "const": 0 },
+              "change_impact": {
+                "properties": {
+                  "carry_forward_check": {
+                    "properties": {
+                      "result": { "const": "pass" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "decision": { "const": "not_accepted" }
+        },
+        "required": ["decision"]
+      },
+      "then": {
+        "properties": {
+          "authorized_next_state": { "const": "remain_architecture" }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "identifier": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$" },
+    "digest": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+    "timestamp": { "type": "string", "format": "date-time", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$" },
+    "candidate_reference": {
+      "type": "object", "additionalProperties": false,
+      "required": ["manifest_id", "version", "manifest_digest"],
+      "properties": { "manifest_id": { "$ref": "#/$defs/identifier" }, "version": { "type": "integer", "minimum": 1 }, "manifest_digest": { "$ref": "#/$defs/digest" } }
+    },
+    "lane_result": {
+      "type": "object", "additionalProperties": false,
+      "required": ["determination_ref", "result", "candidate_binding"],
+      "properties": {
+        "determination_ref": { "$ref": "#/$defs/immutable_reference" },
+        "result": { "enum": ["accept_for_gate_a", "reject", "unable_to_determine"] },
+        "candidate_binding": { "const": "common_operator_candidate" }
+      }
+    },
+    "check_result": {
+      "type": "object", "additionalProperties": false,
+      "required": ["result", "evidence_ref"],
+      "properties": {
+        "result": { "enum": ["pass", "fail", "indeterminate"] },
+        "evidence_ref": { "$ref": "#/$defs/artifact_reference" }
+      }
+    },
+    "artifact_reference": {
+      "type": "object", "additionalProperties": false,
+      "required": ["artifact_id", "digest", "media_type"],
+      "properties": { "artifact_id": { "$ref": "#/$defs/identifier" }, "digest": { "$ref": "#/$defs/digest" }, "media_type": { "type": "string", "minLength": 1 } }
+    },
+    "immutable_reference": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "version", "digest"],
+      "properties": { "id": { "$ref": "#/$defs/identifier" }, "version": { "type": "integer", "minimum": 1 }, "digest": { "$ref": "#/$defs/digest" } }
+    },
+    "versioned_reference": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "version", "digest"],
+      "properties": { "id": { "$ref": "#/$defs/identifier" }, "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" }, "digest": { "$ref": "#/$defs/digest" } }
+    }
+  }
+}

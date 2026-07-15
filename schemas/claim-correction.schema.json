@@ -1,0 +1,160 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:odeya:schema:claim-correction:0.1.0",
+  "title": "Odeya ClaimCorrection",
+  "description": "An immutable correction or retraction decision. It preserves superseded claim versions and names every known dependent action; it never edits a prior claim or proves that external projections were updated.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "correction_id",
+    "version",
+    "mission_id",
+    "correction_kind",
+    "trigger",
+    "superseded_claims",
+    "replacement_claims",
+    "failure_dimensions",
+    "dependency_impacts",
+    "known_projections",
+    "minimum_visibility_rule",
+    "reason_codes",
+    "decision_evidence_ref",
+    "authority_decision_ref",
+    "decided_at_ledger_position",
+    "decided_at",
+    "decided_by"
+  ],
+  "properties": {
+    "schema_version": { "const": "0.1.0" },
+    "correction_id": { "$ref": "#/$defs/identifier" },
+    "version": { "type": "integer", "minimum": 1 },
+    "mission_id": { "$ref": "#/$defs/identifier" },
+    "correction_kind": { "enum": ["correction", "retraction_notice"] },
+    "trigger": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["trigger_class", "triggered_by_refs", "detected_at", "detected_by"],
+      "properties": {
+        "trigger_class": { "enum": ["protocol", "execution", "analysis", "verification", "wording", "release", "rights", "integrity", "external_evidence"] },
+        "triggered_by_refs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/artifact_reference" }
+        },
+        "detected_at": { "type": "string", "format": "date-time" },
+        "detected_by": { "$ref": "#/$defs/principal" }
+      }
+    },
+    "superseded_claims": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/claim_reference" }
+    },
+    "replacement_claims": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/claim_reference" }
+    },
+    "failure_dimensions": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "enum": ["protocol", "run_validity", "measurement", "analysis", "verification", "claim_language", "rights", "publication_package", "external_projection"] }
+    },
+    "dependency_impacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["target_type", "target_id", "target_version", "required_action", "reason_code"],
+        "properties": {
+          "target_type": { "enum": ["artifact", "dataset", "claim", "publication", "benchmark", "evaluation", "grounded_outcome", "strategy_candidate"] },
+          "target_id": { "$ref": "#/$defs/identifier" },
+          "target_version": { "type": "string", "minLength": 1 },
+          "required_action": { "enum": ["invalidate", "recompute", "mark_stale", "correct", "withdraw", "review"] },
+          "reason_code": { "$ref": "#/$defs/identifier" }
+        }
+      }
+    },
+    "known_projections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["projection_id", "projection_type", "visibility", "required_action", "settlement_profile_ref"],
+        "properties": {
+          "projection_id": { "$ref": "#/$defs/identifier" },
+          "projection_type": { "enum": ["private_view", "restricted_package", "paper", "website", "dataset", "benchmark", "api", "other"] },
+          "visibility": { "enum": ["private", "restricted", "embargoed", "public"] },
+          "required_action": { "enum": ["correct", "withdraw", "mark_stale"] },
+          "settlement_profile_ref": { "$ref": "#/$defs/artifact_reference" }
+        }
+      }
+    },
+    "minimum_visibility_rule": { "const": "at_least_as_visible_as_most_visible_affected_projection" },
+    "reason_codes": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/identifier" }
+    },
+    "decision_evidence_ref": { "$ref": "#/$defs/artifact_reference" },
+    "authority_decision_ref": { "$ref": "#/$defs/identifier" },
+    "decided_at_ledger_position": { "type": "integer", "minimum": 0 },
+    "decided_at": { "type": "string", "format": "date-time" },
+    "decided_by": { "$ref": "#/$defs/human_principal" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "correction_kind": { "const": "correction" } }, "required": ["correction_kind"] },
+      "then": { "properties": { "replacement_claims": { "minItems": 1 } } },
+      "else": { "properties": { "replacement_claims": { "maxItems": 0 } } }
+    }
+  ],
+  "$defs": {
+    "identifier": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$" },
+    "digest": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+    "artifact_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifact_id", "digest", "media_type"],
+      "properties": {
+        "artifact_id": { "$ref": "#/$defs/identifier" },
+        "digest": { "$ref": "#/$defs/digest" },
+        "media_type": { "type": "string", "minLength": 1 }
+      }
+    },
+    "claim_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["claim_id", "version", "digest"],
+      "properties": {
+        "claim_id": { "$ref": "#/$defs/identifier" },
+        "version": { "type": "integer", "minimum": 1 },
+        "digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "principal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["principal_id", "principal_type"],
+      "properties": {
+        "principal_id": { "$ref": "#/$defs/identifier" },
+        "principal_type": { "enum": ["human", "service", "organization", "model_run"] }
+      }
+    },
+    "human_principal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["principal_id", "principal_type", "authority_grant_ref"],
+      "properties": {
+        "principal_id": { "$ref": "#/$defs/identifier" },
+        "principal_type": { "const": "human" },
+        "authority_grant_ref": { "$ref": "#/$defs/identifier" }
+      }
+    }
+  }
+}

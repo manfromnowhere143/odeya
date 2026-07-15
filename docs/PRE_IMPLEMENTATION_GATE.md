@@ -50,6 +50,7 @@ No item passes because a document sounds complete. Gate A accepts meanings, cont
 - [ ] Claim compiler maps each evidence outcome to eligible and forbidden language.
 - [ ] Structural schema validity and semantic/state/authority/scientific admissibility are separate retained results; indeterminate fails closed.
 - [ ] Corrections and dependency invalidation are replayable and visible.
+- [ ] Research-state view, compilation receipt, epistemic graph delta, experiment candidate, planning epoch, work contract, candidate artifact, and epistemic-transition meanings are frozen without granting model authority.
 
 ## G3 — Authority, security, and privacy
 
@@ -68,6 +69,7 @@ No item passes because a document sounds complete. Gate A accepts meanings, cont
 - [ ] Every claim can traverse to exact protocol, code, data, environment, command, resource, evaluator, and verifier.
 - [ ] W3C PROV and RO-Crate mappings are defined without losing Odeya-specific semantics.
 - [ ] Context packs, retrieval, summaries, and handoffs are reproducible and cannot silently promote assertions.
+- [ ] The Research-State Compiler binds exact source position, policy, role, exposure, selected context, omissions, contradiction coverage, and sealed-truth noninterference evidence.
 - [ ] Sensitive audit data and private reasoning are excluded or separately controlled.
 - [ ] `STANDARDS_PROFILE.md` entries have exact frozen versions, official copies/digests, validators, conformance vectors, deviations, and migrations.
 
@@ -80,6 +82,9 @@ No item passes because a document sounds complete. Gate A accepts meanings, cont
 - [ ] Learning records require independently verified outcomes and applicability conditions.
 - [ ] Improvement-lab quarantine, promotion, canary, rollback, and human approval paths are specified.
 - [ ] No production recursive self-modification path exists.
+- [ ] Grounded outcome and observable epistemic conduct are evaluated separately; hidden chain-of-thought and self-report are never proof.
+- [ ] Material evidence disposition, refutation response, contradiction retention, selection accounting, and valid stop/escalation have anti-gaming fixtures.
+- [ ] Claim-bearing generation is constrained by separately reserved deterministic, compute, expert, physical, and safety verification capacity.
 
 ## G6 — Module and interface architecture
 
@@ -89,6 +94,7 @@ No item passes because a document sounds complete. Gate A accepts meanings, cont
 - [ ] One-writer and selective-parallelism rules are encoded in contracts.
 - [ ] Vendor replacements cannot change mission or verdict semantics.
 - [ ] Build-versus-adopt decisions include exit and migration plans.
+- [ ] Epistemic state, deterministic state compilation, untrusted planning, verification backpressure, and claim adjudication have noncircular ownership and no ambient I/O path into pure reducers.
 
 ## G7 — Reliability and operations
 
@@ -123,6 +129,7 @@ No item passes because a document sounds complete. Gate A accepts meanings, cont
 - [ ] Recovery review enumerates every crash point and expected retained state; executable fault injection belongs to increment exit gates.
 - [ ] Scientific review identifies claim types the engine cannot validly adjudicate and converts them to explicit refusals or domain-adapter requirements.
 - [ ] Product review uses non-executable fixtures and wire contracts to confirm that truth and limitations are representable without invention.
+- [ ] Cognitive review attempts sealed-truth influence through retrieval/caches, ignored refutation, consensus-as-evidence, fabricated process records, stale-view admission, and verification-backlog overflow.
 - [ ] All critical/high findings are closed; accepted medium findings have owners and bounded experiments.
 - [ ] Operator signs the exact architecture candidate or requests changes; this does not itself authorize product implementation.
 
@@ -148,7 +155,7 @@ Only after Gate A decisions and authorized Gate B findings are integrated:
 - [ ] architecture candidate has a clean immutable commit, manifest, and candidate tag;
 - [ ] every critical/high finding is closed on that exact commit;
 - [ ] medium findings have a non-impact argument, owner, expiry, and rollback;
-- [ ] one offline, rights-cleared proof fixture is pinned with expected positive, null, and broken results;
+- [ ] one offline, rights-cleared composite fixture pack is pinned with expected supported, interval-crossing-zero/inconclusive, invalid, discrepancy, correction, blocked, and refusal consequences;
 - [ ] the operator explicitly authorizes exactly one implementation increment;
 - [ ] the increment's executable tests, fault injection, UI tests, and recovery evidence become its exit gate—not a reason to bypass architecture.
 

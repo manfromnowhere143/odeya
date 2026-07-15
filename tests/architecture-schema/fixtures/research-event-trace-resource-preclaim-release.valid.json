@@ -1,0 +1,81 @@
+{
+  "schema_version": "0.3.0",
+  "trace_id": "trace.resource-preclaim-release.001",
+  "purpose": "Replay cancellation before claim; it releases exactly the reserved ceiling and cannot be used as a post-claim release path.",
+  "stream_id": "mission.resource-accounting.001",
+  "stream_type": "mission",
+  "mission_scope": "mission.resource-accounting.001",
+  "reducer_set": {
+    "name": "odeya-resource-budget-reducer",
+    "version": "0.1.0",
+    "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "steps": [
+    {
+      "ordinal": 0,
+      "event_id": "event.resource-reservation-created.002",
+      "event_type": "resource.reservation_created",
+      "event_version": "1.0.0",
+      "stream_position": 20,
+      "aggregate_type": "resource_budget",
+      "aggregate_id": "resource-budget.mission.001",
+      "aggregate_version": 3,
+      "event_digest": "sha256:5555555555555555555555555555555555555555555555555555555555555555",
+      "expected_axis_changes": [
+        {
+          "axis": "resource_reservation",
+          "from": "none",
+          "to": "active"
+        }
+      ]
+    },
+    {
+      "ordinal": 1,
+      "event_id": "event.resource-reservation-released.002",
+      "event_type": "resource.reservation_released",
+      "event_version": "1.0.0",
+      "stream_position": 21,
+      "aggregate_type": "resource_budget",
+      "aggregate_id": "resource-budget.mission.001",
+      "aggregate_version": 4,
+      "event_digest": "sha256:6666666666666666666666666666666666666666666666666666666666666666",
+      "expected_axis_changes": [
+        {
+          "axis": "resource_reservation",
+          "from": "active",
+          "to": "released"
+        }
+      ]
+    }
+  ],
+  "expected_state": {
+    "run_validity": "not_applicable",
+    "measurement": "not_applicable",
+    "scientific_outcome": "not_adjudicated",
+    "verification_status": "not_applicable",
+    "claim_eligibility": "not_applicable",
+    "publication_release": "not_applicable",
+    "external_effect_settlement": "not_applicable",
+    "grant_use_reservation": "not_applicable",
+    "dispatch_claim": "not_applicable",
+    "retry_disposition": "not_applicable",
+    "channel_observation_refs": [],
+    "resource_accounting": {
+      "reservation_id": "resource-reservation.002",
+      "reservation_state": "released",
+      "ceiling_hold": "zero",
+      "actual_usage_status": "not_observed_preclaim",
+      "observation_axes": [],
+      "settlement": "not_applicable",
+      "conversion_policy": "forbidden_componentwise",
+      "dimension_compensation": "forbidden",
+      "verification_capacity": "released"
+    }
+  },
+  "forbidden_inferences": [
+    "resource.release_from_claimed",
+    "resource.double_release",
+    "resource.crash_as_release_reason",
+    "resource.release_without_exact_ceiling"
+  ]
+}

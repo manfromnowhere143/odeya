@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:authority-grant:0.1.0",
+  "$id": "urn:odeya:schema:authority-grant:0.2.0",
   "title": "Odeya AuthorityGrant",
-  "description": "An immutable, bounded permission. Status is derived from issue, use, expiry, and revocation events.",
+  "description": "An immutable, bounded permission with an explicit action boundary, consumption point, and reservation policy. Status is derived from issue, reservation, use, expiry, release, and revocation events; JSON Schema does not prove their race order.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -16,6 +16,7 @@
     "scope",
     "limits",
     "replay",
+    "consumption",
     "dependencies",
     "delegation",
     "decision_evidence",
@@ -23,7 +24,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.1.0"
+      "const": "0.2.0"
     },
     "grant_id": {
       "$ref": "#/$defs/identifier"
@@ -144,6 +145,16 @@
               "type": "null"
             }
           ]
+        },
+        "external_effect_id": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/identifier"
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       }
     },
@@ -215,6 +226,72 @@
         "idempotency_scope": {
           "type": "string",
           "minLength": 1
+        }
+      }
+    },
+    "consumption": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "action_boundary",
+        "consumption_point",
+        "reservation_policy",
+        "reservation_identity_fields",
+        "maximum_open_reservations",
+        "reservation_ttl_seconds",
+        "pre_consumption_rechecks",
+        "unused_reservation_release",
+        "consumed_reservation_release"
+      ],
+      "properties": {
+        "action_boundary": {
+          "enum": ["in_ledger", "cross_boundary_effect"]
+        },
+        "consumption_point": {
+          "enum": ["domain_commit", "dispatch_claim"]
+        },
+        "reservation_policy": {
+          "enum": ["atomic_reserve_and_consume", "exact_t1_reservation"]
+        },
+        "reservation_identity_fields": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "grant_id",
+              "command_id",
+              "effect_id",
+              "authorization_request_digest",
+              "publication_manifest_digest"
+            ]
+          }
+        },
+        "maximum_open_reservations": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "reservation_ttl_seconds": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "pre_consumption_rechecks": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "active_assignment",
+              "grant_not_revoked",
+              "controlled_time_before_expiry",
+              "prior_use_absent",
+              "exact_scope_match"
+            ]
+          }
+        },
+        "unused_reservation_release": {
+          "enum": ["not_applicable_atomic_commit", "release_on_revoke_expiry_cancellation_before_claim"]
+        },
+        "consumed_reservation_release": {
+          "const": "forbidden"
         }
       }
     },
@@ -332,9 +409,15 @@
       "then": {
         "properties": {
           "scope": {
+            "required": [
+              "external_effect_id"
+            ],
             "properties": {
               "publication_manifest_digest": {
                 "$ref": "#/$defs/digest"
+              },
+              "external_effect_id": {
+                "$ref": "#/$defs/identifier"
               }
             }
           },
@@ -354,6 +437,112 @@
               "mode": {
                 "const": "single_use"
               }
+            }
+          },
+          "limits": {
+            "properties": {
+              "max_uses": { "const": 1 },
+              "max_concurrency": { "const": 1 }
+            }
+          },
+          "delegation": {
+            "properties": {
+              "allowed": { "const": false },
+              "maximum_depth": { "const": 0 },
+              "child_scope_rule": { "const": "none" }
+            }
+          },
+          "consumption": {
+            "properties": {
+              "action_boundary": { "const": "cross_boundary_effect" },
+              "consumption_point": { "const": "dispatch_claim" },
+              "reservation_policy": { "const": "exact_t1_reservation" },
+              "reservation_identity_fields": {
+                "const": ["grant_id", "effect_id", "authorization_request_digest", "publication_manifest_digest"]
+              },
+              "maximum_open_reservations": { "const": 1 },
+              "reservation_ttl_seconds": { "minimum": 1 },
+              "pre_consumption_rechecks": {
+                "const": [
+                  "active_assignment",
+                  "grant_not_revoked",
+                  "controlled_time_before_expiry",
+                  "prior_use_absent",
+                  "exact_scope_match"
+                ]
+              },
+              "unused_reservation_release": {
+                "const": "release_on_revoke_expiry_cancellation_before_claim"
+              },
+              "consumed_reservation_release": { "const": "forbidden" }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "consumption": {
+            "properties": {
+              "action_boundary": { "const": "cross_boundary_effect" }
+            },
+            "required": ["action_boundary"]
+          }
+        },
+        "required": ["consumption"]
+      },
+      "then": {
+        "properties": {
+          "consumption": {
+            "properties": {
+              "consumption_point": { "const": "dispatch_claim" },
+              "reservation_policy": { "const": "exact_t1_reservation" },
+              "reservation_identity_fields": {
+                "minItems": 3,
+                "allOf": [
+                  { "contains": { "const": "grant_id" } },
+                  { "contains": { "const": "effect_id" } },
+                  { "contains": { "const": "authorization_request_digest" } }
+                ]
+              },
+              "maximum_open_reservations": { "minimum": 1 },
+              "reservation_ttl_seconds": { "minimum": 1 },
+              "pre_consumption_rechecks": {
+                "const": [
+                  "active_assignment",
+                  "grant_not_revoked",
+                  "controlled_time_before_expiry",
+                  "prior_use_absent",
+                  "exact_scope_match"
+                ]
+              },
+              "unused_reservation_release": { "const": "release_on_revoke_expiry_cancellation_before_claim" },
+              "consumed_reservation_release": { "const": "forbidden" }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "consumption": {
+            "properties": {
+              "consumption_point": { "const": "domain_commit" },
+              "reservation_policy": { "const": "atomic_reserve_and_consume" },
+              "reservation_identity_fields": { "const": ["grant_id", "command_id", "authorization_request_digest"] },
+              "maximum_open_reservations": { "const": 0 },
+              "reservation_ttl_seconds": { "const": 0 },
+              "pre_consumption_rechecks": {
+                "const": [
+                  "active_assignment",
+                  "grant_not_revoked",
+                  "controlled_time_before_expiry",
+                  "prior_use_absent",
+                  "exact_scope_match"
+                ]
+              },
+              "unused_reservation_release": { "const": "not_applicable_atomic_commit" },
+              "consumed_reservation_release": { "const": "forbidden" }
             }
           }
         }

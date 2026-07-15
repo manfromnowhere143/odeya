@@ -1,0 +1,110 @@
+{
+  "schema_version": "0.1.0",
+  "record_status": "proposed_non_authoritative",
+  "delta_id": "graph-delta.correction.fixture",
+  "version": 1,
+  "mission_id": "mission.fixture",
+  "graph_aggregate_id": "epistemic-graph.fixture",
+  "protocol_branch_ref": {"id": "protocol-branch.fixture", "version": 1, "digest": "sha256:4a00000000000000000000000000000000000000000000000000000000000000"},
+  "expected_predecessor": {
+    "kind": "existing_head",
+    "graph_version": 1,
+    "graph_root_digest": "sha256:5000000000000000000000000000000000000000000000000000000000000000",
+    "head_event_ref": {"id": "event.epistemic-graph-delta-admitted.fixture-01", "version": 1, "digest": "sha256:4b00000000000000000000000000000000000000000000000000000000000000"},
+    "origin_delta_event_ref": {"id": "event.epistemic-graph-delta-admitted.fixture-01", "version": 1, "digest": "sha256:4b00000000000000000000000000000000000000000000000000000000000000"},
+    "absence_evidence_ref": null,
+    "genesis_state_fabrication_allowed": false,
+    "reducer_snapshot_ref": {"id": "epistemic-graph-reducer.fixture", "version": 1, "digest": "sha256:4c00000000000000000000000000000000000000000000000000000000000000"},
+    "source_ledger_position": 10
+  },
+  "expected_predecessor_nodes": [
+    {"id": "hypothesis.fixture-a", "version": 1, "digest": "sha256:4500000000000000000000000000000000000000000000000000000000000000"}
+  ],
+  "node_version_additions": [
+    {
+      "operation": "add_immutable_version",
+      "node_version_ref": {"id": "hypothesis.fixture-a", "version": 2, "digest": "sha256:b400000000000000000000000000000000000000000000000000000000000000"},
+      "proposed_lineage": {
+        "kind": "successor_candidate",
+        "predecessor_node_ref": {"id": "hypothesis.fixture-a", "version": 1, "digest": "sha256:4500000000000000000000000000000000000000000000000000000000000000"},
+        "lineage_reason": "material-correction",
+        "canonical_supersession_effect": "none_until_supersession_edge_admitted"
+      }
+    }
+  ],
+  "edge_changes": [
+    {
+      "operation": "add_immutable_edge",
+      "edge_id": "edge.fixture-hypothesis-correction",
+      "edge_version": 1,
+      "edge_class": "supersession_relation",
+      "relation": "supersedes",
+      "from_endpoint": {"endpoint_type": "epistemic_node", "node_ref": {"id": "hypothesis.fixture-a", "version": 2, "digest": "sha256:b400000000000000000000000000000000000000000000000000000000000000"}},
+      "to_endpoint": {"endpoint_type": "epistemic_node", "node_ref": {"id": "hypothesis.fixture-a", "version": 1, "digest": "sha256:4500000000000000000000000000000000000000000000000000000000000000"}},
+      "expected_previous_edge_ref": null,
+      "reason_code": "material-correction",
+      "compatibility_rule_ref": {"id": "edge-compatibility.fixture", "version": 1, "digest": "sha256:4d00000000000000000000000000000000000000000000000000000000000000"}
+    }
+  ],
+  "material_evidence": [
+    {
+      "evidence_ref": {"artifact_id": "correction-evidence.fixture", "digest": "sha256:5800000000000000000000000000000000000000000000000000000000000000", "media_type": "application/json"},
+      "evidence_kind": "verification_result",
+      "disposition": "incorporated",
+      "rule_ref": {"id": "disposition-rule.fixture", "version": 1, "digest": "sha256:5200000000000000000000000000000000000000000000000000000000000000"},
+      "disposition_evidence_ref": {"artifact_id": "correction-disposition-evidence.fixture", "digest": "sha256:5900000000000000000000000000000000000000000000000000000000000000", "media_type": "application/json"}
+    }
+  ],
+  "reason_codes": ["material-correction"],
+  "proposed_by_candidate_artifact_ref": {"id": "candidate-artifact.correction.fixture", "version": 1, "digest": "sha256:5a00000000000000000000000000000000000000000000000000000000000000"},
+  "admission_controls": {
+    "admission_class": "correction_supersession",
+    "admission_profile_ref": {
+      "profile_id": "graph-admission-profile.correction-verification-only.fixture",
+      "profile_type": "correction_verification_only",
+      "version": "0.1.0",
+      "schema_id": "urn:odeya:schema:epistemic-admission-profile:0.1.0",
+      "digest": "sha256:5b00000000000000000000000000000000000000000000000000000000000000"
+    },
+    "admission_rule_ref": {
+      "rule_id": "graph-correction-admission-rule.fixture",
+      "version": "0.1.0",
+      "schema_id": "urn:odeya:schema:epistemic-admission-rule:0.1.0",
+      "digest": "sha256:5c00000000000000000000000000000000000000000000000000000000000000"
+    },
+    "rule_input_digest": "sha256:5d00000000000000000000000000000000000000000000000000000000000000",
+    "verification_requirement": "required",
+    "adjudication_requirement": "not_required",
+    "derivation_evidence_ref": {"artifact_id": "correction-admission-derivation.fixture", "digest": "sha256:5e00000000000000000000000000000000000000000000000000000000000000", "media_type": "application/json"},
+    "requirements_rule_derived": true,
+    "caller_selected": false
+  },
+  "correction_obligations": {
+    "applicability": "required",
+    "predecessor_node_ref": {"id": "hypothesis.fixture-a", "version": 1, "digest": "sha256:4500000000000000000000000000000000000000000000000000000000000000"},
+    "successor_candidate_node_ref": {"id": "hypothesis.fixture-a", "version": 2, "digest": "sha256:b400000000000000000000000000000000000000000000000000000000000000"},
+    "prior_version_resurrection_forbidden": true,
+    "dependency_fanout_required": true,
+    "non_resurrection_rule_ref": {
+      "rule_id": "correction-non-resurrection-rule.fixture",
+      "version": "0.1.0",
+      "schema_id": "urn:odeya:schema:epistemic-admission-rule:0.1.0",
+      "digest": "sha256:5f00000000000000000000000000000000000000000000000000000000000000"
+    },
+    "fanout_rule_ref": {
+      "rule_id": "correction-dependency-fanout-rule.fixture",
+      "version": "0.1.0",
+      "schema_id": "urn:odeya:schema:epistemic-admission-rule:0.1.0",
+      "digest": "sha256:6000000000000000000000000000000000000000000000000000000000000000"
+    },
+    "affected_dependency_manifest_ref": {"artifact_id": "correction-dependency-fanout.fixture", "digest": "sha256:6100000000000000000000000000000000000000000000000000000000000000", "media_type": "application/json"}
+  },
+  "proposal_boundary": {
+    "proposal_only": true,
+    "canonical_event_append_authorized": false,
+    "history_deletion_authorized": false,
+    "existing_version_mutation_authorized": false
+  },
+  "created_at": "2026-07-15T12:03:00.000000Z",
+  "created_by": {"principal_id": "fixture.model-run", "principal_type": "model_run"}
+}

@@ -1,0 +1,262 @@
+{
+  "schema_version": "0.1.0",
+  "registry_kind": "command_contract_registry",
+  "registry_id": "registry.command.structural-probe",
+  "version": "0.1.0",
+  "conformance_scope": "structural_fixture_only",
+  "supersedes_registry_subject_ref": null,
+  "canonicalization_profile_ref": {
+    "profile_id": "odeya-canonical-json",
+    "version": "1.0.0",
+    "digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+  },
+  "admission_contract": {
+    "members_are_contract_admitted": true,
+    "reserved_design_vocabulary_membership": "forbidden",
+    "nullable_payload_contracts": "forbidden",
+    "content_digest_dependency_order": "schema_to_state_to_reducer_to_event_to_command",
+    "content_digest_cycles": "forbidden",
+    "runtime_activation_proved": false,
+    "handler_deployment_proved": false
+  },
+  "ordering_contract": {
+    "member_key_expression": "command_type@command_version",
+    "ordering": "canonical_utf8_ascending",
+    "duplicate_member_keys": "reject"
+  },
+  "members": {
+    "structural.command_probe@0.1.0": {
+      "member_key": "structural.command_probe@0.1.0",
+      "command_type": "structural.command_probe",
+      "command_version": "0.1.0",
+      "payload_contract": {
+        "payload_required": true,
+        "nullable": false,
+        "schema_ref": {
+          "schema_member_key": "urn:odeya:schema:structural-command-probe:0.1.0@0.1.0",
+          "schema_id": "urn:odeya:schema:structural-command-probe:0.1.0",
+          "semantic_version": "0.1.0",
+          "byte_digest": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+          "byte_count": 4096,
+          "dialect": "https://json-schema.org/draft/2020-12/schema",
+          "root_json_type": "object",
+          "schema_member_digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333"
+        },
+        "payload_json_pointer": "",
+        "validation_mode": "exact_schema_bytes_before_decider"
+      },
+      "target_contract": {
+        "owning_module": "structural-module",
+        "aggregate_type": "structural-aggregate",
+        "allowed_stream_types": ["mission"],
+        "target_existence": "must_be_absent",
+        "origin_event_permitted": true,
+        "aggregate_id_source": "target_selector"
+      },
+      "actor_contract": {
+        "allowed_principal_types": ["human", "service"],
+        "authenticated_identity_required": true,
+        "caller_may_self_approve": false,
+        "tool_or_model_output_is_authority": false
+      },
+      "authority_contract": {
+        "mode": "bounded_grant",
+        "required_role": "structural-role",
+        "assignment_required": true,
+        "grant_required": true,
+        "grant_consumption_point": "admission_commit",
+        "caller_authority_assertion_sufficient": false
+      },
+      "required_evidence_families": [
+        "schema",
+        "state_frontier",
+        "policy",
+        "authority",
+        "resource",
+        "semantic",
+        "transition",
+        "event_cohort"
+      ],
+      "pure_rule_refs": [
+        {
+          "rule_id": "rule.structural.command-admission",
+          "version": "0.1.0",
+          "rule_digest": "sha256:4444444444444444444444444444444444444444444444444444444444444444"
+        }
+      ],
+      "legal_event_alternatives": [
+        {
+          "alternative_id": "structural-origin",
+          "decision_kind": "emit_atomic_ordered_batch",
+          "events": [
+            {
+              "event_type": "structural.event_recorded",
+              "event_version": "0.1.0",
+              "event_member_digest": "sha256:5555555555555555555555555555555555555555555555555555555555555555",
+              "cohort_position": 0
+            }
+          ],
+          "cohort_rule_refs": [
+            {
+              "rule_id": "rule.structural.command-cohort",
+              "version": "0.1.0",
+              "rule_digest": "sha256:6666666666666666666666666666666666666666666666666666666666666666"
+            }
+          ]
+        }
+      ],
+      "rejection_semantics": "reject_without_domain_events",
+      "limits": {
+        "max_envelope_bytes": 65536,
+        "max_payload_bytes": 32768,
+        "max_json_depth": 16,
+        "max_object_members": 128,
+        "max_array_items": 128,
+        "max_reference_count": 32,
+        "rule_timeout_milliseconds": 500
+      },
+      "idempotency_contract": {
+        "scope_fields": ["tenant_id", "namespace", "command_id"],
+        "request_identity": "canonical_envelope_and_payload_digest",
+        "exact_historical_retry": "return_same_receipt",
+        "changed_reuse": "refuse_without_new_receipt",
+        "duplicate_execution": "forbidden"
+      },
+      "handler_port_contract": {
+        "port_id": "port.structural.command-probe",
+        "port_version": "0.1.0",
+        "input_schema_ref": {
+          "schema_member_key": "urn:odeya:schema:structural-command-port-input:0.1.0@0.1.0",
+          "schema_id": "urn:odeya:schema:structural-command-port-input:0.1.0",
+          "semantic_version": "0.1.0",
+          "byte_digest": "sha256:7777777777777777777777777777777777777777777777777777777777777777",
+          "byte_count": 4096,
+          "dialect": "https://json-schema.org/draft/2020-12/schema",
+          "root_json_type": "object",
+          "schema_member_digest": "sha256:8888888888888888888888888888888888888888888888888888888888888888"
+        },
+        "decision_output_schema_ref": {
+          "schema_member_key": "urn:odeya:schema:structural-command-port-output:0.1.0@0.1.0",
+          "schema_id": "urn:odeya:schema:structural-command-port-output:0.1.0",
+          "semantic_version": "0.1.0",
+          "byte_digest": "sha256:9999999999999999999999999999999999999999999999999999999999999999",
+          "byte_count": 4096,
+          "dialect": "https://json-schema.org/draft/2020-12/schema",
+          "root_json_type": "object",
+          "schema_member_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "deterministic_for_bound_inputs": true,
+        "direct_state_mutation": false,
+        "external_io": false,
+        "runtime_conformance_evidence_in_subject": false
+      },
+      "trace_contract": {
+        "positive": [{ "artifact_id": "trace.command.positive", "digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "media_type": "application/json" }],
+        "negative": [{ "artifact_id": "trace.command.negative", "digest": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "media_type": "application/json" }],
+        "boundary": [{ "artifact_id": "trace.command.boundary", "digest": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", "media_type": "application/json" }],
+        "race": [{ "artifact_id": "trace.command.race", "digest": "sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", "media_type": "application/json" }],
+        "replay": [{ "artifact_id": "trace.command.replay", "digest": "sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "media_type": "application/json" }],
+        "compatibility": [{ "artifact_id": "trace.command.compatibility", "digest": "sha256:1212121212121212121212121212121212121212121212121212121212121212", "media_type": "application/json" }]
+      },
+      "review_evidence_refs": [
+        {
+          "artifact_id": "review.command.structural-probe",
+          "digest": "sha256:1313131313131313131313131313131313131313131313131313131313131313",
+          "media_type": "application/json"
+        }
+      ],
+      "member_digest_contract": {
+        "algorithm": "sha256",
+        "domain_separator": "odeya-command-contract-member-v1",
+        "canonicalization_profile_ref": {
+          "profile_id": "odeya-canonical-json",
+          "version": "1.0.0",
+          "digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "subject_schema_ref": {
+          "schema_id": "urn:odeya:schema:command-contract-registry:0.1.0",
+          "schema_digest": "sha256:1414141414141414141414141414141414141414141414141414141414141414"
+        },
+        "included_json_pointers": [
+          "/member_key",
+          "/command_type",
+          "/command_version",
+          "/payload_contract",
+          "/target_contract",
+          "/actor_contract",
+          "/authority_contract",
+          "/required_evidence_families",
+          "/pure_rule_refs",
+          "/legal_event_alternatives",
+          "/rejection_semantics",
+          "/limits",
+          "/idempotency_contract",
+          "/handler_port_contract",
+          "/trace_contract",
+          "/review_evidence_refs",
+          "/member_digest_contract"
+        ],
+        "excluded_json_pointers": ["/member_digest"]
+      },
+      "member_digest": "sha256:1515151515151515151515151515151515151515151515151515151515151515"
+    }
+  },
+  "member_set_commitment": {
+    "algorithm": "odeya-canonical-map-commitment-v1",
+    "member_count": 1,
+    "ordered_member_digests_digest": "sha256:1616161616161616161616161616161616161616161616161616161616161616"
+  },
+  "historical_read_policy": {
+    "resolution": "exact_member_version_and_digest",
+    "retained_contracts_required": true,
+    "mutable_aliases_allowed": false,
+    "unresolved_member": "block_before_envelope",
+    "retired_exact_retry": "resolve_historical_contract"
+  },
+  "source_manifest_ref": { "artifact_id": "manifest.command.structural-probe", "digest": "sha256:1717171717171717171717171717171717171717171717171717171717171717", "media_type": "application/json" },
+  "generator_identity_ref": { "artifact_id": "generator.command.structural-probe", "digest": "sha256:1818181818181818181818181818181818181818181818181818181818181818", "media_type": "application/json" },
+  "review_evidence_refs": [{ "artifact_id": "review.command-registry.structural-probe", "digest": "sha256:1919191919191919191919191919191919191919191919191919191919191919", "media_type": "application/json" }],
+  "known_limitations": [
+    {
+      "limitation_id": "structural-only",
+      "severity": "critical",
+      "statement": "The synthetic member demonstrates shape only and is not an Odeya admitted command.",
+      "consequence": "The exact dependency-closed Gate A admitted command set and all real member instances remain unresolved."
+    }
+  ],
+  "registry_digest_contract": {
+    "algorithm": "sha256",
+    "domain_separator": "odeya-command-contract-registry-v1",
+    "canonicalization_profile_ref": {
+      "profile_id": "odeya-canonical-json",
+      "version": "1.0.0",
+      "digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+    },
+    "subject_schema_ref": {
+      "schema_id": "urn:odeya:schema:command-contract-registry:0.1.0",
+      "schema_digest": "sha256:1414141414141414141414141414141414141414141414141414141414141414"
+    },
+    "included_json_pointers": [
+      "/schema_version",
+      "/registry_kind",
+      "/registry_id",
+      "/version",
+      "/conformance_scope",
+      "/supersedes_registry_subject_ref",
+      "/canonicalization_profile_ref",
+      "/admission_contract",
+      "/ordering_contract",
+      "/members",
+      "/member_set_commitment",
+      "/historical_read_policy",
+      "/source_manifest_ref",
+      "/generator_identity_ref",
+      "/review_evidence_refs",
+      "/known_limitations",
+      "/registry_digest_contract"
+    ],
+    "excluded_json_pointers": ["/registry_digest", "/external_attestations"]
+  },
+  "registry_digest": "sha256:2020202020202020202020202020202020202020202020202020202020202020",
+  "external_attestations": []
+}

@@ -1,0 +1,3950 @@
+{
+  "schema_version": "0.2.0",
+  "artifact_class": "architecture_evidence_only",
+  "inventory_id": "odeya.first-slice-admission-gap-inventory",
+  "version": "0.2.0",
+  "generated_at": "2026-07-16",
+  "status": "non_authoritative_non_freezable_gap_hypothesis",
+  "scope_verdict": {
+    "may_freeze_scope_or_counts": false,
+    "dependency_bounded": false,
+    "dependency_complete": false,
+    "only_exact_count_key": "design_commands_exact",
+    "working_partition_is_admission_set": false,
+    "current_event_union_is_required_set": false,
+    "mandatory_recompute_after": [
+      "C1",
+      "C5",
+      "C6",
+      "C7",
+      "C8"
+    ]
+  },
+  "sources": [
+    "architecture/command-design-vocabulary.json",
+    "architecture/module-dependency-manifest.json",
+    "docs/COMMAND_CONTRACT_REGISTRY.md",
+    "docs/COMMAND_EVENT_CATALOG.md",
+    "docs/COGNITIVE_CONTROL_CONTRACTS.md",
+    "docs/DATA_GOVERNANCE.md",
+    "docs/ENGINE_CONTRACT_ROOT.md",
+    "docs/FIRST_SLICE_METHOD_PROFILE.md",
+    "docs/FIRST_VERTICAL_SLICE.md",
+    "docs/LEDGER_INTEGRITY_AND_RECOVERY.md",
+    "docs/REGISTRY_GRAPH_CONTRACTS.md",
+    "docs/REDUCER_REGISTRY.md",
+    "docs/STATE_MODEL.md",
+    "schemas/command-contract-registry.schema.json",
+    "schemas/command-envelope.schema.json",
+    "schemas/event-contract-registry.schema.json",
+    "schemas/reducer-registry.schema.json",
+    "schemas/research-event.schema.json"
+  ],
+  "counts": {
+    "design_commands_exact": 121,
+    "current_hypothesis_required_commands": 44,
+    "current_hypothesis_outside_commands": 77,
+    "current_hypothesis_closed_payload_candidates_not_admitted": 1,
+    "current_hypothesis_missing_payload_contracts": 43,
+    "current_hypothesis_command_contract_records_missing": 44,
+    "current_primary_event_name_union": 43,
+    "current_kernel_cohort_event_name_union": 9,
+    "current_event_conflict_union": 52,
+    "current_event_conflict_union_members_missing_records": 52,
+    "current_aggregate_hypotheses": 23,
+    "current_state_subject_hypotheses_missing_records": 23,
+    "current_reducer_hypotheses_missing_records": 23,
+    "current_owner_module_hypotheses": 10,
+    "known_blocking_conflicts": 8
+  },
+  "count_semantics": {
+    "design_commands_exact": "exact unique design-vocabulary discriminator count; every member remains not_contract_admitted",
+    "current_hypothesis_required_commands": "provisional classification only; may grow, shrink, or change after cohort, execution, ownership, and prerequisite resolution",
+    "current_hypothesis_outside_commands": "provisional complement only; C5 and C8 make execution/materialization and recovery exclusions conditional",
+    "current_hypothesis_closed_payload_candidates_not_admitted": "current 44-name hypothesis only; membership may change",
+    "current_hypothesis_missing_payload_contracts": "current 44-name hypothesis only; not a final construction cardinality",
+    "current_hypothesis_command_contract_records_missing": "current 44-name hypothesis only; no real command records exist",
+    "current_primary_event_name_union": "unique catalog primary-event names under the disputed 44-command classification",
+    "current_kernel_cohort_event_name_union": "unique currently named companion-event names; alternatives and producers are unresolved",
+    "current_event_conflict_union": "upper-bound name union across mutually exclusive C1 resource branches under the current scope; not an exact required event set and not an event-occurrence count",
+    "current_event_conflict_union_members_missing_records": "all members of the 52-name conflict union lack real EventContractRecords; final missing count follows the resolved event set",
+    "current_aggregate_hypotheses": "provisional rows; C5/C8 can add aggregates and C7 can split or change reducer ownership",
+    "current_state_subject_hypotheses_missing_records": "current aggregate hypothesis only",
+    "current_reducer_hypotheses_missing_records": "current aggregate hypothesis only; C7 makes the verification/reproducibility cardinality unresolved",
+    "current_owner_module_hypotheses": "current scope only; execution or recovery ownership may enter after C5/C8",
+    "known_blocking_conflicts": "exact count of currently enumerated conflicts C1-C8; additional review findings remain possible"
+  },
+  "machine_invariants": [
+    {
+      "invariant_id": "MI-001",
+      "assertion": "unique(commands.command_type) == len(commands) == counts.design_commands_exact == 121",
+      "status": "must_hold"
+    },
+    {
+      "invariant_id": "MI-002",
+      "assertion": "counts.current_hypothesis_required_commands + counts.current_hypothesis_outside_commands == counts.design_commands_exact",
+      "status": "working_partition_only_not_admission_closure"
+    },
+    {
+      "invariant_id": "MI-003",
+      "assertion": "counts.current_hypothesis_closed_payload_candidates_not_admitted + counts.current_hypothesis_missing_payload_contracts == counts.current_hypothesis_required_commands",
+      "status": "working_hypothesis_only"
+    },
+    {
+      "invariant_id": "MI-004",
+      "assertion": "unique(required_events.event_type) == len(required_events) == counts.current_event_conflict_union == 52",
+      "status": "conflict_union_only_not_resolved_required_set"
+    },
+    {
+      "invariant_id": "MI-005",
+      "assertion": "unique(aggregate_dependencies.aggregate_type) == len(aggregate_dependencies) == counts.current_aggregate_hypotheses == 23",
+      "status": "working_hypothesis_only_reducer_cardinality_unresolved_by_C7"
+    },
+    {
+      "invariant_id": "MI-006",
+      "assertion": "unique(blocking_conflicts.conflict_id) == [C1,C2,C3,C4,C5,C6,C7,C8]",
+      "status": "must_hold"
+    },
+    {
+      "invariant_id": "MI-007",
+      "assertion": "C1 resolution recomputes the event set; C5/C8 resolution recomputes command, payload, event, aggregate and module scope; C6 resolution freezes event occurrence cardinality; C7 resolution recomputes reducer ownership/cardinality",
+      "status": "mandatory_before_freeze"
+    },
+    {
+      "invariant_id": "MI-008",
+      "assertion": "set(multi_grant_cardinality_conflict.commands_declaring_bounded_grants) == set(commands where scope_disposition == required_candidate and authority_profile == bounded_grants)",
+      "status": "must_hold_for_current_hypothesis"
+    },
+    {
+      "invariant_id": "MI-009",
+      "assertion": "every conditional_scope_overrides.command_types member exists exactly once in commands and remains non-admitted until its conflict closes",
+      "status": "must_hold"
+    },
+    {
+      "invariant_id": "MI-010",
+      "assertion": "scope_verdict.may_freeze_scope_or_counts == refusal.may_freeze_scope_or_counts == false",
+      "status": "must_hold"
+    }
+  ],
+  "cohort_profiles": {
+    "bootstrap_domain": {
+      "status": "blocked_missing_contract",
+      "events": "authority.assignment_recorded only; constitutional_bootstrap; no grant-use recursion"
+    },
+    "grant_domain": {
+      "status": "blocked_conflict_c6",
+      "required_consumption_events": "exactly one authority.grant_used per command-specific consumed grant",
+      "required_domain_events": "the complete command-specific domain event set",
+      "required_exhaustion_events": "exactly one authority.grant_exhausted for each and only each consumed grant whose final legal use occurred; zero-or-more",
+      "cardinality_and_order": "finite and command-specific; unresolved until immutable CommandContractRecord",
+      "noop": "must_be_command_specific"
+    },
+    "protocol_exposure_integrity": {
+      "status": "blocked_missing_contract_and_conflict_c6",
+      "alternatives": [
+        "grant_domain+protocol.exposure_recorded",
+        "grant_domain+protocol.exposure_recorded+protocol.integrity_determined"
+      ]
+    },
+    "protocol_freeze_integrity": {
+      "status": "blocked_missing_contract_and_conflict_c6",
+      "alternatives": [
+        "grant_domain+protocol.frozen+protocol.integrity_determined"
+      ]
+    },
+    "authority_lifecycle_c4": {
+      "status": "blocked_conflict_c4",
+      "requirement": "assignment-only nonrecursive authority plus exact grant/resource expiry/revoke race cohorts"
+    },
+    "run_measurement_c3": {
+      "status": "blocked_conflict_c3",
+      "requirement": "invalid run and no-valid-measurement must be atomic or globally fenced despite split producers"
+    },
+    "resource_observation_c1": {
+      "status": "blocked_conflict_c1",
+      "requirement": "choose exact resource.observed versus usage_observed/settled algebra and recompute the 52-name conflict union"
+    },
+    "local_execution_materialization_c5": {
+      "status": "blocked_conflict_c5",
+      "requirement": "before local analyzer byte visibility retain exact materialization intent, lease-equivalent exclusivity, sandbox capability, safety/execution grants, resource reservation and claim, execution start/completion, and observations",
+      "resolution_alternatives": [
+        "closed specialized verifier-execution cohort with named legal producers",
+        "expand scope to required work/lease/attempt/materialization commands and aggregates"
+      ]
+    },
+    "verification_assign_resource": {
+      "status": "blocked_missing_contract_and_conflict_c6",
+      "events": "command-specific grant-use set+resource.reservation_created+verification.assigned+exact final-use exhaustion subset"
+    },
+    "verification_start_resource": {
+      "status": "blocked_conflicts_c5_c6",
+      "events": "command-specific grant-use set+resource.reservation_claimed+verification.started+exact final-use exhaustion subset; C5 execution/materialization evidence still absent"
+    },
+    "verification_invalidation_resource": {
+      "status": "blocked_conflict_c4",
+      "alternatives": [
+        "grant_domain+verification.invalidated",
+        "grant_domain+verification.invalidated+resource.reservation_released for exact preclaim child only"
+      ]
+    },
+    "claim_correction_c2": {
+      "status": "blocked_conflicts_c2_c6",
+      "requirement": "claim.superseded+dependency.invalidation_recorded atomic or formally fenced with one legal producer model, plus exact multi-grant use/exhaustion cardinality"
+    },
+    "reproducibility_ownership_c7": {
+      "status": "blocked_conflict_c7",
+      "requirement": "resolve catalog Reproducibility reducer versus candidate Verification reducer for reproducibility.determined without implying two canonical reducers for one aggregate"
+    },
+    "constitutional_recovery_prerequisite_c8": {
+      "status": "blocked_conflict_c8",
+      "admission_boundary": "separately admitted and machine-bound before the first mission command",
+      "requirement": "exact registry graph, EngineContractRoot, C0 bundle, witnessed checkpoint, current RegistryActivation, and legal recovery/fork/quarantine frontier",
+      "fallback": "expand first-slice command and aggregate scope if the prerequisite surface cannot supply the evidence"
+    }
+  },
+  "blocking_conflicts": [
+    {
+      "conflict_id": "C1",
+      "summary": "resource.record_observation maps to resource.observed while resource accounting requires usage_observed and possible settlement; reducer input set conflicts"
+    },
+    {
+      "conflict_id": "C2",
+      "summary": "claim supersession and dependency invalidation must be atomic but have different sole command producers"
+    },
+    {
+      "conflict_id": "C3",
+      "summary": "invalid-run and no-valid-measurement consequence must be atomic or fenced but have different command producers"
+    },
+    {
+      "conflict_id": "C4",
+      "summary": "bootstrap/maintenance authority must avoid recursive self-grants and resource reservation expiry/release/settlement producers and races are not exact"
+    },
+    {
+      "conflict_id": "C5",
+      "summary": "local analyzer execution lacks the required materialization intent, lease-equivalent exclusivity, sandbox capability, safety/execution grant, reservation/claim, and execution observation producer cohort"
+    },
+    {
+      "conflict_id": "C6",
+      "summary": "generic grant cohort is singular although bounded_grants commands require one grant-used event per consumed grant and exhaustion for the exact final-use subset"
+    },
+    {
+      "conflict_id": "C7",
+      "summary": "reproducibility.determined is mapped to reducer Reproducibility in the catalog but folded into Verification in this inventory"
+    },
+    {
+      "conflict_id": "C8",
+      "summary": "checkpoint, witness, registry activation, and recovery legality are asserted outside without a separately admitted machine-bound prerequisite dependency"
+    }
+  ],
+  "external_prerequisite_dependencies": [
+    {
+      "prerequisite_id": "P0.constitutional-recovery-admission",
+      "blocked_by": "C8",
+      "status": "missing_machine_bound_dependency",
+      "must_precede": "first first-slice mission command",
+      "required_subjects": [
+        "schema_registry_snapshot",
+        "aggregate_state_subject_registry_snapshot",
+        "reducer_registry_snapshot",
+        "event_contract_registry_snapshot",
+        "command_contract_registry_snapshot",
+        "engine_contract_root",
+        "c0_registry_bundle",
+        "witnessed_ledger_checkpoint",
+        "registry_activation",
+        "current_recovery_fork_quarantine_frontier"
+      ],
+      "separately_admitted": false,
+      "scope_consequence_if_absent": "checkpoint_witness_activation_recovery_commands_and_aggregates_must_be_reclassified"
+    }
+  ],
+  "conditional_scope_overrides": [
+    {
+      "conflict_id": "C5",
+      "current_scope_dispositions_are_final": false,
+      "command_types": [
+        "work_graph.compile",
+        "stage.set_readiness",
+        "stage.set_authorization",
+        "work.acquire_lease",
+        "work.renew_lease",
+        "work.release_lease",
+        "work.revoke_lease",
+        "attempt.start",
+        "attempt.report",
+        "data_exposure.record_intent"
+      ],
+      "stay_outside_condition": "a closed specialized verifier-execution cohort supplies the exact lease/materialization/sandbox/reservation/execution facts with legal producers"
+    },
+    {
+      "conflict_id": "C8",
+      "current_scope_dispositions_are_final": false,
+      "command_types": [
+        "ledger_checkpoint.propose",
+        "ledger_checkpoint.seal",
+        "ledger_checkpoint.record_witness_observation",
+        "ledger_checkpoint.record_consistency_failure",
+        "backup.record_write_observation",
+        "backup.record_verification_observation",
+        "backup.record_recoverability_observation",
+        "restore.open_case",
+        "restore.record_report",
+        "restore.close_case",
+        "recovery.record_current_policy_frontier",
+        "recovery.record_decision",
+        "recovery.enter_quarantine",
+        "recovery.change_service_scope",
+        "ledger.record_fork",
+        "ledger.begin_epoch"
+      ],
+      "stay_outside_condition": "P0.constitutional-recovery-admission is separately admitted and machine-bound before the first mission command"
+    }
+  ],
+  "multi_grant_cardinality_conflict": {
+    "conflict_id": "C6",
+    "event_payload_cardinality": "one grant_id per authority.grant_used or authority.grant_exhausted event",
+    "commands_declaring_bounded_grants": [
+      "proposal.decide",
+      "mission.create_origin",
+      "mission.advance_phase",
+      "protocol.freeze",
+      "data_use.decide",
+      "verification.assign",
+      "verification.start",
+      "verification.complete",
+      "claim.supersede"
+    ],
+    "required_rule": "one grant-used event per consumed grant plus exhaustion events for exactly the final-use subset, with finite command-specific cardinality and order",
+    "status": "unresolved"
+  },
+  "obligation_profiles": {
+    "mission_metadata": "no source content authority; bind exact mission/protocol/evidence references",
+    "authority_only": "no external effect; exact root/assignment/grant scope, controlled time, use and race state",
+    "data_governance": "metadata before rights; exact rights/use/purpose/recipient/provider/region/retention; unknown denies",
+    "governed_local_bytes": "C5 blocked: active exact DataUseDecision is necessary but not sufficient; require materialization intent, lease-equivalent exclusivity, sandbox capability, safety/execution grants, resource reservation/claim, and retained execution observations before byte visibility",
+    "science_local": "active rights; exact protocol/method/estimand/units/missingness; no provider/model/network/external effect",
+    "resource_observation": "exact multidimensional observation; unknown unavailable and unmeasured are never zero",
+    "verification_reserved": "C5/C6 blocked: exact IV0-IV4 plus command-specific grant-use set, materialization/lease/sandbox execution evidence, resource reserve/claim/observe/settle, two separate clean environments, and zero external boundary",
+    "claim_truth": "exact adjudication/verification/dependency frontier; required limitations; no publication authority",
+    "publication_outside": "terminal boundary forbids publication and release",
+    "external_dispatch_outside": "terminal boundary forbids provider/network/physical/external dispatch",
+    "governed_exposure_outside": "C5 conditional: no external recipient/provider/model boundary crossing, but a local materialization-intent producer remains mandatory",
+    "data_lifecycle_outside": "no revocation/deletion/hold lifecycle exercised by the fixed fixtures",
+    "recovery_outside": "C8 conditional: checkpoint/witness/activation/recovery commands may stay outside only behind separately admitted P0.constitutional-recovery-admission",
+    "scheduler_outside": "C5 conditional: general work lease/attempt commands may stay outside only if a closed specialized verifier-execution cohort supplies equivalent materialization/sandbox/reservation/execution evidence",
+    "learning_outside": "no learning/strategy promotion claim",
+    "not_exercised_outside": "command is not needed to represent the fixed fixture outcomes"
+  },
+  "commands": [
+    {
+      "command_type": "proposal.submit",
+      "scope_disposition": "required_candidate",
+      "command_schema_id": "urn:odeya:command-payload:proposal.submit:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "proposal.submitted"
+      ],
+      "event_alternative_status": "candidate_requires_immutable_contract",
+      "aggregate_type": "proposal",
+      "owner_module": "mission",
+      "stream_types": [
+        "portfolio",
+        "proposal"
+      ],
+      "authority_profile": "bounded_grant",
+      "cohort_profile": "grant_domain",
+      "obligation_profile": "mission_metadata",
+      "reducer_state_dependency": "proposal",
+      "can_stay_outside_first_slice": false,
+      "outside_reason": null,
+      "admission_status": "blocked"
+    },
+    {
+      "command_type": "proposal.decide",
+      "scope_disposition": "required_candidate",
+      "command_schema_id": "urn:odeya:command-payload:proposal.decide:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "proposal.decided"
+      ],
+      "event_alternative_status": "candidate_requires_immutable_contract",
+      "aggregate_type": "proposal",
+      "owner_module": "mission",
+      "stream_types": [
+        "portfolio",
+        "proposal"
+      ],
+      "authority_profile": "bounded_grants",
+      "cohort_profile": "grant_domain",
+      "obligation_profile": "mission_metadata",
+      "reducer_state_dependency": "proposal",
+      "can_stay_outside_first_slice": false,
+      "outside_reason": null,
+      "admission_status": "blocked"
+    },
+    {
+      "command_type": "proposal.withdraw",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:proposal.withdraw:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "proposal.withdrawn"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "proposal",
+      "owner_module": "mission",
+      "stream_types": [
+        "portfolio",
+        "proposal"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "not_exercised_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "no_withdrawal_fixture",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "mission.create_origin",
+      "scope_disposition": "required_candidate",
+      "command_schema_id": "urn:odeya:command-payload:mission.create_origin:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "mission.origin_recorded"
+      ],
+      "event_alternative_status": "candidate_requires_immutable_contract",
+      "aggregate_type": "mission",
+      "owner_module": "mission",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "bounded_grants",
+      "cohort_profile": "grant_domain",
+      "obligation_profile": "mission_metadata",
+      "reducer_state_dependency": "mission",
+      "can_stay_outside_first_slice": false,
+      "outside_reason": null,
+      "admission_status": "blocked"
+    },
+    {
+      "command_type": "mission.compile_contract",
+      "scope_disposition": "required_candidate",
+      "command_schema_id": "urn:odeya:command-payload:mission.compile_contract:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "mission.contract_compiled"
+      ],
+      "event_alternative_status": "candidate_requires_immutable_contract",
+      "aggregate_type": "mission",
+      "owner_module": "mission",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "bounded_grant",
+      "cohort_profile": "grant_domain",
+      "obligation_profile": "mission_metadata",
+      "reducer_state_dependency": "mission",
+      "can_stay_outside_first_slice": false,
+      "outside_reason": null,
+      "admission_status": "blocked"
+    },
+    {
+      "command_type": "mission.advance_phase",
+      "scope_disposition": "required_candidate",
+      "command_schema_id": "urn:odeya:command-payload:mission.advance_phase:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "mission.phase_advanced"
+      ],
+      "event_alternative_status": "candidate_requires_immutable_contract",
+      "aggregate_type": "mission",
+      "owner_module": "mission",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "bounded_grants",
+      "cohort_profile": "grant_domain",
+      "obligation_profile": "mission_metadata",
+      "reducer_state_dependency": "mission",
+      "can_stay_outside_first_slice": false,
+      "outside_reason": null,
+      "admission_status": "blocked"
+    },
+    {
+      "command_type": "mission.change_control",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:mission.change_control:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "mission.control_changed"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "mission",
+      "owner_module": "mission",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "not_exercised_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "full_mission_control_closure_or_handoff_not_exercised",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "mission.close",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:mission.close:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "mission.closed"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "mission",
+      "owner_module": "mission",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "not_exercised_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "full_mission_control_closure_or_handoff_not_exercised",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "mission.record_handoff",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:mission.record_handoff:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "handoff.recorded"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "handoff",
+      "owner_module": "mission",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "not_exercised_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "full_mission_control_closure_or_handoff_not_exercised",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "protocol.record_exposure",
+      "scope_disposition": "required_candidate",
+      "command_schema_id": "urn:odeya:command-payload:protocol.record_exposure:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "protocol.exposure_recorded"
+      ],
+      "event_alternative_status": "candidate_requires_immutable_contract",
+      "aggregate_type": "protocol",
+      "owner_module": "protocol",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "bounded_grant",
+      "cohort_profile": "protocol_exposure_integrity",
+      "obligation_profile": "mission_metadata",
+      "reducer_state_dependency": "protocol",
+      "can_stay_outside_first_slice": false,
+      "outside_reason": null,
+      "admission_status": "blocked"
+    },
+    {
+      "command_type": "protocol.freeze",
+      "scope_disposition": "required_candidate",
+      "command_schema_id": "urn:odeya:command-payload:protocol.freeze:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "protocol.frozen"
+      ],
+      "event_alternative_status": "candidate_requires_immutable_contract",
+      "aggregate_type": "protocol",
+      "owner_module": "protocol",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "bounded_grants",
+      "cohort_profile": "protocol_freeze_integrity",
+      "obligation_profile": "mission_metadata",
+      "reducer_state_dependency": "protocol",
+      "can_stay_outside_first_slice": false,
+      "outside_reason": null,
+      "admission_status": "blocked"
+    },
+    {
+      "command_type": "protocol.amend",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:protocol.amend:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "protocol.amended"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "protocol",
+      "owner_module": "protocol",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "not_exercised_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "prospective_protocol_evolution_not_exercised",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "protocol.fork",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:protocol.fork:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "protocol.forked"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "protocol",
+      "owner_module": "protocol",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "not_exercised_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "prospective_protocol_evolution_not_exercised",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "protocol.supersede",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:protocol.supersede:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "protocol.superseded"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "protocol",
+      "owner_module": "protocol",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "not_exercised_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "prospective_protocol_evolution_not_exercised",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "work_graph.compile",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:work_graph.compile:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "work_graph.compiled"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "work_graph",
+      "owner_module": "work",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "scheduler_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "c5_conditional_specialized_verifier_execution_cohort_or_scope_expansion",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "stage.set_readiness",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:stage.set_readiness:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "stage.readiness_changed"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "stage",
+      "owner_module": "work",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "scheduler_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "c5_conditional_specialized_verifier_execution_cohort_or_scope_expansion",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "stage.set_authorization",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:stage.set_authorization:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "stage.authorization_changed"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "stage",
+      "owner_module": "work",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "scheduler_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "c5_conditional_specialized_verifier_execution_cohort_or_scope_expansion",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "work.acquire_lease",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:work.acquire_lease:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "work.lease_acquired"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "work_item",
+      "owner_module": "work",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "scheduler_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "c5_conditional_specialized_verifier_execution_cohort_or_scope_expansion",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "work.renew_lease",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:work.renew_lease:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "work.lease_renewed"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "work_item",
+      "owner_module": "work",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "scheduler_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "c5_conditional_specialized_verifier_execution_cohort_or_scope_expansion",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "work.release_lease",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:work.release_lease:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "work.lease_released"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "work_item",
+      "owner_module": "work",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "scheduler_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "c5_conditional_specialized_verifier_execution_cohort_or_scope_expansion",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "work.revoke_lease",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:work.revoke_lease:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "work.lease_revoked"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "work_item",
+      "owner_module": "work",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "scheduler_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "c5_conditional_specialized_verifier_execution_cohort_or_scope_expansion",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "attempt.start",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:attempt.start:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "attempt.started"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "attempt",
+      "owner_module": "work",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "scheduler_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "c5_conditional_specialized_verifier_execution_cohort_or_scope_expansion",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "attempt.report",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:attempt.report:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "attempt.interrupted",
+        "attempt.completion_unknown",
+        "attempt.completed",
+        "attempt.failed",
+        "attempt.cancelled"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "attempt",
+      "owner_module": "work",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "scheduler_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "c5_conditional_specialized_verifier_execution_cohort_or_scope_expansion",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "resource.record_observation",
+      "scope_disposition": "required_candidate",
+      "command_schema_id": "urn:odeya:command-payload:resource.record_observation:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "resource.observed"
+      ],
+      "event_alternative_status": "blocked_pending_resource_observation_c1",
+      "aggregate_type": "resource_budget",
+      "owner_module": "resources",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "bounded_grant",
+      "cohort_profile": "resource_observation_c1",
+      "obligation_profile": "resource_observation",
+      "reducer_state_dependency": "resource_budget",
+      "can_stay_outside_first_slice": false,
+      "outside_reason": null,
+      "admission_status": "blocked"
+    },
+    {
+      "command_type": "budget.record_exhaustion",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:budget.record_exhaustion:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "budget.exhausted"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "resource_budget",
+      "owner_module": "resources",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "not_exercised_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "over_ceiling_rejects_slice_not_success_path",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "blocker.open",
+      "scope_disposition": "required_candidate",
+      "command_schema_id": "urn:odeya:command-payload:blocker.open:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "blocker.opened"
+      ],
+      "event_alternative_status": "candidate_requires_immutable_contract",
+      "aggregate_type": "blocker",
+      "owner_module": "mission",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "bounded_grant",
+      "cohort_profile": "grant_domain",
+      "obligation_profile": "mission_metadata",
+      "reducer_state_dependency": "blocker",
+      "can_stay_outside_first_slice": false,
+      "outside_reason": null,
+      "admission_status": "blocked"
+    },
+    {
+      "command_type": "blocker.resolve",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:blocker.resolve:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "blocker.resolved"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "blocker",
+      "owner_module": "mission",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "not_exercised_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "proof_fixture_blockers_remain_open",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "blocker.supersede",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:blocker.supersede:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "blocker.superseded"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "blocker",
+      "owner_module": "mission",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "not_exercised_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "proof_fixture_blockers_remain_open",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "artifact.record",
+      "scope_disposition": "required_candidate",
+      "command_schema_id": "urn:odeya:command-payload:artifact.record:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "artifact.recorded"
+      ],
+      "event_alternative_status": "candidate_requires_immutable_contract",
+      "aggregate_type": "artifact",
+      "owner_module": "artifact",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "bounded_grant",
+      "cohort_profile": "grant_domain",
+      "obligation_profile": "governed_local_bytes",
+      "reducer_state_dependency": "artifact",
+      "can_stay_outside_first_slice": false,
+      "outside_reason": null,
+      "admission_status": "blocked"
+    },
+    {
+      "command_type": "artifact.record_validation",
+      "scope_disposition": "required_candidate",
+      "command_schema_id": "urn:odeya:command-payload:artifact.record_validation:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "artifact.validated"
+      ],
+      "event_alternative_status": "candidate_requires_immutable_contract",
+      "aggregate_type": "artifact",
+      "owner_module": "artifact",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "bounded_grant",
+      "cohort_profile": "grant_domain",
+      "obligation_profile": "governed_local_bytes",
+      "reducer_state_dependency": "artifact",
+      "can_stay_outside_first_slice": false,
+      "outside_reason": null,
+      "admission_status": "blocked"
+    },
+    {
+      "command_type": "artifact.promote",
+      "scope_disposition": "required_candidate",
+      "command_schema_id": "urn:odeya:command-payload:artifact.promote:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "artifact.promoted"
+      ],
+      "event_alternative_status": "candidate_requires_immutable_contract",
+      "aggregate_type": "artifact",
+      "owner_module": "artifact",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "bounded_grant",
+      "cohort_profile": "grant_domain",
+      "obligation_profile": "governed_local_bytes",
+      "reducer_state_dependency": "artifact",
+      "can_stay_outside_first_slice": false,
+      "outside_reason": null,
+      "admission_status": "blocked"
+    },
+    {
+      "command_type": "artifact.quarantine",
+      "scope_disposition": "required_candidate",
+      "command_schema_id": "urn:odeya:command-payload:artifact.quarantine:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "artifact.quarantined"
+      ],
+      "event_alternative_status": "candidate_requires_immutable_contract",
+      "aggregate_type": "artifact",
+      "owner_module": "artifact",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "bounded_grant",
+      "cohort_profile": "grant_domain",
+      "obligation_profile": "governed_local_bytes",
+      "reducer_state_dependency": "artifact",
+      "can_stay_outside_first_slice": false,
+      "outside_reason": null,
+      "admission_status": "blocked"
+    },
+    {
+      "command_type": "artifact.record_corruption",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:artifact.record_corruption:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "artifact.corrupt_detected"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "artifact",
+      "owner_module": "artifact",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "not_exercised_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "corruption_or_tombstone_lifecycle_not_exercised",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "artifact.record_unavailability",
+      "scope_disposition": "required_candidate",
+      "command_schema_id": "urn:odeya:command-payload:artifact.record_unavailability:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "artifact.unavailable"
+      ],
+      "event_alternative_status": "candidate_requires_immutable_contract",
+      "aggregate_type": "artifact",
+      "owner_module": "artifact",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "bounded_grant",
+      "cohort_profile": "grant_domain",
+      "obligation_profile": "governed_local_bytes",
+      "reducer_state_dependency": "artifact",
+      "can_stay_outside_first_slice": false,
+      "outside_reason": null,
+      "admission_status": "blocked"
+    },
+    {
+      "command_type": "artifact.tombstone",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:artifact.tombstone:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "artifact.tombstoned"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "artifact",
+      "owner_module": "artifact",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "not_exercised_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "corruption_or_tombstone_lifecycle_not_exercised",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "run.determine_validity",
+      "scope_disposition": "required_candidate",
+      "command_schema_id": "urn:odeya:command-payload:run.determine_validity:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "run.validity_determined"
+      ],
+      "event_alternative_status": "blocked_pending_run_measurement_c3",
+      "aggregate_type": "run",
+      "owner_module": "measurement",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "bounded_grant",
+      "cohort_profile": "run_measurement_c3",
+      "obligation_profile": "science_local",
+      "reducer_state_dependency": "run",
+      "can_stay_outside_first_slice": false,
+      "outside_reason": null,
+      "admission_status": "blocked"
+    },
+    {
+      "command_type": "measurement.determine_disposition",
+      "scope_disposition": "required_candidate",
+      "command_schema_id": "urn:odeya:command-payload:measurement.determine_disposition:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "measurement.disposition_determined"
+      ],
+      "event_alternative_status": "blocked_pending_run_measurement_c3",
+      "aggregate_type": "measurement",
+      "owner_module": "measurement",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "bounded_grant",
+      "cohort_profile": "run_measurement_c3",
+      "obligation_profile": "science_local",
+      "reducer_state_dependency": "measurement",
+      "can_stay_outside_first_slice": false,
+      "outside_reason": null,
+      "admission_status": "blocked"
+    },
+    {
+      "command_type": "metric.record_observation",
+      "scope_disposition": "required_candidate",
+      "command_schema_id": "urn:odeya:command-payload:metric.record_observation:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "metric.observed"
+      ],
+      "event_alternative_status": "candidate_requires_immutable_contract",
+      "aggregate_type": "metric",
+      "owner_module": "measurement",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "bounded_grant",
+      "cohort_profile": "grant_domain",
+      "obligation_profile": "science_local",
+      "reducer_state_dependency": "metric",
+      "can_stay_outside_first_slice": false,
+      "outside_reason": null,
+      "admission_status": "blocked"
+    },
+    {
+      "command_type": "falsifier.adjudicate",
+      "scope_disposition": "required_candidate",
+      "command_schema_id": "urn:odeya:command-payload:falsifier.adjudicate:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "falsifier.adjudicated"
+      ],
+      "event_alternative_status": "candidate_requires_immutable_contract",
+      "aggregate_type": "falsifier",
+      "owner_module": "measurement",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "bounded_grant",
+      "cohort_profile": "grant_domain",
+      "obligation_profile": "science_local",
+      "reducer_state_dependency": "falsifier",
+      "can_stay_outside_first_slice": false,
+      "outside_reason": null,
+      "admission_status": "blocked"
+    },
+    {
+      "command_type": "verification.request",
+      "scope_disposition": "required_candidate",
+      "command_schema_id": "urn:odeya:command-payload:verification.request:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "verification.requested"
+      ],
+      "event_alternative_status": "candidate_requires_immutable_contract",
+      "aggregate_type": "verification",
+      "owner_module": "verification",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "bounded_grant",
+      "cohort_profile": "grant_domain",
+      "obligation_profile": "verification_reserved",
+      "reducer_state_dependency": "verification",
+      "can_stay_outside_first_slice": false,
+      "outside_reason": null,
+      "admission_status": "blocked"
+    },
+    {
+      "command_type": "verification.assign",
+      "scope_disposition": "required_candidate",
+      "command_schema_id": "urn:odeya:command-payload:verification.assign:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "verification.assigned"
+      ],
+      "event_alternative_status": "candidate_requires_immutable_contract",
+      "aggregate_type": "verification",
+      "owner_module": "verification",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "bounded_grants",
+      "cohort_profile": "verification_assign_resource",
+      "obligation_profile": "verification_reserved",
+      "reducer_state_dependency": "verification",
+      "can_stay_outside_first_slice": false,
+      "outside_reason": null,
+      "admission_status": "blocked"
+    },
+    {
+      "command_type": "verification.start",
+      "scope_disposition": "required_candidate",
+      "command_schema_id": "urn:odeya:command-payload:verification.start:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "verification.started"
+      ],
+      "event_alternative_status": "blocked_conflicts_c5_c6_execution_and_grant_cardinality",
+      "aggregate_type": "verification",
+      "owner_module": "verification",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "bounded_grants",
+      "cohort_profile": "verification_start_resource",
+      "obligation_profile": "verification_reserved",
+      "reducer_state_dependency": "verification",
+      "scope_dependency_conflicts": [
+        "C5",
+        "C6"
+      ],
+      "can_stay_outside_first_slice": false,
+      "outside_reason": null,
+      "admission_status": "blocked"
+    },
+    {
+      "command_type": "verification.complete",
+      "scope_disposition": "required_candidate",
+      "command_schema_id": "urn:odeya:command-payload:verification.complete:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "verification.completed"
+      ],
+      "event_alternative_status": "blocked_conflicts_c5_c6_execution_evidence_and_grant_cardinality",
+      "aggregate_type": "verification",
+      "owner_module": "verification",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "bounded_grants",
+      "cohort_profile": "grant_domain",
+      "obligation_profile": "verification_reserved",
+      "reducer_state_dependency": "verification",
+      "scope_dependency_conflicts": [
+        "C5",
+        "C6"
+      ],
+      "can_stay_outside_first_slice": false,
+      "outside_reason": null,
+      "admission_status": "blocked"
+    },
+    {
+      "command_type": "verification.dispute",
+      "scope_disposition": "required_candidate",
+      "command_schema_id": "urn:odeya:command-payload:verification.dispute:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "verification.disputed"
+      ],
+      "event_alternative_status": "candidate_requires_immutable_contract",
+      "aggregate_type": "verification",
+      "owner_module": "verification",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "bounded_grant",
+      "cohort_profile": "grant_domain",
+      "obligation_profile": "verification_reserved",
+      "reducer_state_dependency": "verification",
+      "can_stay_outside_first_slice": false,
+      "outside_reason": null,
+      "admission_status": "blocked"
+    },
+    {
+      "command_type": "verification.resolve_dispute",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:verification.resolve_dispute:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "verification.dispute_resolved"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "verification",
+      "owner_module": "verification",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "not_exercised_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "dispute_remains_open_and_no_replication_or_transport_claim",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "verification.invalidate",
+      "scope_disposition": "required_candidate",
+      "command_schema_id": "urn:odeya:command-payload:verification.invalidate:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "verification.invalidated"
+      ],
+      "event_alternative_status": "blocked_pending_authority_and_reservation_c4",
+      "aggregate_type": "verification",
+      "owner_module": "verification",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "bounded_grant",
+      "cohort_profile": "verification_invalidation_resource",
+      "obligation_profile": "verification_reserved",
+      "reducer_state_dependency": "verification",
+      "can_stay_outside_first_slice": false,
+      "outside_reason": null,
+      "admission_status": "blocked"
+    },
+    {
+      "command_type": "reproducibility.determine",
+      "scope_disposition": "required_candidate",
+      "command_schema_id": "urn:odeya:command-payload:reproducibility.determine:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "reproducibility.determined"
+      ],
+      "event_alternative_status": "blocked_conflict_c7_reducer_ownership",
+      "aggregate_type": "verification",
+      "owner_module": "verification",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "bounded_grant",
+      "cohort_profile": "grant_domain",
+      "obligation_profile": "verification_reserved",
+      "reducer_state_dependency": "unresolved_c7_verification_vs_reproducibility",
+      "reducer_ownership_conflict": {
+        "catalog_aggregate": "verification",
+        "catalog_reducer_family": "Reproducibility",
+        "inventory_reducer_family": "Verification",
+        "resolution_status": "blocked"
+      },
+      "can_stay_outside_first_slice": false,
+      "outside_reason": null,
+      "admission_status": "blocked"
+    },
+    {
+      "command_type": "replication.start",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:replication.start:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "replication.started"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "verification",
+      "owner_module": "verification",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "not_exercised_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "dispute_remains_open_and_no_replication_or_transport_claim",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "replication.determine",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:replication.determine:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "replication.determined"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "verification",
+      "owner_module": "verification",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "not_exercised_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "dispute_remains_open_and_no_replication_or_transport_claim",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "transport.start",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:transport.start:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "transport.started"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "verification",
+      "owner_module": "verification",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "not_exercised_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "dispute_remains_open_and_no_replication_or_transport_claim",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "transport.determine",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:transport.determine:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "transport.determined"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "verification",
+      "owner_module": "verification",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "not_exercised_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "dispute_remains_open_and_no_replication_or_transport_claim",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "review.record",
+      "scope_disposition": "required_candidate",
+      "command_schema_id": "urn:odeya:command-payload:review.record:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "review.recorded"
+      ],
+      "event_alternative_status": "candidate_requires_immutable_contract",
+      "aggregate_type": "review",
+      "owner_module": "verification",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "bounded_grant",
+      "cohort_profile": "grant_domain",
+      "obligation_profile": "verification_reserved",
+      "reducer_state_dependency": "review",
+      "can_stay_outside_first_slice": false,
+      "outside_reason": null,
+      "admission_status": "blocked"
+    },
+    {
+      "command_type": "adjudication.record",
+      "scope_disposition": "required_candidate",
+      "command_schema_id": "urn:odeya:command-payload:adjudication.record:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "adjudication.recorded"
+      ],
+      "event_alternative_status": "candidate_requires_immutable_contract",
+      "aggregate_type": "adjudication",
+      "owner_module": "adjudication",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "bounded_grant",
+      "cohort_profile": "grant_domain",
+      "obligation_profile": "claim_truth",
+      "reducer_state_dependency": "adjudication",
+      "can_stay_outside_first_slice": false,
+      "outside_reason": null,
+      "admission_status": "blocked"
+    },
+    {
+      "command_type": "claim.propose",
+      "scope_disposition": "required_candidate",
+      "command_schema_id": "urn:odeya:command-payload:claim.propose:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "claim.proposed"
+      ],
+      "event_alternative_status": "candidate_requires_immutable_contract",
+      "aggregate_type": "claim_proposal",
+      "owner_module": "claims",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "bounded_grant",
+      "cohort_profile": "grant_domain",
+      "obligation_profile": "claim_truth",
+      "reducer_state_dependency": "claim_proposal",
+      "can_stay_outside_first_slice": false,
+      "outside_reason": null,
+      "admission_status": "blocked"
+    },
+    {
+      "command_type": "claim.record_disposition",
+      "scope_disposition": "required_candidate",
+      "command_schema_id": "urn:odeya:command-payload:claim.record_disposition:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "claim.disposition_recorded"
+      ],
+      "event_alternative_status": "candidate_requires_immutable_contract",
+      "aggregate_type": "claim_proposal",
+      "owner_module": "claims",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "bounded_grant",
+      "cohort_profile": "grant_domain",
+      "obligation_profile": "claim_truth",
+      "reducer_state_dependency": "claim_proposal",
+      "can_stay_outside_first_slice": false,
+      "outside_reason": null,
+      "admission_status": "blocked"
+    },
+    {
+      "command_type": "claim.compile_version",
+      "scope_disposition": "required_candidate",
+      "command_schema_id": "urn:odeya:command-payload:claim.compile_version:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "claim.version_compiled"
+      ],
+      "event_alternative_status": "candidate_requires_immutable_contract",
+      "aggregate_type": "claim_version",
+      "owner_module": "claims",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "bounded_grant",
+      "cohort_profile": "grant_domain",
+      "obligation_profile": "claim_truth",
+      "reducer_state_dependency": "claim_version",
+      "can_stay_outside_first_slice": false,
+      "outside_reason": null,
+      "admission_status": "blocked"
+    },
+    {
+      "command_type": "claim.supersede",
+      "scope_disposition": "required_candidate",
+      "command_schema_id": "urn:odeya:command-payload:claim.supersede:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "claim.superseded"
+      ],
+      "event_alternative_status": "blocked_pending_claim_correction_c2",
+      "aggregate_type": "claim_version",
+      "owner_module": "claims",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "bounded_grants",
+      "cohort_profile": "claim_correction_c2",
+      "obligation_profile": "claim_truth",
+      "reducer_state_dependency": "claim_version",
+      "can_stay_outside_first_slice": false,
+      "outside_reason": null,
+      "admission_status": "blocked"
+    },
+    {
+      "command_type": "claim.retract",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:claim.retract:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "claim.retracted"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "claim_version",
+      "owner_module": "claims",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "not_exercised_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "additive_supersession_not_retraction",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "dependency.record_invalidation",
+      "scope_disposition": "required_candidate",
+      "command_schema_id": "urn:odeya:command-payload:dependency.record_invalidation:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "dependency.invalidation_recorded"
+      ],
+      "event_alternative_status": "blocked_pending_claim_correction_c2",
+      "aggregate_type": "dependency",
+      "owner_module": "claims",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "bounded_grant",
+      "cohort_profile": "claim_correction_c2",
+      "obligation_profile": "claim_truth",
+      "reducer_state_dependency": "dependency",
+      "can_stay_outside_first_slice": false,
+      "outside_reason": null,
+      "admission_status": "blocked"
+    },
+    {
+      "command_type": "authority.record_root_assignment",
+      "scope_disposition": "required_candidate",
+      "command_schema_id": "urn:odeya:command-payload:authority.record_root_assignment:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "authority.assignment_recorded"
+      ],
+      "event_alternative_status": "candidate_requires_immutable_contract",
+      "aggregate_type": "authority_assignment",
+      "owner_module": "authority",
+      "stream_types": [
+        "authority_root",
+        "mission"
+      ],
+      "authority_profile": "bootstrap_root",
+      "cohort_profile": "bootstrap_domain",
+      "obligation_profile": "authority_only",
+      "reducer_state_dependency": "authority_assignment",
+      "can_stay_outside_first_slice": false,
+      "outside_reason": null,
+      "admission_status": "blocked"
+    },
+    {
+      "command_type": "authority.record_assignment",
+      "scope_disposition": "required_candidate",
+      "command_schema_id": "urn:odeya:command-payload:authority.record_assignment:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "authority.assignment_recorded"
+      ],
+      "event_alternative_status": "blocked_pending_authority_lifecycle_c4",
+      "aggregate_type": "authority_assignment",
+      "owner_module": "authority",
+      "stream_types": [
+        "authority_root",
+        "mission"
+      ],
+      "authority_profile": "assignment_only_candidate_c4",
+      "cohort_profile": "authority_lifecycle_c4",
+      "obligation_profile": "authority_only",
+      "reducer_state_dependency": "authority_assignment",
+      "can_stay_outside_first_slice": false,
+      "outside_reason": null,
+      "admission_status": "blocked"
+    },
+    {
+      "command_type": "authority.issue_grant",
+      "scope_disposition": "required_candidate",
+      "command_schema_id": "urn:odeya:command-payload:authority.issue_grant:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "authority.grant_issued"
+      ],
+      "event_alternative_status": "blocked_pending_authority_lifecycle_c4",
+      "aggregate_type": "authority_grant",
+      "owner_module": "authority",
+      "stream_types": [
+        "authority_root",
+        "mission"
+      ],
+      "authority_profile": "assignment_only_candidate_c4",
+      "cohort_profile": "authority_lifecycle_c4",
+      "obligation_profile": "authority_only",
+      "reducer_state_dependency": "authority_grant",
+      "can_stay_outside_first_slice": false,
+      "outside_reason": null,
+      "admission_status": "blocked"
+    },
+    {
+      "command_type": "authority.observe_activation",
+      "scope_disposition": "required_candidate",
+      "command_schema_id": "urn:odeya:command-payload:authority.observe_activation:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "authority.grant_activated"
+      ],
+      "event_alternative_status": "blocked_pending_authority_lifecycle_c4",
+      "aggregate_type": "authority_grant",
+      "owner_module": "authority",
+      "stream_types": [
+        "authority_root",
+        "mission"
+      ],
+      "authority_profile": "assignment_only_candidate_c4",
+      "cohort_profile": "authority_lifecycle_c4",
+      "obligation_profile": "authority_only",
+      "reducer_state_dependency": "authority_grant",
+      "can_stay_outside_first_slice": false,
+      "outside_reason": null,
+      "admission_status": "blocked"
+    },
+    {
+      "command_type": "authority.observe_expiry",
+      "scope_disposition": "required_candidate",
+      "command_schema_id": "urn:odeya:command-payload:authority.observe_expiry:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "authority.grant_expired"
+      ],
+      "event_alternative_status": "blocked_pending_authority_lifecycle_c4",
+      "aggregate_type": "authority_grant",
+      "owner_module": "authority",
+      "stream_types": [
+        "authority_root",
+        "mission"
+      ],
+      "authority_profile": "assignment_only_candidate_c4",
+      "cohort_profile": "authority_lifecycle_c4",
+      "obligation_profile": "authority_only",
+      "reducer_state_dependency": "authority_grant",
+      "can_stay_outside_first_slice": false,
+      "outside_reason": null,
+      "admission_status": "blocked"
+    },
+    {
+      "command_type": "authority.revoke_grant",
+      "scope_disposition": "required_candidate",
+      "command_schema_id": "urn:odeya:command-payload:authority.revoke_grant:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "authority.grant_revoked"
+      ],
+      "event_alternative_status": "blocked_pending_authority_lifecycle_c4",
+      "aggregate_type": "authority_grant",
+      "owner_module": "authority",
+      "stream_types": [
+        "authority_root",
+        "mission"
+      ],
+      "authority_profile": "assignment_only_candidate_c4",
+      "cohort_profile": "authority_lifecycle_c4",
+      "obligation_profile": "authority_only",
+      "reducer_state_dependency": "authority_grant",
+      "can_stay_outside_first_slice": false,
+      "outside_reason": null,
+      "admission_status": "blocked"
+    },
+    {
+      "command_type": "publication.compile_candidate",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:publication.compile_candidate:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "publication.candidate_compiled"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "publication",
+      "owner_module": "publication",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "publication_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "slice_stops_before_publication",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "release.request",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:release.request:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "release.requested"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "publication",
+      "owner_module": "publication",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "publication_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "slice_stops_before_publication",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "release.decide",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:release.decide:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "release.decided"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "publication",
+      "owner_module": "publication",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "publication_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "slice_stops_before_publication",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "publication.seal",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:publication.seal:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "publication.sealed"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "publication",
+      "owner_module": "publication",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "publication_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "slice_stops_before_publication",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "publication.start_release",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:publication.start_release:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "publication.release_started"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "publication",
+      "owner_module": "publication",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "publication_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "slice_stops_before_publication",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "publication.record_release_settlement",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:publication.record_release_settlement:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "publication.release_settled"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "publication",
+      "owner_module": "publication",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "publication_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "slice_stops_before_publication",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "publication.correct",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:publication.correct:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "publication.corrected"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "publication",
+      "owner_module": "publication",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "publication_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "slice_stops_before_publication",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "publication.withdraw",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:publication.withdraw:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "publication.withdrawn"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "publication",
+      "owner_module": "publication",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "publication_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "slice_stops_before_publication",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "external_effect.authorize",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:external_effect.authorize:1.0.0",
+      "payload_contract_status": "closed_candidate_not_admitted",
+      "catalog_events": [
+        "authority.grant_use_reserved",
+        "external_effect.authorized"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "external_effect",
+      "owner_module": "effects",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "external_dispatch_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "zero_external_dispatch_boundary",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "external_effect.start",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:external_effect.start:1.0.0",
+      "payload_contract_status": "closed_candidate_not_admitted",
+      "catalog_events": [
+        "external_effect.started"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "external_effect",
+      "owner_module": "effects",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "external_dispatch_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "zero_external_dispatch_boundary",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "external_effect.cancel",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:external_effect.cancel:1.0.0",
+      "payload_contract_status": "closed_candidate_not_admitted",
+      "catalog_events": [
+        "external_effect.cancelled_before_dispatch"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "external_effect",
+      "owner_module": "effects",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "external_dispatch_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "zero_external_dispatch_boundary",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "external_effect.report_completion",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:external_effect.report_completion:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "external_effect.completion_reported"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "external_effect",
+      "owner_module": "effects",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "external_dispatch_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "zero_external_dispatch_boundary",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "external_effect.start_reconciliation",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:external_effect.start_reconciliation:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "external_effect.reconciliation_started"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "external_effect",
+      "owner_module": "effects",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "external_dispatch_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "zero_external_dispatch_boundary",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "external_effect.complete_reconciliation",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:external_effect.complete_reconciliation:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "external_effect.reconciliation_completed"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "external_effect",
+      "owner_module": "effects",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "external_dispatch_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "zero_external_dispatch_boundary",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "external_effect.fail_reconciliation",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:external_effect.fail_reconciliation:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "external_effect.reconciliation_failed"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "external_effect",
+      "owner_module": "effects",
+      "stream_types": [
+        "mission"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "external_dispatch_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "zero_external_dispatch_boundary",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "incident.open",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:incident.open:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "incident.opened"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "incident",
+      "owner_module": "incidents",
+      "stream_types": [
+        "portfolio",
+        "mission",
+        "incident"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "not_exercised_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "fixture_discrepancy_is_not_operational_incident",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "incident.transition",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:incident.transition:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "incident.transitioned"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "incident",
+      "owner_module": "incidents",
+      "stream_types": [
+        "portfolio",
+        "mission",
+        "incident"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "not_exercised_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "fixture_discrepancy_is_not_operational_incident",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "grounded_outcome.record",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:grounded_outcome.record:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "grounded_outcome.recorded"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "grounded_outcome",
+      "owner_module": "learning",
+      "stream_types": [
+        "mission",
+        "learning"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "learning_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "no_learning_or_strategy_promotion_claim",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "strategy.record_candidate",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:strategy.record_candidate:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "strategy.candidate_recorded"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "strategy_candidate",
+      "owner_module": "learning",
+      "stream_types": [
+        "mission",
+        "learning"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "learning_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "no_learning_or_strategy_promotion_claim",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "data_asset.record",
+      "scope_disposition": "required_candidate",
+      "command_schema_id": "urn:odeya:command-payload:data_asset.record:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "data_asset.recorded"
+      ],
+      "event_alternative_status": "candidate_requires_immutable_contract",
+      "aggregate_type": "data_asset",
+      "owner_module": "data_governance",
+      "stream_types": [
+        "mission",
+        "data_governance"
+      ],
+      "authority_profile": "bounded_grant",
+      "cohort_profile": "grant_domain",
+      "obligation_profile": "data_governance",
+      "reducer_state_dependency": "data_asset",
+      "can_stay_outside_first_slice": false,
+      "outside_reason": null,
+      "admission_status": "blocked"
+    },
+    {
+      "command_type": "data_asset.change_lifecycle",
+      "scope_disposition": "required_candidate",
+      "command_schema_id": "urn:odeya:command-payload:data_asset.change_lifecycle:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "data_asset.lifecycle_changed"
+      ],
+      "event_alternative_status": "candidate_requires_immutable_contract",
+      "aggregate_type": "data_asset",
+      "owner_module": "data_governance",
+      "stream_types": [
+        "mission",
+        "data_governance"
+      ],
+      "authority_profile": "bounded_grant",
+      "cohort_profile": "grant_domain",
+      "obligation_profile": "data_governance",
+      "reducer_state_dependency": "data_asset",
+      "can_stay_outside_first_slice": false,
+      "outside_reason": null,
+      "admission_status": "blocked"
+    },
+    {
+      "command_type": "rights_assertion.record",
+      "scope_disposition": "required_candidate",
+      "command_schema_id": "urn:odeya:command-payload:rights_assertion.record:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "rights_assertion.recorded"
+      ],
+      "event_alternative_status": "candidate_requires_immutable_contract",
+      "aggregate_type": "rights_assertion",
+      "owner_module": "data_governance",
+      "stream_types": [
+        "mission",
+        "data_governance"
+      ],
+      "authority_profile": "bounded_grant",
+      "cohort_profile": "grant_domain",
+      "obligation_profile": "data_governance",
+      "reducer_state_dependency": "rights_assertion",
+      "can_stay_outside_first_slice": false,
+      "outside_reason": null,
+      "admission_status": "blocked"
+    },
+    {
+      "command_type": "data_use.decide",
+      "scope_disposition": "required_candidate",
+      "command_schema_id": "urn:odeya:command-payload:data_use.decide:1.0.0",
+      "payload_contract_status": "closed_candidate_not_admitted",
+      "catalog_events": [
+        "data_use.decided"
+      ],
+      "event_alternative_status": "candidate_requires_immutable_contract",
+      "aggregate_type": "data_use_decision",
+      "owner_module": "data_governance",
+      "stream_types": [
+        "mission",
+        "data_governance"
+      ],
+      "authority_profile": "bounded_grants",
+      "cohort_profile": "grant_domain",
+      "obligation_profile": "data_governance",
+      "reducer_state_dependency": "data_use_decision",
+      "can_stay_outside_first_slice": false,
+      "outside_reason": null,
+      "admission_status": "blocked"
+    },
+    {
+      "command_type": "strategy.authorize_shadow",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:strategy.authorize_shadow:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "strategy.shadow_authorized"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "strategy_candidate",
+      "owner_module": "learning",
+      "stream_types": [
+        "mission",
+        "learning"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "learning_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "no_learning_or_strategy_promotion_claim",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "strategy.record_shadow",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:strategy.record_shadow:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "strategy.shadow_recorded"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "strategy_candidate",
+      "owner_module": "learning",
+      "stream_types": [
+        "mission",
+        "learning"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "learning_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "no_learning_or_strategy_promotion_claim",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "strategy.authorize_canary",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:strategy.authorize_canary:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "strategy.canary_authorized"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "strategy_candidate",
+      "owner_module": "learning",
+      "stream_types": [
+        "mission",
+        "learning"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "learning_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "no_learning_or_strategy_promotion_claim",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "strategy.decide_promotion",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:strategy.decide_promotion:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "strategy.promotion_decided"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "strategy_candidate",
+      "owner_module": "learning",
+      "stream_types": [
+        "mission",
+        "learning"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "learning_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "no_learning_or_strategy_promotion_claim",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "strategy.rollback",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:strategy.rollback:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "strategy.rolled_back"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "strategy_candidate",
+      "owner_module": "learning",
+      "stream_types": [
+        "mission",
+        "learning"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "learning_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "no_learning_or_strategy_promotion_claim",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "data_use.revoke",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:data_use.revoke:1.0.0",
+      "payload_contract_status": "closed_candidate_not_admitted",
+      "catalog_events": [
+        "data_use.revoked"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "data_use_decision",
+      "owner_module": "data_governance",
+      "stream_types": [
+        "mission",
+        "data_governance"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "data_lifecycle_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "initial_deny_or_indeterminate_not_later_revocation",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "data_exposure.record_intent",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:data_exposure.record_intent:1.0.0",
+      "payload_contract_status": "closed_candidate_not_admitted",
+      "catalog_events": [
+        "data_exposure.intent_recorded"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "data_exposure",
+      "owner_module": "data_governance",
+      "stream_types": [
+        "mission",
+        "data_governance"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "governed_exposure_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "c5_conditional_local_materialization_intent_producer_unresolved",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "data_exposure.record_observation",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:data_exposure.record_observation:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "data_exposure.observation_recorded"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "data_exposure",
+      "owner_module": "data_governance",
+      "stream_types": [
+        "mission",
+        "data_governance"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "governed_exposure_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "provisional_outside_no_external_governed_boundary_crossing",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "data_exposure.record_settlement",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:data_exposure.record_settlement:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "data_exposure.settlement_recorded"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "data_exposure",
+      "owner_module": "data_governance",
+      "stream_types": [
+        "mission",
+        "data_governance"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "governed_exposure_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "provisional_outside_no_external_governed_boundary_crossing",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "transformation.record",
+      "scope_disposition": "required_candidate",
+      "command_schema_id": "urn:odeya:command-payload:transformation.record:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "transformation.recorded"
+      ],
+      "event_alternative_status": "candidate_requires_immutable_contract",
+      "aggregate_type": "transformation",
+      "owner_module": "data_governance",
+      "stream_types": [
+        "mission",
+        "data_governance"
+      ],
+      "authority_profile": "bounded_grant",
+      "cohort_profile": "grant_domain",
+      "obligation_profile": "data_governance",
+      "reducer_state_dependency": "transformation",
+      "can_stay_outside_first_slice": false,
+      "outside_reason": null,
+      "admission_status": "blocked"
+    },
+    {
+      "command_type": "retention.record_schedule",
+      "scope_disposition": "required_candidate",
+      "command_schema_id": "urn:odeya:command-payload:retention.record_schedule:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "retention.schedule_recorded"
+      ],
+      "event_alternative_status": "candidate_requires_immutable_contract",
+      "aggregate_type": "retention_schedule",
+      "owner_module": "data_governance",
+      "stream_types": [
+        "mission",
+        "data_governance"
+      ],
+      "authority_profile": "bounded_grant",
+      "cohort_profile": "grant_domain",
+      "obligation_profile": "data_governance",
+      "reducer_state_dependency": "retention_schedule",
+      "can_stay_outside_first_slice": false,
+      "outside_reason": null,
+      "admission_status": "blocked"
+    },
+    {
+      "command_type": "deletion.open_case",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:deletion.open_case:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "deletion.case_opened"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "deletion_case",
+      "owner_module": "data_governance",
+      "stream_types": [
+        "mission",
+        "data_governance"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "data_lifecycle_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "no_deletion_lifecycle_fixture",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "deletion.record_progress",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:deletion.record_progress:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "deletion.progress_recorded"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "deletion_case",
+      "owner_module": "data_governance",
+      "stream_types": [
+        "mission",
+        "data_governance"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "data_lifecycle_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "no_deletion_lifecycle_fixture",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "deletion.close_case",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:deletion.close_case:1.0.0",
+      "payload_contract_status": "closed_candidate_not_admitted",
+      "catalog_events": [
+        "deletion.case_closed"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "deletion_case",
+      "owner_module": "data_governance",
+      "stream_types": [
+        "mission",
+        "data_governance"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "data_lifecycle_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "no_deletion_lifecycle_fixture",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "legal_hold.issue",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:legal_hold.issue:1.0.0",
+      "payload_contract_status": "closed_candidate_not_admitted",
+      "catalog_events": [
+        "legal_hold.issued"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "legal_hold",
+      "owner_module": "data_governance",
+      "stream_types": [
+        "mission",
+        "data_governance"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "data_lifecycle_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "no_legal_hold_fixture",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "legal_hold.release",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:legal_hold.release:1.0.0",
+      "payload_contract_status": "closed_candidate_not_admitted",
+      "catalog_events": [
+        "legal_hold.released"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "legal_hold",
+      "owner_module": "data_governance",
+      "stream_types": [
+        "mission",
+        "data_governance"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "data_lifecycle_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "no_legal_hold_fixture",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "legal_hold.observe_expiry",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:legal_hold.observe_expiry:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "legal_hold.expired"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "legal_hold",
+      "owner_module": "data_governance",
+      "stream_types": [
+        "mission",
+        "data_governance"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "data_lifecycle_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "no_legal_hold_fixture",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "ledger_checkpoint.propose",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:ledger_checkpoint.propose:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "ledger_checkpoint.proposed"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "ledger_checkpoint",
+      "owner_module": "recovery",
+      "stream_types": [
+        "recovery"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "recovery_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "c8_conditional_on_separately_admitted_p0_constitutional_recovery_dependency",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "ledger_checkpoint.seal",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:ledger_checkpoint.seal:1.0.0",
+      "payload_contract_status": "closed_candidate_not_admitted",
+      "catalog_events": [
+        "ledger_checkpoint.sealed"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "ledger_checkpoint",
+      "owner_module": "recovery",
+      "stream_types": [
+        "recovery"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "recovery_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "c8_conditional_on_separately_admitted_p0_constitutional_recovery_dependency",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "ledger_checkpoint.record_witness_observation",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:ledger_checkpoint.record_witness_observation:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "ledger_checkpoint.witness_observed"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "ledger_checkpoint",
+      "owner_module": "recovery",
+      "stream_types": [
+        "recovery"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "recovery_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "c8_conditional_on_separately_admitted_p0_constitutional_recovery_dependency",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "ledger_checkpoint.record_consistency_failure",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:ledger_checkpoint.record_consistency_failure:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "ledger_checkpoint.consistency_failed"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "ledger_checkpoint",
+      "owner_module": "recovery",
+      "stream_types": [
+        "recovery"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "recovery_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "c8_conditional_on_separately_admitted_p0_constitutional_recovery_dependency",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "backup.record_write_observation",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:backup.record_write_observation:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "backup.write_observed"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "backup",
+      "owner_module": "recovery",
+      "stream_types": [
+        "recovery"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "recovery_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "c8_conditional_on_separately_admitted_p0_constitutional_recovery_dependency",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "backup.record_verification_observation",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:backup.record_verification_observation:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "backup.verification_observed"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "backup",
+      "owner_module": "recovery",
+      "stream_types": [
+        "recovery"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "recovery_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "c8_conditional_on_separately_admitted_p0_constitutional_recovery_dependency",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "backup.record_recoverability_observation",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:backup.record_recoverability_observation:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "backup.recoverability_observed"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "backup",
+      "owner_module": "recovery",
+      "stream_types": [
+        "recovery"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "recovery_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "c8_conditional_on_separately_admitted_p0_constitutional_recovery_dependency",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "restore.open_case",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:restore.open_case:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "restore.case_opened"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "restore_case",
+      "owner_module": "recovery",
+      "stream_types": [
+        "recovery"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "recovery_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "c8_conditional_on_separately_admitted_p0_constitutional_recovery_dependency",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "recovery.record_current_policy_frontier",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:recovery.record_current_policy_frontier:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "recovery.current_policy_frontier_recorded"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "recovery_control",
+      "owner_module": "recovery",
+      "stream_types": [
+        "recovery"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "recovery_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "c8_conditional_on_separately_admitted_p0_constitutional_recovery_dependency",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "restore.record_report",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:restore.record_report:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "restore.report_recorded"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "restore_case",
+      "owner_module": "recovery",
+      "stream_types": [
+        "recovery"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "recovery_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "c8_conditional_on_separately_admitted_p0_constitutional_recovery_dependency",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "recovery.record_decision",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:recovery.record_decision:1.0.0",
+      "payload_contract_status": "closed_candidate_not_admitted",
+      "catalog_events": [
+        "recovery.decision_recorded"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "recovery_decision",
+      "owner_module": "recovery",
+      "stream_types": [
+        "recovery"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "recovery_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "c8_conditional_on_separately_admitted_p0_constitutional_recovery_dependency",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "recovery.enter_quarantine",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:recovery.enter_quarantine:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "recovery.quarantine_entered"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "recovery_control",
+      "owner_module": "recovery",
+      "stream_types": [
+        "recovery"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "recovery_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "c8_conditional_on_separately_admitted_p0_constitutional_recovery_dependency",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "ledger.record_fork",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:ledger.record_fork:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "ledger.fork_detected"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "ledger_epoch",
+      "owner_module": "recovery",
+      "stream_types": [
+        "recovery"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "recovery_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "c8_conditional_on_separately_admitted_p0_constitutional_recovery_dependency",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "ledger.begin_epoch",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:ledger.begin_epoch:1.0.0",
+      "payload_contract_status": "closed_candidate_not_admitted",
+      "catalog_events": [
+        "ledger.epoch_started"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "ledger_epoch",
+      "owner_module": "recovery",
+      "stream_types": [
+        "recovery"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "recovery_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "c8_conditional_on_separately_admitted_p0_constitutional_recovery_dependency",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "restore.close_case",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:restore.close_case:1.0.0",
+      "payload_contract_status": "missing_separate_payload_contract",
+      "catalog_events": [
+        "restore.case_closed"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "restore_case",
+      "owner_module": "recovery",
+      "stream_types": [
+        "recovery"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "recovery_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "c8_conditional_on_separately_admitted_p0_constitutional_recovery_dependency",
+      "admission_status": "not_admitted"
+    },
+    {
+      "command_type": "recovery.change_service_scope",
+      "scope_disposition": "outside_first_slice",
+      "command_schema_id": "urn:odeya:command-payload:recovery.change_service_scope:1.0.0",
+      "payload_contract_status": "closed_candidate_not_admitted",
+      "catalog_events": [
+        "recovery.service_scope_changed"
+      ],
+      "event_alternative_status": "not_designed_for_first_slice_registry",
+      "aggregate_type": "recovery_control",
+      "owner_module": "recovery",
+      "stream_types": [
+        "recovery"
+      ],
+      "authority_profile": "undefined_until_future_contract",
+      "cohort_profile": "outside_not_admitted",
+      "obligation_profile": "recovery_outside",
+      "reducer_state_dependency": "outside_not_enrolled",
+      "can_stay_outside_first_slice": true,
+      "outside_reason": "c8_conditional_on_separately_admitted_p0_constitutional_recovery_dependency",
+      "admission_status": "not_admitted"
+    }
+  ],
+  "required_events": [
+    {
+      "event_type": "adjudication.recorded",
+      "event_version": "1.0.0",
+      "payload_schema_id": "urn:odeya:event-payload:adjudication.recorded:1.0.0",
+      "aggregate_type": "adjudication",
+      "owner_module": "adjudication",
+      "producer_role": "command_primary",
+      "event_contract_status": "missing_immutable_event_contract",
+      "reducer_state_dependency": "adjudication"
+    },
+    {
+      "event_type": "artifact.promoted",
+      "event_version": "1.0.0",
+      "payload_schema_id": "urn:odeya:event-payload:artifact.promoted:1.0.0",
+      "aggregate_type": "artifact",
+      "owner_module": "artifact",
+      "producer_role": "command_primary",
+      "event_contract_status": "missing_immutable_event_contract",
+      "reducer_state_dependency": "artifact"
+    },
+    {
+      "event_type": "artifact.quarantined",
+      "event_version": "1.0.0",
+      "payload_schema_id": "urn:odeya:event-payload:artifact.quarantined:1.0.0",
+      "aggregate_type": "artifact",
+      "owner_module": "artifact",
+      "producer_role": "command_primary",
+      "event_contract_status": "missing_immutable_event_contract",
+      "reducer_state_dependency": "artifact"
+    },
+    {
+      "event_type": "artifact.recorded",
+      "event_version": "1.0.0",
+      "payload_schema_id": "urn:odeya:event-payload:artifact.recorded:1.0.0",
+      "aggregate_type": "artifact",
+      "owner_module": "artifact",
+      "producer_role": "command_primary",
+      "event_contract_status": "missing_immutable_event_contract",
+      "reducer_state_dependency": "artifact"
+    },
+    {
+      "event_type": "artifact.unavailable",
+      "event_version": "1.0.0",
+      "payload_schema_id": "urn:odeya:event-payload:artifact.unavailable:1.0.0",
+      "aggregate_type": "artifact",
+      "owner_module": "artifact",
+      "producer_role": "command_primary",
+      "event_contract_status": "missing_immutable_event_contract",
+      "reducer_state_dependency": "artifact"
+    },
+    {
+      "event_type": "artifact.validated",
+      "event_version": "1.0.0",
+      "payload_schema_id": "urn:odeya:event-payload:artifact.validated:1.0.0",
+      "aggregate_type": "artifact",
+      "owner_module": "artifact",
+      "producer_role": "command_primary",
+      "event_contract_status": "missing_immutable_event_contract",
+      "reducer_state_dependency": "artifact"
+    },
+    {
+      "event_type": "authority.assignment_recorded",
+      "event_version": "1.0.0",
+      "payload_schema_id": "urn:odeya:event-payload:authority.assignment_recorded:1.0.0",
+      "aggregate_type": "authority_assignment",
+      "owner_module": "authority",
+      "producer_role": "command_primary",
+      "event_contract_status": "missing_immutable_event_contract",
+      "reducer_state_dependency": "authority_assignment"
+    },
+    {
+      "event_type": "authority.grant_activated",
+      "event_version": "1.0.0",
+      "payload_schema_id": "urn:odeya:event-payload:authority.grant_activated:1.0.0",
+      "aggregate_type": "authority_grant",
+      "owner_module": "authority",
+      "producer_role": "command_primary",
+      "event_contract_status": "missing_immutable_event_contract",
+      "reducer_state_dependency": "authority_grant"
+    },
+    {
+      "event_type": "authority.grant_exhausted",
+      "event_version": "1.0.0",
+      "payload_schema_id": "urn:odeya:event-payload:authority.grant_exhausted:1.0.0",
+      "aggregate_type": "authority_grant",
+      "owner_module": "authority",
+      "producer_role": "kernel_cohort",
+      "event_contract_status": "missing_immutable_event_contract",
+      "reducer_state_dependency": "authority_grant"
+    },
+    {
+      "event_type": "authority.grant_expired",
+      "event_version": "1.0.0",
+      "payload_schema_id": "urn:odeya:event-payload:authority.grant_expired:1.0.0",
+      "aggregate_type": "authority_grant",
+      "owner_module": "authority",
+      "producer_role": "command_primary",
+      "event_contract_status": "missing_immutable_event_contract",
+      "reducer_state_dependency": "authority_grant"
+    },
+    {
+      "event_type": "authority.grant_issued",
+      "event_version": "1.0.0",
+      "payload_schema_id": "urn:odeya:event-payload:authority.grant_issued:1.0.0",
+      "aggregate_type": "authority_grant",
+      "owner_module": "authority",
+      "producer_role": "command_primary",
+      "event_contract_status": "missing_immutable_event_contract",
+      "reducer_state_dependency": "authority_grant"
+    },
+    {
+      "event_type": "authority.grant_revoked",
+      "event_version": "1.0.0",
+      "payload_schema_id": "urn:odeya:event-payload:authority.grant_revoked:1.0.0",
+      "aggregate_type": "authority_grant",
+      "owner_module": "authority",
+      "producer_role": "command_primary",
+      "event_contract_status": "missing_immutable_event_contract",
+      "reducer_state_dependency": "authority_grant"
+    },
+    {
+      "event_type": "authority.grant_used",
+      "event_version": "1.0.0",
+      "payload_schema_id": "urn:odeya:event-payload:authority.grant_used:1.0.0",
+      "aggregate_type": "authority_grant",
+      "owner_module": "authority",
+      "producer_role": "kernel_cohort",
+      "event_contract_status": "missing_immutable_event_contract",
+      "reducer_state_dependency": "authority_grant"
+    },
+    {
+      "event_type": "blocker.opened",
+      "event_version": "1.0.0",
+      "payload_schema_id": "urn:odeya:event-payload:blocker.opened:1.0.0",
+      "aggregate_type": "blocker",
+      "owner_module": "mission",
+      "producer_role": "command_primary",
+      "event_contract_status": "missing_immutable_event_contract",
+      "reducer_state_dependency": "blocker"
+    },
+    {
+      "event_type": "claim.disposition_recorded",
+      "event_version": "1.0.0",
+      "payload_schema_id": "urn:odeya:event-payload:claim.disposition_recorded:1.0.0",
+      "aggregate_type": "claim_proposal",
+      "owner_module": "claims",
+      "producer_role": "command_primary",
+      "event_contract_status": "missing_immutable_event_contract",
+      "reducer_state_dependency": "claim_proposal"
+    },
+    {
+      "event_type": "claim.proposed",
+      "event_version": "1.0.0",
+      "payload_schema_id": "urn:odeya:event-payload:claim.proposed:1.0.0",
+      "aggregate_type": "claim_proposal",
+      "owner_module": "claims",
+      "producer_role": "command_primary",
+      "event_contract_status": "missing_immutable_event_contract",
+      "reducer_state_dependency": "claim_proposal"
+    },
+    {
+      "event_type": "claim.superseded",
+      "event_version": "1.0.0",
+      "payload_schema_id": "urn:odeya:event-payload:claim.superseded:1.0.0",
+      "aggregate_type": "claim_version",
+      "owner_module": "claims",
+      "producer_role": "command_primary",
+      "event_contract_status": "missing_immutable_event_contract",
+      "reducer_state_dependency": "claim_version"
+    },
+    {
+      "event_type": "claim.version_compiled",
+      "event_version": "1.0.0",
+      "payload_schema_id": "urn:odeya:event-payload:claim.version_compiled:1.0.0",
+      "aggregate_type": "claim_version",
+      "owner_module": "claims",
+      "producer_role": "command_primary",
+      "event_contract_status": "missing_immutable_event_contract",
+      "reducer_state_dependency": "claim_version"
+    },
+    {
+      "event_type": "data_asset.lifecycle_changed",
+      "event_version": "1.0.0",
+      "payload_schema_id": "urn:odeya:event-payload:data_asset.lifecycle_changed:1.0.0",
+      "aggregate_type": "data_asset",
+      "owner_module": "data_governance",
+      "producer_role": "command_primary",
+      "event_contract_status": "missing_immutable_event_contract",
+      "reducer_state_dependency": "data_asset"
+    },
+    {
+      "event_type": "data_asset.recorded",
+      "event_version": "1.0.0",
+      "payload_schema_id": "urn:odeya:event-payload:data_asset.recorded:1.0.0",
+      "aggregate_type": "data_asset",
+      "owner_module": "data_governance",
+      "producer_role": "command_primary",
+      "event_contract_status": "missing_immutable_event_contract",
+      "reducer_state_dependency": "data_asset"
+    },
+    {
+      "event_type": "data_use.decided",
+      "event_version": "1.0.0",
+      "payload_schema_id": "urn:odeya:event-payload:data_use.decided:1.0.0",
+      "aggregate_type": "data_use_decision",
+      "owner_module": "data_governance",
+      "producer_role": "command_primary",
+      "event_contract_status": "missing_immutable_event_contract",
+      "reducer_state_dependency": "data_use_decision"
+    },
+    {
+      "event_type": "dependency.invalidation_recorded",
+      "event_version": "1.0.0",
+      "payload_schema_id": "urn:odeya:event-payload:dependency.invalidation_recorded:1.0.0",
+      "aggregate_type": "dependency",
+      "owner_module": "claims",
+      "producer_role": "command_primary",
+      "event_contract_status": "missing_immutable_event_contract",
+      "reducer_state_dependency": "dependency"
+    },
+    {
+      "event_type": "falsifier.adjudicated",
+      "event_version": "1.0.0",
+      "payload_schema_id": "urn:odeya:event-payload:falsifier.adjudicated:1.0.0",
+      "aggregate_type": "falsifier",
+      "owner_module": "measurement",
+      "producer_role": "command_primary",
+      "event_contract_status": "missing_immutable_event_contract",
+      "reducer_state_dependency": "falsifier"
+    },
+    {
+      "event_type": "measurement.disposition_determined",
+      "event_version": "1.0.0",
+      "payload_schema_id": "urn:odeya:event-payload:measurement.disposition_determined:1.0.0",
+      "aggregate_type": "measurement",
+      "owner_module": "measurement",
+      "producer_role": "command_primary",
+      "event_contract_status": "missing_immutable_event_contract",
+      "reducer_state_dependency": "measurement"
+    },
+    {
+      "event_type": "metric.observed",
+      "event_version": "1.0.0",
+      "payload_schema_id": "urn:odeya:event-payload:metric.observed:1.0.0",
+      "aggregate_type": "metric",
+      "owner_module": "measurement",
+      "producer_role": "command_primary",
+      "event_contract_status": "missing_immutable_event_contract",
+      "reducer_state_dependency": "metric"
+    },
+    {
+      "event_type": "mission.contract_compiled",
+      "event_version": "1.0.0",
+      "payload_schema_id": "urn:odeya:event-payload:mission.contract_compiled:1.0.0",
+      "aggregate_type": "mission",
+      "owner_module": "mission",
+      "producer_role": "command_primary",
+      "event_contract_status": "missing_immutable_event_contract",
+      "reducer_state_dependency": "mission"
+    },
+    {
+      "event_type": "mission.origin_recorded",
+      "event_version": "1.0.0",
+      "payload_schema_id": "urn:odeya:event-payload:mission.origin_recorded:1.0.0",
+      "aggregate_type": "mission",
+      "owner_module": "mission",
+      "producer_role": "command_primary",
+      "event_contract_status": "missing_immutable_event_contract",
+      "reducer_state_dependency": "mission"
+    },
+    {
+      "event_type": "mission.phase_advanced",
+      "event_version": "1.0.0",
+      "payload_schema_id": "urn:odeya:event-payload:mission.phase_advanced:1.0.0",
+      "aggregate_type": "mission",
+      "owner_module": "mission",
+      "producer_role": "command_primary",
+      "event_contract_status": "missing_immutable_event_contract",
+      "reducer_state_dependency": "mission"
+    },
+    {
+      "event_type": "proposal.decided",
+      "event_version": "1.0.0",
+      "payload_schema_id": "urn:odeya:event-payload:proposal.decided:1.0.0",
+      "aggregate_type": "proposal",
+      "owner_module": "mission",
+      "producer_role": "command_primary",
+      "event_contract_status": "missing_immutable_event_contract",
+      "reducer_state_dependency": "proposal"
+    },
+    {
+      "event_type": "proposal.submitted",
+      "event_version": "1.0.0",
+      "payload_schema_id": "urn:odeya:event-payload:proposal.submitted:1.0.0",
+      "aggregate_type": "proposal",
+      "owner_module": "mission",
+      "producer_role": "command_primary",
+      "event_contract_status": "missing_immutable_event_contract",
+      "reducer_state_dependency": "proposal"
+    },
+    {
+      "event_type": "protocol.exposure_recorded",
+      "event_version": "1.0.0",
+      "payload_schema_id": "urn:odeya:event-payload:protocol.exposure_recorded:1.0.0",
+      "aggregate_type": "protocol",
+      "owner_module": "protocol",
+      "producer_role": "command_primary",
+      "event_contract_status": "missing_immutable_event_contract",
+      "reducer_state_dependency": "protocol"
+    },
+    {
+      "event_type": "protocol.frozen",
+      "event_version": "1.0.0",
+      "payload_schema_id": "urn:odeya:event-payload:protocol.frozen:1.0.0",
+      "aggregate_type": "protocol",
+      "owner_module": "protocol",
+      "producer_role": "command_primary",
+      "event_contract_status": "missing_immutable_event_contract",
+      "reducer_state_dependency": "protocol"
+    },
+    {
+      "event_type": "protocol.integrity_determined",
+      "event_version": "1.0.0",
+      "payload_schema_id": "urn:odeya:event-payload:protocol.integrity_determined:1.0.0",
+      "aggregate_type": "protocol",
+      "owner_module": "protocol",
+      "producer_role": "kernel_cohort",
+      "event_contract_status": "missing_immutable_event_contract",
+      "reducer_state_dependency": "protocol"
+    },
+    {
+      "event_type": "reproducibility.determined",
+      "event_version": "1.0.0",
+      "payload_schema_id": "urn:odeya:event-payload:reproducibility.determined:2.0.0",
+      "aggregate_type": "verification",
+      "owner_module": "verification",
+      "producer_role": "command_primary",
+      "event_contract_status": "missing_immutable_event_contract",
+      "reducer_state_dependency": "unresolved_c7_verification_vs_reproducibility",
+      "scope_membership_status": "current_conflict_union_member_reducer_ownership_unresolved"
+    },
+    {
+      "event_type": "resource.observed",
+      "event_version": "1.0.0",
+      "payload_schema_id": "urn:odeya:event-payload:resource.observed:1.0.0",
+      "aggregate_type": "resource_budget",
+      "owner_module": "resources",
+      "producer_role": "command_primary",
+      "event_contract_status": "missing_immutable_event_contract",
+      "reducer_state_dependency": "resource_budget",
+      "scope_membership_status": "current_conflict_union_member_c1_branch_unresolved"
+    },
+    {
+      "event_type": "resource.reservation_claimed",
+      "event_version": "1.0.0",
+      "payload_schema_id": "urn:odeya:event-payload:resource.reservation_claimed:1.0.0",
+      "aggregate_type": "resource_budget",
+      "owner_module": "resources",
+      "producer_role": "kernel_cohort",
+      "event_contract_status": "missing_immutable_event_contract",
+      "reducer_state_dependency": "resource_budget"
+    },
+    {
+      "event_type": "resource.reservation_created",
+      "event_version": "1.0.0",
+      "payload_schema_id": "urn:odeya:event-payload:resource.reservation_created:1.0.0",
+      "aggregate_type": "resource_budget",
+      "owner_module": "resources",
+      "producer_role": "kernel_cohort",
+      "event_contract_status": "missing_immutable_event_contract",
+      "reducer_state_dependency": "resource_budget"
+    },
+    {
+      "event_type": "resource.reservation_expired",
+      "event_version": "1.0.0",
+      "payload_schema_id": "urn:odeya:event-payload:resource.reservation_expired:1.0.0",
+      "aggregate_type": "resource_budget",
+      "owner_module": "resources",
+      "producer_role": "kernel_cohort",
+      "event_contract_status": "missing_immutable_event_contract",
+      "reducer_state_dependency": "resource_budget"
+    },
+    {
+      "event_type": "resource.reservation_released",
+      "event_version": "1.0.0",
+      "payload_schema_id": "urn:odeya:event-payload:resource.reservation_released:1.0.0",
+      "aggregate_type": "resource_budget",
+      "owner_module": "resources",
+      "producer_role": "kernel_cohort",
+      "event_contract_status": "missing_immutable_event_contract",
+      "reducer_state_dependency": "resource_budget"
+    },
+    {
+      "event_type": "resource.reservation_settled",
+      "event_version": "1.0.0",
+      "payload_schema_id": "urn:odeya:event-payload:resource.reservation_settled:1.0.0",
+      "aggregate_type": "resource_budget",
+      "owner_module": "resources",
+      "producer_role": "kernel_cohort",
+      "event_contract_status": "missing_immutable_event_contract",
+      "reducer_state_dependency": "resource_budget",
+      "scope_membership_status": "current_conflict_union_member_c1_branch_unresolved"
+    },
+    {
+      "event_type": "resource.usage_observed",
+      "event_version": "1.0.0",
+      "payload_schema_id": "urn:odeya:event-payload:resource.usage_observed:1.0.0",
+      "aggregate_type": "resource_budget",
+      "owner_module": "resources",
+      "producer_role": "kernel_cohort",
+      "event_contract_status": "missing_immutable_event_contract",
+      "reducer_state_dependency": "resource_budget",
+      "scope_membership_status": "current_conflict_union_member_c1_branch_unresolved"
+    },
+    {
+      "event_type": "retention.schedule_recorded",
+      "event_version": "1.0.0",
+      "payload_schema_id": "urn:odeya:event-payload:retention.schedule_recorded:1.0.0",
+      "aggregate_type": "retention_schedule",
+      "owner_module": "data_governance",
+      "producer_role": "command_primary",
+      "event_contract_status": "missing_immutable_event_contract",
+      "reducer_state_dependency": "retention_schedule"
+    },
+    {
+      "event_type": "review.recorded",
+      "event_version": "1.0.0",
+      "payload_schema_id": "urn:odeya:event-payload:review.recorded:1.0.0",
+      "aggregate_type": "review",
+      "owner_module": "verification",
+      "producer_role": "command_primary",
+      "event_contract_status": "missing_immutable_event_contract",
+      "reducer_state_dependency": "review"
+    },
+    {
+      "event_type": "rights_assertion.recorded",
+      "event_version": "1.0.0",
+      "payload_schema_id": "urn:odeya:event-payload:rights_assertion.recorded:1.0.0",
+      "aggregate_type": "rights_assertion",
+      "owner_module": "data_governance",
+      "producer_role": "command_primary",
+      "event_contract_status": "missing_immutable_event_contract",
+      "reducer_state_dependency": "rights_assertion"
+    },
+    {
+      "event_type": "run.validity_determined",
+      "event_version": "1.0.0",
+      "payload_schema_id": "urn:odeya:event-payload:run.validity_determined:1.0.0",
+      "aggregate_type": "run",
+      "owner_module": "measurement",
+      "producer_role": "command_primary",
+      "event_contract_status": "missing_immutable_event_contract",
+      "reducer_state_dependency": "run"
+    },
+    {
+      "event_type": "transformation.recorded",
+      "event_version": "1.0.0",
+      "payload_schema_id": "urn:odeya:event-payload:transformation.recorded:1.0.0",
+      "aggregate_type": "transformation",
+      "owner_module": "data_governance",
+      "producer_role": "command_primary",
+      "event_contract_status": "missing_immutable_event_contract",
+      "reducer_state_dependency": "transformation"
+    },
+    {
+      "event_type": "verification.assigned",
+      "event_version": "1.0.0",
+      "payload_schema_id": "urn:odeya:event-payload:verification.assigned:2.0.0",
+      "aggregate_type": "verification",
+      "owner_module": "verification",
+      "producer_role": "command_primary",
+      "event_contract_status": "missing_immutable_event_contract",
+      "reducer_state_dependency": "verification"
+    },
+    {
+      "event_type": "verification.completed",
+      "event_version": "1.0.0",
+      "payload_schema_id": "urn:odeya:event-payload:verification.completed:2.0.0",
+      "aggregate_type": "verification",
+      "owner_module": "verification",
+      "producer_role": "command_primary",
+      "event_contract_status": "missing_immutable_event_contract",
+      "reducer_state_dependency": "verification"
+    },
+    {
+      "event_type": "verification.disputed",
+      "event_version": "1.0.0",
+      "payload_schema_id": "urn:odeya:event-payload:verification.disputed:2.0.0",
+      "aggregate_type": "verification",
+      "owner_module": "verification",
+      "producer_role": "command_primary",
+      "event_contract_status": "missing_immutable_event_contract",
+      "reducer_state_dependency": "verification"
+    },
+    {
+      "event_type": "verification.invalidated",
+      "event_version": "1.0.0",
+      "payload_schema_id": "urn:odeya:event-payload:verification.invalidated:1.0.0",
+      "aggregate_type": "verification",
+      "owner_module": "verification",
+      "producer_role": "command_primary",
+      "event_contract_status": "missing_immutable_event_contract",
+      "reducer_state_dependency": "verification"
+    },
+    {
+      "event_type": "verification.requested",
+      "event_version": "1.0.0",
+      "payload_schema_id": "urn:odeya:event-payload:verification.requested:1.0.0",
+      "aggregate_type": "verification",
+      "owner_module": "verification",
+      "producer_role": "command_primary",
+      "event_contract_status": "missing_immutable_event_contract",
+      "reducer_state_dependency": "verification"
+    },
+    {
+      "event_type": "verification.started",
+      "event_version": "1.0.0",
+      "payload_schema_id": "urn:odeya:event-payload:verification.started:1.0.0",
+      "aggregate_type": "verification",
+      "owner_module": "verification",
+      "producer_role": "command_primary",
+      "event_contract_status": "missing_immutable_event_contract",
+      "reducer_state_dependency": "verification"
+    }
+  ],
+  "aggregate_dependencies": [
+    {
+      "aggregate_type": "adjudication",
+      "owner_module": "adjudication",
+      "reducer_family": "Adjudication",
+      "state_axes": [
+        "input_frontier",
+        "rule",
+        "outcome",
+        "reason",
+        "claim_eligibility"
+      ],
+      "state_subject_status": "missing_real_first_slice_member",
+      "reducer_contract_status": "missing_real_first_slice_member"
+    },
+    {
+      "aggregate_type": "artifact",
+      "owner_module": "artifact",
+      "reducer_family": "ArtifactCustody",
+      "state_axes": [
+        "recorded",
+        "validation",
+        "promotion",
+        "quarantine",
+        "availability"
+      ],
+      "state_subject_status": "missing_real_first_slice_member",
+      "reducer_contract_status": "missing_real_first_slice_member"
+    },
+    {
+      "aggregate_type": "authority_assignment",
+      "owner_module": "authority",
+      "reducer_family": "AuthorityAssignment",
+      "state_axes": [
+        "principal_role_scope",
+        "issuer_chain",
+        "validity_interval",
+        "lifecycle"
+      ],
+      "state_subject_status": "missing_real_first_slice_member",
+      "reducer_contract_status": "missing_real_first_slice_member"
+    },
+    {
+      "aggregate_type": "authority_grant",
+      "owner_module": "authority",
+      "reducer_family": "AuthorityGrant",
+      "state_axes": [
+        "issue",
+        "activation",
+        "reservation_use",
+        "exhaustion",
+        "expiry",
+        "revocation"
+      ],
+      "state_subject_status": "missing_real_first_slice_member",
+      "reducer_contract_status": "missing_real_first_slice_member"
+    },
+    {
+      "aggregate_type": "blocker",
+      "owner_module": "mission",
+      "reducer_family": "Blocker",
+      "state_axes": [
+        "class",
+        "scope",
+        "reason",
+        "resolution_requirement",
+        "lifecycle"
+      ],
+      "state_subject_status": "missing_real_first_slice_member",
+      "reducer_contract_status": "missing_real_first_slice_member"
+    },
+    {
+      "aggregate_type": "claim_proposal",
+      "owner_module": "claims",
+      "reducer_family": "ClaimProposal",
+      "state_axes": [
+        "language_scope",
+        "disposition",
+        "limitations"
+      ],
+      "state_subject_status": "missing_real_first_slice_member",
+      "reducer_contract_status": "missing_real_first_slice_member"
+    },
+    {
+      "aggregate_type": "claim_version",
+      "owner_module": "claims",
+      "reducer_family": "ClaimVersion",
+      "state_axes": [
+        "immutable_version",
+        "eligibility",
+        "current_superseded_retracted"
+      ],
+      "state_subject_status": "missing_real_first_slice_member",
+      "reducer_contract_status": "missing_real_first_slice_member"
+    },
+    {
+      "aggregate_type": "data_asset",
+      "owner_module": "data_governance",
+      "reducer_family": "DataAsset",
+      "state_axes": [
+        "identity",
+        "classification",
+        "lifecycle",
+        "custody"
+      ],
+      "state_subject_status": "missing_real_first_slice_member",
+      "reducer_contract_status": "missing_real_first_slice_member"
+    },
+    {
+      "aggregate_type": "data_use_decision",
+      "owner_module": "data_governance",
+      "reducer_family": "DataUseDecision",
+      "state_axes": [
+        "purpose",
+        "operation",
+        "recipient_provider_region",
+        "retention",
+        "validity",
+        "decision"
+      ],
+      "state_subject_status": "missing_real_first_slice_member",
+      "reducer_contract_status": "missing_real_first_slice_member"
+    },
+    {
+      "aggregate_type": "dependency",
+      "owner_module": "claims",
+      "reducer_family": "Dependency",
+      "state_axes": [
+        "edge",
+        "invalidation_frontier",
+        "reason",
+        "fanout"
+      ],
+      "state_subject_status": "missing_real_first_slice_member",
+      "reducer_contract_status": "missing_real_first_slice_member"
+    },
+    {
+      "aggregate_type": "falsifier",
+      "owner_module": "measurement",
+      "reducer_family": "Falsifier",
+      "state_axes": [
+        "mutation",
+        "intended_layer",
+        "result",
+        "consequence"
+      ],
+      "state_subject_status": "missing_real_first_slice_member",
+      "reducer_contract_status": "missing_real_first_slice_member"
+    },
+    {
+      "aggregate_type": "measurement",
+      "owner_module": "measurement",
+      "reducer_family": "MeasurementDisposition",
+      "state_axes": [
+        "disposition",
+        "missingness",
+        "eligibility"
+      ],
+      "state_subject_status": "missing_real_first_slice_member",
+      "reducer_contract_status": "missing_real_first_slice_member"
+    },
+    {
+      "aggregate_type": "metric",
+      "owner_module": "measurement",
+      "reducer_family": "MetricObservation",
+      "state_axes": [
+        "estimand",
+        "quantity_unit_value",
+        "uncertainty",
+        "missingness"
+      ],
+      "state_subject_status": "missing_real_first_slice_member",
+      "reducer_contract_status": "missing_real_first_slice_member"
+    },
+    {
+      "aggregate_type": "mission",
+      "owner_module": "mission",
+      "reducer_family": "Mission",
+      "state_axes": [
+        "origin",
+        "contract",
+        "phase",
+        "control"
+      ],
+      "state_subject_status": "missing_real_first_slice_member",
+      "reducer_contract_status": "missing_real_first_slice_member"
+    },
+    {
+      "aggregate_type": "proposal",
+      "owner_module": "mission",
+      "reducer_family": "Proposal",
+      "state_axes": [
+        "submission",
+        "decision"
+      ],
+      "state_subject_status": "missing_real_first_slice_member",
+      "reducer_contract_status": "missing_real_first_slice_member"
+    },
+    {
+      "aggregate_type": "protocol",
+      "owner_module": "protocol",
+      "reducer_family": "Protocol",
+      "state_axes": [
+        "exposure",
+        "freeze",
+        "integrity",
+        "branch"
+      ],
+      "state_subject_status": "missing_real_first_slice_member",
+      "reducer_contract_status": "missing_real_first_slice_member"
+    },
+    {
+      "aggregate_type": "resource_budget",
+      "owner_module": "resources",
+      "reducer_family": "ResourceLedger",
+      "state_axes": [
+        "reservation_lifecycle",
+        "estimate",
+        "ceiling",
+        "actual",
+        "billed_refunded",
+        "missingness"
+      ],
+      "state_subject_status": "missing_real_first_slice_member",
+      "reducer_contract_status": "missing_real_first_slice_member"
+    },
+    {
+      "aggregate_type": "retention_schedule",
+      "owner_module": "data_governance",
+      "reducer_family": "RetentionSchedule",
+      "state_axes": [
+        "trigger",
+        "duration_bounds",
+        "storage_planes",
+        "hold_precedence",
+        "terminal_action"
+      ],
+      "state_subject_status": "missing_real_first_slice_member",
+      "reducer_contract_status": "missing_real_first_slice_member"
+    },
+    {
+      "aggregate_type": "review",
+      "owner_module": "verification",
+      "reducer_family": "Review",
+      "state_axes": [
+        "scope",
+        "reviewer_conflict",
+        "findings",
+        "disposition",
+        "limitations"
+      ],
+      "state_subject_status": "missing_real_first_slice_member",
+      "reducer_contract_status": "missing_real_first_slice_member"
+    },
+    {
+      "aggregate_type": "rights_assertion",
+      "owner_module": "data_governance",
+      "reducer_family": "RightsAssertion",
+      "state_axes": [
+        "evidence_basis",
+        "scope",
+        "validity",
+        "authority_effect"
+      ],
+      "state_subject_status": "missing_real_first_slice_member",
+      "reducer_contract_status": "missing_real_first_slice_member"
+    },
+    {
+      "aggregate_type": "run",
+      "owner_module": "measurement",
+      "reducer_family": "RunValidity",
+      "state_axes": [
+        "protocol_binding",
+        "validity",
+        "reason",
+        "evidence"
+      ],
+      "state_subject_status": "missing_real_first_slice_member",
+      "reducer_contract_status": "missing_real_first_slice_member"
+    },
+    {
+      "aggregate_type": "transformation",
+      "owner_module": "data_governance",
+      "reducer_family": "Transformation",
+      "state_axes": [
+        "input_output_lineage",
+        "rule_environment",
+        "loss_redaction",
+        "validation"
+      ],
+      "state_subject_status": "missing_real_first_slice_member",
+      "reducer_contract_status": "missing_real_first_slice_member"
+    },
+    {
+      "aggregate_type": "verification",
+      "owner_module": "verification",
+      "reducer_family": "unresolved_c7_verification_vs_reproducibility",
+      "reducer_family_status": "blocked_conflict_c7",
+      "reducer_family_candidates": [
+        "Verification",
+        "Reproducibility"
+      ],
+      "catalog_evidence": "COMMAND_EVENT_CATALOG maps reproducibility.determined to verification / Reproducibility while this inventory previously folded it into Verification",
+      "state_axes": [
+        "request",
+        "assignment",
+        "execution",
+        "terminal_assessment",
+        "dispute",
+        "invalidation",
+        "reproducibility",
+        "independence"
+      ],
+      "state_subject_status": "missing_real_first_slice_member",
+      "reducer_contract_status": "missing_real_first_slice_member"
+    }
+  ],
+  "refusal": {
+    "may_create_registry_instance": false,
+    "may_create_root_or_activation": false,
+    "may_freeze_scope_or_counts": false,
+    "may_claim_gate_a_complete": false,
+    "must_resolve_conflicts": [
+      "C1",
+      "C2",
+      "C3",
+      "C4",
+      "C5",
+      "C6",
+      "C7",
+      "C8"
+    ],
+    "must_recompute_scope_after_resolution": [
+      "C1",
+      "C5",
+      "C6",
+      "C7",
+      "C8"
+    ],
+    "must_bind_external_prerequisite": "P0.constitutional-recovery-admission",
+    "must_close_recomputed_missing_set": true,
+    "prohibited_scope_expansion": [
+      "runtime",
+      "canonical_mission_trace",
+      "main_manifest",
+      "ui",
+      "formal",
+      "publication",
+      "external_effect",
+      "provider_or_model_call",
+      "training",
+      "physical_action"
+    ]
+  },
+  "known_limitations": [
+    "121 design command names is the only frozen count; 44/77/43/52/23/10 are current hypothesis values only",
+    "the 52-event array is a C1 conflict union, not the exact dependency-closed event set or an event-occurrence count",
+    "C5 leaves local materialization, lease, sandbox, resource, and execution facts without a legal producer cohort",
+    "C6 leaves command-specific multi-grant use and exact final-use exhaustion cardinalities unresolved",
+    "C7 leaves reproducibility reducer ownership and therefore reducer cardinality unresolved",
+    "C8 leaves the separately admitted root/C0/checkpoint/witness/activation/recovery prerequisite unbound",
+    "authority_profile values are proposed closure targets, not admitted CommandContractRecord values",
+    "catalog event mappings are design evidence, not legal event alternatives",
+    "reducer family names are conceptual and are not reducer IDs; verification/reproducibility is explicitly contradictory",
+    "the mission phase versus general work-graph boundary must be fixed before admission; expanding it changes counts",
+    "schema validation cannot prove semantic references, producer cohorts, authority, rights, resources, or replay correctness"
+  ]
+}

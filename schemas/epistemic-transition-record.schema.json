@@ -1,0 +1,424 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:odeya:schema:epistemic-transition-record:0.1.0",
+  "title": "Odeya EpistemicTransitionRecord",
+  "description": "A proposed process-level scientific record of externally checkable epistemic change. A changed result has a nonempty closed typed-change set if and only if it proposes a graph delta; edge-only, evidence-disposition-only, and contract-only change are representable. It requires one retained disposition per material evidence item and excludes private reasoning, consensus, votes, debate, and narrative from evidence kinds.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "record_status", "transition_id", "version", "mission_id",
+    "state_view", "candidate_artifact",
+    "graph_aggregate_id", "protocol_branch_ref", "predecessor_graph", "graph_delta",
+    "material_evidence",
+    "coverage", "hypothesis_changes", "new_contradiction_refs", "residual_unknown_refs",
+    "falsifier_outcomes", "contract_changes", "typed_change_classes",
+    "change_summary", "response", "responsibility",
+    "verification", "adjudication", "authority_boundary", "recorded_at"
+  ],
+  "properties": {
+    "schema_version": { "const": "0.1.0" },
+    "record_status": { "const": "proposed_non_authoritative" },
+    "transition_id": { "$ref": "#/$defs/identifier" },
+    "version": { "type": "integer", "minimum": 1 },
+    "mission_id": { "$ref": "#/$defs/identifier" },
+    "state_view": { "$ref": "#/$defs/research_state_view_reference" },
+    "candidate_artifact": { "$ref": "#/$defs/candidate_artifact_reference" },
+    "graph_aggregate_id": { "$ref": "#/$defs/identifier" },
+    "protocol_branch_ref": { "$ref": "#/$defs/immutable_reference" },
+    "predecessor_graph": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "kind", "graph_version", "graph_root_digest", "head_event_ref",
+        "origin_delta_event_ref", "absence_evidence_ref",
+        "genesis_state_fabrication_allowed", "reducer_snapshot_ref",
+        "source_ledger_position"
+      ],
+      "properties": {
+        "kind": { "enum": ["absent_genesis", "existing_head"] },
+        "graph_version": { "oneOf": [{ "type": "integer", "minimum": 1 }, { "type": "null" }] },
+        "graph_root_digest": { "oneOf": [{ "$ref": "#/$defs/digest" }, { "type": "null" }] },
+        "head_event_ref": { "oneOf": [{ "$ref": "#/$defs/immutable_reference" }, { "type": "null" }] },
+        "origin_delta_event_ref": { "oneOf": [{ "$ref": "#/$defs/immutable_reference" }, { "type": "null" }] },
+        "absence_evidence_ref": { "oneOf": [{ "$ref": "#/$defs/artifact_reference" }, { "type": "null" }] },
+        "genesis_state_fabrication_allowed": { "const": false },
+        "reducer_snapshot_ref": { "$ref": "#/$defs/immutable_reference" },
+        "source_ledger_position": { "type": "integer", "minimum": 0 }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "kind": { "const": "absent_genesis" } }, "required": ["kind"] },
+          "then": {
+            "properties": {
+              "graph_version": { "type": "null" },
+              "graph_root_digest": { "type": "null" },
+              "head_event_ref": { "type": "null" },
+              "origin_delta_event_ref": { "type": "null" },
+              "absence_evidence_ref": { "$ref": "#/$defs/artifact_reference" }
+            }
+          },
+          "else": {
+            "properties": {
+              "graph_version": { "type": "integer", "minimum": 1 },
+              "graph_root_digest": { "$ref": "#/$defs/digest" },
+              "head_event_ref": { "$ref": "#/$defs/immutable_reference" },
+              "origin_delta_event_ref": { "$ref": "#/$defs/immutable_reference" },
+              "absence_evidence_ref": { "type": "null" }
+            }
+          }
+        }
+      ]
+    },
+    "graph_delta": {
+      "type": "object", "additionalProperties": false,
+      "required": ["status", "graph_delta_ref", "reason_codes"],
+      "properties": {
+        "status": { "enum": ["proposed", "not_produced", "indeterminate"] },
+        "graph_delta_ref": { "oneOf": [{ "$ref": "#/$defs/epistemic_graph_delta_reference" }, { "type": "null" }] },
+        "reason_codes": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/identifier" } }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "status": { "const": "proposed" } }, "required": ["status"] },
+          "then": { "properties": { "graph_delta_ref": { "$ref": "#/$defs/epistemic_graph_delta_reference" }, "reason_codes": { "maxItems": 0 } } },
+          "else": { "properties": { "graph_delta_ref": { "type": "null" }, "reason_codes": { "minItems": 1 } } }
+        }
+      ]
+    },
+    "material_evidence": {
+      "type": "array", "uniqueItems": true,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["evidence_ref", "evidence_kind", "available_in_view", "consulted", "disposition", "rule_ref", "disposition_evidence_ref"],
+        "properties": {
+          "evidence_ref": { "$ref": "#/$defs/artifact_reference" },
+          "evidence_kind": { "enum": ["source", "dataset", "method", "metric_result", "falsifier_result", "physical_observation", "verification_result", "adjudication"] },
+          "available_in_view": { "const": true },
+          "consulted": { "type": "boolean" },
+          "disposition": { "enum": ["incorporated", "contradicts", "supports_under_scope", "invalid_source", "inadmissible_method", "duplicate_dependency", "not_applicable", "unresolved"] },
+          "rule_ref": { "$ref": "#/$defs/immutable_reference" },
+          "disposition_evidence_ref": { "$ref": "#/$defs/artifact_reference" }
+        }
+      }
+    },
+    "coverage": {
+      "type": "object", "additionalProperties": false,
+      "required": ["result", "material_evidence_search_completed", "missing_material_evidence_refs", "contradiction_search_completed", "omitted_contradiction_refs", "unresolved_coverage_reasons", "coverage_rule_ref", "coverage_evidence_ref"],
+      "properties": {
+        "result": { "enum": ["complete", "incomplete", "indeterminate"] },
+        "material_evidence_search_completed": { "type": "boolean" },
+        "missing_material_evidence_refs": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/artifact_reference" } },
+        "contradiction_search_completed": { "type": "boolean" },
+        "omitted_contradiction_refs": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/immutable_reference" } },
+        "unresolved_coverage_reasons": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/identifier" } },
+        "coverage_rule_ref": { "$ref": "#/$defs/immutable_reference" },
+        "coverage_evidence_ref": { "$ref": "#/$defs/artifact_reference" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "result": { "const": "complete" } }, "required": ["result"] },
+          "then": {
+            "properties": {
+              "material_evidence_search_completed": { "const": true },
+              "missing_material_evidence_refs": { "maxItems": 0 },
+              "contradiction_search_completed": { "const": true },
+              "omitted_contradiction_refs": { "maxItems": 0 },
+              "unresolved_coverage_reasons": { "maxItems": 0 }
+            }
+          },
+          "else": { "properties": { "unresolved_coverage_reasons": { "minItems": 1 } } }
+        }
+      ]
+    },
+    "hypothesis_changes": {
+      "type": "array", "uniqueItems": true,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["action", "predecessor_refs", "successor_refs", "reason_code", "responsible_identity"],
+        "properties": {
+          "action": { "enum": ["introduced", "retained", "revised", "split", "superseded", "rejected"] },
+          "predecessor_refs": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/immutable_reference" } },
+          "successor_refs": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/immutable_reference" } },
+          "reason_code": { "$ref": "#/$defs/identifier" },
+          "responsible_identity": { "$ref": "#/$defs/principal" }
+        },
+        "allOf": [
+          {
+            "if": { "properties": { "action": { "const": "introduced" } }, "required": ["action"] },
+            "then": { "properties": { "predecessor_refs": { "maxItems": 0 }, "successor_refs": { "minItems": 1 } } }
+          },
+          {
+            "if": { "properties": { "action": { "enum": ["revised", "split", "superseded"] } }, "required": ["action"] },
+            "then": { "properties": { "predecessor_refs": { "minItems": 1 }, "successor_refs": { "minItems": 1 } } }
+          },
+          {
+            "if": { "properties": { "action": { "const": "rejected" } }, "required": ["action"] },
+            "then": { "properties": { "predecessor_refs": { "minItems": 1 }, "successor_refs": { "maxItems": 0 } } }
+          }
+        ]
+      }
+    },
+    "new_contradiction_refs": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/immutable_reference" } },
+    "residual_unknown_refs": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/immutable_reference" } },
+    "falsifier_outcomes": {
+      "type": "array", "uniqueItems": true,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["falsifier_result_ref", "outcome", "consequence_rule_ref", "applied_consequence", "application_evidence_ref"],
+        "properties": {
+          "falsifier_result_ref": { "$ref": "#/$defs/immutable_reference" },
+          "outcome": { "enum": ["passed", "triggered", "invalid_measurement", "indeterminate", "not_run"] },
+          "consequence_rule_ref": { "$ref": "#/$defs/immutable_reference" },
+          "applied_consequence": { "enum": ["retain", "revise", "reject", "block", "replan", "escalate", "none"] },
+          "application_evidence_ref": { "$ref": "#/$defs/artifact_reference" }
+        }
+      }
+    },
+    "contract_changes": {
+      "type": "array", "uniqueItems": true,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["change_kind", "from_ref", "to_ref", "reason_code", "approved_by_ref"],
+        "properties": {
+          "change_kind": { "enum": ["assumption", "estimand", "method", "scope"] },
+          "from_ref": { "$ref": "#/$defs/immutable_reference" },
+          "to_ref": { "$ref": "#/$defs/immutable_reference" },
+          "reason_code": { "$ref": "#/$defs/identifier" },
+          "approved_by_ref": { "$ref": "#/$defs/immutable_reference" }
+        }
+      }
+    },
+    "typed_change_classes": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "node_lineage", "edge_relation", "material_evidence_disposition",
+          "contradiction_inventory", "residual_unknown",
+          "falsifier_consequence", "contract"
+        ]
+      }
+    },
+    "change_summary": {
+      "type": "object", "additionalProperties": false,
+      "required": ["result", "reason_codes", "evidence_ref"],
+      "properties": {
+        "result": { "enum": ["changed", "no_change", "incomplete"] },
+        "reason_codes": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/identifier" } },
+        "evidence_ref": { "$ref": "#/$defs/artifact_reference" }
+      }
+    },
+    "response": {
+      "type": "object", "additionalProperties": false,
+      "required": ["kind", "reason_codes", "surprise_recorded", "condition_ref"],
+      "properties": {
+        "kind": { "enum": ["continue", "block", "stop", "replan", "escalate", "refuse"] },
+        "reason_codes": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/identifier" } },
+        "surprise_recorded": { "type": "boolean" },
+        "condition_ref": { "$ref": "#/$defs/immutable_reference" }
+      }
+    },
+    "responsibility": {
+      "type": "array", "minItems": 1, "uniqueItems": true,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["change_ref", "responsibility_kind", "principal", "rule_or_model_ref"],
+        "properties": {
+          "change_ref": { "$ref": "#/$defs/immutable_reference" },
+          "responsibility_kind": { "enum": ["deterministic_rule", "model_proposal", "human_decision", "verifier_determination"] },
+          "principal": { "$ref": "#/$defs/principal" },
+          "rule_or_model_ref": { "$ref": "#/$defs/immutable_reference" }
+        }
+      }
+    },
+    "verification": { "$ref": "#/$defs/control_disposition" },
+    "adjudication": { "$ref": "#/$defs/control_disposition" },
+    "authority_boundary": {
+      "type": "object", "additionalProperties": false,
+      "required": ["proposal_only", "canonical_event_append_authorized", "private_reasoning_used_as_evidence", "consensus_used_as_evidence", "transition_is_admission_authority", "requirements_derive_from_admission_class"],
+      "properties": {
+        "proposal_only": { "const": true },
+        "canonical_event_append_authorized": { "const": false },
+        "private_reasoning_used_as_evidence": { "const": false },
+        "consensus_used_as_evidence": { "const": false },
+        "transition_is_admission_authority": { "const": false },
+        "requirements_derive_from_admission_class": { "const": true }
+      }
+    },
+    "recorded_at": { "$ref": "#/$defs/timestamp" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "coverage": { "properties": { "result": { "enum": ["incomplete", "indeterminate"] } }, "required": ["result"] } } },
+      "then": { "properties": { "response": { "properties": { "kind": { "enum": ["block", "stop", "replan", "escalate", "refuse"] } } } } }
+    },
+    {
+      "if": { "properties": { "change_summary": { "properties": { "result": { "const": "changed" } }, "required": ["result"] } } },
+      "then": {
+        "properties": {
+          "typed_change_classes": { "minItems": 1 },
+          "graph_delta": { "properties": { "status": { "const": "proposed" } } }
+        }
+      },
+      "else": {
+        "properties": {
+          "typed_change_classes": { "maxItems": 0 },
+          "graph_delta": { "properties": { "status": { "enum": ["not_produced", "indeterminate"] } } }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "graph_delta": { "properties": { "status": { "const": "proposed" } }, "required": ["status"] } } },
+      "then": { "properties": { "change_summary": { "properties": { "result": { "const": "changed" } } } } },
+      "else": { "properties": { "change_summary": { "properties": { "result": { "enum": ["no_change", "incomplete"] } } } } }
+    },
+    {
+      "if": { "properties": { "typed_change_classes": { "contains": { "const": "node_lineage" } } } },
+      "then": { "properties": { "hypothesis_changes": { "minItems": 1 } } }
+    },
+    {
+      "if": { "properties": { "typed_change_classes": { "contains": { "const": "material_evidence_disposition" } } } },
+      "then": { "properties": { "material_evidence": { "minItems": 1 } } }
+    },
+    {
+      "if": { "properties": { "typed_change_classes": { "contains": { "const": "contradiction_inventory" } } } },
+      "then": { "properties": { "new_contradiction_refs": { "minItems": 1 } } }
+    },
+    {
+      "if": { "properties": { "typed_change_classes": { "contains": { "const": "residual_unknown" } } } },
+      "then": { "properties": { "residual_unknown_refs": { "minItems": 1 } } }
+    },
+    {
+      "if": { "properties": { "typed_change_classes": { "contains": { "const": "falsifier_consequence" } } } },
+      "then": { "properties": { "falsifier_outcomes": { "minItems": 1 } } }
+    },
+    {
+      "if": { "properties": { "typed_change_classes": { "contains": { "const": "contract" } } } },
+      "then": { "properties": { "contract_changes": { "minItems": 1 } } }
+    },
+    {
+      "if": { "properties": { "hypothesis_changes": { "minItems": 1 } } },
+      "then": { "properties": { "typed_change_classes": { "contains": { "const": "node_lineage" } } } }
+    },
+    {
+      "if": { "properties": { "new_contradiction_refs": { "minItems": 1 } } },
+      "then": { "properties": { "typed_change_classes": { "contains": { "const": "contradiction_inventory" } } } }
+    },
+    {
+      "if": { "properties": { "residual_unknown_refs": { "minItems": 1 } } },
+      "then": { "properties": { "typed_change_classes": { "contains": { "const": "residual_unknown" } } } }
+    },
+    {
+      "if": { "properties": { "falsifier_outcomes": { "minItems": 1 } } },
+      "then": { "properties": { "typed_change_classes": { "contains": { "const": "falsifier_consequence" } } } }
+    },
+    {
+      "if": { "properties": { "contract_changes": { "minItems": 1 } } },
+      "then": { "properties": { "typed_change_classes": { "contains": { "const": "contract" } } } }
+    },
+    {
+      "if": { "properties": { "change_summary": { "properties": { "result": { "const": "incomplete" } }, "required": ["result"] } } },
+      "then": { "properties": { "response": { "properties": { "kind": { "enum": ["block", "stop", "replan", "escalate", "refuse"] } } } } }
+    },
+    {
+      "if": {
+        "properties": {
+          "verification": {
+            "properties": { "requirement": { "const": "required" }, "disposition": { "not": { "const": "satisfied" } } },
+            "required": ["requirement", "disposition"]
+          }
+        }
+      },
+      "then": { "properties": { "response": { "properties": { "kind": { "not": { "const": "continue" } } } } } }
+    },
+    {
+      "if": {
+        "properties": {
+          "adjudication": {
+            "properties": { "requirement": { "const": "required" }, "disposition": { "not": { "const": "satisfied" } } },
+            "required": ["requirement", "disposition"]
+          }
+        }
+      },
+      "then": { "properties": { "response": { "properties": { "kind": { "not": { "const": "continue" } } } } } }
+    }
+  ],
+  "$defs": {
+    "identifier": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$" },
+    "digest": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+    "timestamp": { "type": "string", "format": "date-time", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$" },
+    "artifact_reference": {
+      "type": "object", "additionalProperties": false,
+      "required": ["artifact_id", "digest", "media_type"],
+      "properties": { "artifact_id": { "$ref": "#/$defs/identifier" }, "digest": { "$ref": "#/$defs/digest" }, "media_type": { "type": "string", "minLength": 1 } }
+    },
+    "immutable_reference": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "version", "digest"],
+      "properties": { "id": { "$ref": "#/$defs/identifier" }, "version": { "type": "integer", "minimum": 1 }, "digest": { "$ref": "#/$defs/digest" } }
+    },
+    "research_state_view_reference": {
+      "type": "object", "additionalProperties": false,
+      "required": ["record_type", "id", "version", "schema_id", "digest"],
+      "properties": {
+        "record_type": { "const": "research_state_view" },
+        "id": { "$ref": "#/$defs/identifier" },
+        "version": { "type": "integer", "minimum": 1 },
+        "schema_id": { "const": "urn:odeya:schema:research-state-view:0.1.0" },
+        "digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "candidate_artifact_reference": {
+      "type": "object", "additionalProperties": false,
+      "required": ["record_type", "id", "version", "schema_id", "digest"],
+      "properties": {
+        "record_type": { "const": "candidate_artifact" },
+        "id": { "$ref": "#/$defs/identifier" },
+        "version": { "type": "integer", "minimum": 1 },
+        "schema_id": { "const": "urn:odeya:schema:candidate-artifact:0.1.0" },
+        "digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "epistemic_graph_delta_reference": {
+      "type": "object", "additionalProperties": false,
+      "required": ["record_type", "id", "version", "schema_id", "digest"],
+      "properties": {
+        "record_type": { "const": "epistemic_graph_delta" },
+        "id": { "$ref": "#/$defs/identifier" },
+        "version": { "type": "integer", "minimum": 1 },
+        "schema_id": { "const": "urn:odeya:schema:epistemic-graph-delta:0.1.0" },
+        "digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "control_disposition": {
+      "type": "object", "additionalProperties": false,
+      "required": ["requirement", "disposition", "record_ref", "reason_codes", "evidence_refs"],
+      "properties": {
+        "requirement": { "enum": ["required", "not_required", "indeterminate"] },
+        "disposition": { "enum": ["satisfied", "failed", "missing", "not_required", "indeterminate"] },
+        "record_ref": { "oneOf": [{ "$ref": "#/$defs/immutable_reference" }, { "type": "null" }] },
+        "reason_codes": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/identifier" } },
+        "evidence_refs": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/artifact_reference" } }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "requirement": { "const": "not_required" } }, "required": ["requirement"] },
+          "then": { "properties": { "disposition": { "const": "not_required" }, "record_ref": { "type": "null" }, "reason_codes": { "minItems": 1 } } }
+        },
+        {
+          "if": { "properties": { "requirement": { "const": "indeterminate" } }, "required": ["requirement"] },
+          "then": { "properties": { "disposition": { "const": "indeterminate" }, "record_ref": { "type": "null" }, "reason_codes": { "minItems": 1 } } }
+        },
+        {
+          "if": { "properties": { "disposition": { "enum": ["satisfied", "failed"] } }, "required": ["disposition"] },
+          "then": { "properties": { "record_ref": { "$ref": "#/$defs/immutable_reference" }, "evidence_refs": { "minItems": 1 } } },
+          "else": { "properties": { "record_ref": { "type": "null" }, "reason_codes": { "minItems": 1 } } }
+        }
+      ]
+    },
+    "principal": {
+      "type": "object", "additionalProperties": false,
+      "required": ["principal_id", "principal_type"],
+      "properties": { "principal_id": { "$ref": "#/$defs/identifier" }, "principal_type": { "enum": ["human", "deterministic_service", "model_run"] } }
+    }
+  }
+}

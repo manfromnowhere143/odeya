@@ -1,5 +1,5 @@
 {
-  "schema_version": "0.1.0",
+  "schema_version": "0.2.0",
   "grant_id": "grant.001",
   "version": 1,
   "mission_id": "mission.001",
@@ -47,6 +47,23 @@
   "replay": {
     "mode": "bounded_use",
     "idempotency_scope": "command:stage.authorize:mission.001"
+  },
+  "consumption": {
+    "action_boundary": "in_ledger",
+    "consumption_point": "domain_commit",
+    "reservation_policy": "atomic_reserve_and_consume",
+    "reservation_identity_fields": ["grant_id", "command_id", "authorization_request_digest"],
+    "maximum_open_reservations": 0,
+    "reservation_ttl_seconds": 0,
+    "pre_consumption_rechecks": [
+      "active_assignment",
+      "grant_not_revoked",
+      "controlled_time_before_expiry",
+      "prior_use_absent",
+      "exact_scope_match"
+    ],
+    "unused_reservation_release": "not_applicable_atomic_commit",
+    "consumed_reservation_release": "forbidden"
   },
   "dependencies": {
     "required_grant_refs": [],

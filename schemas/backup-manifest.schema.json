@@ -1,0 +1,293 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:odeya:schema:backup-manifest:0.1.0",
+  "title": "Odeya BackupManifest",
+  "description": "An immutable manifest for one backup set and its distinct write, verification, and clean-room recoverability states. It identifies encryption keys and recovery policy but can never contain key material.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "backup_manifest_id",
+    "version",
+    "source_frontier",
+    "backup_chain",
+    "format_profile",
+    "components",
+    "encryption",
+    "creation",
+    "state",
+    "governance",
+    "checkpoint_contract",
+    "catalog_observation",
+    "digest_scope",
+    "manifest_digest",
+    "signatures"
+  ],
+  "properties": {
+    "schema_version": { "const": "0.1.0" },
+    "backup_manifest_id": { "$ref": "#/$defs/identifier" },
+    "version": { "type": "integer", "minimum": 1 },
+    "source_frontier": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ledger_epoch", "begin_global_position", "end_global_position", "begin_commit_time", "end_commit_time"],
+      "properties": {
+        "ledger_epoch": { "$ref": "#/$defs/identifier" },
+        "begin_global_position": { "type": "integer", "minimum": 0 },
+        "end_global_position": { "type": "integer", "minimum": 0 },
+        "begin_commit_time": { "type": "string", "format": "date-time" },
+        "end_commit_time": { "type": "string", "format": "date-time" }
+      }
+    },
+    "backup_chain": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["backup_kind", "base_backup_ref", "incremental_parent_refs", "chain_order"],
+      "properties": {
+        "backup_kind": { "enum": ["full", "differential", "incremental", "continuous_log_segment"] },
+        "base_backup_ref": {
+          "oneOf": [
+            { "$ref": "#/$defs/backup_reference" },
+            { "type": "null" }
+          ]
+        },
+        "incremental_parent_refs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/backup_reference" }
+        },
+        "chain_order": { "type": "integer", "minimum": 0 }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "backup_kind": { "const": "full" } }, "required": ["backup_kind"] },
+          "then": {
+            "properties": {
+              "base_backup_ref": { "type": "null" },
+              "incremental_parent_refs": { "maxItems": 0 },
+              "chain_order": { "const": 0 }
+            }
+          },
+          "else": {
+            "properties": {
+              "base_backup_ref": { "$ref": "#/$defs/backup_reference" },
+              "incremental_parent_refs": { "minItems": 1 },
+              "chain_order": { "minimum": 1 }
+            }
+          }
+        }
+      ]
+    },
+    "format_profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["database_engine", "database_engine_version", "logical_format_version", "restore_prerequisite_ref"],
+      "properties": {
+        "database_engine": { "type": "string", "minLength": 1 },
+        "database_engine_version": { "type": "string", "minLength": 1 },
+        "logical_format_version": { "type": "string", "minLength": 1 },
+        "restore_prerequisite_ref": { "$ref": "#/$defs/artifact_reference" }
+      }
+    },
+    "components": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["component_id", "recoverability_class", "component_kind", "shard_or_scope", "byte_length", "commitment_ref", "required_for_restore"],
+        "properties": {
+          "component_id": { "$ref": "#/$defs/identifier" },
+          "recoverability_class": { "enum": ["C0", "C1", "C2", "C3", "C4", "C5"] },
+          "component_kind": { "enum": ["constitutional_registry", "ledger_snapshot", "transaction_log", "artifact_shard", "external_evidence_export", "scheduler_export", "projection_snapshot", "catalog"] },
+          "shard_or_scope": { "type": "string", "minLength": 1 },
+          "byte_length": { "type": "integer", "minimum": 0 },
+          "commitment_ref": { "$ref": "#/$defs/artifact_reference" },
+          "required_for_restore": { "type": "boolean" }
+        }
+      }
+    },
+    "encryption": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["encryption_profile_ref", "encryption_key_id", "key_version", "recovery_policy_ref", "key_material_embedded"],
+      "properties": {
+        "encryption_profile_ref": { "$ref": "#/$defs/artifact_reference" },
+        "encryption_key_id": { "$ref": "#/$defs/identifier" },
+        "key_version": { "type": "string", "minLength": 1 },
+        "recovery_policy_ref": { "$ref": "#/$defs/artifact_reference" },
+        "key_material_embedded": { "const": false }
+      }
+    },
+    "creation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["activity_id", "actor", "tool_ref", "image_ref", "config_ref", "started_at", "completed_at"],
+      "properties": {
+        "activity_id": { "$ref": "#/$defs/identifier" },
+        "actor": { "$ref": "#/$defs/principal" },
+        "tool_ref": { "$ref": "#/$defs/artifact_reference" },
+        "image_ref": { "$ref": "#/$defs/artifact_reference" },
+        "config_ref": { "$ref": "#/$defs/artifact_reference" },
+        "started_at": { "type": "string", "format": "date-time" },
+        "completed_at": { "type": "string", "format": "date-time" }
+      }
+    },
+    "state": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["write_completion", "verification", "recoverability"],
+      "properties": {
+        "write_completion": { "$ref": "#/$defs/evidenced_state" },
+        "verification": { "$ref": "#/$defs/evidenced_state" },
+        "recoverability": { "$ref": "#/$defs/evidenced_state" }
+      }
+    },
+    "governance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["residency_regions", "data_classes", "retention_schedule_ref", "legal_hold_refs", "destruction_profile_ref"],
+      "properties": {
+        "residency_regions": { "$ref": "#/$defs/nonempty_string_array" },
+        "data_classes": { "$ref": "#/$defs/nonempty_string_array" },
+        "retention_schedule_ref": { "$ref": "#/$defs/artifact_reference" },
+        "legal_hold_refs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/artifact_reference" }
+        },
+        "destruction_profile_ref": { "$ref": "#/$defs/artifact_reference" }
+      }
+    },
+    "checkpoint_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["prior_checkpoint_ref", "first_expected_post_restore_checkpoint_rule_ref"],
+      "properties": {
+        "prior_checkpoint_ref": { "$ref": "#/$defs/checkpoint_reference" },
+        "first_expected_post_restore_checkpoint_rule_ref": { "$ref": "#/$defs/artifact_reference" }
+      }
+    },
+    "catalog_observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["catalog_id", "observer", "observation_time", "manifest_digest_observed", "immutability_control_ref", "observation_evidence_ref"],
+      "properties": {
+        "catalog_id": { "$ref": "#/$defs/identifier" },
+        "observer": { "$ref": "#/$defs/principal" },
+        "observation_time": { "type": "string", "format": "date-time" },
+        "manifest_digest_observed": { "$ref": "#/$defs/digest" },
+        "immutability_control_ref": { "$ref": "#/$defs/artifact_reference" },
+        "observation_evidence_ref": { "$ref": "#/$defs/artifact_reference" }
+      }
+    },
+    "digest_scope": { "const": "canonical-object:odeya-jcs-0.1:exclude(manifest_digest,signatures)" },
+    "manifest_digest": { "$ref": "#/$defs/digest" },
+    "signatures": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/signature_record" }
+    }
+  },
+  "$defs": {
+    "identifier": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$" },
+    "digest": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+    "artifact_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifact_id", "digest", "media_type"],
+      "properties": {
+        "artifact_id": { "$ref": "#/$defs/identifier" },
+        "digest": { "$ref": "#/$defs/digest" },
+        "media_type": { "type": "string", "minLength": 1 }
+      }
+    },
+    "principal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["principal_id", "principal_type"],
+      "properties": {
+        "principal_id": { "$ref": "#/$defs/identifier" },
+        "principal_type": { "enum": ["human", "service", "organization"] }
+      }
+    },
+    "backup_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["backup_manifest_id", "version", "digest"],
+      "properties": {
+        "backup_manifest_id": { "$ref": "#/$defs/identifier" },
+        "version": { "type": "integer", "minimum": 1 },
+        "digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "checkpoint_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["checkpoint_id", "ledger_epoch", "inclusive_global_position", "digest"],
+      "properties": {
+        "checkpoint_id": { "$ref": "#/$defs/identifier" },
+        "ledger_epoch": { "$ref": "#/$defs/identifier" },
+        "inclusive_global_position": { "type": "integer", "minimum": 0 },
+        "digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "evidenced_state": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["disposition", "evidence_ref", "observed_at"],
+      "properties": {
+        "disposition": { "enum": ["not_run", "pass", "fail", "indeterminate"] },
+        "evidence_ref": {
+          "oneOf": [
+            { "$ref": "#/$defs/artifact_reference" },
+            { "type": "null" }
+          ]
+        },
+        "observed_at": {
+          "oneOf": [
+            { "type": "string", "format": "date-time" },
+            { "type": "null" }
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "disposition": { "const": "not_run" } }, "required": ["disposition"] },
+          "then": {
+            "properties": {
+              "evidence_ref": { "type": "null" },
+              "observed_at": { "type": "null" }
+            }
+          },
+          "else": {
+            "properties": {
+              "evidence_ref": { "$ref": "#/$defs/artifact_reference" },
+              "observed_at": { "type": "string", "format": "date-time" }
+            }
+          }
+        }
+      ]
+    },
+    "nonempty_string_array": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "signature_record": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["signer_id", "key_id", "algorithm_profile_ref", "signature_purpose", "signed_digest", "signature_ref", "signed_at"],
+      "properties": {
+        "signer_id": { "$ref": "#/$defs/identifier" },
+        "key_id": { "$ref": "#/$defs/identifier" },
+        "algorithm_profile_ref": { "$ref": "#/$defs/artifact_reference" },
+        "signature_purpose": { "const": "odeya-backup-manifest-v1" },
+        "signed_digest": { "$ref": "#/$defs/digest" },
+        "signature_ref": { "$ref": "#/$defs/artifact_reference" },
+        "signed_at": { "type": "string", "format": "date-time" }
+      }
+    }
+  }
+}

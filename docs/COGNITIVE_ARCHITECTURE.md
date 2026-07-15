@@ -31,6 +31,8 @@ flowchart TB
 
 No model, including the epistemic supervisor, owns truth or mission state.
 
+The exact logical records, information-flow obligations, reducer laws, process-level evaluation, and verification-capacity invariant are specified in [Cognitive Control Contracts](COGNITIVE_CONTROL_CONTRACTS.md). Naming a component in this document does not make that component Gate A complete.
+
 ## Formal control abstraction
 
 Let the canonical research state at ledger position `t` be
@@ -118,6 +120,14 @@ It may not:
 - turn consensus into evidence.
 
 A context crash loses no scientific state. The next epoch compiles from retained facts.
+
+## Observable epistemic conduct
+
+Odeya must test whether the system responds scientifically to evidence, not only whether it produces a correct-looking final artifact. Every planning epoch and proposed graph transition therefore retains externally checkable evidence dispositions, hypothesis changes, contradiction state, falsifier consequences, assumption or estimand changes, and stop/replan decisions.
+
+This record is deliberately not private chain-of-thought. Hidden reasoning is neither required nor admissible proof. Scientific conduct is evaluated from typed inputs, actions, tool results, graph changes, and decisions that can be replayed and challenged.
+
+A material evidence item cannot disappear silently. It must be incorporated, retained as contradictory or unresolved, or rejected under an exact admissibility/applicability rule with evidence. Agent agreement cannot supply the missing disposition.
 
 ## Epistemic model graph
 
@@ -317,6 +327,12 @@ Rules:
 
 Google ERA and AlphaEvolve support this pattern for objectively scored work; they do not justify it for novelty, causality, safety, or research taste.
 
+## Epistemic backpressure
+
+Generation must not outrun the capacity to verify claim-bearing work. Before such a candidate is admitted, the controller reserves the required deterministic, computational, expert, physical, and safety verification dimensions. These dimensions do not collapse into one fungible score: spare tokens cannot replace an absent physical test or domain expert.
+
+Exploratory overflow may be retained only as explicitly unverified, quarantined candidates with no claim or promotion authority. When verification demand is unknown, confirmatory and high-consequence generation fails closed. The exact vector contract and admission law are defined in [Cognitive Control Contracts](COGNITIVE_CONTROL_CONTRACTS.md).
+
 ## Verification fabric and adjudication
 
 Verification is heterogeneous infrastructure, not one critic persona:
@@ -442,3 +458,7 @@ Required ablations include graph versus flat notes, compiled context versus full
 - [Anthropic managed agents](https://www.anthropic.com/engineering/managed-agents)
 - [Anthropic multi-agent research](https://www.anthropic.com/engineering/multi-agent-research-system)
 - [Google: scaling agent systems](https://research.google/blog/towards-a-science-of-scaling-agent-systems-when-and-why-agent-systems-work/)
+- [AI scientists produce results without reasoning scientifically](https://arxiv.org/abs/2604.18805)
+- [OpenAI LifeSciBench](https://openai.com/index/introducing-life-sci-bench/)
+- [OpenAI GeneBench-Pro](https://openai.com/index/introducing-genebench-pro/)
+- [Toward an Engineering of Science](https://arxiv.org/abs/2605.10425)

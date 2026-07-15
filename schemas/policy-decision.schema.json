@@ -1,0 +1,514 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:odeya:schema:policy-decision:0.1.0",
+  "title": "Odeya PolicyDecision",
+  "description": "A pure immutable result produced by the admission kernel from exact request, policy, engine, controlled-time, and canonical-frontier inputs. It is a policy filter, never an assignment or grant. Callers cannot mint or select it. Structural validity does not prove input truth, policy activation, deterministic evaluation, obligation enforcement, digest equality, or signature validity.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "decision_id",
+    "version",
+    "production_boundary",
+    "request_binding",
+    "evaluation_frontier",
+    "policy_identity",
+    "input_binding",
+    "decision",
+    "obligations",
+    "reason_codes",
+    "limitations",
+    "created_at",
+    "created_by",
+    "integrity"
+  ],
+  "properties": {
+    "schema_version": { "const": "0.1.0" },
+    "decision_id": { "$ref": "#/$defs/identifier" },
+    "version": { "type": "integer", "const": 1 },
+    "production_boundary": { "const": "admission_kernel" },
+    "request_binding": { "$ref": "#/$defs/request_binding" },
+    "evaluation_frontier": { "$ref": "#/$defs/evaluation_frontier" },
+    "policy_identity": { "$ref": "#/$defs/policy_identity" },
+    "input_binding": { "$ref": "#/$defs/input_binding" },
+    "decision": { "$ref": "#/$defs/decision" },
+    "obligations": {
+      "type": "array",
+      "maxItems": 64,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/obligation" }
+    },
+    "reason_codes": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 64,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/reason" }
+    },
+    "limitations": {
+      "type": "array",
+      "maxItems": 64,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/limitation" }
+    },
+    "created_at": { "$ref": "#/$defs/timestamp" },
+    "created_by": { "$ref": "#/$defs/kernel_identity" },
+    "integrity": { "$ref": "#/$defs/integrity" }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "decision": {
+            "properties": { "disposition": { "const": "allow" } },
+            "required": ["disposition"]
+          }
+        },
+        "required": ["decision"]
+      },
+      "then": {
+        "properties": {
+          "decision": {
+            "properties": { "evaluation_status": { "const": "evaluated" } }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "decision": {
+            "properties": { "disposition": { "const": "deny" } },
+            "required": ["disposition"]
+          }
+        },
+        "required": ["decision"]
+      },
+      "then": {
+        "properties": {
+          "decision": {
+            "properties": { "evaluation_status": { "const": "evaluated" } }
+          },
+          "obligations": { "maxItems": 0 }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "decision": {
+            "properties": { "disposition": { "const": "indeterminate" } },
+            "required": ["disposition"]
+          }
+        },
+        "required": ["decision"]
+      },
+      "then": {
+        "properties": {
+          "decision": {
+            "properties": {
+              "evaluation_status": {
+                "enum": [
+                  "bundle_unavailable",
+                  "input_unavailable",
+                  "engine_error",
+                  "timeout",
+                  "unsupported_input",
+                  "conflicting_rules"
+                ]
+              }
+            }
+          },
+          "obligations": { "maxItems": 0 }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 128,
+      "pattern": "^[a-z0-9][a-z0-9._:-]+$"
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "artifact_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifact_id", "digest", "media_type"],
+      "properties": {
+        "artifact_id": { "$ref": "#/$defs/identifier" },
+        "digest": { "$ref": "#/$defs/digest" },
+        "media_type": { "type": "string", "minLength": 1, "maxLength": 255 }
+      }
+    },
+    "versioned_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["object_id", "version", "schema_id", "digest"],
+      "properties": {
+        "object_id": { "$ref": "#/$defs/identifier" },
+        "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+        "schema_id": {
+          "type": "string",
+          "pattern": "^urn:odeya:schema:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "typed_record_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["record_id", "version", "schema_id", "digest"],
+      "properties": {
+        "record_id": { "$ref": "#/$defs/identifier" },
+        "version": { "type": "integer", "minimum": 1 },
+        "schema_id": {
+          "type": "string",
+          "pattern": "^urn:odeya:schema:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "command_contract_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["record_id", "version", "schema_id", "digest", "registry_snapshot_digest"],
+      "properties": {
+        "record_id": { "$ref": "#/$defs/identifier" },
+        "version": { "type": "integer", "minimum": 1 },
+        "schema_id": { "const": "urn:odeya:schema:command-contract-record:0.1.0" },
+        "digest": { "$ref": "#/$defs/digest" },
+        "registry_snapshot_digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "request_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "command_id",
+        "canonical_request_digest",
+        "command_type",
+        "command_version",
+        "command_schema_id",
+        "command_schema_digest",
+        "command_contract_record_ref",
+        "actor_binding_digest",
+        "target_binding_digest",
+        "authority_claim_digest"
+      ],
+      "properties": {
+        "command_id": { "$ref": "#/$defs/identifier" },
+        "canonical_request_digest": { "$ref": "#/$defs/digest" },
+        "command_type": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$"
+        },
+        "command_version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+        "command_schema_id": {
+          "type": "string",
+          "pattern": "^urn:odeya:command-payload:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "command_schema_digest": { "$ref": "#/$defs/digest" },
+        "command_contract_record_ref": { "$ref": "#/$defs/command_contract_reference" },
+        "actor_binding_digest": { "$ref": "#/$defs/digest" },
+        "target_binding_digest": { "$ref": "#/$defs/digest" },
+        "authority_claim_digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "checkpoint_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["checkpoint_id", "version", "schema_id", "ledger_epoch", "inclusive_global_position", "digest"],
+      "properties": {
+        "checkpoint_id": { "$ref": "#/$defs/identifier" },
+        "version": { "type": "integer", "minimum": 1 },
+        "schema_id": { "const": "urn:odeya:schema:ledger-checkpoint:0.2.0" },
+        "ledger_epoch": { "$ref": "#/$defs/identifier" },
+        "inclusive_global_position": { "type": "integer", "minimum": 0 },
+        "digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "aggregate_head_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["stream_id", "stream_position", "aggregate_type", "aggregate_id", "aggregate_version", "head_digest"],
+      "properties": {
+        "stream_id": { "$ref": "#/$defs/identifier" },
+        "stream_position": { "type": "integer", "minimum": -1 },
+        "aggregate_type": { "$ref": "#/$defs/identifier" },
+        "aggregate_id": { "$ref": "#/$defs/identifier" },
+        "aggregate_version": { "type": "integer", "minimum": -1 },
+        "head_digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "evaluation_frontier": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ledger_epoch",
+        "checkpoint_ref",
+        "evaluated_global_position",
+        "aggregate_head_refs",
+        "reference_set_digest",
+        "root_authority_manifest_ref",
+        "policy_registry_snapshot_ref",
+        "controlled_time"
+      ],
+      "properties": {
+        "ledger_epoch": { "$ref": "#/$defs/identifier" },
+        "checkpoint_ref": { "$ref": "#/$defs/checkpoint_reference" },
+        "evaluated_global_position": { "type": "integer", "minimum": 0 },
+        "aggregate_head_refs": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 128,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/aggregate_head_reference" }
+        },
+        "reference_set_digest": { "$ref": "#/$defs/digest" },
+        "root_authority_manifest_ref": { "$ref": "#/$defs/typed_record_reference" },
+        "policy_registry_snapshot_ref": { "$ref": "#/$defs/versioned_reference" },
+        "controlled_time": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["value", "source_ref", "uncertainty_ms"],
+          "properties": {
+            "value": { "$ref": "#/$defs/timestamp" },
+            "source_ref": { "$ref": "#/$defs/artifact_reference" },
+            "uncertainty_ms": { "type": "integer", "minimum": 0 }
+          }
+        }
+      }
+    },
+    "policy_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "policy_bundle_ref",
+        "rule_refs",
+        "entrypoint",
+        "engine_identity",
+        "decision_semantics_profile_ref"
+      ],
+      "properties": {
+        "policy_bundle_ref": { "$ref": "#/$defs/versioned_reference" },
+        "rule_refs": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 128,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/versioned_reference" }
+        },
+        "entrypoint": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256,
+          "pattern": "^[a-zA-Z0-9._:/-]+$"
+        },
+        "engine_identity": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["name", "version", "build_digest", "configuration_digest", "execution_profile_ref"],
+          "properties": {
+            "name": { "$ref": "#/$defs/identifier" },
+            "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+            "build_digest": { "$ref": "#/$defs/digest" },
+            "configuration_digest": { "$ref": "#/$defs/digest" },
+            "execution_profile_ref": { "$ref": "#/$defs/versioned_reference" }
+          }
+        },
+        "decision_semantics_profile_ref": { "$ref": "#/$defs/versioned_reference" }
+      }
+    },
+    "input_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "input_schema_id",
+        "input_schema_digest",
+        "input_digest",
+        "retained_input_ref",
+        "input_reference_set_digest"
+      ],
+      "properties": {
+        "input_schema_id": {
+          "type": "string",
+          "pattern": "^urn:odeya:schema:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "input_schema_digest": { "$ref": "#/$defs/digest" },
+        "input_digest": { "$ref": "#/$defs/digest" },
+        "retained_input_ref": { "$ref": "#/$defs/artifact_reference" },
+        "input_reference_set_digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["disposition", "evaluation_status", "authority_effect", "recheck_point"],
+      "properties": {
+        "disposition": { "enum": ["allow", "deny", "indeterminate"] },
+        "evaluation_status": {
+          "enum": [
+            "evaluated",
+            "bundle_unavailable",
+            "input_unavailable",
+            "engine_error",
+            "timeout",
+            "unsupported_input",
+            "conflicting_rules"
+          ]
+        },
+        "authority_effect": { "const": "policy_filter_only" },
+        "recheck_point": { "enum": ["admission_commit", "dispatch_claim", "admission_and_dispatch"] }
+      }
+    },
+    "obligation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["obligation_id", "obligation_type", "enforcement_point", "parameters_schema_id", "parameters_ref", "mandatory"],
+      "properties": {
+        "obligation_id": { "$ref": "#/$defs/identifier" },
+        "obligation_type": {
+          "enum": [
+            "require_assignment",
+            "require_grant",
+            "require_quorum",
+            "require_human_review",
+            "resource_ceiling",
+            "data_scope",
+            "risk_control",
+            "sandbox_profile",
+            "egress_limit",
+            "retention_requirement",
+            "recheck_at_dispatch",
+            "post_effect_reconciliation"
+          ]
+        },
+        "enforcement_point": {
+          "enum": ["admission_commit", "dispatch_claim", "post_effect", "settlement", "publication_release"]
+        },
+        "parameters_schema_id": {
+          "type": "string",
+          "pattern": "^urn:odeya:policy-obligation:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "parameters_ref": { "$ref": "#/$defs/artifact_reference" },
+        "mandatory": { "const": true }
+      }
+    },
+    "reason": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "rule_ref", "evidence_refs"],
+      "properties": {
+        "code": { "$ref": "#/$defs/identifier" },
+        "rule_ref": { "$ref": "#/$defs/versioned_reference" },
+        "evidence_refs": {
+          "type": "array",
+          "maxItems": 32,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/artifact_reference" }
+        }
+      }
+    },
+    "limitation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "consequence", "evidence_refs"],
+      "properties": {
+        "code": { "$ref": "#/$defs/identifier" },
+        "consequence": { "enum": ["none", "narrowed_allow", "deny", "indeterminate"] },
+        "evidence_refs": {
+          "type": "array",
+          "maxItems": 32,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/artifact_reference" }
+        }
+      }
+    },
+    "kernel_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["principal_id", "principal_type", "execution_identity", "build_digest"],
+      "properties": {
+        "principal_id": { "$ref": "#/$defs/identifier" },
+        "principal_type": { "const": "deterministic_service" },
+        "execution_identity": { "$ref": "#/$defs/identifier" },
+        "build_digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "integrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["canonicalization", "digest_contract", "decision_digest", "signature_ref"],
+      "properties": {
+        "canonicalization": { "const": "odeya-jcs-draft-0.1" },
+        "digest_contract": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["algorithm", "domain_separator", "canonicalization_profile_ref", "schema_binding", "included_json_pointers", "excluded_json_pointers"],
+          "properties": {
+            "algorithm": { "const": "sha-256" },
+            "domain_separator": { "const": "odeya-policy-decision-v1" },
+            "canonicalization_profile_ref": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["name", "version", "digest"],
+              "properties": {
+                "name": { "const": "odeya-jcs" },
+                "version": { "const": "0.1.0" },
+                "digest": { "$ref": "#/$defs/digest" }
+              }
+            },
+            "schema_binding": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["schema_id", "schema_digest"],
+              "properties": {
+                "schema_id": { "const": "urn:odeya:schema:policy-decision:0.1.0" },
+                "schema_digest": { "$ref": "#/$defs/digest" }
+              }
+            },
+            "included_json_pointers": {
+              "const": [
+                "/schema_version",
+                "/decision_id",
+                "/version",
+                "/production_boundary",
+                "/request_binding",
+                "/evaluation_frontier",
+                "/policy_identity",
+                "/input_binding",
+                "/decision",
+                "/obligations",
+                "/reason_codes",
+                "/limitations",
+                "/created_at",
+                "/created_by",
+                "/integrity/canonicalization",
+                "/integrity/digest_contract"
+              ]
+            },
+            "excluded_json_pointers": {
+              "const": ["/integrity/decision_digest", "/integrity/signature_ref"]
+            }
+          }
+        },
+        "decision_digest": { "$ref": "#/$defs/digest" },
+        "signature_ref": {
+          "oneOf": [
+            { "$ref": "#/$defs/artifact_reference" },
+            { "type": "null" }
+          ]
+        }
+      }
+    }
+  }
+}

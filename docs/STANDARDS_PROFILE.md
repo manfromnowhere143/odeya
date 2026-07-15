@@ -33,10 +33,15 @@ Every adopted standard receives a versioned record containing:
 | Supply-chain maturity | [SLSA 1.2](https://slsa.dev/spec/v1.2/) | Measurable source/build provenance target | G3/G9 |
 | Attestation predicate | [in-toto Attestation 1.2.0](https://github.com/in-toto/attestation/tree/v1.2.0/spec) | Signed build and release statements | G3 |
 | Signing bundle | [Sigstore Bundle 0.3.2](https://docs.sigstore.dev/about/bundle/) | Portable signature/verification material | G3 |
+| Transparency architecture | [RFC 9943 SCITT Architecture](https://www.rfc-editor.org/rfc/rfc9943.html) | Candidate architecture for independently receipted, replayable checkpoint statements; not a scientific-validity layer | G3/G4/G7 |
+| Verifiable receipts | [RFC 9942 COSE Receipts](https://www.rfc-editor.org/rfc/rfc9942.html) with the selected VDS profile | Candidate portable inclusion/consistency receipt format | G3/G4/G7 |
+| Append-only VDS | [RFC 9162 CT v2 Merkle construction](https://www.rfc-editor.org/rfc/rfc9162.html), only through an accepted Odeya/SCITT profile | Candidate inclusion and consistency proof construction; CT certificate semantics do not transfer | G4/G7 |
 | SBOM | [SPDX 3.0.1](https://spdx.github.io/spdx-spec/v3.0.1/) or [CycloneDX 1.7](https://cyclonedx.org/specification/overview/) | Select exactly one canonical source; optionally export the other | G3 |
 | Container artifacts | OCI Image/Distribution 1.1.1 and Runtime 1.3.0 | Portable worker image and runtime contracts | G3/G9 |
 | Secure development | [NIST SSDF 1.1](https://csrc.nist.gov/pubs/sp/800/218/final) | Development-control baseline | G3 |
 | Zero trust | [NIST SP 800-207](https://csrc.nist.gov/pubs/sp/800/207/final) and 800-207A | Architecture guidance, not certification | G3 |
+| Key management | [NIST SP 800-57 Part 1 Rev. 5](https://csrc.nist.gov/pubs/sp/800/57/pt1/r5/final) | Key-purpose, lifecycle, protection, recovery, and compromise profile guidance | G3/G7 |
+| Media sanitization | [NIST SP 800-88 Rev. 2](https://csrc.nist.gov/pubs/sp/800/88/r2/final) | Storage-specific sanitization program baseline; not proof of provider or distributed deletion by itself | G3/G7 |
 | Operational telemetry | OpenTelemetry Specification 1.59, Semantic Conventions 1.43, exact GenAI repository commit | Operations only; stable Odeya attributes wrap unstable GenAI fields | G7 |
 | Trace propagation | [W3C Trace Context](https://www.w3.org/TR/trace-context/) | Correlation only, never evidence identity or authority | G7 |
 | Authentication | [OIDC Core Errata 2](https://openid.net/specs/openid-connect-core-1_0-errata2.html), [OAuth Security BCP RFC 9700](https://www.rfc-editor.org/rfc/rfc9700.html) | Human/service authentication boundary | G3 |
@@ -117,6 +122,16 @@ A mission hash chain detects in-chain mutation but not every truncated or forked
 
 This protects integrity, not scientific meaning.
 
+The leading standards-aligned candidate is an Odeya-private SCITT profile: signed checkpoint statements are registered with one or more independently administered transparency services and return portable COSE receipts. RFC 9943 requires an append-only, non-equivocating, replayable verifiable data structure and makes registration policy/trust-anchor history auditable. RFC 9942 defines receipt structures, including RFC 9162 SHA-256 inclusion and consistency proofs. Odeya must still pin the statement content type, privacy boundary, issuer/trust model, registration policy, VDS identifier, proof limits, witness independence, receipt retention, and failure consequences. A valid receipt proves registration under that service/profile; it does not prove a checkpoint payload is complete, scientifically correct, or the only history unless the full witness/consistency assumptions pass.
+
+The event ledger and the transparency service remain distinct. Private event payloads do not enter a public log. A checkpoint statement contains bounded commitments and non-sensitive policy/trust metadata; authorized auditors resolve private leaves through controlled proofs. Multiple receipts improve failure-domain evidence only when the services are actually independent.
+
+## Data lifecycle and key profile
+
+The requirements in `DATA_GOVERNANCE.md` and `LEDGER_INTEGRITY_AND_RECOVERY.md` are Odeya-owned. NIST SP 800-57 Part 1 Rev. 5 informs key types, protection, lifecycle, recovery, split knowledge, trust anchors, and compromise handling. NIST SP 800-88 Rev. 2 informs a media-sanitization program selected by information sensitivity and storage technology. Neither publication certifies an Odeya deployment.
+
+The accepted profile must map every storage plane—including provider copies, caches, replicas, immutable object versions, logs, backups, exports, and encryption keys—to an exact deletion or bounded-expiry mechanism and verification evidence. Cryptographic erasure is accepted only when the data-encryption-key scope, copies, wrapping hierarchy, rotation, backups, residual plaintext, and destruction verification are established. Sanitized media does not erase prior recipient exposure, scientific contamination, or uncontrolled publications.
+
 ## Portable scientific tables
 
 Arrow, Parquet, and DuckDB remain product choices beneath a strict writer profile:
@@ -150,6 +165,8 @@ PROV and RO-Crate carry interoperable structure. Odeya's mapping adds:
 - release authority and sanitized projection.
 
 Publication profiles must map author/contributor identities, CRediT roles, organizations, software, datasets, funding, conflicts, licenses, versions, citations, corrections, and evidence-package identifiers. Venue acceptance is metadata, not a truth state.
+
+Odeya's exact PROV/RO-Crate mapping, namespace requirements, claim traversal, redaction, archive, and round-trip limits are specified in [Provenance and Research-Package Export Profile](PROVENANCE_EXPORT_PROFILE.md).
 
 ## Supply-chain target
 

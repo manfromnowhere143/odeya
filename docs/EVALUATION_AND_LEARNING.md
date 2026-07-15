@@ -31,6 +31,19 @@ The primary question is not “did the agent produce a convincing report?” It 
 - adversarial review yield;
 - claim-boundary compliance.
 
+### Observable epistemic-conduct evaluations
+
+- complete disposition of material evidence in the compiled view;
+- correct belief-state consequence after a known refutation;
+- retention of contradictions, live rivals, and model-incomplete state;
+- convergence across genuinely independent tests rather than repeated correlated opinions;
+- assumption, estimand, method, and scope revision when diagnostics require it;
+- prospective versus post-selection separation;
+- valid abstention, stop, replan, and escalation;
+- sealed-truth, narrative-to-verdict, and debate-as-evidence bypass resistance.
+
+These are derived from typed evidence, action, graph-delta, and decision records. Private chain-of-thought and self-reported scientific behavior are neither required nor accepted as evidence.
+
 ### Mission evaluations
 
 - end-to-end replay from contract to verdict;
@@ -43,6 +56,9 @@ The primary question is not “did the agent produce a convincing report?” It 
 ### Scientific evaluations
 
 - blinded expert validity, novelty, and usefulness;
+- atomic-fact precision, recall, unsupported-fact rate, and contradiction rate;
+- ordinary-access versus clean-room synthesis under an exact blocked-reference manifest;
+- false-premise and pseudoscience resistance, including valid refusal before experiment or report generation;
 - comparison with expert and simple baselines under comparable budgets;
 - external settlement or independent replication;
 - downstream decision consequence;
@@ -65,12 +81,17 @@ Every material score includes:
 
 - exact task and reference version;
 - public and private rotating holdouts where appropriate;
+- an exact contamination manifest and a clean-room variant that blocks reference-like answers, evaluator artifacts, and derivative cache/index paths;
 - multiple independent trials and uncertainty intervals;
 - model, prompt, harness, tool, environment, and evaluator versions;
 - token, wall-time, compute, money, and human-time budgets;
 - failure taxonomy and transcript/artifact audit sample;
 - grader validation and known blind spots;
 - baseline results under comparable resources.
+
+Final-outcome and epistemic-conduct results remain separate. A correct answer reached while ignoring a known refutation is not promoted as a trustworthy research process; a procedurally careful attempt with an incorrect outcome is not promoted as a valid claim.
+
+Retrieval and synthesis also remain separate. Recovering a reference conclusion is not evidence that the system synthesized it, while a fluent conclusion can still omit material facts or contradict the admitted evidence. Report atomic-fact precision and recall separately, retain unsupported and contradicted facts, and compare ordinary-access with clean-room performance. Clean-room blocking itself is audited for overblocking, underblocking, cache leakage, and benchmark-specific evaluator error.
 
 Report capability as a resource curve where additional inference budget changes success. A single score without its budget is incomplete.
 
@@ -150,6 +171,8 @@ Self-editing, architecture search, prompt evolution, tool synthesis, or policy l
 
 The production engine never accepts generated logs, modified detectors, or self-assigned scores as proof of improvement.
 
+Generation is also subject to verification backpressure. New claim-bearing candidates are admitted only when the required deterministic, computational, expert, physical, and safety verification dimensions are reserved. Exploratory overflow remains visibly unverified and quarantined; it cannot become de facto memory or evidence through repetition.
+
 ## Portfolio learning
 
 Cross-mission learning is allowed only after sanitization and applicability review. A pattern from autonomous driving does not automatically govern biology or aerospace. The record names the source domains, evidence count, transfer assumptions, and counterexamples.
@@ -168,6 +191,8 @@ The first vertical slice should report:
 | Recovery | Worker death resumes without lost or duplicated state |
 | Authority | Unauthorized execution, spend, and release fail closed |
 | Claim precision | Generated wording stays within the frozen consequence table |
+| Clean-room synthesis | Reference-like artifacts are blocked; atomic-fact coverage and contradiction remain separately reported |
+| Premise resistance | Pseudoscientific or evidence-inadmissible premises trigger challenge/refusal, not a more persuasive report |
 | Provenance | Claim traverses to all required artifacts and identities |
 | Cost | Estimate and actual usage remain distinct and inspectable |
 | UI truth | Null, unknown, stale, corrected, and blocked states render exactly |

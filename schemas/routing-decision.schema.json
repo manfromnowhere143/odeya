@@ -1,0 +1,541 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:odeya:schema:routing-decision:0.1.0",
+  "title": "Odeya RoutingDecision",
+  "description": "A retained, non-authoritative routing determination over one exact candidate set, task profile, evidence frontier, policy, resource envelope, and validity window. Selection never authorizes dispatch, spend, data exposure, scientific admission, or verification independence.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "record_status", "routing_decision_id", "version",
+    "mission_id", "route_request_ref", "source_attempt_id", "decision_frontier",
+    "policy_binding", "work_profile", "candidate_search", "hard_constraints",
+    "candidate_set", "decision", "fallback", "semantic_assertions",
+    "dispatch_boundary", "decided_at", "decided_by"
+  ],
+  "properties": {
+    "schema_version": { "const": "0.1.0" },
+    "record_status": { "const": "derived_non_authoritative_determination" },
+    "routing_decision_id": { "$ref": "#/$defs/identifier" },
+    "version": { "type": "integer", "minimum": 1 },
+    "mission_id": { "$ref": "#/$defs/identifier" },
+    "route_request_ref": { "$ref": "#/$defs/immutable_reference" },
+    "source_attempt_id": { "$ref": "#/$defs/identifier" },
+    "decision_frontier": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ledger_position", "checkpoint_ref", "engine_contract_root_ref", "model_configuration_registry_ref", "routing_rule_ref", "controlled_time_ref"],
+      "properties": {
+        "ledger_position": { "type": "integer", "minimum": 0 },
+        "checkpoint_ref": { "$ref": "#/$defs/immutable_reference" },
+        "engine_contract_root_ref": { "$ref": "#/$defs/immutable_reference" },
+        "model_configuration_registry_ref": { "$ref": "#/$defs/immutable_reference" },
+        "routing_rule_ref": { "$ref": "#/$defs/immutable_reference" },
+        "controlled_time_ref": { "$ref": "#/$defs/immutable_reference" }
+      }
+    },
+    "policy_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["policy_snapshot_ref", "policy_decision_ref", "result", "obligation_refs"],
+      "properties": {
+        "policy_snapshot_ref": { "$ref": "#/$defs/immutable_reference" },
+        "policy_decision_ref": { "$ref": "#/$defs/immutable_reference" },
+        "result": { "enum": ["allow", "deny", "indeterminate"] },
+        "obligation_refs": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/immutable_reference" } }
+      }
+    },
+    "work_profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "role", "task_family_ref", "objective_class", "required_modalities",
+        "data_classes", "risk_class", "correlation_requirement_ref",
+        "evaluation_profile_ref", "execution_budget", "verification_capacity_ref",
+        "latency_ceiling_ref", "validity_window_ref"
+      ],
+      "properties": {
+        "role": { "$ref": "#/$defs/identifier" },
+        "task_family_ref": { "$ref": "#/$defs/immutable_reference" },
+        "objective_class": { "$ref": "#/$defs/identifier" },
+        "required_modalities": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/identifier" } },
+        "data_classes": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "enum": ["public", "internal", "confidential", "restricted_allowed"] } },
+        "risk_class": { "$ref": "#/$defs/identifier" },
+        "correlation_requirement_ref": { "$ref": "#/$defs/immutable_reference" },
+        "evaluation_profile_ref": { "$ref": "#/$defs/immutable_reference" },
+        "execution_budget": { "$ref": "#/$defs/execution_budget" },
+        "verification_capacity_ref": { "$ref": "#/$defs/immutable_reference" },
+        "latency_ceiling_ref": { "$ref": "#/$defs/immutable_reference" },
+        "validity_window_ref": { "$ref": "#/$defs/immutable_reference" }
+      }
+    },
+    "candidate_search": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["registry_member_count", "considered_count", "partition_complete", "search_evidence_ref", "omitted_candidate_refs", "omission_reason_codes"],
+      "properties": {
+        "registry_member_count": { "type": "integer", "minimum": 0 },
+        "considered_count": { "type": "integer", "minimum": 0 },
+        "partition_complete": { "type": "boolean" },
+        "search_evidence_ref": { "$ref": "#/$defs/artifact_reference" },
+        "omitted_candidate_refs": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/immutable_reference" } },
+        "omission_reason_codes": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/identifier" } }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "partition_complete": { "const": true } }, "required": ["partition_complete"] },
+          "then": { "properties": { "omitted_candidate_refs": { "maxItems": 0 }, "omission_reason_codes": { "maxItems": 0 } } },
+          "else": { "properties": { "omission_reason_codes": { "minItems": 1 } } }
+        }
+      ]
+    },
+    "hard_constraints": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "task_family_rule_ref", "capability_rule_ref", "modality_rule_ref",
+        "data_governance_rule_ref", "residency_rule_ref", "retention_rule_ref",
+        "risk_rule_ref", "evaluation_validity_rule_ref", "budget_rule_ref",
+        "latency_rule_ref", "correlation_rule_ref", "no_cross_dimension_compensation"
+      ],
+      "properties": {
+        "task_family_rule_ref": { "$ref": "#/$defs/immutable_reference" },
+        "capability_rule_ref": { "$ref": "#/$defs/immutable_reference" },
+        "modality_rule_ref": { "$ref": "#/$defs/immutable_reference" },
+        "data_governance_rule_ref": { "$ref": "#/$defs/immutable_reference" },
+        "residency_rule_ref": { "$ref": "#/$defs/immutable_reference" },
+        "retention_rule_ref": { "$ref": "#/$defs/immutable_reference" },
+        "risk_rule_ref": { "$ref": "#/$defs/immutable_reference" },
+        "evaluation_validity_rule_ref": { "$ref": "#/$defs/immutable_reference" },
+        "budget_rule_ref": { "$ref": "#/$defs/immutable_reference" },
+        "latency_rule_ref": { "$ref": "#/$defs/immutable_reference" },
+        "correlation_rule_ref": { "$ref": "#/$defs/immutable_reference" },
+        "no_cross_dimension_compensation": { "const": true }
+      }
+    },
+    "candidate_set": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/route_candidate" }
+    },
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "result", "selection_method", "selected_configuration_ref",
+        "selection_rule_ref", "pareto_frontier_evidence_ref",
+        "sensitivity_evidence_ref", "reason_codes"
+      ],
+      "properties": {
+        "result": { "enum": ["selected", "no_eligible_candidate", "no_candidate_discovered", "evidence_indeterminate", "budget_infeasible", "policy_refusal"] },
+        "selection_method": { "enum": ["pareto_rule", "single_eligible", "human_from_frontier", "no_selection"] },
+        "selected_configuration_ref": { "oneOf": [{ "$ref": "#/$defs/immutable_reference" }, { "type": "null" }] },
+        "selection_rule_ref": { "$ref": "#/$defs/immutable_reference" },
+        "pareto_frontier_evidence_ref": { "$ref": "#/$defs/artifact_reference" },
+        "sensitivity_evidence_ref": { "$ref": "#/$defs/artifact_reference" },
+        "reason_codes": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/identifier" } }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "result": { "const": "selected" } }, "required": ["result"] },
+          "then": {
+            "properties": {
+              "selection_method": { "enum": ["pareto_rule", "single_eligible", "human_from_frontier"] },
+              "selected_configuration_ref": { "$ref": "#/$defs/immutable_reference" }
+            }
+          },
+          "else": {
+            "properties": {
+              "selection_method": { "const": "no_selection" },
+              "selected_configuration_ref": { "type": "null" }
+            }
+          }
+        }
+      ]
+    },
+    "fallback": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "permitted", "fallback_rule_ref", "candidate_configuration_refs",
+        "next_choice_requires_new_routing_decision", "provider_or_model_change_requires_new_attempt",
+        "same_attempt_identity_reuse_allowed", "fallback_is_dispatch_authority"
+      ],
+      "properties": {
+        "permitted": { "type": "boolean" },
+        "fallback_rule_ref": { "$ref": "#/$defs/immutable_reference" },
+        "candidate_configuration_refs": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/immutable_reference" } },
+        "next_choice_requires_new_routing_decision": { "const": true },
+        "provider_or_model_change_requires_new_attempt": { "const": true },
+        "same_attempt_identity_reuse_allowed": { "const": false },
+        "fallback_is_dispatch_authority": { "const": false }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "permitted": { "const": true } }, "required": ["permitted"] },
+          "then": { "properties": { "candidate_configuration_refs": { "minItems": 1 } } },
+          "else": { "properties": { "candidate_configuration_refs": { "maxItems": 0 } } }
+        }
+      ]
+    },
+    "semantic_assertions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "candidate_count_equals_considered_count", "candidate_partition_exact",
+        "constraint_results_complete", "dimension_results_complete",
+        "selected_ref_equals_selected_candidate", "selected_candidate_is_eligible",
+        "selected_candidate_on_pareto_frontier", "selected_configuration_current_at_decision",
+        "metric_bounds_recomputed", "resource_units_not_converted",
+        "unknown_not_coerced", "dispatch_recheck_still_required"
+      ],
+      "properties": {
+        "candidate_count_equals_considered_count": { "const": true },
+        "candidate_partition_exact": { "const": true },
+        "constraint_results_complete": { "const": true },
+        "dimension_results_complete": { "const": true },
+        "selected_ref_equals_selected_candidate": { "enum": ["satisfied", "not_applicable"] },
+        "selected_candidate_is_eligible": { "enum": ["satisfied", "not_applicable"] },
+        "selected_candidate_on_pareto_frontier": { "enum": ["satisfied", "not_applicable"] },
+        "selected_configuration_current_at_decision": { "enum": ["satisfied", "not_applicable"] },
+        "metric_bounds_recomputed": { "const": true },
+        "resource_units_not_converted": { "const": true },
+        "unknown_not_coerced": { "const": true },
+        "dispatch_recheck_still_required": { "const": true }
+      }
+    },
+    "dispatch_boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "routing_decision_is_dispatch_authority", "canonical_event_append_authorized",
+        "spend_authorized", "data_exposure_authorized", "scientific_claim_authorized",
+        "verification_independence_established", "bytes_may_cross_before_dispatch_admission",
+        "provider_spend_may_incur_before_dispatch_admission", "dispatch_revalidation_required",
+        "revalidation_dimensions"
+      ],
+      "properties": {
+        "routing_decision_is_dispatch_authority": { "const": false },
+        "canonical_event_append_authorized": { "const": false },
+        "spend_authorized": { "const": false },
+        "data_exposure_authorized": { "const": false },
+        "scientific_claim_authorized": { "const": false },
+        "verification_independence_established": { "const": false },
+        "bytes_may_cross_before_dispatch_admission": { "const": false },
+        "provider_spend_may_incur_before_dispatch_admission": { "const": false },
+        "dispatch_revalidation_required": { "const": true },
+        "revalidation_dimensions": {
+          "type": "array",
+          "minItems": 10,
+          "maxItems": 12,
+          "uniqueItems": true,
+          "items": { "enum": ["configuration_identity", "configuration_validity", "authority", "policy", "data_use", "residency", "retention", "risk", "resource_reservation", "provider_configuration", "exposure_intent", "controlled_time"] },
+          "allOf": [
+            { "contains": { "const": "configuration_identity" } },
+            { "contains": { "const": "configuration_validity" } },
+            { "contains": { "const": "authority" } },
+            { "contains": { "const": "policy" } },
+            { "contains": { "const": "data_use" } },
+            { "contains": { "const": "residency" } },
+            { "contains": { "const": "retention" } },
+            { "contains": { "const": "risk" } },
+            { "contains": { "const": "resource_reservation" } },
+            { "contains": { "const": "controlled_time" } }
+          ]
+        }
+      }
+    },
+    "decided_at": { "$ref": "#/$defs/controlled_time" },
+    "decided_by": { "$ref": "#/$defs/principal" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "decision": { "properties": { "result": { "const": "selected" } }, "required": ["result"] } }, "required": ["decision"] },
+      "then": {
+        "properties": {
+          "candidate_set": {
+            "minItems": 1,
+            "contains": { "properties": { "selection_disposition": { "const": "selected" } }, "required": ["selection_disposition"] },
+            "minContains": 1,
+            "maxContains": 1
+          },
+          "policy_binding": { "properties": { "result": { "const": "allow" } } },
+          "candidate_search": { "properties": { "partition_complete": { "const": true } } }
+          ,
+          "semantic_assertions": {
+            "properties": {
+              "selected_ref_equals_selected_candidate": { "const": "satisfied" },
+              "selected_candidate_is_eligible": { "const": "satisfied" },
+              "selected_candidate_on_pareto_frontier": { "const": "satisfied" },
+              "selected_configuration_current_at_decision": { "const": "satisfied" }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "candidate_set": {
+            "not": { "contains": { "properties": { "selection_disposition": { "const": "selected" } }, "required": ["selection_disposition"] } }
+          },
+          "semantic_assertions": {
+            "properties": {
+              "selected_ref_equals_selected_candidate": { "const": "not_applicable" },
+              "selected_candidate_is_eligible": { "const": "not_applicable" },
+              "selected_candidate_on_pareto_frontier": { "const": "not_applicable" },
+              "selected_configuration_current_at_decision": { "const": "not_applicable" }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "policy_binding": { "properties": { "result": { "enum": ["deny", "indeterminate"] } }, "required": ["result"] } }, "required": ["policy_binding"] },
+      "then": { "properties": { "decision": { "properties": { "result": { "enum": ["policy_refusal", "evidence_indeterminate"] } } } } }
+    },
+    {
+      "if": { "properties": { "candidate_search": { "properties": { "partition_complete": { "const": false } }, "required": ["partition_complete"] } }, "required": ["candidate_search"] },
+      "then": { "properties": { "decision": { "properties": { "result": { "enum": ["evidence_indeterminate", "no_candidate_discovered"] } } } } }
+    }
+  ],
+  "$defs": {
+    "identifier": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$" },
+    "digest": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+    "timestamp": { "type": "string", "format": "date-time", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$" },
+    "exact_decimal": {
+      "type": "string",
+      "description": "Canonical finite base-10 decimal without exponent, leading zero, plus sign, or any lexical negative zero.",
+      "pattern": "^(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?$|^-(?:[1-9][0-9]*(?:\\.[0-9]+)?|0\\.[0-9]*[1-9][0-9]*)$"
+    },
+    "nonnegative_exact_decimal": {
+      "type": "string",
+      "description": "Canonical finite nonnegative base-10 decimal without exponent, leading zero, or plus sign.",
+      "pattern": "^(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?$"
+    },
+    "immutable_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "version", "digest"],
+      "properties": {
+        "id": { "$ref": "#/$defs/identifier" },
+        "version": { "type": "integer", "minimum": 1 },
+        "digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "artifact_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifact_id", "digest", "media_type"],
+      "properties": {
+        "artifact_id": { "$ref": "#/$defs/identifier" },
+        "digest": { "$ref": "#/$defs/digest" },
+        "media_type": { "type": "string", "pattern": "^[a-z0-9.+-]+/[a-z0-9.+-]+$" }
+      }
+    },
+    "principal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["principal_id", "principal_type"],
+      "properties": {
+        "principal_id": { "$ref": "#/$defs/identifier" },
+        "principal_type": { "enum": ["human", "service", "model_worker", "external_system"] }
+      }
+    },
+    "controlled_time": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "source_ref"],
+      "properties": {
+        "value": { "$ref": "#/$defs/timestamp" },
+        "source_ref": { "$ref": "#/$defs/immutable_reference" }
+      }
+    },
+    "resource_amount": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "unit_ref"],
+      "properties": {
+        "value": { "$ref": "#/$defs/nonnegative_exact_decimal" },
+        "unit_ref": { "$ref": "#/$defs/immutable_reference" }
+      }
+    },
+    "execution_budget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["model_input_tokens", "model_output_tokens", "tool_calls", "cpu_time", "gpu_time", "peak_memory", "storage", "network_egress", "wall_time", "spend"],
+      "properties": {
+        "model_input_tokens": { "$ref": "#/$defs/resource_amount" },
+        "model_output_tokens": { "$ref": "#/$defs/resource_amount" },
+        "tool_calls": { "$ref": "#/$defs/resource_amount" },
+        "cpu_time": { "$ref": "#/$defs/resource_amount" },
+        "gpu_time": { "$ref": "#/$defs/resource_amount" },
+        "peak_memory": { "$ref": "#/$defs/resource_amount" },
+        "storage": { "$ref": "#/$defs/resource_amount" },
+        "network_egress": { "$ref": "#/$defs/resource_amount" },
+        "wall_time": { "$ref": "#/$defs/resource_amount" },
+        "spend": { "$ref": "#/$defs/resource_amount" }
+      }
+    },
+    "constraint_result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["constraint", "rule_ref", "disposition", "evidence_refs", "reason_codes"],
+      "properties": {
+        "constraint": { "enum": ["task_family", "capability", "modality", "data_governance", "residency", "retention", "risk", "evaluation_validity", "budget", "latency", "correlation"] },
+        "rule_ref": { "$ref": "#/$defs/immutable_reference" },
+        "disposition": { "enum": ["pass", "fail", "indeterminate"] },
+        "evidence_refs": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/artifact_reference" } },
+        "reason_codes": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/identifier" } }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "disposition": { "const": "pass" } }, "required": ["disposition"] },
+          "then": { "properties": { "reason_codes": { "maxItems": 0 } } },
+          "else": { "properties": { "reason_codes": { "minItems": 1 } } }
+        }
+      ]
+    },
+    "dimension_observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dimension", "disposition", "lower_bound", "upper_bound", "unit_ref", "evidence_refs", "reason_codes"],
+      "properties": {
+        "dimension": { "enum": ["capability", "performance", "cost", "latency", "reliability", "data_governance", "risk", "correlation", "resource_fit"] },
+        "disposition": { "enum": ["bounded", "categorical", "unknown", "not_applicable"] },
+        "lower_bound": { "oneOf": [{ "$ref": "#/$defs/exact_decimal" }, { "type": "null" }] },
+        "upper_bound": { "oneOf": [{ "$ref": "#/$defs/exact_decimal" }, { "type": "null" }] },
+        "unit_ref": { "oneOf": [{ "$ref": "#/$defs/immutable_reference" }, { "type": "null" }] },
+        "evidence_refs": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/artifact_reference" } },
+        "reason_codes": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/identifier" } }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "disposition": { "const": "bounded" } }, "required": ["disposition"] },
+          "then": {
+            "properties": {
+              "lower_bound": { "$ref": "#/$defs/exact_decimal" },
+              "upper_bound": { "$ref": "#/$defs/exact_decimal" },
+              "unit_ref": { "$ref": "#/$defs/immutable_reference" },
+              "evidence_refs": { "minItems": 1 },
+              "reason_codes": { "maxItems": 0 }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "disposition": { "const": "categorical" } }, "required": ["disposition"] },
+          "then": {
+            "properties": {
+              "lower_bound": { "type": "null" },
+              "upper_bound": { "type": "null" },
+              "unit_ref": { "type": "null" },
+              "evidence_refs": { "minItems": 1 },
+              "reason_codes": { "maxItems": 0 }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "disposition": { "enum": ["unknown", "not_applicable"] } }, "required": ["disposition"] },
+          "then": {
+            "properties": {
+              "lower_bound": { "type": "null" },
+              "upper_bound": { "type": "null" },
+              "unit_ref": { "type": "null" },
+              "reason_codes": { "minItems": 1 }
+            }
+          }
+        }
+      ]
+    },
+    "route_candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "configuration_ref", "configuration_validity", "evidence_completeness",
+        "constraint_results", "dimension_observations", "eligibility_disposition",
+        "pareto_disposition", "selection_disposition", "reason_codes"
+      ],
+      "properties": {
+        "configuration_ref": { "$ref": "#/$defs/immutable_reference" },
+        "configuration_validity": { "enum": ["current_at_decision", "expired", "not_yet_valid", "indeterminate"] },
+        "evidence_completeness": { "enum": ["complete", "incomplete", "indeterminate"] },
+        "constraint_results": {
+          "type": "array",
+          "minItems": 11,
+          "maxItems": 11,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/constraint_result" },
+          "allOf": [
+            { "contains": { "properties": { "constraint": { "const": "task_family" } }, "required": ["constraint"] } },
+            { "contains": { "properties": { "constraint": { "const": "capability" } }, "required": ["constraint"] } },
+            { "contains": { "properties": { "constraint": { "const": "modality" } }, "required": ["constraint"] } },
+            { "contains": { "properties": { "constraint": { "const": "data_governance" } }, "required": ["constraint"] } },
+            { "contains": { "properties": { "constraint": { "const": "residency" } }, "required": ["constraint"] } },
+            { "contains": { "properties": { "constraint": { "const": "retention" } }, "required": ["constraint"] } },
+            { "contains": { "properties": { "constraint": { "const": "risk" } }, "required": ["constraint"] } },
+            { "contains": { "properties": { "constraint": { "const": "evaluation_validity" } }, "required": ["constraint"] } },
+            { "contains": { "properties": { "constraint": { "const": "budget" } }, "required": ["constraint"] } },
+            { "contains": { "properties": { "constraint": { "const": "latency" } }, "required": ["constraint"] } },
+            { "contains": { "properties": { "constraint": { "const": "correlation" } }, "required": ["constraint"] } }
+          ]
+        },
+        "dimension_observations": {
+          "type": "array",
+          "minItems": 9,
+          "maxItems": 9,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/dimension_observation" },
+          "allOf": [
+            { "contains": { "properties": { "dimension": { "const": "capability" } }, "required": ["dimension"] } },
+            { "contains": { "properties": { "dimension": { "const": "performance" } }, "required": ["dimension"] } },
+            { "contains": { "properties": { "dimension": { "const": "cost" } }, "required": ["dimension"] } },
+            { "contains": { "properties": { "dimension": { "const": "latency" } }, "required": ["dimension"] } },
+            { "contains": { "properties": { "dimension": { "const": "reliability" } }, "required": ["dimension"] } },
+            { "contains": { "properties": { "dimension": { "const": "data_governance" } }, "required": ["dimension"] } },
+            { "contains": { "properties": { "dimension": { "const": "risk" } }, "required": ["dimension"] } },
+            { "contains": { "properties": { "dimension": { "const": "correlation" } }, "required": ["dimension"] } },
+            { "contains": { "properties": { "dimension": { "const": "resource_fit" } }, "required": ["dimension"] } }
+          ]
+        },
+        "eligibility_disposition": { "enum": ["eligible", "excluded", "indeterminate"] },
+        "pareto_disposition": { "enum": ["on_frontier", "dominated", "not_assessed", "not_applicable"] },
+        "selection_disposition": { "enum": ["selected", "eligible_not_selected", "excluded", "indeterminate"] },
+        "reason_codes": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/identifier" } }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "eligibility_disposition": { "const": "eligible" } }, "required": ["eligibility_disposition"] },
+          "then": {
+            "properties": {
+              "configuration_validity": { "const": "current_at_decision" },
+              "evidence_completeness": { "const": "complete" },
+              "constraint_results": { "not": { "contains": { "properties": { "disposition": { "not": { "const": "pass" } } }, "required": ["disposition"] } } },
+              "pareto_disposition": { "enum": ["on_frontier", "dominated"] }
+            }
+          },
+          "else": { "properties": { "pareto_disposition": { "enum": ["not_assessed", "not_applicable"] }, "reason_codes": { "minItems": 1 } } }
+        },
+        {
+          "if": { "properties": { "selection_disposition": { "const": "selected" } }, "required": ["selection_disposition"] },
+          "then": {
+            "properties": {
+              "eligibility_disposition": { "const": "eligible" },
+              "pareto_disposition": { "const": "on_frontier" },
+              "configuration_validity": { "const": "current_at_decision" },
+              "evidence_completeness": { "const": "complete" }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "selection_disposition": { "const": "eligible_not_selected" } }, "required": ["selection_disposition"] },
+          "then": { "properties": { "eligibility_disposition": { "const": "eligible" } } }
+        },
+        {
+          "if": { "properties": { "selection_disposition": { "const": "excluded" } }, "required": ["selection_disposition"] },
+          "then": { "properties": { "eligibility_disposition": { "const": "excluded" } } }
+        },
+        {
+          "if": { "properties": { "selection_disposition": { "const": "indeterminate" } }, "required": ["selection_disposition"] },
+          "then": { "properties": { "eligibility_disposition": { "const": "indeterminate" } } }
+        }
+      ]
+    }
+  }
+}

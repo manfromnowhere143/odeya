@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:odeya:schema:conformance-temporal-measurement:0.1.0",
+  "title": "Fixture-only typed measurement or missingness subject",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["observed_at", "measurement"],
+  "properties": {
+    "observed_at": {"type": "string"},
+    "measurement": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["value", "semantic_type", "unit", "precision"],
+          "properties": {
+            "value": {"type": "string"},
+            "semantic_type": {"const": "measured_quantity"},
+            "unit": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["system", "code"],
+              "properties": {
+                "system": {"const": "SI"},
+                "code": {"type": "string", "minLength": 1}
+              }
+            },
+            "precision": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["kind", "value"],
+              "properties": {
+                "kind": {"enum": ["significant_digits", "decimal_places"]},
+                "value": {"type": "integer", "minimum": 0, "maximum": 64}
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["semantic_type", "reason"],
+          "properties": {
+            "semantic_type": {"const": "missing"},
+            "reason": {
+              "enum": ["unknown", "unmeasured", "unavailable", "withheld", "not_applicable"]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

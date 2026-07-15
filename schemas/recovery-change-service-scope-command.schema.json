@@ -1,0 +1,189 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:odeya:schema:recovery-change-service-scope-command:0.1.0",
+  "title": "Odeya recovery.change_service_scope command payload",
+  "description": "Architecture-only closed command payload. Structural validity does not establish referenced evidence, authority, time, signature, quorum, or execution truth.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "recovery_decision_ref",
+    "restore_report_ref",
+    "security_frontier_digest",
+    "security_frontier_completeness",
+    "expected_current_control",
+    "requested_control",
+    "allowed_service_scopes",
+    "prohibited_service_scopes",
+    "publication_enabled",
+    "spending_enabled",
+    "r2_plus_effects_enabled",
+    "physical_actions_enabled",
+    "authority_assignment_refs"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.1.0"
+    },
+    "security_frontier_completeness": {
+      "const": "proven_complete"
+    },
+    "expected_current_control": {
+      "enum": [
+        "isolated",
+        "quarantined",
+        "read_only",
+        "reconciliation_only",
+        "bounded_research_writes"
+      ]
+    },
+    "requested_control": {
+      "enum": [
+        "quarantined",
+        "read_only",
+        "reconciliation_only",
+        "bounded_research_writes"
+      ]
+    },
+    "allowed_service_scopes": {
+      "type": "array",
+      "uniqueItems": true,
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/service_scope"
+      }
+    },
+    "prohibited_service_scopes": {
+      "type": "array",
+      "uniqueItems": true,
+      "minItems": 4,
+      "allOf": [
+        {
+          "contains": {
+            "const": "publication"
+          }
+        },
+        {
+          "contains": {
+            "const": "spending"
+          }
+        },
+        {
+          "contains": {
+            "const": "r2_plus_effects"
+          }
+        },
+        {
+          "contains": {
+            "const": "physical_actions"
+          }
+        }
+      ],
+      "items": {
+        "$ref": "#/$defs/service_scope"
+      }
+    },
+    "publication_enabled": {
+      "const": false
+    },
+    "spending_enabled": {
+      "const": false
+    },
+    "r2_plus_effects_enabled": {
+      "const": false
+    },
+    "physical_actions_enabled": {
+      "const": false
+    },
+    "authority_assignment_refs": {
+      "type": "array",
+      "uniqueItems": true,
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/identifier"
+      }
+    },
+    "recovery_decision_ref": {
+      "$ref": "#/$defs/canonical_record_reference"
+    },
+    "restore_report_ref": {
+      "$ref": "#/$defs/canonical_record_reference"
+    },
+    "security_frontier_digest": {
+      "$ref": "#/$defs/digest"
+    }
+  },
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$"
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "artifact_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "digest",
+        "media_type"
+      ],
+      "properties": {
+        "artifact_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "canonical_record_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "object_id",
+        "version",
+        "schema_id",
+        "digest"
+      ],
+      "properties": {
+        "object_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "schema_id": {
+          "type": "string",
+          "pattern": "^urn:odeya:schema:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        }
+      }
+    },
+    "service_scope": {
+      "enum": [
+        "incident_cockpit",
+        "canonical_reads",
+        "reconciliation_commands",
+        "ordinary_research_writes",
+        "publication",
+        "spending",
+        "r2_plus_effects",
+        "physical_actions"
+      ]
+    }
+  }
+}

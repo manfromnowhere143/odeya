@@ -1,0 +1,415 @@
+{
+  "schema_version": "0.2.0",
+  "status": "bounded_architecture_model_check_candidate",
+  "recorded_at": "2026-07-15T22:11:39Z",
+  "toolchain_ref": "toolchain.lock.json",
+  "toolchain_sha256": "0a6ff3fa84036efbc3e170977499add16d6afd9fec3e95550e0e84a9b2e4d90d",
+  "harness": {
+    "path": "check.sh",
+    "sha256": "b9bd8847dee96ab47a95c521795ce9374135d85d7f64a87c02cafcac70236449",
+    "execution_order": "sequential_isolated_metadirs"
+  },
+  "execution_profile": {
+    "search": "breadth_first_complete_reachable_bounded_graph",
+    "workers": 1,
+    "default_seed": 20260715,
+    "default_fingerprint_polynomial": 0,
+    "supplemental_safe_profiles": [
+      {
+        "name": "cognitive-control-safe-alternate-fingerprint",
+        "module": "CognitiveControl.tla",
+        "config": "CognitiveControl.safe.cfg",
+        "seed": 20260716,
+        "fingerprint_polynomial": 1
+      }
+    ],
+    "deadlock_check": false,
+    "jvm_option": "-XX:+UseParallelGC",
+    "metadir_storage_class": "ephemeral_512_mib_hfs_plus_ramdisk",
+    "metadir_cleanup": "harness_exit_trap",
+    "command_template": "java -XX:+UseParallelGC -jar /tmp/odeya-tla/v1.7.4/tla2tools.jar -workers 1 -seed <seed> -fp <fingerprint-polynomial> -cleanup -metadir <tmp> -config <config> <module>"
+  },
+  "retained_full_suite_run": {
+    "exit_code": 0,
+    "completed_at": "2026-07-15T22:11:39Z",
+    "wall_seconds": 118.07,
+    "user_cpu_seconds": 124.50,
+    "system_cpu_seconds": 10.54,
+    "sany_result": "pass",
+    "safe_model_result": "6_of_6_distinct_models_pass",
+    "safe_execution_result": "7_of_7_pass_including_alternate_cognitive_fingerprint",
+    "negative_control_result": "26_of_26_expected_counterexamples"
+  },
+  "models": [
+    {
+      "module": "AuthorityCommandGrant.tla",
+      "sha256": "360f8a79a9c38432e47c86b542cb2fac57c67afcbf92da692fa63f14064bb4f7",
+      "safe_config": {
+        "path": "AuthorityCommandGrant.safe.cfg",
+        "sha256": "009a5836d0c433cf4d501134b23e41e04e4635652c8eae07502f592606caba5d",
+        "exit_code": 0,
+        "result": "pass",
+        "states_generated": 1142209,
+        "distinct_states": 215360,
+        "states_left": 0,
+        "graph_depth": 21,
+        "fingerprint_collision_probability_actual": "7.9e-10"
+      },
+      "negative_controls": [
+        {
+          "path": "AuthorityCommandGrant.weak-quorum.counterexample.cfg",
+          "sha256": "e1b858730432422c646719af89cd9e602b6a84c1e92ef82757e89c4978d6613f",
+          "exit_code": 12,
+          "violated_invariant": "EveryUseWasAuthorized",
+          "states_generated_before_stop": 11349,
+          "distinct_states_before_stop": 3635,
+          "trace_depth": 7
+        },
+        {
+          "path": "AuthorityCommandGrant.digest-rebind.counterexample.cfg",
+          "sha256": "c32c9502ff9132acc1ce07e687d282d1882dfa3d649227083f35542878de44c8",
+          "exit_code": 12,
+          "violated_invariant": "IdempotentCommandBinding",
+          "states_generated_before_stop": 30993,
+          "distinct_states_before_stop": 8874,
+          "trace_depth": 8
+        },
+        {
+          "path": "AuthorityCommandGrant.post-revoke-use.counterexample.cfg",
+          "sha256": "8486dfc012581ec202cafb2ee7d650a2aae91e0b24f2e03648aa50c33c96df1e",
+          "exit_code": 12,
+          "violated_invariant": "EveryUseWasAuthorized",
+          "states_generated_before_stop": 30955,
+          "distinct_states_before_stop": 8862,
+          "trace_depth": 8
+        }
+      ]
+    },
+    {
+      "module": "GrantConsumptionPoint.tla",
+      "sha256": "c2e7620f3f9f246d89333c15809a30d22e2e06ae7d5be6adf4aa1d9c138b5bb5",
+      "safe_config": {
+        "path": "GrantConsumptionPoint.safe.cfg",
+        "sha256": "f0248100a18e39323db9f6adb5d5b8c55a69161b69f6591280358f75f1f50bc3",
+        "exit_code": 0,
+        "result": "pass",
+        "states_generated": 519,
+        "distinct_states": 224,
+        "states_left": 0,
+        "graph_depth": 10,
+        "fingerprint_collision_probability_optimistic": "3.6e-15"
+      },
+      "negative_controls": [
+        {
+          "path": "GrantConsumptionPoint.consume-at-intent.counterexample.cfg",
+          "sha256": "edc334b37a79fb6cb95cc48b5f50ad3f3dac08144b7643ee3b8eaeb9c57ed438",
+          "exit_code": 12,
+          "violated_invariant": "DispatchClaimRechecksAndConsumes",
+          "states_generated_before_stop": 23,
+          "distinct_states_before_stop": 18,
+          "trace_depth": 3
+        }
+      ]
+    },
+    {
+      "module": "ExternalEffects.tla",
+      "sha256": "a5bbfd1c5c5333f97aa350167c09fa8129bc3a13d335ac7061c559766a9031fd",
+      "safe_config": {
+        "path": "ExternalEffects.safe.cfg",
+        "sha256": "77856bfeb1976bcac156858bb64fef8562ec17d6cb643a8fde0bbd15e7ea1e97",
+        "exit_code": 0,
+        "result": "pass",
+        "states_generated": 25146,
+        "distinct_states": 7150,
+        "states_left": 0,
+        "graph_depth": 20,
+        "fingerprint_collision_probability_optimistic": "7.0e-12"
+      },
+      "negative_controls": [
+        {
+          "path": "ExternalEffects.post-revoke-dispatch.counterexample.cfg",
+          "sha256": "8cc57a55f3be16d03c368626bedfa8978a907503ed69bd30271a578766ff2a43",
+          "exit_code": 12,
+          "violated_invariant": "NoDispatchAfterRevocationOrExpiry",
+          "states_generated_before_stop": 57,
+          "distinct_states_before_stop": 40,
+          "trace_depth": 4
+        },
+        {
+          "path": "ExternalEffects.blind-retry.counterexample.cfg",
+          "sha256": "b016d68b830c2b96a9632bbaebae7c93a21b8755a993c52550b85e45231b29a1",
+          "exit_code": 12,
+          "violated_invariant": "NoUnsafeRetry",
+          "states_generated_before_stop": 203,
+          "distinct_states_before_stop": 117,
+          "trace_depth": 5
+        }
+      ]
+    },
+    {
+      "module": "PublicationRelease.tla",
+      "sha256": "7f87cc8748375c983808165376778cad6477e2be9b03c86ffd2e93dc82de5b50",
+      "safe_config": {
+        "path": "PublicationRelease.safe.cfg",
+        "sha256": "c9fa8c64cb176b11bd6134eaa68ea0403247cbc2fa581797059e30ff386129a5",
+        "exit_code": 0,
+        "result": "pass",
+        "states_generated": 2884,
+        "distinct_states": 924,
+        "states_left": 0,
+        "graph_depth": 19,
+        "fingerprint_collision_probability_optimistic": "9.8e-14"
+      },
+      "negative_controls": [
+        {
+          "path": "PublicationRelease.no-decision-seal.counterexample.cfg",
+          "sha256": "4df016724d3fa1e34ccbeed9d9ed8937f9058e1a7f1ee5cea1ec068495ed6214",
+          "exit_code": 12,
+          "violated_invariant": "ManifestWasSealedFromAuthorizedCandidate",
+          "states_generated_before_stop": 11,
+          "distinct_states_before_stop": 10,
+          "trace_depth": 3
+        },
+        {
+          "path": "PublicationRelease.wrong-manifest-grant.counterexample.cfg",
+          "sha256": "7eab811658d10022b2fb3b5f25c979b4da5f1f663d2123bb648e14758e5e4072",
+          "exit_code": 12,
+          "violated_invariant": "GrantBindsExactFinalManifest",
+          "states_generated_before_stop": 130,
+          "distinct_states_before_stop": 76,
+          "trace_depth": 6
+        },
+        {
+          "path": "PublicationRelease.grant-reuse.counterexample.cfg",
+          "sha256": "0c222890331caf4af3f154ed81c0ed101737018ce6cd037e79f568d17b6cc8b9",
+          "exit_code": 12,
+          "violated_invariant": "PublicationGrantIsSingleUse",
+          "states_generated_before_stop": 346,
+          "distinct_states_before_stop": 173,
+          "trace_depth": 9
+        },
+        {
+          "path": "PublicationRelease.timeout-release.counterexample.cfg",
+          "sha256": "44224a5c72a1741854c453f0ef3e21b3ce9c8a93f8d1c8a66e90376d6ef771ae",
+          "exit_code": 12,
+          "violated_invariant": "ReleasedRequiresExactExternalObservation",
+          "states_generated_before_stop": 455,
+          "distinct_states_before_stop": 235,
+          "trace_depth": 10
+        },
+        {
+          "path": "PublicationRelease.visibility-only-release.counterexample.cfg",
+          "sha256": "f980e380b09087154cde49040d80cc69a2a53ccda0dcea9518cc45b16551da07",
+          "exit_code": 12,
+          "violated_invariant": "ReleasedRequiresExactExternalObservation",
+          "states_generated_before_stop": 469,
+          "distinct_states_before_stop": 243,
+          "trace_depth": 10
+        },
+        {
+          "path": "PublicationRelease.missing-dispute.counterexample.cfg",
+          "sha256": "0c74b1d60cfa88b352a50aad38231bd55ddb18b1095171baec9a3c55ddc670d3",
+          "exit_code": 12,
+          "violated_invariant": "ContradictoryExternalFactsRequireDispute",
+          "states_generated_before_stop": 461,
+          "distinct_states_before_stop": 239,
+          "trace_depth": 10
+        }
+      ]
+    },
+    {
+      "module": "CognitiveControl.tla",
+      "sha256": "8e84d740aaa15da67bbee504c2e88fec24f9de25b888e8ad32e58442201bf2a1",
+      "safe_config": {
+        "path": "CognitiveControl.safe.cfg",
+        "sha256": "a09894e1720ca3698d7edc55710bfef1c6592569bdfd835508857c1ad010d03d",
+        "exit_code": 0,
+        "result": "pass",
+        "states_generated": 11957345,
+        "distinct_states": 1569152,
+        "states_left": 0,
+        "graph_depth": 22,
+        "fingerprint_collision_probability_optimistic": "8.8e-7",
+        "fingerprint_collision_probability_actual": "3.5e-7"
+      },
+      "supplemental_safe_runs": [
+        {
+          "profile": "cognitive-control-safe-alternate-fingerprint",
+          "seed": 20260716,
+          "fingerprint_polynomial": 1,
+          "exit_code": 0,
+          "result": "pass",
+          "states_generated": 11957345,
+          "distinct_states": 1569152,
+          "states_left": 0,
+          "graph_depth": 22,
+          "fingerprint_collision_probability_optimistic": "8.8e-7",
+          "fingerprint_collision_probability_actual": "5.7e-8",
+          "independence_claim": "none_same_model_config_checker_and_host"
+        }
+      ],
+      "negative_controls": [
+        {
+          "path": "CognitiveControl.truth-leak.counterexample.cfg",
+          "sha256": "7daa0410f576c7809f801efc6a673177a587730b39d77319a814482ae92e0f89",
+          "exit_code": 12,
+          "violated_invariant": "SealedTruthHiddenFromProducer",
+          "states_generated_before_stop": 3,
+          "distinct_states_before_stop": 3,
+          "trace_depth": 2
+        },
+        {
+          "path": "CognitiveControl.undispositioned-promotion.counterexample.cfg",
+          "sha256": "fad2bfca432ec985f7edc4765d6d52b9168ac36e29ab8bdeba0f79710d8d241b",
+          "exit_code": 12,
+          "violated_invariant": "PromotionRequiresMaterialDisposition",
+          "states_generated_before_stop": 1819,
+          "distinct_states_before_stop": 743,
+          "trace_depth": 4
+        },
+        {
+          "path": "CognitiveControl.consensus-as-evidence.counterexample.cfg",
+          "sha256": "2c476b2d3e9eccef54c44ebd7fbf6b2644b7fc752eee4efe3786ad1e035189cf",
+          "exit_code": 12,
+          "violated_invariant": "ConsensusIsNotEvidence",
+          "states_generated_before_stop": 3,
+          "distinct_states_before_stop": 3,
+          "trace_depth": 2
+        },
+        {
+          "path": "CognitiveControl.capacity-overcommit.counterexample.cfg",
+          "sha256": "e9b0a967a344ffc95f4ed846c50dcec9ec6632e2adc35a3e87d665926e7f69be",
+          "exit_code": 12,
+          "violated_invariant": "VerificationDemandWithinReservation",
+          "states_generated_before_stop": 108,
+          "distinct_states_before_stop": 82,
+          "trace_depth": 3
+        },
+        {
+          "path": "CognitiveControl.stale-view-admission.counterexample.cfg",
+          "sha256": "4520886c7fae7361d7a294124c30d721d52cecd541fc2ccea9d99002d40c1377",
+          "exit_code": 12,
+          "violated_invariant": "DispatchAdmissionUsesCurrentPositionAndAuthority",
+          "states_generated_before_stop": 540782,
+          "distinct_states_before_stop": 101238,
+          "trace_depth": 8
+        },
+        {
+          "path": "CognitiveControl.failed-compilation-admission.counterexample.cfg",
+          "sha256": "c2a6074d671e9bbd2a6f71e8543f934afcefb1961993837384a62623f2df4ad5",
+          "exit_code": 12,
+          "violated_invariant": "DispatchAdmissionBindsPassedIssuedBundle",
+          "states_generated_before_stop": 17199,
+          "distinct_states_before_stop": 4603,
+          "trace_depth": 5
+        },
+        {
+          "path": "CognitiveControl.not-run-compilation-admission.counterexample.cfg",
+          "sha256": "cf27d87a0097571496a554d89fdaeae3513f90fc96dbc1d93fe833baffa19843",
+          "exit_code": 12,
+          "violated_invariant": "DispatchAdmissionBindsPassedIssuedBundle",
+          "states_generated_before_stop": 17215,
+          "distinct_states_before_stop": 4603,
+          "trace_depth": 5
+        },
+        {
+          "path": "CognitiveControl.mismatched-bundle-admission.counterexample.cfg",
+          "sha256": "6bdb5403b9418062f4e877f42bb0e03e9255678d287dc8a4dd00c2cca36bda3f",
+          "exit_code": 12,
+          "violated_invariant": "DispatchAdmissionBindsPassedIssuedBundle",
+          "states_generated_before_stop": 70996,
+          "distinct_states_before_stop": 16048,
+          "trace_depth": 6
+        },
+        {
+          "path": "CognitiveControl.unissued-bundle-admission.counterexample.cfg",
+          "sha256": "f60b81023ad19255d05896ba04b85a60b272fab0783f61050ddb65756f07a17b",
+          "exit_code": 12,
+          "violated_invariant": "DispatchAdmissionBindsPassedIssuedBundle",
+          "states_generated_before_stop": 17183,
+          "distinct_states_before_stop": 4603,
+          "trace_depth": 5
+        },
+        {
+          "path": "CognitiveControl.data-access-bypass.counterexample.cfg",
+          "sha256": "6c458c35e83bfcc061344257ae840aa208c9886907a1b13e6000a308a360ae92",
+          "exit_code": 12,
+          "violated_invariant": "VerificationRequiresDataAccess",
+          "states_generated_before_stop": 225063,
+          "distinct_states_before_stop": 45455,
+          "trace_depth": 7
+        }
+      ]
+    },
+    {
+      "module": "ResourceReservation.tla",
+      "sha256": "84e3b8be45c144d44fb68b14c79d88ec1b0e82d96914b0ec7073d844a5f0b324",
+      "safe_config": {
+        "path": "ResourceReservation.safe.cfg",
+        "sha256": "e138cf4d58becceddcc345624e082117f4d54f8aaad5d9144401271d917b8333",
+        "exit_code": 0,
+        "result": "pass",
+        "states_generated": 16,
+        "distinct_states": 13,
+        "states_left": 0,
+        "graph_depth": 7
+      },
+      "negative_controls": [
+        {
+          "path": "ResourceReservation.cross-resource-conversion.counterexample.cfg",
+          "sha256": "a29c8c161e539a012d827fa2fcde778b8ff2ca308be6c10ffb7d5e2e325d9b4e",
+          "exit_code": 12,
+          "violated_invariant": "NoDimensionOvercommit",
+          "states_generated_before_stop": 2,
+          "distinct_states_before_stop": 2,
+          "trace_depth": 2
+        },
+        {
+          "path": "ResourceReservation.crash-release.counterexample.cfg",
+          "sha256": "c9b686bfd11c3e8735ae414eff5dd27625e32f2f0c2ea6d3f86fbb17e91717f7",
+          "exit_code": 12,
+          "violated_invariant": "TerminalReleaseWasPreClaim",
+          "states_generated_before_stop": 7,
+          "distinct_states_before_stop": 7,
+          "trace_depth": 4
+        },
+        {
+          "path": "ResourceReservation.settle-without-observation.counterexample.cfg",
+          "sha256": "ef059c3f73ae7867023551a09865a18bfacaaf112977084a8b478cabbc3e8c60",
+          "exit_code": 12,
+          "violated_invariant": "SettlementRequiresObservation",
+          "states_generated_before_stop": 7,
+          "distinct_states_before_stop": 7,
+          "trace_depth": 4
+        },
+        {
+          "path": "ResourceReservation.infer-actual-at-claim.counterexample.cfg",
+          "sha256": "76e7d41a10428da030f0bad93a5fcaaafb7eb1debdaed87e50b44c387344f539",
+          "exit_code": 12,
+          "violated_invariant": "ClaimDoesNotInventActualUse",
+          "states_generated_before_stop": 3,
+          "distinct_states_before_stop": 3,
+          "trace_depth": 3
+        }
+      ]
+    }
+  ],
+  "totals": {
+    "safe_models_passed": 6,
+    "safe_models_failed": 0,
+    "safe_executions_passed": 7,
+    "supplemental_safe_executions_passed": 1,
+    "safe_states_generated_sum": 13128119,
+    "safe_distinct_states_sum_across_models": 1792823,
+    "safe_execution_states_generated_sum_including_supplemental": 25085464,
+    "safe_execution_distinct_states_sum_including_supplemental": 3361975,
+    "expected_counterexamples_reproduced": 26,
+    "unexpected_counterexamples": 0,
+    "counterexample_states_generated_before_stop_sum": 965842,
+    "counterexample_distinct_states_before_stop_sum": 199922
+  },
+  "open_findings": [
+    "FM-A-001"
+  ],
+  "interpretation": "Safety invariants held for every reachable state in the declared finite configurations, subject to TLC fingerprinting and the explicit abstraction assumptions. CognitiveControl also passed the same bounded graph under a second retained seed and fingerprint polynomial; this is robustness evidence, not an independent proof, and the collision estimates are not multiplied. This is not implementation conformance or unbounded proof."
+}

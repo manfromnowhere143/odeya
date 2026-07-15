@@ -1,0 +1,192 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:odeya:schema:epistemic-node-version:0.1.0",
+  "title": "Odeya EpistemicNodeVersion",
+  "description": "An immutable, scoped proposition version. It describes a state of knowledge rather than declaring reality, and it cannot use consensus, narrative, private reasoning, or self-confidence as evidence.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "record_status", "node_id", "version", "mission_id", "node_kind",
+    "proposition", "claim_type", "scope", "variables", "interpretation", "lineage",
+    "assumptions", "model_discrepancy_class", "probabilistic_model",
+    "model_incomplete", "predictions", "prospective_falsifier_refs",
+    "uncertainty_channels", "origin", "exposure", "created_at", "created_by"
+  ],
+  "properties": {
+    "schema_version": { "const": "0.1.0" },
+    "record_status": { "const": "proposed_non_authoritative" },
+    "node_id": { "$ref": "#/$defs/identifier" },
+    "version": { "type": "integer", "minimum": 1 },
+    "mission_id": { "$ref": "#/$defs/identifier" },
+    "node_kind": { "enum": ["hypothesis", "mechanism", "variable", "assumption", "definition", "prediction", "expected_observation", "contradiction", "residual_unknown", "experiment_candidate"] },
+    "proposition": { "type": "string", "minLength": 1 },
+    "claim_type": { "enum": ["measurement", "descriptive", "predictive", "causal", "agent_comparison", "safety_reliability", "value", "evidence_synthesis", "associational", "mechanistic", "definitional", "exploratory_unrouted"] },
+    "scope": {
+      "type": "object", "additionalProperties": false,
+      "required": ["population", "environment", "time_window", "applicability", "exclusions"],
+      "properties": {
+        "population": { "type": "string", "minLength": 1 },
+        "environment": { "type": "string", "minLength": 1 },
+        "time_window": { "type": "string", "minLength": 1 },
+        "applicability": { "type": "string", "minLength": 1 },
+        "exclusions": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+      }
+    },
+    "variables": {
+      "type": "array", "uniqueItems": true,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["variable_id", "role", "dimension_ref", "unit_ref", "coordinate_frame_ref", "reference_frame_ref"],
+        "properties": {
+          "variable_id": { "$ref": "#/$defs/identifier" },
+          "role": { "enum": ["exposure", "outcome", "mediator", "confounder", "control", "latent", "other"] },
+          "dimension_ref": { "$ref": "#/$defs/immutable_reference" },
+          "unit_ref": { "$ref": "#/$defs/immutable_reference" },
+          "coordinate_frame_ref": { "oneOf": [{ "$ref": "#/$defs/immutable_reference" }, { "type": "null" }] },
+          "reference_frame_ref": { "oneOf": [{ "$ref": "#/$defs/immutable_reference" }, { "type": "null" }] }
+        }
+      }
+    },
+    "interpretation": {
+      "type": "object", "additionalProperties": false,
+      "required": ["structure", "causal_status", "structural_model_ref", "identification_argument_ref", "identification_evidence_refs"],
+      "properties": {
+        "structure": { "enum": ["none", "relational", "temporal", "hierarchical", "graphical", "physical"] },
+        "causal_status": { "enum": ["not_claimed", "assumed", "identified", "not_identified", "unknown"] },
+        "structural_model_ref": { "oneOf": [{ "$ref": "#/$defs/artifact_reference" }, { "type": "null" }] },
+        "identification_argument_ref": { "oneOf": [{ "$ref": "#/$defs/artifact_reference" }, { "type": "null" }] },
+        "identification_evidence_refs": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/artifact_reference" } }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "causal_status": { "const": "identified" } }, "required": ["causal_status"] },
+          "then": {
+            "properties": {
+              "identification_argument_ref": { "$ref": "#/$defs/artifact_reference" },
+              "identification_evidence_refs": { "minItems": 1 }
+            }
+          },
+          "else": {
+            "properties": {
+              "identification_argument_ref": { "type": "null" },
+              "identification_evidence_refs": { "maxItems": 0 }
+            }
+          }
+        }
+      ]
+    },
+    "lineage": {
+      "type": "object", "additionalProperties": false,
+      "required": ["supersedes_node_version_ref", "supersession_reason"],
+      "properties": {
+        "supersedes_node_version_ref": { "oneOf": [{ "$ref": "#/$defs/immutable_reference" }, { "type": "null" }] },
+        "supersession_reason": { "oneOf": [{ "type": "string", "minLength": 1 }, { "type": "null" }] }
+      },
+      "oneOf": [
+        { "properties": { "supersedes_node_version_ref": { "type": "null" }, "supersession_reason": { "type": "null" } } },
+        { "properties": { "supersedes_node_version_ref": { "$ref": "#/$defs/immutable_reference" }, "supersession_reason": { "type": "string", "minLength": 1 } } }
+      ]
+    },
+    "assumptions": {
+      "type": "array", "uniqueItems": true,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["assumption_id", "statement", "status", "evidence_ref"],
+        "properties": {
+          "assumption_id": { "$ref": "#/$defs/identifier" },
+          "statement": { "type": "string", "minLength": 1 },
+          "status": { "enum": ["declared", "tested", "violated", "unknown"] },
+          "evidence_ref": { "oneOf": [{ "$ref": "#/$defs/artifact_reference" }, { "type": "null" }] }
+        }
+      }
+    },
+    "model_discrepancy_class": { "enum": ["none_declared", "structural", "parametric", "measurement", "transport", "computational", "unknown"] },
+    "probabilistic_model": {
+      "type": "object", "additionalProperties": false,
+      "required": ["status", "prior_family", "likelihood_family", "model_ref"],
+      "properties": {
+        "status": { "enum": ["modeled", "not_modeled"] },
+        "prior_family": { "oneOf": [{ "type": "string", "minLength": 1 }, { "type": "null" }] },
+        "likelihood_family": { "oneOf": [{ "type": "string", "minLength": 1 }, { "type": "null" }] },
+        "model_ref": { "oneOf": [{ "$ref": "#/$defs/artifact_reference" }, { "type": "null" }] }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "status": { "const": "not_modeled" } }, "required": ["status"] },
+          "then": { "properties": { "prior_family": { "type": "null" }, "likelihood_family": { "type": "null" }, "model_ref": { "type": "null" } } },
+          "else": { "properties": { "prior_family": { "type": "string" }, "likelihood_family": { "type": "string" }, "model_ref": { "$ref": "#/$defs/artifact_reference" } } }
+        }
+      ]
+    },
+    "model_incomplete": { "type": "boolean" },
+    "predictions": {
+      "type": "array", "uniqueItems": true,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["prediction_id", "statement", "scope", "prospective", "registered_at_ref"],
+        "properties": {
+          "prediction_id": { "$ref": "#/$defs/identifier" },
+          "statement": { "type": "string", "minLength": 1 },
+          "scope": { "type": "string", "minLength": 1 },
+          "prospective": { "type": "boolean" },
+          "registered_at_ref": { "$ref": "#/$defs/immutable_reference" }
+        }
+      }
+    },
+    "prospective_falsifier_refs": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/immutable_reference" } },
+    "uncertainty_channels": {
+      "type": "array", "minItems": 1, "uniqueItems": true,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["channel", "status", "description", "estimate_ref"],
+        "properties": {
+          "channel": { "enum": ["sampling", "measurement", "model", "numerical", "transport", "missingness", "confounding", "physical", "unknown"] },
+          "status": { "enum": ["bounded", "unbounded", "unmeasured", "not_applicable", "unknown"] },
+          "description": { "type": "string", "minLength": 1 },
+          "estimate_ref": { "oneOf": [{ "$ref": "#/$defs/artifact_reference" }, { "type": "null" }] }
+        }
+      }
+    },
+    "origin": {
+      "type": "object", "additionalProperties": false,
+      "required": ["origin_type", "origin_ref", "producer"],
+      "properties": {
+        "origin_type": { "enum": ["mission_spec", "candidate_artifact", "adjudication", "correction", "human_proposal"] },
+        "origin_ref": { "$ref": "#/$defs/immutable_reference" },
+        "producer": { "$ref": "#/$defs/principal" }
+      }
+    },
+    "exposure": {
+      "type": "object", "additionalProperties": false,
+      "required": ["data_class", "purpose", "sealed_truth_derived", "private_reasoning_derived"],
+      "properties": {
+        "data_class": { "enum": ["public", "internal", "confidential", "restricted"] },
+        "purpose": { "$ref": "#/$defs/identifier" },
+        "sealed_truth_derived": { "const": false },
+        "private_reasoning_derived": { "const": false }
+      }
+    },
+    "created_at": { "$ref": "#/$defs/timestamp" },
+    "created_by": { "$ref": "#/$defs/principal" }
+  },
+  "$defs": {
+    "identifier": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$" },
+    "digest": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+    "timestamp": { "type": "string", "format": "date-time", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$" },
+    "artifact_reference": {
+      "type": "object", "additionalProperties": false,
+      "required": ["artifact_id", "digest", "media_type"],
+      "properties": { "artifact_id": { "$ref": "#/$defs/identifier" }, "digest": { "$ref": "#/$defs/digest" }, "media_type": { "type": "string", "minLength": 1 } }
+    },
+    "immutable_reference": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "version", "digest"],
+      "properties": { "id": { "$ref": "#/$defs/identifier" }, "version": { "type": "integer", "minimum": 1 }, "digest": { "$ref": "#/$defs/digest" } }
+    },
+    "principal": {
+      "type": "object", "additionalProperties": false,
+      "required": ["principal_id", "principal_type"],
+      "properties": { "principal_id": { "$ref": "#/$defs/identifier" }, "principal_type": { "enum": ["human", "deterministic_service", "model_run"] } }
+    }
+  }
+}

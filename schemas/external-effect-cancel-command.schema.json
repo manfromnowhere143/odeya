@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:odeya:schema:external-effect-cancel-command:0.1.0",
+  "x-odeya-command-payload-id": "urn:odeya:command-payload:external_effect.cancel:1.0.0",
+  "title": "Cancel Authorized External Effect Command Payload",
+  "description": "Requests cancellation only while an effect remains authorized and undispatched. Admission closes the intent and releases or invalidates its exact reservations; it cannot cancel an in-flight call or synthesize not-applied settlement. The required effect class must equal the class retained by the authorized effect; that cross-record equality is a semantic check.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "effect_id",
+    "effect_class",
+    "expected_effect_state",
+    "authorization_event_ref",
+    "grant_use_reservation_refs",
+    "expected_effect_payload_digest",
+    "cancellation_reason",
+    "reason_evidence_refs"
+  ],
+  "properties": {
+    "schema_version": {"const": "0.1.0"},
+    "effect_id": {"$ref": "#/$defs/identifier"},
+    "effect_class": {
+      "enum": [
+        "publication",
+        "message",
+        "governed_processing_dispatch",
+        "repository_write",
+        "payment",
+        "physical_action",
+        "provider_mutation"
+      ]
+    },
+    "expected_effect_state": {"const": "authorized"},
+    "authorization_event_ref": {"$ref": "#/$defs/identifier"},
+    "grant_use_reservation_refs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/identifier"}
+    },
+    "expected_effect_payload_digest": {"$ref": "#/$defs/digest"},
+    "cancellation_reason": {
+      "enum": [
+        "operator_cancelled",
+        "correction_invalidated",
+        "rights_invalidated",
+        "policy_invalidated",
+        "safety_invalidated",
+        "resource_invalidated",
+        "superseded",
+        "mission_quarantined",
+        "shutdown"
+      ]
+    },
+    "reason_evidence_refs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/artifact_reference"}
+    }
+  },
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]*$"
+    },
+    "digest": {"type": "string", "pattern": "^sha256:[a-f0-9]{64}$"},
+    "artifact_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifact_id", "digest", "media_type"],
+      "properties": {
+        "artifact_id": {"$ref": "#/$defs/identifier"},
+        "digest": {"$ref": "#/$defs/digest"},
+        "media_type": {"type": "string", "minLength": 1, "maxLength": 255}
+      }
+    }
+  }
+}

@@ -1,0 +1,250 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:odeya:schema:architecture-candidate-manifest:0.1.0",
+  "title": "Odeya ArchitectureCandidateManifest",
+  "description": "An immutable byte-exact Gate A review scope. Its canonical digest is bound externally to avoid a self-digest cycle. A structurally valid manifest is neither reviewed nor accepted.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "manifest_id", "version", "candidate_status",
+    "repository", "reviewed_files", "registries", "conformance_evidence",
+    "formal_models", "first_vertical_slice", "fixture_packages",
+    "standards_snapshots", "validator_evidence", "review_scope",
+    "manifest_profile", "candidate_signature", "created_at", "created_by"
+  ],
+  "properties": {
+    "schema_version": { "const": "0.1.0" },
+    "manifest_id": { "$ref": "#/$defs/identifier" },
+    "version": { "type": "integer", "minimum": 1 },
+    "candidate_status": { "enum": ["draft", "ready_for_independent_review", "superseded"] },
+    "repository": {
+      "type": "object", "additionalProperties": false,
+      "required": ["repository_id", "visibility", "candidate_commit", "tree_digest", "worktree_state", "worktree_evidence_ref"],
+      "properties": {
+        "repository_id": { "$ref": "#/$defs/identifier" },
+        "visibility": { "enum": ["private", "public"] },
+        "candidate_commit": { "type": "string", "pattern": "^git:(sha1:[a-f0-9]{40}|sha256:[a-f0-9]{64})$" },
+        "tree_digest": { "$ref": "#/$defs/digest" },
+        "worktree_state": { "const": "clean" },
+        "worktree_evidence_ref": { "$ref": "#/$defs/artifact_reference" }
+      }
+    },
+    "reviewed_files": {
+      "type": "array", "minItems": 1, "uniqueItems": true,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["path", "media_type", "byte_length", "byte_digest", "artifact_role", "relied_on_by_lanes"],
+        "properties": {
+          "path": { "type": "string", "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+$" },
+          "media_type": { "type": "string", "minLength": 1 },
+          "byte_length": { "type": "integer", "minimum": 0 },
+          "byte_digest": { "$ref": "#/$defs/digest" },
+          "artifact_role": { "enum": ["constitutional_document", "schema", "fixture", "formal_model", "validator", "decision", "rendered_output", "source_snapshot", "standards_snapshot", "other"] },
+          "relied_on_by_lanes": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/review_lane" } }
+        }
+      }
+    },
+    "registries": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schema_registry", "metaschema_set", "canonicalization_profile", "semantic_rule_registry", "method_registry"],
+      "properties": {
+        "schema_registry": { "$ref": "#/$defs/artifact_reference" },
+        "metaschema_set": { "$ref": "#/$defs/artifact_reference" },
+        "canonicalization_profile": { "$ref": "#/$defs/artifact_reference" },
+        "semantic_rule_registry": { "$ref": "#/$defs/artifact_reference" },
+        "method_registry": { "$ref": "#/$defs/artifact_reference" }
+      }
+    },
+    "conformance_evidence": {
+      "type": "object", "additionalProperties": false,
+      "required": ["canonicalization_vectors", "semantic_trace_package", "structural_validation", "canonicalization_result", "semantic_trace_result"],
+      "properties": {
+        "canonicalization_vectors": { "$ref": "#/$defs/artifact_reference" },
+        "semantic_trace_package": { "$ref": "#/$defs/artifact_reference" },
+        "structural_validation": { "$ref": "#/$defs/result_disposition" },
+        "canonicalization_result": { "$ref": "#/$defs/result_disposition" },
+        "semantic_trace_result": { "$ref": "#/$defs/result_disposition" }
+      }
+    },
+    "formal_models": {
+      "type": "array", "minItems": 1, "uniqueItems": true,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["model_ref", "configuration_ref", "tool_identity", "result_ref", "result"],
+        "properties": {
+          "model_ref": { "$ref": "#/$defs/artifact_reference" },
+          "configuration_ref": { "$ref": "#/$defs/artifact_reference" },
+          "tool_identity": { "$ref": "#/$defs/versioned_reference" },
+          "result_ref": { "$ref": "#/$defs/artifact_reference" },
+          "result": { "$ref": "#/$defs/result_disposition" }
+        }
+      }
+    },
+    "first_vertical_slice": {
+      "type": "object", "additionalProperties": false,
+      "required": ["slice_contract_ref", "source_lock_ref", "source_snapshot_refs", "rights_decision_refs", "settlement_evidence_refs", "proof_fixture_root_ref"],
+      "properties": {
+        "slice_contract_ref": { "$ref": "#/$defs/artifact_reference" },
+        "source_lock_ref": { "$ref": "#/$defs/artifact_reference" },
+        "source_snapshot_refs": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/artifact_reference" } },
+        "rights_decision_refs": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/immutable_reference" } },
+        "settlement_evidence_refs": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/artifact_reference" } },
+        "proof_fixture_root_ref": { "$ref": "#/$defs/artifact_reference" }
+      }
+    },
+    "fixture_packages": {
+      "type": "object", "additionalProperties": false,
+      "required": ["known_bad", "correction", "refusal", "null_result", "supported_result", "recovery"],
+      "properties": {
+        "known_bad": { "$ref": "#/$defs/artifact_reference" },
+        "correction": { "$ref": "#/$defs/artifact_reference" },
+        "refusal": { "$ref": "#/$defs/artifact_reference" },
+        "null_result": { "$ref": "#/$defs/artifact_reference" },
+        "supported_result": { "$ref": "#/$defs/artifact_reference" },
+        "recovery": { "$ref": "#/$defs/artifact_reference" }
+      }
+    },
+    "standards_snapshots": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/artifact_reference" } },
+    "validator_evidence": {
+      "type": "object", "additionalProperties": false,
+      "required": ["validator_code_ref", "environment_manifest_ref", "dependency_lock_ref", "result_ref", "result"],
+      "properties": {
+        "validator_code_ref": { "$ref": "#/$defs/artifact_reference" },
+        "environment_manifest_ref": { "$ref": "#/$defs/artifact_reference" },
+        "dependency_lock_ref": { "$ref": "#/$defs/artifact_reference" },
+        "result_ref": { "$ref": "#/$defs/artifact_reference" },
+        "result": { "$ref": "#/$defs/result_disposition" }
+      }
+    },
+    "review_scope": {
+      "type": "object", "additionalProperties": false,
+      "required": ["required_lanes", "open_findings", "accepted_limitations", "deferred_gate_b_probes", "review_packet_ref"],
+      "properties": {
+        "required_lanes": {
+          "type": "array", "minItems": 8, "maxItems": 8, "uniqueItems": true,
+          "items": { "$ref": "#/$defs/review_lane" },
+          "allOf": [
+            { "contains": { "const": "mission_product_boundary" } },
+            { "contains": { "const": "statistical_scientific" } },
+            { "contains": { "const": "physical_domain" } },
+            { "contains": { "const": "distributed_systems_recovery" } },
+            { "contains": { "const": "security_authority_cryptography" } },
+            { "contains": { "const": "data_rights_privacy" } },
+            { "contains": { "const": "human_factors_accessibility" } },
+            { "contains": { "const": "adversarial_scientific_integrity" } }
+          ]
+        },
+        "open_findings": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/finding_summary" } },
+        "accepted_limitations": {
+          "type": "array", "uniqueItems": true,
+          "items": { "$ref": "#/$defs/accepted_limitation" }
+        },
+        "deferred_gate_b_probes": {
+          "type": "array", "uniqueItems": true,
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["probe_ref", "semantics_frozen", "product_empirical_only", "blocking_gate"],
+            "properties": {
+              "probe_ref": { "$ref": "#/$defs/artifact_reference" },
+              "semantics_frozen": { "const": true },
+              "product_empirical_only": { "const": true },
+              "blocking_gate": { "const": "gate_b" }
+            }
+          }
+        },
+        "review_packet_ref": { "$ref": "#/$defs/artifact_reference" }
+      }
+    },
+    "manifest_profile": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schema_id", "canonicalization_profile_ref", "signature_profile_ref", "self_digest_location"],
+      "properties": {
+        "schema_id": { "const": "urn:odeya:schema:architecture-candidate-manifest:0.1.0" },
+        "canonicalization_profile_ref": { "$ref": "#/$defs/versioned_reference" },
+        "signature_profile_ref": { "$ref": "#/$defs/versioned_reference" },
+        "self_digest_location": { "const": "external_identity_registry" }
+      }
+    },
+    "candidate_signature": {
+      "type": "object", "additionalProperties": false,
+      "required": ["status", "signer", "signature_ref"],
+      "properties": {
+        "status": { "enum": ["unsigned", "signed"] },
+        "signer": { "oneOf": [{ "$ref": "#/$defs/human_principal" }, { "type": "null" }] },
+        "signature_ref": { "oneOf": [{ "$ref": "#/$defs/artifact_reference" }, { "type": "null" }] }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "status": { "const": "signed" } }, "required": ["status"] },
+          "then": { "properties": { "signer": { "$ref": "#/$defs/human_principal" }, "signature_ref": { "$ref": "#/$defs/artifact_reference" } } },
+          "else": { "properties": { "signer": { "type": "null" }, "signature_ref": { "type": "null" } } }
+        }
+      ]
+    },
+    "created_at": { "$ref": "#/$defs/timestamp" },
+    "created_by": { "$ref": "#/$defs/principal" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "candidate_status": { "const": "ready_for_independent_review" } }, "required": ["candidate_status"] },
+      "then": {
+        "properties": {
+          "conformance_evidence": { "properties": { "structural_validation": { "const": "pass" }, "canonicalization_result": { "const": "pass" }, "semantic_trace_result": { "const": "pass" } } },
+          "formal_models": { "items": { "properties": { "result": { "const": "pass" } } } },
+          "validator_evidence": { "properties": { "result": { "const": "pass" } } },
+          "candidate_signature": { "properties": { "status": { "const": "signed" } } }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "identifier": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$" },
+    "digest": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+    "timestamp": { "type": "string", "format": "date-time", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$" },
+    "review_lane": { "enum": ["mission_product_boundary", "statistical_scientific", "physical_domain", "distributed_systems_recovery", "security_authority_cryptography", "data_rights_privacy", "human_factors_accessibility", "adversarial_scientific_integrity"] },
+    "result_disposition": { "enum": ["pass", "fail", "indeterminate"] },
+    "principal": {
+      "type": "object", "additionalProperties": false,
+      "required": ["principal_id", "principal_type"],
+      "properties": { "principal_id": { "$ref": "#/$defs/identifier" }, "principal_type": { "enum": ["human", "deterministic_service"] } }
+    },
+    "human_principal": {
+      "type": "object", "additionalProperties": false,
+      "required": ["principal_id", "principal_type"],
+      "properties": { "principal_id": { "$ref": "#/$defs/identifier" }, "principal_type": { "const": "human" } }
+    },
+    "artifact_reference": {
+      "type": "object", "additionalProperties": false,
+      "required": ["artifact_id", "digest", "media_type"],
+      "properties": { "artifact_id": { "$ref": "#/$defs/identifier" }, "digest": { "$ref": "#/$defs/digest" }, "media_type": { "type": "string", "minLength": 1 } }
+    },
+    "immutable_reference": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "version", "digest"],
+      "properties": { "id": { "$ref": "#/$defs/identifier" }, "version": { "type": "integer", "minimum": 1 }, "digest": { "$ref": "#/$defs/digest" } }
+    },
+    "versioned_reference": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "version", "digest"],
+      "properties": { "id": { "$ref": "#/$defs/identifier" }, "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" }, "digest": { "$ref": "#/$defs/digest" } }
+    },
+    "finding_summary": {
+      "type": "object", "additionalProperties": false,
+      "required": ["finding_ref", "severity", "state"],
+      "properties": {
+        "finding_ref": { "$ref": "#/$defs/immutable_reference" },
+        "severity": { "enum": ["critical", "high", "medium", "low", "note"] },
+        "state": { "enum": ["open", "remedy_proposed", "changed_candidate", "closure_reviewed", "closed", "duplicate", "invalid_with_evidence", "accepted_limitation", "deferred_probe"] }
+      }
+    },
+    "accepted_limitation": {
+      "type": "object", "additionalProperties": false,
+      "required": ["finding_ref", "severity", "evidence_ref"],
+      "properties": {
+        "finding_ref": { "$ref": "#/$defs/immutable_reference" },
+        "severity": { "enum": ["medium", "low"] },
+        "evidence_ref": { "$ref": "#/$defs/artifact_reference" }
+      }
+    }
+  }
+}

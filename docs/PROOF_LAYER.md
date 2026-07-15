@@ -2,6 +2,8 @@
 
 Snapshot date: 2026-07-15. Git state was observed at `2026-07-15T20:19:31+03:00`. This is a bounded requirements and company-narrative source, not an import of the projects into Odeya.
 
+The numbered mapping from each load-bearing lesson to its architecture contract and remaining closure evidence is maintained in [Proof-Mission Requirements Traceability](PROOF_MISSION_REQUIREMENTS_TRACEABILITY.md).
+
 Sentinel, Telos, and Inbar demonstrate three different parts of the research method. Their nulls, corrections, invalid runs, and blocked states are part of the proof: the process preserves outcomes that a presentation-oriented agent would be tempted to hide.
 
 ## Source status
@@ -13,6 +15,8 @@ Sentinel, Telos, and Inbar demonstrate three different parts of the research met
 | Inbar | `workspace/fieldtrue`, remote identity `inbar` | `b3cd7570a7b86e918e4831c3b57f7d4ca213d026`, clean at observation | Repository namespace is legacy; current result is intentionally blocked |
 
 These are observations, not moving pointers: active repositories may advance immediately afterward. Odeya must pin an exact committed import and recompute the snapshot before using any project as an executable replay fixture.
+
+A follow-up fixture audit at `2026-07-15T21:27:38+03:00` selected the same three commits but observed that Telos had 84 tracked modifications plus 45 untracked paths and Inbar had 12 tracked modifications plus 4 untracked paths; Sentinel remained clean. The exact artifact, rights, hash, replay, outcome, and falsifier specification is [the first vertical slice](FIRST_VERTICAL_SLICE.md). Working-tree bytes are excluded even when they contain a scientifically important pending correction.
 
 ## Sentinel
 
@@ -32,6 +36,8 @@ Claim boundary: this supports research on a pinned simulation monitor. It does n
 
 Canonical snapshot sources: `sentinel/README.md`, `sentinel/CONTINUITY.md`, and `sentinel/docs/research/FRONTIER_PROBLEM_ALIGNMENT_2026-07-13.md`.
 
+The selected replay is Sentinel's committed `full14_power` positive plus iteration 48's source-reported HUGSIM `TRANSFER_NULL`. Odeya must preserve that source label but compile an interval crossing zero without a frozen equivalence region as `inconclusive`, not affirmative equivalence or `null_result`. The fixture intentionally retains the planned-800/measured-799 distinction and requires the transfer analyzer's frozen clustering and parameter checks.
+
 ## Telos
 
 **Question:** Does benchmark-reported completion correspond to the intended outcome under retained, external execution?
@@ -48,6 +54,8 @@ Transferable requirements:
 - corrections propagate into every product and investor surface.
 
 Claim boundary: the corrected retained cases establish a bounded benchmark phenomenon. They do not validate invalid detector protocols or the obsolete 40-row framing.
+
+The exact fixture audit found an additional load-bearing limitation: iteration 192's explicit-input core facts (`40/40` rows unresolved and failing at least one graded regression item) reproduce, but its committed repository-wide “baseline was absent” scan is not replay-stable after the correction is published. A clean replay finds two correction-surface hits at commit `c681785efa8f0bf420eb52b8a3bb634957cc040e` and three at selected commit `fc955a5caf20dc1ed53ef71b83797ba75315afb5`, so the terminal `pass` receipt cannot be treated as replay-complete. Odeya must retain the narrower correction facts, record the discrepancy, and reject the mutable whole-repository scan as an unfrozen evidence universe.
 
 Canonical snapshot sources: `telos/README.md`, `telos/CONTINUITY.md`, `telos/docs/ARCHITECTURE.md`, and `telos/docs/MISSION_LOOP.md`.
 
@@ -69,6 +77,8 @@ Transferable requirements:
 - unknown criteria never represented as zero.
 
 Claim boundary: the current result is a serious substrate audit and architecture requirement, not a validated causal-diagnosis or intervention result.
+
+The selected Inbar fixtures use only committed project-generated metadata and proof. Raw NASA ADAPT bytes are absent and remain unavailable for redistribution because the recorded landing-page terms are unspecified. The historical iteration-000 authority is consumed and must not be regenerated merely to make the fixture look more reproducible.
 
 Canonical snapshot sources: `fieldtrue/README.md`, `fieldtrue/CONTINUITY.md`, `fieldtrue/docs/ARCHITECTURE.md`, and `fieldtrue/docs/research/ITER001_SOURCE_ROLE_AUDIT.md`.
 
@@ -95,4 +105,4 @@ Avoid saying:
 - Inbar has demonstrated diagnosis or intervention;
 - Maestro already executes the scientific lifecycle.
 
-The strongest narrative is the real one: difficult research produced measurable positives, tight nulls, invalid protocols, visible corrections, and a blocked substrate—and those outcomes now define the engine's architecture.
+The strongest narrative is the real one: difficult research produced measurable positives, valid intervals crossing the reference boundary, invalid protocols, visible corrections, replay discrepancies, and a blocked substrate—and those outcomes now define the engine's architecture.

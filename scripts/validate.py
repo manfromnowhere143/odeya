@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import json
 import re
+import subprocess
 import sys
 from copy import deepcopy
 from importlib.metadata import PackageNotFoundError, version
@@ -77,17 +78,91 @@ REQUIRED_FILES = (
     "docs/PRE_IMPLEMENTATION_GATE.md",
     "docs/FRONTIER_REVIEW_2026-07-15.md",
     "docs/PROOF_LAYER.md",
+    "docs/FIRST_VERTICAL_SLICE.md",
+    "docs/FIRST_SLICE_METHOD_PROFILE.md",
+    "docs/CANONICALIZATION_PROFILE.md",
+    "docs/DATA_GOVERNANCE.md",
+    "docs/PUBLICATION_PROTOCOL.md",
+    "docs/LEDGER_INTEGRITY_AND_RECOVERY.md",
+    "docs/MODULE_DEPENDENCY_MANIFEST.md",
+    "docs/COMMAND_CONTRACT_REGISTRY.md",
+    "docs/ARCHITECTURE_REVIEW_PROTOCOL.md",
+    "architecture/module-dependency-manifest.json",
     "schemas/research-mission.schema.json",
+    "schemas/protocol-snapshot.schema.json",
+    "schemas/protocol-amendment.schema.json",
+    "schemas/run-manifest.schema.json",
+    "schemas/command-envelope.schema.json",
+    "schemas/command-receipt.schema.json",
     "schemas/research-event.schema.json",
+    "schemas/research-event-trace.schema.json",
+    "schemas/artifact-manifest.schema.json",
+    "schemas/artifact-custody-observation.schema.json",
+    "schemas/metric-result.schema.json",
+    "schemas/falsifier-result.schema.json",
     "schemas/claim.schema.json",
     "schemas/claim-proposal.schema.json",
     "schemas/adjudication.schema.json",
+    "schemas/claim-correction.schema.json",
     "schemas/publication-manifest.schema.json",
+    "schemas/publication-candidate.schema.json",
+    "schemas/publication-decision.schema.json",
     "schemas/authority-grant.schema.json",
+    "schemas/root-authority-manifest.schema.json",
+    "schemas/authority-assignment.schema.json",
+    "schemas/data-asset-record.schema.json",
+    "schemas/rights-assertion.schema.json",
+    "schemas/data-use-decision.schema.json",
+    "schemas/data-exposure-record.schema.json",
+    "schemas/transformation-record.schema.json",
+    "schemas/retention-schedule.schema.json",
+    "schemas/deletion-case.schema.json",
+    "schemas/legal-hold.schema.json",
+    "schemas/method-registry.schema.json",
+    "schemas/ledger-checkpoint.schema.json",
+    "schemas/backup-manifest.schema.json",
+    "schemas/key-profile.schema.json",
+    "schemas/restore-verification-report.schema.json",
+    "schemas/recovery-decision.schema.json",
+    "schemas/module-dependency-manifest.schema.json",
+    "schemas/architecture-candidate-manifest.schema.json",
+    "schemas/architecture-finding.schema.json",
+    "schemas/review-determination.schema.json",
+    "schemas/operator-architecture-decision.schema.json",
     "schemas/blocker.schema.json",
     "schemas/verification-run.schema.json",
+    "schemas/validation-rule-registry.schema.json",
+    "schemas/validation-result.schema.json",
+    "schemas/handoff.schema.json",
+    "schemas/grounded-outcome.schema.json",
+    "schemas/strategy-candidate.schema.json",
+    "schemas/promotion-decision.schema.json",
     "requirements-architecture.txt",
     "tests/architecture-schema/manifest.json",
+    "tests/cognitive-contracts/check.py",
+    "tests/cognitive-contracts/cases.json",
+    "tests/projection-contracts/check.py",
+    "tests/projection-contracts/cases.json",
+    "tests/physical-contracts/check.py",
+    "tests/physical-contracts/cases.json",
+    "tests/mathematical-contracts/check.py",
+    "tests/mathematical-contracts/cases.json",
+    "tests/canonicalization/README.md",
+    "tests/canonicalization/manifest.json",
+    "tests/canonicalization/expectations.json",
+    "tests/canonicalization/source-lock.json",
+    "tests/canonicalization/requirements.txt",
+    "tests/canonicalization/node/package.json",
+    "tests/canonicalization/node/package-lock.json",
+    "tests/canonicalization/runner_python.py",
+    "tests/canonicalization/runner_node.mjs",
+    "tests/canonicalization/compare_results.py",
+    "tests/canonicalization/audit_schemas.py",
+    "tests/canonicalization/SCHEMA_AUDIT.json",
+    "tests/canonicalization/results/python-rfc8785-0.1.4.json",
+    "tests/canonicalization/results/node-canonicalize-3.0.0.json",
+    "tests/canonicalization/results/comparison-receipt.json",
+    "scripts/validate_module_manifest.py",
 )
 FORBIDDEN_IMPLEMENTATION_DIRS = (
     "apps",
@@ -95,6 +170,12 @@ FORBIDDEN_IMPLEMENTATION_DIRS = (
     "services",
     "infrastructure",
     "deploy",
+)
+ISOLATED_CONTRACT_SUITES = (
+    "tests/cognitive-contracts/check.py",
+    "tests/projection-contracts/check.py",
+    "tests/physical-contracts/check.py",
+    "tests/mathematical-contracts/check.py",
 )
 MARKDOWN_LINK = re.compile(r"!?\[[^\]]*\]\(([^)]+)\)")
 EXTERNAL_PREFIXES = ("http://", "https://", "mailto:", "urn:", "data:")
@@ -271,6 +352,67 @@ def validate_schemas(errors: list[str], dependency_ready: bool) -> tuple[int, di
         }
         if authority_roles != expected_authorities:
             add(errors, "mission schema must represent all nine founding authority roles")
+
+    command_envelope = schemas.get("schemas/command-envelope.schema.json")
+    command_receipt = schemas.get("schemas/command-receipt.schema.json")
+    if command_envelope is not None and command_receipt is not None:
+        envelope_namespaces = set(
+            command_envelope["properties"]["idempotency_scope"]["properties"]["namespace"]["enum"]
+        )
+        receipt_namespaces = set(
+            command_receipt["properties"]["idempotency_scope"]["properties"]["namespace"]["enum"]
+        )
+        if envelope_namespaces != receipt_namespaces:
+            add(
+                errors,
+                "command envelope/receipt idempotency namespace vocabularies must match exactly",
+            )
+        envelope_stream_types = set(command_envelope["$defs"]["stream_type"]["enum"])
+        receipt_stream_types = set(
+            command_receipt["properties"]["target_binding"]["properties"]["stream_type"]["enum"]
+        )
+        if envelope_stream_types != receipt_stream_types:
+            add(
+                errors,
+                "command envelope/receipt target stream vocabularies must match exactly",
+            )
+        registry_binding_fields = {
+            "command_registry_snapshot_ref",
+            "command_registry_activation_ref",
+            "command_contract_record_ref",
+        }
+        for label, schema in (
+            ("command envelope", command_envelope),
+            ("command receipt", command_receipt),
+        ):
+            missing = registry_binding_fields - set(schema.get("required", []))
+            if missing:
+                add(errors, f"{label} must require exact registry bindings: {sorted(missing)}")
+        if "presented_authority_hints" not in set(command_envelope.get("required", [])):
+            add(errors, "command envelope must require explicitly untrusted presented authority hints")
+        hint_properties = command_envelope["$defs"]["presented_authority_hints"]["properties"]
+        prohibited_hint_fields = {"mode", "derivation_rule_ref", "policy_decision_refs"}
+        leaked_hint_fields = prohibited_hint_fields & set(hint_properties)
+        if leaked_hint_fields:
+            add(
+                errors,
+                "command envelope authority hints expose kernel-owned fields: "
+                f"{sorted(leaked_hint_fields)}",
+            )
+        if hint_properties.get("trust_level", {}).get("const") != "untrusted_resolve_only":
+            add(errors, "command envelope authority hints must be untrusted resolve-only inputs")
+        if "admission_evidence" not in set(command_receipt.get("required", [])):
+            add(errors, "command receipt must bind the exact admission-evidence bundle")
+        rejection_codes = set(
+            command_receipt["$defs"]["rejected_result"]["properties"]["rejection_code"]["enum"]
+        )
+        impossible_receipt_codes = {"unknown_command", "command_id_reuse"}
+        leaked = rejection_codes & impossible_receipt_codes
+        if leaked:
+            add(
+                errors,
+                f"post-registry command receipt contains pre-receipt ingress codes: {sorted(leaked)}",
+            )
     return count, schemas
 
 
@@ -500,6 +642,412 @@ def validate_foundation_invariants(errors: list[str]) -> None:
             add(errors, f"implementation lock violation: top-level {directory}/ exists")
 
 
+def load_fixture_object(relative: str, errors: list[str]) -> dict | None:
+    path = ROOT / relative
+    loaded = load_json(path, errors, relative)
+    if not isinstance(loaded, dict):
+        if loaded is not None:
+            add(errors, f"semantic fixture must contain an object: {relative}")
+        return None
+    return loaded
+
+
+def validate_exact_record_keys(
+    records: object,
+    key: str,
+    expected: set[str],
+    errors: list[str],
+    label: str,
+) -> int:
+    if not isinstance(records, list):
+        add(errors, f"{label} must be an array")
+        return 1
+    values = [record.get(key) for record in records if isinstance(record, dict)]
+    if len(values) != len(records) or any(not isinstance(value, str) for value in values):
+        add(errors, f"{label} must contain an object with string {key} for every member")
+        return 1
+    if len(set(values)) != len(values):
+        add(errors, f"{label} contains duplicate {key} values")
+    if set(values) != expected:
+        missing = sorted(expected - set(values))
+        unexpected = sorted(set(values) - expected)
+        add(errors, f"{label} exact vocabulary mismatch; missing={missing}, unexpected={unexpected}")
+    return 1
+
+
+def validate_architecture_semantic_fixtures(errors: list[str]) -> int:
+    """Check founding cross-field laws that JSON Schema cannot express alone.
+
+    These checks cover retained architecture fixtures, not arbitrary runtime state and
+    not the independent implementation obligations in SEMANTIC_VALIDATION.md.
+    """
+
+    checks = 0
+    fixture_root = "tests/architecture-schema/fixtures"
+
+    method_registry = load_fixture_object(f"{fixture_root}/method-registry.valid.json", errors)
+    if method_registry is not None:
+        methods = method_registry.get("methods")
+        if isinstance(methods, list):
+            method_keys: list[tuple[object, object]] = []
+            for method in methods:
+                if not isinstance(method, dict):
+                    continue
+                method_keys.append((method.get("method_id"), method.get("version")))
+                implementations = method.get("implementations")
+                if isinstance(implementations, list):
+                    implementation_ids = [
+                        item.get("implementation_id")
+                        for item in implementations
+                        if isinstance(item, dict)
+                    ]
+                    if len(implementation_ids) != len(implementations) or len(set(implementation_ids)) != len(implementation_ids):
+                        add(errors, "method registry implementation identities must be present and unique per method")
+                    if method.get("status") == "admitted":
+                        minimum = method.get("verification_contract", {}).get("minimum_independent_implementations")
+                        roles = {item.get("role") for item in implementations if isinstance(item, dict)}
+                        if not isinstance(minimum, int) or len(implementations) < minimum:
+                            add(errors, "admitted method does not meet its independent implementation minimum")
+                        if not {"reference", "independent_verifier"}.issubset(roles):
+                            add(errors, "admitted method requires reference and independent-verifier roles")
+            if len(set(method_keys)) != len(method_keys):
+                add(errors, "method registry contains duplicate method_id/version records")
+        checks += 1
+
+    checkpoint = load_fixture_object(f"{fixture_root}/ledger-checkpoint.valid.json", errors)
+    if checkpoint is not None:
+        coverage = checkpoint.get("artifact_verification_coverage", {})
+        if isinstance(coverage, dict):
+            registered = coverage.get("registered_count")
+            categories = [
+                coverage.get("full_bytes_verified_count"),
+                coverage.get("metadata_only_count"),
+                coverage.get("missing_count"),
+                coverage.get("corrupt_count"),
+            ]
+            if not isinstance(registered, int) or any(not isinstance(value, int) for value in categories) or sum(categories) != registered:
+                add(errors, "ledger checkpoint artifact coverage categories must partition registered_count")
+        checkpoint_digest = checkpoint.get("checkpoint_digest")
+        for signature in checkpoint.get("signatures", []):
+            if isinstance(signature, dict) and signature.get("signed_digest") != checkpoint_digest:
+                add(errors, "ledger checkpoint signature must bind checkpoint_digest")
+        previous = checkpoint.get("previous_checkpoint")
+        if isinstance(previous, dict):
+            if previous.get("ledger_epoch") != checkpoint.get("ledger_epoch"):
+                add(errors, "ordinary checkpoint predecessor must remain in the same ledger epoch")
+            if not isinstance(previous.get("inclusive_global_position"), int) or previous["inclusive_global_position"] >= checkpoint.get("inclusive_global_position", -1):
+                add(errors, "ledger checkpoint predecessor position must be strictly earlier")
+        checks += 1
+
+    backup = load_fixture_object(f"{fixture_root}/backup-manifest.valid.json", errors)
+    if backup is not None:
+        source = backup.get("source_frontier", {})
+        if isinstance(source, dict) and source.get("begin_global_position", 0) > source.get("end_global_position", -1):
+            add(errors, "backup source frontier begins after it ends")
+        manifest_digest = backup.get("manifest_digest")
+        catalog = backup.get("catalog_observation", {})
+        if isinstance(catalog, dict) and catalog.get("manifest_digest_observed") != manifest_digest:
+            add(errors, "independent backup catalog observation must bind manifest_digest")
+        for signature in backup.get("signatures", []):
+            if isinstance(signature, dict) and signature.get("signed_digest") != manifest_digest:
+                add(errors, "backup signature must bind manifest_digest")
+        checks += 1
+
+    key_profile = load_fixture_object(f"{fixture_root}/key-profile.valid.json", errors)
+    if key_profile is not None:
+        expected_key_classes = {
+            "constitutional_root_signing",
+            "ledger_checkpoint_signing",
+            "witness_signing",
+            "publication_signing",
+            "service_workload_identity",
+            "data_encryption",
+            "backup_encryption",
+            "provider_operational_credential",
+        }
+        checks += validate_exact_record_keys(
+            key_profile.get("key_classes"),
+            "key_class",
+            expected_key_classes,
+            errors,
+            "founding key profile",
+        )
+        for record in key_profile.get("key_classes", []):
+            if not isinstance(record, dict):
+                continue
+            for quorum_name in ("activation_quorum", "recovery_quorum"):
+                quorum = record.get(quorum_name, {})
+                if isinstance(quorum, dict) and quorum.get("threshold", 0) > quorum.get("eligible_principal_count", -1):
+                    add(errors, f"key profile {record.get('key_class')} {quorum_name} threshold exceeds eligible principals")
+
+    restore = load_fixture_object(f"{fixture_root}/restore-verification-report.valid.json", errors)
+    service_scopes = {
+        "incident_cockpit",
+        "canonical_reads",
+        "reconciliation_commands",
+        "ordinary_research_writes",
+        "publication",
+        "spending",
+        "r2_plus_effects",
+        "physical_actions",
+    }
+    if restore is not None:
+        checks += validate_exact_record_keys(
+            restore.get("truth_plane_results"),
+            "recoverability_class",
+            {"C0", "C1", "C2", "C3", "C4", "C5", "C6"},
+            errors,
+            "restore truth-plane results",
+        )
+        expected_invariants = {
+            "aggregate-head-reduction",
+            "command-id-receipt-uniqueness",
+            "transaction-cohort-completeness",
+            "grant-lifecycle-reconciliation",
+            "resource-lifecycle-reconciliation",
+            "eligible-claim-evidence-traversal",
+            "external-effect-next-action",
+            "anti-resurrection-frontier",
+            "checkpoint-witness-consistency",
+            "projection-position-authority-fence",
+            "no-mutable-or-secret-alias-trust",
+        }
+        checks += validate_exact_record_keys(
+            restore.get("invariant_results"),
+            "invariant_id",
+            expected_invariants,
+            errors,
+            "restore invariant results",
+        )
+        dispositions = []
+        service_state = restore.get("recommended_service_state", {})
+        for result in restore.get("invariant_results", []):
+            if not isinstance(result, dict):
+                continue
+            disposition = result.get("disposition")
+            dispositions.append(disposition)
+            if disposition in {"fail", "indeterminate"} and isinstance(service_state, dict):
+                for scope in result.get("affected_scopes", []):
+                    decision = service_state.get(scope, {})
+                    if isinstance(decision, dict) and decision.get("state") != "disabled":
+                        add(errors, f"restore invariant {result.get('invariant_id')} leaves affected scope {scope} enabled")
+        frontier = restore.get("current_security_frontier", {})
+        if (
+            restore.get("overall_disposition") == "accepted_bounded"
+            and (
+                any(value in {"fail", "indeterminate"} for value in dispositions)
+                or not isinstance(frontier, dict)
+                or frontier.get("completeness") != "proven_complete"
+            )
+        ):
+            add(errors, "bounded restore acceptance requires passing invariants and a proven-complete security frontier")
+        report_digest = restore.get("report_digest")
+        for determination in restore.get("review_determinations", []):
+            if isinstance(determination, dict) and determination.get("reviewed_report_digest") != report_digest:
+                add(errors, "restore review determination must bind report_digest")
+
+    recovery = load_fixture_object(f"{fixture_root}/recovery-decision.valid.json", errors)
+    if recovery is not None:
+        allowed = set(recovery.get("allowed_service_scopes", []))
+        prohibited = set(recovery.get("prohibited_service_scopes", []))
+        if allowed & prohibited or allowed | prohibited != service_scopes:
+            add(errors, "recovery decision allowed/prohibited scopes must be a disjoint complete partition")
+        quorum = recovery.get("quorum", {})
+        if isinstance(quorum, dict):
+            threshold = quorum.get("threshold")
+            eligible = quorum.get("eligible_principal_count")
+            members = quorum.get("members", [])
+            member_ids = [member.get("principal_id") for member in members if isinstance(member, dict)]
+            approvals = sum(1 for member in members if isinstance(member, dict) and member.get("vote") == "approve")
+            if not isinstance(threshold, int) or not isinstance(eligible, int) or threshold > eligible:
+                add(errors, "recovery quorum threshold exceeds eligible principal count")
+            if len(member_ids) != len(members) or len(set(member_ids)) != len(member_ids):
+                add(errors, "recovery quorum member identities must be present and unique")
+            if isinstance(threshold, int) and approvals < threshold:
+                add(errors, "recovery decision lacks its approval threshold")
+        if recovery.get("effective_at", "") >= recovery.get("expires_at", ""):
+            add(errors, "recovery decision expiry must be after effective time")
+        checks += 1
+
+    return checks
+
+
+def validate_canonical_identity_evidence(
+    errors: list[str],
+) -> tuple[int, int, int, int]:
+    """Validate retained two-path identity evidence and audit freshness offline.
+
+    This executes only standard-library evidence comparators. It does not install
+    packages, invoke either canonicalizer, access the network, or claim that the
+    proposed profile has passed Gate A.
+    """
+
+    compare_path = ROOT / "tests/canonicalization/compare_results.py"
+    audit_path = ROOT / "tests/canonicalization/audit_schemas.py"
+    if not compare_path.is_file() or not audit_path.is_file():
+        return 0, 0, 0, 0
+
+    try:
+        comparison = subprocess.run(
+            [sys.executable, str(compare_path)],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            timeout=30,
+            check=False,
+        )
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        add(errors, f"canonical identity evidence comparator failed to execute: {type(exc).__name__}")
+        return 0, 0, 0, 0
+
+    receipt: object | None = None
+    try:
+        receipt = json.loads(comparison.stdout, object_pairs_hook=reject_duplicate_keys)
+    except (json.JSONDecodeError, DuplicateKeyError):
+        add(errors, "canonical identity comparator emitted an invalid receipt")
+    case_count = 0
+    relation_count = 0
+    if isinstance(receipt, dict):
+        case_count = receipt.get("case_count", 0)
+        relation_count = receipt.get("metamorphic_relation_count", 0)
+        if not isinstance(case_count, int) or case_count < 1:
+            add(errors, "canonical identity receipt has no positive case count")
+            case_count = 0
+        if not isinstance(relation_count, int) or relation_count < 1:
+            add(errors, "canonical identity receipt has no positive metamorphic relation count")
+            relation_count = 0
+        if comparison.returncode != 0 or receipt.get("status") != "pass":
+            receipt_errors = receipt.get("errors", [])
+            if isinstance(receipt_errors, list) and receipt_errors:
+                for message in receipt_errors[:10]:
+                    add(errors, f"canonical identity evidence: {message}")
+            else:
+                add(errors, "canonical identity evidence comparison failed")
+    elif comparison.returncode != 0:
+        add(errors, "canonical identity evidence comparison failed without a receipt")
+
+    try:
+        audit_check = subprocess.run(
+            [sys.executable, str(audit_path), "--check"],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            timeout=30,
+            check=False,
+        )
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        add(errors, f"canonical schema audit failed to execute: {type(exc).__name__}")
+        return case_count, relation_count, 0, 0
+    if audit_check.returncode != 0:
+        add(errors, "canonical schema/fixture migration audit is stale")
+
+    audit_document = load_json(
+        ROOT / "tests/canonicalization/SCHEMA_AUDIT.json",
+        errors,
+        "tests/canonicalization/SCHEMA_AUDIT.json",
+    )
+    schema_audit_count = 0
+    fixture_audit_count = 0
+    if isinstance(audit_document, dict):
+        schema_audit_count = audit_document.get("schema_count", 0)
+        fixture_audit_count = audit_document.get("fixture_count", 0)
+        if not isinstance(schema_audit_count, int) or schema_audit_count < 1:
+            add(errors, "canonical audit has no positive schema count")
+            schema_audit_count = 0
+        if not isinstance(fixture_audit_count, int) or fixture_audit_count < 1:
+            add(errors, "canonical audit has no positive fixture count")
+            fixture_audit_count = 0
+        if audit_document.get("gate_a_disposition") not in {"blocked", "candidate_clear"}:
+            add(errors, "canonical audit has no recognized Gate A disposition")
+    return case_count, relation_count, schema_audit_count, fixture_audit_count
+
+
+def validate_module_dependency_evidence(errors: list[str]) -> dict[str, int]:
+    validator_path = ROOT / "scripts/validate_module_manifest.py"
+    manifest_path = ROOT / "architecture/module-dependency-manifest.json"
+    empty = {"layers": 0, "modules": 0, "aggregates": 0, "schemas": 0, "commands": 0, "events": 0}
+    if not validator_path.is_file() or not manifest_path.is_file():
+        return empty
+    try:
+        result = subprocess.run(
+            [sys.executable, str(validator_path)],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            timeout=30,
+            check=False,
+        )
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        add(errors, f"module dependency manifest validator failed to execute: {type(exc).__name__}")
+        return empty
+    if result.returncode != 0:
+        detail = [line[2:] for line in result.stdout.splitlines() if line.startswith("- ")]
+        if detail:
+            for message in detail[:20]:
+                add(errors, f"module dependency manifest: {message}")
+        else:
+            add(errors, "module dependency manifest validation failed")
+        return empty
+    manifest = load_json(manifest_path, errors, "architecture/module-dependency-manifest.json")
+    if not isinstance(manifest, dict):
+        return empty
+    return {
+        "layers": len(manifest.get("layers", [])),
+        "modules": len(manifest.get("modules", [])),
+        "aggregates": len(manifest.get("aggregate_owners", [])),
+        "schemas": len(manifest.get("schema_owners", [])),
+        "commands": manifest.get("derived_ownership", {}).get("commands", {}).get("expected_minimum_count", 0),
+        "events": manifest.get("derived_ownership", {}).get("events", {}).get("expected_minimum_count", 0),
+    }
+
+
+def validate_isolated_contract_suites(errors: list[str]) -> int:
+    """Run every mandatory contract-family suite under the pinned interpreter.
+
+    These suites contain local structural and bounded semantic checks that are
+    intentionally richer than the shared mutation manifest. A missing, timed
+    out, or nonzero suite is a foundation-validation failure; a pass remains
+    architecture evidence only.
+    """
+
+    passed = 0
+    for relative in ISOLATED_CONTRACT_SUITES:
+        path = ROOT / relative
+        if not path.is_file():
+            add(errors, f"isolated contract suite is missing: {relative}")
+            continue
+        try:
+            result = subprocess.run(
+                [sys.executable, str(path)],
+                cwd=ROOT,
+                capture_output=True,
+                text=True,
+                timeout=30,
+                check=False,
+            )
+        except (OSError, subprocess.TimeoutExpired) as exc:
+            add(
+                errors,
+                f"isolated contract suite {relative} failed to execute: "
+                f"{type(exc).__name__}",
+            )
+            continue
+        if result.returncode != 0:
+            detail = [
+                line.strip()
+                for line in (result.stdout + "\n" + result.stderr).splitlines()
+                if line.strip()
+            ]
+            if detail:
+                for message in detail[:20]:
+                    add(errors, f"isolated contract suite {relative}: {message}")
+            else:
+                add(errors, f"isolated contract suite failed without output: {relative}")
+            continue
+        passed += 1
+    return passed
+
+
 def validate_decisions(errors: list[str]) -> int:
     decision_dir = ROOT / "docs/decisions"
     decisions = sorted(decision_dir.glob("[0-9][0-9][0-9][0-9]-*.md"))
@@ -523,6 +1071,15 @@ def main() -> int:
     schema_case_count = validate_schema_fixtures(errors, schemas, fixture_ready)
     document_count, local_link_count = validate_markdown_links(errors)
     validate_foundation_invariants(errors)
+    semantic_fixture_check_count = validate_architecture_semantic_fixtures(errors)
+    isolated_contract_suite_count = validate_isolated_contract_suites(errors)
+    (
+        canonical_case_count,
+        canonical_relation_count,
+        canonical_schema_audit_count,
+        canonical_fixture_audit_count,
+    ) = validate_canonical_identity_evidence(errors)
+    module_counts = validate_module_dependency_evidence(errors)
     decision_count = validate_decisions(errors)
 
     if errors:
@@ -535,6 +1092,23 @@ def main() -> int:
     print(f"- {document_count} Markdown documents")
     print(f"- {schema_count} JSON schemas")
     print(f"- {schema_case_count} valid/adversarial schema cases")
+    print(f"- {semantic_fixture_check_count} founding cross-field fixture groups checked")
+    print(f"- {isolated_contract_suite_count} isolated contract-family suites passed")
+    print(
+        f"- {canonical_case_count} canonical identity cases reconciled across "
+        "two pinned implementations"
+    )
+    print(f"- {canonical_relation_count} canonical identity metamorphic relations checked")
+    print(
+        f"- canonical migration inventory current for {canonical_schema_audit_count} schemas "
+        f"and {canonical_fixture_audit_count} fixtures; profile blockers remain explicit"
+    )
+    print(
+        "- logical ownership manifest checked: "
+        f"{module_counts['modules']} modules, {module_counts['aggregates']} aggregates, "
+        f"{module_counts['schemas']} schemas, {module_counts['commands']} commands, "
+        f"{module_counts['events']} events"
+    )
     print(f"- {decision_count} architecture decisions")
     print(f"- {local_link_count} local Markdown links checked")
     print("- implementation lock intact")

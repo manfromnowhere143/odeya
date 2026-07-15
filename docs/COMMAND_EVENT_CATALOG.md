@@ -1,445 +1,377 @@
 # Command and Event Catalog
 
-Status: proposed architecture contract, 2026-07-15. This document is non-executable and does not authorize runtime implementation. It defines the registry that must be frozen for Gate A; it also names incompatibilities in the current draft schemas that must be resolved before G2, G6, and G7 can pass.
+Status: architecture-closure candidate, 2026-07-15. This contract is non-executable and does not authorize product implementation. It replaces the legacy single-status event draft with the orthogonal event algebra in `research-event` 0.6.0 and adds language-neutral command/receipt envelopes.
 
-## Purpose
+## Canonical contracts
 
-Odeya changes canonical state only by admitting a versioned command and atomically appending an immutable event batch. A command is a request that may be rejected. An event is a retained fact that already happened. A worker result, workflow callback, model answer, provider receipt, UI action, or clock tick has no direct write path: each must enter through a typed command.
+- `schemas/command-envelope.schema.json` 0.4.0 currently binds the request identity and one of 121 declared design discriminators to its exact semantic version, payload-schema ID, immutable registry-snapshot reference, separate activation proof, exact contract-record reference, target stream family, aggregate owner, optimistic positions, actor, untrusted presented authority hints, causal inputs, payload, and a non-recursive request-digest contract. The hints are resolution inputs only: the caller cannot select an authority mode, derivation rule, or PolicyDecision. “Declared” does not mean admitted: under [ADR 0013](decisions/0013-admitted-only-command-ingress.md), this broad file is a red-team candidate and must be regenerated from the exact admitted registry so no discriminator lacks complete contract bytes.
+- `schemas/command-receipt.schema.json` 0.3.0 begins only after exact registry-member resolution and immutably settles one idempotency-scope plus command-ID pair. It binds the result to the resolved registry snapshot/activation/member record, a closed admission-evidence bundle, exact policy/validation records, and non-recursive result/receipt digest contracts.
+- `schemas/research-event.schema.json` 0.6.0 defines 135 event facts. Every event discriminator fixes one payload-schema ID, one stream family, one aggregate owner, one fact-time basis, one closed payload shape, and explicit payload/event digest contracts. Every command-bound event also carries an exact AdmissionEvidenceBundle reference.
+- `schemas/research-event-trace.schema.json` 0.3.0 binds ordered event vectors and typed command-receipt observations to orthogonal scientific, authority, data-governance, governed-processing, recovery, and resource-accounting axes. It structurally forbids the founding invalid-run/null, disputed-verification/eligibility, grant-reservation/dispatch-claim, rejected-processing/cohort, deletion-resurrection, incomplete-frontier reopen, missing-artifact reopen, fork-selection, restore-report-as-authority, claimed-resource release, inferred usage, unknown-as-zero, and unobserved-settlement contradictions.
+- [The state model](STATE_MODEL.md) defines the reducer axes and transition laws. Schema validity is necessary but never sufficient for transition legality.
 
-This catalog is the semantic source for future command schemas, event payload schemas, transition reducers, policy rules, idempotency records, recovery tests, and projection fixtures. It is not an API description and does not select a framework.
+A command is an untrusted request. A receipt is the durable admission result. An event is an immutable retained fact. A worker callback, model answer, provider receipt, UI action, timer, or human click changes no canonical state until admitted through a registered command.
 
-Related contracts:
+## Stream and aggregate law
 
-- [Architecture](ARCHITECTURE.md)
-- [Orthogonal state model](STATE_MODEL.md)
-- [Interface contracts](INTERFACE_CONTRACTS.md)
-- [Failure model](FAILURE_MODEL.md)
-- [Security and authority](SECURITY_AND_AUTHORITY.md)
-- [Standards profile](STANDARDS_PROFILE.md)
-- [Pre-implementation gate](PRE_IMPLEMENTATION_GATE.md)
+The founding ledger has eight stream classes:
 
-## Normative language and notation
-
-`MUST`, `MUST NOT`, `SHOULD`, and `MAY` describe proposed Gate A requirements.
-
-Event notation in the family tables is deliberate:
-
-- `schema:event.name` exists in `research-event.schema.json` version `0.2.0`.
-- `required:event.name` is required by the state, authority, or recovery model but is absent from that schema.
-- A bracketed batch such as `[a, b]` is committed atomically and in the listed order.
-- `none` means a valid no-op or rejection returns a result without adding a scientific fact. Evidence-relevant denials and security events are exceptions and require a named event.
-
-The `required:` names are candidate vocabulary. They do not become canonical until their payload, aggregate owner, state effect, and compatibility policy are accepted.
-
-## Registry record required for every command
-
-Every command version MUST have one immutable registry record containing:
-
-```text
-command_type + semantic version
-owning stream and aggregate
-canonical payload schema ID + digest
-allowed actors and execution identities
-required authority roles, grants, quorum, and separation constraints
-policy action and frozen policy-bundle compatibility range
-state admission predicate
-referential, artifact, rights, budget, and risk predicates
-events emitted for every accepted branch
-typed rejection codes and whether rejection itself is evidence-relevant
-idempotency scope and canonical request digest rule
-external-effect and provider-idempotency class
-retry class, retry ceiling, and reconciliation procedure
-projection invalidations and dependent aggregates
-positive, negative, race, crash, replay, and compatibility fixtures
-```
-
-An unregistered command is inadmissible. A registered command whose schema or policy version cannot be resolved fails closed.
-
-## Canonical command envelope
-
-The conceptual envelope in `INTERFACE_CONTRACTS.md` is refined as follows:
-
-```text
-command_id
-command_type + command_version
-target_stream_id + target_aggregate_type + target_aggregate_id
-expected_stream_position
-actor_principal + authenticated_execution_identity
-authority_assignment_refs[]
-authority_grant_refs[]
-policy_decision_refs[]
-correlation_id + causation_id
-input_artifact_refs[]
-canonical_payload
-canonical_request_digest
-client_observed_time | null       informational only
-```
-
-Multiple authority references are necessary for dual control and cross-role approval. `mission_id` remains a required scope after a mission exists, but cannot replace `target_stream_id` for portfolio and pre-mission proposal commands. `canonical_request_digest` covers the command type/version, target, expected position, actor identity, authority references, input references, and canonical payload. It excludes server-assigned recorded time.
-
-## Universal admission order
-
-The application boundary processes a command in this order:
-
-1. Authenticate the execution identity and establish the controlled recorded time.
-2. Resolve the command registry entry and exact schema digest.
-3. Canonicalize the request and compute `canonical_request_digest`.
-4. Look up `command_id` in its idempotency scope before checking the caller's stale expected position.
-5. If the same ID and digest were settled, return the original result. If the same ID has a different digest, reject with `CommandIdReuse` and open a security incident when policy requires.
-6. Validate schema, size, media-type, canonical-number, and unknown-field rules.
-7. Compare `expected_stream_position` and the aggregate version with canonical heads.
-8. Resolve every referenced event, artifact, protocol, manifest, policy decision, assignment, and grant by immutable identity.
-9. Verify artifact custody, rights, classification, exposure, and disclosure predicates.
-10. Evaluate policy and all authority predicates at the controlled recorded time, including quorum, role separation, scope, remaining uses, resource limits, and revocation.
-11. Check budget reservations, risk tier, lease ownership, blockers, and the exact state-transition predicate.
-12. Run the pure command decision and event derivation. Model or tool output cannot participate in this function except as an untrusted referenced artifact.
-13. Atomically persist the command receipt, grant reservations/uses, event batch, aggregate heads, and transactional outbox.
-14. Return the committed stream position and event references. Projection freshness is reported separately.
-
-Schema validation is only step 6. It cannot establish reference existence, authority separation, scientific validity, event ordering, or external settlement.
-
-## Event-batch laws
-
-For an accepted internal state change:
-
-1. The batch has one `commit_id`, one `command_id`, one correlation chain, and a fixed `batch_size`.
-2. `batch_index` is zero-based, unique, and contiguous through `batch_size - 1`.
-3. Mission or stream sequence positions are contiguous and allocated only at commit.
-4. Every event names exactly one owning aggregate; a batch MAY contain events for several aggregates in the same canonical stream.
-5. Each event's previous digest points to the immediately preceding canonical event, including earlier events in the same batch.
-6. The entire batch commits or none of it commits. Event delivery and projection updates after the outbox remain at-least-once.
-7. Event time means one of two things: an internal decision's controlled commit time, or an externally observed time with retained source and uncertainty. Provider-reported time never becomes trusted merely by being recorded.
-8. An event records the decision and retained references used at that moment. Later revocation, correction, or invalidation adds events; it never edits the batch.
-9. An accepted command that changes canonical state MUST emit at least one event. A successful read, dry validation, duplicate, or genuine no-op MAY emit none.
-10. Batch contiguity, referential integrity, digest chaining, grant accounting, time order, and cross-event invariants require semantic validation beyond JSON Schema.
-
-Cross-mission atomic commits are forbidden in the founding design. A portfolio decision that creates a mission uses a retained causal link and an idempotent saga: settle the proposal decision first, then create the mission origin, with explicit recovery if the second command has not yet settled.
-
-## Idempotency and recovery classes
-
-The tables use these recovery classes:
-
-| Class | Meaning | Duplicate and crash rule |
+| Stream | Mission scope | Purpose |
 |---|---|---|
-| `I` | Pure internal transition | Same command ID/digest returns the original batch. A new command ID reevaluates current state and cannot repeat an illegal edge. |
-| `D` | Human or policy decision | The signed decision artifact is immutable. Retry resubmits the same command; changed wording, scope, or evidence requires a new command and usually a new decision. |
-| `A` | Artifact/object transition | Bytes are staged, digest-verified, and immutably materialized first. Canonical artifact promotion occurs only in the metadata/event transaction; unregistered objects and missing committed objects are reconciled explicitly. |
-| `L` | Lease, attempt, or budget transition | Compare-and-set on stage/work/lease version. Retry never erases an attempt or resource observation; a new execution is a new attempt ID. |
-| `X` | External consequential effect | Commit authorization and intent before the call. Use a stable provider key. Timeout becomes `completion_unknown`; no retry until independent reconciliation. |
-| `V` | Pure verification/adjudication derivation | Same sealed inputs and rule versions must derive the same event proposal. Changed evidence, evaluator, or rule creates a new run/version. |
+| `portfolio` | optional | company-level intake and proposal policy |
+| `proposal` | optional | pre-mission proposal history, including decline and withdrawal |
+| `mission` | required | one mission's scientific and operational facts |
+| `authority_root` | optional | constitutional assignments and authority facts |
+| `incident` | required | retained mission-scoped security/safety response history; company-wide incidents use a `portfolio` stream |
+| `learning` | required for mission-derived learning | grounded outcomes and quarantined strategy candidates |
+| `data_governance` | optional; required when the governed asset is mission-scoped | shared or mission-scoped rights and lifecycle facts that must not be forced into a synthetic mission |
+| `recovery` | forbidden (`null`) | global checkpoint, witness, backup, restore, frontier, fork, epoch, and recovery-control facts |
 
-A retry with changed payload is never a retry of the same command. Model sampling retries are additional attempts and retain their own identities, costs, and outputs.
+A fake mission ID is forbidden. Proposal acceptance and mission-origin creation are two causal commits, not a cross-stream atomic transaction.
 
-## Command families
+Every event owns exactly one aggregate and advances exactly one aggregate version. The founding aggregate vocabulary is:
 
-### 1. Intake, mission contract, and protocol
+`proposal`, `mission`, `protocol`, `work_graph`, `stage`, `work_item`, `attempt`, `resource_budget`, `blocker`, `artifact`, `run`, `measurement`, `metric`, `falsifier`, `verification`, `review`, `adjudication`, `claim_proposal`, `claim_version`, `dependency`, `external_effect`, `publication`, `authority_assignment`, `authority_grant`, `incident`, `handoff`, `grounded_outcome`, `strategy_candidate`, `data_asset`, `rights_assertion`, `data_use_decision`, `data_exposure`, `transformation`, `retention_schedule`, `deletion_case`, `legal_hold`, `ledger_checkpoint`, `backup`, `restore_case`, `recovery_decision`, `ledger_epoch`, and `recovery_control`.
 
-| Command | Admission predicate | Authority | Committed event batch | Recovery |
-|---|---|---|---|---|
-| `proposal.submit` | Identity/disclosure envelope valid; attachments quarantined; no duplicate proposal version | Authenticated ingress policy; no scientific authority implied | `schema:proposal.submitted` | `I`; same proposal version/digest is a no-op, different bytes require a new version |
-| `proposal.decide` | Proposal exists; screening evidence retained; decision branch legal | Human proposal authority; rights/safety decisions separately referenced where relevant | `schema:proposal.decided`; acceptance causally schedules mission origin creation, never in a cross-stream atomic claim | `D`; signed decision is replay-safe, changed rationale is a new decision |
-| `proposal.withdraw` | Requester owns withdrawal right; downstream mission consequences resolved | Contributor/owner plus policy; publication authority if already public | `required:proposal.withdrawn` | `D`; repeated withdrawal returns original result |
-| `mission.create_origin` | Accepted proposal or operator-authored origin exists; target mission ID unused | Proposal authority and explicit mission owner assignment | `required:mission.origin_recorded` | `I`; saga resumes until mission origin exists exactly once |
-| `mission.compile` | Orientation package and method registries resolve; output passes structural and semantic validation | Scoped execution grant; protocol authority is needed to accept, not to run the compiler | `schema:mission.compiled` | `V`; compiler/version/input digest fix the output; failed validation returns a report without advancing phase |
-| `protocol.record_exposure` | Exposure is newly observed and scoped to data, role, actor, and time | Data-rights or protocol authority depending source; observation cannot be suppressed by producer | `required:protocol.exposure_recorded` | `I`; exposure history is monotonic and never cleared |
-| `protocol.freeze` | Mission compiled and validated; forbidden exposure absent; consequence table, bars, controls, and amendment rules complete | Human protocol authority; safety/data/resource grants referenced but not inherited | `schema:protocol.frozen` | `D`; identical digest is duplicate, changed protocol requires amendment/fork |
-| `protocol.amend` | Frozen branch exists; reason and complete exposure history retained; prospective consequence derived | Human protocol authority and every affected authority role | `[schema:protocol.amended, required:dependency.invalidation_recorded]` when dependencies change | `D`; never edits the prior snapshot |
-| `protocol.fork` | Existing branch retained; new prospective scope and origin consequence explicit | Human protocol authority | `required:protocol.forked` | `I`; target branch ID and parent digest make creation idempotent |
-| `protocol.supersede` | Replacement branch frozen; dependent run/claim effects enumerated | Human protocol authority | `[required:protocol.superseded, required:dependency.invalidation_recorded]` | `D`; supersession cannot delete prior use |
-| `mission.advance_phase` | Exact phase entry predicate in `STATE_MODEL.md` passes; required checkpoint promoted; no affected open blocker | Role owning the boundary; pure phase derivation by kernel | `required:mission.phase_advanced` | `V`; stale position conflicts, duplicate returns original edge |
+A transaction may append a multi-aggregate batch to one stream. No event is reduced by two aggregates. Cross-stream and cross-mission atomic batches are forbidden.
 
-Proposal acceptance means worth testing, not true. Protocol authority can freeze what the experiment means; it cannot grant execution, verification, outcome, or publication authority.
+## Command admission and immutable settlement
 
-The phase boundary consumes the following retained decisions; it does not mint them:
+Admission order is normative:
 
-| Phase edge | Required authority/evidence lineage |
-|---|---|
-| `intake -> orient` | Proposal decision and origin rights/safety screen |
-| `orient -> contract` | Protocol owner accepts orientation completeness; data-rights status resolves every admitted source |
-| `contract -> preregister` | Protocol authority accepts the validated mission contract |
-| `preregister -> preflight` | Human protocol freeze with recorded exposure state |
-| `preflight -> execute` | Active safety, data-rights, resource, and execution grants for the exact run manifest |
-| `execute -> verify` | Kernel proves the work graph settled; execution authority does not choose the verifier |
-| `verify -> adversarial_review` | Required verification packages settled under the independence contract |
-| `adversarial_review -> adjudicate` | Verification authority records disposition of every material finding |
-| `adjudicate -> handoff` | Pure consequence rule settles or refuses adjudication; verification lineage is retained |
-| `handoff -> learn` | Handoff sealed at an exact ledger position; no scientific authority is inferred |
-| `learn -> closed` | `mission.close` separately checks leases, ambiguous effects, handoff, and policy obligations |
+1. Authenticate the execution identity and establish controlled recorded time.
+2. Resolve the exact immutable command-registry snapshot and contract record, then verify a separate activation proof whose checkpoint/position is admissible for this tenant, mission, and target ledger position. Registry bytes never embed the checkpoint that activates them, and `latest` resolution is forbidden.
+3. Canonicalize the envelope and compute the request digest.
+4. Look up `idempotency_scope + command_id` before testing caller positions.
+5. Return the exact retained result for the same ID and digest. Changed-digest reuse is an ingress/idempotency conflict and cannot create a competing `CommandReceipt` under the same key.
+6. Assert envelope and payload structure, formats, canonical numbers, media types, and size bounds.
+7. Compare expected stream position and aggregate version.
+8. Resolve every referenced artifact, event, protocol, manifest, assignment, grant, and rights record. Generate the PolicyDecision inside admission; a caller cannot submit its identity.
+9. Evaluate custody, rights, classification, exposure, budget, risk, state, quorum, role separation, grant limits, controlled time, and revocation.
+10. Generate the pure immutable PolicyDecision and the CommandContractRecord-selected validation/reference/authority/rights/resource/risk/transition records over the exact frontier.
+11. Run the pure command decision and build one closed AdmissionEvidenceBundle. Generated prose and model/tool output may be referenced evidence but cannot alter this function.
+12. Atomically persist the immutable admission evidence, receipt, grant-use/resource facts, domain-event batch, aggregate heads, and outbox.
+13. Return the receipt. Projection freshness is separate.
 
-### 2. Authority assignments and grant accounting
+The receipt has one of three canonical results:
 
-| Command | Admission predicate | Authority | Committed event batch | Recovery |
-|---|---|---|---|---|
-| `authority.record_assignment` | Signed governing decision names principal, role, scope, conflicts, effective interval, and issuer chain | Founding constitutional authority or an active, delegable parent assignment; never the assignee alone | `required:authority.assignment_recorded` | `D`; assignment version is immutable and narrowing/supersession is additive |
-| `authority.issue_grant` | Issuer assignment active; signed policy decision, request digest, subject binding, scope, limits, replay rule, dependencies, and quorum valid | Assigned issuer roles and human approval exactly where the frozen action matrix requires | `schema:authority.granted` after bootstrap semantics are resolved | `D`; grant ID/digest is immutable and cannot widen on retry |
-| `authority.observe_expiry` | Controlled time is at/after expiry and no prior expiry observation exists | Kernel clock boundary under pinned time policy | `required:authority.expired` | `I`; admission denies expired grants even if projection delivery lags |
-| `authority.revoke` | Grant/assignment active or issued; revocation issuer and reason are in scope | Authorized human/policy issuer under the frozen action matrix | `schema:authority.revoked` | `D`; canonical commit order settles use-versus-revoke races |
+| Result | Meaning | Event requirement |
+|---|---|---|
+| `accepted` | canonical state changed | at least one event reference and resulting stream head |
+| `rejected` | admission failed | typed code and admission stage; no domain event merely to log an ordinary rejection |
+| `noop` | request was legal but state already represented it | named no-op reason and unchanged heads |
 
-The initial root assignment is a reviewed constitutional artifact, not a self-issued grant. Its creation and rotation procedure must be accepted before the first authority command schema can freeze.
+The receipt's `result_digest` binds the entire result. The request, result, receipt, event payload, event, and checkpoint each use a distinct domain separator and an exact included/excluded JSON-Pointer set. Digest/signature values are outside their own hash scope; signatures are external attestations. Schema shape does not recompute a digest, prove a signature, prove snapshot activation/currentness, prove duplicated record metadata equal, or prove admission evidence complete. The replay contract is always `return_exact_bound_result`; a retry never reevaluates current state. A changed payload, target, actor binding, authority claim, registry binding, or input is a new command ID. A transport may mark a response as replayed, but it may not mutate the canonical receipt.
 
-Grant use is not a caller-accessible command. Each admitted domain command appends `required:authority.grant_used` for every consumed grant in the same batch as the authorized fact; exhaustion may add `required:authority.exhausted`. Long-lived concurrency is owned by the lease/effect aggregate rather than a free-floating permission reservation. If the database transaction fails, neither the use nor the domain event exists.
+`CommandReceipt` is not a raw-ingress receipt. An unparseable envelope, unknown or unadmitted command, invalid membership, or changed-digest ID reuse has no truthful new member-bound receipt and is refused before receipt creation. Policy may route evidence-relevant abuse through a separate registered security-observation command. `schema_unresolvable` is legal only after member proof fixes the exact schema ID/digest but retained schema bytes cannot be loaded; `schema_invalid` requires those exact bytes to have resolved and rejected the payload.
 
-### 3. Planning, control, work, and external effects
+Reservation-aware admission uses stable rejections: `grant_consumption_point_mismatch`, `grant_reservation_missing`, `grant_reservation_mismatch`, `grant_reservation_expired`, `grant_reservation_released`, `grant_reservation_cancelled`, and `dispatch_already_claimed`. An accepted authorize/start/cancel receipt must reference the complete required event cohort under one `commit_id`; the schema retains those event references, while semantic validation proves cohort completeness and equality.
 
-| Command | Admission predicate | Authority | Committed event batch | Recovery |
-|---|---|---|---|---|
-| `work_graph.compile` | Frozen protocol and registered stage templates resolve; graph is acyclic and outputs cover gates | Scoped execution grant; protocol digest fixes semantics | `required:work_graph.compiled` | `V`; graph digest identifies output |
-| `stage.set_readiness` | Readiness edge is legal; required inputs or blocker resolution evidence retained | Kernel derivation under owning stage policy | `required:stage.readiness_changed` | `I`; never changes authorization or mission phase implicitly |
-| `stage.authorize` | Stage ready; run manifest immutable; safety/resource/execution/data grants active and compatible | All declared grants; high consequence may require dual control | `schema:stage.authorized` | `D`; grant reservations commit with the event |
-| `blocker.open` | Named dependency prevents a legal action; class, scope, evidence, and resolution rule valid | Any permitted detector; security/policy classes trigger their owning authority | `required:blocker.opened` | `I`; same blocker key coalesces only if evidence and requirement match |
-| `blocker.resolve` | Blocker open; exact resolution requirement met by retained evidence | Authority owning blocker class; producer cannot self-resolve verification/security blockers | `required:blocker.resolved` | `D`; readiness changes only in a subsequent or same derived batch |
-| `blocker.supersede` | Replacement blocker identifies why the prior formulation is obsolete | Same authority as original blocker | `[required:blocker.superseded, required:blocker.opened]` | `D`; prior blocker remains visible |
-| `work.lease` | Work ready and authorized; no active writer lease; capability and budget subset valid | Execution grant bound to subject, stage, manifest, and resources | `[schema:work.leased, required:authority.grant_used]` | `L`; one lease ID, compare-and-set owner |
-| `work.renew_lease` | Same subject and active lease; heartbeat and observed usage within limits | Existing execution grant; no implicit expansion | `required:work.lease_renewed` | `L`; renewal ID prevents extending twice |
-| `work.revoke_lease` | Lease active/stale; revocation reason and authority valid | Execution, safety, or resource authority according to reason; incident policy maps containment to those roles | `required:work.lease_revoked` | `L`; revocation wins over later completion admission |
-| `attempt.start` | Active lease; attempt ID unused; environment and input manifest digests resolve | Lease-bound execution grant | `schema:attempt.recorded(status=started)` | `L`; start commits before execution begins |
-| `attempt.report` | Reporter matches lease/attempt identity; result manifest staged/promoted as required; status legal | Lease-bound execution identity | `schema:attempt.recorded` | `L`; completion does not promote artifacts or complete a stage |
-| `attempt.mark_interrupted` | Worker loss/cancellation observed; no terminal attempt fact exists | Kernel/workflow observation; safety or execution authority when interruption is an incident action | `required:attempt.interrupted` | `L`; a replacement execution uses a new attempt ID |
-| `work.complete_lease` | Terminal attempt fact and resource observations retained; no further worker mutation allowed | Kernel derivation under the original execution scope | `required:work.lease_completed` | `L`; completion releases concurrency but never refunds a consumed grant use |
-| `resource.observe` | Observation source and unit registered; attempt exists; unknown remains typed unknown | Metering service or verified provider receipt | `schema:resource.observed` | `L`; append corrections, never overwrite estimates or prior readings |
-| `budget.mark_exhausted` | Measured/reserved use reaches a frozen limit or becomes unsafe to estimate | Resource policy derivation | `[required:budget.exhausted, required:blocker.opened]` | `L`; more budget requires a new grant, not a retry |
-| `effect.authorize` | Consequential effect fully specified; all safety/resource/write/publication grants active | Roles required by action class; R3/R4 use explicit human gates | `required:external_effect.authorized` | `D`; authorization binds exact effect digest and replay policy |
-| `effect.start` | Effect authorized; no unresolved prior start; provider idempotency/reconciliation profile exists | Execution grant consuming effect authorization | `required:external_effect.started` | `X`; intent commits before provider invocation |
-| `effect.report_result` | Provider response or timeout tied to effect/attempt identity | Adapter may report evidence but cannot choose scientific meaning | One of `required:external_effect.confirmed_applied`, `required:external_effect.confirmed_not_applied`, `required:external_effect.completion_unknown` | `X`; missing receipt means unknown, never not applied |
-| `effect.reconcile` | Effect is unknown; independent read capability and evidence retained | Separate reconciliation execution grant; stronger approval if another write may be needed | `required:external_effect.reconciliation_completed` with observed applied/not-applied settlement | `X`; only a settled reconciliation can reopen a safe next action; it does not erase prior ambiguity |
-| `stage.complete` | Required outputs promoted; attempts settled; no ambiguous effect; gate and authority predicates pass | Kernel derivation plus owning stage authority where specified | `[required:stage.readiness_changed(to=completed), required:mission.phase_advanced]` when phase boundary is reached | `V`; completion is immutable and later invalidation is additive |
+## Authority evidence without recursion
 
-Workflow history schedules these commands but is not the scientific ledger. A lease authorizes a bounded attempt; it is not a data-rights, scientific-verdict, or publication grant.
+Actor identity is not authority. A command carries only typed, untrusted references that may help the kernel resolve authority. It cannot declare the mode, derivation rule, PolicyDecision, validity, or result. The admission kernel derives one authority-evidence mode from current canonical records, and accepted events retain that derived basis:
 
-### 4. Evidence, measurement, verification, and review
+| Mode | Required basis | Use |
+|---|---|---|
+| `constitutional_bootstrap` | reviewed constitutional artifact | initial root assignment only |
+| `ingress_policy` | server-generated immutable PolicyDecision in the admission cohort | non-scientific intake; the caller supplies no policy-decision identity or result |
+| `kernel_derivation` | versioned pure rule | mechanical consequences |
+| `assigned_role` | one or more active assignments | role-owned decisions |
+| `bounded_grants` | commands: grant refs; events: same-batch exact grant-use reservation or consumption refs | consequential bounded action |
+| `external_observation` | retained source in fact time | provider/instrument observations; no inferred decision authority |
 
-| Command | Admission predicate | Authority | Committed event batch | Recovery |
-|---|---|---|---|---|
-| `artifact.record` | Staged bytes or lawful metadata tombstone exists; origin, media type, rights, and declared digest present | Execution/data-rights grants appropriate to custody | `schema:artifact.recorded` | `A`; a failed metadata commit leaves an orphan object for reconciliation |
-| `artifact.validate` | Recorded artifact available; exact validator set and known-bad suite resolve | Execution or verification role according to artifact purpose | `required:artifact.validated` or `required:artifact.validation_failed` | `A`; validator change creates a new report, not a changed past verdict |
-| `artifact.promote` | Streamed digest matches; validation and rights gates pass; immutable target condition succeeds | Execution plus data-rights/safety gates; verifier artifacts use verification authority | `schema:artifact.promoted` | `A`; digest-keyed conditional creation, then one metadata/event/outbox transaction |
-| `artifact.quarantine` | Threat, rights, integrity, or provenance reason retained | Security, data-rights, or evidence policy | `schema:artifact.recorded(state=quarantined)` pending a dedicated event | `A`; dependent use fails closed immediately |
-| `artifact.mark_corrupt` | Integrity check fails against committed identity | Evidence/security authority or deterministic check | `[required:artifact.corrupt, required:dependency.invalidation_recorded]` | `A`; bytes are never silently replaced under the same identity |
-| `artifact.mark_unavailable` | Referenced bytes cannot be retrieved or lawfully accessed | Storage/data-rights observation | `[required:artifact.unavailable, required:blocker.opened]` | `A`; reacquisition is a new custody fact |
-| `artifact.tombstone` | Lawful removal decision retained; identity/provenance retention allowed | Data-rights authority, with publication/correction review where affected | `[required:artifact.tombstoned, required:dependency.invalidation_recorded]` | `D`; tombstone is irreversible absent a new lawful artifact identity |
-| `metric.record_observation` | Frozen metric method, population, denominator, unit, missingness, and run references resolve | Verifier or registered measurement process; producer output alone is candidate evidence | `schema:metric.observed` | `V`; corrected computation is a new observation/version |
-| `falsifier.adjudicate` | Frozen falsifier and known-bad control evaluated from promoted evidence | Verification authority or pure registered adjudicator | `schema:falsifier.adjudicated` | `V`; unmeasured and inconclusive remain distinct |
-| `run.determine_validity` | Protocol, attempt, artifact, leakage, control, and environment evidence complete | Independent verification plus pure validity rule | `required:run.validity_determined` | `V`; invalidity blocks scientific adjudication, not evidence retention |
-| `run.record_measurement_status` | Measurement acceptance rule evaluated independently of hypothesis result | Registered measurement/verifier identity | `required:run.measurement_status_recorded` | `V`; `no_valid_measurement` cannot become a null result |
-| `verification.request` | Frozen protocol, promoted evidence manifest, independence requirement, and sealed exposure policy exist | Kernel/mission owner may request; requester cannot choose itself as verifier | `schema:verification.requested` | `I`; request digest fixes the assignment constraints |
-| `verification.assign` | Candidate satisfies every required independence and conflict predicate | Verification authority separate from producer | `required:verification.assigned` | `D`; reassignment preserves earlier exposure and conflicts |
-| `verification.start` | Assignment active; verifier context manifest honors exposure policy | Assigned verifier execution grant | `required:verification.started` | `L`; retry is a new verification attempt, not erased work |
-| `verification.complete` | Verification package promoted; known-bad controls and dimension results present | Assigned verifier submits; kernel validates requirement vector | `schema:verification.completed` | `V`; same sealed inputs/rule version reproduce the result |
-| `verification.dispute` | Material producer-verifier or verifier-verifier mismatch retained | Verification authority or affected party through controlled challenge | `required:verification.disputed` | `D`; majority vote cannot close it |
-| `verification.invalidate` | Contamination, conflict, evaluator defect, or missing evidence established | Independent verification/security authority | `[required:verification.invalidated, required:dependency.invalidation_recorded]` | `D`; prior package remains addressable |
-| `replication.record` | New diagnostic data/measurement and required organizational independence established | Independent replication authority | `required:replication.recorded` | `V`; same-evidence replay is inadmissible here |
-| `transport.record` | Predeclared external context and criterion evaluated | Independent verification/outcome authority as domain requires | `required:transport.recorded` | `V`; failed transfer narrows claims, not source evidence identity |
-| `review.record` | Review assignment, exposure, conflicts, report, and finding severity present | Assigned domain/statistical/security/rights/publication reviewer | `schema:review.recorded` | `D`; changed report is a new review version |
+The first root assignment does not self-grant. For an ordinary in-ledger command, `authority.grant_used(consumption_point=domain_commit)` is a kernel-produced fact in the same batch as the authorized domain fact. For a cross-boundary effect, T1 emits `authority.grant_use_reserved` with `external_effect.authorized`; the dispatch claim later emits `authority.grant_used(consumption_point=dispatch_claim)` with `external_effect.started`. Callers can submit none of these facts directly. Revocation/release versus dispatch is decided by canonical commit order.
 
-Integrity, reproducibility, method validity, replication, and transport are separate dimensions. No command may collapse them into one verifier score.
+## Canonical producer and reducer registry
 
-### 5. Claims, correction, and publication
+“Producer” names the only command or kernel boundary allowed to derive the event. “Reducer” is the sole aggregate projection that consumes it. An event delivered to any other reducer is rejected as a contract defect.
 
-| Command | Admission predicate | Authority | Committed event batch | Recovery |
-|---|---|---|---|---|
-| `claim.propose` | Prospective proposition, type, scope, estimand/consequence rule, falsifiers, and exposure state are typed and within the mission claim surface | Proposal capability only; generator has no verdict authority | `schema:claim.proposed` after payload aligns to `ClaimProposal` | `I`; same proposal digest is duplicate, changed wording/scope is a new proposal version |
-| `adjudication.determine` | Run validity, measurement disposition, frozen consequence rule, metrics, falsifiers, verifier packages, reviews, and blockers settle | Pure adjudicator using retained facts; never generator self-verdict | `schema:claim.adjudicated` after renaming/alignment to `Adjudication`; refusal may open or reference a blocker | `V`; rule/input changes create a new adjudication object |
-| `claim.compile_version` | Proposal and adjudication resolve; every required verification profile and evidence edge settles; compiler rule/version fixed | Pure claim compiler; human/domain review only where mission requires it | `required:claim.version_compiled` with eligible or ineligible projection | `V`; immutable version bytes and ledger position identify result |
-| `claim.correct` | New evidence identifies affected prior version and all known dependencies; replacement adjudication/version is complete | Verification/protocol authority for decision inputs; outcome authority for external-settlement changes; publication authority only for release effects | `[schema:claim.corrected, required:claim.version_compiled, required:claim.superseded, required:dependency.invalidation_recorded]` | `D`; correction is a new version, never an in-place edit |
-| `claim.retract` | Claim is no longer supportable or lawful; reason, replacement/retraction-notice version, and dependency set retained | Verification/protocol or rights authority by reason; publication authority only for public effects | `[schema:claim.retracted, required:claim.version_compiled, required:dependency.invalidation_recorded]` | `D`; retraction notice remains at least as visible as prior release |
-| `publication.compile_candidate` | Exact eligible claim versions, disclosure projection, rights/safety wording, citations, limitations, and correction endpoint resolve | Scoped publication preparation; no release authority yet | `required:publication.candidate_compiled` | `V`; candidate digest fixes exact proposed disclosure |
-| `release.request` | Candidate digest exists; requestor and intended channels/scope recorded | Authenticated request capability; not publication approval | `schema:release.requested` after its payload is split from decision | `I`; duplicate request returns existing aggregate |
-| `release.decide` | Candidate, claim state, rights, safety, embargo, contributor, wording, and channel risks evaluated | Human publication authority; dual control when policy requires | `schema:release.decided` | `D`; authorization binds the exact candidate/manifest digest |
-| `publication.seal` | Release authorized; final projection exactly matches approved candidate; grant unused and active | Human publication authority | `schema:publication.sealed` | `D`; any byte change requires a new manifest and decision |
-| `publication.start_release` | Manifest sealed; effect authorization active; channel idempotency/reconciliation profile exists | Single-use publication grant plus execution grant | `[required:external_effect.started, required:publication.release_started]` | `X`; commit before sending bytes |
-| `publication.report_release` | Receipt or timeout tied to manifest, channel, and effect ID | Channel adapter reports only | One of `required:publication.released`, `required:publication.release_completion_unknown` | `X`; timeout forbids blind retry |
-| `publication.reconcile_release` | Release completion unknown; independent channel observation retained | Publication/reconciliation authority | `[required:external_effect.reconciliation_completed, required:publication.release_reconciliation_completed]` | `X`; observed applied -> released, not applied -> sealed; reconciliation remains a separate process fact |
-| `publication.withdraw` | Released manifest exists; correction/safety/rights reason retained; channel effect authorized | Human publication authority | `schema:publication.withdrawn` plus external-effect events | `X`; channel timeout remains unknown and visible |
-| `publication.correct` | Replacement publication references superseded manifest and exact claim correction | Human publication authority | `[required:publication.corrected, required:dependency.invalidation_recorded]` plus release effect events | `X`; old projection remains addressable with correction banner |
+### Intake, mission, protocol, and work
 
-Claim proposal, adjudication, claim-version eligibility, release request, release authorization, manifest sealing, channel intent, and observed release are distinct facts. None implies the next.
+| Event | Sole producer | Aggregate / reducer |
+|---|---|---|
+| `proposal.submitted` | `proposal.submit` | proposal / Proposal |
+| `proposal.decided` | `proposal.decide` | proposal / Proposal |
+| `proposal.withdrawn` | `proposal.withdraw` | proposal / Proposal |
+| `mission.origin_recorded` | `mission.create_origin` | mission / Mission |
+| `mission.contract_compiled` | `mission.compile_contract` | mission / Mission |
+| `mission.phase_advanced` | `mission.advance_phase` | mission / Mission |
+| `mission.control_changed` | `mission.change_control` | mission / Mission |
+| `handoff.recorded` | `mission.record_handoff` | handoff / Handoff |
+| `mission.closed` | `mission.close` | mission / Mission |
+| `protocol.exposure_recorded` | `protocol.record_exposure` | protocol / Protocol |
+| `protocol.integrity_determined` | protocol consequence kernel in the same batch as the determining freeze, exposure, or amendment | protocol / Protocol |
+| `protocol.frozen` | `protocol.freeze` | protocol / Protocol |
+| `protocol.amended` | `protocol.amend` | protocol / Protocol |
+| `protocol.forked` | `protocol.fork` | protocol / Protocol |
+| `protocol.superseded` | `protocol.supersede` | protocol / Protocol |
+| `work_graph.compiled` | `work_graph.compile` | work_graph / WorkGraph |
+| `stage.readiness_changed` | `stage.set_readiness` | stage / StageReadiness |
+| `stage.authorization_changed` | `stage.set_authorization` | stage / StageAuthorization |
+| `work.lease_acquired` | `work.acquire_lease` | work_item / WorkLease |
+| `work.lease_renewed` | `work.renew_lease` | work_item / WorkLease |
+| `work.lease_released` | `work.release_lease` | work_item / WorkLease |
+| `work.lease_revoked` | `work.revoke_lease` | work_item / WorkLease |
 
-### 6. Mission control, incidents, handoff, and closure
+### Attempts, resources, blockers, evidence, and science
 
-| Command | Admission predicate | Authority | Committed event batch | Recovery |
-|---|---|---|---|---|
-| `mission.pause` | Mission open; reason, scope, and active-work handling declared | Execution, safety, or resource authority according to the stop reason | `required:mission.control_changed(to=paused)` plus lease/effect actions as needed | `D`; pause does not change scientific phase |
-| `mission.quarantine` | Security/evidence condition requires containment | Safety authority or deterministic critical detector under a frozen incident policy | `[required:mission.control_changed(to=quarantined), required:incident.opened]` | `D`; no automatic resume |
-| `mission.resume` | Pause/quarantine resolution evidence complete; grants and leases re-evaluated | Authority that owns the stop reason | `required:mission.control_changed(to=open)` | `D`; creates new leases, never resurrects stale ones |
-| `incident.open` | Detection report identifies affected scope and containment requirement | Any trusted detector may submit; policy determines immediate controls | `schema:incident.recorded` pending typed lifecycle events | `I`; duplicate detector report links to the same incident only by exact key |
-| `incident.transition` | Legal incident edge with evidence and accountable responder | Safety plus execution authority as required by the incident policy | One of `required:incident.contained`, `required:incident.investigating`, `required:incident.resolved`, `required:incident.superseded` | `D`; closure cannot erase affected-state consequences |
-| `handoff.record` | Factual state generated at an exact ledger position; leases, blockers, effects, revisions, and next legal actions included | Kernel derivation; operator signs where transfer occurs | `schema:handoff.recorded` | `V`; stale handoff remains valid only for its named position |
-| `mission.close` | Handoff sealed; no active lease; no unresolved ambiguous effect; closure dependencies enumerated | Mission owner and any authority required by unresolved policy | `schema:mission.closed` | `D`; close is not a scientific verdict |
+| Event | Sole producer | Aggregate / reducer |
+|---|---|---|
+| `attempt.started` | `attempt.start` | attempt / AttemptExecution |
+| `attempt.interrupted` | `attempt.report` | attempt / AttemptExecution |
+| `attempt.completion_unknown` | `attempt.report` | attempt / AttemptExecution |
+| `attempt.completed` | `attempt.report` | attempt / AttemptExecution |
+| `attempt.failed` | `attempt.report` | attempt / AttemptExecution |
+| `attempt.cancelled` | `attempt.report` | attempt / AttemptExecution |
+| `resource.reservation_created` | resource-accounting kernel in the exact admission/authorization cohort; never caller-produced | resource_budget / ResourceLedger |
+| `resource.reservation_claimed` | resource-accounting kernel in the exact work/effect/verification start cohort; never caller-produced | resource_budget / ResourceLedger |
+| `resource.reservation_released` | resource-accounting kernel in a winning pre-claim cancellation, rejection, revocation, or invalidation cohort | resource_budget / ResourceLedger |
+| `resource.reservation_expired` | controlled-time resource-accounting kernel before any claim commits | resource_budget / ResourceLedger |
+| `resource.usage_observed` | resource-accounting kernel from retained provider, meter, instrument, or operator-reviewed observation | resource_budget / ResourceLedger |
+| `resource.reservation_settled` | resource-accounting kernel after exact usage/billing/refund observations resolve | resource_budget / ResourceLedger |
+| `resource.observed` | `resource.record_observation` | resource_budget / ResourceLedger |
+| `budget.exhausted` | `budget.record_exhaustion` | resource_budget / ResourceLedger |
+| `blocker.opened` | `blocker.open` | blocker / Blocker |
+| `blocker.resolved` | `blocker.resolve` | blocker / Blocker |
+| `blocker.superseded` | `blocker.supersede` | blocker / Blocker |
+| `artifact.recorded` | `artifact.record` | artifact / ArtifactCustody |
+| `artifact.validated` | `artifact.record_validation` | artifact / ArtifactCustody |
+| `artifact.promoted` | `artifact.promote` | artifact / ArtifactCustody |
+| `artifact.quarantined` | `artifact.quarantine` | artifact / ArtifactCustody |
+| `artifact.corrupt_detected` | `artifact.record_corruption` | artifact / ArtifactCustody |
+| `artifact.unavailable` | `artifact.record_unavailability` | artifact / ArtifactCustody |
+| `artifact.tombstoned` | `artifact.tombstone` | artifact / ArtifactCustody |
+| `run.validity_determined` | `run.determine_validity` | run / RunValidity |
+| `measurement.disposition_determined` | `measurement.determine_disposition` | measurement / MeasurementDisposition |
+| `metric.observed` | `metric.record_observation` | metric / MetricObservation |
+| `falsifier.adjudicated` | `falsifier.adjudicate` | falsifier / Falsifier |
+| `review.recorded` | `review.record` | review / Review |
 
-### 7. Grounded learning and controlled promotion
+### Verification and scientific settlement
 
-| Command | Admission predicate | Authority | Committed event batch | Recovery |
-|---|---|---|---|---|
-| `grounded_outcome.record` | External outcome identity, observation method, time, applicability, uncertainty, and evidence retained | Outcome authority; instrument/service may observe but not broaden meaning | `schema:grounded_outcome.recorded` | `V`; later observations append versions/counterevidence |
-| `strategy.propose_candidate` | Grounded observations, affected component, scope, regression fixture, and cost/risk are named | Learning lab proposal only; no production authority | `schema:strategy_candidate.recorded` | `I`; digest identifies candidate |
-| `strategy.authorize_shadow` | Offline gates pass; no production writes/credentials; fixed evaluator and budget | Evaluation/resource authority | `required:strategy.shadow_authorized` | `D`; authorization is bounded and expiring |
-| `strategy.record_shadow` | Held-out replay package and all negative fixtures settle | Independent evaluator | `required:strategy.shadow_recorded` | `V`; evaluator/version changes create a new result |
-| `strategy.authorize_canary` | Shadow evidence accepted; rollback, blast radius, and monitoring frozen | Human safety/resource/production authority | `required:strategy.canary_authorized` | `D`; no implicit widening |
-| `strategy.decide_promotion` | Independent review, canary outcome, regression suite, and rollback readiness complete | Human protocol, safety, resource, and execution quorum as required; all separated from the candidate generator | `schema:strategy.promoted` for promotion; `required:strategy.rejected` otherwise | `D`; decision binds exact strategy digest |
-| `strategy.rollback` | Regression, safety, validity, or operational trigger fires | Human or preauthorized deterministic kill policy | `required:strategy.rolled_back` | `D`; rollback does not delete learning evidence |
+| Event | Sole producer | Aggregate / reducer |
+|---|---|---|
+| `verification.requested` | `verification.request` | verification / Verification |
+| `verification.assigned` | `verification.assign` | verification / Verification |
+| `verification.started` | `verification.start` | verification / Verification |
+| `verification.completed` | `verification.complete` | verification / Verification |
+| `verification.disputed` | `verification.dispute` | verification / Verification |
+| `verification.dispute_resolved` | `verification.resolve_dispute` | verification / Verification |
+| `verification.invalidated` | `verification.invalidate` | verification / Verification |
+| `reproducibility.determined` | `reproducibility.determine` | verification / Reproducibility |
+| `replication.started` | `replication.start` | verification / Replication |
+| `replication.determined` | `replication.determine` | verification / Replication |
+| `transport.started` | `transport.start` | verification / Transport |
+| `transport.determined` | `transport.determine` | verification / Transport |
+| `adjudication.recorded` | `adjudication.record` | adjudication / Adjudication |
+| `claim.proposed` | `claim.propose` | claim_proposal / ClaimProposal |
+| `claim.disposition_recorded` | `claim.record_disposition` | claim_proposal / ClaimProposal |
+| `claim.version_compiled` | `claim.compile_version` | claim_version / ClaimVersion |
+| `claim.superseded` | `claim.supersede` | claim_version / ClaimVersion |
+| `claim.retracted` | `claim.retract` | claim_version / ClaimVersion |
+| `dependency.invalidation_recorded` | `dependency.record_invalidation` | dependency / Dependency |
 
-Learning commands cannot edit production prompts, tools, schemas, policy, retrieval, or code directly. They can only create candidates and bounded promotion decisions.
+### Authority, publication, effects, incidents, and learning
 
-### Current event type with no admissible producer
+| Event | Sole producer | Aggregate / reducer |
+|---|---|---|
+| `authority.assignment_recorded` | `authority.record_root_assignment` or `authority.record_assignment`; branch is fixed by authority mode | authority_assignment / AuthorityAssignment |
+| `authority.grant_issued` | `authority.issue_grant` | authority_grant / AuthorityGrant |
+| `authority.grant_activated` | `authority.observe_activation` | authority_grant / AuthorityGrant |
+| `authority.grant_use_reserved` | admission kernel in the `external_effect.authorize` T1 cohort; never caller-facing | authority_grant / AuthorityGrant |
+| `authority.grant_use_reservation_released` | admission kernel in the winning revoke/expiry/cancel/invalidation cohort; never caller-facing | authority_grant / AuthorityGrant |
+| `authority.grant_used` | admission kernel in an ordinary domain-commit or external-effect dispatch-claim cohort; never caller-facing | authority_grant / AuthorityGrant |
+| `authority.grant_exhausted` | admission kernel after the last legal use | authority_grant / AuthorityGrant |
+| `authority.grant_expired` | `authority.observe_expiry` | authority_grant / AuthorityGrant |
+| `authority.grant_revoked` | `authority.revoke_grant` | authority_grant / AuthorityGrant |
+| `publication.candidate_compiled` | `publication.compile_candidate` | publication / Publication |
+| `release.requested` | `release.request` | publication / Publication |
+| `release.decided` | `release.decide` | publication / Publication |
+| `publication.sealed` | `publication.seal` | publication / Publication |
+| `publication.release_started` | `publication.start_release` | publication / Publication |
+| `publication.release_settled` | `publication.record_release_settlement` | publication / Publication |
+| `publication.corrected` | `publication.correct` | publication / Publication |
+| `publication.withdrawn` | `publication.withdraw` | publication / Publication |
+| `external_effect.authorized` | `external_effect.authorize` | external_effect / ExternalEffect |
+| `external_effect.started` | `external_effect.start` | external_effect / ExternalEffect |
+| `external_effect.cancelled_before_dispatch` | `external_effect.cancel` | external_effect / ExternalEffect |
+| `external_effect.completion_reported` | `external_effect.report_completion` | external_effect / ExternalEffect |
+| `external_effect.reconciliation_started` | `external_effect.start_reconciliation` | external_effect / ExternalEffect |
+| `external_effect.reconciliation_completed` | `external_effect.complete_reconciliation` | external_effect / ExternalEffect |
+| `external_effect.reconciliation_failed` | `external_effect.fail_reconciliation` | external_effect / ExternalEffect |
+| `incident.opened` | `incident.open` | incident / Incident |
+| `incident.transitioned` | `incident.transition` | incident / Incident |
+| `grounded_outcome.recorded` | `grounded_outcome.record` | grounded_outcome / GroundedOutcome |
+| `strategy.candidate_recorded` | `strategy.record_candidate` | strategy_candidate / StrategyCandidate |
+| `strategy.shadow_authorized` | `strategy.authorize_shadow` | strategy_candidate / StrategyCandidate |
+| `strategy.shadow_recorded` | `strategy.record_shadow` | strategy_candidate / StrategyCandidate |
+| `strategy.canary_authorized` | `strategy.authorize_canary` | strategy_candidate / StrategyCandidate |
+| `strategy.promotion_decided` | `strategy.decide_promotion` | strategy_candidate / StrategyCandidate |
+| `strategy.rolled_back` | `strategy.rollback` | strategy_candidate / StrategyCandidate |
 
-`schema:stage.transitioned` has no command in this catalog. Its payload collapses mission phase, stage readiness, authorization, lease, and attempt execution into one state. Admitting it would violate the orthogonal state model. It must be replaced by axis-specific facts or given a narrower, non-conflicting meaning before Gate A.
+### Data governance
 
-## External-effect protocol
+| Event | Sole producer | Aggregate / reducer |
+|---|---|---|
+| `data_asset.recorded` | `data_asset.record` | data_asset / DataAsset |
+| `data_asset.lifecycle_changed` | `data_asset.change_lifecycle` | data_asset / DataAsset |
+| `rights_assertion.recorded` | `rights_assertion.record` | rights_assertion / RightsAssertion |
+| `data_use.decided` | `data_use.decide` | data_use_decision / DataUseDecision |
+| `data_use.revoked` | `data_use.revoke` | data_use_decision / DataUseDecision |
+| `data_exposure.intent_recorded` | `data_exposure.record_intent` | data_exposure / DataExposure |
+| `data_exposure.observation_recorded` | `data_exposure.record_observation` | data_exposure / DataExposure |
+| `data_exposure.settlement_recorded` | `data_exposure.record_settlement` | data_exposure / DataExposure |
+| `transformation.recorded` | `transformation.record` | transformation / Transformation |
+| `retention.schedule_recorded` | `retention.record_schedule` | retention_schedule / RetentionSchedule |
+| `deletion.case_opened` | `deletion.open_case` | deletion_case / DeletionCase |
+| `deletion.progress_recorded` | `deletion.record_progress` | deletion_case / DeletionCase |
+| `deletion.case_closed` | `deletion.close_case` | deletion_case / DeletionCase |
+| `legal_hold.issued` | `legal_hold.issue` | legal_hold / LegalHold |
+| `legal_hold.released` | `legal_hold.release` | legal_hold / LegalHold |
+| `legal_hold.expired` | `legal_hold.observe_expiry` | legal_hold / LegalHold |
 
-No database transaction can make a provider write, physical action, payment, message, repository mutation, or public release exactly once. Every such action uses this state machine:
+`rights_assertion.recorded` is an external evidence fact with `authority_effect=evidence_only_no_permission`; only `data_use.decided` can create bounded data-use authority. Exposure intent is also not dispatch: its closed high-consequence command payload requires `recording_intent_does_not_dispatch=true` and names the separate external-effect identity through which bytes may later cross a boundary. Observation and settlement remain distinct, and `completion_unknown` is never reduced to zero or `confirmed_not_exposed`.
+
+### Ledger integrity and recovery
+
+| Event | Sole producer | Aggregate / reducer |
+|---|---|---|
+| `ledger_checkpoint.proposed` | `ledger_checkpoint.propose` | ledger_checkpoint / LedgerCheckpoint |
+| `ledger_checkpoint.sealed` | `ledger_checkpoint.seal` | ledger_checkpoint / LedgerCheckpoint |
+| `ledger_checkpoint.witness_observed` | `ledger_checkpoint.record_witness_observation` | ledger_checkpoint / LedgerCheckpoint |
+| `ledger_checkpoint.consistency_failed` | `ledger_checkpoint.record_consistency_failure` | ledger_checkpoint / LedgerCheckpoint |
+| `backup.write_observed` | `backup.record_write_observation` | backup / Backup |
+| `backup.verification_observed` | `backup.record_verification_observation` | backup / Backup |
+| `backup.recoverability_observed` | `backup.record_recoverability_observation` | backup / Backup |
+| `restore.case_opened` | `restore.open_case` | restore_case / RestoreCase |
+| `restore.report_recorded` | `restore.record_report` | restore_case / RestoreCase |
+| `restore.case_closed` | `restore.close_case` | restore_case / RestoreCase |
+| `recovery.current_policy_frontier_recorded` | `recovery.record_current_policy_frontier` | recovery_control / RecoveryControl |
+| `recovery.decision_recorded` | `recovery.record_decision` | recovery_decision / RecoveryDecision |
+| `recovery.quarantine_entered` | `recovery.enter_quarantine` | recovery_control / RecoveryControl |
+| `recovery.service_scope_changed` | `recovery.change_service_scope` | recovery_control / RecoveryControl |
+| `ledger.fork_detected` | `ledger.record_fork` | ledger_epoch / LedgerEpoch |
+| `ledger.epoch_started` | `ledger.begin_epoch` | ledger_epoch / LedgerEpoch |
+
+Checkpoint proposal, signed seal, witness observation, and consistency failure are separate facts. Backup write, byte/manifest verification, and clean-room recoverability are three separate observations; no reducer promotes one into another. `restore.report_recorded` has `authority_effect=no_service_reopen`. Only a separate recovery-quorum decision followed by `recovery.service_scope_changed` can alter recovery control, and that command structurally keeps publication, spending, R2+ effects, and physical actions disabled. A fork enters quarantine; a new epoch requires a constitutional recovery decision, named prior heads, identity non-reuse evidence, and `wall_clock_branch_selection=false`.
+
+The two root-assignment producers share one event only because the payload and authority mode make the branches disjoint: bootstrap requires a constitutional artifact; ordinary assignment requires an issuer assignment. Before Gate A, the registry must either preserve this explicit branch or split it into two event types.
+
+## Batch and replay laws
+
+1. All events derived from one accepted command share command binding, commit ID, correlation ID, batch size, and request digest.
+2. Batch indexes are zero-based, unique, and contiguous; stream positions and aggregate versions are allocated only at commit.
+3. Every event's previous-stream digest names the immediately preceding event, including the prior member of the same batch.
+4. Receipt, grant-use reservation/use/release facts, domain facts, heads, resource reservation facts, and causally required outbox records commit together or not at all.
+5. A reservation is one child of its `resource_budget`, keyed by `reservation_id`. Creation binds an exact budget head, non-fungible unit profile, estimate, ceiling, subject, and start cohort; it cannot fabricate a second aggregate or spend one dimension as another.
+6. Claim commits the entire ceiling at the exact work/effect/verification start cohort and does not infer attempted, actual, billed, or refunded use. Crash, recovery, lost callback, and `completion_unknown` retain the full claim hold.
+7. Release and expiry are pre-claim terminals only. A claimed reservation can reach only observation and settlement; it cannot be released as unused because a process died or a response was missing.
+8. Settlement requires exact retained observations. Componentwise, `net = reserved_consumed + overage` and `ceiling = reserved_consumed + unused`; holds fall to zero only at settlement. Unknown or missing usage remains unknown and retains the conservative hold.
+9. Execution, per-currency money, and the five verification-capacity dimensions are non-fungible. Cross-resource conversion and dimension compensation are forbidden; work/effect/verification creation and claim bind the complete exact cohort.
+10. `external_effect.authorize` commits exact active grant-use reservation fact(s), `resource.reservation_created`, and `external_effect.authorized`; it emits no grant-use or resource claim.
+11. `external_effect.start` requires the effect class, revalidates it against the retained authorization, and atomically commits matching `authority.grant_used(consumption_point=dispatch_claim)`, `resource.reservation_claimed`, and `external_effect.started` facts before any provider call.
+12. For `effect_class=governed_processing_dispatch`, both authorize and start carry exact schema-typed WorkContract, DataUseDecision, DataExposure intent, LedgerCheckpoint, and provider-configuration references; exact purpose, recipient, provider, region, payload, and frontier bindings; and current policy/authority/resource input digests. Each commit independently re-resolves and rechecks currentness. The shapes and digests do not prove that currentness or cross-record equality.
+13. `external_effect.cancel` requires the effect class and is legal only from `authorized`; it atomically commits terminal grant-use and resource-reservation release facts plus `external_effect.cancelled_before_dispatch`, emits no use/claim fact, and cannot settle an in-flight effect.
+14. At-least-once delivery begins after commit. Projection reducers deduplicate by event ID and reject gaps, reordering, unknown semantic versions, wrong aggregate ownership, and broken hashes.
+15. Replaying event zero through position N with the frozen reducer set must reproduce identical axes, resource vectors, and aggregate-head digests.
+16. Corrections append version and dependency-invalidation events. No prior bytes or outcomes are overwritten.
+17. An upcaster changes only the reader view. It never rewrites retained bytes, event digest, or historical semantic meaning.
+
+## External effects and publication
+
+An external effect follows:
 
 ```text
-not_intended
-  -> authorized                 internal event committed
-  -> started                    intent + stable provider key committed
-  -> confirmed_applied          provider receipt independently attributable
-  -> confirmed_not_applied      authoritative negative observation
-  -> completion_unknown         timeout or ambiguous response
-       -> reconciliation process
-       -> confirmed_applied | confirmed_not_applied
+not_intended -> authorized(reservation active) -> started(reservation consumed)
+authorized -> cancelled_before_dispatch(reservation terminal)
+started -> confirmed_applied | confirmed_not_applied | completion_unknown
+completion_unknown -> reconciliation pending/running
+reconciliation completed -> confirmed_applied | confirmed_not_applied
+reconciliation failed -> failed | manual_review
 ```
 
-The adapter call occurs only after `started` commits. If the process dies before the call, reconciliation checks the provider using the stable key before another call. If it dies after the call but before reporting, the same rule applies. A provider without idempotency and without authoritative reconciliation cannot receive automatic retry authority.
+The adapter call happens only after `external_effect.started` commits with a stable provider-key digest and exact dispatch-bound grant consumption. `cancelled_before_dispatch` is not an external observation and never means `confirmed_not_applied`; it proves only that the canonical dispatch claim did not win. `completion_unknown` forces `forbidden_until_reconciled`; blind retry is inadmissible.
 
-Publication uses this protocol but also maintains its own release aggregate because a provider write receipt does not prove the right bytes are public, correctly visible, indexed, or withdrawable.
+Model, tool, data-processing, and paid-compute calls use the distinct `governed_processing_dispatch` effect class, never the ambiguous `message` class. A WorkContract is a bounded control artifact, not dispatch authority. Authorize and start each require the exact typed governance/frontier bindings above and must compare them with the current canonical fold at their own commit. A stale or revoked DataUseDecision produces a rejected CommandReceipt with no reservation, grant-use, effect-authorization/start, or spend cohort. JSON Schema proves only that the fields and typed references are present; reference resolution, digest equality, scope coverage, source/checkpoint ordering, currentness, and authorize-to-start equality remain semantic rules.
 
-## Artifact promotion transaction
+Publication is a separate aggregate. Provider application does not prove the approved bytes are visible. `publication.release_settled(to=released)` therefore requires an exact channel observation. The publication sequence is candidate compiled -> request -> human decision -> exact manifest sealed -> publication release started plus external effect started -> effect observation/reconciliation -> publication settlement. Correction or withdrawal is additive and causally invalidates dependent projections.
 
-Artifact commands follow the cross-store rule from `STANDARDS_PROFILE.md`:
+## Replay acceptance traces
 
-```text
-stage bytes
-  -> stream-verify digest and declared format
-  -> conditional immutable byte materialization
-  -> one database transaction:
-       command receipt
-       artifact-promotion event + metadata
-       grant reservation/use
-       domain event batch
-       aggregate heads/reducer state
-       outbox
-  -> asynchronous projection delivery
-  -> orphan/missing-object reconciliation
-```
+These traces are normative examples; their cross-event predicates still require the semantic validator named below.
+The first machine-readable vector is the [invalid-run/no-measurement refusal trace](../tests/architecture-schema/fixtures/research-event-trace-invalid-run.valid.json), backed by individually schema-valid run, measurement, and adjudication events.
 
-An object materialized before a failed database commit is an unregistered orphan, not promoted evidence. Promotion metadata committed for missing bytes makes the artifact unavailable/corrupt and blocks dependent claims. Odeya makes no distributed-atomicity claim.
+| Trace | Ordered facts | Required projection | Forbidden inference |
+|---|---|---|---|
+| Pre-mission decline | `proposal.submitted`, `proposal.decided(declined)` | proposal declined; no mission aggregate | synthetic mission ID or scientific verdict |
+| Broken execution | `attempt.failed`, `run.validity_determined(invalid)`, `measurement.disposition_determined(no_valid_measurement)`, `adjudication.recorded(refused)` | invalid run, no measurement, not adjudicated | null result |
+| Verifier disagreement | request, assignment, start, completion, `verification.disputed` | disputed remains visible | confirmed verification or claim eligibility |
+| Grant race, use first | `authority.grant_used`, domain fact, then `authority.grant_revoked` | historical use valid; future use denied | retroactive erasure |
+| Grant race, revoke first | `authority.grant_revoked`; attempted domain command rejected in receipt | no use/domain event | post-revocation authority |
+| Effect dispatch claim wins | `authority.grant_use_reserved`, `external_effect.authorized`, then same-batch `authority.grant_used(dispatch_claim)` + `external_effect.started` | reservation consumed; immutable in-flight effect | release as unused or provider call before claim |
+| Effect cancellation wins | reservation + authorized effect, then same-batch `authority.grant_use_reservation_released` + `external_effect.cancelled_before_dispatch` | terminal reservation; no dispatch claim/use | dispatch after terminal release or synthetic not-applied settlement |
+| Effect revoke/expiry wins | reservation + authorized effect, then typed `authority.grant_use_reservation_released` in the revoke/expiry cohort | retained but nondispatchable intent until explicit closure; no claim/use | dispatch from a terminal reservation |
+| Ambiguous publication | publication/effect started, `external_effect.completion_reported(completion_unknown)`, reconciliation started/completed, channel observation, publication settled | released only after channel observation | timeout equals release or safe blind retry |
+| Correction | new adjudication, new claim version, supersession, dependency invalidation, publication correction/withdrawal | old bytes addressable with correction lineage | silent overwrite |
+| Incident and learning | incident open/transition plus grounded outcome and candidate facts | response and learning histories remain separate | incident resolution promotes a strategy |
+| Rights assertion | `rights_assertion.recorded` | evidence only; data-use authority missing | assertion or possession becomes permission |
+| Exposure ambiguity | intent, `data_exposure.observation_recorded(completion_unknown)`, settlement unknown | exposure remains unknown and monotonic | timeout or missing receipt becomes zero/not exposed |
+| Deletion anti-resurrection | `data_use.revoked`, `deletion.case_closed(completed)`, asset tombstone | permission revoked; data tombstoned; bytes unavailable | old digest, backup, or verification resurrects access |
+| Stale-grant restore | restore case plus incomplete current-policy frontier and quarantine decision | isolated/quarantined | historical grant or credential re-enabled |
+| Missing artifact restore | restore report records missing C2 bytes; recovery remains quarantined | exact bytes unavailable; dependent claims blocked | metadata or regeneration proves recovery |
+| Fork detection | `ledger.fork_detected`, quarantine | no canonical branch selected | wall-clock/last-write-wins branch selection |
+| Restore report | passing report without recovery decision | service remains isolated | report, recommendation, or signature reopens service |
+| Stale processing dispatch | WorkContract + exposure intent, then data-use revocation and rejected `external_effect.authorize` receipt | no reservation/use/effect/spend cohort; dispatch refused | WorkContract alone, historical decision, or intent sends bytes or spends |
+| [Claimed reservation survives crash](../tests/architecture-schema/fixtures/research-event-trace-resource-claimed-crash-holds.valid.json) | reservation create + exact start/claim, then process loss before usage observation | claimed; full ceiling held; actual usage unknown | crash releases capacity or proves zero use |
+| [Pre-claim release](../tests/architecture-schema/fixtures/research-event-trace-resource-preclaim-release.valid.json) | reservation create, then exact cancellation/revocation cohort + release | released; zero hold; no actual-use claim | released reservation can later be claimed |
+| [Pre-claim expiry](../tests/architecture-schema/fixtures/research-event-trace-resource-preclaim-expiry.valid.json) | reservation create, controlled-time expiry wins before start | expired; zero hold; no claim | expiry races past a committed claim |
+| [Verification-capacity settlement](../tests/architecture-schema/fixtures/research-event-trace-verification-resource-settlement.valid.json) | verification assignment reserve + verification start claim + observed use + settlement | five-dimensional verification capacity reconciled without substitution | compute replaces absent expert/physical/safety capacity |
+| [Unavailable usage is not zero](../tests/architecture-schema/fixtures/research-event-trace-resource-unavailable-not-zero.valid.json) | claimed reservation + unavailable meter observation | claimed; full hold; actual usage unavailable | missing measurement becomes zero or permits settlement |
 
-## Rejection semantics
+## Compatibility policy
 
-Ordinary malformed, stale, unauthorized, or illegal-transition commands return a typed rejection and no scientific event. The command receipt MAY be retained in a security/audit plane under its own access and retention policy.
+- The envelope schema version governs storage shape. Event semantic version governs one fact's meaning. Payload schema ID and digest bind its exact contract.
+- Patch versions may clarify annotations only. Minor versions may add optional fields that old reducers safely ignore. New required fields, changed enum meaning, changed reducer effect, changed authority, or changed aggregate owner require a new major semantic version.
+- Unknown event type, unknown major version, missing schema digest, or unavailable reducer stops canonical replay. It never becomes an ignored event.
+- Upcasters are pure, versioned, fixture-tested reader functions. Downcasting canonical state is forbidden.
+- Old bytes, digests, command receipt, registry entry, and reducer version remain retained for audit.
+- New-command admission uses only the server-activated admitted registry/envelope. Retired commands remain readable for exact historical receipt replay; reserved design vocabulary has no envelope/member/receipt semantics until prospectively activated.
+- The JCS profile string is still a draft. Cross-runtime number, timestamp, and digest vectors remain A-008 work; this catalog does not claim they are frozen.
 
-An immutable domain event is required when the attempted action is itself consequential evidence, including:
+## Rejections and evidence-relevant attempts
 
-- policy or safety denial that opens a mission blocker;
-- suspected command-ID reuse, credential misuse, injection, or authority escalation;
-- attempted use of revoked or exhausted high-consequence authority;
-- an ambiguous external effect;
-- verifier disagreement or known-bad gate failure;
-- protocol exposure, leakage, or evidence invalidation.
+Generic limits and a bounded selector precede command-envelope processing. Unknown, reserved, inactive, invalid-member, or otherwise unbindable ingress produces `command_contract_not_admitted` operational/security refusal evidence and no `CommandReceipt` or canonical cohort. Changed bytes under a settled command ID likewise create no second receipt; exact historical retry returns the existing receipt under its retained contract.
 
-The event must describe the observed fact and retained evidence, not speculate about intent.
+Once an exact admitted member and all required envelope bindings resolve, payload-schema-invalid, stale, unauthorized, or illegal commands may produce a rejected receipt and no scientific event. `unknown_command` is not a legal receipt result. A separate domain command records an attempted action only when the attempt is itself consequential evidence: protocol exposure, suspected credential or command-ID abuse, a high-risk revoked-grant attempt, verifier disagreement, known-bad failure, evidence invalidation, or an ambiguous external effect. The event records an observation, never guessed intent.
 
-## Authority rules across commands
+## Structural audit and remaining gaps
 
-1. `actor` identifies who submitted the command. It is not proof of authority.
-2. An assignment says a principal may hold a role. A grant authorizes a bounded action. A grant-use record proves a particular admission consumed or reserved that permission.
-3. Every grant is checked against command type/version, mission/stream, aggregate, stage, protocol and manifest digests, capability, data class, risk tier, resource, purpose, time, use count, concurrency, delegation, and forbidden role overlap.
-4. Grant reservations and event batches commit together. A crash cannot consume permission without a retained decision or commit a consequential event without consuming permission.
-5. Revocation races are resolved by canonical commit order. A use committed before revocation remains historical; a command admitted after revocation fails.
-6. Generator identity cannot issue or consume verification, outcome, or publication authority for its own output.
-7. Policy availability is required for consequential admission. Cached decisions are usable only within their signed scope, version, expiry, and revocation policy.
-8. Human approval is required where risk policy says so; it is not assumed for every low-risk mechanical grant. The exact human-only matrix must be frozen separately from schema syntax.
+The isolated architecture audit currently finds:
 
-## Coverage required before Gate A acceptance
+- 121 unique design discriminators in the current red-team envelope, each with one branch binding semantic version, payload-schema ID, stream family, and target aggregate; this count is not an admitted surface;
+- 135 unique event discriminators, each with one payload branch, one payload-schema ID, one stream-family rule, one aggregate owner, and one named reducer in this catalog;
+- no command or event discriminator missing from this catalog;
+- 58 schema-valid event fixtures and 16 schema-valid replay traces, including pre-mission, run-invalid, no-valid-measurement, adjudication-refusal, grant reservation/dispatch/cancel, verifier-dispute, publication, all 32 data/recovery branches, governed-processing refusal, and the six-event resource reservation/observation/settlement lifecycle;
+- adversarial rejection of rights assertion as permission, authorized use without exact scope, unknown-exposure laundering, completed deletion with residual copies, hold-as-access-authority, checkpoint seal without verification evidence, backup-axis aliasing, restore report as reopen authority, failed recovery quorum without limitation, wall-clock fork choice, new epoch without constitutional selection, and open recovery scope without a complete security frontier.
 
-For every command branch and event type, the architecture candidate must provide:
+This resolves the original structural envelope/vocabulary inventory defects behind A-001 and demonstrates a candidate shape for the missing envelope/receipt portion of A-002:
 
-### Contract coverage
+- pre-mission streams no longer require fake missions;
+- aggregate ownership covers every founding axis;
+- run validity and measurement disposition are independent facts;
+- authority basis is plural and non-recursive;
+- grant use, exact reservation, typed reservation termination, activation, exhaustion, expiry, and revocation are replayable;
+- blocker, verification dispute, claims, publication settlement, external effects, incidents, and learning have explicit producers, payloads, and reducers;
+- command ID, exact request digest, actor/target/schema binding, settlement, event batch, stream heads, and exact replay policy have a language-neutral retained shape.
 
-- command, payload, event, and result schemas with exact IDs, versions, digests, format checking, and closed unknown-field behavior;
-- one owning stream/aggregate and a complete field-to-provenance map;
-- a state predicate and pure reducer law;
-- an authority/policy row including quorum and separation;
-- typed rejection and retry classifications;
-- event upcast/downcast policy or an explicit refusal to downcast.
+It does **not** close A-001 or A-002 as Gate A blockers yet. The remaining gaps are explicit:
 
-### Fixture coverage
+1. Thirteen separate closed payload-schema candidates now exist: the three external-effect candidates plus ten high-consequence data/recovery candidates for data-use decide/revoke, exposure intent, deletion closure, hold issue/release, checkpoint seal, recovery decision, epoch start, and recovery scope change. Envelope/receipt references now require exact snapshot, activation, and contract-record identities, but the immutable registry/activation/record and bounded selector/refusal schemas/bytes do not yet exist, none of the thirteen candidates is enrolled, and the exact dependency-closed Gate A admitted set is not named. The other 108 of 121 design payload contracts do not exist. ADR 0013 therefore requires an admitted-only generated envelope and keeps all non-enrolled names outside executable ingress rather than treating missing contracts as reserved members.
+2. Event payload contracts are embedded in the envelope candidate, but the separately addressed payload-schema bytes and accepted registry digests do not yet exist. An instance digest is format-checked, not recomputed or matched to a registry.
+3. Reducer ownership is complete as a catalog mapping, but reducer input/output contracts, machine-readable transition tables, reducer versions/digests, and independent replay implementations remain absent.
+4. `authority.assignment_recorded` still has two deliberately disjoint producer branches—constitutional root and ordinary assignment. Gate A should split the event or freeze a machine-readable branch registry so “one producer” is literal, not prose.
+5. Data-governance and recovery vocabulary coverage is structurally complete for the founding lifecycles, but reference existence, rights-subset reasoning, lineage/deletion fanout, witness/signature verification, frontier completeness, branch selection, and service-scope legality remain semantic checks.
+6. The replay-trace schema enforces important terminal combinations and a rejected governed-processing command's zero-effect cohort structurally, but ordinal/position contiguity, event and receipt digest chains, actual fixture-to-step/reference identity, event-cohort completeness, and reducer output equivalence remain semantic checks.
+7. JSON Schema cannot establish request/result/receipt/event/checkpoint digest equality, signature validity, registry membership or activation, duplicated record equality, snapshot currentness, canonicalization, batch contiguity, time order, reference existence, source/checkpoint ordering, typed subject truth, authorize/start effect-class equality, binding equality, input currentness, scope coverage, role separation, quorum, grant accounting, legal transition pairs, scientific consequence rules, external truth, or reducer determinism.
 
-- minimum valid command and event batch;
-- every legal branch and transition edge;
-- every required field missing, wrong type, boundary value, and forbidden extra field;
-- stale position, duplicate same digest, duplicate changed digest, and concurrent owner cases;
-- missing, expired, revoked, exhausted, wrong-purpose, wrong-risk, wrong-protocol, and overlapping-role grants;
-- missing/corrupt/quarantined/rights-blocked artifacts;
-- known-bad evidence that each consequential gate must reject;
-- null, invalid, no-valid-measurement, blocked, disagreement, correction, and withdrawal paths;
-- canonicalization and hash-chain vectors across at least two independent implementations before product commitment.
-
-### Crash and race coverage
-
-For each commit boundary, enumerate retained state and next legal command after process death:
-
-- before and after command receipt lookup;
-- before and after grant reservation;
-- before and after event/outbox commit;
-- before and after byte materialization and the separate canonical artifact-promotion commit;
-- before and after lease acquisition, renewal, expiry, revocation, and attempt completion;
-- before and after external-effect intent, call, receipt, and reconciliation;
-- before and after publication authorization, seal, release, correction, and withdrawal.
-
-The bounded model must cover the ten races named in `STATE_MODEL.md`. Every counterexample becomes a transition fixture.
-
-### Replay and projection coverage
-
-- rebuilding from event zero yields the same canonical aggregate axes at the same stream position;
-- duplicate and reordered delivery does not change a projection twice;
-- a projector discloses its exact source position and cannot invent freshness;
-- corrections and invalidations reach every registered dependent projection;
-- unknown, unmeasured, unavailable, withheld, stale, and zero remain distinguishable;
-- old event bytes remain verifiable after an upcaster or reader changes.
-
-Gate A cannot mark this catalog complete while any required command lacks a schema/event mapping, any event lacks a producer and reducer, or any critical transition relies on prose-only authority or recovery behavior.
-
-## Blocking reconciliation findings
-
-These are contradictions or omissions in the current drafts, not accepted design decisions:
-
-1. **Pre-mission stream paradox.** `research-event.schema.json` requires `mission_id` for `proposal.submitted`, but a proposal precedes mission creation and may be declined. The envelope needs a general stream ID and an optional mission scope, or a separately typed portfolio/proposal event envelope.
-2. **State-axis collapse.** `STATE_MODEL.md` separates mission phase, stage readiness, authorization, lease, and attempt execution. The current `stage.transitioned` payload instead uses one state enum containing `authorized`, `running`, `interrupted`, `blocked`, and `completed`, and has no `ready`. This would recreate the forbidden single-status model.
-3. **Attempt mismatch.** The state model includes `running` and `interrupted`; the event payload uses `started` and omits `interrupted`. Exact transition facts and projection mapping are therefore incomplete.
-4. **Missing aggregate owners.** The event envelope has no aggregate type for blocker, run/measurement, metric, falsifier, external effect, review, replication, transport, handoff, resource budget, or work graph even though several are canonical objects or required state axes.
-5. **Authority bootstrap and plurality.** Every event requires one non-null `authority_ref`, including `authority.granted`; its meaning is undefined and can recurse unless it points to a separately modeled assignment/decision. The command envelope documents one grant while the event has multiple grant-use references and dual control requires several grants.
-6. **Authority acceptance gap.** Mission, event, and grant candidates now name the same nine roles and the event envelope no longer forces all grant/revoke actors to be human. The proposed root bootstrap, human-only action matrix, service-ceiling rule, quorum, delegation, and overlap semantics in `AUTHORITY_MATRIX.md` still require semantic traces, independent review, and operator acceptance.
-7. **Incomplete grant lifecycle.** Grant state is said to derive from issue, use, expiry, and revocation, but the event enum has only grant and revoke. There is no grant-use/reservation/exhaustion fact. Time-derived expiry also requires an explicit `as_of` value or expiry observation so a projection is not claimed to derive from ledger position alone.
-8. **No blocker lifecycle events.** `blocker.schema.json` and the state model require open, resolve, and supersede facts, but none exist in the event catalog and `blocker` is not an aggregate type.
-9. **Verification mismatch.** The verification object permits `disputed`, exposes detailed independence, and allows several runs, while the event catalog has only request/complete and its completion verdict omits `disputed`. Assignment, start, invalidation, disagreement, replication, and transport facts are missing.
-10. **Publication circularity and incomplete settlement.** The shared release payload requires a non-null `publication_grant_id` even for `release.requested`, while publication grants require a publication-manifest digest and sealing follows authorization. Request and decision need different payloads. There are also no release-started, released, completion-unknown, reconciliation-completed, corrected, or channel-effect events, so the specified release state machine cannot be replayed safely.
-11. **Artifact custody gaps.** Current events can record, quarantine, or promote, but cannot represent validated, corrupt, unavailable, or tombstoned states from `STATE_MODEL.md`. The shared artifact payload also requires a validation report for initial recording and quarantine, even though those facts may precede validation; the report's meaning is therefore ambiguous.
-12. **Run/scientific admissibility gaps.** There are no canonical validity or measurement-status events. Without them, `null_result` versus `no_valid_measurement` is a prose invariant rather than replayable state.
-13. **Claim lifecycle gaps.** The current object model separates proposal, adjudication, immutable claim version, revision edges, and publication, while current claim events cover only propose, adjudicate, correct, and retract through one legacy payload. Version compilation, eligibility, supersession, dependency invalidation, and object-specific payloads are missing.
-14. **External-effect gap.** The state and failure models require authorized, started, applied, not-applied, completion-unknown, and reconciliation-process facts. None exist in the current event enum, making safe recovery from ambiguous writes impossible to express.
-15. **Command-receipt gap.** Events retain `command_id` but not the canonical request digest or original result. Exact duplicate versus malicious/accidental command-ID reuse therefore requires a separate immutable command receipt contract that does not yet exist.
-16. **Semantic validation gap.** JSON Schema cannot enforce batch contiguity, sequence allocation, digest chain, time ordering, referenced existence, grant quorum/use, independence, or reducer legality. Those validators and adversarial traces remain Gate A work.
-17. **Learning-event aliasing.** `grounded_outcome.recorded`, `strategy_candidate.recorded`, and `strategy.promoted` share one payload schema without conditions tying event type to `record_type` and `promotion_state`. A syntactically valid `strategy.promoted` event can currently carry a grounded-outcome record or a rejected promotion state.
-18. **Known-bad ambiguity.** The falsifier payload uses `known_bad_passed`, which can mean either that the gate correctly passed its negative-control test or that the deliberately broken object passed through the gate. The field must be renamed or represented as expected/observed verdicts before it can settle eligibility.
-Until these findings are resolved, `research-event.schema.json` is a useful adversarial prototype, not the frozen canonical event model.
-
-## Findings closed during this review
-
-- **Event discriminator composition:** typed payload branches now form the root `oneOf`; cross-cutting guards are in `allOf`. Valid proposal and human release-decision fixtures pass, and wrong-actor/payload fixtures fail.
-- **Format assertion:** the isolated architecture validator pins `jsonschema[format]` and `rfc3339-validator`, verifies dependency versions, and includes malformed-date-time adversarial cases. This closes structural format assertion only; relational time ordering remains a semantic blocker under `SEMANTIC_VALIDATION.md`.
-
-## Freeze criteria for this catalog
-
-This catalog is eligible for acceptance only when:
-
-- every `required:` event is either added with a complete contract or deliberately removed with a proved replacement;
-- every existing `schema:` event maps to exactly one fact meaning and one reducer effect;
-- proposal/portfolio stream ownership is resolved without fake mission identities;
-- orthogonal state axes remain orthogonal in payloads and projections;
-- the authority bootstrap, grant-use transaction, and time semantics are explicit;
-- the external-effect and publication crash matrix has no blind-retry path;
-- command/event schemas and semantic fixtures reject attempts to turn invalid, missing, blocked, interrupted, or ambiguous evidence into a scientific or public success;
-- the operator accepts the exact immutable architecture candidate.
-
-Acceptance freezes semantics for the first bounded slice. It does not claim the engine exists, that faults have been injected, or that Odeya has demonstrated autonomous science.
+Those items require bounded selector/refusal and registry/schema work, runtime-enabled envelope/registry/conforming-handler set-equality validation, historical replay and changed-ID-reuse vectors, two independent semantic-validator and replay implementations, race traces, and canonicalization vectors before Gate A. The current pass closes the explicit data/recovery vocabulary omission; it is strong structural evidence, not proof of an engine and not full A-001/A-002 closure.

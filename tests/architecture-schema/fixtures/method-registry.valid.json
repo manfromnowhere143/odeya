@@ -1,0 +1,263 @@
+{
+  "schema_version": "0.1.0",
+  "registry_id": "method-registry.first-slice",
+  "version": "0.1.0",
+  "status": "proposed",
+  "previous_registry": null,
+  "canonicalization_profile": {
+    "profile_id": "odeya-jcs",
+    "version": "0.1.0",
+    "digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+  },
+  "methods": [
+    {
+      "method_id": "method.paired-stratified-bootstrap",
+      "version": "0.1.0",
+      "status": "proposed",
+      "method_class": "paired_agent_evaluation",
+      "scientific_domains": ["agent-evaluation", "simulation"],
+      "supported_claim_types": ["bounded-comparative-performance"],
+      "supported_data_types": ["paired-episode-outcomes"],
+      "formal_guarantee": {
+        "guarantee_kind": "empirical_only",
+        "statement": "Produces a prespecified paired, task-stratified bootstrap interval for the selected estimand under the frozen resampling procedure.",
+        "scope": "The retained Sentinel simulation task distribution and declared primary metric only.",
+        "assumption_dependency": true,
+        "non_guarantees": [
+          "Does not establish transport to HUGSIM or the physical world.",
+          "Does not establish safety, causality, or general agent superiority."
+        ]
+      },
+      "assumptions": [
+        {
+          "assumption_id": "paired-identities-correct",
+          "statement": "Each comparison preserves the planned baseline/candidate episode pairing and task stratum.",
+          "checkability": "enforced",
+          "violation_consequence": "invalid"
+        },
+        {
+          "assumption_id": "planned-exclusions-only",
+          "statement": "Episode inclusion and exclusion follow the prospectively frozen protocol.",
+          "checkability": "externally_reviewed",
+          "violation_consequence": "invalid"
+        }
+      ],
+      "required_inputs": [
+        {
+          "input_id": "paired-episode-table",
+          "schema_id": "urn:odeya:data:paired-episode-table",
+          "schema_version_range": ">=0.1.0 <0.2.0",
+          "required": true
+        },
+        {
+          "input_id": "resampling-plan",
+          "schema_id": "urn:odeya:data:resampling-plan",
+          "schema_version_range": ">=0.1.0 <0.2.0",
+          "required": true
+        }
+      ],
+      "incompatible_operations": [
+        "post-hoc metric substitution",
+        "dropping failed episodes without the frozen missingness rule",
+        "interpreting an interval crossing zero as equivalence"
+      ],
+      "diagnostics": ["pair-completeness", "stratum-counts", "seed-replay"],
+      "sensitivity_analyses": ["task-cluster-resampling", "missing-episode-worst-case"],
+      "uncertainty_semantics": {
+        "kind": "fixed_sample_interval",
+        "level": "0.95",
+        "simultaneity": "pointwise",
+        "stopping_rule": "fixed_in_advance",
+        "interpretation": "A fixed-procedure bootstrap interval for the frozen paired estimand; it is not a posterior probability or equivalence region."
+      },
+      "adaptation_and_multiplicity": {
+        "adaptation_policy": "forbidden",
+        "multiplicity_policy": "single_primary",
+        "data_reuse_policy": "single_use_partition",
+        "violation_consequence": "invalid"
+      },
+      "numerical_profile": {
+        "arithmetic": "ieee754_binary64",
+        "precision": "binary64 with retained input decimals and exact seed",
+        "rounding": "round only for display after retained full-precision computation",
+        "overflow_policy": "fail",
+        "randomness": "fixed_seed_pseudorandom",
+        "tolerance_ref": null
+      },
+      "failure_states": [
+        "broken-pairing",
+        "empty-stratum",
+        "nonfinite-input",
+        "unreplayable-random-stream",
+        "interval-indeterminate"
+      ],
+      "implementations": [
+        {
+          "implementation_id": "sentinel-retained-reference",
+          "implementation_version": "source-commit-542b432",
+          "code_ref": {
+            "artifact_id": "artifact.sentinel-bootstrap-code",
+            "digest": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+            "media_type": "application/vnd.odeya.source-tree"
+          },
+          "environment_ref": {
+            "artifact_id": "artifact.sentinel-bootstrap-environment",
+            "digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+            "media_type": "application/vnd.odeya.environment-manifest+json"
+          },
+          "numeric_runtime": "candidate identity only; exact runtime pending clean-room capture",
+          "role": "reference",
+          "maintainer": "Sentinel source mission",
+          "license_or_rights_ref": {
+            "artifact_id": "artifact.sentinel-rights-pending",
+            "digest": "sha256:4444444444444444444444444444444444444444444444444444444444444444",
+            "media_type": "application/vnd.odeya.rights-assertion+json"
+          }
+        }
+      ],
+      "verification_contract": {
+        "independent_recomputation_required": true,
+        "minimum_independent_implementations": 2,
+        "agreement_rule_ref": {
+          "artifact_id": "artifact.bootstrap-agreement-rule",
+          "digest": "sha256:5555555555555555555555555555555555555555555555555555555555555555",
+          "media_type": "application/vnd.odeya.validation-rule+json"
+        },
+        "disagreement_consequence": "indeterminate"
+      },
+      "conformance_vectors": {
+        "synthetic_null": {
+          "applicability": "required",
+          "artifact_refs": [
+            {
+              "artifact_id": "vector.bootstrap-synthetic-null",
+              "digest": "sha256:6666666666666666666666666666666666666666666666666666666666666666",
+              "media_type": "application/vnd.odeya.method-vector+json"
+            }
+          ]
+        },
+        "known_effect": {
+          "applicability": "required",
+          "artifact_refs": [
+            {
+              "artifact_id": "vector.bootstrap-known-effect",
+              "digest": "sha256:7777777777777777777777777777777777777777777777777777777777777777",
+              "media_type": "application/vnd.odeya.method-vector+json"
+            }
+          ]
+        },
+        "dependence": {
+          "applicability": "required",
+          "artifact_refs": [
+            {
+              "artifact_id": "vector.bootstrap-dependent-tasks",
+              "digest": "sha256:8888888888888888888888888888888888888888888888888888888888888888",
+              "media_type": "application/vnd.odeya.method-vector+json"
+            }
+          ]
+        },
+        "leakage": {
+          "applicability": "required",
+          "artifact_refs": [
+            {
+              "artifact_id": "vector.bootstrap-leakage",
+              "digest": "sha256:9999999999999999999999999999999999999999999999999999999999999999",
+              "media_type": "application/vnd.odeya.method-vector+json"
+            }
+          ]
+        },
+        "optional_stopping": {
+          "applicability": "required",
+          "artifact_refs": [
+            {
+              "artifact_id": "vector.bootstrap-optional-stopping",
+              "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "media_type": "application/vnd.odeya.method-vector+json"
+            }
+          ]
+        },
+        "missingness": {
+          "applicability": "required",
+          "artifact_refs": [
+            {
+              "artifact_id": "vector.bootstrap-missingness",
+              "digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "media_type": "application/vnd.odeya.method-vector+json"
+            }
+          ]
+        },
+        "broken_artifact": {
+          "applicability": "required",
+          "artifact_refs": [
+            {
+              "artifact_id": "vector.bootstrap-broken-artifact",
+              "digest": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+              "media_type": "application/vnd.odeya.method-vector+json"
+            }
+          ]
+        },
+        "numerical_boundary": {
+          "applicability": "required",
+          "artifact_refs": [
+            {
+              "artifact_id": "vector.bootstrap-numerical-boundary",
+              "digest": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+              "media_type": "application/vnd.odeya.method-vector+json"
+            }
+          ]
+        },
+        "metamorphic": {
+          "applicability": "required",
+          "artifact_refs": [
+            {
+              "artifact_id": "vector.bootstrap-permutation-invariance",
+              "digest": "sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+              "media_type": "application/vnd.odeya.method-vector+json"
+            }
+          ]
+        },
+        "cross_implementation": {
+          "applicability": "required",
+          "artifact_refs": [
+            {
+              "artifact_id": "vector.bootstrap-cross-implementation",
+              "digest": "sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+              "media_type": "application/vnd.odeya.method-vector+json"
+            }
+          ]
+        }
+      },
+      "admission": {
+        "decision": "not_reviewed",
+        "decision_ref": null,
+        "reviewer_independence_ref": null,
+        "limitations": [
+          "Only the retained source implementation is identified.",
+          "Vector artifacts and digests are placeholders until generated and independently reviewed.",
+          "Per-artifact rights and the exact clean-room environment are unsettled."
+        ]
+      },
+      "supersedes": [],
+      "effective_at": "2026-07-15T00:00:00Z",
+      "expires_at": null
+    }
+  ],
+  "vector_package_refs": [
+    {
+      "artifact_id": "package.first-slice-method-vectors-pending",
+      "digest": "sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+      "media_type": "application/vnd.odeya.method-vector-package+json"
+    }
+  ],
+  "review_evidence_refs": [],
+  "effective_at": "2026-07-15T00:00:00Z",
+  "expires_at": null,
+  "sealed_at_ledger_position": 0,
+  "sealed_at": "2026-07-15T00:00:00Z",
+  "sealed_by": {
+    "principal_id": "daniel.wahnich",
+    "principal_type": "human",
+    "authority_grant_ref": "grant.architecture-method-proposal"
+  },
+  "registry_digest": "sha256:abcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcd"
+}

@@ -1,0 +1,86 @@
+{
+  "schema_version": "0.3.0",
+  "trace_id": "trace.fork-no-wall-clock-selection.001",
+  "purpose": "Divergent signed histories trigger quarantine; wall-clock recency cannot select the canonical branch.",
+  "stream_id": "recovery.founding",
+  "stream_type": "recovery",
+  "mission_scope": null,
+  "reducer_set": {
+    "name": "odeya-founding-reducers",
+    "version": "0.2.0",
+    "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "steps": [
+    {
+      "ordinal": 0,
+      "event_id": "event.ledger-fork_detected.0",
+      "event_type": "ledger.fork_detected",
+      "event_version": "1.0.0",
+      "stream_position": 100,
+      "aggregate_type": "ledger_epoch",
+      "aggregate_id": "ledger_epoch.001",
+      "aggregate_version": 0,
+      "event_digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+      "expected_axis_changes": [
+        {
+          "axis": "ledger_integrity",
+          "from": "continuous",
+          "to": "fork_detected"
+        }
+      ]
+    },
+    {
+      "ordinal": 1,
+      "event_id": "event.recovery-quarantine_entered.1",
+      "event_type": "recovery.quarantine_entered",
+      "event_version": "1.0.0",
+      "stream_position": 101,
+      "aggregate_type": "recovery_control",
+      "aggregate_id": "recovery_control.001",
+      "aggregate_version": 1,
+      "event_digest": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+      "expected_axis_changes": [
+        {
+          "axis": "recovery_control",
+          "from": "isolated",
+          "to": "quarantined"
+        }
+      ]
+    }
+  ],
+  "expected_state": {
+    "run_validity": "not_applicable",
+    "measurement": "not_applicable",
+    "scientific_outcome": "not_adjudicated",
+    "verification_status": "not_applicable",
+    "claim_eligibility": "not_applicable",
+    "publication_release": "not_applicable",
+    "external_effect_settlement": "not_applicable",
+    "grant_use_reservation": "not_applicable",
+    "dispatch_claim": "not_applicable",
+    "retry_disposition": "not_applicable",
+    "channel_observation_refs": [],
+    "security_frontier": "indeterminate",
+    "restore_report": "not_applicable",
+    "recovery_decision": "remain_quarantined",
+    "recovery_control": "quarantined",
+    "ledger_integrity": "fork_detected",
+    "artifact_recovery": "not_applicable",
+    "resource_accounting": {
+      "reservation_id": null,
+      "reservation_state": "not_applicable",
+      "ceiling_hold": "not_applicable",
+      "actual_usage_status": "not_applicable",
+      "observation_axes": [],
+      "settlement": "not_applicable",
+      "conversion_policy": "not_applicable",
+      "dimension_compensation": "not_applicable",
+      "verification_capacity": "not_applicable"
+    }
+  },
+  "forbidden_inferences": [
+    "fork-by-wall-clock",
+    "last-write-wins-ledger",
+    "automatic-branch-union"
+  ]
+}

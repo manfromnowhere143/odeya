@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:odeya:schema:transformation-record:0.1.0",
+  "title": "Odeya TransformationRecord",
+  "description": "An immutable transformation activity binding exact inputs, method/environment, outputs, information loss, validation, and rights consequences. Derived bytes never become unrestricted by implication.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "transformation_id", "version", "mission_id", "kind",
+    "input_assets", "method", "output_assets", "information_effect",
+    "rights_effect", "rights_decision_ref", "validation", "status",
+    "started_at", "completed_at", "executed_by"
+  ],
+  "properties": {
+    "schema_version": { "const": "0.1.0" },
+    "transformation_id": { "$ref": "#/$defs/identifier" },
+    "version": { "type": "integer", "minimum": 1 },
+    "mission_id": { "$ref": "#/$defs/identifier" },
+    "kind": { "enum": ["normalization", "transcoding", "redaction", "de_identification", "aggregation", "feature_extraction", "embedding", "summarization", "synthetic_generation", "linkage", "other"] },
+    "input_assets": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/immutable_reference" } },
+    "method": {
+      "type": "object", "additionalProperties": false,
+      "required": ["rule_ref", "code_digest", "environment_digest", "run_manifest_ref", "randomness_ref"],
+      "properties": {
+        "rule_ref": { "$ref": "#/$defs/versioned_reference" },
+        "code_digest": { "$ref": "#/$defs/digest" },
+        "environment_digest": { "$ref": "#/$defs/digest" },
+        "run_manifest_ref": { "$ref": "#/$defs/immutable_reference" },
+        "randomness_ref": { "oneOf": [{ "$ref": "#/$defs/artifact_reference" }, { "type": "null" }] }
+      }
+    },
+    "output_assets": {
+      "type": "array", "uniqueItems": true,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["asset_ref", "quarantined"],
+        "properties": { "asset_ref": { "$ref": "#/$defs/immutable_reference" }, "quarantined": { "type": "boolean" } }
+      }
+    },
+    "information_effect": {
+      "type": "object", "additionalProperties": false,
+      "required": ["loss_mode", "redaction_manifest_ref", "residual_risk_ref", "reversibility"],
+      "properties": {
+        "loss_mode": { "enum": ["lossless", "declared_lossy", "redacted", "aggregated", "inferred", "unknown"] },
+        "redaction_manifest_ref": { "oneOf": [{ "$ref": "#/$defs/artifact_reference" }, { "type": "null" }] },
+        "residual_risk_ref": { "$ref": "#/$defs/artifact_reference" },
+        "reversibility": { "enum": ["reversible", "irreversible_by_design", "not_established", "unknown"] }
+      }
+    },
+    "rights_effect": { "enum": ["restrictions_preserved", "restrictions_narrowed", "restrictions_potentially_increased", "less_restrictive_scope_proposed", "indeterminate"] },
+    "rights_decision_ref": { "oneOf": [{ "$ref": "#/$defs/immutable_reference" }, { "type": "null" }] },
+    "validation": {
+      "type": "object", "additionalProperties": false,
+      "required": ["result_refs", "aggregate_disposition", "known_bad_result_refs"],
+      "properties": {
+        "result_refs": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/immutable_reference" } },
+        "aggregate_disposition": { "enum": ["pass", "fail", "indeterminate"] },
+        "known_bad_result_refs": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/immutable_reference" } }
+      }
+    },
+    "status": { "enum": ["completed", "failed", "indeterminate"] },
+    "started_at": { "$ref": "#/$defs/timestamp" },
+    "completed_at": { "$ref": "#/$defs/timestamp" },
+    "executed_by": { "$ref": "#/$defs/principal" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "status": { "const": "completed" } }, "required": ["status"] },
+      "then": { "properties": { "output_assets": { "minItems": 1 }, "rights_decision_ref": { "$ref": "#/$defs/immutable_reference" }, "validation": { "properties": { "aggregate_disposition": { "const": "pass" } } } } },
+      "else": { "properties": { "output_assets": { "items": { "properties": { "quarantined": { "const": true } } } }, "validation": { "properties": { "aggregate_disposition": { "enum": ["fail", "indeterminate"] } } } } }
+    },
+    {
+      "if": { "properties": { "rights_effect": { "const": "less_restrictive_scope_proposed" } }, "required": ["rights_effect"] },
+      "then": { "properties": { "rights_decision_ref": { "$ref": "#/$defs/immutable_reference" } } }
+    },
+    {
+      "if": { "properties": { "kind": { "const": "redaction" } }, "required": ["kind"] },
+      "then": { "properties": { "information_effect": { "properties": { "loss_mode": { "const": "redacted" }, "redaction_manifest_ref": { "$ref": "#/$defs/artifact_reference" } } } } }
+    }
+  ],
+  "$defs": {
+    "identifier": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$" },
+    "digest": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+    "timestamp": { "type": "string", "format": "date-time", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$" },
+    "principal": {
+      "type": "object", "additionalProperties": false,
+      "required": ["principal_id", "principal_type"],
+      "properties": { "principal_id": { "$ref": "#/$defs/identifier" }, "principal_type": { "enum": ["human", "deterministic_service", "tool"] } }
+    },
+    "immutable_reference": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "version", "digest"],
+      "properties": { "id": { "$ref": "#/$defs/identifier" }, "version": { "type": "integer", "minimum": 1 }, "digest": { "$ref": "#/$defs/digest" } }
+    },
+    "versioned_reference": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "version", "digest"],
+      "properties": { "id": { "$ref": "#/$defs/identifier" }, "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" }, "digest": { "$ref": "#/$defs/digest" } }
+    },
+    "artifact_reference": {
+      "type": "object", "additionalProperties": false,
+      "required": ["artifact_id", "digest", "media_type"],
+      "properties": { "artifact_id": { "$ref": "#/$defs/identifier" }, "digest": { "$ref": "#/$defs/digest" }, "media_type": { "type": "string", "minLength": 1 } }
+    }
+  }
+}

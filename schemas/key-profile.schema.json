@@ -1,0 +1,197 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:odeya:schema:key-profile:0.1.0",
+  "title": "Odeya KeyProfile",
+  "description": "A deployment-neutral cryptographic key-purpose and recovery profile. It contains identifiers and policy, never key bytes, secrets, recovery shares, or credentials.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "key_profile_id",
+    "version",
+    "status",
+    "risk_tier",
+    "time_trust_profile_ref",
+    "key_classes",
+    "separation_constraints",
+    "algorithm_agility",
+    "review_evidence_refs",
+    "key_material_embedded",
+    "effective_at",
+    "expires_at",
+    "profile_digest",
+    "approved_by"
+  ],
+  "properties": {
+    "schema_version": { "const": "0.1.0" },
+    "key_profile_id": { "$ref": "#/$defs/identifier" },
+    "version": { "type": "integer", "minimum": 1 },
+    "status": { "enum": ["proposed", "active", "retired"] },
+    "risk_tier": { "enum": ["R0", "R1", "R2", "R3", "R4"] },
+    "time_trust_profile_ref": { "$ref": "#/$defs/artifact_reference" },
+    "key_classes": {
+      "type": "array",
+      "minItems": 8,
+      "items": { "$ref": "#/$defs/key_class_profile" }
+    },
+    "separation_constraints": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["constraint_id", "left_key_class", "right_key_class", "separation", "minimum_risk_tier", "exception_policy_ref"],
+        "properties": {
+          "constraint_id": { "$ref": "#/$defs/identifier" },
+          "left_key_class": { "$ref": "#/$defs/key_class" },
+          "right_key_class": { "$ref": "#/$defs/key_class" },
+          "separation": { "enum": ["distinct_key", "distinct_principal", "distinct_administrator", "distinct_failure_domain", "forbidden_combination"] },
+          "minimum_risk_tier": { "enum": ["R0", "R1", "R2", "R3", "R4"] },
+          "exception_policy_ref": {
+            "oneOf": [
+              { "$ref": "#/$defs/artifact_reference" },
+              { "type": "null" }
+            ]
+          }
+        }
+      }
+    },
+    "algorithm_agility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["approved_algorithm_registry_ref", "deprecation_policy_ref", "migration_requires_resigning_old_subjects", "historical_verification_policy_ref"],
+      "properties": {
+        "approved_algorithm_registry_ref": { "$ref": "#/$defs/artifact_reference" },
+        "deprecation_policy_ref": { "$ref": "#/$defs/artifact_reference" },
+        "migration_requires_resigning_old_subjects": { "const": false },
+        "historical_verification_policy_ref": { "$ref": "#/$defs/artifact_reference" }
+      }
+    },
+    "review_evidence_refs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/artifact_reference" }
+    },
+    "key_material_embedded": { "const": false },
+    "effective_at": { "type": "string", "format": "date-time" },
+    "expires_at": {
+      "oneOf": [
+        { "type": "string", "format": "date-time" },
+        { "type": "null" }
+      ]
+    },
+    "profile_digest": { "$ref": "#/$defs/digest" },
+    "approved_by": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/human_principal" }
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "status": { "const": "active" } }, "required": ["status"] },
+      "then": { "properties": { "review_evidence_refs": { "minItems": 1 } } }
+    }
+  ],
+  "$defs": {
+    "identifier": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$" },
+    "digest": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+    "key_class": {
+      "enum": [
+        "constitutional_root_signing",
+        "ledger_checkpoint_signing",
+        "witness_signing",
+        "publication_signing",
+        "service_workload_identity",
+        "data_encryption",
+        "backup_encryption",
+        "provider_operational_credential"
+      ]
+    },
+    "artifact_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifact_id", "digest", "media_type"],
+      "properties": {
+        "artifact_id": { "$ref": "#/$defs/identifier" },
+        "digest": { "$ref": "#/$defs/digest" },
+        "media_type": { "type": "string", "minLength": 1 }
+      }
+    },
+    "human_principal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["principal_id", "principal_type", "authority_assignment_ref"],
+      "properties": {
+        "principal_id": { "$ref": "#/$defs/identifier" },
+        "principal_type": { "const": "human" },
+        "authority_assignment_ref": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "quorum_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["threshold", "eligible_principal_count", "distinct_principals", "forbidden_role_overlap"],
+      "properties": {
+        "threshold": { "type": "integer", "minimum": 1 },
+        "eligible_principal_count": { "type": "integer", "minimum": 1 },
+        "distinct_principals": { "const": true },
+        "forbidden_role_overlap": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "key_class_profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key_class",
+        "purpose_context",
+        "allowed_operations",
+        "forbidden_operations",
+        "algorithm_profile_ref",
+        "protection_profile_ref",
+        "exportability",
+        "activation_quorum",
+        "recovery_quorum",
+        "overlap_policy_ref",
+        "rotation_policy_ref",
+        "revocation_policy_ref",
+        "compromise_policy_ref",
+        "loss_policy_ref",
+        "escrow_or_recovery_profile_ref",
+        "destruction_policy_ref"
+      ],
+      "properties": {
+        "key_class": { "$ref": "#/$defs/key_class" },
+        "purpose_context": { "$ref": "#/$defs/identifier" },
+        "allowed_operations": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "forbidden_operations": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "algorithm_profile_ref": { "$ref": "#/$defs/artifact_reference" },
+        "protection_profile_ref": { "$ref": "#/$defs/artifact_reference" },
+        "exportability": { "enum": ["non_exportable", "wrapped_export_under_quorum", "exportable_under_policy"] },
+        "activation_quorum": { "$ref": "#/$defs/quorum_policy" },
+        "recovery_quorum": { "$ref": "#/$defs/quorum_policy" },
+        "overlap_policy_ref": { "$ref": "#/$defs/artifact_reference" },
+        "rotation_policy_ref": { "$ref": "#/$defs/artifact_reference" },
+        "revocation_policy_ref": { "$ref": "#/$defs/artifact_reference" },
+        "compromise_policy_ref": { "$ref": "#/$defs/artifact_reference" },
+        "loss_policy_ref": { "$ref": "#/$defs/artifact_reference" },
+        "escrow_or_recovery_profile_ref": { "$ref": "#/$defs/artifact_reference" },
+        "destruction_policy_ref": { "$ref": "#/$defs/artifact_reference" }
+      }
+    }
+  }
+}

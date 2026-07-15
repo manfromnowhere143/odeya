@@ -36,6 +36,26 @@ These objects never collapse:
 
 A domain adapter cannot weaken measurement traceability or reinterpret calibration as validation.
 
+Statistical, measurement, uncertainty-propagation, numerical-verification, physical-validation, identification, and control-safety procedures enter through the same closed [`MethodRegistry`](../schemas/method-registry.schema.json) contract. Domain adapters may narrow an admitted method's applicability but cannot widen its guarantee, omit its assumptions, replace an indeterminate result with a pass, or treat a proposed registry record as admitted.
+
+## Machine contract closure candidate
+
+The prose constitution now has an isolated, acyclic eight-schema candidate family:
+
+1. [`PhysicalQuantity`](../schemas/physical-quantity.schema.json) has no physical-record dependency.
+2. [`UncertaintyBudget`](../schemas/uncertainty-budget.schema.json) and [`AssetConfigurationSnapshot`](../schemas/asset-configuration-snapshot.schema.json) depend only on physical quantities.
+3. [`PhysicalMeasurementResult`](../schemas/physical-measurement-result.schema.json) depends on quantities, an uncertainty budget, and the effective asset snapshot.
+4. [`PhysicalModelRecord`](../schemas/physical-model-record.schema.json) depends on quantities, asset snapshots, and physical measurements.
+5. [`PhysicalEvidenceVector`](../schemas/physical-evidence-vector.schema.json) depends on the model, asset snapshots, and measurements.
+6. [`SafetyEnvelope`](../schemas/safety-envelope.schema.json) depends on quantities, the asset, model, and evidence vector.
+7. [`PhysicalExperimentContract`](../schemas/physical-experiment-contract.schema.json) depends on quantities, the asset, model, evidence vector, and safety envelope.
+
+The schemas close record shape and fail-closed alternatives: exact decimal or distribution reference; a registered unit binding with all seven SI base dimensions and semantic kind; fixed UTC-microsecond timestamps; affine/logarithmic conversion separation; conditional frame/time/spatial support; Type A/Type B evaluation origin distinct from aleatory/epistemic nature; covariance, correlation, calibration, raw-signal, instrument, firmware, environment, configuration, discrepancy, partition, VVUQ, preflight, and safety-boundary evidence. Exact decimals reject binary numbers, negative zero, exponent notation, and leading zeros while preserving legitimate negative nonzero values.
+
+The evidence record contains exactly ten non-collapsible credibility components and P0–P12. Physical validation requires independent physical-world measurement identities; calibration, simulation, code verification, and numerical convergence cannot substitute. The experiment and safety contracts emit proposals or recommendations only and cannot issue execution or actuator authority. Missing or unknown hardware forces a blocked, refused, or indeterminate disposition; zero observed components remains an observation, never success.
+
+The isolated checker at [`tests/physical-contracts`](../tests/physical-contracts/README.md) passes 85 structural expectations, 32 bounded local-semantic expectations, and an eight-schema dependency-DAG check. It pins and validates one exact fixture per schema; the Inbar fixtures preserve a valid measured result, an unknown-hardware asset block, and an experiment refusal. These checks do not resolve the unit/method registries, prove dimensional or frame-transform algebra, prove covariance positive semidefiniteness or propagation, reconcile cross-record digests and effective times, execute reducers/traces, establish physical-world validity, or constitute metrology, VVUQ, safety, or accountable domain review.
+
 ## Quantity and frame kernel
 
 No physical scalar enters Odeya as a bare number:

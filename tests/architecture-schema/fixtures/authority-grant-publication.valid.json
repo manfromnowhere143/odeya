@@ -1,0 +1,67 @@
+{
+  "schema_version": "0.2.0",
+  "grant_id": "grant.publication.001",
+  "version": 1,
+  "mission_id": "mission.sentinel-fixture",
+  "role": "publication",
+  "issuer_assignment_ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "subject": {
+    "principal_id": "release-adapter.001",
+    "principal_type": "service",
+    "execution_identity_selector": "workload:release-adapter.001",
+    "authentication_binding_ref": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  },
+  "scope": {
+    "command_types": ["publication.start_release"],
+    "capability_ids": ["capability.private-release"],
+    "action_classes": ["release.dispatch"],
+    "resource_selectors": ["channel:review-room"],
+    "protocol_digest": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "run_manifest_digest": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "stage_id": "stage.private-release",
+    "purpose": "Dispatch one exact sealed private review package",
+    "maximum_risk_tier": "R1",
+    "data_classes": ["D1"],
+    "publication_manifest_digest": "sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "external_effect_id": "effect.private-release.001"
+  },
+  "limits": {
+    "not_before": "2026-07-15T19:00:00.000000Z",
+    "expires_at": "2026-07-15T19:10:00.000000Z",
+    "max_uses": 1,
+    "max_concurrency": 1,
+    "resource_budget": {"wall_time_seconds":"60","model_tokens":"0","cpu_seconds":"10","memory_gib_seconds":"10","accelerator_seconds":"0","storage_bytes":"1048576","network_bytes":"1048576","human_hours":"0"},
+    "spend_limit_usd": "0",
+    "egress_allowlist": ["review-room.invalid"],
+    "allowed_methods": ["method.private-package-dispatch"],
+    "sandbox_tier": "hardened_container"
+  },
+  "replay": {"mode":"single_use","idempotency_scope":"effect:private-release.001"},
+  "consumption": {
+    "action_boundary": "cross_boundary_effect",
+    "consumption_point": "dispatch_claim",
+    "reservation_policy": "exact_t1_reservation",
+    "reservation_identity_fields": ["grant_id", "effect_id", "authorization_request_digest", "publication_manifest_digest"],
+    "maximum_open_reservations": 1,
+    "reservation_ttl_seconds": 300,
+    "pre_consumption_rechecks": ["active_assignment", "grant_not_revoked", "controlled_time_before_expiry", "prior_use_absent", "exact_scope_match"],
+    "unused_reservation_release": "release_on_revoke_expiry_cancellation_before_claim",
+    "consumed_reservation_release": "forbidden"
+  },
+  "dependencies": {
+    "required_grant_refs": ["grant.execution.001", "grant.data-rights.001"],
+    "authorization_request_digest": "sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "quorum": 1,
+    "distinct_principals": true,
+    "forbidden_role_overlap": ["proposal"]
+  },
+  "delegation": {"allowed":false,"maximum_depth":0,"child_scope_rule":"none"},
+  "decision_evidence": {
+    "policy_decision_id": "publication-decision.001",
+    "policy_bundle_digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+    "policy_input_digest": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+    "approval_refs": [{"artifact_id":"publication-decision.001","digest":"sha256:3333333333333333333333333333333333333333333333333333333333333333","media_type":"application/json"}],
+    "issued_by": {"principal_id":"publication-authority.001","principal_type":"human"}
+  },
+  "issued_at": "2026-07-15T18:59:00.000000Z"
+}

@@ -1,0 +1,153 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:odeya:schema:falsifier-result:0.1.0",
+  "title": "Odeya FalsifierResult",
+  "description": "An immutable observation from one frozen falsifier or control. A triggered falsifier is not itself an adjudicated claim, and a failed known-bad control blocks rather than validates the gate.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "falsifier_result_id",
+    "version",
+    "mission_id",
+    "protocol_snapshot",
+    "run_manifest",
+    "attempt_id",
+    "falsifier_spec_ref",
+    "fixture_role",
+    "expected_verdict",
+    "test_status",
+    "observed_verdict",
+    "scientific_validity",
+    "gate_consequence",
+    "reason_codes",
+    "evidence_refs",
+    "limitations",
+    "evaluated_by",
+    "observed_at",
+    "recorded_at_ledger_position",
+    "recorded_at"
+  ],
+  "properties": {
+    "schema_version": { "const": "0.1.0" },
+    "falsifier_result_id": { "$ref": "#/$defs/identifier" },
+    "version": { "type": "integer", "minimum": 1 },
+    "mission_id": { "$ref": "#/$defs/identifier" },
+    "protocol_snapshot": { "$ref": "#/$defs/protocol_reference" },
+    "run_manifest": { "$ref": "#/$defs/manifest_reference" },
+    "attempt_id": { "$ref": "#/$defs/identifier" },
+    "falsifier_spec_ref": { "$ref": "#/$defs/artifact_reference" },
+    "fixture_role": { "enum": ["mission_falsifier", "known_bad_control", "negative_control", "positive_control"] },
+    "expected_verdict": { "enum": ["triggered", "not_triggered"] },
+    "test_status": { "enum": ["executed", "not_executed"] },
+    "observed_verdict": {
+      "oneOf": [
+        { "enum": ["triggered", "not_triggered", "indeterminate"] },
+        { "type": "null" }
+      ]
+    },
+    "scientific_validity": { "enum": ["valid", "invalid", "not_assessed"] },
+    "gate_consequence": { "enum": ["no_change", "claim_narrowed", "claim_blocked", "run_invalid", "gate_failed", "gate_blocked"] },
+    "reason_codes": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/identifier" }
+    },
+    "evidence_refs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/artifact_reference" }
+    },
+    "limitations": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "evaluated_by": { "$ref": "#/$defs/execution_identity" },
+    "observed_at": { "type": "string", "format": "date-time" },
+    "recorded_at_ledger_position": { "type": "integer", "minimum": 0 },
+    "recorded_at": { "type": "string", "format": "date-time" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "test_status": { "const": "executed" } }, "required": ["test_status"] },
+      "then": {
+        "properties": {
+          "observed_verdict": { "enum": ["triggered", "not_triggered", "indeterminate"] },
+          "evidence_refs": { "minItems": 1 }
+        }
+      },
+      "else": {
+        "properties": {
+          "observed_verdict": { "type": "null" },
+          "scientific_validity": { "const": "not_assessed" },
+          "gate_consequence": { "const": "gate_blocked" },
+          "reason_codes": { "minItems": 1 }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "fixture_role": { "const": "known_bad_control" } }, "required": ["fixture_role"] },
+      "then": { "properties": { "expected_verdict": { "const": "triggered" } } }
+    },
+    {
+      "if": {
+        "properties": {
+          "fixture_role": { "const": "known_bad_control" },
+          "observed_verdict": { "enum": ["not_triggered", "indeterminate"] }
+        },
+        "required": ["fixture_role", "observed_verdict"]
+      },
+      "then": { "properties": { "gate_consequence": { "const": "gate_failed" } } }
+    },
+    {
+      "if": { "properties": { "scientific_validity": { "const": "invalid" } }, "required": ["scientific_validity"] },
+      "then": { "properties": { "gate_consequence": { "const": "run_invalid" } } }
+    }
+  ],
+  "$defs": {
+    "identifier": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$" },
+    "digest": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+    "artifact_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifact_id", "digest", "media_type"],
+      "properties": {
+        "artifact_id": { "$ref": "#/$defs/identifier" },
+        "digest": { "$ref": "#/$defs/digest" },
+        "media_type": { "type": "string", "minLength": 1 }
+      }
+    },
+    "protocol_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["protocol_snapshot_id", "version", "digest"],
+      "properties": {
+        "protocol_snapshot_id": { "$ref": "#/$defs/identifier" },
+        "version": { "type": "integer", "minimum": 1 },
+        "digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "manifest_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["run_manifest_id", "version", "digest"],
+      "properties": {
+        "run_manifest_id": { "$ref": "#/$defs/identifier" },
+        "version": { "type": "integer", "minimum": 1 },
+        "digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "execution_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["principal_id", "execution_id", "code_digest", "environment_digest", "evaluator_ref"],
+      "properties": {
+        "principal_id": { "$ref": "#/$defs/identifier" },
+        "execution_id": { "$ref": "#/$defs/identifier" },
+        "code_digest": { "$ref": "#/$defs/digest" },
+        "environment_digest": { "$ref": "#/$defs/digest" },
+        "evaluator_ref": { "$ref": "#/$defs/artifact_reference" }
+      }
+    }
+  }
+}

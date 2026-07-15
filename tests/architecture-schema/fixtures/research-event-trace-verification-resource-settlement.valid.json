@@ -1,0 +1,193 @@
+{
+  "schema_version": "0.3.0",
+  "trace_id": "trace.verification-resource-settlement.001",
+  "purpose": "Replay verification reservation, atomic start claim, retained actual/billed/refunded observations, and exact settlement with unused-ceiling release.",
+  "stream_id": "mission.resource-accounting.001",
+  "stream_type": "mission",
+  "mission_scope": "mission.resource-accounting.001",
+  "reducer_set": {
+    "name": "odeya-resource-budget-reducer",
+    "version": "0.1.0",
+    "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "steps": [
+    {
+      "ordinal": 0,
+      "event_id": "event.resource-reservation-created.001",
+      "event_type": "resource.reservation_created",
+      "event_version": "1.0.0",
+      "stream_position": 40,
+      "aggregate_type": "resource_budget",
+      "aggregate_id": "resource-budget.mission.001",
+      "aggregate_version": 7,
+      "event_digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+      "expected_axis_changes": [
+        {
+          "axis": "resource_reservation",
+          "from": "none",
+          "to": "active"
+        }
+      ]
+    },
+    {
+      "ordinal": 1,
+      "event_id": "event.verification-assigned.001",
+      "event_type": "verification.assigned",
+      "event_version": "1.0.0",
+      "stream_position": 41,
+      "aggregate_type": "verification",
+      "aggregate_id": "verification-run.001",
+      "aggregate_version": 1,
+      "event_digest": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+      "expected_axis_changes": [
+        {
+          "axis": "verification_status",
+          "from": "requested",
+          "to": "assigned"
+        }
+      ]
+    },
+    {
+      "ordinal": 2,
+      "event_id": "event.resource-reservation-claimed.001",
+      "event_type": "resource.reservation_claimed",
+      "event_version": "1.0.0",
+      "stream_position": 42,
+      "aggregate_type": "resource_budget",
+      "aggregate_id": "resource-budget.mission.001",
+      "aggregate_version": 8,
+      "event_digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+      "expected_axis_changes": [
+        {
+          "axis": "resource_reservation",
+          "from": "active",
+          "to": "claimed"
+        }
+      ]
+    },
+    {
+      "ordinal": 3,
+      "event_id": "event.verification-started.001",
+      "event_type": "verification.started",
+      "event_version": "1.0.0",
+      "stream_position": 43,
+      "aggregate_type": "verification",
+      "aggregate_id": "verification-run.001",
+      "aggregate_version": 2,
+      "event_digest": "sha256:4444444444444444444444444444444444444444444444444444444444444444",
+      "expected_axis_changes": [
+        {
+          "axis": "verification_status",
+          "from": "assigned",
+          "to": "running"
+        }
+      ]
+    },
+    {
+      "ordinal": 4,
+      "event_id": "event.resource-usage-actual.001",
+      "event_type": "resource.usage_observed",
+      "event_version": "1.0.0",
+      "stream_position": 44,
+      "aggregate_type": "resource_budget",
+      "aggregate_id": "resource-budget.mission.001",
+      "aggregate_version": 9,
+      "event_digest": "sha256:5555555555555555555555555555555555555555555555555555555555555555",
+      "expected_axis_changes": [
+        {
+          "axis": "resource_actual_usage",
+          "from": "unknown",
+          "to": "observed"
+        }
+      ]
+    },
+    {
+      "ordinal": 5,
+      "event_id": "event.resource-usage-billed.001",
+      "event_type": "resource.usage_observed",
+      "event_version": "1.0.0",
+      "stream_position": 45,
+      "aggregate_type": "resource_budget",
+      "aggregate_id": "resource-budget.mission.001",
+      "aggregate_version": 10,
+      "event_digest": "sha256:6666666666666666666666666666666666666666666666666666666666666666",
+      "expected_axis_changes": [
+        {
+          "axis": "resource_billed",
+          "from": "unknown",
+          "to": "observed"
+        }
+      ]
+    },
+    {
+      "ordinal": 6,
+      "event_id": "event.resource-usage-refunded.001",
+      "event_type": "resource.usage_observed",
+      "event_version": "1.0.0",
+      "stream_position": 46,
+      "aggregate_type": "resource_budget",
+      "aggregate_id": "resource-budget.mission.001",
+      "aggregate_version": 11,
+      "event_digest": "sha256:7777777777777777777777777777777777777777777777777777777777777777",
+      "expected_axis_changes": [
+        {
+          "axis": "resource_refunded",
+          "from": "unknown",
+          "to": "observed"
+        }
+      ]
+    },
+    {
+      "ordinal": 7,
+      "event_id": "event.resource-reservation-settled.001",
+      "event_type": "resource.reservation_settled",
+      "event_version": "1.0.0",
+      "stream_position": 47,
+      "aggregate_type": "resource_budget",
+      "aggregate_id": "resource-budget.mission.001",
+      "aggregate_version": 12,
+      "event_digest": "sha256:8888888888888888888888888888888888888888888888888888888888888888",
+      "expected_axis_changes": [
+        {
+          "axis": "resource_reservation",
+          "from": "claimed",
+          "to": "settled"
+        }
+      ]
+    }
+  ],
+  "expected_state": {
+    "run_validity": "not_applicable",
+    "measurement": "not_applicable",
+    "scientific_outcome": "not_adjudicated",
+    "verification_status": "not_applicable",
+    "claim_eligibility": "not_applicable",
+    "publication_release": "not_applicable",
+    "external_effect_settlement": "not_applicable",
+    "grant_use_reservation": "not_applicable",
+    "dispatch_claim": "not_applicable",
+    "retry_disposition": "not_applicable",
+    "channel_observation_refs": [],
+    "resource_accounting": {
+      "reservation_id": "resource-reservation.001",
+      "reservation_state": "settled",
+      "ceiling_hold": "zero",
+      "actual_usage_status": "observed",
+      "observation_axes": [
+        "actual_usage",
+        "billed",
+        "refunded"
+      ],
+      "settlement": "settled_exact",
+      "conversion_policy": "forbidden_componentwise",
+      "dimension_compensation": "forbidden",
+      "verification_capacity": "settled"
+    }
+  },
+  "forbidden_inferences": [
+    "resource.settle_without_actual_observation",
+    "resource.cross_dimension_conversion",
+    "resource.dimension_compensation",
+    "resource.retain_unused_ceiling_after_settlement"
+  ]
+}

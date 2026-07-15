@@ -1,0 +1,160 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:odeya:schema:data-exposure-record-intent-command:0.1.0",
+  "title": "Odeya data_exposure.record_intent command payload",
+  "description": "Architecture-only closed command payload. Structural validity does not establish referenced evidence, authority, time, signature, quorum, or execution truth.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "exposure_intent_record_ref",
+    "asset_ref",
+    "data_use_decision_ref",
+    "expected_asset_state",
+    "expected_decision",
+    "projected_payload_digest",
+    "recipient_digest",
+    "provider_id",
+    "model_identity",
+    "external_effect_id",
+    "dispatch_via_external_effect",
+    "recording_intent_does_not_dispatch",
+    "authority_assignment_refs"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.1.0"
+    },
+    "expected_asset_state": {
+      "const": "admitted"
+    },
+    "expected_decision": {
+      "const": "authorized"
+    },
+    "provider_id": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/identifier"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "model_identity": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/digest"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "dispatch_via_external_effect": {
+      "const": true
+    },
+    "recording_intent_does_not_dispatch": {
+      "const": true
+    },
+    "authority_assignment_refs": {
+      "type": "array",
+      "uniqueItems": true,
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/identifier"
+      }
+    },
+    "exposure_intent_record_ref": {
+      "$ref": "#/$defs/canonical_record_reference"
+    },
+    "asset_ref": {
+      "$ref": "#/$defs/canonical_record_reference"
+    },
+    "data_use_decision_ref": {
+      "$ref": "#/$defs/canonical_record_reference"
+    },
+    "projected_payload_digest": {
+      "$ref": "#/$defs/digest"
+    },
+    "recipient_digest": {
+      "$ref": "#/$defs/digest"
+    },
+    "external_effect_id": {
+      "$ref": "#/$defs/identifier"
+    }
+  },
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$"
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "artifact_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "digest",
+        "media_type"
+      ],
+      "properties": {
+        "artifact_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "canonical_record_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "object_id",
+        "version",
+        "schema_id",
+        "digest"
+      ],
+      "properties": {
+        "object_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "schema_id": {
+          "type": "string",
+          "pattern": "^urn:odeya:schema:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        }
+      }
+    },
+    "service_scope": {
+      "enum": [
+        "incident_cockpit",
+        "canonical_reads",
+        "reconciliation_commands",
+        "ordinary_research_writes",
+        "publication",
+        "spending",
+        "r2_plus_effects",
+        "physical_actions"
+      ]
+    }
+  }
+}

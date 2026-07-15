@@ -1,0 +1,121 @@
+{
+  "schema_version": "0.3.0",
+  "trace_id": "trace.grant-dispatch-claim.001",
+  "purpose": "Prove that external authorization reserves an exact grant use and dispatch starts only in the atomic cohort that consumes that reservation.",
+  "stream_id": "mission.001",
+  "stream_type": "mission",
+  "mission_scope": "mission.001",
+  "reducer_set": {
+    "name": "odeya-founding-reducers",
+    "version": "0.1.0",
+    "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "steps": [
+    {
+      "ordinal": 0,
+      "event_id": "event.grant-use-reserved.001",
+      "event_type": "authority.grant_use_reserved",
+      "event_version": "1.0.0",
+      "stream_position": 50,
+      "aggregate_type": "authority_grant",
+      "aggregate_id": "grant.repository-write.001",
+      "aggregate_version": 2,
+      "event_digest": "sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "expected_axis_changes": [
+        {
+          "axis": "grant_use_reservation",
+          "from": "not_applicable",
+          "to": "active"
+        }
+      ]
+    },
+    {
+      "ordinal": 1,
+      "event_id": "event.effect-authorized.001",
+      "event_type": "external_effect.authorized",
+      "event_version": "1.0.0",
+      "stream_position": 51,
+      "aggregate_type": "external_effect",
+      "aggregate_id": "effect.repository-write.001",
+      "aggregate_version": 0,
+      "event_digest": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+      "expected_axis_changes": [
+        {
+          "axis": "external_effect_settlement",
+          "from": "not_intended",
+          "to": "authorized"
+        }
+      ]
+    },
+    {
+      "ordinal": 2,
+      "event_id": "event.grant-used-dispatch.001",
+      "event_type": "authority.grant_used",
+      "event_version": "1.0.0",
+      "stream_position": 52,
+      "aggregate_type": "authority_grant",
+      "aggregate_id": "grant.repository-write.001",
+      "aggregate_version": 3,
+      "event_digest": "sha256:1212121212121212121212121212121212121212121212121212121212121212",
+      "expected_axis_changes": [
+        {
+          "axis": "grant_use_reservation",
+          "from": "active",
+          "to": "consumed"
+        },
+        {
+          "axis": "dispatch_claim",
+          "from": "not_claimed",
+          "to": "claimed"
+        }
+      ]
+    },
+    {
+      "ordinal": 3,
+      "event_id": "event.effect-started.001",
+      "event_type": "external_effect.started",
+      "event_version": "1.0.0",
+      "stream_position": 53,
+      "aggregate_type": "external_effect",
+      "aggregate_id": "effect.repository-write.001",
+      "aggregate_version": 1,
+      "event_digest": "sha256:1313131313131313131313131313131313131313131313131313131313131313",
+      "expected_axis_changes": [
+        {
+          "axis": "external_effect_settlement",
+          "from": "authorized",
+          "to": "started"
+        }
+      ]
+    }
+  ],
+  "expected_state": {
+    "run_validity": "not_applicable",
+    "measurement": "not_applicable",
+    "scientific_outcome": "not_adjudicated",
+    "verification_status": "not_applicable",
+    "claim_eligibility": "not_applicable",
+    "publication_release": "not_applicable",
+    "external_effect_settlement": "started",
+    "grant_use_reservation": "consumed",
+    "dispatch_claim": "claimed",
+    "retry_disposition": "safe_same_key",
+    "channel_observation_refs": [],
+    "resource_accounting": {
+      "reservation_id": null,
+      "reservation_state": "not_applicable",
+      "ceiling_hold": "not_applicable",
+      "actual_usage_status": "not_applicable",
+      "observation_axes": [],
+      "settlement": "not_applicable",
+      "conversion_policy": "not_applicable",
+      "dimension_compensation": "not_applicable",
+      "verification_capacity": "not_applicable"
+    }
+  },
+  "forbidden_inferences": [
+    "dispatch.without-grant-consumption",
+    "release.consumed-reservation",
+    "provider-call.before-dispatch-claim"
+  ]
+}

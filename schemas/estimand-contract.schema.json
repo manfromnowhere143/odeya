@@ -1,0 +1,758 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:odeya:schema:estimand-contract:0.1.0",
+  "title": "Odeya EstimandContract",
+  "description": "An immutable prospective mathematical contract for one closed claim type. It fixes exact population, unit, exposure, comparator, outcome, time, intercurrent-event, summary, contrast, scale, uncertainty, multiplicity, missingness, sequential, method, and decision semantics before affected outcome access. It is not a result, claim, or authority grant.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "record_status", "estimand_id", "version", "mission_id",
+    "mission_spec_ref", "analysis_mode", "claim_type", "population",
+    "unit_of_analysis", "exposure", "comparator", "outcome", "time",
+    "intercurrent_event", "summary", "contrast", "effect_scale",
+    "claim_contract", "decision_rule", "uncertainty_plan",
+    "multiplicity_plan", "missingness_plan", "sequential_plan",
+    "data_role_plan", "method_plan", "prospective_freeze",
+    "authority_boundary", "created_at", "created_by"
+  ],
+  "properties": {
+    "schema_version": { "const": "0.1.0" },
+    "record_status": { "const": "prospective_immutable_contract" },
+    "estimand_id": { "$ref": "#/$defs/identifier" },
+    "version": { "type": "integer", "minimum": 1 },
+    "mission_id": { "$ref": "#/$defs/identifier" },
+    "mission_spec_ref": { "$ref": "#/$defs/mission_spec_reference" },
+    "analysis_mode": { "enum": ["exploratory", "confirmatory"] },
+    "claim_type": { "$ref": "#/$defs/claim_type" },
+    "population": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "population_id", "definition_ref", "inclusion_rule_ref",
+        "exclusion_rule_ref", "sampling_frame_ref", "environment_scope_refs",
+        "transport_scope_ref"
+      ],
+      "properties": {
+        "population_id": { "$ref": "#/$defs/identifier" },
+        "definition_ref": { "$ref": "#/$defs/artifact_reference" },
+        "inclusion_rule_ref": { "$ref": "#/$defs/artifact_reference" },
+        "exclusion_rule_ref": { "$ref": "#/$defs/artifact_reference" },
+        "sampling_frame_ref": { "$ref": "#/$defs/nullable_artifact_reference" },
+        "environment_scope_refs": {
+          "type": "array", "minItems": 1, "maxItems": 64, "uniqueItems": true,
+          "items": { "$ref": "#/$defs/artifact_reference" }
+        },
+        "transport_scope_ref": { "$ref": "#/$defs/artifact_reference" }
+      }
+    },
+    "unit_of_analysis": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "unit_type", "definition_ref", "clustering_key_refs",
+        "repeated_measure_policy", "pairing_rule_ref"
+      ],
+      "properties": {
+        "unit_type": {
+          "enum": [
+            "individual", "episode", "pair", "task", "cluster", "system",
+            "asset", "physical_sample", "time_point", "aggregate"
+          ]
+        },
+        "definition_ref": { "$ref": "#/$defs/artifact_reference" },
+        "clustering_key_refs": {
+          "type": "array", "maxItems": 32, "uniqueItems": true,
+          "items": { "$ref": "#/$defs/artifact_reference" }
+        },
+        "repeated_measure_policy": { "enum": ["none", "modeled", "aggregated_by_frozen_rule"] },
+        "pairing_rule_ref": { "$ref": "#/$defs/nullable_artifact_reference" }
+      }
+    },
+    "exposure": {
+      "type": "object", "additionalProperties": false,
+      "required": ["mode", "exposure_ref", "assignment_or_observation_rule_ref", "version_or_dose_ref"],
+      "properties": {
+        "mode": {
+          "enum": [
+            "none", "observed_exposure", "assigned_intervention",
+            "prediction_information_set", "optimization_action", "physical_excitation"
+          ]
+        },
+        "exposure_ref": { "$ref": "#/$defs/nullable_artifact_reference" },
+        "assignment_or_observation_rule_ref": { "$ref": "#/$defs/nullable_artifact_reference" },
+        "version_or_dose_ref": { "$ref": "#/$defs/nullable_artifact_reference" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "mode": { "const": "none" } }, "required": ["mode"] },
+          "then": {
+            "properties": {
+              "exposure_ref": { "type": "null" },
+              "assignment_or_observation_rule_ref": { "type": "null" },
+              "version_or_dose_ref": { "type": "null" }
+            }
+          },
+          "else": {
+            "properties": {
+              "exposure_ref": { "$ref": "#/$defs/artifact_reference" },
+              "assignment_or_observation_rule_ref": { "$ref": "#/$defs/artifact_reference" }
+            }
+          }
+        }
+      ]
+    },
+    "comparator": {
+      "type": "object", "additionalProperties": false,
+      "required": ["mode", "comparator_ref", "comparability_rule_ref"],
+      "properties": {
+        "mode": {
+          "enum": [
+            "none", "reference_population", "unexposed", "active_comparator",
+            "baseline_model", "baseline_policy", "constraint_set", "physical_reference"
+          ]
+        },
+        "comparator_ref": { "$ref": "#/$defs/nullable_artifact_reference" },
+        "comparability_rule_ref": { "$ref": "#/$defs/nullable_artifact_reference" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "mode": { "const": "none" } }, "required": ["mode"] },
+          "then": {
+            "properties": {
+              "comparator_ref": { "type": "null" },
+              "comparability_rule_ref": { "type": "null" }
+            }
+          },
+          "else": {
+            "properties": {
+              "comparator_ref": { "$ref": "#/$defs/artifact_reference" },
+              "comparability_rule_ref": { "$ref": "#/$defs/artifact_reference" }
+            }
+          }
+        }
+      ]
+    },
+    "outcome": {
+      "type": "object", "additionalProperties": false,
+      "required": ["endpoint_id", "definition_ref", "quantity_kind", "unit_ref", "direction", "ascertainment_rule_ref"],
+      "properties": {
+        "endpoint_id": { "$ref": "#/$defs/identifier" },
+        "definition_ref": { "$ref": "#/$defs/artifact_reference" },
+        "quantity_kind": {
+          "enum": ["scalar", "binary", "count", "time_to_event", "vector", "distribution", "physical_quantity", "utility", "objective"]
+        },
+        "unit_ref": { "$ref": "#/$defs/nullable_unit_reference" },
+        "direction": { "enum": ["higher_is_better", "lower_is_better", "two_sided", "none"] },
+        "ascertainment_rule_ref": { "$ref": "#/$defs/artifact_reference" }
+      }
+    },
+    "time": {
+      "type": "object", "additionalProperties": false,
+      "required": ["time_origin_ref", "horizon", "assessment_window_ref", "censoring_rule_ref"],
+      "properties": {
+        "time_origin_ref": { "$ref": "#/$defs/artifact_reference" },
+        "horizon": { "$ref": "#/$defs/quantity" },
+        "assessment_window_ref": { "$ref": "#/$defs/artifact_reference" },
+        "censoring_rule_ref": { "$ref": "#/$defs/artifact_reference" }
+      }
+    },
+    "intercurrent_event": {
+      "type": "object", "additionalProperties": false,
+      "required": ["strategy", "event_definition_ref", "handling_rule_ref"],
+      "properties": {
+        "strategy": {
+          "enum": [
+            "not_applicable", "treatment_policy", "hypothetical", "composite",
+            "while_on_treatment", "principal_stratum", "censor_at_event"
+          ]
+        },
+        "event_definition_ref": { "$ref": "#/$defs/nullable_artifact_reference" },
+        "handling_rule_ref": { "$ref": "#/$defs/artifact_reference" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "strategy": { "const": "not_applicable" } }, "required": ["strategy"] },
+          "then": { "properties": { "event_definition_ref": { "type": "null" } } },
+          "else": { "properties": { "event_definition_ref": { "$ref": "#/$defs/artifact_reference" } } }
+        }
+      ]
+    },
+    "summary": {
+      "type": "object", "additionalProperties": false,
+      "required": ["functional", "parameters_ref"],
+      "properties": {
+        "functional": {
+          "enum": [
+            "mean", "median", "proportion", "rate", "risk", "hazard",
+            "quantile", "correlation", "regression_coefficient", "predictive_loss",
+            "calibration_error", "utility", "objective_value",
+            "physical_discrepancy", "distributional_functional"
+          ]
+        },
+        "parameters_ref": { "$ref": "#/$defs/nullable_artifact_reference" }
+      }
+    },
+    "contrast": {
+      "type": "object", "additionalProperties": false,
+      "required": ["type", "reference_value"],
+      "properties": {
+        "type": {
+          "enum": [
+            "none", "difference", "ratio", "log_ratio", "odds_ratio",
+            "risk_difference", "risk_ratio", "hazard_ratio", "correlation",
+            "slope", "equivalence_region", "noninferiority_boundary",
+            "optimization_gap", "validation_discrepancy"
+          ]
+        },
+        "reference_value": { "$ref": "#/$defs/nullable_quantity" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "type": { "const": "none" } }, "required": ["type"] },
+          "then": { "properties": { "reference_value": { "type": "null" } } },
+          "else": { "properties": { "reference_value": { "$ref": "#/$defs/quantity" } } }
+        }
+      ]
+    },
+    "effect_scale": {
+      "type": "object", "additionalProperties": false,
+      "required": ["scale", "unit_ref", "transformation_ref"],
+      "properties": {
+        "scale": { "enum": ["identity", "additive", "multiplicative", "log", "logit", "probability", "rate", "utility", "objective", "physical_quantity"] },
+        "unit_ref": { "$ref": "#/$defs/unit_reference" },
+        "transformation_ref": { "$ref": "#/$defs/nullable_artifact_reference" }
+      }
+    },
+    "claim_contract": { "$ref": "#/$defs/claim_contract" },
+    "decision_rule": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "rule_type", "rule_ref", "null_or_reference_value",
+        "interval_crossing_reference_disposition",
+        "failure_to_reject_establishes_equivalence", "unknown_treated_as_zero"
+      ],
+      "properties": {
+        "rule_type": {
+          "enum": [
+            "descriptive_estimation", "association_interval", "predictive_performance",
+            "directional_interval", "equivalence_margin", "noninferiority_margin",
+            "risk_upper_bound", "optimization_feasibility", "physical_validation_acceptance"
+          ]
+        },
+        "rule_ref": { "$ref": "#/$defs/method_reference" },
+        "null_or_reference_value": { "$ref": "#/$defs/nullable_quantity" },
+        "interval_crossing_reference_disposition": { "const": "inconclusive_unless_predeclared_margin_rule_is_satisfied" },
+        "failure_to_reject_establishes_equivalence": { "const": false },
+        "unknown_treated_as_zero": { "const": false }
+      }
+    },
+    "uncertainty_plan": {
+      "type": "object", "additionalProperties": false,
+      "required": ["status", "representation", "sidedness", "level", "simultaneous_scope", "method_ref", "channels", "missing_uncertainty_disposition"],
+      "properties": {
+        "status": { "enum": ["required", "not_applicable"] },
+        "representation": { "enum": ["interval", "confidence_sequence", "credible_interval", "prediction_set", "risk_bound", "uncertainty_set", "not_applicable"] },
+        "sidedness": { "enum": ["two_sided", "lower", "upper", "not_applicable"] },
+        "level": { "oneOf": [{ "$ref": "#/$defs/probability_decimal" }, { "type": "null" }] },
+        "simultaneous_scope": { "enum": ["pointwise", "simultaneous_family", "time_uniform", "not_applicable"] },
+        "method_ref": { "oneOf": [{ "$ref": "#/$defs/method_reference" }, { "type": "null" }] },
+        "channels": {
+          "type": "array", "uniqueItems": true,
+          "items": { "enum": ["measurement", "sampling", "parameter", "predictive", "model_form", "distribution_shift", "causal_identification", "decision_utility", "physical_discrepancy", "infrastructure_operational"] }
+        },
+        "missing_uncertainty_disposition": { "const": "incomplete_or_indeterminate_never_zero" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "status": { "const": "required" } }, "required": ["status"] },
+          "then": {
+            "properties": {
+              "representation": { "not": { "const": "not_applicable" } },
+              "sidedness": { "not": { "const": "not_applicable" } },
+              "level": { "$ref": "#/$defs/probability_decimal" },
+              "simultaneous_scope": { "not": { "const": "not_applicable" } },
+              "method_ref": { "$ref": "#/$defs/method_reference" },
+              "channels": { "minItems": 1 }
+            }
+          },
+          "else": {
+            "properties": {
+              "representation": { "const": "not_applicable" },
+              "sidedness": { "const": "not_applicable" },
+              "level": { "type": "null" },
+              "simultaneous_scope": { "const": "not_applicable" },
+              "method_ref": { "type": "null" },
+              "channels": { "maxItems": 0 }
+            }
+          }
+        }
+      ]
+    },
+    "multiplicity_plan": {
+      "type": "object", "additionalProperties": false,
+      "required": ["applicability", "family_id", "hypothesis_key", "error_criterion", "plan_ref", "selection_adjustment", "unplanned_addition_disposition"],
+      "properties": {
+        "applicability": { "enum": ["declared", "not_applicable"] },
+        "family_id": { "oneOf": [{ "$ref": "#/$defs/identifier" }, { "type": "null" }] },
+        "hypothesis_key": { "oneOf": [{ "$ref": "#/$defs/identifier" }, { "type": "null" }] },
+        "error_criterion": { "enum": ["fwer", "fdr", "online_fdr", "e_value_family", "bayesian_decision_family", "not_applicable"] },
+        "plan_ref": { "$ref": "#/$defs/nullable_artifact_reference" },
+        "selection_adjustment": { "enum": ["required", "not_required", "not_applicable"] },
+        "unplanned_addition_disposition": { "const": "invalidates_or_reclassifies_confirmatory_inference" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "applicability": { "const": "declared" } }, "required": ["applicability"] },
+          "then": {
+            "properties": {
+              "family_id": { "$ref": "#/$defs/identifier" },
+              "hypothesis_key": { "$ref": "#/$defs/identifier" },
+              "error_criterion": { "not": { "const": "not_applicable" } },
+              "plan_ref": { "$ref": "#/$defs/artifact_reference" },
+              "selection_adjustment": { "not": { "const": "not_applicable" } }
+            }
+          },
+          "else": {
+            "properties": {
+              "family_id": { "type": "null" },
+              "hypothesis_key": { "type": "null" },
+              "error_criterion": { "const": "not_applicable" },
+              "plan_ref": { "type": "null" },
+              "selection_adjustment": { "const": "not_applicable" }
+            }
+          }
+        }
+      ]
+    },
+    "missingness_plan": {
+      "type": "object", "additionalProperties": false,
+      "required": ["plan_ref", "primary_strategy", "mechanism_assumption_ref", "sensitivity_plan_refs", "unknown_is_absent", "unknown_count_is_zero"],
+      "properties": {
+        "plan_ref": { "$ref": "#/$defs/artifact_reference" },
+        "primary_strategy": { "enum": ["model_based", "multiple_imputation", "inverse_probability_weighting", "censoring_model", "bounded_worst_case", "complete_case_with_justification", "not_applicable"] },
+        "mechanism_assumption_ref": { "$ref": "#/$defs/artifact_reference" },
+        "sensitivity_plan_refs": {
+          "type": "array", "minItems": 1, "maxItems": 32, "uniqueItems": true,
+          "items": { "$ref": "#/$defs/artifact_reference" }
+        },
+        "unknown_is_absent": { "const": false },
+        "unknown_count_is_zero": { "const": false }
+      }
+    },
+    "sequential_plan": {
+      "type": "object", "additionalProperties": false,
+      "required": ["regime", "plan_ref", "planned_look_count", "stopping_rule_ref", "unplanned_peeking_disposition", "operational_and_statistical_stops_separate"],
+      "properties": {
+        "regime": { "enum": ["fixed_horizon", "group_sequential", "anytime_valid", "adaptive_registered"] },
+        "plan_ref": { "$ref": "#/$defs/artifact_reference" },
+        "planned_look_count": { "oneOf": [{ "type": "integer", "minimum": 1 }, { "type": "null" }] },
+        "stopping_rule_ref": { "$ref": "#/$defs/artifact_reference" },
+        "unplanned_peeking_disposition": { "const": "invalidates_fixed_horizon_or_requires_anytime_valid_reanalysis" },
+        "operational_and_statistical_stops_separate": { "const": true }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "regime": { "enum": ["fixed_horizon", "group_sequential"] } }, "required": ["regime"] },
+          "then": { "properties": { "planned_look_count": { "type": "integer", "minimum": 1 } } },
+          "else": { "properties": { "planned_look_count": { "type": "null" } } }
+        }
+      ]
+    },
+    "data_role_plan": {
+      "type": "object", "additionalProperties": false,
+      "required": ["partitions", "role_overlap_rule_ref", "role_disjointness_required", "verifier_only_data_hidden_from_producer"],
+      "properties": {
+        "partitions": {
+          "type": "array", "minItems": 1, "maxItems": 64, "uniqueItems": true,
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["role", "manifest_ref", "dependency_group_id"],
+            "properties": {
+              "role": { "enum": ["training", "calibration", "test", "transfer", "replication", "verifier_only", "physical_validation", "simulation", "synthetic_control"] },
+              "manifest_ref": { "$ref": "#/$defs/artifact_reference" },
+              "dependency_group_id": { "$ref": "#/$defs/identifier" }
+            }
+          }
+        },
+        "role_overlap_rule_ref": { "$ref": "#/$defs/artifact_reference" },
+        "role_disjointness_required": { "const": true },
+        "verifier_only_data_hidden_from_producer": { "const": true }
+      }
+    },
+    "method_plan": {
+      "type": "object", "additionalProperties": false,
+      "required": ["estimator_ref", "implementation_ref", "design_ref", "assumption_refs", "diagnostic_refs", "sensitivity_refs", "conformance_refs"],
+      "properties": {
+        "estimator_ref": { "$ref": "#/$defs/method_reference" },
+        "implementation_ref": { "$ref": "#/$defs/artifact_reference" },
+        "design_ref": { "$ref": "#/$defs/artifact_reference" },
+        "assumption_refs": { "$ref": "#/$defs/nonempty_artifact_array" },
+        "diagnostic_refs": { "$ref": "#/$defs/nonempty_artifact_array" },
+        "sensitivity_refs": { "$ref": "#/$defs/nonempty_artifact_array" },
+        "conformance_refs": { "$ref": "#/$defs/nonempty_artifact_array" }
+      }
+    },
+    "prospective_freeze": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "frozen_at_ledger_position", "frozen_at", "exposure_level",
+        "affected_outcome_accessed_before_freeze", "authority_decision_ref",
+        "canonicalization_profile_ref", "immutable_after_freeze",
+        "externally_issued_identity_required"
+      ],
+      "properties": {
+        "frozen_at_ledger_position": { "type": "integer", "minimum": 0 },
+        "frozen_at": { "$ref": "#/$defs/timestamp" },
+        "exposure_level": { "enum": ["outcome_blind", "partial_outcome_exposure", "full_outcome_exposure"] },
+        "affected_outcome_accessed_before_freeze": { "type": "boolean" },
+        "authority_decision_ref": { "$ref": "#/$defs/artifact_reference" },
+        "canonicalization_profile_ref": { "$ref": "#/$defs/artifact_reference" },
+        "immutable_after_freeze": { "const": true },
+        "externally_issued_identity_required": { "const": true }
+      }
+    },
+    "authority_boundary": {
+      "type": "object", "additionalProperties": false,
+      "required": ["estimand_is_result", "estimand_is_claim", "estimand_is_admission_authority", "model_may_amend_after_exposure"],
+      "properties": {
+        "estimand_is_result": { "const": false },
+        "estimand_is_claim": { "const": false },
+        "estimand_is_admission_authority": { "const": false },
+        "model_may_amend_after_exposure": { "const": false }
+      }
+    },
+    "created_at": { "$ref": "#/$defs/timestamp" },
+    "created_by": { "$ref": "#/$defs/principal" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "analysis_mode": { "const": "confirmatory" } }, "required": ["analysis_mode"] },
+      "then": {
+        "properties": {
+          "prospective_freeze": {
+            "properties": {
+              "exposure_level": { "const": "outcome_blind" },
+              "affected_outcome_accessed_before_freeze": { "const": false }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "claim_type": { "const": "descriptive" } }, "required": ["claim_type"] },
+      "then": {
+        "properties": {
+          "claim_contract": { "$ref": "#/$defs/descriptive_contract" },
+          "exposure": { "properties": { "mode": { "const": "none" } } },
+          "comparator": { "properties": { "mode": { "const": "none" } } },
+          "contrast": { "properties": { "type": { "const": "none" } } },
+          "decision_rule": { "properties": { "rule_type": { "const": "descriptive_estimation" } } }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "claim_type": { "const": "associational" } }, "required": ["claim_type"] },
+      "then": {
+        "properties": {
+          "claim_contract": { "$ref": "#/$defs/associational_contract" },
+          "exposure": { "properties": { "mode": { "const": "observed_exposure" } } },
+          "decision_rule": { "properties": { "rule_type": { "const": "association_interval" } } }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "claim_type": { "const": "predictive" } }, "required": ["claim_type"] },
+      "then": {
+        "properties": {
+          "claim_contract": { "$ref": "#/$defs/predictive_contract" },
+          "exposure": { "properties": { "mode": { "const": "prediction_information_set" } } },
+          "comparator": { "properties": { "mode": { "enum": ["baseline_model", "baseline_policy"] } } },
+          "decision_rule": { "properties": { "rule_type": { "const": "predictive_performance" } } }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "claim_type": { "const": "causal" } }, "required": ["claim_type"] },
+      "then": {
+        "properties": {
+          "claim_contract": { "$ref": "#/$defs/causal_contract" },
+          "exposure": { "properties": { "mode": { "enum": ["assigned_intervention", "observed_exposure"] } } },
+          "comparator": { "properties": { "mode": { "enum": ["unexposed", "active_comparator", "baseline_policy"] } } },
+          "decision_rule": { "properties": { "rule_type": { "const": "directional_interval" } } }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "claim_type": { "const": "equivalence" } }, "required": ["claim_type"] },
+      "then": {
+        "properties": {
+          "claim_contract": { "$ref": "#/$defs/equivalence_contract" },
+          "exposure": { "properties": { "mode": { "enum": ["assigned_intervention", "observed_exposure"] } } },
+          "comparator": { "properties": { "mode": { "enum": ["active_comparator", "baseline_model", "baseline_policy"] } } },
+          "contrast": { "properties": { "type": { "const": "equivalence_region" } } },
+          "decision_rule": { "properties": { "rule_type": { "const": "equivalence_margin" } } }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "claim_type": { "const": "noninferiority" } }, "required": ["claim_type"] },
+      "then": {
+        "properties": {
+          "claim_contract": { "$ref": "#/$defs/noninferiority_contract" },
+          "exposure": { "properties": { "mode": { "enum": ["assigned_intervention", "observed_exposure"] } } },
+          "comparator": { "properties": { "mode": { "enum": ["active_comparator", "baseline_model", "baseline_policy"] } } },
+          "contrast": { "properties": { "type": { "const": "noninferiority_boundary" } } },
+          "decision_rule": { "properties": { "rule_type": { "const": "noninferiority_margin" } } }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "claim_type": { "const": "safety" } }, "required": ["claim_type"] },
+      "then": {
+        "properties": {
+          "claim_contract": { "$ref": "#/$defs/safety_contract" },
+          "decision_rule": { "properties": { "rule_type": { "const": "risk_upper_bound" } } }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "claim_type": { "const": "optimization" } }, "required": ["claim_type"] },
+      "then": {
+        "properties": {
+          "claim_contract": { "$ref": "#/$defs/optimization_contract" },
+          "exposure": { "properties": { "mode": { "const": "optimization_action" } } },
+          "comparator": { "properties": { "mode": { "enum": ["baseline_policy", "constraint_set"] } } },
+          "contrast": { "properties": { "type": { "const": "optimization_gap" } } },
+          "decision_rule": { "properties": { "rule_type": { "const": "optimization_feasibility" } } }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "claim_type": { "const": "physical_validation" } }, "required": ["claim_type"] },
+      "then": {
+        "properties": {
+          "claim_contract": { "$ref": "#/$defs/physical_validation_contract" },
+          "exposure": { "properties": { "mode": { "const": "physical_excitation" } } },
+          "comparator": { "properties": { "mode": { "const": "physical_reference" } } },
+          "contrast": { "properties": { "type": { "const": "validation_discrepancy" } } },
+          "decision_rule": { "properties": { "rule_type": { "const": "physical_validation_acceptance" } } }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "identifier": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$" },
+    "semantic_version": { "type": "string", "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$" },
+    "digest": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+    "decimal": { "type": "string", "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?([eE][+-]?[0-9]+)?$" },
+    "probability_decimal": { "type": "string", "pattern": "^(0(\\.[0-9]+)?|1(\\.0+)?)$" },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
+    },
+    "claim_type": { "enum": ["descriptive", "associational", "predictive", "causal", "equivalence", "noninferiority", "safety", "optimization", "physical_validation"] },
+    "artifact_reference": {
+      "type": "object", "additionalProperties": false,
+      "required": ["artifact_id", "digest", "media_type"],
+      "properties": {
+        "artifact_id": { "$ref": "#/$defs/identifier" },
+        "digest": { "$ref": "#/$defs/digest" },
+        "media_type": { "type": "string", "minLength": 1, "maxLength": 255 }
+      }
+    },
+    "nullable_artifact_reference": { "oneOf": [{ "$ref": "#/$defs/artifact_reference" }, { "type": "null" }] },
+    "nonempty_artifact_array": {
+      "type": "array", "minItems": 1, "maxItems": 128, "uniqueItems": true,
+      "items": { "$ref": "#/$defs/artifact_reference" }
+    },
+    "mission_spec_reference": {
+      "type": "object", "additionalProperties": false,
+      "required": ["record_type", "mission_id", "version", "schema_id", "digest"],
+      "properties": {
+        "record_type": { "const": "research_mission_spec" },
+        "mission_id": { "$ref": "#/$defs/identifier" },
+        "version": { "type": "integer", "minimum": 1 },
+        "schema_id": { "const": "urn:odeya:schema:research-mission:0.2.0" },
+        "digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "method_reference": {
+      "type": "object", "additionalProperties": false,
+      "required": ["method_id", "version", "registry_digest", "method_record_digest"],
+      "properties": {
+        "method_id": { "$ref": "#/$defs/identifier" },
+        "version": { "$ref": "#/$defs/semantic_version" },
+        "registry_digest": { "$ref": "#/$defs/digest" },
+        "method_record_digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "unit_reference": {
+      "type": "object", "additionalProperties": false,
+      "required": ["unit_id", "version", "registry_digest", "dimension_signature"],
+      "properties": {
+        "unit_id": { "$ref": "#/$defs/identifier" },
+        "version": { "$ref": "#/$defs/semantic_version" },
+        "registry_digest": { "$ref": "#/$defs/digest" },
+        "dimension_signature": { "type": "string", "minLength": 1, "maxLength": 255 }
+      }
+    },
+    "nullable_unit_reference": { "oneOf": [{ "$ref": "#/$defs/unit_reference" }, { "type": "null" }] },
+    "quantity": {
+      "type": "object", "additionalProperties": false,
+      "required": ["value", "unit_ref"],
+      "properties": {
+        "value": { "$ref": "#/$defs/decimal" },
+        "unit_ref": { "$ref": "#/$defs/unit_reference" }
+      }
+    },
+    "nullable_quantity": { "oneOf": [{ "$ref": "#/$defs/quantity" }, { "type": "null" }] },
+    "principal": {
+      "type": "object", "additionalProperties": false,
+      "required": ["principal_id", "principal_type"],
+      "properties": {
+        "principal_id": { "$ref": "#/$defs/identifier" },
+        "principal_type": { "enum": ["human", "deterministic_service"] }
+      }
+    },
+    "descriptive_contract": {
+      "type": "object", "additionalProperties": false,
+      "required": ["branch_type", "sampling_design_ref", "target_functional_ref"],
+      "properties": {
+        "branch_type": { "const": "descriptive" },
+        "sampling_design_ref": { "$ref": "#/$defs/artifact_reference" },
+        "target_functional_ref": { "$ref": "#/$defs/artifact_reference" }
+      }
+    },
+    "associational_contract": {
+      "type": "object", "additionalProperties": false,
+      "required": ["branch_type", "association_measure", "exposure_variable_ref", "outcome_variable_ref", "adjustment_set_ref", "temporal_order_ref"],
+      "properties": {
+        "branch_type": { "const": "associational" },
+        "association_measure": { "enum": ["correlation", "regression_coefficient", "odds_ratio", "risk_ratio", "rate_ratio", "mutual_information"] },
+        "exposure_variable_ref": { "$ref": "#/$defs/artifact_reference" },
+        "outcome_variable_ref": { "$ref": "#/$defs/artifact_reference" },
+        "adjustment_set_ref": { "$ref": "#/$defs/nullable_artifact_reference" },
+        "temporal_order_ref": { "$ref": "#/$defs/artifact_reference" }
+      }
+    },
+    "predictive_contract": {
+      "type": "object", "additionalProperties": false,
+      "required": ["branch_type", "prediction_target_ref", "information_set_ref", "loss_ref", "split_plan_ref", "calibration_plan_ref", "shift_scope_ref"],
+      "properties": {
+        "branch_type": { "const": "predictive" },
+        "prediction_target_ref": { "$ref": "#/$defs/artifact_reference" },
+        "information_set_ref": { "$ref": "#/$defs/artifact_reference" },
+        "loss_ref": { "$ref": "#/$defs/method_reference" },
+        "split_plan_ref": { "$ref": "#/$defs/artifact_reference" },
+        "calibration_plan_ref": { "$ref": "#/$defs/artifact_reference" },
+        "shift_scope_ref": { "$ref": "#/$defs/artifact_reference" }
+      }
+    },
+    "causal_contract": {
+      "type": "object", "additionalProperties": false,
+      "required": ["branch_type", "intervention_policy_ref", "comparator_policy_ref", "causal_model_ref", "identification_argument_ref", "target_trial_ref", "sensitivity_plan_ref", "interference_rule_ref"],
+      "properties": {
+        "branch_type": { "const": "causal" },
+        "intervention_policy_ref": { "$ref": "#/$defs/artifact_reference" },
+        "comparator_policy_ref": { "$ref": "#/$defs/artifact_reference" },
+        "causal_model_ref": { "$ref": "#/$defs/artifact_reference" },
+        "identification_argument_ref": { "$ref": "#/$defs/artifact_reference" },
+        "target_trial_ref": { "$ref": "#/$defs/artifact_reference" },
+        "sensitivity_plan_ref": { "$ref": "#/$defs/artifact_reference" },
+        "interference_rule_ref": { "$ref": "#/$defs/artifact_reference" }
+      }
+    },
+    "equivalence_contract": {
+      "type": "object", "additionalProperties": false,
+      "required": ["branch_type", "lower_margin", "upper_margin", "margin_rationale_ref", "design_ref", "test_method_ref", "margin_frozen_prospectively", "failure_to_reject_sufficient"],
+      "properties": {
+        "branch_type": { "const": "equivalence" },
+        "lower_margin": { "$ref": "#/$defs/quantity" },
+        "upper_margin": { "$ref": "#/$defs/quantity" },
+        "margin_rationale_ref": { "$ref": "#/$defs/artifact_reference" },
+        "design_ref": { "$ref": "#/$defs/artifact_reference" },
+        "test_method_ref": { "$ref": "#/$defs/method_reference" },
+        "margin_frozen_prospectively": { "const": true },
+        "failure_to_reject_sufficient": { "const": false }
+      }
+    },
+    "noninferiority_contract": {
+      "type": "object", "additionalProperties": false,
+      "required": ["branch_type", "margin", "benefit_direction", "margin_rationale_ref", "design_ref", "test_method_ref", "margin_frozen_prospectively", "failure_to_reject_sufficient"],
+      "properties": {
+        "branch_type": { "const": "noninferiority" },
+        "margin": { "$ref": "#/$defs/quantity" },
+        "benefit_direction": { "enum": ["higher_is_better", "lower_is_better"] },
+        "margin_rationale_ref": { "$ref": "#/$defs/artifact_reference" },
+        "design_ref": { "$ref": "#/$defs/artifact_reference" },
+        "test_method_ref": { "$ref": "#/$defs/method_reference" },
+        "margin_frozen_prospectively": { "const": true },
+        "failure_to_reject_sufficient": { "const": false }
+      }
+    },
+    "safety_contract": {
+      "type": "object", "additionalProperties": false,
+      "required": ["branch_type", "hazard_ref", "exposure_denominator_ref", "operating_domain_ref", "risk_functional_ref", "tolerated_upper_bound", "stress_plan_ref", "negative_control_refs", "zero_failures_requires_upper_bound"],
+      "properties": {
+        "branch_type": { "const": "safety" },
+        "hazard_ref": { "$ref": "#/$defs/artifact_reference" },
+        "exposure_denominator_ref": { "$ref": "#/$defs/artifact_reference" },
+        "operating_domain_ref": { "$ref": "#/$defs/artifact_reference" },
+        "risk_functional_ref": { "$ref": "#/$defs/artifact_reference" },
+        "tolerated_upper_bound": { "$ref": "#/$defs/quantity" },
+        "stress_plan_ref": { "$ref": "#/$defs/artifact_reference" },
+        "negative_control_refs": { "$ref": "#/$defs/nonempty_artifact_array" },
+        "zero_failures_requires_upper_bound": { "const": true }
+      }
+    },
+    "optimization_contract": {
+      "type": "object", "additionalProperties": false,
+      "required": ["branch_type", "decision_space_ref", "objective_ref", "constraint_refs", "baseline_policy_ref", "optimality_criterion_ref", "feasibility_rule_ref"],
+      "properties": {
+        "branch_type": { "const": "optimization" },
+        "decision_space_ref": { "$ref": "#/$defs/artifact_reference" },
+        "objective_ref": { "$ref": "#/$defs/artifact_reference" },
+        "constraint_refs": { "$ref": "#/$defs/nonempty_artifact_array" },
+        "baseline_policy_ref": { "$ref": "#/$defs/artifact_reference" },
+        "optimality_criterion_ref": { "$ref": "#/$defs/artifact_reference" },
+        "feasibility_rule_ref": { "$ref": "#/$defs/artifact_reference" }
+      }
+    },
+    "physical_validation_contract": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "branch_type", "physical_system_ref", "asset_configuration_ref",
+        "physical_model_ref", "physical_measurement_plan_ref",
+        "validation_partition_ref", "discrepancy_method_ref",
+        "acceptance_rule_ref", "physical_world_measurement_required",
+        "simulation_sufficient", "calibration_sufficient", "code_verification_sufficient"
+      ],
+      "properties": {
+        "branch_type": { "const": "physical_validation" },
+        "physical_system_ref": { "$ref": "#/$defs/artifact_reference" },
+        "asset_configuration_ref": { "$ref": "#/$defs/artifact_reference" },
+        "physical_model_ref": { "$ref": "#/$defs/artifact_reference" },
+        "physical_measurement_plan_ref": { "$ref": "#/$defs/artifact_reference" },
+        "validation_partition_ref": { "$ref": "#/$defs/artifact_reference" },
+        "discrepancy_method_ref": { "$ref": "#/$defs/method_reference" },
+        "acceptance_rule_ref": { "$ref": "#/$defs/method_reference" },
+        "physical_world_measurement_required": { "const": true },
+        "simulation_sufficient": { "const": false },
+        "calibration_sufficient": { "const": false },
+        "code_verification_sufficient": { "const": false }
+      }
+    },
+    "claim_contract": {
+      "oneOf": [
+        { "$ref": "#/$defs/descriptive_contract" },
+        { "$ref": "#/$defs/associational_contract" },
+        { "$ref": "#/$defs/predictive_contract" },
+        { "$ref": "#/$defs/causal_contract" },
+        { "$ref": "#/$defs/equivalence_contract" },
+        { "$ref": "#/$defs/noninferiority_contract" },
+        { "$ref": "#/$defs/safety_contract" },
+        { "$ref": "#/$defs/optimization_contract" },
+        { "$ref": "#/$defs/physical_validation_contract" }
+      ]
+    }
+  }
+}

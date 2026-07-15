@@ -34,14 +34,18 @@ Every state-changing request contains:
 
 ```text
 command_id
-command_type + schema_version
-mission_id + expected_ledger_position
-actor + execution_identity
-authority_grant_ref
-correlation_id + causation_id
-input artifact digests
-canonical payload
-client-observed time (informational)
+command_type + command_version + exact payload-schema ID/digest
+idempotency scope
+target stream/type + expected stream position
+target aggregate/type + expected aggregate version
+mission scope when applicable
+actor + execution identity
+plural authority evidence: bootstrap | policy | derivation | assignments | grants | observation
+correlation ID + typed causation references
+exact input artifact references
+closed payload validated separately under the referenced command-payload schema
+canonical request digest
+client-observed time (informational) + optional signature reference
 ```
 
 The application boundary validates object bytes and retains a validation/materialization proof before opening the canonical transaction. Inside the transaction, the kernel validates schema, state, policy, authority, idempotency, and exact registered artifact identities or proof references without making a network or object-store call. It then appends zero or more events in one transaction. The authoritative recorded time comes from the controlled application boundary, not the worker.
@@ -50,14 +54,15 @@ The application boundary validates object bytes and retains a validation/materia
 
 ```text
 command_id
-accepted | rejected | duplicate
-new_ledger_position
-event references
-projection freshness token
-typed error or next legal actions
+accepted | rejected | noop
+exact request + actor + target bindings
+commit/event/stream-head references when accepted
+typed rejection stage/code or named no-op reason
+immutable result digest
+exact-replay contract
 ```
 
-A duplicate returns the original result. A rejection appends an event only when the attempt itself is evidence-relevant, such as policy denial or security incident.
+A duplicate transport attempt returns the original retained receipt; `duplicate` is not a mutable domain result. Same-scope/same-command-ID with different canonical bytes is rejected as `command_id_reuse`. A rejection appends an event only when the attempt itself is evidence-relevant, such as suspected abuse or a consequential exposure; ordinary rejection has a receipt but no domain event.
 
 ## Core ports
 
@@ -156,12 +161,17 @@ Projection reads disclose their ledger position. If the required position is una
 
 ```text
 compile(claim_refs, evidence_projection, disclosure_policy) -> publication candidate
-seal(candidate, publication_grant) -> publication manifest
-release(manifest, channel_adapter) -> release receipt
-withdraw(manifest, publication_grant, reason) -> withdrawal receipt
+decide(candidate_digest, check_results, human_authority) -> publication decision
+seal(candidate, approved_decision, seal_rule) -> publication manifest
+authorize(manifest_digest, human_publication_authority) -> single-use grant
+intend_release(manifest, grant, channel_profile) -> external-effect intent
+dispatch(intent, channel_adapter) -> untrusted effect observation
+reconcile(effect, channel_observation) -> applied | not_applied | completion_unknown
+settle_publication(manifest, confirmed_applied_observation) -> released
+withdraw(manifest, new_publication_grant, reason) -> withdrawal effect + settlement
 ```
 
-Release channels never receive arbitrary repository, database, or artifact-store access.
+The manifest cannot contain its future grant; the grant binds the final manifest digest. Release channels never receive arbitrary repository, database, or artifact-store access. A provider receipt or timeout cannot settle publication without exact channel observation under the accepted rule.
 
 ## Typed error families
 

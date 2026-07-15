@@ -1,0 +1,203 @@
+{
+  "schema_version": "0.6.0",
+  "event_id": "event.resource-reservation-released.002",
+  "event_type": "resource.reservation_released",
+  "event_version": "1.0.0",
+  "payload_schema_id": "urn:odeya:event-payload:resource.reservation_released:1.0.0",
+  "payload_schema_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "stream": {
+    "stream_id": "mission.resource-accounting.001",
+    "stream_type": "mission",
+    "position": 3
+  },
+  "mission_scope": "mission.resource-accounting.001",
+  "aggregate": {
+    "aggregate_type": "resource_budget",
+    "aggregate_id": "resource-budget.mission.001",
+    "aggregate_version": 3
+  },
+  "commit": {
+    "commit_id": "commit.resource-reservation-released.002",
+    "batch_index": 0,
+    "batch_size": 1
+  },
+  "command_binding": {
+    "command_id": "kernel-command.resource-reservation-released.002",
+    "canonical_request_digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "receipt_id": "receipt.resource-reservation-released.002",
+    "admission_evidence_bundle_ref": {
+      "record_id": "admission-evidence.resource-reservation-released.002",
+      "version": 1,
+      "schema_id": "urn:odeya:schema:admission-evidence-bundle:0.1.0",
+      "digest": "sha256:9999999999999999999999999999999999999999999999999999999999999999"
+    }
+  },
+  "recorded_at": "2026-07-15T18:13:01Z",
+  "fact_time": {
+    "basis": "controlled_commit",
+    "observed_at": "2026-07-15T18:13:00Z",
+    "source_ref": null,
+    "uncertainty_ms": 0
+  },
+  "actor": {
+    "principal_id": "service.odeya-kernel",
+    "principal_type": "service",
+    "execution_identity": "execution.odeya-kernel.001"
+  },
+  "authority_evidence": {
+    "mode": "kernel_derivation",
+    "assignment_refs": [],
+    "grant_refs": [],
+    "grant_use_event_refs": [],
+    "grant_use_reservation_event_refs": [],
+    "grant_use_reservation_release_event_refs": [],
+    "policy_decision_refs": [],
+    "constitutional_artifact_ref": null,
+    "derivation_rule_ref": {
+      "name": "resource-reservation-reducer",
+      "version": "1.0.0",
+      "digest": "sha256:4444444444444444444444444444444444444444444444444444444444444444"
+    }
+  },
+  "correlation_id": "correlation.resource-reservation.001",
+  "causation_refs": [],
+  "inputs": [],
+  "outputs": [],
+  "system_identity": {
+    "code": {
+      "name": "odeya-kernel",
+      "version": "1.0.0",
+      "digest": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+    },
+    "environment": {
+      "name": "architecture-fixture",
+      "version": "1.0.0",
+      "digest": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+    },
+    "model": null,
+    "harness": null,
+    "tools": []
+  },
+  "payload": {
+    "reservation_id": "resource-reservation.002",
+    "created_event_ref": {
+      "event_id": "event.resource-reservation-created.002",
+      "event_type": "resource.reservation_created",
+      "event_version": "1.0.0",
+      "digest": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+    },
+    "lifecycle_axis": "resource_reservation",
+    "from": "active",
+    "to": "released",
+    "claim_committed": false,
+    "release_reason": "verification_cancelled_before_start",
+    "released_ceiling_vector": {
+      "vector_profile": "odeya-resource-vector-v1",
+      "dimension_key_rule": "resource_class+resource_kind+pool_id+unit+currency_code_if_money",
+      "dimensions": [
+        {
+          "resource_class": "execution",
+          "resource_kind": "gpu_time",
+          "pool_id": "pool.gpu.frontier",
+          "unit": "millisecond",
+          "value": "120"
+        },
+        {
+          "resource_class": "money",
+          "resource_kind": "monetary",
+          "pool_id": "pool.money.research",
+          "currency_code": "USD",
+          "unit": "minor_currency_unit",
+          "value": "12000"
+        },
+        {
+          "resource_class": "verification",
+          "resource_kind": "safety_verification",
+          "pool_id": "pool.verification.safety",
+          "unit": "capacity_slot",
+          "value": "2"
+        }
+      ],
+      "duplicate_dimension_keys_allowed": false,
+      "cross_resource_conversion_allowed": false,
+      "dimension_compensation_allowed": false
+    },
+    "actual_use_status": "not_observed",
+    "terminal_effect": "full_ceiling_released_preclaim",
+    "release_rule_ref": {
+      "name": "resource-reservation-release",
+      "version": "1.0.0",
+      "digest": "sha256:4444444444444444444444444444444444444444444444444444444444444444"
+    },
+    "released_at": "2026-07-15T18:13:00Z",
+    "evidence_refs": [
+      {
+        "artifact_id": "verification-cancellation.002",
+        "digest": "sha256:4444444444444444444444444444444444444444444444444444444444444444",
+        "media_type": "application/json"
+      }
+    ]
+  },
+  "integrity": {
+    "canonicalization": "odeya-jcs-draft-0.1",
+    "payload_digest_contract": {
+      "algorithm": "sha-256",
+      "domain_separator": "odeya-event-payload-v1",
+      "canonicalization_profile_ref": {
+        "name": "odeya-jcs",
+        "version": "0.1.0",
+        "digest": "sha256:abababababababababababababababababababababababababababababababab"
+      },
+      "payload_schema_binding_source": "event.payload_schema_id+event.payload_schema_digest",
+      "included_json_pointers": [
+        "/payload"
+      ],
+      "excluded_json_pointers": []
+    },
+    "payload_digest": "sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "previous_stream_event_digest": null,
+    "event_digest_contract": {
+      "algorithm": "sha-256",
+      "domain_separator": "odeya-research-event-v1",
+      "canonicalization_profile_ref": {
+        "name": "odeya-jcs",
+        "version": "0.1.0",
+        "digest": "sha256:abababababababababababababababababababababababababababababababab"
+      },
+      "included_json_pointers": [
+        "/schema_version",
+        "/event_id",
+        "/event_type",
+        "/event_version",
+        "/payload_schema_id",
+        "/payload_schema_digest",
+        "/stream",
+        "/mission_scope",
+        "/aggregate",
+        "/commit",
+        "/command_binding",
+        "/recorded_at",
+        "/fact_time",
+        "/actor",
+        "/authority_evidence",
+        "/correlation_id",
+        "/causation_refs",
+        "/inputs",
+        "/outputs",
+        "/system_identity",
+        "/payload",
+        "/integrity/canonicalization",
+        "/integrity/payload_digest_contract",
+        "/integrity/payload_digest",
+        "/integrity/previous_stream_event_digest",
+        "/integrity/event_digest_contract"
+      ],
+      "excluded_json_pointers": [
+        "/integrity/event_digest",
+        "/integrity/signature_ref"
+      ]
+    },
+    "event_digest": "sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "signature_ref": null
+  }
+}

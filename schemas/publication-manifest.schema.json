@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:publication-manifest:0.1.0",
+  "$id": "urn:odeya:schema:publication-manifest:0.2.0",
   "title": "Odeya PublicationManifest",
   "description": "An immutable, sealed disclosure package at an exact ledger position. Release settlement is tracked by events and is not embedded in the manifest.",
   "type": "object",
@@ -11,6 +11,9 @@
     "version",
     "mission_id",
     "source_ledger_position",
+    "candidate_digest",
+    "publication_decision_ref",
+    "seal_rule_ref",
     "visibility",
     "audience",
     "claim_versions",
@@ -18,7 +21,6 @@
     "rendered_artifacts",
     "redactions",
     "decision_refs",
-    "publication_grant_ref",
     "canonical_payload_digest",
     "channel_targets",
     "expires_at",
@@ -26,11 +28,14 @@
     "sealed_by"
   ],
   "properties": {
-    "schema_version": { "const": "0.1.0" },
+    "schema_version": { "const": "0.2.0" },
     "manifest_id": { "$ref": "#/$defs/identifier" },
     "version": { "type": "integer", "minimum": 1 },
     "mission_id": { "$ref": "#/$defs/identifier" },
     "source_ledger_position": { "type": "integer", "minimum": 0 },
+    "candidate_digest": { "$ref": "#/$defs/digest" },
+    "publication_decision_ref": { "$ref": "#/$defs/artifact_reference" },
+    "seal_rule_ref": { "$ref": "#/$defs/method_reference" },
     "visibility": { "enum": ["private", "restricted", "embargoed", "public"] },
     "audience": {
       "type": "array",
@@ -78,7 +83,6 @@
         "wording": { "$ref": "#/$defs/artifact_reference" }
       }
     },
-    "publication_grant_ref": { "$ref": "#/$defs/identifier" },
     "canonical_payload_digest": { "$ref": "#/$defs/digest" },
     "channel_targets": {
       "type": "array",
@@ -103,7 +107,16 @@
       ]
     },
     "sealed_at": { "type": "string", "format": "date-time" },
-    "sealed_by": { "$ref": "#/$defs/principal" }
+    "sealed_by": {
+      "allOf": [
+        { "$ref": "#/$defs/principal" },
+        {
+          "properties": {
+            "principal_type": { "const": "human" }
+          }
+        }
+      ]
+    }
   },
   "allOf": [
     {
@@ -148,6 +161,16 @@
       "properties": {
         "claim_id": { "$ref": "#/$defs/identifier" },
         "version": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "method_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["method_id", "version", "registry_digest"],
+      "properties": {
+        "method_id": { "$ref": "#/$defs/identifier" },
+        "version": { "type": "string", "minLength": 1 },
+        "registry_digest": { "$ref": "#/$defs/digest" }
       }
     },
     "principal": {

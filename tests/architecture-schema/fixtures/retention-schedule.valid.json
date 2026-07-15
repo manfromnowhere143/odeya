@@ -1,0 +1,36 @@
+{
+  "schema_version": "0.1.0",
+  "schedule_id": "retention-schedule.001",
+  "version": 1,
+  "mission_id": "mission.sentinel-fixture",
+  "asset_scope": {
+    "asset_refs": [{"id":"data-asset.001","version":1,"digest":"sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}],
+    "collection_selector_ref": null
+  },
+  "status": "active",
+  "trigger": {
+    "kind": "mission_close",
+    "event_type": "mission.closed",
+    "reference_time_source": {"id":"clock.canonical-commit","version":"0.1.0","digest":"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"}
+  },
+  "minimum_retention_days": 0,
+  "maximum_retention_days": 30,
+  "authoritative_clock_ref": {"id":"clock.canonical-commit","version":"0.1.0","digest":"sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"},
+  "representation_planes": [
+    {"plane":"primary_artifact","terminal_action":"delete","method_profile_ref":{"id":"method.object-delete","version":"0.1.0","digest":"sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"},"backup_treatment":"not_applicable","verification_profile_ref":{"id":"verify.object-absence","version":"0.1.0","digest":"sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"}},
+    {"plane":"canonical_metadata","terminal_action":"retain_minimum_tombstone","method_profile_ref":{"id":"method.tombstone","version":"0.1.0","digest":"sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"},"backup_treatment":"access_blocked_bounded_expiry","verification_profile_ref":{"id":"verify.tombstone-minimum","version":"0.1.0","digest":"sha256:1111111111111111111111111111111111111111111111111111111111111111"}}
+  ],
+  "legal_hold_behavior": {
+    "destruction_effect": "pause_covered_destruction_only",
+    "authority_effect": "no_new_access_processing_or_disclosure",
+    "review_rule_ref": {"id":"rule.hold-review","version":"0.1.0","digest":"sha256:2222222222222222222222222222222222222222222222222222222222222222"},
+    "release_route_ref": {"id":"route.hold-release","version":"0.1.0","digest":"sha256:3333333333333333333333333333333333333333333333333333333333333333"}
+  },
+  "tombstone_profile_ref": {"id":"profile.minimum-tombstone","version":"0.1.0","digest":"sha256:4444444444444444444444444444444444444444444444444444444444444444"},
+  "unknown_capabilities": [],
+  "review_at": "2026-08-01T00:00:00.000000Z",
+  "data_rights_assignment_ref": {"id":"assignment.data-rights.001","version":1,"digest":"sha256:5555555555555555555555555555555555555555555555555555555555555555"},
+  "decision_evidence": {"artifact_id":"retention-decision.001","digest":"sha256:6666666666666666666666666666666666666666666666666666666666666666","media_type":"application/json"},
+  "decided_at": "2026-07-15T18:00:00.000000Z",
+  "decided_by": {"principal_id":"data-rights-authority.001","principal_type":"human"}
+}

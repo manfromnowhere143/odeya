@@ -1,0 +1,130 @@
+{
+  "manifest_version": "0.1.0",
+  "suite_id": "urn:odeya:conformance:canonical-identity:0.1.0",
+  "profile_id": "urn:odeya:canonicalization:odeya-jcs-0.1",
+  "evidence_label": "gate-a-candidate-2026-07-15",
+  "expectations_path": "tests/canonicalization/expectations.json",
+  "expectations_sha256": "17c6c746b95d6c4912923e8f6c585708897bfad3c042b5903efb235c5cf02264",
+  "limits": {
+    "max_bytes": 1048576,
+    "max_depth": 64,
+    "max_object_members": 4096,
+    "max_array_items": 10000,
+    "max_string_code_points": 262144,
+    "max_number_token_bytes": 128,
+    "max_scientific_decimal_bytes": 128,
+    "max_total_nodes": 20000,
+    "max_safe_integer": 9007199254740991
+  },
+  "schema_registry": [
+    {
+      "schema_id": "urn:odeya:schema:conformance-plain-a:0.1.0",
+      "path": "tests/canonicalization/schemas/plain-a.schema.json",
+      "byte_sha256": "bbfe352b3f3513ae88afab325dcf90c95599de2ba96ba8dd672a7b7883c98ddf",
+      "admission_profile": "plain"
+    },
+    {
+      "schema_id": "urn:odeya:schema:conformance-plain-b:0.1.0",
+      "path": "tests/canonicalization/schemas/plain-b.schema.json",
+      "byte_sha256": "889fe253f3422fc24f9e806340e1e55f0848fa5540b6823ceac81709eb5eb6c3",
+      "admission_profile": "plain"
+    },
+    {
+      "schema_id": "urn:odeya:schema:conformance-temporal-measurement:0.1.0",
+      "path": "tests/canonicalization/schemas/temporal-measurement.schema.json",
+      "byte_sha256": "bae3038e542c0e74f8cbf333dde44061de1a0a5a5a8fa06939b559cbd78281c8",
+      "admission_profile": "temporal_measurement"
+    },
+    {
+      "schema_id": "urn:odeya:schema:conformance-collections:0.1.0",
+      "path": "tests/canonicalization/schemas/collections.schema.json",
+      "byte_sha256": "d6b03193695ec291a19405c713a8f9338589a421183b054626d01915e79417a0",
+      "admission_profile": "collections"
+    },
+    {
+      "schema_id": "urn:odeya:schema:conformance-reference-holder:0.1.0",
+      "path": "tests/canonicalization/schemas/reference-holder.schema.json",
+      "byte_sha256": "9f49caad71dd03b8eddb98852dc0033d0f4f9cb69ffd6d03802293b7bbfc5cf5",
+      "admission_profile": "reference_holder"
+    }
+  ],
+  "vectors": [
+    {"id": "UPSTREAM-ARRAYS", "family": "rfc8785-author", "mode": "jcs", "upstream_vector": "arrays", "expect": {"outcome": "accepted"}},
+    {"id": "UPSTREAM-FRENCH", "family": "rfc8785-author", "mode": "jcs", "upstream_vector": "french", "expect": {"outcome": "accepted"}},
+    {"id": "UPSTREAM-STRUCTURES", "family": "rfc8785-author", "mode": "jcs", "upstream_vector": "structures", "expect": {"outcome": "accepted"}},
+    {"id": "UPSTREAM-UNICODE", "family": "rfc8785-author", "mode": "jcs", "upstream_vector": "unicode", "expect": {"outcome": "accepted"}},
+    {"id": "UPSTREAM-VALUES", "family": "rfc8785-author", "mode": "jcs", "upstream_vector": "values", "expect": {"outcome": "accepted"}},
+    {"id": "UPSTREAM-WEIRD", "family": "rfc8785-author", "mode": "jcs", "upstream_vector": "weird", "expect": {"outcome": "accepted"}},
+
+    {"id": "PARSE-DUPLICATE-ROOT", "family": "parser", "mode": "jcs", "input_utf8": "{\"a\":1,\"a\":2}", "expect": {"outcome": "refused", "code": "ODEYA_PARSE_DUPLICATE_KEY"}},
+    {"id": "PARSE-DUPLICATE-NESTED-ESCAPED", "family": "parser", "mode": "jcs", "input_utf8": "{\"x\":{\"a\":1,\"\\u0061\":2}}", "expect": {"outcome": "refused", "code": "ODEYA_PARSE_DUPLICATE_KEY"}},
+    {"id": "PARSE-BOM", "family": "parser", "mode": "jcs", "input_hex": "efbbbf7b7d", "expect": {"outcome": "refused", "code": "ODEYA_PARSE_BOM"}},
+    {"id": "PARSE-INVALID-UTF8", "family": "parser", "mode": "jcs", "input_hex": "7b2278223a22c328227d", "expect": {"outcome": "refused", "code": "ODEYA_PARSE_UTF8"}},
+    {"id": "PARSE-UNPAIRED-HIGH-SURROGATE", "family": "parser", "mode": "jcs", "input_utf8": "{\"x\":\"\\ud800\"}", "expect": {"outcome": "refused", "code": "ODEYA_PARSE_UNPAIRED_SURROGATE"}},
+    {"id": "PARSE-UNPAIRED-LOW-SURROGATE", "family": "parser", "mode": "jcs", "input_utf8": "{\"x\":\"\\udc00\"}", "expect": {"outcome": "refused", "code": "ODEYA_PARSE_UNPAIRED_SURROGATE"}},
+    {"id": "PARSE-TRAILING-DATA", "family": "parser", "mode": "jcs", "input_utf8": "{}{}", "expect": {"outcome": "refused", "code": "ODEYA_PARSE_SYNTAX"}},
+    {"id": "PARSE-COMMENT", "family": "parser", "mode": "jcs", "input_utf8": "{\"a\":1/*extension*/}", "expect": {"outcome": "refused", "code": "ODEYA_PARSE_SYNTAX"}},
+    {"id": "PARSE-NONSTANDARD-ESCAPE", "family": "parser", "mode": "jcs", "input_utf8": "{\"x\":\"\\x41\"}", "expect": {"outcome": "refused", "code": "ODEYA_PARSE_SYNTAX"}},
+    {"id": "PARSE-NAN", "family": "parser", "mode": "jcs", "input_utf8": "{\"x\":NaN}", "expect": {"outcome": "refused", "code": "ODEYA_PARSE_SYNTAX"}},
+    {"id": "PARSE-INFINITY", "family": "parser", "mode": "jcs", "input_utf8": "{\"x\":Infinity}", "expect": {"outcome": "refused", "code": "ODEYA_PARSE_SYNTAX"}},
+
+    {"id": "NUMBER-NEGATIVE-ZERO-INTEGER", "family": "numbers", "mode": "jcs", "input_utf8": "{\"x\":-0}", "expect": {"outcome": "refused", "code": "ODEYA_NUMBER_NEGATIVE_ZERO"}},
+    {"id": "NUMBER-NEGATIVE-ZERO-EXPONENT", "family": "numbers", "mode": "jcs", "input_utf8": "{\"x\":-0e+9}", "expect": {"outcome": "refused", "code": "ODEYA_NUMBER_NEGATIVE_ZERO"}},
+    {"id": "NUMBER-UNSAFE-INTEGER", "family": "numbers", "mode": "jcs", "input_utf8": "{\"x\":9007199254740992}", "expect": {"outcome": "refused", "code": "ODEYA_NUMBER_DOMAIN"}},
+    {"id": "NUMBER-OVERFLOW", "family": "numbers", "mode": "jcs", "input_utf8": "{\"x\":1e400}", "expect": {"outcome": "refused", "code": "ODEYA_NUMBER_NONFINITE"}},
+    {"id": "NUMBER-UNDERFLOW", "family": "numbers", "mode": "jcs", "input_utf8": "{\"x\":1e-400}", "expect": {"outcome": "refused", "code": "ODEYA_NUMBER_UNDERFLOW"}},
+    {"id": "NUMBER-JCS-EDGES", "family": "numbers", "mode": "jcs", "input_utf8": "{\"a\":0.000001,\"b\":0.0000001,\"c\":1e20,\"d\":1e21,\"e\":5e-324,\"f\":1.7976931348623157e308}", "expect": {"outcome": "accepted"}},
+    {"id": "UNICODE-UTF16-KEY-ORDER", "family": "unicode", "mode": "jcs", "input_utf8": "{\"\":\"bmp-private\",\"😀\":\"supplementary\"}", "expect": {"outcome": "accepted"}},
+    {"id": "UNICODE-PRECOMPOSED", "family": "unicode", "mode": "jcs", "input_utf8": "{\"x\":\"é\"}", "expect": {"outcome": "accepted"}},
+    {"id": "UNICODE-DECOMPOSED", "family": "unicode", "mode": "jcs", "input_utf8": "{\"x\":\"é\"}", "expect": {"outcome": "accepted"}},
+
+    {"id": "LIMIT-BYTES", "family": "limits", "mode": "jcs", "input_recipe": {"kind": "ascii_string", "length": 1048576}, "expect": {"outcome": "refused", "code": "ODEYA_LIMIT_BYTES"}},
+    {"id": "LIMIT-DEPTH", "family": "limits", "mode": "jcs", "input_recipe": {"kind": "nested_array", "depth": 65}, "expect": {"outcome": "refused", "code": "ODEYA_LIMIT_DEPTH"}},
+    {"id": "LIMIT-OBJECT-MEMBERS", "family": "limits", "mode": "jcs", "input_recipe": {"kind": "object_members", "count": 4097}, "expect": {"outcome": "refused", "code": "ODEYA_LIMIT_OBJECT_MEMBERS"}},
+    {"id": "LIMIT-ARRAY-ITEMS", "family": "limits", "mode": "jcs", "input_recipe": {"kind": "array_items", "count": 10001}, "expect": {"outcome": "refused", "code": "ODEYA_LIMIT_ARRAY_ITEMS"}},
+    {"id": "LIMIT-STRING", "family": "limits", "mode": "jcs", "input_recipe": {"kind": "ascii_string", "length": 262145}, "expect": {"outcome": "refused", "code": "ODEYA_LIMIT_STRING"}},
+    {"id": "LIMIT-NUMBER-TOKEN", "family": "limits", "mode": "jcs", "input_recipe": {"kind": "number_fraction_zeros", "fraction_digits": 128}, "expect": {"outcome": "refused", "code": "ODEYA_LIMIT_NUMBER_TOKEN"}},
+    {"id": "LIMIT-TOTAL-NODES", "family": "limits", "mode": "jcs", "input_recipe": {"kind": "node_forest", "branches": 3, "items_per_branch": 7000}, "expect": {"outcome": "refused", "code": "ODEYA_LIMIT_TOTAL_NODES"}},
+
+    {"id": "IDENTITY-PLAIN-A", "family": "domain-separation", "mode": "identity", "schema_id": "urn:odeya:schema:conformance-plain-a:0.1.0", "input_utf8": "{\"payload\":\"same\"}", "expect": {"outcome": "accepted"}},
+    {"id": "IDENTITY-PLAIN-B", "family": "domain-separation", "mode": "identity", "schema_id": "urn:odeya:schema:conformance-plain-b:0.1.0", "input_utf8": "{\"payload\":\"same\"}", "expect": {"outcome": "accepted"}},
+    {"id": "IDENTITY-PROFILE-UNKNOWN", "family": "domain-separation", "mode": "identity", "profile_id": "urn:odeya:canonicalization:odeya-jcs-latest", "schema_id": "urn:odeya:schema:conformance-plain-a:0.1.0", "input_utf8": "{\"payload\":\"same\"}", "expect": {"outcome": "refused", "code": "ODEYA_PROFILE_UNKNOWN"}},
+    {"id": "IDENTITY-SCHEMA-UNREGISTERED", "family": "domain-separation", "mode": "identity", "schema_id": "urn:odeya:schema:conformance-plain-a:latest", "input_utf8": "{\"payload\":\"same\"}", "expect": {"outcome": "refused", "code": "ODEYA_SCHEMA_UNREGISTERED"}},
+    {"id": "IDENTITY-SELF-REFERENCE", "family": "domain-separation", "mode": "identity", "schema_id": "urn:odeya:schema:conformance-plain-a:0.1.0", "input_utf8": "{\"payload\":\"same\",\"canonical_digest\":\"sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}", "expect": {"outcome": "refused", "code": "ODEYA_SUBJECT_SELF_REFERENCE"}},
+
+    {"id": "TIME-EXACT-MICROSECONDS", "family": "time-and-quantity", "mode": "identity", "schema_id": "urn:odeya:schema:conformance-temporal-measurement:0.1.0", "input_utf8": "{\"observed_at\":\"2026-07-15T12:34:56.123456Z\",\"measurement\":{\"value\":\"-1.2500e-3\",\"semantic_type\":\"measured_quantity\",\"unit\":{\"system\":\"SI\",\"code\":\"m.s-2\"},\"precision\":{\"kind\":\"significant_digits\",\"value\":5}}}", "expect": {"outcome": "accepted"}},
+    {"id": "TIME-OFFSET-REFUSED", "family": "time-and-quantity", "mode": "identity", "schema_id": "urn:odeya:schema:conformance-temporal-measurement:0.1.0", "input_utf8": "{\"observed_at\":\"2026-07-15T15:34:56.123456+03:00\",\"measurement\":{\"semantic_type\":\"missing\",\"reason\":\"unmeasured\"}}", "expect": {"outcome": "refused", "code": "ODEYA_TIMESTAMP_PROFILE"}},
+    {"id": "TIME-FRACTION-SHORT", "family": "time-and-quantity", "mode": "identity", "schema_id": "urn:odeya:schema:conformance-temporal-measurement:0.1.0", "input_utf8": "{\"observed_at\":\"2026-07-15T12:34:56.123Z\",\"measurement\":{\"semantic_type\":\"missing\",\"reason\":\"unmeasured\"}}", "expect": {"outcome": "refused", "code": "ODEYA_TIMESTAMP_PROFILE"}},
+    {"id": "TIME-INVALID-CALENDAR", "family": "time-and-quantity", "mode": "identity", "schema_id": "urn:odeya:schema:conformance-temporal-measurement:0.1.0", "input_utf8": "{\"observed_at\":\"2026-02-30T12:34:56.123456Z\",\"measurement\":{\"semantic_type\":\"missing\",\"reason\":\"unmeasured\"}}", "expect": {"outcome": "refused", "code": "ODEYA_TIMESTAMP_PROFILE"}},
+    {"id": "TIME-LEAP-SECOND", "family": "time-and-quantity", "mode": "identity", "schema_id": "urn:odeya:schema:conformance-temporal-measurement:0.1.0", "input_utf8": "{\"observed_at\":\"2026-12-31T23:59:60.000000Z\",\"measurement\":{\"semantic_type\":\"missing\",\"reason\":\"unmeasured\"}}", "expect": {"outcome": "refused", "code": "ODEYA_TIMESTAMP_PROFILE"}},
+    {"id": "QUANTITY-DECIMAL-PLACES", "family": "time-and-quantity", "mode": "identity", "schema_id": "urn:odeya:schema:conformance-temporal-measurement:0.1.0", "input_utf8": "{\"observed_at\":\"2026-07-15T12:34:56.000000Z\",\"measurement\":{\"value\":\"-1.2500e-3\",\"semantic_type\":\"measured_quantity\",\"unit\":{\"system\":\"SI\",\"code\":\"m.s-2\"},\"precision\":{\"kind\":\"decimal_places\",\"value\":7}}}", "expect": {"outcome": "accepted"}},
+    {"id": "QUANTITY-LEADING-PLUS", "family": "time-and-quantity", "mode": "identity", "schema_id": "urn:odeya:schema:conformance-temporal-measurement:0.1.0", "input_utf8": "{\"observed_at\":\"2026-07-15T12:34:56.000000Z\",\"measurement\":{\"value\":\"+1.0\",\"semantic_type\":\"measured_quantity\",\"unit\":{\"system\":\"SI\",\"code\":\"m\"},\"precision\":{\"kind\":\"significant_digits\",\"value\":2}}}", "expect": {"outcome": "refused", "code": "ODEYA_DECIMAL_LEXICAL"}},
+    {"id": "QUANTITY-LEADING-ZERO", "family": "time-and-quantity", "mode": "identity", "schema_id": "urn:odeya:schema:conformance-temporal-measurement:0.1.0", "input_utf8": "{\"observed_at\":\"2026-07-15T12:34:56.000000Z\",\"measurement\":{\"value\":\"01.0\",\"semantic_type\":\"measured_quantity\",\"unit\":{\"system\":\"SI\",\"code\":\"m\"},\"precision\":{\"kind\":\"significant_digits\",\"value\":2}}}", "expect": {"outcome": "refused", "code": "ODEYA_DECIMAL_LEXICAL"}},
+    {"id": "QUANTITY-UPPERCASE-EXPONENT", "family": "time-and-quantity", "mode": "identity", "schema_id": "urn:odeya:schema:conformance-temporal-measurement:0.1.0", "input_utf8": "{\"observed_at\":\"2026-07-15T12:34:56.000000Z\",\"measurement\":{\"value\":\"1.0E3\",\"semantic_type\":\"measured_quantity\",\"unit\":{\"system\":\"SI\",\"code\":\"m\"},\"precision\":{\"kind\":\"significant_digits\",\"value\":2}}}", "expect": {"outcome": "refused", "code": "ODEYA_DECIMAL_LEXICAL"}},
+    {"id": "QUANTITY-POSITIVE-EXPONENT-SIGN", "family": "time-and-quantity", "mode": "identity", "schema_id": "urn:odeya:schema:conformance-temporal-measurement:0.1.0", "input_utf8": "{\"observed_at\":\"2026-07-15T12:34:56.000000Z\",\"measurement\":{\"value\":\"1.0e+3\",\"semantic_type\":\"measured_quantity\",\"unit\":{\"system\":\"SI\",\"code\":\"m\"},\"precision\":{\"kind\":\"significant_digits\",\"value\":2}}}", "expect": {"outcome": "refused", "code": "ODEYA_DECIMAL_LEXICAL"}},
+    {"id": "QUANTITY-DECIMAL-LENGTH-LIMIT", "family": "time-and-quantity", "mode": "identity", "schema_id": "urn:odeya:schema:conformance-temporal-measurement:0.1.0", "input_recipe": {"kind": "temporal_measurement_decimal", "decimal_length": 129}, "expect": {"outcome": "refused", "code": "ODEYA_DECIMAL_LEXICAL"}},
+    {"id": "QUANTITY-NEGATIVE-ZERO", "family": "time-and-quantity", "mode": "identity", "schema_id": "urn:odeya:schema:conformance-temporal-measurement:0.1.0", "input_utf8": "{\"observed_at\":\"2026-07-15T12:34:56.000000Z\",\"measurement\":{\"value\":\"-0.000\",\"semantic_type\":\"measured_quantity\",\"unit\":{\"system\":\"SI\",\"code\":\"m\"},\"precision\":{\"kind\":\"decimal_places\",\"value\":3}}}", "expect": {"outcome": "refused", "code": "ODEYA_DECIMAL_NEGATIVE_ZERO"}},
+    {"id": "QUANTITY-PRECISION-MISMATCH", "family": "time-and-quantity", "mode": "identity", "schema_id": "urn:odeya:schema:conformance-temporal-measurement:0.1.0", "input_utf8": "{\"observed_at\":\"2026-07-15T12:34:56.000000Z\",\"measurement\":{\"value\":\"1.2500\",\"semantic_type\":\"measured_quantity\",\"unit\":{\"system\":\"SI\",\"code\":\"m\"},\"precision\":{\"kind\":\"significant_digits\",\"value\":4}}}", "expect": {"outcome": "refused", "code": "ODEYA_PRECISION_MISMATCH"}},
+    {"id": "QUANTITY-BINARY-NUMBER-REFUSED", "family": "time-and-quantity", "mode": "identity", "schema_id": "urn:odeya:schema:conformance-temporal-measurement:0.1.0", "input_utf8": "{\"observed_at\":\"2026-07-15T12:34:56.000000Z\",\"measurement\":{\"value\":1.25,\"semantic_type\":\"measured_quantity\",\"unit\":{\"system\":\"SI\",\"code\":\"m\"},\"precision\":{\"kind\":\"significant_digits\",\"value\":3}}}", "expect": {"outcome": "refused", "code": "ODEYA_QUANTITY_SHAPE"}},
+    {"id": "MISSINGNESS-UNMEASURED", "family": "time-and-quantity", "mode": "identity", "schema_id": "urn:odeya:schema:conformance-temporal-measurement:0.1.0", "input_utf8": "{\"observed_at\":\"2026-07-15T12:34:56.000000Z\",\"measurement\":{\"semantic_type\":\"missing\",\"reason\":\"unmeasured\"}}", "expect": {"outcome": "accepted"}},
+    {"id": "MISSINGNESS-WITH-PLACEHOLDER", "family": "time-and-quantity", "mode": "identity", "schema_id": "urn:odeya:schema:conformance-temporal-measurement:0.1.0", "input_utf8": "{\"observed_at\":\"2026-07-15T12:34:56.000000Z\",\"measurement\":{\"semantic_type\":\"missing\",\"reason\":\"unmeasured\",\"value\":\"0\"}}", "expect": {"outcome": "refused", "code": "ODEYA_MISSINGNESS_SHAPE"}},
+
+    {"id": "COLLECTION-BASE", "family": "collections", "mode": "identity", "schema_id": "urn:odeya:schema:conformance-collections:0.1.0", "input_utf8": "{\"sequence\":[\"z\",\"a\"],\"tags\":[\"beta\",\"alpha\"]}", "expect": {"outcome": "accepted"}},
+    {"id": "COLLECTION-SET-PERMUTED", "family": "collections", "mode": "identity", "schema_id": "urn:odeya:schema:conformance-collections:0.1.0", "input_utf8": "{\"sequence\":[\"z\",\"a\"],\"tags\":[\"alpha\",\"beta\"]}", "expect": {"outcome": "accepted"}},
+    {"id": "COLLECTION-SEQUENCE-PERMUTED", "family": "collections", "mode": "identity", "schema_id": "urn:odeya:schema:conformance-collections:0.1.0", "input_utf8": "{\"sequence\":[\"a\",\"z\"],\"tags\":[\"beta\",\"alpha\"]}", "expect": {"outcome": "accepted"}},
+    {"id": "COLLECTION-SET-DUPLICATE", "family": "collections", "mode": "identity", "schema_id": "urn:odeya:schema:conformance-collections:0.1.0", "input_utf8": "{\"sequence\":[],\"tags\":[\"alpha\",\"alpha\"]}", "expect": {"outcome": "refused", "code": "ODEYA_SET_DUPLICATE"}},
+
+    {"id": "REFERENCE-EXACT", "family": "references", "mode": "identity", "schema_id": "urn:odeya:schema:conformance-reference-holder:0.1.0", "input_utf8": "{\"reference\":{\"type\":\"artifact\",\"id\":\"artifact-0001\",\"version\":\"1.2.0\",\"digest\":\"sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"media_type\":\"application/json\",\"schema_id\":\"urn:odeya:schema:artifact-manifest:0.1.0\"}}", "expect": {"outcome": "accepted"}},
+    {"id": "REFERENCE-MUTABLE", "family": "references", "mode": "identity", "schema_id": "urn:odeya:schema:conformance-reference-holder:0.1.0", "input_utf8": "{\"reference\":{\"type\":\"artifact\",\"id\":\"https://example.test/main\",\"version\":\"latest\",\"digest\":\"sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"media_type\":\"application/json\",\"schema_id\":\"urn:odeya:schema:artifact-manifest:0.1.0\"}}", "expect": {"outcome": "refused", "code": "ODEYA_REFERENCE_MUTABLE"}},
+    {"id": "REFERENCE-NONHTTP-MUTABLE", "family": "references", "mode": "identity", "schema_id": "urn:odeya:schema:conformance-reference-holder:0.1.0", "input_utf8": "{\"reference\":{\"type\":\"artifact\",\"id\":\"s3://bucket/current\",\"version\":\"1.2.0\",\"digest\":\"sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"media_type\":\"application/json\",\"schema_id\":\"urn:odeya:schema:artifact-manifest:0.1.0\"}}", "expect": {"outcome": "refused", "code": "ODEYA_REFERENCE_MUTABLE"}},
+    {"id": "REFERENCE-BAD-DIGEST", "family": "references", "mode": "identity", "schema_id": "urn:odeya:schema:conformance-reference-holder:0.1.0", "input_utf8": "{\"reference\":{\"type\":\"artifact\",\"id\":\"artifact-0001\",\"version\":\"1.2.0\",\"digest\":\"sha256:not-a-digest\",\"media_type\":\"application/json\",\"schema_id\":\"urn:odeya:schema:artifact-manifest:0.1.0\"}}", "expect": {"outcome": "refused", "code": "ODEYA_REFERENCE_DIGEST"}},
+    {"id": "REFERENCE-MUTABLE-SCHEMA", "family": "references", "mode": "identity", "schema_id": "urn:odeya:schema:conformance-reference-holder:0.1.0", "input_utf8": "{\"reference\":{\"type\":\"artifact\",\"id\":\"artifact-0001\",\"version\":\"1.2.0\",\"digest\":\"sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"media_type\":\"application/json\",\"schema_id\":\"urn:odeya:schema:artifact-manifest:latest\"}}", "expect": {"outcome": "refused", "code": "ODEYA_REFERENCE_SHAPE"}},
+    {"id": "REFERENCE-LOCATOR-ONLY", "family": "references", "mode": "identity", "schema_id": "urn:odeya:schema:conformance-reference-holder:0.1.0", "input_utf8": "{\"reference\":{\"type\":\"artifact\",\"id\":\"artifact-0001\",\"version\":\"1.2.0\",\"media_type\":\"application/json\",\"schema_id\":\"urn:odeya:schema:artifact-manifest:0.1.0\",\"locator\":\"s3://bucket/current\"}}", "expect": {"outcome": "refused", "code": "ODEYA_REFERENCE_SHAPE"}}
+  ],
+  "metamorphic_relations": [
+    {"id": "META-UNICODE-NO-NORMALIZATION", "relation": "different_canonical_bytes", "members": ["UNICODE-PRECOMPOSED", "UNICODE-DECOMPOSED"]},
+    {"id": "META-SCHEMA-DOMAIN-SEPARATION", "relation": "different_digest", "members": ["IDENTITY-PLAIN-A", "IDENTITY-PLAIN-B"]},
+    {"id": "META-SET-NORMALIZATION", "relation": "same_digest", "members": ["COLLECTION-BASE", "COLLECTION-SET-PERMUTED"]},
+    {"id": "META-SEQUENCE-PRESERVATION", "relation": "different_digest", "members": ["COLLECTION-BASE", "COLLECTION-SEQUENCE-PERMUTED"]}
+  ]
+}
