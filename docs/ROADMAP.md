@@ -142,6 +142,21 @@ The provisional address is `odeya.danielwahnich.dev`. `odeya.ai` was quoted by V
 
 No outreach, purchase, public repository, or legal filing is authorized merely by this roadmap.
 
+## Repository release gate — deferred
+
+Creating or pushing the canonical Odeya remote is a separately authorized release operation, not a side effect of architecture work. The engine repository remains private by default. Release is eligible only after the operator approves the exact destination and visibility, the accepted architecture checkpoint is immutable, the implementation boundary is truthful, and the release candidate passes from a fresh clone.
+
+The first remote-ready repository must include:
+
+- a short README whose opening sentence says exactly what Odeya is, followed by its current state, explicit non-claims, and the bounded proof relationship to Sentinel, Telos, and Inbar;
+- one memorable Mermaid architecture map derived from the accepted contracts and module manifest, with scientific state, authority, evidence, verification, and external-effect boundaries visible rather than decorative;
+- required fast pull-request checks plus separately visible exhaustive schema, semantic, adversarial, canonicalization, architecture-evidence, and formal-model checks;
+- GitHub Actions pinned to immutable revisions, least-privilege token permissions, explicit concurrency and timeout limits, protected required checks, retained failure evidence, and no secret-bearing untrusted execution;
+- security and supply-chain checks appropriate to the implemented stack, enabled when their subject actually exists rather than claimed in advance;
+- a fresh-clone rehearsal proving that the README commands, Mermaid rendering, validation environment, and required checks reproduce without local hidden state.
+
+No remote creation, visibility change, branch-protection mutation, or push is authorized until these conditions and the separate publication/operations gates are reviewed. A successful repository release does not authorize product deployment, research publication, domain purchase, outreach, or runtime execution.
+
 ## What is deliberately deferred
 
 - production recursive self-modification;
