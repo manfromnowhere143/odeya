@@ -45,10 +45,11 @@ semantics, not a runtime clock, registry lookup, or reducer proof.
 
 An adversarial trace that asserts only `reject` proves nothing about the guard
 it names: a trace refused for an incidental reason satisfies that assertion
-while its guard is broken. Nine of the retained traces refuse with more than one
-error, so this was not hypothetical. Weakening `authority.grant_activated` to
-accept a second activation, or weakening `authority.grant_used` to accept a
-terminal state, both left this suite green.
+while its guard is broken. Seven of the twenty-five traces retained before
+ADR 0024 refuse with more than one error, so this was not hypothetical.
+Weakening `authority.grant_activated` to accept a second activation, or
+weakening `authority.grant_used` to accept a terminal state, both left this
+suite green.
 
 Every adversarial case therefore declares `expected_refusal_contains`: the
 substring of the refusal that is that guard's own error. Incidental errors are

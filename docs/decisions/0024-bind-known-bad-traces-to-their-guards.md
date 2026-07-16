@@ -15,12 +15,12 @@ fires. The lifecycle closure suite retained twenty-five adversarial traces, each
 naming a guard through `adversarial_tag`. The checker asserted only that some
 error was produced. It never asserted which guard produced it.
 
-That gap is not theoretical. Nine of the retained traces refuse with more than
-one error, and the surplus errors are incidental to the named guard. In the
-AuthorityGrant model, any `authority.grant_used` step sets a pending exhaustion
-that produces `grant trace ends with an unexhausted final use` at trace end.
-That error fires whether or not the use-while-terminal guard exists, so it
-masks the guard the trace was written to prove.
+That gap is not theoretical. Seven of the twenty-five retained traces refuse
+with more than one error, and the surplus errors are incidental to the named
+guard. In the AuthorityGrant model, any `authority.grant_used` step sets a
+pending exhaustion that produces `grant trace ends with an unexhausted final
+use` at trace end. That error fires whether or not the use-while-terminal guard
+exists, so it masks the guard the trace was written to prove.
 
 Two mutations of the exact committed checker bytes were confirmed blind:
 
@@ -87,7 +87,25 @@ This decision does not:
 
 A weakened lifecycle guard can no longer hide behind an incidental refusal in
 this suite, and PRQ-005 now has a retained trace for each of the four classes it
-names. The `expected_refusal_contains` bindings are themselves a reviewable
+names. That statement is bounded to guards a trace actually exercises and must
+not be read as suite-wide coverage. Independent review confirmed both blindness
+claims and both halves of the change as load-bearing — the added traces alone
+still miss use-after-terminal, and `expected_refusal_contains` alone cannot
+supply an absent class — and separately established that the pre-existing
+`grant_use_before_active` trace was itself blind to its own guard: widening the
+use guard to accept `issued` left the suite green before this change.
+
+The same review found seven AuthorityGrant guards that remain weakenable with
+the suite green because no trace exercises them at all: `exceeds max_uses`, the
+immediate-exhaustion rule, the trailing unexhausted-use rule, `declared_from`
+consistency, the `not_issued` start requirement, the single-use requirement, and
+the unknown-event refusal. None is a PRQ-005 class, so this decision's scope
+holds, but two are notable. The README asserts that a single final use is
+immediately exhausted, and that property has no known-bad proof — the same law
+11 defect this decision exists to fix, still present in the same model. And the
+trailing-exhaustion rule that masked the use-after-terminal guard is itself
+unproven. Those seven do not hide behind incidental refusals; they have no
+evidence at all, which is the weaker position. The `expected_refusal_contains` bindings are themselves a reviewable
 surface: a substring that is too generic would silently re-admit the masking it
 was added to prevent, so each one must be read against its model's error set
 rather than trusted because the suite is green. Each of the twenty-eight

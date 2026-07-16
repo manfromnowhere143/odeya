@@ -268,9 +268,9 @@ or false. The three new schemas add zero canonical-audit blockers.
 
 ADR 0024 corrects a defect in the retained evidence itself rather than in a
 contract. The lifecycle closure suite asserted only that a known-bad trace was
-refused, never which guard refused it, and nine of its traces refuse with more
-than one error. Two guard weakenings were therefore confirmed blind against the
-exact committed bytes: widening `authority.grant_activated` to accept `active`
+refused, never which guard refused it, and seven of its twenty-five traces
+refuse with more than one error. Two guard weakenings were therefore confirmed
+blind against the exact committed bytes: widening `authority.grant_activated` to accept `active`
 made a second activation legal, and widening `authority.grant_used` to accept a
 terminal state made use after revocation or expiry legal. Both left the suite
 green at the same `cases` digest. PRQ-005 also enumerates four required
@@ -284,7 +284,19 @@ event identity, schema byte, or first-slice boundary changed, and PRQ-005 is
 not closed: closure additionally requires an independently reproduced verdict
 that the producing agent cannot supply for its own change.
 
-Two follow-ons are open from that finding. Six suites still assert refusal
+An independent adversarial review reproduced both blindness claims on isolated
+`git archive` trees, confirmed both halves of the change as load-bearing, and
+corrected this handoff's own count from nine to seven by measuring the
+pre-change tree rather than the post-change one. It also established that the
+pre-existing `grant_use_before_active` trace was itself blind to its own guard,
+and that seven AuthorityGrant guards remain weakenable with the suite green
+because no trace exercises them at all — including the immediate-exhaustion rule
+the README asserts, and the trailing-exhaustion rule that masked the
+use-after-terminal guard. Those seven are the next lifecycle unit and are
+smaller and more falsifiable than any new candidate resource. That review is one
+non-authoritative pass, not a retained accountable Gate A review determination.
+
+Three follow-ons are open from that finding. Six suites still assert refusal
 without attribution across 229 known-bad cases — `cognitive-contracts` (107),
 `projection-contracts` (37), `constitutional-construction` (29),
 `first-slice-resolution` (21), `mathematical-contracts` (19), and
