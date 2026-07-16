@@ -1,0 +1,207 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:odeya:schema:work-intent:0.3.0",
+  "title": "Odeya WorkIntent Exact-Reference Candidate",
+  "description": "Side-by-side WorkIntent successor that embeds the exact reference-resolved semantic core, binds the frozen-but-unissued canonicalization profile candidate, and leaves every canonical identity, admission, assignment, and authority field blocked.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "artifact_class",
+    "candidate_status",
+    "canonicalization_profile_ref",
+    "identity_subject",
+    "canonical_digest",
+    "canonical_identity_status",
+    "registry_member_ref",
+    "admission_ref",
+    "operator_acceptance_ref",
+    "authority_boundary"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.3.0"
+    },
+    "artifact_class": {
+      "const": "work_intent_exact_reference_successor_candidate"
+    },
+    "candidate_status": {
+      "const": "exact_raw_targets_bound_profile_unissued_canonical_identity_absent"
+    },
+    "canonicalization_profile_ref": {
+      "$ref": "#/$defs/profile_ref"
+    },
+    "identity_subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "core_binding",
+        "semantic_core"
+      ],
+      "properties": {
+        "core_binding": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "core_path",
+            "core_schema_path",
+            "core_schema_id",
+            "core_schema_raw_digest",
+            "core_schema_bytes",
+            "core_raw_digest",
+            "core_bytes"
+          ],
+          "properties": {
+            "core_path": {
+              "const": "architecture/work-intent-reference-resolved-core-candidate.json"
+            },
+            "core_schema_path": {
+              "const": "schemas/work-intent-reference-resolved-core.schema.json"
+            },
+            "core_schema_id": {
+              "const": "urn:odeya:schema:work-intent-core:0.2.0"
+            },
+            "core_schema_raw_digest": {
+              "type": "string",
+              "pattern": "^sha256:[a-f0-9]{64}$",
+              "const": "sha256:e48604af8f5d5977dcba23a83cc3c63ee409dd98b9a4f8ff5c226475007d5146",
+              "x-odeya-digest-scope": {
+                "kind": "raw_schema_resource_digest",
+                "subject": "core_schema_path sibling raw bytes",
+                "profile": "not_a_canonical_object_digest",
+                "schema": "core_schema_id sibling",
+                "algorithm": "sha-256",
+                "status": "exact_schema_binding"
+              }
+            },
+            "core_schema_bytes": {
+              "const": 19523
+            },
+            "core_raw_digest": {
+              "type": "string",
+              "pattern": "^sha256:[a-f0-9]{64}$",
+              "const": "sha256:177ca63a54e810d2d025f54f0d544123d8dd2a3bd962209db712b2260fe3cef5",
+              "x-odeya-digest-scope": {
+                "kind": "raw_file_digest",
+                "subject": "core_path sibling raw bytes",
+                "profile": "not_a_canonical_object_digest",
+                "schema": "core_schema_id sibling",
+                "algorithm": "sha-256",
+                "status": "exact_semantic_core_binding"
+              }
+            },
+            "core_bytes": {
+              "const": 5645
+            }
+          }
+        },
+        "semantic_core": {
+          "$ref": "urn:odeya:schema:work-intent-core:0.2.0"
+        }
+      }
+    },
+    "canonical_digest": {
+      "type": "null",
+      "x-odeya-digest-scope": {
+        "kind": "canonical_object_digest",
+        "subject": "identity_subject.semantic_core",
+        "profile": "canonicalization_profile_ref sibling is unissued",
+        "schema": "urn:odeya:schema:work-intent-core:0.2.0",
+        "algorithm": "sha-256",
+        "status": "not_constructible_until_profile_issuance_and_admission"
+      }
+    },
+    "canonical_identity_status": {
+      "const": "not_constructible_profile_unissued_target_canonical_identities_absent"
+    },
+    "registry_member_ref": {
+      "type": "null"
+    },
+    "admission_ref": {
+      "type": "null"
+    },
+    "operator_acceptance_ref": {
+      "type": "null"
+    },
+    "authority_boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "work_intent_admitted",
+        "work_intent_assignable",
+        "assignment_authorized",
+        "lease_authorized",
+        "materialization_authorized",
+        "dispatch_authorized",
+        "runtime_authorized",
+        "deployment_authorized",
+        "external_effects_authorized"
+      ],
+      "properties": {
+        "work_intent_admitted": {
+          "const": false
+        },
+        "work_intent_assignable": {
+          "const": false
+        },
+        "assignment_authorized": {
+          "const": false
+        },
+        "lease_authorized": {
+          "const": false
+        },
+        "materialization_authorized": {
+          "const": false
+        },
+        "dispatch_authorized": {
+          "const": false
+        },
+        "runtime_authorized": {
+          "const": false
+        },
+        "deployment_authorized": {
+          "const": false
+        },
+        "external_effects_authorized": {
+          "const": false
+        }
+      }
+    }
+  },
+  "$defs": {
+    "profile_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profile_id",
+        "profile_version",
+        "profile_core_schema_id",
+        "profile_core_raw_digest"
+      ],
+      "properties": {
+        "profile_id": {
+          "const": "urn:odeya:canonicalization:odeya-jcs-0.1"
+        },
+        "profile_version": {
+          "const": "0.1.0"
+        },
+        "profile_core_schema_id": {
+          "const": "urn:odeya:schema:canonicalization-profile-core:0.1.0"
+        },
+        "profile_core_raw_digest": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$",
+          "const": "sha256:7fcdb930cb8e89000b2f2bd13da820fc3de1f0bb28d59e6082f4cf8e6cbf54af",
+          "x-odeya-digest-scope": {
+            "kind": "raw_file_digest",
+            "subject": "architecture/canonicalization-profile-core-candidate.json raw bytes",
+            "profile": "not_a_canonical_object_digest",
+            "schema": "urn:odeya:schema:canonicalization-profile-core:0.1.0",
+            "algorithm": "sha-256",
+            "status": "candidate_profile_unissued"
+          }
+        }
+      }
+    }
+  }
+}

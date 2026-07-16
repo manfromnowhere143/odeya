@@ -212,8 +212,9 @@ and materialization and commits the claim/start cohort before bytes become
 visible.
 
 PRQ-009 remains `unresolved_blocking`, and C5 must not be reported resolved.
-The retained WorkIntent candidate has unresolved identity inputs, a null
-canonicalization profile, a null canonical digest, and no assignable authority.
+The retained WorkIntent 0.1/0.2 candidates preserve unresolved legacy identity
+inputs. WorkIntent 0.3 binds exact raw targets but still has null target and
+WorkIntent canonical digests, no admitted profile, and no assignable authority.
 The identity construction in
 [ADR 0021](decisions/0021-separate-work-intent-core-from-identity-binding.md)
 separates an exact semantic core from its external binding. The side-by-side
@@ -222,11 +223,16 @@ successor cohort in
 now retains WorkIntent 0.1, canonical WorkLease 0.1, and WorkContract 0.2 while
 adding exact WorkIntent 0.2, WorkLease 0.2, and WorkContract 0.3 resources. The
 cohort rejects 37 known-bad mutations and uses no same-path mutation, mutable
-alias, or implicit latest. Its source-view and planning-epoch values remain
-synthetic, its legacy output-schema digest mismatches the exact target schema
-bytes, and every canonical digest/admission/authority field remains absent or
-false. Raw-byte and successor-resource binding is not canonical identity,
-admission, or assignment authority.
+alias, or implicit latest. The exact-reference successor in
+[ADR 0023](decisions/0023-separate-raw-reference-lineage-from-canonical-identity.md)
+adds WorkIntentCore 0.2 and WorkIntent 0.3. It replaces the three placeholder
+reference values with exact raw ResearchStateView/PlanningEpoch candidate
+bindings and the exact CandidateArtifact schema digest, and its dedicated suite
+rejects 40 known-bad mutations. Raw candidate lineage is explicitly not
+canonical identity: both target canonical digests, the WorkIntent digest,
+profile issuance, admission, and every authority field remain absent or false.
+Raw-byte and successor-resource binding is not canonical identity, admission,
+or assignment authority.
 The current `ResearchEvent` 0.7.0 assignment payload intentionally does not
 invent a WorkIntent reference. Closure requires a newly identified resolved
 WorkIntent, a WorkContract bound to that exact intent and assignment commit,

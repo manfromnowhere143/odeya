@@ -6309,6 +6309,51 @@
       "mutations": [
         {"op": "replace", "path": "/authority_boundary/runtime_authorized", "value": true}
       ]
+    },
+    {
+      "name": "work-intent-reference-resolved-core-valid-exact-raw-targets",
+      "schema": "schemas/work-intent-reference-resolved-core.schema.json",
+      "fixture": "architecture/work-intent-reference-resolved-core-candidate.json",
+      "expect": "valid"
+    },
+    {
+      "name": "work-intent-reference-resolved-core-rejects-invented-target-canonical-digest",
+      "schema": "schemas/work-intent-reference-resolved-core.schema.json",
+      "fixture": "architecture/work-intent-reference-resolved-core-candidate.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/source_view_ref/canonical_digest", "value": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}
+      ]
+    },
+    {
+      "name": "work-intent-exact-reference-successor-valid-blocked-candidate",
+      "schema": "schemas/work-intent-exact-reference-candidate.schema.json",
+      "fixture": "architecture/work-intent-exact-reference-candidate.json",
+      "expect": "valid"
+    },
+    {
+      "name": "work-intent-exact-reference-successor-cannot-authorize-runtime",
+      "schema": "schemas/work-intent-exact-reference-candidate.schema.json",
+      "fixture": "architecture/work-intent-exact-reference-candidate.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/authority_boundary/runtime_authorized", "value": true}
+      ]
+    },
+    {
+      "name": "work-intent-reference-resolution-evidence-valid-blocked-candidate",
+      "schema": "schemas/work-intent-reference-resolution-evidence.schema.json",
+      "fixture": "architecture/work-intent-reference-resolution-evidence.json",
+      "expect": "valid"
+    },
+    {
+      "name": "work-intent-reference-resolution-evidence-cannot-issue-profile",
+      "schema": "schemas/work-intent-reference-resolution-evidence.schema.json",
+      "fixture": "architecture/work-intent-reference-resolution-evidence.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/proof_obligations/profile_issued", "value": true}
+      ]
     }
   ]
 }

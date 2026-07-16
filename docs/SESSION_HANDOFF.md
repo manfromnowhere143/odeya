@@ -88,11 +88,17 @@ neither is Odeya authority, storage, namespace, runtime, or control plane.
 - Isolated architecture candidate worktree:
   `/Users/danielwahnich/workspace/odeya-t0-work-lease`
 - Isolated architecture branch: `agent/t0-work-lease-20260716`
-- Validated immediate WorkIntent-identity predecessor:
-  `6ec40b4635815c64ba9d8c5ec084d7f480e16db1`
+- Validated immediate exact-reference predecessor:
+  `45c1fd769a123a9bf03e8de93c2ecf127b254199`
 - Validated immediate predecessor tree:
-  `e7044da26ad273de8491a34705e87c8899173f29`
+  `39111bfa595c8b12e28b0d8de309e0b5e2f6fc99`
 - Retained immediate-predecessor rehearsal evidence:
+  `/Users/danielwahnich/workspace/odeya-release-evidence/45c1fd769a123a9bf03e8de93c2ecf127b254199/rehearsal-evidence-manifest.json`
+- Validated WorkIntent-identity predecessor:
+  `6ec40b4635815c64ba9d8c5ec084d7f480e16db1`
+- Validated WorkIntent-identity predecessor tree:
+  `e7044da26ad273de8491a34705e87c8899173f29`
+- Retained WorkIntent-identity rehearsal evidence:
   `/Users/danielwahnich/workspace/odeya-release-evidence/6ec40b4635815c64ba9d8c5ec084d7f480e16db1/rehearsal-evidence-manifest.json`
 - Validated canonical-profile predecessor:
   `c9ce09d49fa38e11eed4ff40ee484e6e0ed9593f`
@@ -134,7 +140,7 @@ test "$(git symbolic-ref --short HEAD)" = agent/t0-work-lease-20260716
 test "$(git rev-parse main)" = f8c71c8e3174f07619e0bbd31cb3d6df5d848361
 test -z "$(git remote)"
 git merge-base --is-ancestor \
-  6ec40b4635815c64ba9d8c5ec084d7f480e16db1 HEAD
+  45c1fd769a123a9bf03e8de93c2ecf127b254199 HEAD
 git diff --cached --name-only
 git diff --check
 test "$(git -C /Users/danielwahnich/workspace/odeya symbolic-ref --short HEAD)" = \
@@ -211,9 +217,9 @@ predecessor commit. A descendant never inherits it. Diagnostic evidence under
 ## Current isolated T0 architecture descendant
 
 The isolated architecture lane descends from the exact validated immediate
-predecessor named above. Its current candidate tree contains 109 schemas, 654
-shared schema cases, eleven isolated contract suites, 64 canonical vectors,
-four metamorphic relations, 22 architecture decisions, and the
+predecessor named above. Its current candidate tree contains 112 schemas, 660
+shared schema cases, twelve isolated contract suites, 64 canonical vectors,
+four metamorphic relations, 23 architecture decisions, and the
 unchanged 43/60/25/11 first-slice boundary.
 
 ADR 0020 adds a nonrecursive `odeya-jcs-0.1` profile core and an external
@@ -222,7 +228,7 @@ RFC 8785 serialization, canonical envelope, digest framing, future reference
 shape, 21 current domain constants, and eight version axes for review. The
 evidence binds exact raw bytes and retains one safe reference plus 26 known-bad
 mutations. It issues no canonical digest, admits no profile member, and does
-not close PRQ-001: the 109-schema/200-fixture migration audit remains blocked
+not close PRQ-001: the 112-schema/200-fixture migration audit remains blocked
 at 122 unprofiled time paths, 61 number/decimal findings, 668 unscoped digest
 fields, 56 divergent common-definition names, 11 unpinned profile bindings,
 and 236 nonconformant fixture timestamps.
@@ -246,12 +252,21 @@ remain synthetic, the legacy output-schema digest mismatches the exact target
 schema bytes, and all canonical identity/admission/authority fields remain
 blocked.
 
-The next exact identity unit replaces those synthetic values and the output
-schema mismatch through new immutable successor resources, then issues and
-admits the canonical profile before computing any canonical digest. After that,
-construct registry memberships and only then the exact thirteen-event
-assignment cohort. Preserve all null/false authority boundaries until each
-separate prerequisite is evidenced.
+ADR 0023 adds exact raw ResearchStateView and PlanningEpoch candidates,
+WorkIntentCore 0.2, and side-by-side WorkIntent 0.3. It removes the three
+placeholder reference values, binds the exact CandidateArtifact schema bytes,
+and rejects 40 known-bad mutations. Raw candidate lineage is explicitly not
+canonical object identity: both target canonical digests, the WorkIntent
+digest, profile admission, registry membership, and all authority remain null
+or false. The three new schemas add zero canonical-audit blockers.
+
+The next exact identity unit must disposition the retained canonical migration
+findings into immutable legacy resources versus explicitly reissued candidate
+resources, without same-ID mutation. Only after accountable review and Daniel's
+profile decision may profile-bound ResearchStateView/PlanningEpoch successors
+receive canonical digests, followed by an admitted WorkIntent member and then
+the exact thirteen-event assignment cohort. Preserve all null/false authority
+boundaries until each separate prerequisite is evidenced.
 
 Resolve the current isolated branch `HEAD` and tree from Git. A later handoff
 message may name the resulting commit and retained fresh-clone evidence; this
@@ -356,12 +371,14 @@ A mission.
    nonrecursive canonical-profile candidate parameters, 21 current digest
    domains, future profile-reference shape, and eight version axes for review,
    while ADR 0021 freezes the first nonrecursive WorkIntent semantic-core and
-   external binding candidate. ADR 0022 now retains the three immutable
+   external binding candidate. ADR 0022 retains the three immutable
    predecessors and adds exact side-by-side WorkIntent 0.2, canonical WorkLease
    0.2, and WorkContract 0.3 successor resources plus bounded lineage. None is
-   admitted. Replace synthetic source/planning references and the output-schema
-   digest mismatch only through new immutable successors, then issue/admit the
-   profile before any canonical digest. Keep admission, assignment, lease,
+   admitted. ADR 0023 adds WorkIntent 0.3 with exact raw source/planning
+   candidates and exact output-schema bytes while refusing to relabel raw
+   hashes as canonical identity. Disposition the retained migration findings,
+   obtain the required profile review/decision, and reissue profile-bound target
+   resources before any canonical digest. Keep admission, assignment, lease,
    dispatch, and runtime blocked. Then resolve or explicitly version the retained
    migration findings; close grant lifecycle, protocol origin, and data-use
    authority contradictions; bind schema, payload, event, member, and snapshot
