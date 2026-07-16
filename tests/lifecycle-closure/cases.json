@@ -11,6 +11,13 @@
     "grant_double_activation",
     "grant_use_after_revoked",
     "grant_use_after_expired",
+    "grant_start_not_from_absence",
+    "grant_not_single_use",
+    "grant_final_use_not_immediately_exhausted",
+    "grant_exceeds_max_uses",
+    "grant_unknown_event",
+    "grant_declared_from_drift",
+    "grant_ends_unexhausted",
     "protocol_hidden_prior_state",
     "protocol_missing_validation_evidence",
     "protocol_split_freeze_integrity",
@@ -389,6 +396,209 @@
       },
       "adversarial_tag": "grant_use_after_expired",
       "expected_refusal_contains": "uses a grant while 'expired'"
+    },
+    {
+      "name": "grant-bad-start-not-from-absence",
+      "kind": "adversarial",
+      "model": "authority_grant_trace",
+      "expect": "reject",
+      "subject": {
+        "initial_state": "active",
+        "max_uses": 1,
+        "steps": [
+          {
+            "event_type": "authority.grant_used",
+            "declared_from": "active",
+            "declared_to": "active"
+          },
+          {
+            "event_type": "authority.grant_exhausted",
+            "declared_from": "active",
+            "declared_to": "exhausted"
+          }
+        ]
+      },
+      "adversarial_tag": "grant_start_not_from_absence",
+      "expected_refusal_contains": "does not start from aggregate absence"
+    },
+    {
+      "name": "grant-bad-not-single-use",
+      "kind": "adversarial",
+      "model": "authority_grant_trace",
+      "expect": "reject",
+      "subject": {
+        "initial_state": "not_issued",
+        "max_uses": 2,
+        "steps": [
+          {
+            "event_type": "authority.grant_issued",
+            "declared_from": "not_issued",
+            "declared_to": "issued"
+          },
+          {
+            "event_type": "authority.grant_activated",
+            "declared_from": "issued",
+            "declared_to": "active"
+          }
+        ]
+      },
+      "adversarial_tag": "grant_not_single_use",
+      "expected_refusal_contains": "is not single-use"
+    },
+    {
+      "name": "grant-bad-final-use-not-immediately-exhausted",
+      "kind": "adversarial",
+      "model": "authority_grant_trace",
+      "expect": "reject",
+      "subject": {
+        "initial_state": "not_issued",
+        "max_uses": 1,
+        "steps": [
+          {
+            "event_type": "authority.grant_issued",
+            "declared_from": "not_issued",
+            "declared_to": "issued"
+          },
+          {
+            "event_type": "authority.grant_activated",
+            "declared_from": "issued",
+            "declared_to": "active"
+          },
+          {
+            "event_type": "authority.grant_used",
+            "declared_from": "active",
+            "declared_to": "active"
+          },
+          {
+            "event_type": "authority.grant_revoked",
+            "declared_from": "active",
+            "declared_to": "revoked"
+          }
+        ]
+      },
+      "adversarial_tag": "grant_final_use_not_immediately_exhausted",
+      "expected_refusal_contains": "exposes a final grant use without immediate exhaustion"
+    },
+    {
+      "name": "grant-bad-exceeds-max-uses",
+      "kind": "adversarial",
+      "model": "authority_grant_trace",
+      "expect": "reject",
+      "subject": {
+        "initial_state": "not_issued",
+        "max_uses": 1,
+        "steps": [
+          {
+            "event_type": "authority.grant_issued",
+            "declared_from": "not_issued",
+            "declared_to": "issued"
+          },
+          {
+            "event_type": "authority.grant_activated",
+            "declared_from": "issued",
+            "declared_to": "active"
+          },
+          {
+            "event_type": "authority.grant_used",
+            "declared_from": "active",
+            "declared_to": "active"
+          },
+          {
+            "event_type": "authority.grant_used",
+            "declared_from": "active",
+            "declared_to": "active"
+          },
+          {
+            "event_type": "authority.grant_exhausted",
+            "declared_from": "active",
+            "declared_to": "exhausted"
+          }
+        ]
+      },
+      "adversarial_tag": "grant_exceeds_max_uses",
+      "expected_refusal_contains": "exceeds max_uses"
+    },
+    {
+      "name": "grant-bad-unknown-event",
+      "kind": "adversarial",
+      "model": "authority_grant_trace",
+      "expect": "reject",
+      "subject": {
+        "initial_state": "not_issued",
+        "max_uses": 1,
+        "steps": [
+          {
+            "event_type": "authority.grant_issued",
+            "declared_from": "not_issued",
+            "declared_to": "issued"
+          },
+          {
+            "event_type": "authority.grant_activated",
+            "declared_from": "issued",
+            "declared_to": "active"
+          },
+          {
+            "event_type": "authority.grant_renewed",
+            "declared_from": "active",
+            "declared_to": "active"
+          }
+        ]
+      },
+      "adversarial_tag": "grant_unknown_event",
+      "expected_refusal_contains": "uses unknown grant event"
+    },
+    {
+      "name": "grant-bad-declared-from-drift",
+      "kind": "adversarial",
+      "model": "authority_grant_trace",
+      "expect": "reject",
+      "subject": {
+        "initial_state": "not_issued",
+        "max_uses": 1,
+        "steps": [
+          {
+            "event_type": "authority.grant_issued",
+            "declared_from": "not_issued",
+            "declared_to": "issued"
+          },
+          {
+            "event_type": "authority.grant_activated",
+            "declared_from": "not_issued",
+            "declared_to": "active"
+          }
+        ]
+      },
+      "adversarial_tag": "grant_declared_from_drift",
+      "expected_refusal_contains": "declared_from does not equal folded state"
+    },
+    {
+      "name": "grant-bad-ends-unexhausted",
+      "kind": "adversarial",
+      "model": "authority_grant_trace",
+      "expect": "reject",
+      "subject": {
+        "initial_state": "not_issued",
+        "max_uses": 1,
+        "steps": [
+          {
+            "event_type": "authority.grant_issued",
+            "declared_from": "not_issued",
+            "declared_to": "issued"
+          },
+          {
+            "event_type": "authority.grant_activated",
+            "declared_from": "issued",
+            "declared_to": "active"
+          },
+          {
+            "event_type": "authority.grant_used",
+            "declared_from": "active",
+            "declared_to": "active"
+          }
+        ]
+      },
+      "adversarial_tag": "grant_ends_unexhausted",
+      "expected_refusal_contains": "ends with an unexhausted final use"
     },
     {
       "name": "protocol-safe-origin-from-absence-exact-freeze",
