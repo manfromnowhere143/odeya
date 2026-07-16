@@ -13,6 +13,15 @@ python3 -m venv .venv-architecture
 
 If the isolated environment already contains the exact pinned dependencies, reuse it and run only the final command. Never treat a structural validation pass as architecture acceptance.
 
+## Session recovery
+
+Before changing any Gate A artifact, read
+[`docs/GATE_A_HANDOFF_WORKING_PACKET_2026-07-15.md`](docs/GATE_A_HANDOFF_WORKING_PACKET_2026-07-15.md).
+It records the current scoped architecture checkpoint, exact restart sequence,
+remaining blockers, and concurrent UI/UX paths that must stay outside architecture
+staging. Revalidate the packet's evidence from repository bytes; the packet is a
+recovery aid, not Gate A authority.
+
 ## Repository boundary
 
 - Odeya is independent from Aweb, Maestro, Sentinel, Telos, and Inbar.
