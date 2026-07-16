@@ -1,7 +1,7 @@
 # Odeya Session Handoff
 
 Status: canonical recovery entrypoint for the current Odeya architecture and
-repository-release mission. Last updated 2026-07-16, Asia/Jerusalem. This is a
+repository-release mission. Last updated 2026-07-17, Asia/Jerusalem. This is a
 handoff contract, not Gate A acceptance, implementation authorization, remote
 authority, or scientific evidence.
 
@@ -225,7 +225,7 @@ predecessor commit. A descendant never inherits it. Diagnostic evidence under
 The isolated architecture lane descends from the exact validated immediate
 predecessor named above. Its current candidate tree contains 112 schemas, 660
 shared schema cases, twelve isolated contract suites, 64 canonical vectors,
-four metamorphic relations, 23 architecture decisions, and the
+four metamorphic relations, 30 architecture decisions, and the
 unchanged 43/60/25/11 first-slice boundary.
 
 ADR 0020 adds a nonrecursive `odeya-jcs-0.1` profile core and an external

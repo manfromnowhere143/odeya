@@ -1,6 +1,6 @@
 # Architecture Working Checkpoint Status
 
-Status timestamp: 2026-07-16, Asia/Jerusalem. This is an evidence-backed working checkpoint, not a frozen Gate A candidate, operator acceptance, or implementation authorization. Product/runtime work remains prohibited.
+Status timestamp: 2026-07-17, Asia/Jerusalem. This is an evidence-backed working checkpoint, not a frozen Gate A candidate, operator acceptance, or implementation authorization. Product/runtime work remains prohibited.
 
 ## Locked operator constraints
 
@@ -27,7 +27,8 @@ This design fits the strongest retained lessons from the three proof missions. I
 
 | Area | Retained working evidence | Bounded interpretation |
 | --- | --- | --- |
-| Foundation corpus | 112 Draft 2020-12 schemas; 660 valid/adversarial shared-manifest cases; 7 founding cross-field groups; 12 mandatory isolated contract suites; 2 bounded architecture-evidence checks; 1 repository release-surface check | The full architecture validator passes. Structural and bounded semantic evidence is not runtime or Gate A evidence |
+| Foundation corpus | 112 Draft 2020-12 schemas; 660 valid/adversarial shared-manifest cases; 7 founding cross-field groups; 12 mandatory isolated contract suites; 3 bounded architecture-evidence checks; 1 repository release-surface check | The full architecture validator passes. Structural and bounded semantic evidence is not runtime or Gate A evidence |
+| Lifecycle guard evidence | Guard coverage is measured by mutation and gated: of 139 refusal statements across six checker functions, 89 are reachable by a retained known-bad case and 50 are not; every adversarial case is bound to the exact guard that must refuse it; the record is pinned to the checker digest and re-measured in the fresh-clone rehearsal (ADR 0024–0030) | Statement reachability only. The conditions inside all 139 guards are unmeasured, weakening a condition is not detected, the denominator has been corrected three times by independent review, and none of this proves a guard enforces the right rule |
 | Repository release surface | One exact README identity sentence and render-validated Mermaid source; architecture-only least-privilege workflows with full-SHA Action uses; exact-version Python/Node/Java inputs; hash-locked Python dependencies; integrity-locked npm dependencies; digest-verified fallback tool archives; Markdown, shell, workflow, bounded dependency-freshness, and fresh-clone harnesses | Local candidate only. No remote, required GitHub check, branch rule, visibility decision, push, runtime, or Gate A authority exists until the release gate is separately satisfied |
 | Command/event surface | `CommandEnvelope` 0.5.0 and `CommandReceipt` 0.4.0 are explicitly nonconstructible structural candidates over the 121-selector design vocabulary retained from exact historical `CommandEnvelope` 0.4.0 bytes; `ResearchEvent` 0.7.0 has 135 closed branches; 62 schema-valid event fixtures and 16 schema-valid replay traces are retained within 186 direct event/trace manifest cases | Every design command/event remains non-admitted until exact immutable members, identities, and activation exist |
 | Registry/root graph | Six registry/root/activation schema subjects validate; the proposed logical manifest v2 covers 9 layers, 30 modules, 47 aggregate owners, 112 schema owners, 121 command owners, and 135 event owners | Ownership and acyclic subject shape are present; no real registry snapshot, root, checkpoint, activation, or handler-set equality exists |
