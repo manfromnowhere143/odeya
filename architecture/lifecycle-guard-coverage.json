@@ -1,0 +1,404 @@
+{
+  "schema_version": "0.1.0",
+  "artifact_class": "architecture_evidence",
+  "inventory_id": "odeya.lifecycle-guard-coverage",
+  "version": "0.1.0",
+  "status": "candidate_measurement_not_admitted",
+  "method": "each errors.append branch of a declared lifecycle model is disabled one at a time in an isolated copy; a guard is proved only when the suite fails without it",
+  "subject": "tests/lifecycle-closure/check.py",
+  "subject_sha256": "sha256:c44d6fa6aec896d05029b7a319560a8ce54cfd314213c9f4fbe19cd134b3b748",
+  "models": [
+    {
+      "function": "authority_grant_trace_errors",
+      "branch_count": 11,
+      "proved_count": 11,
+      "branches": [
+        {
+          "guard": "grant trace does not start from aggregate absence/not_issued",
+          "proved": true,
+          "proved_by": "grant-bad-start-not-from-absence"
+        },
+        {
+          "guard": "grant trace is not single-use",
+          "proved": true,
+          "proved_by": "grant-bad-not-single-use"
+        },
+        {
+          "guard": "step {} exposes a final grant use without immediate exhaustion",
+          "proved": true,
+          "proved_by": "grant-bad-final-use-not-immediately-exhausted"
+        },
+        {
+          "guard": "step {} uses a grant while {}",
+          "proved": true,
+          "proved_by": "grant-bad-use-before-active"
+        },
+        {
+          "guard": "step {} exceeds max_uses",
+          "proved": true,
+          "proved_by": "grant-bad-exceeds-max-uses"
+        },
+        {
+          "guard": "step {} exhausts before the exact final legal use",
+          "proved": true,
+          "proved_by": "grant-bad-exhaust-before-final-use"
+        },
+        {
+          "guard": "step {} cannot apply {} from {}",
+          "proved": true,
+          "proved_by": "grant-bad-activate-before-issue"
+        },
+        {
+          "guard": "step {} uses unknown grant event {}",
+          "proved": true,
+          "proved_by": "grant-bad-unknown-event"
+        },
+        {
+          "guard": "step {} declared_from does not equal folded state {}",
+          "proved": true,
+          "proved_by": "grant-bad-declared-from-drift"
+        },
+        {
+          "guard": "step {} declared_to does not equal legal result {}",
+          "proved": true,
+          "proved_by": "grant-bad-issue-directly-active"
+        },
+        {
+          "guard": "grant trace ends with an unexhausted final use",
+          "proved": true,
+          "proved_by": "grant-bad-ends-unexhausted"
+        }
+      ]
+    },
+    {
+      "function": "protocol_origin_errors",
+      "branch_count": 12,
+      "proved_count": 3,
+      "branches": [
+        {
+          "guard": "protocol origin fabricates or depends on a prior canonical state",
+          "proved": true,
+          "proved_by": "protocol-bad-hidden-prior-canonical-state"
+        },
+        {
+          "guard": "protocol origin is not explicitly from aggregate absence",
+          "proved": false,
+          "proved_by": null
+        },
+        {
+          "guard": "protocol origin does not materialize version 1",
+          "proved": false,
+          "proved_by": null
+        },
+        {
+          "guard": "protocol origin lacks an exact frozen ProtocolSnapshot reference",
+          "proved": false,
+          "proved_by": null
+        },
+        {
+          "guard": "protocol origin lacks exact source-draft evidence",
+          "proved": false,
+          "proved_by": null
+        },
+        {
+          "guard": "protocol origin lacks one or more exact validation evidence references",
+          "proved": true,
+          "proved_by": "protocol-bad-missing-validation-evidence"
+        },
+        {
+          "guard": "protocol origin lacks an exact exposure-history digest",
+          "proved": false,
+          "proved_by": null
+        },
+        {
+          "guard": "protocol origin lacks an exact integrity rule identity",
+          "proved": false,
+          "proved_by": null
+        },
+        {
+          "guard": "protocol freeze lacks the bounded protocol grant",
+          "proved": false,
+          "proved_by": null
+        },
+        {
+          "guard": "protocol freeze is not at index 1 of one four-event commit",
+          "proved": true,
+          "proved_by": "protocol-bad-freeze-without-same-commit-integrity"
+        },
+        {
+          "guard": "protocol grant-use/freeze/integrity/exhaustion order is not exact",
+          "proved": false,
+          "proved_by": null
+        },
+        {
+          "guard": "protocol origin lacks {}",
+          "proved": false,
+          "proved_by": null
+        }
+      ]
+    },
+    {
+      "function": "data_use_cohort_errors",
+      "branch_count": 11,
+      "proved_count": 4,
+      "branches": [
+        {
+          "guard": "data-use decision is not authorized through bounded_grants",
+          "proved": true,
+          "proved_by": "data-use-bad-assigned-role-only"
+        },
+        {
+          "guard": "data-use decision lacks assignment evidence",
+          "proved": false,
+          "proved_by": null
+        },
+        {
+          "guard": "data-use decision must retain exactly one data_rights grant and use event",
+          "proved": false,
+          "proved_by": null
+        },
+        {
+          "guard": "data-use decision consumes the wrong authority slot",
+          "proved": false,
+          "proved_by": null
+        },
+        {
+          "guard": "data-use payload grant differs from authority evidence",
+          "proved": false,
+          "proved_by": null
+        },
+        {
+          "guard": "data-use payload use-event differs from authority evidence",
+          "proved": false,
+          "proved_by": null
+        },
+        {
+          "guard": "data-use final grant use is not exhausted in the cohort",
+          "proved": true,
+          "proved_by": "data-use-bad-missing-final-use-exhaustion"
+        },
+        {
+          "guard": "data-use grant is not single-use at domain commit",
+          "proved": false,
+          "proved_by": null
+        },
+        {
+          "guard": "data-use authority and decision are split across commits",
+          "proved": true,
+          "proved_by": "data-use-bad-split-grant-cohort"
+        },
+        {
+          "guard": "data-use decision is not index 1 of exactly three events",
+          "proved": false,
+          "proved_by": null
+        },
+        {
+          "guard": "data-use grant-use/decision/exhaustion order is not exact",
+          "proved": true,
+          "proved_by": "data-use-bad-domain-decision-before-grant-use"
+        }
+      ]
+    },
+    {
+      "function": "work_lease_trace_errors",
+      "branch_count": 8,
+      "proved_count": 2,
+      "branches": [
+        {
+          "guard": "WorkLease canonical vocabulary is not the exact five-state sequence",
+          "proved": false,
+          "proved_by": null
+        },
+        {
+          "guard": "stale/completed are not explicitly projection-only labels",
+          "proved": false,
+          "proved_by": null
+        },
+        {
+          "guard": "WorkLease trace does not start unleased",
+          "proved": false,
+          "proved_by": null
+        },
+        {
+          "guard": "step {} uses a projection label or unknown WorkLease event",
+          "proved": false,
+          "proved_by": null
+        },
+        {
+          "guard": "step {} cannot apply {} from {}",
+          "proved": true,
+          "proved_by": "work-lease-bad-reacquire-after-release"
+        },
+        {
+          "guard": "step {} declared_from does not equal folded WorkLease state",
+          "proved": false,
+          "proved_by": null
+        },
+        {
+          "guard": "step {} declared_to does not equal legal WorkLease result",
+          "proved": false,
+          "proved_by": null
+        },
+        {
+          "guard": "step {} promotes a projection-only label to canonical WorkLease state",
+          "proved": true,
+          "proved_by": "work-lease-bad-stale-canonical-transition"
+        }
+      ]
+    },
+    {
+      "function": "work_lease_record_candidate_errors",
+      "branch_count": 27,
+      "proved_count": 4,
+      "branches": [
+        {
+          "guard": "WorkLease record fixture is not a blocked candidate",
+          "proved": false,
+          "proved_by": null
+        },
+        {
+          "guard": "WorkLease record fixture fabricates resolved identity",
+          "proved": false,
+          "proved_by": null
+        },
+        {
+          "guard": "WorkLease record fixture fabricates profile or canonical digest",
+          "proved": false,
+          "proved_by": null
+        },
+        {
+          "guard": "WorkLease record fixture claims execution authority",
+          "proved": false,
+          "proved_by": null
+        },
+        {
+          "guard": "WorkLease record fixture binds the wrong WorkIntent resource",
+          "proved": false,
+          "proved_by": null
+        },
+        {
+          "guard": "WorkLease WorkIntent record and artifact digests differ",
+          "proved": true,
+          "proved_by": "work-lease-record-bad-work-intent-artifact-digest-mismatch"
+        },
+        {
+          "guard": "WorkLease assignment binding does not retain the exact five-role order",
+          "proved": false,
+          "proved_by": null
+        },
+        {
+          "guard": "WorkLease assignment binding lacks the verification assignment event",
+          "proved": false,
+          "proved_by": null
+        },
+        {
+          "guard": "WorkLease assignment binding fabricates a resolved cohort",
+          "proved": false,
+          "proved_by": null
+        },
+        {
+          "guard": "WorkLease assignment binding exposes source bytes at assignment",
+          "proved": false,
+          "proved_by": null
+        },
+        {
+          "guard": "WorkLease assignment binding creates a launch outbox at assignment",
+          "proved": false,
+          "proved_by": null
+        },
+        {
+          "guard": "WorkLease reservation frontier lacks its origin event",
+          "proved": false,
+          "proved_by": null
+        },
+        {
+          "guard": "unclaimed WorkLease reservation frontier retains a claim event",
+          "proved": false,
+          "proved_by": null
+        },
+        {
+          "guard": "claimed WorkLease reservation frontier lacks the claim event",
+          "proved": false,
+          "proved_by": null
+        },
+        {
+          "guard": "WorkLease transition claims authority over ResourceLedger state",
+          "proved": false,
+          "proved_by": null
+        },
+        {
+          "guard": "WorkLease frontier does not preserve separate claimed-reservation settlement",
+          "proved": false,
+          "proved_by": null
+        },
+        {
+          "guard": "WorkLease temporal bounds are not parseable fixed instants",
+          "proved": false,
+          "proved_by": null
+        },
+        {
+          "guard": "WorkLease not_before must precede expires_at",
+          "proved": true,
+          "proved_by": "work-lease-record-bad-reversed-temporal-bounds"
+        },
+        {
+          "guard": "WorkLease record fixture uses an unknown transition event",
+          "proved": false,
+          "proved_by": null
+        },
+        {
+          "guard": "WorkLease record event and declared transition differ",
+          "proved": false,
+          "proved_by": null
+        },
+        {
+          "guard": "WorkLease record state differs from its transition result",
+          "proved": false,
+          "proved_by": null
+        },
+        {
+          "guard": "WorkLease acquisition is not version-one origin from aggregate absence",
+          "proved": false,
+          "proved_by": null
+        },
+        {
+          "guard": "non-origin WorkLease transition lacks an active predecessor",
+          "proved": false,
+          "proved_by": null
+        },
+        {
+          "guard": "WorkLease acquisition does not begin with an unclaimed reservation",
+          "proved": false,
+          "proved_by": null
+        },
+        {
+          "guard": "first-slice WorkLease release forgets the claimed reservation awaiting settlement",
+          "proved": true,
+          "proved_by": "work-lease-record-bad-release-forgets-claimed-reservation"
+        },
+        {
+          "guard": "first-slice WorkLease expiry is not the pre-claim deadline branch",
+          "proved": false,
+          "proved_by": null
+        },
+        {
+          "guard": "terminal WorkLease record permits a new start claim",
+          "proved": true,
+          "proved_by": "work-lease-record-bad-terminal-new-start-claim"
+        }
+      ]
+    }
+  ],
+  "not_auditable": [
+    {
+      "function": "identity_map_mutation_errors",
+      "reason": "returns refusal lists directly and delegates to schema_contract_errors instead of appending to a local errors list, so branch mutation cannot attribute its guards. Its coverage is unmeasured, not proved."
+    }
+  ],
+  "summary": {
+    "branch_count": 69,
+    "proved": 24,
+    "unproved": 45
+  },
+  "boundary": "architecture evidence about retained bytes only; not a runtime, an admitted member, an independently reproduced verdict, or Gate A acceptance"
+}

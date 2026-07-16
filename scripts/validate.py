@@ -300,6 +300,7 @@ ISOLATED_CONTRACT_SUITES = (
 ARCHITECTURE_EVIDENCE_CHECKS = (
     "scripts/validate_gate_a_prerequisites.py",
     "scripts/validate_schema_resource_reissues.py",
+    "scripts/validate_lifecycle_guard_coverage.py",
 )
 REPOSITORY_RELEASE_CHECKS = (
     "scripts/validate_repository_release.py",

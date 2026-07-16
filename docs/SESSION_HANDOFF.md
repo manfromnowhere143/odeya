@@ -296,7 +296,36 @@ use-after-terminal guard. Those seven are the next lifecycle unit and are
 smaller and more falsifiable than any new candidate resource. That review is one
 non-authoritative pass, not a retained accountable Gate A review determination.
 
-Three follow-ons are open from that finding. Six suites still assert refusal
+ADR 0025 answered the prior question — whether a guard is exercised at all — by
+disabling every guard in turn and running the suite. Of 69 guards in the five
+auditable lifecycle models, **24 are proved and 45 can be removed with the suite
+green**. Only AuthorityGrant is complete, at 11 of 11, and only because ADR 0024
+and this tranche completed it. `protocol_origin` is 3 of 12, `data_use_cohort` 4
+of 11, `work_lease_trace` 2 of 8, `work_lease_record_candidate` 4 of 27.
+`identity_map_mutation` is unmeasured rather than proved.
+
+That is now the sharpest blocker in T0, and it is subtractive: **PRQ-006,
+PRQ-007, and PRQ-008 cannot close on the current evidence.** Each names a
+property that no known-bad trace exercises — the protocol origin materializing
+version 1 from absence, the data-use grant being single-use at one atomic
+commit, and the exact five-state WorkLease vocabulary that is law 40 of the
+state model. Their closure records now say so. They are blocked on absent
+evidence, not on a decision, which makes them autonomous work rather than
+work waiting on Daniel.
+
+The measurement is retained at `architecture/lifecycle-guard-coverage.json`,
+reproduced by `scripts/audit_lifecycle_guard_coverage.py` (~90s), and gated
+cheaply by `scripts/validate_lifecycle_guard_coverage.py` in the default
+validator. The record is pinned to the exact checker digest, so changing the
+checker forces its guards to be re-proved. Both halves of the ratchet were
+confirmed to fire. Do not hand-edit that record; regenerate it, and note that it
+is untracked until committed, so `git checkout` cannot restore it.
+
+The next lifecycle unit is to fill the 45 in dependency order, starting with the
+guards named by PRQ-006, PRQ-007, and PRQ-008. Extend the same audit to
+`schema_contract_errors`, which the harness cannot currently reach.
+
+Three further follow-ons are open. Six suites still assert refusal
 without attribution across 229 known-bad cases — `cognitive-contracts` (107),
 `projection-contracts` (37), `constitutional-construction` (29),
 `first-slice-resolution` (21), `mathematical-contracts` (19), and

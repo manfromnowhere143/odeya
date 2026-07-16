@@ -57,10 +57,29 @@ excluded on purpose. The checker fails when a known-bad trace is accepted, when
 it declares no guard, or when it is refused by something other than its declared
 guard. ADR 0024 records the correction and the exact mutations that were blind.
 
+## Most guards in this suite are not proved
+
+The properties described above are what the checker attempts to enforce. They
+are not all evidenced. ADR 0025 disabled every guard in turn and ran the suite:
+of 69 guards, 24 are proved and **45 can be removed with the suite green**. Only
+`AuthorityGrant` is complete, at 11 of 11. `protocol_origin` is 3 of 12,
+`data_use_cohort` 4 of 11, `work_lease_trace` 2 of 8, and
+`work_lease_record_candidate` 4 of 27. `identity_map_mutation` is unmeasured
+rather than proved, because it delegates instead of appending refusals.
+
+Read the sections above against that record. Several properties they state — the
+protocol origin materializing version 1 from absence, the data-use grant being
+single-use at domain commit, the exact five-state WorkLease vocabulary, and the
+immediate exhaustion of a final grant use — describe guards that, before
+ADR 0024 and ADR 0025, nothing exercised. The retained record at
+`architecture/lifecycle-guard-coverage.json` names every unproved guard, and
+`scripts/audit_lifecycle_guard_coverage.py` reproduces the measurement.
+
 Run from the repository root:
 
 ```bash
 python3 tests/lifecycle-closure/check.py
+python3 scripts/audit_lifecycle_guard_coverage.py   # ~90s; re-proves every guard
 ```
 
 Passing is bounded consistency evidence only. It does not create immutable
