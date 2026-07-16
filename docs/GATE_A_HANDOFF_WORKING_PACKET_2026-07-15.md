@@ -1,6 +1,6 @@
 # Odeya Gate A — Working Handoff Packet
 
-Status: handoff-ready working checkpoint preparation, not a frozen Gate A candidate, acceptance record, or implementation authorization. Last materially updated 2026-07-16, Asia/Jerusalem.
+Status: handoff-ready scoped architecture checkpoint, not a frozen Gate A candidate, acceptance record, or implementation authorization. Last materially updated 2026-07-16, Asia/Jerusalem.
 
 This packet lets a later Codex, Claude, or human reviewer recover the mission, current evidence, restart sequence, and known remaining work without guessing. Passing architecture checks does not remove the blockers recorded here, and later review can add findings.
 
@@ -34,13 +34,15 @@ These paths are not part of the scoped architecture checkpoint merely because th
 - Workspace: `/Users/danielwahnich/workspace/odeya`
 - Branch: `main`
 - Starting commit: `369bbb87f1e9bea05733df44d36bcf177451371f`
-- Immutable local architecture checkpoint: `63212488b919b7d8fedce83bc3be344064d7cfe6`
-- Checkpoint tree: `979f5c46ec098fdb2e7598c6dc428ce45288788e`
-- Remote: none at checkpoint preparation time
+- Foundational local architecture checkpoint: `63212488b919b7d8fedce83bc3be344064d7cfe6`
+- Foundational checkpoint tree: `979f5c46ec098fdb2e7598c6dc428ce45288788e`
+- Current scoped first-slice architecture checkpoint: `e6072718209e59c124ed6387373317b1feb1c955`
+- Current scoped checkpoint tree: `406f2f0f852c72230fe893aacd51211a5dd87b65`
+- Remote: none at handoff anchoring time
 - Pinned architecture environment: `/tmp/odeya-architecture-venv`
 - Product/runtime implementation lock: intact
 
-The worktree contains a large, intentional architecture change set. Untracked or modified files are not disposable. Never use destructive reset/checkout operations or indiscriminate staging.
+The C1-C8 architecture delta is committed in the current scoped checkpoint. The remaining modified or untracked worktree paths are Daniel's intentional concurrent UI/UX lane and are not disposable. Never use destructive reset/checkout operations or indiscriminate staging.
 
 ## Proof-mission facts that must survive every handoff
 
@@ -126,8 +128,8 @@ Sentinel’s interval [-0.127, +0.065] is retained as `inconclusive` and rejecte
 
 ### First-slice resolution boundary
 
-The checkpoint retained a deliberately non-freezable 44/77/52/23 hypothesis.
-The post-checkpoint [First-Slice Admission Resolution Candidate](FIRST_SLICE_ADMISSION_RESOLUTION_2026-07-16.md), [ADR 0014](decisions/0014-resolve-first-slice-atomic-admission.md), and [machine inventory](../architecture/first-slice-admission-resolution-candidate.json) now resolve C1-C8 into one exact architecture-scope candidate:
+The foundational checkpoint retained a deliberately non-freezable 44/77/52/23 hypothesis.
+The current scoped checkpoint's [First-Slice Admission Resolution Candidate](FIRST_SLICE_ADMISSION_RESOLUTION_2026-07-16.md), [ADR 0014](decisions/0014-resolve-first-slice-atomic-admission.md), and [machine inventory](../architecture/first-slice-admission-resolution-candidate.json) resolve C1-C8 into one exact architecture-scope candidate:
 
 - 43 required and 78 outside command names;
 - 60 exact required event discriminators;
@@ -207,7 +209,7 @@ Before interpreting a failure, inspect whether any owner is actively editing the
 4. Stage only reviewed architecture files. Keep UI/UX-owned paths outside the scoped checkpoint.
 5. Export the staged index to a temporary directory and validate that tree so untracked UI files cannot mask a broken checkpoint.
 6. Create one scoped local architecture checkpoint commit; do not push.
-7. Record the resulting commit ID in the final handoff message. A commit cannot contain its own hash without recursion.
+7. Record the resulting commit ID in a follow-up handoff-only record or the final handoff message. The scoped architecture commit cannot contain its own hash without recursion.
 8. Continue from the checkpoint toward first-slice records, independent reducers/replays, reviews, and a later exact candidate.
 
 ## Remaining Gate A blockers
@@ -235,8 +237,10 @@ Before interpreting a failure, inspect whether any owner is actively editing the
 ## Handoff fields
 
 - Frozen Gate A candidate manifest: **not created**
-- Architecture checkpoint commit: **`63212488b919b7d8fedce83bc3be344064d7cfe6`**
-- Post-checkpoint C1-C8 resolution delta: **validated and included in the scoped second architecture checkpoint; record its commit ID externally after commit because a commit cannot contain its own hash**
+- Foundational architecture checkpoint: **`63212488b919b7d8fedce83bc3be344064d7cfe6`**
+- Current scoped first-slice architecture checkpoint: **`e6072718209e59c124ed6387373317b1feb1c955`**
+- Current scoped checkpoint tree: **`406f2f0f852c72230fe893aacd51211a5dd87b65`**
+- C1-C8 resolution delta: **committed in the current scoped checkpoint after exact-index export validation and independent scope, identity, and packaging audits**
 - Full validator: **pass — 98 schemas, 564 shared cases, 7 founding semantic groups, 5 isolated suites, 64 canonical cases, 4 metamorphic relations, 98-schema/194-fixture audit, 30 modules, 47 aggregates, 121 design commands, 135 events**
 - Cognitive: **150 pass / 14 bounded semantic**
 - First-slice adversarial: **11/11 safe references / 12/12 intended refusals**
