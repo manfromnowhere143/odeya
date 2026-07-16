@@ -88,11 +88,17 @@ neither is Odeya authority, storage, namespace, runtime, or control plane.
 - Isolated architecture candidate worktree:
   `/Users/danielwahnich/workspace/odeya-t0-work-lease`
 - Isolated architecture branch: `agent/t0-work-lease-20260716`
-- Validated immediate exact-reference predecessor:
-  `45c1fd769a123a9bf03e8de93c2ecf127b254199`
+- Validated immediate predecessor:
+  `f79ce3cc7c1dd300e6f3c2c54a85b200c8ca119c`
 - Validated immediate predecessor tree:
-  `39111bfa595c8b12e28b0d8de309e0b5e2f6fc99`
+  `c49ba1ba485c08f1f230da9fb3522d526acaf513`
 - Retained immediate-predecessor rehearsal evidence:
+  `/Users/danielwahnich/workspace/odeya-release-evidence/f79ce3cc7c1dd300e6f3c2c54a85b200c8ca119c/rehearsal-evidence-manifest.json`
+- Validated exact-reference predecessor:
+  `45c1fd769a123a9bf03e8de93c2ecf127b254199`
+- Validated exact-reference predecessor tree:
+  `39111bfa595c8b12e28b0d8de309e0b5e2f6fc99`
+- Retained exact-reference rehearsal evidence:
   `/Users/danielwahnich/workspace/odeya-release-evidence/45c1fd769a123a9bf03e8de93c2ecf127b254199/rehearsal-evidence-manifest.json`
 - Validated WorkIntent-identity predecessor:
   `6ec40b4635815c64ba9d8c5ec084d7f480e16db1`
@@ -140,7 +146,7 @@ test "$(git symbolic-ref --short HEAD)" = agent/t0-work-lease-20260716
 test "$(git rev-parse main)" = f8c71c8e3174f07619e0bbd31cb3d6df5d848361
 test -z "$(git remote)"
 git merge-base --is-ancestor \
-  45c1fd769a123a9bf03e8de93c2ecf127b254199 HEAD
+  f79ce3cc7c1dd300e6f3c2c54a85b200c8ca119c HEAD
 git diff --cached --name-only
 git diff --check
 test "$(git -C /Users/danielwahnich/workspace/odeya symbolic-ref --short HEAD)" = \
@@ -259,6 +265,48 @@ and rejects 40 known-bad mutations. Raw candidate lineage is explicitly not
 canonical object identity: both target canonical digests, the WorkIntent
 digest, profile admission, registry membership, and all authority remain null
 or false. The three new schemas add zero canonical-audit blockers.
+
+ADR 0024 corrects a defect in the retained evidence itself rather than in a
+contract. The lifecycle closure suite asserted only that a known-bad trace was
+refused, never which guard refused it, and nine of its traces refuse with more
+than one error. Two guard weakenings were therefore confirmed blind against the
+exact committed bytes: widening `authority.grant_activated` to accept `active`
+made a second activation legal, and widening `authority.grant_used` to accept a
+terminal state made use after revocation or expiry legal. Both left the suite
+green at the same `cases` digest. PRQ-005 also enumerates four required
+known-bad classes and only two had traces; `required_adversarial_tags` did not
+detect this because it was derived from existing coverage rather than from the
+PRQ. All twenty-eight adversarial cases now declare
+`expected_refusal_contains`, each matching exactly one error of its own case,
+and both mutations now fail closed. The AuthorityGrant state machine was already
+correct; the defect was evidentiary. No transition table, state vocabulary,
+event identity, schema byte, or first-slice boundary changed, and PRQ-005 is
+not closed: closure additionally requires an independently reproduced verdict
+that the producing agent cannot supply for its own change.
+
+Two follow-ons are open from that finding. Six suites still assert refusal
+without attribution across 229 known-bad cases — `cognitive-contracts` (107),
+`projection-contracts` (37), `constitutional-construction` (29),
+`first-slice-resolution` (21), `mathematical-contracts` (19), and
+`architecture-review` (16). They are not shown to be blind; they cannot
+currently distinguish a guard firing from an incidental refusal, which is the
+condition that made lifecycle closure blind, and they should be audited by
+mutation rather than by inspection. Separately, refusal attribution now has five
+spellings across the suites and should converge on one exact vocabulary.
+
+Read the tranche's convergence honestly. Across this tranche the canonical
+profile audit moved from 675 to 668 unscoped digest fields, 118 to 122
+unprofiled date-time paths, 233 to 236 nonconformant fixture timestamps, 62 to
+61 number findings, and left 56 divergent common definitions and 11 unpinned
+profile bindings unchanged. Zero of the twelve PRQ findings are closed and
+`profile_status` remains `blocked`, while the schema count grew from 100 to 112.
+The added candidates are correctly evidenced and T0 issues no immutable member
+by design, so this is not a discipline failure. It does mean the tranche is
+additive and that PRQ-001 terminates in Daniel's profile decision, which no
+session can self-close. The highest-value remaining autonomous work is
+therefore the profile-independent findings and the evidence-quality audit above,
+plus reducing the profile decision to an exact decidable package rather than
+1,154 raw findings.
 
 The next exact identity unit must disposition the retained canonical migration
 findings into immutable legacy resources versus explicitly reissued candidate

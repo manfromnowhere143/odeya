@@ -8,6 +8,9 @@
     "grant_use_before_active",
     "grant_exhaust_before_use",
     "grant_transition_after_terminal",
+    "grant_double_activation",
+    "grant_use_after_revoked",
+    "grant_use_after_expired",
     "protocol_hidden_prior_state",
     "protocol_missing_validation_evidence",
     "protocol_split_freeze_integrity",
@@ -176,7 +179,8 @@
           }
         ]
       },
-      "adversarial_tag": "grant_issue_skips_issued"
+      "adversarial_tag": "grant_issue_skips_issued",
+      "expected_refusal_contains": "declared_to does not equal legal result 'issued'"
     },
     {
       "name": "grant-bad-activate-before-issue",
@@ -194,7 +198,8 @@
           }
         ]
       },
-      "adversarial_tag": "grant_activate_before_issue"
+      "adversarial_tag": "grant_activate_before_issue",
+      "expected_refusal_contains": "cannot apply authority.grant_activated from 'not_issued'"
     },
     {
       "name": "grant-bad-use-before-active",
@@ -217,7 +222,8 @@
           }
         ]
       },
-      "adversarial_tag": "grant_use_before_active"
+      "adversarial_tag": "grant_use_before_active",
+      "expected_refusal_contains": "uses a grant while 'issued'"
     },
     {
       "name": "grant-bad-exhaust-before-final-use",
@@ -245,7 +251,8 @@
           }
         ]
       },
-      "adversarial_tag": "grant_exhaust_before_use"
+      "adversarial_tag": "grant_exhaust_before_use",
+      "expected_refusal_contains": "exhausts before the exact final legal use"
     },
     {
       "name": "grant-bad-expire-after-exhausted",
@@ -283,7 +290,105 @@
           }
         ]
       },
-      "adversarial_tag": "grant_transition_after_terminal"
+      "adversarial_tag": "grant_transition_after_terminal",
+      "expected_refusal_contains": "cannot apply authority.grant_expired from 'exhausted'"
+    },
+    {
+      "name": "grant-bad-double-activation",
+      "kind": "adversarial",
+      "model": "authority_grant_trace",
+      "expect": "reject",
+      "subject": {
+        "initial_state": "not_issued",
+        "max_uses": 1,
+        "steps": [
+          {
+            "event_type": "authority.grant_issued",
+            "declared_from": "not_issued",
+            "declared_to": "issued"
+          },
+          {
+            "event_type": "authority.grant_activated",
+            "declared_from": "issued",
+            "declared_to": "active"
+          },
+          {
+            "event_type": "authority.grant_activated",
+            "declared_from": "active",
+            "declared_to": "active"
+          }
+        ]
+      },
+      "adversarial_tag": "grant_double_activation",
+      "expected_refusal_contains": "cannot apply authority.grant_activated from 'active'"
+    },
+    {
+      "name": "grant-bad-use-after-revoked",
+      "kind": "adversarial",
+      "model": "authority_grant_trace",
+      "expect": "reject",
+      "subject": {
+        "initial_state": "not_issued",
+        "max_uses": 1,
+        "steps": [
+          {
+            "event_type": "authority.grant_issued",
+            "declared_from": "not_issued",
+            "declared_to": "issued"
+          },
+          {
+            "event_type": "authority.grant_activated",
+            "declared_from": "issued",
+            "declared_to": "active"
+          },
+          {
+            "event_type": "authority.grant_revoked",
+            "declared_from": "active",
+            "declared_to": "revoked"
+          },
+          {
+            "event_type": "authority.grant_used",
+            "declared_from": "revoked",
+            "declared_to": "revoked"
+          }
+        ]
+      },
+      "adversarial_tag": "grant_use_after_revoked",
+      "expected_refusal_contains": "uses a grant while 'revoked'"
+    },
+    {
+      "name": "grant-bad-use-after-expired",
+      "kind": "adversarial",
+      "model": "authority_grant_trace",
+      "expect": "reject",
+      "subject": {
+        "initial_state": "not_issued",
+        "max_uses": 1,
+        "steps": [
+          {
+            "event_type": "authority.grant_issued",
+            "declared_from": "not_issued",
+            "declared_to": "issued"
+          },
+          {
+            "event_type": "authority.grant_activated",
+            "declared_from": "issued",
+            "declared_to": "active"
+          },
+          {
+            "event_type": "authority.grant_expired",
+            "declared_from": "active",
+            "declared_to": "expired"
+          },
+          {
+            "event_type": "authority.grant_used",
+            "declared_from": "expired",
+            "declared_to": "expired"
+          }
+        ]
+      },
+      "adversarial_tag": "grant_use_after_expired",
+      "expected_refusal_contains": "uses a grant while 'expired'"
     },
     {
       "name": "protocol-safe-origin-from-absence-exact-freeze",
@@ -390,7 +495,8 @@
         "integrity_event_ref": "event.protocol-integrity.001",
         "grant_exhaustion_event_ref": "event.grant-exhausted.protocol.001"
       },
-      "adversarial_tag": "protocol_hidden_prior_state"
+      "adversarial_tag": "protocol_hidden_prior_state",
+      "expected_refusal_contains": "protocol origin fabricates or depends on a prior canonical state"
     },
     {
       "name": "protocol-bad-missing-validation-evidence",
@@ -438,7 +544,8 @@
         "integrity_event_ref": "event.protocol-integrity.001",
         "grant_exhaustion_event_ref": "event.grant-exhausted.protocol.001"
       },
-      "adversarial_tag": "protocol_missing_validation_evidence"
+      "adversarial_tag": "protocol_missing_validation_evidence",
+      "expected_refusal_contains": "protocol origin lacks one or more exact validation evidence references"
     },
     {
       "name": "protocol-bad-freeze-without-same-commit-integrity",
@@ -491,7 +598,8 @@
         "integrity_event_ref": "event.protocol-integrity.001",
         "grant_exhaustion_event_ref": "event.grant-exhausted.protocol.001"
       },
-      "adversarial_tag": "protocol_split_freeze_integrity"
+      "adversarial_tag": "protocol_split_freeze_integrity",
+      "expected_refusal_contains": "protocol freeze is not at index 1 of one four-event commit"
     },
     {
       "name": "data-use-safe-exact-bounded-grant-cohort",
@@ -552,7 +660,8 @@
           "authority.grant_exhausted(data_rights)"
         ]
       },
-      "adversarial_tag": "data_use_assigned_role"
+      "adversarial_tag": "data_use_assigned_role",
+      "expected_refusal_contains": "data-use decision is not authorized through bounded_grants"
     },
     {
       "name": "data-use-bad-split-grant-cohort",
@@ -585,7 +694,8 @@
           "authority.grant_exhausted(data_rights)"
         ]
       },
-      "adversarial_tag": "data_use_split_grant_cohort"
+      "adversarial_tag": "data_use_split_grant_cohort",
+      "expected_refusal_contains": "data-use authority and decision are split across commits"
     },
     {
       "name": "data-use-bad-domain-decision-before-grant-use",
@@ -618,7 +728,8 @@
           "authority.grant_exhausted(data_rights)"
         ]
       },
-      "adversarial_tag": "data_use_wrong_grant_order"
+      "adversarial_tag": "data_use_wrong_grant_order",
+      "expected_refusal_contains": "data-use grant-use/decision/exhaustion order is not exact"
     },
     {
       "name": "data-use-bad-missing-final-use-exhaustion",
@@ -650,7 +761,8 @@
           "authority.grant_exhausted(data_rights)"
         ]
       },
-      "adversarial_tag": "data_use_missing_exhaustion"
+      "adversarial_tag": "data_use_missing_exhaustion",
+      "expected_refusal_contains": "data-use final grant use is not exhausted in the cohort"
     },
     {
       "name": "work-lease-safe-release",
@@ -779,7 +891,8 @@
           }
         ]
       },
-      "adversarial_tag": "work_lease_stale_as_canonical"
+      "adversarial_tag": "work_lease_stale_as_canonical",
+      "expected_refusal_contains": "promotes a projection-only label to canonical WorkLease state"
     },
     {
       "name": "work-lease-bad-completed-canonical-transition",
@@ -812,7 +925,8 @@
           }
         ]
       },
-      "adversarial_tag": "work_lease_completed_as_canonical"
+      "adversarial_tag": "work_lease_completed_as_canonical",
+      "expected_refusal_contains": "promotes a projection-only label to canonical WorkLease state"
     },
     {
       "name": "work-lease-bad-reacquire-after-release",
@@ -850,7 +964,8 @@
           }
         ]
       },
-      "adversarial_tag": "work_lease_reopen_terminal"
+      "adversarial_tag": "work_lease_reopen_terminal",
+      "expected_refusal_contains": "cannot apply work.lease_acquired from 'released'"
     },
     {
       "name": "work-lease-record-safe-blocked-acquisition-candidate",
@@ -879,7 +994,8 @@
         "fixture": "acquired",
         "mutation": "reverse_temporal_bounds"
       },
-      "adversarial_tag": "work_lease_record_reversed_time"
+      "adversarial_tag": "work_lease_record_reversed_time",
+      "expected_refusal_contains": "WorkLease not_before must precede expires_at"
     },
     {
       "name": "work-lease-record-bad-work-intent-artifact-digest-mismatch",
@@ -890,7 +1006,8 @@
         "fixture": "acquired",
         "mutation": "mismatch_work_intent_artifact_digest"
       },
-      "adversarial_tag": "work_lease_record_reference_digest_mismatch"
+      "adversarial_tag": "work_lease_record_reference_digest_mismatch",
+      "expected_refusal_contains": "WorkLease WorkIntent record and artifact digests differ"
     },
     {
       "name": "work-lease-record-bad-terminal-new-start-claim",
@@ -901,7 +1018,8 @@
         "fixture": "released",
         "mutation": "terminal_allows_new_start_claim"
       },
-      "adversarial_tag": "work_lease_record_terminal_start_claim"
+      "adversarial_tag": "work_lease_record_terminal_start_claim",
+      "expected_refusal_contains": "terminal WorkLease record permits a new start claim"
     },
     {
       "name": "work-lease-record-bad-release-forgets-claimed-reservation",
@@ -912,7 +1030,8 @@
         "fixture": "released",
         "mutation": "release_forgets_claimed_reservation"
       },
-      "adversarial_tag": "work_lease_release_forgets_claimed_reservation"
+      "adversarial_tag": "work_lease_release_forgets_claimed_reservation",
+      "expected_refusal_contains": "first-slice WorkLease release forgets the claimed reservation awaiting settlement"
     },
     {
       "name": "identity-map-safe-exact-resource-and-branch-binding",
@@ -933,7 +1052,8 @@
           "value": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
         }
       },
-      "adversarial_tag": "identity_fabricated_contract_digest"
+      "adversarial_tag": "identity_fabricated_contract_digest",
+      "expected_refusal_contains": "payload_contract_digest does not match exact branch identity"
     },
     {
       "name": "identity-map-bad-resolved-status-with-null-digest",
@@ -947,7 +1067,8 @@
           "value": "resolved_exact"
         }
       },
-      "adversarial_tag": "identity_resolved_status_with_null"
+      "adversarial_tag": "identity_resolved_status_with_null",
+      "expected_refusal_contains": "payload_contract_resolution_status does not match exact branch identity"
     },
     {
       "name": "identity-map-bad-schema-resource-substituted-for-logical-type",
@@ -961,7 +1082,8 @@
           "value": "urn:odeya:schema:research-event:0.7.0"
         }
       },
-      "adversarial_tag": "identity_logical_type_resource_substitution"
+      "adversarial_tag": "identity_logical_type_resource_substitution",
+      "expected_refusal_contains": "conflates logical payload type and schema resource"
     },
     {
       "name": "identity-map-bad-wrong-branch-pointer",
@@ -975,7 +1097,8 @@
           "value": "/oneOf/999/properties/payload"
         }
       },
-      "adversarial_tag": "identity_wrong_branch_pointer"
+      "adversarial_tag": "identity_wrong_branch_pointer",
+      "expected_refusal_contains": "payload_branch_pointer does not match exact branch identity"
     },
     {
       "name": "identity-map-bad-source-raw-digest-drift",
@@ -989,7 +1112,8 @@
           "value": "sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
         }
       },
-      "adversarial_tag": "identity_source_digest_drift"
+      "adversarial_tag": "identity_source_digest_drift",
+      "expected_refusal_contains": "ResearchEvent raw-byte digest is stale"
     },
     {
       "name": "identity-map-bad-source-byte-count-drift",
@@ -1003,7 +1127,8 @@
           "value": 1
         }
       },
-      "adversarial_tag": "identity_source_byte_count_drift"
+      "adversarial_tag": "identity_source_byte_count_drift",
+      "expected_refusal_contains": "ResearchEvent byte count is stale"
     }
   ]
 }

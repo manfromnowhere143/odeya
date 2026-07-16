@@ -949,6 +949,15 @@ def main() -> int:
                 observed_tags.add(tag)
             if not errors:
                 failures.append(f"{name}: known-bad trace was accepted")
+            expected_refusal = case.get("expected_refusal_contains")
+            if not isinstance(expected_refusal, str) or not expected_refusal:
+                failures.append(f"{name}: adversarial case does not declare the guard that must refuse it")
+            elif not any(expected_refusal in error for error in errors):
+                # Refusal for an incidental reason is not proof that the named
+                # guard fires. Bind each known-bad trace to its own guard.
+                failures.append(
+                    f"{name}: refused, but not by its declared guard {expected_refusal!r}; got {errors}"
+                )
         else:
             failures.append(f"{name}: invalid expectation {expect!r}")
 

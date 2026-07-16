@@ -41,6 +41,21 @@ digest, permit a new start from a terminal lease, and make release forget the
 claimed reservation awaiting separate settlement. These are bounded fixture
 semantics, not a runtime clock, registry lookup, or reducer proof.
 
+## Each known-bad trace is bound to the guard that must refuse it
+
+An adversarial trace that asserts only `reject` proves nothing about the guard
+it names: a trace refused for an incidental reason satisfies that assertion
+while its guard is broken. Nine of the retained traces refuse with more than one
+error, so this was not hypothetical. Weakening `authority.grant_activated` to
+accept a second activation, or weakening `authority.grant_used` to accept a
+terminal state, both left this suite green.
+
+Every adversarial case therefore declares `expected_refusal_contains`: the
+substring of the refusal that is that guard's own error. Incidental errors are
+excluded on purpose. The checker fails when a known-bad trace is accepted, when
+it declares no guard, or when it is refused by something other than its declared
+guard. ADR 0024 records the correction and the exact mutations that were blind.
+
 Run from the repository root:
 
 ```bash
