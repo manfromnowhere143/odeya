@@ -81,7 +81,7 @@ They are requirements sources and bounded proof missions—not runtime dependenc
 
 ## Architecture checkpoint
 
-The current retained foundation contains 112 Draft 2020-12 schemas, 660 valid/adversarial cases, 12 isolated contract suites, 3 architecture-evidence checks, and 7 bounded safe TLA+ models with 30 mutation controls. These counts are bound to the validator run that measures them; the README previously stated four of them as fact while all four had drifted.
+The current retained foundation contains 112 Draft 2020-12 schemas, 660 valid/adversarial cases, 12 isolated contract suites, 4 architecture-evidence checks, and 7 bounded safe TLA+ models with 30 mutation controls. These counts are bound to the validator run that measures them; the README previously stated four of them as fact while all four had drifted.
 
 Those results establish structural and bounded semantic evidence only. Their strength is bounded further: of 156 refusal statements across the nine refusal-bearing functions of the lifecycle checker, 97 are reachable by a retained known-bad case and 59 are not, and the conditions inside all 156 are unmeasured. A passing suite is therefore weaker evidence than it reads — see [ADR 0030](docs/decisions/0030-statement-coverage-is-not-condition-coverage.md). [Gate A remains blocked](docs/ARCHITECTURE_STATUS.md), and its accountable review and operator decision have not occurred.
 

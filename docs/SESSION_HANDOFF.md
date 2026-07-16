@@ -416,9 +416,23 @@ therefore the profile-independent findings and the evidence-quality audit above,
 plus reducing the profile decision to an exact decidable package rather than
 1,154 raw findings.
 
-The next exact identity unit must disposition the retained canonical migration
-findings into immutable legacy resources versus explicitly reissued candidate
-resources, without same-ID mutation. Only after accountable review and Daniel's
+The canonical migration findings are now partitioned for decision. The
+disposition candidate at
+`architecture/canonicalization-migration-disposition-candidate.json` assigns all
+1,154 findings of the six audit classes to exactly nine disposition classes; the
+fourth architecture-evidence check recomputes that partition from the audit
+bytes on every run and refuses drift, count tampering, pre-filled acceptance, or
+a promoted status, with a nine-mutation self-test proving the gate fires. The
+touched-schema union is exactly 100 of 112, so the blast radius is one
+coordinated reissue wave regardless of which classes are accepted. Roughly 369
+findings are mechanical, 729 are table-driven behind two embedded proposal
+tables (59 decimal rows; 151 digest field groups, both with null proposal slots
+awaiting a proposing tranche), and the remaining true judgment sits in the
+divergent definition vocabularies. Every operator_acceptance slot is null: ADR 0032
+records the partition; Daniel's per-class decision is a separate explicit
+change. The next exact identity unit dispositions the retained canonical
+migration findings per accepted class into immutable legacy resources versus
+explicitly reissued candidate resources, without same-ID mutation. Only after accountable review and Daniel's
 profile decision may profile-bound ResearchStateView/PlanningEpoch successors
 receive canonical digests, followed by an admitted WorkIntent member and then
 the exact thirteen-event assignment cohort. Preserve all null/false authority

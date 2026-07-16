@@ -109,6 +109,7 @@ REQUIRED_FILES = (
     "architecture/gate-a-prerequisite-closure.json",
     "architecture/schema-resource-reissue-ledger.json",
     "architecture/canonicalization-profile-core-candidate.json",
+    "architecture/canonicalization-migration-disposition-candidate.json",
     "architecture/canonicalization-profile-candidate-evidence.json",
     "architecture/work-intent-core-candidate.json",
     "architecture/work-intent-identity-candidate-evidence.json",
@@ -301,6 +302,7 @@ ARCHITECTURE_EVIDENCE_CHECKS = (
     "scripts/validate_gate_a_prerequisites.py",
     "scripts/validate_schema_resource_reissues.py",
     "scripts/validate_lifecycle_guard_coverage.py",
+    "scripts/validate_canonicalization_dispositions.py",
 )
 REPOSITORY_RELEASE_CHECKS = (
     "scripts/validate_repository_release.py",

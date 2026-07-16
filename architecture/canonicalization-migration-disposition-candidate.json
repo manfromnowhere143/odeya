@@ -1,0 +1,2959 @@
+{
+ "schema_version": "0.1.0",
+ "artifact_class": "architecture_evidence",
+ "inventory_id": "odeya.canonicalization-migration-disposition",
+ "version": "0.1.0",
+ "status": "candidate_partition_not_accepted",
+ "plan_ref": "docs/GATE_A_PREREQUISITE_CLOSURE_PLAN_2026-07-16.md",
+ "decision_ref": "docs/decisions/0032-partition-the-canonical-migration-findings.md",
+ "partition_basis": {
+  "audit_ref": "tests/canonicalization/SCHEMA_AUDIT.json",
+  "audit_version": "0.2.0",
+  "schema_corpus_sha256": "cb06a762897fa1077eeb9eeadcc2b2cc977729e8e7b94378443dda1285b19ed2",
+  "fixture_corpus_sha256": "73e91321a78893b013ee279bd961a421013c4ab0d3f0775b9f7012813a626d02",
+  "schema_count": 112,
+  "fixture_count": 200
+ },
+ "partition_law": "every finding of the six audit classes is assigned to exactly one disposition class by the selectors below; the validator recomputes this partition from the audit bytes on every run and refuses drift",
+ "total_findings": 1154,
+ "touched_schema_union_count": 100,
+ "touched_schema_union": [
+  "schemas/adjudication.schema.json",
+  "schemas/admission-evidence-bundle.schema.json",
+  "schemas/aggregate-state-subject-registry.schema.json",
+  "schemas/architecture-candidate-manifest.schema.json",
+  "schemas/architecture-finding.schema.json",
+  "schemas/artifact-custody-observation.schema.json",
+  "schemas/artifact-manifest.schema.json",
+  "schemas/asset-configuration-snapshot.schema.json",
+  "schemas/authority-assignment.schema.json",
+  "schemas/authority-grant.schema.json",
+  "schemas/backup-manifest.schema.json",
+  "schemas/blocker.schema.json",
+  "schemas/c0-registry-bundle.schema.json",
+  "schemas/candidate-artifact.schema.json",
+  "schemas/claim-correction.schema.json",
+  "schemas/claim-proposal.schema.json",
+  "schemas/claim.schema.json",
+  "schemas/command-contract-record.schema.json",
+  "schemas/command-contract-registry.schema.json",
+  "schemas/command-design-vocabulary.schema.json",
+  "schemas/command-envelope.schema.json",
+  "schemas/command-receipt.schema.json",
+  "schemas/context-compilation-receipt.schema.json",
+  "schemas/data-asset-record.schema.json",
+  "schemas/data-exposure-record-intent-command.schema.json",
+  "schemas/data-exposure-record.schema.json",
+  "schemas/data-use-decide-command.schema.json",
+  "schemas/data-use-decision.schema.json",
+  "schemas/data-use-revoke-command.schema.json",
+  "schemas/deletion-case.schema.json",
+  "schemas/deletion-close-case-command.schema.json",
+  "schemas/engine-contract-root.schema.json",
+  "schemas/epistemic-graph-delta.schema.json",
+  "schemas/epistemic-node-version.schema.json",
+  "schemas/epistemic-transition-record.schema.json",
+  "schemas/estimand-contract.schema.json",
+  "schemas/event-contract-registry.schema.json",
+  "schemas/experiment-candidate.schema.json",
+  "schemas/external-effect-authorize-command.schema.json",
+  "schemas/external-effect-cancel-command.schema.json",
+  "schemas/external-effect-start-command.schema.json",
+  "schemas/falsifier-result.schema.json",
+  "schemas/grounded-outcome.schema.json",
+  "schemas/handoff.schema.json",
+  "schemas/key-profile.schema.json",
+  "schemas/ledger-begin-epoch-command.schema.json",
+  "schemas/ledger-checkpoint-seal-command.schema.json",
+  "schemas/ledger-checkpoint.schema.json",
+  "schemas/legal-hold-issue-command.schema.json",
+  "schemas/legal-hold-release-command.schema.json",
+  "schemas/legal-hold.schema.json",
+  "schemas/method-registry.schema.json",
+  "schemas/metric-result.schema.json",
+  "schemas/model-configuration-record.schema.json",
+  "schemas/module-dependency-manifest.schema.json",
+  "schemas/operator-architecture-decision.schema.json",
+  "schemas/physical-evidence-vector.schema.json",
+  "schemas/physical-experiment-contract.schema.json",
+  "schemas/physical-measurement-result.schema.json",
+  "schemas/physical-model-record.schema.json",
+  "schemas/physical-quantity.schema.json",
+  "schemas/planning-epoch.schema.json",
+  "schemas/policy-decision.schema.json",
+  "schemas/projection-impact-record.schema.json",
+  "schemas/projection-redaction-manifest.schema.json",
+  "schemas/projection-snapshot.schema.json",
+  "schemas/promotion-decision.schema.json",
+  "schemas/protocol-amendment.schema.json",
+  "schemas/protocol-snapshot.schema.json",
+  "schemas/publication-candidate.schema.json",
+  "schemas/publication-decision.schema.json",
+  "schemas/publication-manifest.schema.json",
+  "schemas/recovery-change-service-scope-command.schema.json",
+  "schemas/recovery-decision.schema.json",
+  "schemas/recovery-record-decision-command.schema.json",
+  "schemas/reducer-equivalence-result.schema.json",
+  "schemas/reducer-registry.schema.json",
+  "schemas/registry-activation.schema.json",
+  "schemas/research-event-trace.schema.json",
+  "schemas/research-event.schema.json",
+  "schemas/research-mission.schema.json",
+  "schemas/research-state-view.schema.json",
+  "schemas/restore-verification-report.schema.json",
+  "schemas/retention-schedule.schema.json",
+  "schemas/review-determination.schema.json",
+  "schemas/rights-assertion.schema.json",
+  "schemas/root-authority-manifest.schema.json",
+  "schemas/routing-decision.schema.json",
+  "schemas/run-manifest.schema.json",
+  "schemas/safety-envelope.schema.json",
+  "schemas/schema-registry.schema.json",
+  "schemas/scientific-result-envelope.schema.json",
+  "schemas/strategy-candidate.schema.json",
+  "schemas/transformation-record.schema.json",
+  "schemas/uncertainty-budget.schema.json",
+  "schemas/validation-result.schema.json",
+  "schemas/validation-rule-registry.schema.json",
+  "schemas/verification-run.schema.json",
+  "schemas/work-contract.schema.json",
+  "schemas/work-intent.schema.json"
+ ],
+ "single_wave_consequence": "under the no-same-ID-mutation law the blast radius is one coordinated reissue wave over the touched-schema union; accepting or rejecting classes changes reissued content, never the wave size",
+ "sequencing": [
+  "any D5 new-domain registration and any profile-core edit first, because they re-freeze the core bytes",
+  "the D2-D8 schema reissue wave",
+  "D9 profile-binding pins against the final core bytes",
+  "the D1 fixture wave plus fixture URN repins",
+  "audit regeneration must then show all six blocking findings at zero; refreshing the audit without resolving findings is not closure"
+ ],
+ "defs_comparator": {
+  "prose_stripped_keys": [
+   "$comment",
+   "description",
+   "examples",
+   "title"
+  ],
+  "scalar_constraint_keys_blanked": [
+   "exclusiveMaximum",
+   "exclusiveMinimum",
+   "format",
+   "maxItems",
+   "maxLength",
+   "maxProperties",
+   "maximum",
+   "minItems",
+   "minLength",
+   "minProperties",
+   "minimum",
+   "multipleOf",
+   "pattern"
+  ],
+  "set_semantic_keys_sorted": [
+   "allOf",
+   "anyOf",
+   "oneOf",
+   "required",
+   "type"
+  ],
+  "rule": "one shared structural skeleton and one enum vocabulary is D6; one skeleton with differing enum vocabularies is D8; differing skeletons is D7. Constraint-keyword presence is treated as structure, which is the conservative reading; a presence-insensitive comparator reclassifies three names from D7 to D6 and is recorded here so the sensitivity is visible rather than silent",
+  "presence_insensitive_triage": {
+   "D6": 9,
+   "D7": 44,
+   "D8": 3
+  }
+ },
+ "classes": [
+  {
+   "class_id": "D1",
+   "title": "Fixture timestamp normalization",
+   "finding_id": "CANON-FIXTURE-TIME-001",
+   "selector": "every entry of fixtures[].nonconformant_timestamp_values",
+   "count": 236,
+   "kind": "mechanical",
+   "recommendation": "normalize every value to the frozen UTC microsecond lexical form and regenerate the audit corpus digests; zero schema reissues"
+  },
+  {
+   "class_id": "D2",
+   "title": "Datetime profile pinning",
+   "finding_id": "CANON-SCHEMA-TIME-001",
+   "selector": "every entry of schemas[].unprofiled_datetime_paths",
+   "count": 122,
+   "kind": "mechanical_after_exemption_pass",
+   "recommendation": "pin each path to one shared profiled timestamp definition and reissue; one enumeration pass first for any source-reported external-time exemption"
+  },
+  {
+   "class_id": "D3",
+   "title": "Scientific-decimal typed-object migration",
+   "finding_id": "CANON-SCHEMA-NUMBER-001",
+   "selector": "every entry of schemas[].generic_scientific_decimal_paths",
+   "count": 59,
+   "kind": "table_driven",
+   "recommendation": "migrate each field to the frozen typed scientific-decimal object; the semantic type, unit, and precision per row require operator approval of the embedded table"
+  },
+  {
+   "class_id": "D4",
+   "title": "Binary-number domain declaration",
+   "finding_id": "CANON-SCHEMA-NUMBER-001",
+   "selector": "every entry of schemas[].generic_json_number_paths",
+   "count": 2,
+   "kind": "single_judgment",
+   "recommendation": "declare a frozen bounded-integer domain or migrate to decimal strings; both findings are in research-mission.schema.json"
+  },
+  {
+   "class_id": "D5",
+   "title": "Digest scope annotation",
+   "finding_id": "CANON-SCHEMA-DIGEST-001",
+   "selector": "every schemas[].digest_fields[] entry with scope_annotation_present false",
+   "count": 668,
+   "kind": "table_driven",
+   "recommendation": "annotate each field via shared scoped-digest definitions distinguishing byte digests from canonical object digests; rows proposing a domain beyond the frozen 21 require separate operator judgment and re-freeze the profile core"
+  },
+  {
+   "class_id": "D6",
+   "title": "Divergent definitions: constraint-only, converge",
+   "finding_id": "CANON-SCHEMA-DEFS-001",
+   "selector": "divergent_common_definitions entries whose variants share one structural skeleton and one enum vocabulary under the comparator in defs_comparator",
+   "count": 6,
+   "kind": "semi_mechanical",
+   "recommendation": "converge to one canonical shared definition per name; every narrowing carries a known-bad vector proving the stricter form refuses what the profile intends to refuse"
+  },
+  {
+   "class_id": "D7",
+   "title": "Divergent definitions: structural",
+   "finding_id": "CANON-SCHEMA-DEFS-001",
+   "selector": "divergent_common_definitions entries whose variants differ structurally under the comparator in defs_comparator",
+   "count": 47,
+   "kind": "per_name_decision",
+   "recommendation": "rename-distinct by default; converge-to-superset only where provably safe, decided per name over the retained variant diffs"
+  },
+  {
+   "class_id": "D8",
+   "title": "Divergent definitions: enum vocabulary policy",
+   "finding_id": "CANON-SCHEMA-DEFS-001",
+   "selector": "divergent_common_definitions entries whose variants share one skeleton but differ in enum vocabularies under the comparator in defs_comparator",
+   "count": 3,
+   "kind": "operator_judgment",
+   "recommendation": "closed central vocabularies with declared per-context subsets"
+  },
+  {
+   "class_id": "D9",
+   "title": "Profile-binding pinning",
+   "finding_id": "CANON-SCHEMA-PROFILE-001",
+   "selector": "every schemas[].canonical_profile_bindings entry not pinned",
+   "count": 11,
+   "kind": "mechanical_strictly_last",
+   "recommendation": "pin the exact prospective profile reference members only after the profile core bytes are final; any later core edit invalidates every pin"
+  }
+ ],
+ "defs_assignments": [
+  {
+   "definition_name": "artifact_reference",
+   "class": "D7",
+   "occurrence_count": 96,
+   "variant_count": 5,
+   "variant_sha256": [
+    "12cd45d4b4e16b0c29616a6139bcb8e78d5041956ed43ffc5219608ea10ae8ff",
+    "5ca9ff3a29e5c2cbf5f1bb89af084e2ff661a0b6039923c7e32c311110c58096",
+    "8cbadd26c66f022bbd32d44232b5795e421b2c0e912c4ebb193590bcc5adc09c",
+    "a0b168bf81b9b39cff9ed3b087fa640425ed1b59add6c8132ce8ffefcc8f7704",
+    "feaad3ec0773d4eab1afe3647f07b004cf2fadd6861a3ed0cbe5dbaedd46073b"
+   ]
+  },
+  {
+   "definition_name": "attestation",
+   "class": "D7",
+   "occurrence_count": 6,
+   "variant_count": 2,
+   "variant_sha256": [
+    "a19d958d284ca4a79c8407fd358dcd64274a268680820738c75982e926e79122",
+    "e1afa15327b495116e0fedef3db67ee5190e19428df4687f0fe8fea727c686ae"
+   ]
+  },
+  {
+   "definition_name": "authorization_scope",
+   "class": "D7",
+   "occurrence_count": 2,
+   "variant_count": 2,
+   "variant_sha256": [
+    "6f0a46bc7287d3b44f393ac0079d3c2d37a66089470899ad937e7cb8e9896cd2",
+    "e8bc163466366bebd8ef22fedd18ed9e466d414c8554a14650017f81cbde90e4"
+   ]
+  },
+  {
+   "definition_name": "c0_registry_bundle_reference",
+   "class": "D7",
+   "occurrence_count": 5,
+   "variant_count": 2,
+   "variant_sha256": [
+    "03c300fdf7a1c7abb638bccd2e822e3d4dd7251c457303985b012df758593c1d",
+    "576ae124603257ecc64b42cdbc744689010354b4f63e91a698ee922e553a6372"
+   ]
+  },
+  {
+   "definition_name": "calibration_traceability",
+   "class": "D7",
+   "occurrence_count": 2,
+   "variant_count": 2,
+   "variant_sha256": [
+    "6d03c8da2b37e50a0ad32d7bd5925ef8376ab3e577275e5262ba7680d2f816fd",
+    "86a2aaa422761ed7d72fa907cbd881f1740bf434b086c72355815502588dea94"
+   ]
+  },
+  {
+   "definition_name": "canonical_record_reference",
+   "class": "D7",
+   "occurrence_count": 11,
+   "variant_count": 2,
+   "variant_sha256": [
+    "86e495f2d56093fdaa2fc96285bec1f88edd1f36af57e4c3cd34ff75114c3f4f",
+    "ab787a2a2cca9ee4ef5514ade47b0a4f8404d9b1ef01ff62e8822c8cd700fe35"
+   ]
+  },
+  {
+   "definition_name": "check_result",
+   "class": "D7",
+   "occurrence_count": 2,
+   "variant_count": 2,
+   "variant_sha256": [
+    "05a1a6760102dce78266fce016c0384fcb71411b2a8c1a54bf78f3c4c1c7b1c5",
+    "10a749babf30c6d82f35cdcaad19c4c618aa6d44e89864c4071d4ba82e7576ec"
+   ]
+  },
+  {
+   "definition_name": "checkpoint_reference",
+   "class": "D7",
+   "occurrence_count": 5,
+   "variant_count": 3,
+   "variant_sha256": [
+    "1f5e9cc4bc4b88ca2b7a76c395f9bb83273ca7514e920242a8a4aba4815ff64f",
+    "2767209659259d939ab456bfa5a7a558bd73de419a0c674265b07484ebfa4437",
+    "3b4301dcab75427f9d26b6f170b20cb6f6d2327244c434eb2eb2ff2754947db9"
+   ]
+  },
+  {
+   "definition_name": "claim_reference",
+   "class": "D7",
+   "occurrence_count": 5,
+   "variant_count": 2,
+   "variant_sha256": [
+    "2f4d5b32e0f4236c93304edd31f66dbfa86957236d5fb23efedb8aeadf1a61a8",
+    "a8a0f13204f1f6815af57ddab9610a10c8159cc068cdadcb4437dbc00ab1bacb"
+   ]
+  },
+  {
+   "definition_name": "claim_type",
+   "class": "D8",
+   "occurrence_count": 4,
+   "variant_count": 2,
+   "variant_sha256": [
+    "70526339989703852ff5ea7c319690cfb1239251be921d8f8a2049d6092204c4",
+    "9feb1fcba698c0b3da4c22a263651e2090d5136682f5243a985cd42cec3924a7"
+   ]
+  },
+  {
+   "definition_name": "command_binding",
+   "class": "D7",
+   "occurrence_count": 2,
+   "variant_count": 2,
+   "variant_sha256": [
+    "4610f438d6e1195312b768e0b9b74471fae12cfee40888189913b2924316776b",
+    "ea1cdd00bbb75f2a06e1270dab5f46abf0f63af4d15f4f03081ef2cf2eb09e10"
+   ]
+  },
+  {
+   "definition_name": "command_contract_record_reference",
+   "class": "D7",
+   "occurrence_count": 2,
+   "variant_count": 2,
+   "variant_sha256": [
+    "315911b2289e75baea6b1d3d28f1315a2dd15a8485290908a67b747039a1f55e",
+    "6f83e4ff86ab323a5b91ed15ef10f4cf9b419ae5f265898d2ceed020999b9714"
+   ]
+  },
+  {
+   "definition_name": "decimal",
+   "class": "D6",
+   "occurrence_count": 11,
+   "variant_count": 4,
+   "variant_sha256": [
+    "65a62baed080f69a168746ffaa37012dd79887aa07ed061878e2837e1dddebe1",
+    "7d1d60d1e4f0ac4721517fe29c63c192768544a9556009f1f3ce7d438963546f",
+    "a17ae2cf5a0c84a4ab1a7f72a93b6508267177f8e8ccd5dec1fdedc9cdce0155",
+    "ef7b7e8e228f0f1adf25817aa7381c499a79e63b504be03236afb25d243e7622"
+   ]
+  },
+  {
+   "definition_name": "decimal_string",
+   "class": "D6",
+   "occurrence_count": 3,
+   "variant_count": 2,
+   "variant_sha256": [
+    "7d1d60d1e4f0ac4721517fe29c63c192768544a9556009f1f3ce7d438963546f",
+    "a17ae2cf5a0c84a4ab1a7f72a93b6508267177f8e8ccd5dec1fdedc9cdce0155"
+   ]
+  },
+  {
+   "definition_name": "digest_contract",
+   "class": "D7",
+   "occurrence_count": 4,
+   "variant_count": 4,
+   "variant_sha256": [
+    "114efa3c10941d8edcb718e1a3e48166b735cb6ec3d7648a5c5b6c44dfea8e58",
+    "476568cded43382261fd3ef282b1e537e594d8c3e4eff603e8c83c3dabf793a5",
+    "791a3a7e183517785b03615d5d09bd981fe63a019e0a2b36e1fd740c350b0902",
+    "c16b2596a6ee59c1f7cd193d9203497a1ab5cfa9f97f5cea79bdf6284babeacf"
+   ]
+  },
+  {
+   "definition_name": "engine_contract_root_reference",
+   "class": "D7",
+   "occurrence_count": 6,
+   "variant_count": 3,
+   "variant_sha256": [
+    "32718367341e5fee22ef7b3470bfd0f5276ab1676a663cc95a024919326d0c22",
+    "9210b8b83fca3754d8ca3b3dff7ee61f2513effcfad99d0af62649461c5d97e7",
+    "a994c8b96092c5e9305016c64140721c08bd63ded978065a908ca02618f400f8"
+   ]
+  },
+  {
+   "definition_name": "estimand_contract_reference",
+   "class": "D7",
+   "occurrence_count": 3,
+   "variant_count": 2,
+   "variant_sha256": [
+    "1a0a957742f08daecdb32d6ae0520ef6a1b559a9d320538370256e0ce8cb8f5e",
+    "ecd5afff466a7d3f667e77890ed289d23ec472f95c9b54937c838bbeb1eacc8d"
+   ]
+  },
+  {
+   "definition_name": "evaluation_frontier",
+   "class": "D7",
+   "occurrence_count": 2,
+   "variant_count": 2,
+   "variant_sha256": [
+    "9b9d031ff807b35110cee2f5bfdb42627ac7d31965af375684450eb1e1770442",
+    "b03891c5c3beaddf98f37f6c32714716da08e77edb363970d7912f7a9938f68b"
+   ]
+  },
+  {
+   "definition_name": "event_member_reference",
+   "class": "D7",
+   "occurrence_count": 3,
+   "variant_count": 2,
+   "variant_sha256": [
+    "2ba2480844f881a3bd9b03a555b8c31f15e6d413e2cf50670d59ca072ef106b2",
+    "abbf4d2952cd028ab477c0c2bd4f1948c229b3963415328d1c0168c8ea70cbf3"
+   ]
+  },
+  {
+   "definition_name": "event_reference",
+   "class": "D7",
+   "occurrence_count": 2,
+   "variant_count": 2,
+   "variant_sha256": [
+    "08878749804992dcceb5c4a039164a77bfb83646df95c4693296cbfb02dbac72",
+    "9694280278443de255c6725a37e1eef4fcfd7bc7cb7b48a89a839bf5251df64b"
+   ]
+  },
+  {
+   "definition_name": "exact_decimal",
+   "class": "D6",
+   "occurrence_count": 3,
+   "variant_count": 2,
+   "variant_sha256": [
+    "5a882bb4d07c220eff65069bba64aae8841719e1ab55aa2d217c2580b2280fee",
+    "f78ce5e754c8aa46d874c2551f2fbc267b54faa7c4ad2cadcb980f26d5bdf6ae"
+   ]
+  },
+  {
+   "definition_name": "execution_budget",
+   "class": "D7",
+   "occurrence_count": 4,
+   "variant_count": 2,
+   "variant_sha256": [
+    "d90d12ab331563ca1763f8075c3b4e7954e6c4d2de8a20db382cfb8d322a42a7",
+    "f99c12b0cd11cf1ff3ab0ba139ef31231cca8d9ebed225297a0524c404af9a19"
+   ]
+  },
+  {
+   "definition_name": "execution_identity",
+   "class": "D7",
+   "occurrence_count": 7,
+   "variant_count": 3,
+   "variant_sha256": [
+    "7afc1db4a3800741fa834e78a7b4c324714d36a61f7306b13eec1860b01ce1e2",
+    "a2b5c01165c0c04a649a3c287993d71779750bb255adff4e72a258f81b6e3def",
+    "f8c9c4df7cdd0c4886262df3daf536050e09337e7722b3a3dc4f5c26851e0f26"
+   ]
+  },
+  {
+   "definition_name": "historical_read_policy",
+   "class": "D7",
+   "occurrence_count": 4,
+   "variant_count": 4,
+   "variant_sha256": [
+    "7db1cc13a10aadc5dfb4a09dc0f835c13fe9ffd09dc3b7dcea106c30f89113a7",
+    "9287aed01310b77f9b4d000d9fec3b044ab31423c1dcf5f50dec7825adfe76f5",
+    "a10a2516712e40a6e71cab44cbee19149b90e762e58edfe12cecf23fdc46c09a",
+    "f8172a2d9ba071791734ca1cf25c225be29fefb85eff8232c6c5cb7e4166d934"
+   ]
+  },
+  {
+   "definition_name": "human_principal",
+   "class": "D7",
+   "occurrence_count": 18,
+   "variant_count": 3,
+   "variant_sha256": [
+    "478c7ed1fbe18c8f1ea22cc8c162e61134a13a375021a7a1d287de00b5652f2b",
+    "8b75cec820580fbdd0f7653e22fc0f0845e26a0d4c7ff09039c3ef0294edad62",
+    "cd48050ddd4994a288bf659f008f855460bd984e9494622bec419c3690ccaf42"
+   ]
+  },
+  {
+   "definition_name": "identifier",
+   "class": "D7",
+   "occurrence_count": 100,
+   "variant_count": 3,
+   "variant_sha256": [
+    "0722f36cafd3ee5b451e851da28b0d0a8d6bce3f40adc038b25d35e0e35df2e6",
+    "6c1a4514d21050fcb7e7f19a82469411677ea5cae0219ea85b8f120aa453a4fc",
+    "9fa04674b258d7db9cb505e557c119a518b151a7e2642df3471ae7000f01d469"
+   ]
+  },
+  {
+   "definition_name": "immutable_reference",
+   "class": "D7",
+   "occurrence_count": 26,
+   "variant_count": 3,
+   "variant_sha256": [
+    "028cf1062b3782503b0d5ef43fdcc83a0adef5422081a934d256215473e1c2cb",
+    "73bdf85c5910c27a6f965a9df64a0f2236d17ecd2303dfa1bb806d6c74c77ea7",
+    "85bce6bf5601405c2e23121c0722eabb22227145bd77873ef7a8d9ddf621ea1f"
+   ]
+  },
+  {
+   "definition_name": "integrity",
+   "class": "D7",
+   "occurrence_count": 3,
+   "variant_count": 3,
+   "variant_sha256": [
+    "2f8d6f58263caf86d196d22b80e27f9fb750f4ce6a6dfa7f36e0d973f0173fab",
+    "775d0c6b5fd0ccb7650166a7d5405282f0426ec7e76a9669e9c9b4030340806b",
+    "ebf3f86408b086e069f0600f6e171e4a165c122e2e86db197268f2081bac07fc"
+   ]
+  },
+  {
+   "definition_name": "member_key",
+   "class": "D6",
+   "occurrence_count": 4,
+   "variant_count": 2,
+   "variant_sha256": [
+    "64570dd27e49d1f34c9ca386e5796752ca1f1f28260b7f2ba2f4514bace125ec",
+    "a402b432610f27dc4e38f13ad88bc9d30fa6e3e4fedcd3a5b7d83da660e5b03f"
+   ]
+  },
+  {
+   "definition_name": "method_reference",
+   "class": "D7",
+   "occurrence_count": 15,
+   "variant_count": 3,
+   "variant_sha256": [
+    "14ccba49c52f7a8211ed8fbf895248216e9ba6bf1f6927d192aef1465861f163",
+    "4e9a3e1ef8b0d8648734172d47bf2db06065ef5e646e2d560695d82f65096596",
+    "95c953871eff177fe2ad70baa88fa530ec652066f3bb66d065cc3069e448ad2f"
+   ]
+  },
+  {
+   "definition_name": "non_recursive_construction",
+   "class": "D7",
+   "occurrence_count": 4,
+   "variant_count": 3,
+   "variant_sha256": [
+    "25d638144732e1bc6d3c112721f49aca04474d2429aaa5821540b7647e4557bc",
+    "d67258e7c3e514802065c40401640dac32c37fd8fe0db86984499b1d3eee573c",
+    "fa6364379652c0862df6da46273aaef96c3eefed8ed54e1b9d74c71bc089e4b1"
+   ]
+  },
+  {
+   "definition_name": "nonempty_artifact_array",
+   "class": "D7",
+   "occurrence_count": 12,
+   "variant_count": 3,
+   "variant_sha256": [
+    "0f863771f391f78f2c921220e20bff304c85325c9f8c5a367cbdbd4ce4424d33",
+    "66e5bb5817b69b404c5b67d3de27391f50eb973a797837440781b549262b5c49",
+    "c432d17ce2bd5d4a8df6bc2cf60f8e39e650cc9d1c9736b160d8e55e087c8441"
+   ]
+  },
+  {
+   "definition_name": "operation",
+   "class": "D8",
+   "occurrence_count": 3,
+   "variant_count": 2,
+   "variant_sha256": [
+    "39c341895dbc4cf872faed605b1d8ee87a4177b48151ee5bcd37150d6a4980ff",
+    "d27cdd358790584c13a6dcf40a5390f13d49fb0ee9c7983dcfc9d7216329f66a"
+   ]
+  },
+  {
+   "definition_name": "origin_contract",
+   "class": "D7",
+   "occurrence_count": 2,
+   "variant_count": 2,
+   "variant_sha256": [
+    "4d6e9a2b3e30a11d826e03f689209ae4d3df558985ea38dc870ddcb325ccdd03",
+    "bfa3eaea774dae2cd8f4956912d23c196804572ae06d532a217f24b990d1c31f"
+   ]
+  },
+  {
+   "definition_name": "physical_model_reference",
+   "class": "D7",
+   "occurrence_count": 4,
+   "variant_count": 2,
+   "variant_sha256": [
+    "239c8fca6fdc9029e5bd30d89e249e6cc1787da4976987e2e744f87ff527340f",
+    "a056148c63ce6462d92d49384e4ea5f3547545ba14d8da657c5a39bdc8805cc1"
+   ]
+  },
+  {
+   "definition_name": "principal",
+   "class": "D7",
+   "occurrence_count": 30,
+   "variant_count": 11,
+   "variant_sha256": [
+    "04b886c4699c8cf059b3ce6878cdadabe0c2c219c3e94feac9bdf0e18fb38a60",
+    "2ac861751a52ff9c5654e0790432dc87c075d055ebc13083ae5ffc54d9b19fd2",
+    "39af16323e16e4f2ce0744fabe131175d0e3538c5e1d42a597eb15c62dd2b2e5",
+    "4ba21b5a310950d59a77e41b113216abebdf792b2449c7f2a59c52b96ad16472",
+    "54db7ee3acd6376950a97c326c95575195ed2bdc100c9896e30ca6b966bd1bda",
+    "6e0bcf020e1729519800e1348b953e7549f1aaff4d28e2ff0af1c50e71b6a9db",
+    "7854d1b521ebf46c2edec1608068df5da3fae1f954b58870d6bd69dd2fb14ff4",
+    "883f0fde41589280c6e3694354c9e46d87656cc6459ab72787248cf43d082bd6",
+    "8a9a1d5fe318b02328e484bcbb909146a14d110ca7d7b862efd12f78998abe92",
+    "ab86ab45220999301899ef4ba6be38d2929c71f1f052cd072b4a6b761adacd5b",
+    "bb878c7a07df9eb7366341fc6b673e6374336792f19e1b69b020fab1cca0926c"
+   ]
+  },
+  {
+   "definition_name": "protocol_snapshot_reference",
+   "class": "D7",
+   "occurrence_count": 2,
+   "variant_count": 2,
+   "variant_sha256": [
+    "402229cd4bc75c8500cbf6484ec9af9483e2b0fb6d365a6a63153b302a90af94",
+    "d475ce2e17c0dde1746b67ff40c23e3151b0573789be16a9a7ac5d190a5e8515"
+   ]
+  },
+  {
+   "definition_name": "quantity",
+   "class": "D7",
+   "occurrence_count": 7,
+   "variant_count": 3,
+   "variant_sha256": [
+    "20eafa12cbc1589ff97f6d6570e025c0d5dd8f0f84fa40a36955dc2a230a7a2f",
+    "66866ef54422c890a588a9a6f61928d48885d898e4bdea6bdad52a430ec98ad1",
+    "9823bec6fe35345f49377e03213a122617a24554d2811b36ec7b3202d4ea30e1"
+   ]
+  },
+  {
+   "definition_name": "reducer_member_reference",
+   "class": "D7",
+   "occurrence_count": 2,
+   "variant_count": 2,
+   "variant_sha256": [
+    "a5cac5e08004148b3ec0820d705a83f3dc1c81c2fd8b7cd6670d70a980a09614",
+    "becadbb453f9f7b61b69d3b95bb2be264b79b2264541d7c937cf1c1715cff3c5"
+   ]
+  },
+  {
+   "definition_name": "registry_activation_reference",
+   "class": "D7",
+   "occurrence_count": 4,
+   "variant_count": 2,
+   "variant_sha256": [
+    "67c6744db72286353685960023c786ae8f70c299dcbd0c7c3615a17dd26fac3b",
+    "764b3a691746191208c7bd6c7cae9ccafe5c10dc472144aa7fddd52a5c29fed9"
+   ]
+  },
+  {
+   "definition_name": "registry_digest_contract",
+   "class": "D7",
+   "occurrence_count": 4,
+   "variant_count": 4,
+   "variant_sha256": [
+    "3586bbeedadf92a79e245e28a7bbbd883f0e5d5495f186f23123e4ca09cd110c",
+    "562374ccd05606a9e5ae82994dd91d0d0bf3ab88f64ed0fed2ab87c923d1cc85",
+    "be210983a77ea6f04c9543fb354db3246567b05840b2558e050b016b3f42e796",
+    "eb81a2d460b46496e7b41479177817e37fad2f5e102d45fd3673ea45023614ff"
+   ]
+  },
+  {
+   "definition_name": "resource_budget",
+   "class": "D7",
+   "occurrence_count": 2,
+   "variant_count": 2,
+   "variant_sha256": [
+    "10c07bcd7c8cdec6c9dadc9d9184fbe4bc046657fbd68e15f8f77118c091d88d",
+    "496ddf59756446243ddd534cd21d318c418854c59bab5f54e007b602caa1863f"
+   ]
+  },
+  {
+   "definition_name": "resource_observation",
+   "class": "D7",
+   "occurrence_count": 2,
+   "variant_count": 2,
+   "variant_sha256": [
+    "8d05fca31ae388127a2440367f95a153c246a7728be49216c5bcf6e83d741771",
+    "fb01ce5f86f43c77d5e3ff92f578773fff39a9056ff596b56ebd02d6ecb75db3"
+   ]
+  },
+  {
+   "definition_name": "rule_reference",
+   "class": "D7",
+   "occurrence_count": 4,
+   "variant_count": 2,
+   "variant_sha256": [
+    "650c7cfbb29abb7414d78d05d267af288f6855b4b5ad14a1c31956e464e40d0d",
+    "8e6dd18d100cec307c49800df38ff34d1d86ad888e6692895c2f54b2cedddae7"
+   ]
+  },
+  {
+   "definition_name": "schema_bytes_reference",
+   "class": "D7",
+   "occurrence_count": 6,
+   "variant_count": 5,
+   "variant_sha256": [
+    "53d0c81250c8c53d386ea2c9913ab8491761985de13eba1ada6d497443c225e0",
+    "7e79c784dc7833e625d02a12561c7b80bf6a923942d05113d25e1b952aed70f4",
+    "80597ba04acbbed32b451fb612cd005eb0dc6e570c1e956aaaa53be46ca3618a",
+    "cfb8e3adfcb5b3c67bc789548e0c4a5ffa00ebffe3475a5de5ddef3b09dedb13",
+    "ec0de2d63c7a47498c39faa680c53eb53503a10ceb659922cf70febfb6e86d8c"
+   ]
+  },
+  {
+   "definition_name": "scientific_outcome",
+   "class": "D8",
+   "occurrence_count": 4,
+   "variant_count": 2,
+   "variant_sha256": [
+    "10544968cb80baad7b63ce12190416bd9481c7b963483d5cae15a8097ee00fd3",
+    "95643c83549e5d8b96c4cb5a0a47aea198886a94b507884c9b0854dbdae854bd"
+   ]
+  },
+  {
+   "definition_name": "semantic_version",
+   "class": "D6",
+   "occurrence_count": 19,
+   "variant_count": 2,
+   "variant_sha256": [
+    "2c46cfea06365f55c0c90fc07b1deb601750eea20388458d9ae54dba80dd4ce3",
+    "6702fe3fdb6484049fdb6c5c77035848611d331c42f88b829576593a3f2fa685"
+   ]
+  },
+  {
+   "definition_name": "signature_record",
+   "class": "D6",
+   "occurrence_count": 2,
+   "variant_count": 2,
+   "variant_sha256": [
+    "2b7aecac1f4afeba53ebfca4a05ac8697ddfed8655d5797720c4d550fff49ab9",
+    "6b90382fd6789ccc83ae7874fea4da7b9edcb782052583826dc9f590ea1876f4"
+   ]
+  },
+  {
+   "definition_name": "subject_reference",
+   "class": "D7",
+   "occurrence_count": 8,
+   "variant_count": 2,
+   "variant_sha256": [
+    "b62960c395e03b2299d00be12fa2263c26d8269a0239e4e08043d330714c958d",
+    "d41a85729f76e086ba9f58153e84429d429bb1c57bc7abe52a7c10c51d75aa75"
+   ]
+  },
+  {
+   "definition_name": "timestamp",
+   "class": "D7",
+   "occurrence_count": 47,
+   "variant_count": 2,
+   "variant_sha256": [
+    "4f410cd74c87d8ddd21f20e835e06ed7445481c3aeae3c12085e82c54ea2fb7d",
+    "65cce9649bc9ae632d8583f16a97f446ceb537387905b7a669de1fb5a2bebb67"
+   ]
+  },
+  {
+   "definition_name": "trace_contract",
+   "class": "D7",
+   "occurrence_count": 2,
+   "variant_count": 2,
+   "variant_sha256": [
+    "70741771a94b8a032a5ece478defd6de39d3180c45a9ff4e0deba9afa712f1e4",
+    "9d5455167f5a1fce5fb5c82ddfbc1c962e6e1587a20411fffeb0d1ffd95b789d"
+   ]
+  },
+  {
+   "definition_name": "unit",
+   "class": "D7",
+   "occurrence_count": 5,
+   "variant_count": 2,
+   "variant_sha256": [
+    "4c6b97241ae5763925d2e0dc0c8fca3b9134b5b753296525bcbab0941b9827a6",
+    "a4878cd2f9a7ce1aab39e60e95202e190b9796c1b5d80c572b239f4ad6decc14"
+   ]
+  },
+  {
+   "definition_name": "validation_partition",
+   "class": "D7",
+   "occurrence_count": 2,
+   "variant_count": 2,
+   "variant_sha256": [
+    "386d59f7bad6555022ab3f66ece56ce0ebbfc893658edc81f087a5415d5f5c57",
+    "ed9f6d7321d574a27bb118f07ed236f0b74188782a9e976c1037f67ae74f0b13"
+   ]
+  },
+  {
+   "definition_name": "verifier_identity",
+   "class": "D7",
+   "occurrence_count": 2,
+   "variant_count": 2,
+   "variant_sha256": [
+    "1daad74cc3fd33dfdc12035c29f9b4082910c7aba5465f9013368d8bfffc2b9c",
+    "81f3ade02e7b1658b816c9da5cdf64b8eef8acae31b8781f31e623ef4dd009b7"
+   ]
+  },
+  {
+   "definition_name": "versioned_reference",
+   "class": "D7",
+   "occurrence_count": 25,
+   "variant_count": 5,
+   "variant_sha256": [
+    "018914d45f255fe3cfdfee20e19f86c6deefea83c36303ab9f400a9383abe532",
+    "748792f7bd728b6a670681898d9a32675a7e136e64518c8de1e3fe10a3464205",
+    "7ba230289b3d9b815273a3eceac2cdd1751106775e7841fc53dd5d241737ae8b",
+    "95d2fad04e6804d7e35244f0beb92c7e971c709317627271166bd07c6cbc7029",
+    "ee0213e78395de99baa7cf24cf4b0aef3f0ab6cfafe3b3270d17a9bb47de438d"
+   ]
+  },
+  {
+   "definition_name": "work_contract_reference",
+   "class": "D7",
+   "occurrence_count": 4,
+   "variant_count": 3,
+   "variant_sha256": [
+    "04a79e1500c32b57e5e981c5532b6b7619f2a4e93b51ebb080beaa6e835b5900",
+    "4a6b6f6ac6e44d7beead2961e98d63f4e0fda5cc8370a0114e3cad89804796eb",
+    "a034b00479f6202a3d925903ef77f30782e62f734852eca39519c2fcc1b1e64e"
+   ]
+  }
+ ],
+ "d3_decimal_table": [
+  {
+   "schema": "schemas/authority-grant.schema.json",
+   "pointer": "/$defs/resource_budget/properties/accelerator_seconds",
+   "proposed_semantic_type": null,
+   "proposed_unit": null,
+   "proposed_precision": null
+  },
+  {
+   "schema": "schemas/authority-grant.schema.json",
+   "pointer": "/$defs/resource_budget/properties/cpu_seconds",
+   "proposed_semantic_type": null,
+   "proposed_unit": null,
+   "proposed_precision": null
+  },
+  {
+   "schema": "schemas/authority-grant.schema.json",
+   "pointer": "/$defs/resource_budget/properties/human_hours",
+   "proposed_semantic_type": null,
+   "proposed_unit": null,
+   "proposed_precision": null
+  },
+  {
+   "schema": "schemas/authority-grant.schema.json",
+   "pointer": "/$defs/resource_budget/properties/memory_gib_seconds",
+   "proposed_semantic_type": null,
+   "proposed_unit": null,
+   "proposed_precision": null
+  },
+  {
+   "schema": "schemas/authority-grant.schema.json",
+   "pointer": "/$defs/resource_budget/properties/network_bytes",
+   "proposed_semantic_type": null,
+   "proposed_unit": null,
+   "proposed_precision": null
+  },
+  {
+   "schema": "schemas/authority-grant.schema.json",
+   "pointer": "/$defs/resource_budget/properties/storage_bytes",
+   "proposed_semantic_type": null,
+   "proposed_unit": null,
+   "proposed_precision": null
+  },
+  {
+   "schema": "schemas/authority-grant.schema.json",
+   "pointer": "/$defs/resource_budget/properties/wall_time_seconds",
+   "proposed_semantic_type": null,
+   "proposed_unit": null,
+   "proposed_precision": null
+  },
+  {
+   "schema": "schemas/candidate-artifact.schema.json",
+   "pointer": "/$defs/resource_observation/allOf/0/then/properties/value",
+   "proposed_semantic_type": null,
+   "proposed_unit": null,
+   "proposed_precision": null
+  },
+  {
+   "schema": "schemas/candidate-artifact.schema.json",
+   "pointer": "/$defs/spend_observation/allOf/0/then/properties/amount",
+   "proposed_semantic_type": null,
+   "proposed_unit": null,
+   "proposed_precision": null
+  },
+  {
+   "schema": "schemas/claim.schema.json",
+   "pointer": "/$defs/quantity/properties/value",
+   "proposed_semantic_type": null,
+   "proposed_unit": null,
+   "proposed_precision": null
+  },
+  {
+   "schema": "schemas/claim.schema.json",
+   "pointer": "/$defs/uncertainty_channel/properties/interval/oneOf/0/properties/level",
+   "proposed_semantic_type": null,
+   "proposed_unit": null,
+   "proposed_precision": null
+  },
+  {
+   "schema": "schemas/estimand-contract.schema.json",
+   "pointer": "/$defs/quantity/properties/value",
+   "proposed_semantic_type": null,
+   "proposed_unit": null,
+   "proposed_precision": null
+  },
+  {
+   "schema": "schemas/estimand-contract.schema.json",
+   "pointer": "/$defs/safety_contract/properties/tolerated_upper_bound",
+   "proposed_semantic_type": null,
+   "proposed_unit": null,
+   "proposed_precision": null
+  },
+  {
+   "schema": "schemas/estimand-contract.schema.json",
+   "pointer": "/properties/contrast/allOf/0/else/properties/reference_value",
+   "proposed_semantic_type": null,
+   "proposed_unit": null,
+   "proposed_precision": null
+  },
+  {
+   "schema": "schemas/estimand-contract.schema.json",
+   "pointer": "/properties/uncertainty_plan/allOf/0/then/properties/level",
+   "proposed_semantic_type": null,
+   "proposed_unit": null,
+   "proposed_precision": null
+  },
+  {
+   "schema": "schemas/experiment-candidate.schema.json",
+   "pointer": "/$defs/compute_requirement/properties/value",
+   "proposed_semantic_type": null,
+   "proposed_unit": null,
+   "proposed_precision": null
+  },
+  {
+   "schema": "schemas/experiment-candidate.schema.json",
+   "pointer": "/$defs/money_quantity/properties/amount",
+   "proposed_semantic_type": null,
+   "proposed_unit": null,
+   "proposed_precision": null
+  },
+  {
+   "schema": "schemas/experiment-candidate.schema.json",
+   "pointer": "/$defs/registered_quantity/properties/value",
+   "proposed_semantic_type": null,
+   "proposed_unit": null,
+   "proposed_precision": null
+  },
+  {
+   "schema": "schemas/grounded-outcome.schema.json",
+   "pointer": "/$defs/quantity/properties/value",
+   "proposed_semantic_type": null,
+   "proposed_unit": null,
+   "proposed_precision": null
+  },
+  {
+   "schema": "schemas/grounded-outcome.schema.json",
+   "pointer": "/properties/dimensions/items/allOf/0/then/properties/value",
+   "proposed_semantic_type": null,
+   "proposed_unit": null,
+   "proposed_precision": null
+  },
+  {
+   "schema": "schemas/metric-result.schema.json",
+   "pointer": "/$defs/quantity/properties/value",
+   "proposed_semantic_type": null,
+   "proposed_unit": null,
+   "proposed_precision": null
+  },
+  {
+   "schema": "schemas/metric-result.schema.json",
+   "pointer": "/properties/measurement/allOf/0/then/properties/estimate",
+   "proposed_semantic_type": null,
+   "proposed_unit": null,
+   "proposed_precision": null
+  },
+  {
+   "schema": "schemas/model-configuration-record.schema.json",
+   "pointer": "/$defs/controlled_time/properties/value",
+   "proposed_semantic_type": null,
+   "proposed_unit": null,
+   "proposed_precision": null
+  },
+  {
+   "schema": "schemas/physical-quantity.schema.json",
+   "pointer": "/$defs/conversion/oneOf/0/properties/scale",
+   "proposed_semantic_type": null,
+   "proposed_unit": null,
+   "proposed_precision": null
+  },
+  {
+   "schema": "schemas/physical-quantity.schema.json",
+   "pointer": "/$defs/conversion/oneOf/1/properties/scale",
+   "proposed_semantic_type": null,
+   "proposed_unit": null,
+   "proposed_precision": null
+  },
+  {
+   "schema": "schemas/planning-epoch.schema.json",
+   "pointer": "/$defs/compute_requirement/properties/value",
+   "proposed_semantic_type": null,
+   "proposed_unit": null,
+   "proposed_precision": null
+  },
+  {
+   "schema": "schemas/planning-epoch.schema.json",
+   "pointer": "/$defs/money_quantity/properties/amount",
+   "proposed_semantic_type": null,
+   "proposed_unit": null,
+   "proposed_precision": null
+  },
+  {
+   "schema": "schemas/planning-epoch.schema.json",
+   "pointer": "/$defs/objective_evaluation/allOf/0/then/properties/point_value",
+   "proposed_semantic_type": null,
+   "proposed_unit": null,
+   "proposed_precision": null
+  },
+  {
+   "schema": "schemas/planning-epoch.schema.json",
+   "pointer": "/$defs/objective_evaluation/allOf/1/then/properties/lower_bound",
+   "proposed_semantic_type": null,
+   "proposed_unit": null,
+   "proposed_precision": null
+  },
+  {
+   "schema": "schemas/planning-epoch.schema.json",
+   "pointer": "/$defs/objective_evaluation/allOf/1/then/properties/upper_bound",
+   "proposed_semantic_type": null,
+   "proposed_unit": null,
+   "proposed_precision": null
+  },
+  {
+   "schema": "schemas/planning-epoch.schema.json",
+   "pointer": "/$defs/registered_quantity/properties/value",
+   "proposed_semantic_type": null,
+   "proposed_unit": null,
+   "proposed_precision": null
+  },
+  {
+   "schema": "schemas/planning-epoch.schema.json",
+   "pointer": "/properties/pareto_dimensions/items/properties/uncertainty_lower",
+   "proposed_semantic_type": null,
+   "proposed_unit": null,
+   "proposed_precision": null
+  },
+  {
+   "schema": "schemas/planning-epoch.schema.json",
+   "pointer": "/properties/pareto_dimensions/items/properties/uncertainty_upper",
+   "proposed_semantic_type": null,
+   "proposed_unit": null,
+   "proposed_precision": null
+  },
+  {
+   "schema": "schemas/projection-snapshot.schema.json",
+   "pointer": "/properties/controlled_time/properties/generated_at",
+   "proposed_semantic_type": null,
+   "proposed_unit": null,
+   "proposed_precision": null
+  },
+  {
+   "schema": "schemas/promotion-decision.schema.json",
+   "pointer": "/$defs/quantity/properties/value",
+   "proposed_semantic_type": null,
+   "proposed_unit": null,
+   "proposed_precision": null
+  },
+  {
+   "schema": "schemas/research-event.schema.json",
+   "pointer": "/$defs/metric_observation_payload/allOf/0/then/properties/value",
+   "proposed_semantic_type": null,
+   "proposed_unit": null,
+   "proposed_precision": null
+  },
+  {
+   "schema": "schemas/research-event.schema.json",
+   "pointer": "/$defs/resource_dimension_amount/oneOf/0/properties/value",
+   "proposed_semantic_type": null,
+   "proposed_unit": null,
+   "proposed_precision": null
+  },
+  {
+   "schema": "schemas/research-event.schema.json",
+   "pointer": "/$defs/resource_dimension_amount/oneOf/1/properties/value",
+   "proposed_semantic_type": null,
+   "proposed_unit": null,
+   "proposed_precision": null
+  },
+  {
+   "schema": "schemas/research-event.schema.json",
+   "pointer": "/$defs/resource_dimension_amount/oneOf/2/properties/value",
+   "proposed_semantic_type": null,
+   "proposed_unit": null,
+   "proposed_precision": null
+  },
+  {
+   "schema": "schemas/research-mission.schema.json",
+   "pointer": "/$defs/quantity/properties/value",
+   "proposed_semantic_type": null,
+   "proposed_unit": null,
+   "proposed_precision": null
+  },
+  {
+   "schema": "schemas/research-mission.schema.json",
+   "pointer": "/properties/metrics/items/allOf/0/else/properties/threshold",
+   "proposed_semantic_type": null,
+   "proposed_unit": null,
+   "proposed_precision": null
+  },
+  {
+   "schema": "schemas/research-state-view.schema.json",
+   "pointer": "/$defs/money_quantity/properties/amount",
+   "proposed_semantic_type": null,
+   "proposed_unit": null,
+   "proposed_precision": null
+  },
+  {
+   "schema": "schemas/research-state-view.schema.json",
+   "pointer": "/properties/compilation_time/properties/value",
+   "proposed_semantic_type": null,
+   "proposed_unit": null,
+   "proposed_precision": null
+  },
+  {
+   "schema": "schemas/routing-decision.schema.json",
+   "pointer": "/$defs/controlled_time/properties/value",
+   "proposed_semantic_type": null,
+   "proposed_unit": null,
+   "proposed_precision": null
+  },
+  {
+   "schema": "schemas/routing-decision.schema.json",
+   "pointer": "/$defs/dimension_observation/allOf/0/then/properties/lower_bound",
+   "proposed_semantic_type": null,
+   "proposed_unit": null,
+   "proposed_precision": null
+  },
+  {
+   "schema": "schemas/routing-decision.schema.json",
+   "pointer": "/$defs/dimension_observation/allOf/0/then/properties/upper_bound",
+   "proposed_semantic_type": null,
+   "proposed_unit": null,
+   "proposed_precision": null
+  },
+  {
+   "schema": "schemas/routing-decision.schema.json",
+   "pointer": "/$defs/resource_amount/properties/value",
+   "proposed_semantic_type": null,
+   "proposed_unit": null,
+   "proposed_precision": null
+  },
+  {
+   "schema": "schemas/run-manifest.schema.json",
+   "pointer": "/$defs/resource_budget/properties/accelerator_seconds",
+   "proposed_semantic_type": null,
+   "proposed_unit": null,
+   "proposed_precision": null
+  },
+  {
+   "schema": "schemas/run-manifest.schema.json",
+   "pointer": "/$defs/resource_budget/properties/cpu_seconds",
+   "proposed_semantic_type": null,
+   "proposed_unit": null,
+   "proposed_precision": null
+  },
+  {
+   "schema": "schemas/run-manifest.schema.json",
+   "pointer": "/$defs/resource_budget/properties/external_cost_usd",
+   "proposed_semantic_type": null,
+   "proposed_unit": null,
+   "proposed_precision": null
+  },
+  {
+   "schema": "schemas/run-manifest.schema.json",
+   "pointer": "/$defs/resource_budget/properties/human_hours",
+   "proposed_semantic_type": null,
+   "proposed_unit": null,
+   "proposed_precision": null
+  },
+  {
+   "schema": "schemas/run-manifest.schema.json",
+   "pointer": "/$defs/resource_budget/properties/memory_gib_seconds",
+   "proposed_semantic_type": null,
+   "proposed_unit": null,
+   "proposed_precision": null
+  },
+  {
+   "schema": "schemas/run-manifest.schema.json",
+   "pointer": "/$defs/resource_budget/properties/network_bytes",
+   "proposed_semantic_type": null,
+   "proposed_unit": null,
+   "proposed_precision": null
+  },
+  {
+   "schema": "schemas/run-manifest.schema.json",
+   "pointer": "/$defs/resource_budget/properties/storage_bytes",
+   "proposed_semantic_type": null,
+   "proposed_unit": null,
+   "proposed_precision": null
+  },
+  {
+   "schema": "schemas/run-manifest.schema.json",
+   "pointer": "/$defs/resource_budget/properties/wall_time_seconds",
+   "proposed_semantic_type": null,
+   "proposed_unit": null,
+   "proposed_precision": null
+  },
+  {
+   "schema": "schemas/scientific-result-envelope.schema.json",
+   "pointer": "/$defs/quantity/properties/value",
+   "proposed_semantic_type": null,
+   "proposed_unit": null,
+   "proposed_precision": null
+  },
+  {
+   "schema": "schemas/scientific-result-envelope.schema.json",
+   "pointer": "/properties/evidence_measure/allOf/0/else/properties/value",
+   "proposed_semantic_type": null,
+   "proposed_unit": null,
+   "proposed_precision": null
+  },
+  {
+   "schema": "schemas/scientific-result-envelope.schema.json",
+   "pointer": "/properties/result_value/allOf/0/then/properties/point_estimate",
+   "proposed_semantic_type": null,
+   "proposed_unit": null,
+   "proposed_precision": null
+  },
+  {
+   "schema": "schemas/scientific-result-envelope.schema.json",
+   "pointer": "/properties/uncertainty/allOf/0/then/properties/level",
+   "proposed_semantic_type": null,
+   "proposed_unit": null,
+   "proposed_precision": null
+  }
+ ],
+ "d5_field_table": [
+  {
+   "field_name": "digest",
+   "occurrences": 275,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 274,
+    "unconstrained_or_union": 1
+   },
+   "schema_count": 98,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "registry_digest",
+   "occurrences": 25,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 24,
+    "unconstrained_or_union": 1
+   },
+   "schema_count": 23,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "canonical_digest",
+   "occurrences": 18,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 14,
+    "unconstrained_or_union": 4
+   },
+   "schema_count": 15,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "byte_digest",
+   "occurrences": 13,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 11,
+    "unconstrained_or_union": 2
+   },
+   "schema_count": 11,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "code_digest",
+   "occurrences": 11,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 10,
+    "unconstrained_or_union": 1
+   },
+   "schema_count": 11,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "environment_digest",
+   "occurrences": 11,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 10,
+    "unconstrained_or_union": 1
+   },
+   "schema_count": 11,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "schema_digest",
+   "occurrences": 11,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 11
+   },
+   "schema_count": 11,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "protocol_digest",
+   "occurrences": 10,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 9,
+    "unconstrained_or_union": 1
+   },
+   "schema_count": 9,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "checkpoint_digest",
+   "occurrences": 10,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 8,
+    "unconstrained_or_union": 2
+   },
+   "schema_count": 6,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "graph_root_digest",
+   "occurrences": 9,
+   "lexical_constraints": {
+    "unconstrained_or_union": 6,
+    "sha256_lowercase_hex": 3
+   },
+   "schema_count": 3,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "build_digest",
+   "occurrences": 8,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 8
+   },
+   "schema_count": 7,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "scope_digest",
+   "occurrences": 8,
+   "lexical_constraints": {
+    "unconstrained_or_union": 4,
+    "sha256_lowercase_hex": 4
+   },
+   "schema_count": 3,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "canonical_request_digest",
+   "occurrences": 7,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 7
+   },
+   "schema_count": 6,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "activation_digest",
+   "occurrences": 7,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 7
+   },
+   "schema_count": 5,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "manifest_digest",
+   "occurrences": 7,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 7
+   },
+   "schema_count": 7,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "payload_schema_canonical_digest",
+   "occurrences": 6,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 6
+   },
+   "schema_count": 4,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "payload_schema_closure_digest",
+   "occurrences": 6,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 6
+   },
+   "schema_count": 4,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "subject_digest",
+   "occurrences": 5,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 5
+   },
+   "schema_count": 5,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "member_digest",
+   "occurrences": 5,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 5
+   },
+   "schema_count": 5,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "canonical_payload_digest",
+   "occurrences": 5,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 5
+   },
+   "schema_count": 5,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "event_digest",
+   "occurrences": 5,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 5
+   },
+   "schema_count": 3,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "projected_payload_digest",
+   "occurrences": 5,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 5
+   },
+   "schema_count": 5,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "input_set_digest",
+   "occurrences": 4,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 4
+   },
+   "schema_count": 4,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "registry_snapshot_digest",
+   "occurrences": 4,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 4
+   },
+   "schema_count": 4,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "ordered_member_digests_digest",
+   "occurrences": 4,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 4
+   },
+   "schema_count": 4,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "candidate_digest",
+   "occurrences": 4,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 4
+   },
+   "schema_count": 4,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "security_frontier_digest",
+   "occurrences": 4,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 4
+   },
+   "schema_count": 4,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "allowed_scope_digest",
+   "occurrences": 4,
+   "lexical_constraints": {
+    "unconstrained_or_union": 2,
+    "sha256_lowercase_hex": 2
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "prohibited_scope_digest",
+   "occurrences": 4,
+   "lexical_constraints": {
+    "unconstrained_or_union": 2,
+    "sha256_lowercase_hex": 2
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "p0_admission_digest",
+   "occurrences": 3,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 3
+   },
+   "schema_count": 3,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "rule_digest",
+   "occurrences": 3,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 3
+   },
+   "schema_count": 3,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "expected_digest",
+   "occurrences": 3,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 2,
+    "unconstrained_or_union": 1
+   },
+   "schema_count": 2,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "signed_digest",
+   "occurrences": 3,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 3
+   },
+   "schema_count": 3,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "asset_scope_digest",
+   "occurrences": 3,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 3
+   },
+   "schema_count": 2,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "current_authority_inputs_digest",
+   "occurrences": 3,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 3
+   },
+   "schema_count": 3,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "current_policy_inputs_digest",
+   "occurrences": 3,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 3
+   },
+   "schema_count": 3,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "current_resource_inputs_digest",
+   "occurrences": 3,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 3
+   },
+   "schema_count": 3,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "provider_idempotency_key_digest",
+   "occurrences": 3,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 3
+   },
+   "schema_count": 3,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "binding_digest",
+   "occurrences": 3,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 3
+   },
+   "schema_count": 3,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "provider_profile_digest",
+   "occurrences": 3,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 3
+   },
+   "schema_count": 3,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "semantic_vector_a_digest",
+   "occurrences": 3,
+   "lexical_constraints": {
+    "unconstrained_or_union": 2,
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "semantic_vector_b_digest",
+   "occurrences": 3,
+   "lexical_constraints": {
+    "unconstrained_or_union": 2,
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "frontier_digest",
+   "occurrences": 3,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 3
+   },
+   "schema_count": 2,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "previous_candidate_digest",
+   "occurrences": 3,
+   "lexical_constraints": {
+    "unconstrained_or_union": 2,
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "reference_set_digest",
+   "occurrences": 2,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 2
+   },
+   "schema_count": 2,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "bundle_digest",
+   "occurrences": 2,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 2
+   },
+   "schema_count": 2,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "input_digest",
+   "occurrences": 2,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 2
+   },
+   "schema_count": 2,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "schema_member_digest",
+   "occurrences": 2,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 2
+   },
+   "schema_count": 2,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "observed_digest",
+   "occurrences": 2,
+   "lexical_constraints": {
+    "unconstrained_or_union": 1,
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "publication_manifest_digest",
+   "occurrences": 2,
+   "lexical_constraints": {
+    "unconstrained_or_union": 1,
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "run_manifest_digest",
+   "occurrences": 2,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 2
+   },
+   "schema_count": 2,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "ordered_members_digest",
+   "occurrences": 2,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 2
+   },
+   "schema_count": 2,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "payload_schema_blob_digest",
+   "occurrences": 2,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 2
+   },
+   "schema_count": 2,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "recipient_digest",
+   "occurrences": 2,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 2
+   },
+   "schema_count": 2,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "observed_payload_digest",
+   "occurrences": 2,
+   "lexical_constraints": {
+    "unconstrained_or_union": 1,
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "root_digest",
+   "occurrences": 2,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 2
+   },
+   "schema_count": 2,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "method_record_digest",
+   "occurrences": 2,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 2
+   },
+   "schema_count": 2,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "effect_payload_digest",
+   "occurrences": 2,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 2
+   },
+   "schema_count": 2,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "head_digest",
+   "occurrences": 2,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 2
+   },
+   "schema_count": 2,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "signed_body_digest",
+   "occurrences": 2,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 2
+   },
+   "schema_count": 2,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "legal_frontier_digest",
+   "occurrences": 2,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 2
+   },
+   "schema_count": 2,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "decision_digest",
+   "occurrences": 2,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 2
+   },
+   "schema_count": 2,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "set_digest",
+   "occurrences": 2,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 2
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "output_set_digest",
+   "occurrences": 2,
+   "lexical_constraints": {
+    "unconstrained_or_union": 1,
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "protocol_snapshot_digest",
+   "occurrences": 2,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 2
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "tree_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "snapshot_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "root_manifest_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "policy_bundle_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "policy_input_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "authorization_request_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "manifest_digest_observed",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "rule_registry_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "record_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "unconstrained_or_union": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "event_member_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "blob_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "unconstrained_or_union": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "closure_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "unconstrained_or_union": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "ordered_resource_canonical_digests_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "unconstrained_or_union": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "ordered_record_digests_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "unconstrained_or_union": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "vocabulary_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "claimed_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "unconstrained_or_union": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "receipt_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "result_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "evaluation_frontier_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "source_set_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "dependency_set_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "selected_reference_set_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "retrieval_candidate_set_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "entry_set_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "intent_payload_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "lineage_graph_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "scope_manifest_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "graph_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "rule_input_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "reducer_member_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "authorization_inputs_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "expected_effect_payload_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "reservation_set_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "target_descriptor_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "event_checkpoint_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "profile_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "harness_build_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "determination_set_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "evidence_vector_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "experiment_contract_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "measurement_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "model_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "quantity_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "input_reference_set_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "input_schema_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "configuration_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "actor_binding_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "authority_claim_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "target_binding_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "cache_partition_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "canonical_release_payload_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "replacement_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "state_member_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "p0_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "payload_contract_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "unconstrained_or_union": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "backup_manifest_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "projection_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "authorized_request_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "reservation_binding_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "payload_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "previous_stream_event_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "unconstrained_or_union": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "authority_policy_set_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "data_use_state_root_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "lease_state_root_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "resource_state_root_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "materialization_target_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "exposure_history_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "representation_plane_set_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "command_member_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "registry_subject_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "report_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "aggregate_head_set_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "reviewed_report_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "change_set_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "architecture_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "weights_or_endpoint_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "interface_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "safety_envelope_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "estimand_rule_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "metric_set_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "estimand_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "bound_estimand_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "target_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "budget_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "subject_members_root_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "sha256_lowercase_hex": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  },
+  {
+   "field_name": "assignment_commit_digest",
+   "occurrences": 1,
+   "lexical_constraints": {
+    "unconstrained_or_union": 1
+   },
+   "schema_count": 1,
+   "proposed_digest_kind": null,
+   "proposed_subject_class_or_domain": null,
+   "requires_new_domain_registration": null
+  }
+ ],
+ "operator_acceptance": {
+  "D1": null,
+  "D2": null,
+  "D3": null,
+  "D4": null,
+  "D5": null,
+  "D6": null,
+  "D7": null,
+  "D8": null,
+  "D9": null
+ },
+ "boundary": "architecture evidence only; accepting any class authorizes candidate reissue work, never admission, canonical digests, runtime, or Gate A"
+}
