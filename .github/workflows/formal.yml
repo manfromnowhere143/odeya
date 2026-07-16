@@ -1,0 +1,66 @@
+name: Architecture / Bounded Formal Models
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: formal-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  bounded-models:
+    name: Bounded formal models
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Check out the complete evidence history
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up the pinned Java interpreter
+        uses: actions/setup-java@0f481fcb613427c0f801b606911222b5b6f3083a # v5.5.0
+        with:
+          distribution: temurin
+          java-version: "21.0.9"
+
+      - name: Prepare diagnostic evidence
+        run: mkdir -p artifacts/ci /tmp/odeya-tla/v1.7.4
+
+      - name: Fetch and verify the pinned TLA+ tools release
+        run: |
+          curl --fail --location --retry 3 --silent --show-error \
+            https://github.com/tlaplus/tlaplus/releases/download/v1.7.4/tla2tools.jar \
+            --output /tmp/odeya-tla/v1.7.4/tla2tools.jar
+          printf '%s  %s\n' \
+            936a262061c914694dfd669a543be24573c45d5aa0ff20a8b96b23d01e050e88 \
+            /tmp/odeya-tla/v1.7.4/tla2tools.jar \
+            | sha256sum --check --strict
+
+      - name: Reproduce safe models and mutation controls
+        run: bash formal/tla/check.sh 2>&1 | tee artifacts/ci/formal.log
+
+      - name: Prove model checking did not mutate tracked evidence
+        run: git diff --exit-code
+
+      - name: Retain the formal-model log
+        if: ${{ always() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: architecture-formal-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/ci/
+          if-no-files-found: warn
+          retention-days: 14
+          compression-level: 9

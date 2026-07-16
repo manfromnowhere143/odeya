@@ -1,0 +1,315 @@
+name: Architecture / Foundation
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: architecture-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  PYTHONDONTWRITEBYTECODE: "1"
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  fast-policy:
+    name: Fast policy
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Check out the complete evidence history
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up the pinned Python interpreter
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version-file: .python-version
+
+      - name: Validate static repository policy
+        run: |
+          mkdir -p artifacts/ci
+          python scripts/validate_repository_release.py \
+            2>&1 | tee artifacts/ci/fast-policy.log
+
+      - name: Prove policy validation did not mutate tracked evidence
+        run: git diff --exit-code
+
+      - name: Retain fast-policy evidence
+        if: ${{ always() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: fast-policy-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/ci/fast-policy.log
+          if-no-files-found: warn
+          retention-days: 14
+          compression-level: 9
+
+  foundation:
+    name: Foundation
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Check out the complete evidence history
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up the pinned Python interpreter
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version-file: .python-version
+
+      - name: Prepare diagnostic evidence
+        run: mkdir -p artifacts/ci
+
+      - name: Install the hash-locked architecture environment
+        run: |
+          python -m pip install \
+            --disable-pip-version-check \
+            --no-input \
+            --require-hashes \
+            --only-binary=:all: \
+            --report artifacts/ci/pip-install-report.json \
+            --requirement tools/repository-release/requirements-architecture.lock
+          python -m pip check
+
+      - name: Validate the architecture foundation
+        run: python scripts/validate.py 2>&1 | tee artifacts/ci/foundation.log
+
+      - name: Prove validation did not mutate tracked evidence
+        run: git diff --exit-code
+
+      - name: Retain the foundation log
+        if: ${{ always() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: architecture-foundation-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/ci/
+          if-no-files-found: warn
+          retention-days: 14
+          compression-level: 9
+
+  schema-contracts:
+    name: Schema contracts
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Check out the complete evidence history
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up the pinned Python interpreter
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version-file: .python-version
+
+      - name: Install the hash-locked architecture environment
+        run: |
+          python -m pip install \
+            --disable-pip-version-check \
+            --no-input \
+            --require-hashes \
+            --only-binary=:all: \
+            --requirement tools/repository-release/requirements-architecture.lock
+          python -m pip check
+
+      - name: Reproduce the complete schema contract
+        run: |
+          mkdir -p artifacts/ci
+          python scripts/validate_schema_contracts.py \
+            2>&1 | tee artifacts/ci/schema-contracts.log
+
+      - name: Prove schema validation did not mutate tracked evidence
+        run: git diff --exit-code
+
+      - name: Retain schema-contract evidence
+        if: ${{ always() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: schema-contracts-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/ci/schema-contracts.log
+          if-no-files-found: warn
+          retention-days: 14
+          compression-level: 9
+
+  semantic-contracts:
+    name: Semantic contracts
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Check out the complete evidence history
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up the pinned Python interpreter
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version-file: .python-version
+
+      - name: Install the hash-locked architecture environment
+        run: |
+          python -m pip install \
+            --disable-pip-version-check \
+            --no-input \
+            --require-hashes \
+            --only-binary=:all: \
+            --requirement tools/repository-release/requirements-architecture.lock
+          python -m pip check
+
+      - name: Reproduce admitted semantic contracts
+        run: |
+          mkdir -p artifacts/ci
+          python scripts/validate_contract_profiles.py --profile semantic \
+            2>&1 | tee artifacts/ci/semantic-contracts.log
+
+      - name: Prove semantic validation did not mutate tracked evidence
+        run: git diff --exit-code
+
+      - name: Retain semantic-contract evidence
+        if: ${{ always() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: semantic-contracts-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/ci/semantic-contracts.log
+          if-no-files-found: warn
+          retention-days: 14
+          compression-level: 9
+
+  adversarial-controls:
+    name: Adversarial controls
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Check out the complete evidence history
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up the pinned Python interpreter
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version-file: .python-version
+
+      - name: Install the hash-locked architecture environment
+        run: |
+          python -m pip install \
+            --disable-pip-version-check \
+            --no-input \
+            --require-hashes \
+            --only-binary=:all: \
+            --requirement tools/repository-release/requirements-architecture.lock
+          python -m pip check
+
+      - name: Reproduce admitted adversarial controls
+        run: |
+          mkdir -p artifacts/ci
+          python scripts/validate_contract_profiles.py --profile adversarial \
+            2>&1 | tee artifacts/ci/adversarial-controls.log
+
+      - name: Prove adversarial validation did not mutate tracked evidence
+        run: git diff --exit-code
+
+      - name: Retain adversarial-control evidence
+        if: ${{ always() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: adversarial-controls-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/ci/adversarial-controls.log
+          if-no-files-found: warn
+          retention-days: 14
+          compression-level: 9
+
+  canonical-identity:
+    name: Canonical identity
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Check out the complete evidence history
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up the pinned Python interpreter
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version-file: .python-version
+
+      - name: Reconcile retained canonicalization evidence
+        run: |
+          mkdir -p artifacts/ci
+          {
+            python tests/canonicalization/compare_results.py
+            python tests/canonicalization/audit_schemas.py --check
+          } 2>&1 | tee artifacts/ci/canonical-identity.log
+
+      - name: Prove canonicalization checks did not mutate tracked evidence
+        run: git diff --exit-code
+
+      - name: Retain canonical identity evidence
+        if: ${{ always() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: canonical-identity-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/ci/canonical-identity.log
+          if-no-files-found: warn
+          retention-days: 14
+          compression-level: 9
+
+  architecture-evidence:
+    name: Architecture evidence
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Check out the complete evidence history
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up the pinned Python interpreter
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version-file: .python-version
+
+      - name: Reproduce architecture evidence checks
+        run: |
+          mkdir -p artifacts/ci
+          {
+            python scripts/validate_gate_a_prerequisites.py
+            python scripts/validate_schema_resource_reissues.py
+            python scripts/validate_module_manifest.py
+            python scripts/validate_first_slice_resolution.py
+          } 2>&1 | tee artifacts/ci/architecture-evidence.log
+
+      - name: Prove architecture checks did not mutate tracked evidence
+        run: git diff --exit-code
+
+      - name: Retain architecture evidence logs
+        if: ${{ always() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: architecture-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/ci/architecture-evidence.log
+          if-no-files-found: warn
+          retention-days: 14
+          compression-level: 9

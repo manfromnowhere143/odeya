@@ -35,6 +35,8 @@ This repository is an architecture foundation. Do not describe a documented comp
 
 **Hard gate:** do not add runtime, application, infrastructure, or deployment implementation until every blocking item in `docs/PRE_IMPLEMENTATION_GATE.md` has retained evidence and the operator has explicitly accepted the architecture baseline. Schemas, decision records, threat models, mathematical specifications, interface contracts, evaluation fixtures, and paper designs are architecture work; executable product code is not yet authorized.
 
+Architecture-validation CI and private repository-release tooling are permitted when explicitly scoped. They may validate and retain evidence about repository bytes; they may not deploy a product, receive mission credentials, invoke runtime providers, publish research, or turn a green workflow into Gate A authority.
+
 The current architectural target is a modular private engine with:
 
 - one canonical `ResearchMissionSpec`;

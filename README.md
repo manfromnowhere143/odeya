@@ -1,120 +1,149 @@
 # Odeya
 
-Odeya is a private, evidence-native operating system for frontier research. Its purpose is to turn a thesis into a bounded, replayable research mission whose claims can be traced to preregistered tests, exact artifacts, independent verification, and explicit authority.
+Odeya is a private research engine that turns a thesis into a governed, replayable chain from question to evidence to warranted claim.
 
-> Current state, 2026-07-16: architecture foundation only. This repository does not yet contain an executable research engine and makes no claim of autonomous science.
+> **Current state — 2026-07-16:** architecture foundation only. No executable research engine, autonomous-science capability, production deployment, or automatic publication is claimed. Runtime work remains blocked until the architecture gates are accepted.
 
-Runtime implementation is blocked until the pre-implementation architecture gate is accepted. The working web address will be `odeya.danielwahnich.dev`; `odeya.ai` is only a separately tracked apex-domain candidate.
+The provisional web address is `odeya.danielwahnich.dev`. The apex domain, company, trademark, and public-release decisions remain separate.
 
-## Architecture verdict
+## The system in one view
 
-Build a governed scientific kernel with durable typed state and selective agentic intelligence around it—not one immortal agent, an unstructured swarm, or a production system that rewrites itself.
+Question → contract → evidence → independent verification → bounded claim. Nothing jumps the chain.
 
-```text
-thesis proposal
-  -> mission contract
-  -> frozen protocol
-  -> planned work graph
-  -> isolated execution
-  -> evidence and artifacts
-  -> independent verification
-  -> adversarial adjudication
-  -> bounded claim/release, valid null, invalidity, or explicit blocker
-  -> grounded learning
+```mermaid
+flowchart TB
+    subgraph R["ODEYA · PRIVATE RESEARCH ENGINE"]
+        direction LR
+        C["1 · CONTRACT<br/>thesis · frozen protocol<br/>authority · rights · budget"]
+        W["2 · EXPLORE<br/>search · plan · code<br/>experiment · critique"]
+        E["3 · EVIDENCE<br/>inputs · artifacts<br/>environment · cost · lineage"]
+        K[("CANONICAL SCIENTIFIC STATE<br/>append-only event + evidence ledger<br/>deterministic replay")]
+        V["4 · VERIFY<br/>Independent verification<br/>replication · falsifiers · replay"]
+        D["5 · ADJUDICATE<br/>rule-bound bounded outcome"]
+        L["6 · LEARN<br/>Grounded memory<br/>transfer · failure · unknowns"]
+        C --> W --> E --> K --> V --> D -->|every outcome| L
+    end
+
+    subgraph X["RELEASE PATH · adjudicated candidate only · one governed external effect · separate from scientific truth"]
+        direction LR
+        RC["Release candidate"]
+        H{"Human release decision"}
+        G["Exact single-use grant"]
+        O["Bounded external effect"]
+        S["Independent observation<br/>applied · not applied · unknown"]
+        N["Retained · not released"]
+        RC --> H
+        H -->|authorized| G --> O --> S
+        H -->|denied| N
+    end
+
+    R ~~~ X
+
+    classDef core fill:#FFFFFF,stroke:#0F172A,stroke-width:1.5px,color:#0F172A
+    classDef evidence fill:#E0F2FE,stroke:#0369A1,stroke-width:1.5px,color:#0C4A6E
+    classDef state fill:#082F49,stroke:#0369A1,stroke-width:1.5px,color:#FFFFFF
+    classDef decision fill:#0F172A,stroke:#0F172A,stroke-width:1.5px,color:#FFFFFF
+    classDef release fill:#FFF7ED,stroke:#9A3412,stroke-width:1.5px,color:#7C2D12
+    classDef releaseGate fill:#9F1239,stroke:#881337,stroke-width:1.5px,color:#FFFFFF
+    classDef quiet fill:#F1F5F9,stroke:#64748B,stroke-width:1px,color:#334155
+    class C,W,V,L core
+    class E evidence
+    class K state
+    class D decision
+    class RC,G,O,S release
+    class H releaseGate
+    class N quiet
+    style R fill:#F8FAFC,stroke:#0F172A,stroke-width:2px
+    style X fill:#FFFBEB,stroke:#9A3412,stroke-width:2px
 ```
 
-The deterministic kernel owns state transitions, budgets, approvals, lineage, and claim eligibility. Models may propose, search, code, analyze, and criticize; they do not grant themselves authority or turn agreement into truth.
+This is the intended control architecture, not a runtime screenshot. Models may propose, search, code, analyze, and criticize. They cannot grant themselves authority, verify their own claims, convert consensus into evidence, or treat a provider response as external truth.
 
-## Why Odeya exists
+## Five operating laws
 
-The engine is being extracted from three active research tracks:
+1. **Contract before cognition.** Scope, protocol, falsifiers, resources, rights, and authority are explicit before consequential work.
+2. **Evidence before narrative.** Every claim traverses to exact inputs, artifacts, environments, costs, methods, and producing activity.
+3. **Verification is independent.** Producing and verifying a scientific claim are separate roles, contexts, and retained records.
+4. **Nulls and failures are first-class results.** Missing is never zero; blocked, invalid, contradicted, and inconclusive outcomes remain visible.
+5. **Every external effect is separately governed.** Publication, repository writes, paid compute, messages, lab actions, and physical actions require exact scoped authority and independent settlement.
 
-- **Sentinel** tests runtime monitoring and failure localization around a frozen autonomous-driving stack. It contributes disciplined measurement, attribution, and bounded transfer claims.
-- **Telos** tests whether benchmark success survives contact with the intended outcome. It contributes external verification, deliberately broken positive controls, and correction discipline.
-- **Inbar** studies physical causal evidence and verified intervention. It contributes evidence admissibility, prospective tests, and strict separation of proposal, safety, execution, truth, outcome, and publication authority.
+## Proof layer
 
-These projects are the proof layer and requirements source. They are not dependencies to merge into the engine, and their current limitations remain visible in [the proof-layer snapshot](docs/PROOF_LAYER.md) and [the exact first-slice fixture specification](docs/FIRST_VERTICAL_SLICE.md).
+Odeya is being extracted from three active research tracks rather than invented from an abstract agent demo:
 
-## Company and repository boundary
+| Mission | What it contributes |
+| --- | --- |
+| **Sentinel** | Measurement discipline, runtime monitoring, failure localization, and bounded transfer claims around autonomous-driving systems |
+| **Telos** | External verification, deliberately broken positive controls, correction discipline, and tests of whether benchmark success survives contact with the intended outcome |
+| **Inbar** | Physical causal evidence, prospective intervention tests, evidence admissibility, and separation of proposal, safety, execution, truth, outcome, and publication authority |
 
-Odeya is a separate frontier-research company and product. This repository is independent from Aweb and Maestro in runtime, storage, namespace, control, scientific authority, and release authority. Maestro is a useful protocol and systems reference, but its own committed audit does not establish a working research engine.
+They are requirements sources and bounded proof missions—not runtime dependencies and not proof that Odeya is already implemented. Their exact role and current limitations are retained in the [proof-layer snapshot](docs/PROOF_LAYER.md).
 
-The intended boundary is:
+## Architecture checkpoint
 
-- private engine, evaluation suites, control plane, and operating knowledge;
-- research papers, datasets, benchmarks, and mission code released only through explicit rights, safety, evidence, and publication gates;
-- provider-neutral model, tool, compute, and storage adapters;
-- no inherited credentials, databases, routes, or approval shortcuts.
+The current retained foundation contains 100 Draft 2020-12 schemas, 588 valid/adversarial cases, eight isolated contract suites, two architecture-evidence checks, and seven bounded safe TLA+ models with thirty mutation controls. These results establish structural and bounded semantic evidence only. [Gate A remains blocked](docs/ARCHITECTURE_STATUS.md), and its accountable review and operator decision have not occurred.
 
-No public repository, company registration, trademark conclusion, or domain acquisition is implied by this local foundation.
+The architecture is a modular scientific kernel with isolated cognitive workers around it:
 
-## Documents
+- deterministic state, authority, budgets, lineage, and claim eligibility in the kernel;
+- selective model and tool intelligence behind typed work contracts;
+- content-addressed evidence and replayable event history;
+- separately isolated verification and adversarial adjudication;
+- explicit recovery, correction, publication, and external-effect protocols; and
+- provider-neutral ports, with infrastructure kept outside scientific meaning.
+
+## Repository boundary
+
+Odeya is independent from Aweb and Maestro in runtime, storage, namespace, control, scientific authority, and release authority. The intended boundary is a private engine, private evaluation suites, and private operating knowledge. Papers, datasets, benchmarks, and mission code may be released mission by mission only through explicit rights, safety, evidence, and publication gates.
+
+No license, domain purchase, company filing, outreach, product deployment, or public-repository decision is implied by this architecture repository.
+
+## Read the architecture
 
 - [Charter](CHARTER.md)
-- [Architecture](docs/ARCHITECTURE.md)
-- [Architecture candidate status and blockers](docs/ARCHITECTURE_STATUS.md)
-- [Cognitive architecture](docs/COGNITIVE_ARCHITECTURE.md)
-- [Cognitive control contracts](docs/COGNITIVE_CONTROL_CONTRACTS.md)
-- [Command and event catalog](docs/COMMAND_EVENT_CATALOG.md)
-- [Command contract registry](docs/COMMAND_CONTRACT_REGISTRY.md)
-- [Reducer registry](docs/REDUCER_REGISTRY.md)
-- [Registry graph contracts](docs/REGISTRY_GRAPH_CONTRACTS.md)
-- [Engine contract root](docs/ENGINE_CONTRACT_ROOT.md)
+- [System architecture](docs/ARCHITECTURE.md)
+- [Current status and blockers](docs/ARCHITECTURE_STATUS.md)
+- [Pre-implementation gates](docs/PRE_IMPLEMENTATION_GATE.md)
 - [Research protocol](docs/RESEARCH_PROTOCOL.md)
 - [Mathematical constitution](docs/MATHEMATICAL_CONSTITUTION.md)
-- [Physical science constitution](docs/PHYSICAL_SCIENCE_CONSTITUTION.md)
-- [First-slice scientific method profile](docs/FIRST_SLICE_METHOD_PROFILE.md)
-- [First-slice admission closure plan](docs/FIRST_SLICE_ADMISSION_CLOSURE_PLAN.md)
-- [Semantic validation constitution](docs/SEMANTIC_VALIDATION.md)
-- [Evidence and memory](docs/EVIDENCE_AND_MEMORY.md)
-- [Provenance and research-package export profile](docs/PROVENANCE_EXPORT_PROFILE.md)
-- [Canonical identity and serialization profile](docs/CANONICALIZATION_PROFILE.md)
-- [Standards profile](docs/STANDARDS_PROFILE.md)
-- [Evaluation and learning](docs/EVALUATION_AND_LEARNING.md)
+- [Physical-science constitution](docs/PHYSICAL_SCIENCE_CONSTITUTION.md)
 - [Security and authority](docs/SECURITY_AND_AUTHORITY.md)
-- [Authority and separation matrix](docs/AUTHORITY_MATRIX.md)
-- [Threat model](docs/THREAT_MODEL.md)
-- [Interface contracts](docs/INTERFACE_CONTRACTS.md)
 - [Module ownership and dependency manifest](docs/MODULE_DEPENDENCY_MANIFEST.md)
-- [Transaction and recovery model](docs/TRANSACTION_MODEL.md)
-- [Ledger integrity, backup, and recovery contract](docs/LEDGER_INTEGRITY_AND_RECOVERY.md)
-- [Data governance, rights, and lifecycle contract](docs/DATA_GOVERNANCE.md)
-- [Publication protocol](docs/PUBLICATION_PROTOCOL.md)
-- [Projection contracts](docs/PROJECTION_CONTRACTS.md)
-- [Technology decisions and reversibility](docs/TECHNOLOGY_DECISIONS.md)
-- [Orthogonal state model](docs/STATE_MODEL.md)
-- [Failure model](docs/FAILURE_MODEL.md)
-- [Thesis intake](docs/THESIS_INTAKE.md)
-- [UI/UX system](docs/UI_UX.md)
+- [Architecture review protocol](docs/ARCHITECTURE_REVIEW_PROTOCOL.md)
+- [Repository release engineering](docs/REPOSITORY_RELEASE.md)
 - [Roadmap](docs/ROADMAP.md)
-- [Implementation order](docs/IMPLEMENTATION_ORDER.md)
-- [Pre-implementation gate](docs/PRE_IMPLEMENTATION_GATE.md)
-- [Independent architecture review protocol](docs/ARCHITECTURE_REVIEW_PROTOCOL.md)
-- [Verification protocol](docs/VERIFICATION_PROTOCOL.md)
-- [Proof-mission requirements traceability](docs/PROOF_MISSION_REQUIREMENTS_TRACEABILITY.md)
-- [Internal architecture red-team findings](docs/INTERNAL_RED_TEAM_FINDINGS_2026-07-15.md)
-- [Frontier review, 2026-07-15](docs/FRONTIER_REVIEW_2026-07-15.md)
-- [Working Gate A handoff packet](docs/GATE_A_HANDOFF_WORKING_PACKET_2026-07-15.md)
-- [Architecture decisions](docs/decisions/README.md)
 
-## Validate
+## Reproduce the checkpoint
+
+The architecture validator runs without a development server:
 
 ```bash
 python3 -m venv .venv-architecture
-.venv-architecture/bin/python -m pip install -r requirements-architecture.txt
+.venv-architecture/bin/python -m pip install \
+  --require-hashes \
+  --only-binary=:all: \
+  --requirement tools/repository-release/requirements-architecture.lock
 .venv-architecture/bin/python scripts/validate.py
 ```
 
-The pinned architecture validator meta-validates every Draft 2020-12 schema, asserts RFC 3339 formats, rejects duplicate JSON members, runs the shared fixture manifest plus the mandatory cognitive, projection, physical, and mathematical contract-family suites, checks local Markdown links, and enforces the implementation lock. A pass is structural and bounded semantic evidence only; it is not Gate A acceptance.
+Repository-release checks lint the workflows and Markdown, validate the README contract, and render the Mermaid map from the exact checked-in block:
 
-## Near-term milestone
+```bash
+bash scripts/ci/check-repository-release.sh
+```
 
-The current milestone is to close [the pre-implementation gate](docs/PRE_IMPLEMENTATION_GATE.md). Gate A acceptance may authorize only the exact Gate B probes named in the accepted candidate. Runtime product work still requires a later explicit Gate C decision for one bounded vertical slice that replays a settled research cycle from a proof project.
+After fetching the digest-verified JAR described in the [formal-model guide](formal/tla/README.md), the bounded models run:
 
-1. compile one canonical mission specification into an immutable run manifest;
-2. execute a bounded experiment in an isolated worker;
-3. retain exact inputs, environment, costs, and artifacts;
-4. recompute its verdict in a separately isolated verifier;
-5. render the claim, evidence, uncertainty, nulls, and corrections in a research-native cockpit.
+```bash
+bash formal/tla/check.sh
+```
 
-Autonomy expands only after this chain survives negative fixtures, replay, interruption, and independent review.
+See [repository release engineering](docs/REPOSITORY_RELEASE.md) for the exact CI jobs, threat boundary, toolchain pins, and fresh-clone rehearsal. A green check is evidence about this repository snapshot; it is never scientific truth or Gate A acceptance.
+
+## Next
+
+The next architecture mission closes canonical identity and version-axis blockers, then WorkLease, the verification-assignment cohort, T1 AuthorityAssignment, the complete command/event/state/reducer graph, the constitutional root/checkpoint/activation chain, and two non-sharing verifier implementations. Independent reducers, replay/recovery/correction-fanout evidence, rights-settled proof import, canonical migration closure, accountable review lanes, the exact candidate manifest, and Daniel’s exact-byte decision remain mandatory before Gate A. The [closure plan](docs/GATE_A_PREREQUISITE_CLOSURE_PLAN_2026-07-16.md) and [working handoff](docs/GATE_A_HANDOFF_WORKING_PACKET_2026-07-15.md) retain the dependency order and open limitations.
+
+Only an accepted Gate A candidate can authorize disposable Gate B probes; one bounded replayable engine slice begins only after a separate Gate C decision.
+
+Autonomy expands after one full chain of custody survives replay, interruption, negative fixtures, recovery, and independent review—not before.

@@ -156,7 +156,18 @@ REQUIRED_FILES = (
     "schemas/strategy-candidate.schema.json",
     "schemas/promotion-decision.schema.json",
     "schemas/work-intent.schema.json",
+    ".python-version",
+    ".java-version",
+    ".gitleaks.toml",
+    ".gitleaksignore",
+    ".markdownlint-cli2.jsonc",
+    ".github/SECURITY.md",
+    ".github/dependabot.yml",
+    ".github/workflows/architecture.yml",
+    ".github/workflows/release-surface.yml",
+    ".github/workflows/formal.yml",
     "requirements-architecture.txt",
+    "docs/REPOSITORY_RELEASE.md",
     "tests/architecture-schema/manifest.json",
     "tests/cognitive-contracts/check.py",
     "tests/cognitive-contracts/cases.json",
@@ -199,6 +210,27 @@ REQUIRED_FILES = (
     "scripts/validate_first_slice_resolution.py",
     "scripts/validate_gate_a_prerequisites.py",
     "scripts/validate_schema_resource_reissues.py",
+    "scripts/validate_repository_release.py",
+    "scripts/ci/install-node.sh",
+    "scripts/ci/install-actionlint.sh",
+    "scripts/ci/install-zizmor.sh",
+    "scripts/ci/install-shellcheck.sh",
+    "scripts/ci/install-gitleaks.sh",
+    "scripts/ci/render-readme-architecture.sh",
+    "scripts/ci/check-repository-release.sh",
+    "scripts/ci/rehearse-fresh-clone.sh",
+    "scripts/write_release_evidence_manifest.py",
+    "scripts/write_rehearsal_evidence_manifest.py",
+    "scripts/compare_rehearsal_manifests.py",
+    "scripts/validate_schema_contracts.py",
+    "scripts/validate_contract_profiles.py",
+    "tests/repository-release/README.md",
+    "tests/repository-release/cases.json",
+    "tools/repository-release/.node-version",
+    "tools/repository-release/package.json",
+    "tools/repository-release/package-lock.json",
+    "tools/repository-release/requirements-architecture.lock",
+    "tools/repository-release/toolchain.lock.json",
 )
 FORBIDDEN_IMPLEMENTATION_DIRS = (
     "apps",
@@ -221,8 +253,18 @@ ARCHITECTURE_EVIDENCE_CHECKS = (
     "scripts/validate_gate_a_prerequisites.py",
     "scripts/validate_schema_resource_reissues.py",
 )
+REPOSITORY_RELEASE_CHECKS = (
+    "scripts/validate_repository_release.py",
+)
 MARKDOWN_LINK = re.compile(r"!?\[[^\]]*\]\(([^)]+)\)")
 EXTERNAL_PREFIXES = ("http://", "https://", "mailto:", "urn:", "data:")
+IGNORED_DISCOVERY_DIRS = {
+    ".git",
+    ".venv",
+    ".venv-architecture",
+    "artifacts",
+    "node_modules",
+}
 SCHEMA_ID_VERSION = re.compile(r"^urn:odeya:schema:[a-z0-9-]+:(\d+\.\d+\.\d+)$")
 
 
@@ -682,7 +724,7 @@ def validate_markdown_links(errors: list[str]) -> tuple[int, int]:
     document_count = 0
     local_link_count = 0
     for path in sorted(ROOT.rglob("*.md")):
-        if ".git" in path.parts:
+        if any(part in IGNORED_DISCOVERY_DIRS for part in path.parts):
             continue
         document_count += 1
         text = path.read_text(encoding="utf-8")
@@ -715,10 +757,13 @@ def validate_foundation_invariants(errors: list[str]) -> None:
     corpus = "\n".join(
         path.read_text(encoding="utf-8")
         for path in ROOT.rglob("*.md")
-        if ".git" not in path.parts
+        if not any(part in IGNORED_DISCOVERY_DIRS for part in path.parts)
     )
 
-    if "does not yet contain an executable research engine" not in readme:
+    if (
+        "architecture foundation only" not in readme
+        or "No executable research engine" not in readme
+    ):
         add(errors, "README must preserve the explicit unimplemented-engine boundary")
     if "PRE_IMPLEMENTATION_GATE.md" not in readme or "PRE_IMPLEMENTATION_GATE.md" not in agents:
         add(errors, "README and AGENTS must both enforce the pre-implementation gate")
@@ -1225,6 +1270,47 @@ def validate_architecture_evidence_checks(errors: list[str]) -> int:
     return passed
 
 
+def validate_repository_release_checks(errors: list[str]) -> int:
+    """Run repository-surface checks without implying release authority."""
+
+    passed = 0
+    for relative in REPOSITORY_RELEASE_CHECKS:
+        path = ROOT / relative
+        if not path.is_file():
+            add(errors, f"repository release check is missing: {relative}")
+            continue
+        try:
+            result = subprocess.run(
+                [sys.executable, str(path)],
+                cwd=ROOT,
+                capture_output=True,
+                text=True,
+                timeout=30,
+                check=False,
+            )
+        except (OSError, subprocess.TimeoutExpired) as exc:
+            add(
+                errors,
+                f"repository release check {relative} failed to execute: "
+                f"{type(exc).__name__}",
+            )
+            continue
+        if result.returncode != 0:
+            detail = [
+                line.strip()
+                for line in (result.stdout + "\n" + result.stderr).splitlines()
+                if line.strip()
+            ]
+            if detail:
+                for message in detail[:20]:
+                    add(errors, f"repository release check {relative}: {message}")
+            else:
+                add(errors, f"repository release check failed without output: {relative}")
+            continue
+        passed += 1
+    return passed
+
+
 def validate_decisions(errors: list[str]) -> int:
     decision_dir = ROOT / "docs/decisions"
     decisions = sorted(decision_dir.glob("[0-9][0-9][0-9][0-9]-*.md"))
@@ -1251,6 +1337,7 @@ def main() -> int:
     semantic_fixture_check_count = validate_architecture_semantic_fixtures(errors)
     isolated_contract_suite_count = validate_isolated_contract_suites(errors)
     architecture_evidence_check_count = validate_architecture_evidence_checks(errors)
+    repository_release_check_count = validate_repository_release_checks(errors)
     (
         canonical_case_count,
         canonical_relation_count,
@@ -1276,6 +1363,10 @@ def main() -> int:
     print(
         f"- {architecture_evidence_check_count} architecture evidence checks passed; "
         "blockers remain explicit"
+    )
+    print(
+        f"- {repository_release_check_count} static repository release-contract check passed; "
+        "no remote or release authority implied"
     )
     print(
         f"- {canonical_case_count} canonical identity cases reconciled across "

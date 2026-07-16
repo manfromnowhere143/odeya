@@ -1,0 +1,78 @@
+{
+  "schema_version": "0.1.0",
+  "base_workflow": ".github/workflows/architecture.yml",
+  "mutations": [
+    {
+      "id": "permission-expansion",
+      "old": "permissions:\n  contents: read\n",
+      "new": "permissions:\n  contents: read\n  issues: write\n",
+      "expected": "permissions"
+    },
+    {
+      "id": "pull-request-target",
+      "old": "  pull_request:\n",
+      "new": "  pull_request_target:\n",
+      "expected": "trigger"
+    },
+    {
+      "id": "explicit-github-token",
+      "old": "permissions:\n  contents: read\n",
+      "new": "permissions:\n  contents: read\nenv:\n  RELEASE_TOKEN: ${{ github.token }}\n",
+      "expected": "token"
+    },
+    {
+      "id": "deployment-environment",
+      "old": "    runs-on: ubuntu-24.04\n",
+      "new": "    runs-on: ubuntu-24.04\n    environment: production\n",
+      "expected": "environment"
+    },
+    {
+      "id": "missing-timeout",
+      "old": "    timeout-minutes: 15\n",
+      "new": "",
+      "expected": "timeout"
+    },
+    {
+      "id": "persisted-checkout-credentials",
+      "old": "          persist-credentials: false\n",
+      "new": "          persist-credentials: true\n",
+      "expected": "checkout"
+    },
+    {
+      "id": "shallow-history",
+      "old": "          fetch-depth: 0\n",
+      "new": "          fetch-depth: 1\n",
+      "expected": "checkout"
+    },
+    {
+      "id": "self-hosted-runner",
+      "old": "    runs-on: ubuntu-24.04\n",
+      "new": "    runs-on: self-hosted\n",
+      "expected": "runner"
+    },
+    {
+      "id": "scheduled-trigger",
+      "old": "  workflow_dispatch:\n\npermissions:",
+      "new": "  workflow_dispatch:\n  schedule:\n    - cron: '0 * * * *'\n\npermissions:",
+      "expected": "trigger"
+    },
+    {
+      "id": "repository-dispatch-trigger",
+      "old": "  workflow_dispatch:\n\npermissions:",
+      "new": "  workflow_dispatch:\n  repository_dispatch:\n\npermissions:",
+      "expected": "trigger"
+    },
+    {
+      "id": "workflow-run-trigger",
+      "old": "  workflow_dispatch:\n\npermissions:",
+      "new": "  workflow_dispatch:\n  workflow_run:\n    workflows: [untrusted]\n    types: [completed]\n\npermissions:",
+      "expected": "trigger"
+    },
+    {
+      "id": "unexpected-job",
+      "old": "          compression-level: 9\n\n  foundation:",
+      "new": "          compression-level: 9\n\n  hidden-network:\n    runs-on: ubuntu-24.04\n    timeout-minutes: 5\n    steps:\n      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0\n        with:\n          fetch-depth: 0\n          persist-credentials: false\n      - run: curl https://example.invalid/unreviewed\n\n  foundation:",
+      "expected": "job"
+    }
+  ]
+}

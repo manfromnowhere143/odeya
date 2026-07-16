@@ -1,0 +1,119 @@
+#!/usr/bin/env python3
+"""Bind and execute the semantic or adversarial contract profile.
+
+Every case belongs to exactly one retained profile. Each independently required
+CI job then executes all paired harnesses so a negative control can never be
+separated from the baseline and interpreter against which it is meaningful.
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import subprocess
+import sys
+from pathlib import Path
+from typing import Any
+
+
+ROOT = Path(__file__).resolve().parents[1]
+SUITES = {
+    "cognitive-contracts": (150, 31, 119),
+    "command-identity-contracts": (19, 2, 17),
+    "constitutional-construction": (32, 3, 29),
+    "first-slice-resolution": (33, 12, 21),
+    "lifecycle-closure": (32, 11, 21),
+    "mathematical-contracts": (57, 20, 37),
+    "physical-contracts": (85, 14, 71),
+    "projection-contracts": (62, 8, 54),
+}
+
+
+def semantic_case(case: dict[str, Any]) -> bool:
+    return (
+        case.get("kind") == "safe_reference"
+        or case.get("semantic_expect") == "valid"
+        or case.get("expected_status") == "blocked_unresolved_identity"
+        or (
+            case.get("expect") in {"valid", "accept"}
+            and case.get("semantic_expect") != "invalid"
+            and case.get("kind") != "adversarial"
+        )
+        or (
+            case.get("structural_expect") == "valid"
+            and case.get("semantic_expect") != "invalid"
+        )
+    )
+
+
+def adversarial_case(case: dict[str, Any]) -> bool:
+    return (
+        case.get("kind") == "adversarial"
+        or case.get("semantic_expect") == "invalid"
+        or case.get("expect") in {"invalid", "reject"}
+        or str(case.get("expected_status", "")).startswith("invalid_")
+        or case.get("structural_expect") == "invalid"
+    )
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--profile", choices=("semantic", "adversarial"), required=True)
+    args = parser.parse_args()
+
+    errors: list[str] = []
+    profile_total = 0
+    for suite, expected in SUITES.items():
+        manifest_path = ROOT / "tests" / suite / "cases.json"
+        document = json.loads(manifest_path.read_text(encoding="utf-8"))
+        cases = document.get("cases")
+        if not isinstance(cases, list):
+            errors.append(f"{suite}: cases must be an array")
+            continue
+
+        semantic = sum(semantic_case(case) for case in cases)
+        adversarial = sum(adversarial_case(case) for case in cases)
+        overlap = sum(
+            semantic_case(case) and adversarial_case(case) for case in cases
+        )
+        unclassified = len(cases) - semantic - adversarial + overlap
+        observed = (len(cases), semantic, adversarial)
+        if observed != expected:
+            errors.append(f"{suite}: expected partition {expected}, got {observed}")
+        if overlap or unclassified:
+            errors.append(
+                f"{suite}: profile partition is not exact "
+                f"(overlap={overlap}, unclassified={unclassified})"
+            )
+        profile_total += semantic if args.profile == "semantic" else adversarial
+
+    if errors:
+        print(f"Odeya {args.profile} contract profile FAILED")
+        for error in errors:
+            print(f"- {error}")
+        return 1
+
+    for suite in SUITES:
+        checker = ROOT / "tests" / suite / "check.py"
+        result = subprocess.run(
+            [sys.executable, str(checker)],
+            cwd=ROOT,
+            check=False,
+        )
+        if result.returncode != 0:
+            print(
+                f"Odeya {args.profile} contract profile FAILED: {suite} exited "
+                f"{result.returncode}",
+                file=sys.stderr,
+            )
+            return result.returncode
+
+    print(f"Odeya {args.profile} contract profile PASSED")
+    print(f"- {profile_total} exactly classified {args.profile} cases")
+    print("- 8 complete paired harnesses executed")
+    print("- semantic baselines and negative controls remained co-located")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

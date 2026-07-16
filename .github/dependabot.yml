@@ -1,0 +1,46 @@
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "07:00"
+      timezone: "Asia/Jerusalem"
+    open-pull-requests-limit: 5
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+    commit-message:
+      prefix: "build(ci)"
+
+  - package-ecosystem: "npm"
+    directory: "/tools/repository-release"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "07:15"
+      timezone: "Asia/Jerusalem"
+    open-pull-requests-limit: 5
+    groups:
+      release-tooling:
+        patterns:
+          - "*"
+    commit-message:
+      prefix: "build(release)"
+
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "07:30"
+      timezone: "Asia/Jerusalem"
+    open-pull-requests-limit: 5
+    groups:
+      architecture-validation:
+        patterns:
+          - "*"
+    commit-message:
+      prefix: "build(validation)"

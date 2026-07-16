@@ -27,7 +27,8 @@ This design fits the strongest retained lessons from the three proof missions. I
 
 | Area | Retained working evidence | Bounded interpretation |
 |---|---|---|
-| Foundation corpus | 100 Draft 2020-12 schemas; 588 valid/adversarial shared-manifest cases; 7 founding cross-field groups; 8 mandatory isolated contract suites; 2 bounded architecture-evidence checks | The full architecture validator passes. Structural and bounded semantic evidence is not runtime or Gate A evidence |
+| Foundation corpus | 100 Draft 2020-12 schemas; 588 valid/adversarial shared-manifest cases; 7 founding cross-field groups; 8 mandatory isolated contract suites; 2 bounded architecture-evidence checks; 1 repository release-surface check | The full architecture validator passes. Structural and bounded semantic evidence is not runtime or Gate A evidence |
+| Repository release surface | One exact README identity sentence and render-validated Mermaid source; architecture-only least-privilege workflows with full-SHA Action uses; exact-version Python/Node/Java inputs; hash-locked Python dependencies; integrity-locked npm dependencies; digest-verified fallback tool archives; Markdown, shell, workflow, bounded dependency-freshness, and fresh-clone harnesses | Local candidate only. No remote, required GitHub check, branch rule, visibility decision, push, runtime, or Gate A authority exists until the release gate is separately satisfied |
 | Command/event surface | `CommandEnvelope` 0.5.0 and `CommandReceipt` 0.4.0 are explicitly nonconstructible structural candidates over the 121-selector design vocabulary retained from exact historical `CommandEnvelope` 0.4.0 bytes; `ResearchEvent` 0.7.0 has 135 closed branches; 62 schema-valid event fixtures and 16 schema-valid replay traces are retained within 186 direct event/trace manifest cases | Every design command/event remains non-admitted until exact immutable members, identities, and activation exist |
 | Registry/root graph | Six registry/root/activation schema subjects validate; the proposed logical manifest v2 covers 9 layers, 30 modules, 47 aggregate owners, 100 schema owners, 121 command owners, and 135 event owners | Ownership and acyclic subject shape are present; no real registry snapshot, root, checkpoint, activation, or handler-set equality exists |
 | Cognitive controls | 150 cases pass, including 18 bounded semantic checks over state views, graph deltas/transitions, WorkIntent/blocked WorkContract boundaries, model configuration, and routing plus retained local-dispatch refusals | Models remain proposal/evidence producers; routing is not dispatch or independence authority |
@@ -110,7 +111,7 @@ Schema validation proves only the declared structural language and bounded local
 
 - no engine runtime, application services, or production UI;
 - no database, workflow, object-store, policy, sandbox, model, or laboratory provisioning;
-- no provider, MCP, repository, publication, payment, trading, or physical integration;
+- no engine/runtime provider, MCP, repository, publication, payment, trading, or physical integration; architecture-only repository validation is the sole repository exception;
 - no DNS/domain/company/public-repository action;
 - no source import from Sentinel, Telos, Inbar, Maestro, or Aweb;
 - no training, fine-tuning, recursive self-modification, deployment, publication, or physical authority.
