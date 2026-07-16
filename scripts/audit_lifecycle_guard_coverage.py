@@ -24,8 +24,23 @@ failing. An adversarial case expects a non-empty list containing its declared
 guard, so it can only fail by being accepted outright or by losing that guard,
 and both outcomes are attributable to the guard just removed.
 
-Where this method is actually weak: discovery, not mutation. A proved verdict is
-trustworthy; the denominator is only as honest as `discover()`. An earlier
+What a proved verdict does NOT mean. Disabling a guard deletes its refusal
+statement, which is equivalent to forcing its condition to False. A proved
+verdict therefore establishes that the statement is reachable by some retained
+case. It establishes nothing about whether each condition inside the guard is
+exercised. Deleting one disjunct from a guard's condition — admitting a
+fabricated canonicalization profile, say — leaves the suite green and regenerates
+a full-coverage record whose only diff is `subject_sha256`. Review measured 20 of
+32 single-disjunct removals and 16 of 19 helper-predicate conjunct removals
+surviving that way. This is statement coverage, not condition coverage; ADR 0030
+records the retraction and names condition-level mutation as the next unit.
+
+Relatedly, the digest pin below is a change-detector, not a weakening-detector.
+It fires on any edit and is cleared by regenerating, and re-proving a weakened
+guard succeeds.
+
+Where this method is also weak: discovery. A proved verdict is trustworthy for
+what it measures; the denominator is only as honest as `discover()`. An earlier
 version of this tool matched only `errors.append` and therefore never saw two
 `return [...]` guards, reporting a contented 69 when the count was 71 — both
 missing guards were unproved, so the coverage claim was inflated by a silent

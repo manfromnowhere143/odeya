@@ -347,6 +347,24 @@ every figure was published as fact and every one was wrong, because the
 measurement is only as wide as where it was pointed and nothing reveals where it
 was not.
 
+**Read the numerator with suspicion too. ADR 0030 retracts the strength of every
+coverage figure here.** The audit deletes a refusal *statement*, so a proved
+verdict means that statement is reachable — never that the conditions inside it
+are exercised. Deleting one disjunct (admitting a fabricated canonicalization
+profile, a property PRQ-008 turns on) leaves the suite green and regenerates a
+full-coverage record whose only diff is `subject_sha256`. Review measured 36 such
+conditions across the five models. The digest pin is a change-detector, not a
+weakening-detector. Condition-level mutation — each disjunct and conjunct, the
+MC/DC question — is the next lifecycle unit and is a strictly larger audit than
+the one built here.
+
+There is a second masking form worth carrying forward. A closed mutation
+vocabulary bounds what evidence can exist; so does a **conjoined known-bad case**.
+`first-slice WorkLease release forgets the claimed reservation` has one naming
+case that sets both of its disjuncts at once, so neither is independently
+exercised. The case looks like proof of the guard and is proof only of its
+disjunction.
+
 The measurement is retained at `architecture/lifecycle-guard-coverage.json` and
 reproduced by `scripts/audit_lifecycle_guard_coverage.py` (~90s). Do not
 hand-edit that record; regenerate it.

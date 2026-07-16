@@ -34,17 +34,21 @@ operation — `{"op": "replace", "path": [...], "value": ...}` — the exact sha
 established idiom, not a new mechanism. The four named mutations are retained
 byte-for-byte, so every previously retained case is unchanged.
 
-Twenty-nine known-bad traces were added: twenty-four breaking exactly one field
-of the retained fixture, and five entering branches the others never reach — the
+Twenty-nine known-bad traces were added: twenty-three breaking exactly one field
+of the retained fixture, six exercising the mutation vocabulary itself rather
+than any fixture field — this decision first miscounted these as twenty-four
+single-field cases — and five entering branches the others never reach: the
 released fixture's claimed frontier, the non-origin version rule, and the expiry
 pre-claim branch that neither retained fixture reaches without changing its
 transition event. Every variant was probed against the exact checker before
 retention.
 
-Five co-fire with a neighbouring guard, and that is handled rather than hidden:
-each case names its own guard through `expected_refusal_contains`, so removing
-that guard fails the suite even though a second error survives. This is the
-ADR 0024 binding doing the work it was added for.
+Six co-fire with a neighbouring guard — this decision first said five — and that
+is handled rather than hidden: each case names its own guard through
+`expected_refusal_contains`, so removing that guard fails the suite even though a
+second error survives. Independent review confirmed every case in these models
+binds to exactly one guard. This is the ADR 0024 binding doing the work it was
+added for.
 
 Coverage, re-measured by mutation:
 
@@ -86,9 +90,14 @@ This decision does not:
 
 ## Consequences
 
-Law 11 holds for these five models as a measured fact rather than an assertion:
-no guard among them can be removed, weakened, or silently lost without the suite
-failing and the rehearsal refusing the record.
+This decision originally claimed that no guard among these models can be
+removed, weakened, or silently lost without the suite failing and the rehearsal
+refusing the record. **ADR 0030 retracts the word "weakened".** Removal is
+caught; weakening is not. The audit deletes a refusal *statement*, which proves
+only that the statement is reachable, never that each *condition* inside it is
+exercised. Deleting one disjunct from a guard's condition leaves the suite green
+and regenerates a full-coverage record. Law 11 holds for statement reachability
+in these five models, which is weaker than it sounded.
 
 The result should be read against how it began. This suite passed green
 throughout, at every commit, while forty-seven of its guards were removable
