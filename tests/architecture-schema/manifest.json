@@ -6021,6 +6021,99 @@
       "mutations": [
         {"op": "replace", "path": "/acceptance_boundary/runtime_authorized", "value": true}
       ]
+    },
+    {
+      "name": "work-intent-core-valid-non-authoritative-candidate",
+      "schema": "schemas/work-intent-core.schema.json",
+      "fixture": "architecture/work-intent-core-candidate.json",
+      "expect": "valid"
+    },
+    {
+      "name": "work-intent-core-rejects-canonical-self-digest",
+      "schema": "schemas/work-intent-core.schema.json",
+      "fixture": "architecture/work-intent-core-candidate.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "add", "path": "/canonical_digest", "value": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}
+      ]
+    },
+    {
+      "name": "work-intent-core-rejects-unprofiled-timestamp",
+      "schema": "schemas/work-intent-core.schema.json",
+      "fixture": "architecture/work-intent-core-candidate.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/created_at", "value": "2026-07-16T09:00:00Z"}
+      ]
+    },
+    {
+      "name": "work-intent-core-cannot-authorize-dispatch",
+      "schema": "schemas/work-intent-core.schema.json",
+      "fixture": "architecture/work-intent-core-candidate.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/prospective_authority_boundary/dispatch_authority_granted", "value": true}
+      ]
+    },
+    {
+      "name": "work-intent-identity-candidate-evidence-valid-blocked-binding",
+      "schema": "schemas/work-intent-identity-candidate-evidence.schema.json",
+      "fixture": "architecture/work-intent-identity-candidate-evidence.json",
+      "expect": "valid"
+    },
+    {
+      "name": "work-intent-identity-candidate-evidence-rejects-status-escalation",
+      "schema": "schemas/work-intent-identity-candidate-evidence.schema.json",
+      "fixture": "architecture/work-intent-identity-candidate-evidence.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/candidate_status", "value": "accepted"}
+      ]
+    },
+    {
+      "name": "work-intent-identity-candidate-evidence-rejects-self-hash-claim",
+      "schema": "schemas/work-intent-identity-candidate-evidence.schema.json",
+      "fixture": "architecture/work-intent-identity-candidate-evidence.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/work_intent_core_binding/core_contains_self_hash", "value": true}
+      ]
+    },
+    {
+      "name": "work-intent-identity-candidate-evidence-rejects-canonical-digest-fabrication",
+      "schema": "schemas/work-intent-identity-candidate-evidence.schema.json",
+      "fixture": "architecture/work-intent-identity-candidate-evidence.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/identity_construction_boundary/canonical_digest", "value": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"}
+      ]
+    },
+    {
+      "name": "work-intent-identity-candidate-evidence-requires-both-direct-consumers",
+      "schema": "schemas/work-intent-identity-candidate-evidence.schema.json",
+      "fixture": "architecture/work-intent-identity-candidate-evidence.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "remove", "path": "/transitive_reissue_boundary/direct_schema_consumers/1"}
+      ]
+    },
+    {
+      "name": "work-intent-identity-candidate-evidence-cannot-unblock-assignment",
+      "schema": "schemas/work-intent-identity-candidate-evidence.schema.json",
+      "fixture": "architecture/work-intent-identity-candidate-evidence.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/transitive_reissue_boundary/assignment_construction_unblocked", "value": true}
+      ]
+    },
+    {
+      "name": "work-intent-identity-candidate-evidence-cannot-authorize-runtime",
+      "schema": "schemas/work-intent-identity-candidate-evidence.schema.json",
+      "fixture": "architecture/work-intent-identity-candidate-evidence.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/authority_boundary/runtime_authorized", "value": true}
+      ]
     }
   ]
 }

@@ -1,0 +1,491 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:odeya:schema:work-intent-identity-candidate-evidence:0.1.0",
+  "title": "Odeya WorkIntent Identity Candidate Evidence",
+  "description": "External nonrecursive binding of exact WorkIntent semantic-core bytes to the frozen-but-unissued canonicalization-profile candidate, the retained WorkIntent 0.1 projection, and the exact transitive reissue boundary. This is architecture evidence only; it does not issue a canonical identity, replace a schema resource, admit a WorkIntent, authorize assignment, or authorize runtime effects.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "artifact_class",
+    "candidate_status",
+    "frozen_at",
+    "profile_candidate_binding",
+    "work_intent_core_binding",
+    "legacy_projection_binding",
+    "transitive_reissue_boundary",
+    "identity_construction_boundary",
+    "authority_boundary"
+  ],
+  "properties": {
+    "schema_version": { "const": "0.1.0" },
+    "artifact_class": {
+      "const": "work_intent_identity_candidate_evidence"
+    },
+    "candidate_status": {
+      "const": "nonrecursive_core_bound_profile_unissued_transitive_reissue_blocked"
+    },
+    "frozen_at": {
+      "$ref": "#/$defs/work_intent_identity_candidate_timestamp"
+    },
+    "profile_candidate_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profile_id",
+        "profile_version",
+        "profile_core_schema_id",
+        "profile_core_raw_digest",
+        "profile_core_bytes",
+        "profile_status",
+        "same_active_root_membership_proven",
+        "operator_acceptance_ref"
+      ],
+      "properties": {
+        "profile_id": {
+          "const": "urn:odeya:canonicalization:odeya-jcs-0.1"
+        },
+        "profile_version": { "const": "0.1.0" },
+        "profile_core_schema_id": {
+          "const": "urn:odeya:schema:canonicalization-profile-core:0.1.0"
+        },
+        "profile_core_raw_digest": {
+          "const": "sha256:7fcdb930cb8e89000b2f2bd13da820fc3de1f0bb28d59e6082f4cf8e6cbf54af",
+          "x-odeya-digest-scope": {
+            "kind": "raw_file_digest",
+            "subject": "architecture/canonicalization-profile-core-candidate.json raw bytes",
+            "profile": "not_a_canonical_object_digest",
+            "schema": "urn:odeya:schema:canonicalization-profile-core:0.1.0",
+            "algorithm": "sha-256",
+            "status": "candidate_profile_core_raw_byte_binding"
+          }
+        },
+        "profile_core_bytes": { "const": 13152 },
+        "profile_status": { "const": "candidate_unissued" },
+        "same_active_root_membership_proven": { "const": false },
+        "operator_acceptance_ref": { "type": "null" }
+      }
+    },
+    "work_intent_core_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "core_path",
+        "core_schema_path",
+        "core_schema_id",
+        "core_raw_digest",
+        "core_bytes",
+        "core_schema_raw_digest",
+        "core_schema_bytes",
+        "core_contains_self_hash",
+        "identity_binding_external_to_core",
+        "canonical_audit"
+      ],
+      "properties": {
+        "core_path": { "const": "architecture/work-intent-core-candidate.json" },
+        "core_schema_path": {
+          "const": "schemas/work-intent-core.schema.json"
+        },
+        "core_schema_id": {
+          "const": "urn:odeya:schema:work-intent-core:0.1.0"
+        },
+        "core_raw_digest": {
+          "$ref": "#/$defs/work_intent_core_candidate_raw_digest"
+        },
+        "core_bytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1048576
+        },
+        "core_schema_raw_digest": {
+          "$ref": "#/$defs/work_intent_core_schema_raw_digest"
+        },
+        "core_schema_bytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1048576
+        },
+        "core_contains_self_hash": { "const": false },
+        "identity_binding_external_to_core": { "const": true },
+        "canonical_audit": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "unprofiled_datetime_paths",
+            "generic_json_number_paths",
+            "generic_scientific_decimal_paths",
+            "unscoped_digest_fields",
+            "unpinned_profile_bindings",
+            "dangling_local_refs"
+          ],
+          "properties": {
+            "unprofiled_datetime_paths": { "const": 0 },
+            "generic_json_number_paths": { "const": 0 },
+            "generic_scientific_decimal_paths": { "const": 0 },
+            "unscoped_digest_fields": { "const": 0 },
+            "unpinned_profile_bindings": { "const": 0 },
+            "dangling_local_refs": { "const": 0 }
+          }
+        }
+      }
+    },
+    "legacy_projection_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "legacy_schema_path",
+        "legacy_schema_id",
+        "legacy_schema_raw_digest",
+        "legacy_schema_bytes",
+        "legacy_fixture_path",
+        "legacy_fixture_raw_digest",
+        "legacy_fixture_bytes",
+        "identity_fields_removed",
+        "semantic_projection_equal",
+        "legacy_schema_resource_replaced",
+        "legacy_fixture_is_architecture_only",
+        "legacy_reference_identity_status"
+      ],
+      "properties": {
+        "legacy_schema_path": { "const": "schemas/work-intent.schema.json" },
+        "legacy_schema_id": {
+          "const": "urn:odeya:schema:work-intent:0.1.0"
+        },
+        "legacy_schema_raw_digest": {
+          "$ref": "#/$defs/work_intent_legacy_schema_raw_digest"
+        },
+        "legacy_schema_bytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1048576
+        },
+        "legacy_fixture_path": {
+          "const": "tests/cognitive-contracts/fixtures/work-intent.valid.json"
+        },
+        "legacy_fixture_raw_digest": {
+          "$ref": "#/$defs/work_intent_legacy_fixture_raw_digest"
+        },
+        "legacy_fixture_bytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1048576
+        },
+        "identity_fields_removed": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "prefixItems": [
+            { "const": "identity_resolution_status" },
+            { "const": "canonicalization_profile_ref" },
+            { "const": "canonical_digest" }
+          ],
+          "items": false
+        },
+        "semantic_projection_equal": { "const": true },
+        "legacy_schema_resource_replaced": { "const": false },
+        "legacy_fixture_is_architecture_only": { "const": true },
+        "legacy_reference_identity_status": {
+          "const": "synthetic_architecture_values_not_admitted"
+        }
+      }
+    },
+    "transitive_reissue_boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "direct_schema_consumer_count",
+        "direct_schema_consumers",
+        "required_reissue_order",
+        "reissue_unit",
+        "current_work_intent_resource_reissued",
+        "current_direct_consumers_reissued",
+        "complete_offline_predecessor_registry",
+        "migration_evidence_complete",
+        "assignment_construction_unblocked"
+      ],
+      "properties": {
+        "direct_schema_consumer_count": { "const": 2 },
+        "direct_schema_consumers": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "prefixItems": [
+            { "$ref": "#/$defs/work_intent_lease_consumer" },
+            { "$ref": "#/$defs/work_intent_contract_consumer" }
+          ],
+          "items": false
+        },
+        "required_reissue_order": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "prefixItems": [
+            { "$ref": "#/$defs/work_intent_reissue_step" },
+            { "$ref": "#/$defs/work_lease_reissue_step" },
+            { "$ref": "#/$defs/work_contract_reissue_step" }
+          ],
+          "items": false
+        },
+        "reissue_unit": {
+          "const": "single_reviewed_commit_without_missing_intermediate_schema_ids"
+        },
+        "current_work_intent_resource_reissued": { "const": false },
+        "current_direct_consumers_reissued": { "const": false },
+        "complete_offline_predecessor_registry": { "const": false },
+        "migration_evidence_complete": { "const": false },
+        "assignment_construction_unblocked": { "const": false }
+      }
+    },
+    "identity_construction_boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "canonical_envelope_exact_members",
+        "canonical_envelope_profile_id",
+        "canonical_envelope_schema_id",
+        "canonical_envelope_subject_path",
+        "subject_contains_self_hash",
+        "raw_byte_binding_is_canonical_object_identity",
+        "canonical_digest",
+        "canonical_identity_status",
+        "registry_member_ref",
+        "admission_ref",
+        "operator_acceptance_ref"
+      ],
+      "properties": {
+        "canonical_envelope_exact_members": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "prefixItems": [
+            { "const": "profile_id" },
+            { "const": "schema_id" },
+            { "const": "subject" }
+          ],
+          "items": false
+        },
+        "canonical_envelope_profile_id": {
+          "const": "urn:odeya:canonicalization:odeya-jcs-0.1"
+        },
+        "canonical_envelope_schema_id": {
+          "const": "urn:odeya:schema:work-intent-core:0.1.0"
+        },
+        "canonical_envelope_subject_path": {
+          "const": "architecture/work-intent-core-candidate.json"
+        },
+        "subject_contains_self_hash": { "const": false },
+        "raw_byte_binding_is_canonical_object_identity": { "const": false },
+        "canonical_digest": {
+          "type": "null",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "subject": "work_intent_core_candidate canonical envelope",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1 unissued",
+            "schema": "urn:odeya:schema:work-intent-core:0.1.0",
+            "algorithm": "sha-256",
+            "status": "not_constructible_until_profile_issuance_and_subject_admission"
+          }
+        },
+        "canonical_identity_status": {
+          "const": "not_constructible_profile_unissued_and_resource_not_admitted"
+        },
+        "registry_member_ref": { "type": "null" },
+        "admission_ref": { "type": "null" },
+        "operator_acceptance_ref": { "type": "null" }
+      }
+    },
+    "authority_boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profile_issued",
+        "work_intent_admitted",
+        "work_intent_assignable",
+        "assignment_authorized",
+        "lease_authorized",
+        "dispatch_authorized",
+        "runtime_authorized",
+        "deployment_authorized",
+        "external_effects_authorized"
+      ],
+      "properties": {
+        "profile_issued": { "const": false },
+        "work_intent_admitted": { "const": false },
+        "work_intent_assignable": { "const": false },
+        "assignment_authorized": { "const": false },
+        "lease_authorized": { "const": false },
+        "dispatch_authorized": { "const": false },
+        "runtime_authorized": { "const": false },
+        "deployment_authorized": { "const": false },
+        "external_effects_authorized": { "const": false }
+      }
+    }
+  },
+  "$defs": {
+    "work_intent_identity_candidate_timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
+    },
+    "work_intent_identity_candidate_raw_digest": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "work_intent_core_candidate_raw_digest": {
+      "$ref": "#/$defs/work_intent_identity_candidate_raw_digest",
+      "x-odeya-digest-scope": {
+        "kind": "raw_file_digest",
+        "subject": "architecture/work-intent-core-candidate.json raw bytes",
+        "profile": "not_a_canonical_object_digest",
+        "schema": "urn:odeya:schema:work-intent-core:0.1.0",
+        "algorithm": "sha-256",
+        "status": "external_nonrecursive_candidate_binding"
+      }
+    },
+    "work_intent_core_schema_raw_digest": {
+      "$ref": "#/$defs/work_intent_identity_candidate_raw_digest",
+      "x-odeya-digest-scope": {
+        "kind": "raw_schema_resource_digest",
+        "subject": "schemas/work-intent-core.schema.json raw bytes",
+        "profile": "not_a_canonical_object_digest",
+        "schema": "urn:odeya:schema:work-intent-core:0.1.0",
+        "algorithm": "sha-256",
+        "status": "external_nonrecursive_candidate_binding"
+      }
+    },
+    "work_intent_legacy_schema_raw_digest": {
+      "$ref": "#/$defs/work_intent_identity_candidate_raw_digest",
+      "x-odeya-digest-scope": {
+        "kind": "raw_schema_resource_digest",
+        "subject": "schemas/work-intent.schema.json raw bytes",
+        "profile": "not_a_canonical_object_digest",
+        "schema": "urn:odeya:schema:work-intent:0.1.0",
+        "algorithm": "sha-256",
+        "status": "retained_legacy_candidate_binding"
+      }
+    },
+    "work_intent_legacy_fixture_raw_digest": {
+      "$ref": "#/$defs/work_intent_identity_candidate_raw_digest",
+      "x-odeya-digest-scope": {
+        "kind": "raw_fixture_digest",
+        "subject": "tests/cognitive-contracts/fixtures/work-intent.valid.json raw bytes",
+        "profile": "not_a_canonical_object_digest",
+        "schema": "urn:odeya:schema:work-intent:0.1.0",
+        "algorithm": "sha-256",
+        "status": "architecture_fixture_projection_binding"
+      }
+    },
+    "work_intent_lease_consumer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_path",
+        "current_schema_id",
+        "prospective_schema_id",
+        "current_schema_raw_digest",
+        "current_schema_bytes"
+      ],
+      "properties": {
+        "schema_path": { "const": "schemas/canonical-work-lease.schema.json" },
+        "current_schema_id": {
+          "const": "urn:odeya:schema:canonical-work-lease:0.1.0"
+        },
+        "prospective_schema_id": {
+          "const": "urn:odeya:schema:canonical-work-lease:0.2.0"
+        },
+        "current_schema_raw_digest": {
+          "$ref": "#/$defs/work_intent_lease_consumer_raw_digest"
+        },
+        "current_schema_bytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1048576
+        }
+      }
+    },
+    "work_intent_lease_consumer_raw_digest": {
+      "$ref": "#/$defs/work_intent_identity_candidate_raw_digest",
+      "x-odeya-digest-scope": {
+        "kind": "raw_schema_resource_digest",
+        "subject": "schemas/canonical-work-lease.schema.json raw bytes",
+        "profile": "not_a_canonical_object_digest",
+        "schema": "urn:odeya:schema:canonical-work-lease:0.1.0",
+        "algorithm": "sha-256",
+        "status": "direct_consumer_pre_reissue_binding"
+      }
+    },
+    "work_intent_contract_consumer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_path",
+        "current_schema_id",
+        "prospective_schema_id",
+        "current_schema_raw_digest",
+        "current_schema_bytes"
+      ],
+      "properties": {
+        "schema_path": { "const": "schemas/work-contract.schema.json" },
+        "current_schema_id": {
+          "const": "urn:odeya:schema:work-contract:0.2.0"
+        },
+        "prospective_schema_id": {
+          "const": "urn:odeya:schema:work-contract:0.3.0"
+        },
+        "current_schema_raw_digest": {
+          "$ref": "#/$defs/work_intent_contract_consumer_raw_digest"
+        },
+        "current_schema_bytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1048576
+        }
+      }
+    },
+    "work_intent_contract_consumer_raw_digest": {
+      "$ref": "#/$defs/work_intent_identity_candidate_raw_digest",
+      "x-odeya-digest-scope": {
+        "kind": "raw_schema_resource_digest",
+        "subject": "schemas/work-contract.schema.json raw bytes",
+        "profile": "not_a_canonical_object_digest",
+        "schema": "urn:odeya:schema:work-contract:0.2.0",
+        "algorithm": "sha-256",
+        "status": "direct_consumer_pre_reissue_binding"
+      }
+    },
+    "work_intent_reissue_step": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "from_schema_id", "to_schema_id"],
+      "properties": {
+        "path": { "const": "schemas/work-intent.schema.json" },
+        "from_schema_id": { "const": "urn:odeya:schema:work-intent:0.1.0" },
+        "to_schema_id": { "const": "urn:odeya:schema:work-intent:0.2.0" }
+      }
+    },
+    "work_lease_reissue_step": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "from_schema_id", "to_schema_id"],
+      "properties": {
+        "path": { "const": "schemas/canonical-work-lease.schema.json" },
+        "from_schema_id": {
+          "const": "urn:odeya:schema:canonical-work-lease:0.1.0"
+        },
+        "to_schema_id": {
+          "const": "urn:odeya:schema:canonical-work-lease:0.2.0"
+        }
+      }
+    },
+    "work_contract_reissue_step": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "from_schema_id", "to_schema_id"],
+      "properties": {
+        "path": { "const": "schemas/work-contract.schema.json" },
+        "from_schema_id": { "const": "urn:odeya:schema:work-contract:0.2.0" },
+        "to_schema_id": { "const": "urn:odeya:schema:work-contract:0.3.0" }
+      }
+    }
+  }
+}

@@ -214,6 +214,15 @@ visible.
 PRQ-009 remains `unresolved_blocking`, and C5 must not be reported resolved.
 The retained WorkIntent candidate has unresolved identity inputs, a null
 canonicalization profile, a null canonical digest, and no assignable authority.
+The prospective identity construction in
+[ADR 0021](decisions/0021-separate-work-intent-core-from-identity-binding.md)
+now separates an exact semantic core from its external byte/profile/lineage
+binding and rejects 28 known-bad mutations. It deliberately does not replace
+WorkIntent 0.1: canonical WorkLease 0.1 and WorkContract 0.2 are exact direct
+schema consumers, so WorkIntent 0.2, WorkLease 0.2, and WorkContract 0.3 must be
+reissued together after the core's three legacy nested-reference shapes are
+made profile-bound. Raw-byte binding is not canonical identity, admission, or
+assignment authority.
 The current `ResearchEvent` 0.7.0 assignment payload intentionally does not
 invent a WorkIntent reference. Closure requires a newly identified resolved
 WorkIntent, a WorkContract bound to that exact intent and assignment commit,

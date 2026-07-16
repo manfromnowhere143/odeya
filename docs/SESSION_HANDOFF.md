@@ -88,12 +88,18 @@ neither is Odeya authority, storage, namespace, runtime, or control plane.
 - Isolated architecture candidate worktree:
   `/Users/danielwahnich/workspace/odeya-t0-work-lease`
 - Isolated architecture branch: `agent/t0-work-lease-20260716`
+- Validated canonical-profile predecessor:
+  `c9ce09d49fa38e11eed4ff40ee484e6e0ed9593f`
+- Validated canonical-profile predecessor tree:
+  `ec170fa22f03108b914fa8c204fb13bb26f4bbd1`
+- Retained predecessor rehearsal evidence:
+  `/Users/danielwahnich/workspace/odeya-release-evidence/c9ce09d49fa38e11eed4ff40ee484e6e0ed9593f/rehearsal-evidence-manifest.json`
 - Validated WorkLease predecessor:
   `763e7d48889265835c76ef66878515467cdf09b6`
 - Unchanged local `main`: `f8c71c8e3174f07619e0bbd31cb3d6df5d848361`
 - Validated repository-release predecessor:
   `ff512c5211f6ace0816e7991913234ce7cb72e25`
-- Validated predecessor tree:
+- Validated repository-release predecessor tree:
   `39c88d64a03c9227749d8aa045d57301e1f78997`
 - Canonical remote: none
 - Repository visibility, creation, push, publication, and deployment authority:
@@ -109,7 +115,7 @@ Run first:
 
 ```bash
 bash -euo pipefail <<'BASH'
-cd /Users/danielwahnich/workspace/odeya
+cd /Users/danielwahnich/workspace/odeya-t0-work-lease
 source scripts/ci/sanitize-git-environment.sh
 git status --short --branch
 git rev-parse HEAD
@@ -118,19 +124,24 @@ git symbolic-ref --short HEAD
 git rev-parse main
 git remote -v
 git log --oneline --decorate -5
-test "$(git symbolic-ref --short HEAD)" = agent/repository-release
+test "$(git symbolic-ref --short HEAD)" = agent/t0-work-lease-20260716
 test "$(git rev-parse main)" = f8c71c8e3174f07619e0bbd31cb3d6df5d848361
 test -z "$(git remote)"
 git merge-base --is-ancestor \
-  ff512c5211f6ace0816e7991913234ce7cb72e25 HEAD
+  c9ce09d49fa38e11eed4ff40ee484e6e0ed9593f HEAD
 git diff --cached --name-only
 git diff --check
+test "$(git -C /Users/danielwahnich/workspace/odeya symbolic-ref --short HEAD)" = \
+  agent/repository-release
+git -C /Users/danielwahnich/workspace/odeya status --short --branch
 BASH
 ```
 
 Expected invariants:
 
-- the branch is `agent/repository-release`;
+- the active architecture branch is `agent/t0-work-lease-20260716`;
+- the canonical worktree remains on `agent/repository-release` with Daniel's
+  protected UI/UX changes untouched;
 - `main` remains the exact commit recorded above;
 - the validated predecessor is an ancestor of `HEAD`;
 - no remote is configured;
@@ -193,11 +204,11 @@ predecessor commit. A descendant never inherits it. Diagnostic evidence under
 
 ## Current isolated T0 architecture descendant
 
-The isolated architecture lane descends from the exact validated WorkLease
-commit named above. Its current candidate tree contains 103 schemas, 620 shared
-schema cases, nine isolated contract suites, 64 canonical vectors, four
-metamorphic relations, 20 architecture decisions, and the unchanged 43/60/25/11
-first-slice boundary.
+The isolated architecture lane descends from the exact validated
+canonical-profile commit named above. Its current candidate tree contains 105
+schemas, 631 shared schema cases, ten isolated contract suites, 64 canonical
+vectors, four metamorphic relations, 21 architecture decisions, and the
+unchanged 43/60/25/11 first-slice boundary.
 
 ADR 0020 adds a nonrecursive `odeya-jcs-0.1` profile core and an external
 candidate-evidence binding. The core freezes exact candidate parser limits,
@@ -205,10 +216,27 @@ RFC 8785 serialization, canonical envelope, digest framing, future reference
 shape, 21 current domain constants, and eight version axes for review. The
 evidence binds exact raw bytes and retains one safe reference plus 26 known-bad
 mutations. It issues no canonical digest, admits no profile member, and does
-not close PRQ-001: the 103-schema/200-fixture migration audit remains blocked
+not close PRQ-001: the 105-schema/200-fixture migration audit remains blocked
 at 122 unprofiled time paths, 61 number/decimal findings, 668 unscoped digest
 fields, 56 divergent common-definition names, 11 unpinned profile bindings,
-and 238 nonconformant fixture timestamps.
+and 236 nonconformant fixture timestamps.
+
+ADR 0021 adds an identity-free `work-intent-core:0.1.0` semantic subject and an
+external `work-intent-identity-candidate-evidence:0.1.0` binding. The safe core
+is exactly the retained WorkIntent 0.1 fixture after removing only its three
+identity fields. Its schema contributes zero time/number/decimal/digest/profile
+audit blockers, and the dedicated suite rejects 28 known-bad mutations. The
+binding fixes exact current bytes for WorkIntent 0.1 and its two direct schema
+consumers. It does not replace any of them, issue a canonical digest, or make a
+WorkIntent assignable.
+
+The next exact migration unit is ordered WorkIntent 0.2, canonical WorkLease
+0.2, and WorkContract 0.3 in one reviewed commit with immediate-predecessor
+lineage. Before that reissue, replace the core's three legacy digest-reference
+shapes with exact profile/schema-bound references. Migrate the cognitive,
+lifecycle, shared-manifest, and fixture consumers in the same unit. Preserve
+all null/false admission and authority boundaries, and do not claim that this
+constructs the thirteen-event assignment cohort.
 
 Resolve the current isolated branch `HEAD` and tree from Git. A later handoff
 message may name the resulting commit and retained fresh-clone evidence; this
@@ -217,9 +245,10 @@ file cannot recursively contain the commit that contains it.
 ## Reproduce the current exact `HEAD`
 
 Reuse `.venv-architecture` only if its pinned dependencies are intact. The
-following mixed-worktree checks are useful before committing, but they are
-advisory because Daniel's protected untracked UI files are present. They cannot
-certify a staged or committed handoff tree:
+following checks apply to the isolated architecture worktree. Daniel's
+protected UI files remain in the separate canonical worktree and must never be
+copied, staged, normalized, or removed. Pre-commit checks still cannot certify
+a later commit; the definitive evidence is the exact-commit fresh clone:
 
 ```bash
 .venv-architecture/bin/python scripts/validate.py
@@ -239,14 +268,14 @@ directory, outside both the Git worktree and temporary storage:
 
 ```bash
 bash -euo pipefail <<'BASH'
-cd /Users/danielwahnich/workspace/odeya
+cd /Users/danielwahnich/workspace/odeya-t0-work-lease
 source scripts/ci/sanitize-git-environment.sh
 commit="$(git rev-parse HEAD)"
 evidence="/Users/danielwahnich/workspace/odeya-release-evidence/$commit"
 test ! -e "$evidence"
 bash scripts/ci/rehearse-fresh-clone.sh \
   "$commit" \
-  /Users/danielwahnich/workspace/odeya \
+  /Users/danielwahnich/workspace/odeya-t0-work-lease \
   "$evidence" \
   local
 python3 - "$evidence" "$commit" <<'PY'
@@ -308,11 +337,16 @@ A mission.
 
 ## Next architecture mission, in dependency order
 
-1. Complete T0 by closing PRQ-001–PRQ-010. ADR 0020 now freezes the exact
+1. Complete T0 by closing PRQ-001–PRQ-010. ADR 0020 freezes the exact
    nonrecursive canonical-profile candidate parameters, 21 current digest
    domains, future profile-reference shape, and eight version axes for review,
-   but no canonical profile identity is issued and all current consumer
-   migration remains blocked. Resolve or explicitly version the retained
+   while ADR 0021 freezes the first nonrecursive WorkIntent semantic-core and
+   external binding candidate. Neither identity is issued. First replace the
+   core's three legacy digest-reference shapes, then atomically reissue
+   WorkIntent 0.2, canonical WorkLease 0.2, and WorkContract 0.3 with exact
+   immediate-predecessor lineage and all direct test/fixture consumers. Keep
+   admission, assignment, lease, dispatch, and runtime blocked. Then resolve or
+   explicitly version the retained
    migration findings; close grant lifecycle, protocol origin, and data-use
    authority contradictions; bind schema, payload, event, member, and snapshot
    identities; separate core/evidence/seal/attestation subjects; and retain
