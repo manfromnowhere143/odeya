@@ -1,0 +1,407 @@
+{
+  "manifest_version": "0.1.0",
+  "description": "Architecture-only safe and known-bad cases for the nonrecursive odeya-jcs-0.1 candidate parameter freeze. Passing confers no canonical identity, registry membership, Gate A acceptance, runtime authority, deployment authority, external-effect authority, or publication authority.",
+  "required_adversarial_tags": [
+    "profile_alias",
+    "self_digest",
+    "fabricated_operator_acceptance",
+    "bom_allowed",
+    "duplicate_key_last_wins",
+    "unsafe_integer_domain",
+    "parser_limit_drift",
+    "serializer_substitution",
+    "envelope_shape_drift",
+    "fabricated_canonical_digest",
+    "legacy_profile_reference_shape",
+    "fabricated_consumer_migration",
+    "missing_digest_domain",
+    "wrong_domain_schema_binding",
+    "version_axis_reorder",
+    "implicit_upcast",
+    "fabricated_core_runtime_authority",
+    "core_raw_hash_drift",
+    "conformance_artifact_hash_drift",
+    "fabricated_organizational_independence",
+    "migration_count_drift",
+    "fabricated_migration_completion",
+    "fabricated_profile_acceptance",
+    "fabricated_runtime_authority",
+    "domain_evidence_count_drift",
+    "evidence_status_escalation"
+  ],
+  "cases": [
+    {
+      "name": "candidate-core-and-evidence-remain-fail-closed",
+      "kind": "safe_reference"
+    },
+    {
+      "name": "mutable-profile-alias-is-rejected",
+      "kind": "adversarial",
+      "adversarial_tag": "profile_alias",
+      "mutations": [
+        {
+          "target": "core",
+          "op": "replace",
+          "path": "/profile_id",
+          "value": "urn:odeya:canonicalization:odeya-jcs-latest"
+        }
+      ],
+      "required_errors": ["profile_identity_mismatch"]
+    },
+    {
+      "name": "profile-core-cannot-contain-a-self-digest",
+      "kind": "adversarial",
+      "adversarial_tag": "self_digest",
+      "mutations": [
+        {
+          "target": "core",
+          "op": "replace",
+          "path": "/bootstrap_boundary/core_contains_self_hash",
+          "value": true
+        }
+      ],
+      "required_errors": ["nonrecursive_bootstrap_violation"]
+    },
+    {
+      "name": "operator-acceptance-cannot-be-invented",
+      "kind": "adversarial",
+      "adversarial_tag": "fabricated_operator_acceptance",
+      "mutations": [
+        {
+          "target": "core",
+          "op": "replace",
+          "path": "/bootstrap_boundary/operator_acceptance_ref",
+          "value": "operator-decision.fabricated"
+        }
+      ],
+      "required_errors": ["operator_acceptance_fabricated"]
+    },
+    {
+      "name": "byte-order-mark-cannot-be-admitted",
+      "kind": "adversarial",
+      "adversarial_tag": "bom_allowed",
+      "mutations": [
+        {
+          "target": "core",
+          "op": "replace",
+          "path": "/parser_contract/byte_order_mark",
+          "value": "allow"
+        }
+      ],
+      "required_errors": ["bom_not_rejected"]
+    },
+    {
+      "name": "last-key-wins-parser-is-rejected",
+      "kind": "adversarial",
+      "adversarial_tag": "duplicate_key_last_wins",
+      "mutations": [
+        {
+          "target": "core",
+          "op": "replace",
+          "path": "/parser_contract/duplicate_object_names",
+          "value": "last_key_wins"
+        }
+      ],
+      "required_errors": ["duplicate_names_not_rejected_before_mapping"]
+    },
+    {
+      "name": "integer-outside-cross-runtime-safe-domain-is-rejected",
+      "kind": "adversarial",
+      "adversarial_tag": "unsafe_integer_domain",
+      "mutations": [
+        {
+          "target": "core",
+          "op": "replace",
+          "path": "/parser_contract/integer_domain/maximum",
+          "value": 9007199254740992
+        }
+      ],
+      "required_errors": ["unsafe_integer_domain"]
+    },
+    {
+      "name": "parser-limit-drift-from-retained-vectors-is-rejected",
+      "kind": "adversarial",
+      "adversarial_tag": "parser_limit_drift",
+      "mutations": [
+        {
+          "target": "core",
+          "op": "replace",
+          "path": "/parser_contract/limits/max_depth",
+          "value": 65
+        }
+      ],
+      "required_errors": ["parser_limits_mismatch_retained_vectors"]
+    },
+    {
+      "name": "serializer-substitution-is-rejected",
+      "kind": "adversarial",
+      "adversarial_tag": "serializer_substitution",
+      "mutations": [
+        {
+          "target": "core",
+          "op": "replace",
+          "path": "/serialization_contract/standard",
+          "value": "generic_canonical_json"
+        }
+      ],
+      "required_errors": ["serialization_contract_not_exact_rfc8785_profile"]
+    },
+    {
+      "name": "canonical-envelope-member-drift-is-rejected",
+      "kind": "adversarial",
+      "adversarial_tag": "envelope_shape_drift",
+      "mutations": [
+        {
+          "target": "core",
+          "op": "replace",
+          "path": "/canonical_envelope_contract/exact_members/1",
+          "value": "subject"
+        }
+      ],
+      "required_errors": ["canonical_envelope_members_mismatch"]
+    },
+    {
+      "name": "canonical-digest-before-profile-issuance-is-rejected",
+      "kind": "adversarial",
+      "adversarial_tag": "fabricated_canonical_digest",
+      "mutations": [
+        {
+          "target": "core",
+          "op": "replace",
+          "path": "/canonical_object_digest_contract/canonical_digest",
+          "value": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      ],
+      "required_errors": ["canonical_digest_fabricated"]
+    },
+    {
+      "name": "legacy-name-version-digest-profile-reference-is-rejected",
+      "kind": "adversarial",
+      "adversarial_tag": "legacy_profile_reference_shape",
+      "mutations": [
+        {
+          "target": "core",
+          "op": "replace",
+          "path": "/prospective_profile_reference_contract/exact_members/0",
+          "value": "name"
+        }
+      ],
+      "required_errors": ["prospective_profile_reference_shape_mismatch"]
+    },
+    {
+      "name": "current-consumer-migration-cannot-be-inferred",
+      "kind": "adversarial",
+      "adversarial_tag": "fabricated_consumer_migration",
+      "mutations": [
+        {
+          "target": "core",
+          "op": "replace",
+          "path": "/prospective_profile_reference_contract/current_consumer_migration_complete",
+          "value": true
+        }
+      ],
+      "required_errors": ["current_consumer_migration_fabricated"]
+    },
+    {
+      "name": "missing-current-digest-domain-is-rejected",
+      "kind": "adversarial",
+      "adversarial_tag": "missing_digest_domain",
+      "mutations": [
+        {
+          "target": "core",
+          "op": "remove",
+          "path": "/domain_registry/20"
+        }
+      ],
+      "required_errors": ["declared_domain_registry_mismatch"]
+    },
+    {
+      "name": "domain-to-schema-substitution-is-rejected",
+      "kind": "adversarial",
+      "adversarial_tag": "wrong_domain_schema_binding",
+      "mutations": [
+        {
+          "target": "core",
+          "op": "replace",
+          "path": "/domain_registry/0/declaring_schema_id",
+          "value": "urn:odeya:schema:policy-decision:0.2.0"
+        }
+      ],
+      "required_errors": ["declared_domain_registry_mismatch"]
+    },
+    {
+      "name": "version-axis-reorder-is-rejected",
+      "kind": "adversarial",
+      "adversarial_tag": "version_axis_reorder",
+      "mutations": [
+        {
+          "target": "core",
+          "op": "replace",
+          "path": "/version_axes/0/axis_id",
+          "value": "logical_command_payload_version"
+        },
+        {
+          "target": "core",
+          "op": "replace",
+          "path": "/version_axes/1/axis_id",
+          "value": "command_semantic_version"
+        }
+      ],
+      "required_errors": ["explicit_version_axes_mismatch"]
+    },
+    {
+      "name": "implicit-same-major-upcast-is-rejected",
+      "kind": "adversarial",
+      "adversarial_tag": "implicit_upcast",
+      "mutations": [
+        {
+          "target": "core",
+          "op": "replace",
+          "path": "/version_axes/4/implicit_upcast",
+          "value": "same_major_allowed"
+        }
+      ],
+      "required_errors": ["implicit_version_conversion_allowed"]
+    },
+    {
+      "name": "profile-core-cannot-authorize-runtime",
+      "kind": "adversarial",
+      "adversarial_tag": "fabricated_core_runtime_authority",
+      "mutations": [
+        {
+          "target": "core",
+          "op": "replace",
+          "path": "/authority_boundary/runtime_authorized",
+          "value": true
+        }
+      ],
+      "required_errors": ["profile_core_authority_fabricated"]
+    },
+    {
+      "name": "profile-core-raw-hash-drift-is-rejected",
+      "kind": "adversarial",
+      "adversarial_tag": "core_raw_hash_drift",
+      "mutations": [
+        {
+          "target": "evidence",
+          "op": "replace",
+          "path": "/profile_core_binding/profile_core_raw_digest",
+          "value": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      ],
+      "required_errors": ["profile_core_raw_binding_mismatch"]
+    },
+    {
+      "name": "retained-conformance-artifact-hash-drift-is-rejected",
+      "kind": "adversarial",
+      "adversarial_tag": "conformance_artifact_hash_drift",
+      "mutations": [
+        {
+          "target": "evidence",
+          "op": "replace",
+          "path": "/conformance_evidence/artifacts/1/raw_digest",
+          "value": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      ],
+      "required_errors": ["conformance_artifact_raw_binding_mismatch"]
+    },
+    {
+      "name": "organizational-independence-cannot-be-inferred-from-two-libraries",
+      "kind": "adversarial",
+      "adversarial_tag": "fabricated_organizational_independence",
+      "mutations": [
+        {
+          "target": "evidence",
+          "op": "replace",
+          "path": "/conformance_evidence/organizational_independence_proven",
+          "value": true
+        }
+      ],
+      "required_errors": ["organizational_independence_fabricated"]
+    },
+    {
+      "name": "migration-snapshot-count-drift-is-rejected",
+      "kind": "adversarial",
+      "adversarial_tag": "migration_count_drift",
+      "mutations": [
+        {
+          "target": "evidence",
+          "op": "replace",
+          "path": "/migration_snapshot/unscoped_digest_fields",
+          "value": 669
+        }
+      ],
+      "required_errors": ["migration_snapshot_count_mismatch"]
+    },
+    {
+      "name": "consumer-migration-completion-cannot-be-invented",
+      "kind": "adversarial",
+      "adversarial_tag": "fabricated_migration_completion",
+      "mutations": [
+        {
+          "target": "evidence",
+          "op": "replace",
+          "path": "/migration_snapshot/current_consumer_migration_complete",
+          "value": true
+        }
+      ],
+      "required_errors": ["migration_or_acceptance_completion_fabricated"]
+    },
+    {
+      "name": "profile-acceptance-record-cannot-be-invented",
+      "kind": "adversarial",
+      "adversarial_tag": "fabricated_profile_acceptance",
+      "mutations": [
+        {
+          "target": "evidence",
+          "op": "replace",
+          "path": "/acceptance_boundary/operator_acceptance_ref",
+          "value": "operator-decision.fabricated"
+        }
+      ],
+      "required_errors": ["acceptance_subject_fabricated"]
+    },
+    {
+      "name": "candidate-evidence-cannot-authorize-runtime",
+      "kind": "adversarial",
+      "adversarial_tag": "fabricated_runtime_authority",
+      "mutations": [
+        {
+          "target": "evidence",
+          "op": "replace",
+          "path": "/acceptance_boundary/runtime_authorized",
+          "value": true
+        }
+      ],
+      "required_errors": ["acceptance_authority_fabricated"]
+    },
+    {
+      "name": "declared-domain-count-drift-is-rejected",
+      "kind": "adversarial",
+      "adversarial_tag": "domain_evidence_count_drift",
+      "mutations": [
+        {
+          "target": "evidence",
+          "op": "replace",
+          "path": "/declared_domain_inventory/declared_domain_count",
+          "value": 20
+        }
+      ],
+      "required_errors": ["declared_domain_evidence_mismatch"]
+    },
+    {
+      "name": "candidate-evidence-status-cannot-escalate-to-accepted",
+      "kind": "adversarial",
+      "adversarial_tag": "evidence_status_escalation",
+      "mutations": [
+        {
+          "target": "evidence",
+          "op": "replace",
+          "path": "/candidate_status",
+          "value": "accepted"
+        }
+      ],
+      "required_errors": ["candidate_evidence_status_mismatch"]
+    }
+  ]
+}

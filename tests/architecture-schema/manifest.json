@@ -5874,6 +5874,153 @@
       "mutations": [
         {"op": "remove", "path": "/command_binding/command_registry_activation_ref/p0_admission_digest"}
       ]
+    },
+    {
+      "name": "canonicalization-profile-core-valid-fail-closed-candidate",
+      "schema": "schemas/canonicalization-profile-core.schema.json",
+      "fixture": "architecture/canonicalization-profile-core-candidate.json",
+      "expect": "valid"
+    },
+    {
+      "name": "canonicalization-profile-core-rejects-mutable-profile-alias",
+      "schema": "schemas/canonicalization-profile-core.schema.json",
+      "fixture": "architecture/canonicalization-profile-core-candidate.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/profile_id", "value": "urn:odeya:canonicalization:odeya-jcs-latest"}
+      ]
+    },
+    {
+      "name": "canonicalization-profile-core-rejects-self-hash",
+      "schema": "schemas/canonicalization-profile-core.schema.json",
+      "fixture": "architecture/canonicalization-profile-core-candidate.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/bootstrap_boundary/core_contains_self_hash", "value": true}
+      ]
+    },
+    {
+      "name": "canonicalization-profile-core-rejects-parser-limit-drift",
+      "schema": "schemas/canonicalization-profile-core.schema.json",
+      "fixture": "architecture/canonicalization-profile-core-candidate.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/parser_contract/limits/max_depth", "value": 65}
+      ]
+    },
+    {
+      "name": "canonicalization-profile-core-rejects-fabricated-canonical-digest",
+      "schema": "schemas/canonicalization-profile-core.schema.json",
+      "fixture": "architecture/canonicalization-profile-core-candidate.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/canonical_object_digest_contract/canonical_digest", "value": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}
+      ]
+    },
+    {
+      "name": "canonicalization-profile-core-requires-all-current-domain-registrations",
+      "schema": "schemas/canonicalization-profile-core.schema.json",
+      "fixture": "architecture/canonicalization-profile-core-candidate.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "remove", "path": "/domain_registry/20"}
+      ]
+    },
+    {
+      "name": "canonicalization-profile-core-rejects-version-axis-reorder",
+      "schema": "schemas/canonicalization-profile-core.schema.json",
+      "fixture": "architecture/canonicalization-profile-core-candidate.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/version_axes/0/axis_id", "value": "logical_command_payload_version"}
+      ]
+    },
+    {
+      "name": "canonicalization-profile-core-cannot-authorize-runtime",
+      "schema": "schemas/canonicalization-profile-core.schema.json",
+      "fixture": "architecture/canonicalization-profile-core-candidate.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/authority_boundary/runtime_authorized", "value": true}
+      ]
+    },
+    {
+      "name": "canonicalization-profile-candidate-evidence-valid-blocked-binding",
+      "schema": "schemas/canonicalization-profile-candidate-evidence.schema.json",
+      "fixture": "architecture/canonicalization-profile-candidate-evidence.json",
+      "expect": "valid"
+    },
+    {
+      "name": "canonicalization-profile-candidate-evidence-rejects-status-escalation",
+      "schema": "schemas/canonicalization-profile-candidate-evidence.schema.json",
+      "fixture": "architecture/canonicalization-profile-candidate-evidence.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/candidate_status", "value": "accepted"}
+      ]
+    },
+    {
+      "name": "canonicalization-profile-candidate-evidence-rejects-self-hash-claim",
+      "schema": "schemas/canonicalization-profile-candidate-evidence.schema.json",
+      "fixture": "architecture/canonicalization-profile-candidate-evidence.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/profile_core_binding/core_contains_self_hash", "value": true}
+      ]
+    },
+    {
+      "name": "canonicalization-profile-candidate-evidence-rejects-vector-count-drift",
+      "schema": "schemas/canonicalization-profile-candidate-evidence.schema.json",
+      "fixture": "architecture/canonicalization-profile-candidate-evidence.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/conformance_evidence/case_count", "value": 63}
+      ]
+    },
+    {
+      "name": "canonicalization-profile-candidate-evidence-cannot-invent-independence",
+      "schema": "schemas/canonicalization-profile-candidate-evidence.schema.json",
+      "fixture": "architecture/canonicalization-profile-candidate-evidence.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/conformance_evidence/organizational_independence_proven", "value": true}
+      ]
+    },
+    {
+      "name": "canonicalization-profile-candidate-evidence-rejects-domain-count-drift",
+      "schema": "schemas/canonicalization-profile-candidate-evidence.schema.json",
+      "fixture": "architecture/canonicalization-profile-candidate-evidence.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/declared_domain_inventory/declared_domain_count", "value": 20}
+      ]
+    },
+    {
+      "name": "canonicalization-profile-candidate-evidence-cannot-invent-migration-completion",
+      "schema": "schemas/canonicalization-profile-candidate-evidence.schema.json",
+      "fixture": "architecture/canonicalization-profile-candidate-evidence.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/migration_snapshot/current_consumer_migration_complete", "value": true}
+      ]
+    },
+    {
+      "name": "canonicalization-profile-candidate-evidence-cannot-invent-operator-acceptance",
+      "schema": "schemas/canonicalization-profile-candidate-evidence.schema.json",
+      "fixture": "architecture/canonicalization-profile-candidate-evidence.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/acceptance_boundary/operator_acceptance_ref", "value": "operator-decision.fabricated"}
+      ]
+    },
+    {
+      "name": "canonicalization-profile-candidate-evidence-cannot-authorize-runtime",
+      "schema": "schemas/canonicalization-profile-candidate-evidence.schema.json",
+      "fixture": "architecture/canonicalization-profile-candidate-evidence.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/acceptance_boundary/runtime_authorized", "value": true}
+      ]
     }
   ]
 }

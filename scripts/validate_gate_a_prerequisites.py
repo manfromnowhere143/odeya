@@ -19,6 +19,12 @@ ROOT = Path(__file__).resolve().parents[1]
 INVENTORY = ROOT / "architecture/gate-a-prerequisite-closure.json"
 FIRST_SLICE = ROOT / "architecture/first-slice-admission-resolution-candidate.json"
 CANONICAL_AUDIT = ROOT / "tests/canonicalization/SCHEMA_AUDIT.json"
+CANONICAL_PROFILE_CORE = (
+    ROOT / "architecture/canonicalization-profile-core-candidate.json"
+)
+CANONICAL_PROFILE_EVIDENCE = (
+    ROOT / "architecture/canonicalization-profile-candidate-evidence.json"
+)
 
 
 class DuplicateKey(ValueError):
@@ -52,6 +58,8 @@ def main() -> int:
         inventory = load(INVENTORY)
         first_slice = load(FIRST_SLICE)
         canonical_audit = load(CANONICAL_AUDIT)
+        canonical_profile_core = load(CANONICAL_PROFILE_CORE)
+        canonical_profile_evidence = load(CANONICAL_PROFILE_EVIDENCE)
     except (OSError, json.JSONDecodeError, DuplicateKey, ValueError) as exc:
         print(f"Gate A prerequisite closure: invalid evidence: {exc}", file=sys.stderr)
         return 1
@@ -165,6 +173,12 @@ def main() -> int:
         and integration.get("source_candidate_schema_bytes_conform") is False
         and integration.get("replacement_schema_identities_assigned") is False
         and integration.get("complete_transitive_consumer_migration") is False
+        and integration.get("candidate_profile_parameters_frozen_for_review")
+        is True
+        and integration.get("candidate_digest_input_framing_frozen_for_review")
+        is True
+        and integration.get("candidate_profile_reference_shape_frozen_for_review")
+        is True
         and integration.get("canonicalization_profile_frozen") is False
         and integration.get("digest_input_framing_frozen") is False
         and integration.get("replacement_digest_contract_shapes_frozen") is False
@@ -228,17 +242,56 @@ def main() -> int:
             require(split.get(key) is True, f"{key} must remain true", errors)
 
     axes = inventory.get("explicit_version_axes")
+    profile_axes = canonical_profile_core.get("version_axes")
+    profile_axis_ids = [
+        item.get("axis_id")
+        for item in profile_axes
+        if isinstance(item, dict)
+    ] if isinstance(profile_axes, list) else []
     require(
         isinstance(axes, list)
         and len(axes) == 8
-        and len(set(axes)) == len(axes),
-        "eight unique explicit version axes are required",
+        and len(set(axes)) == len(axes)
+        and profile_axis_ids == axes,
+        "eight unique explicit version axes must equal the profile core",
         errors,
     )
     require(
         inventory.get("implicit_version_equality") == "forbidden"
         and inventory.get("implicit_upcast") == "forbidden",
         "implicit version equality and upcast must be forbidden",
+        errors,
+    )
+
+    profile_candidate = inventory.get("canonical_profile_candidate")
+    profile_binding = canonical_profile_evidence.get("profile_core_binding")
+    migration_snapshot = canonical_profile_evidence.get("migration_snapshot")
+    require(
+        isinstance(profile_candidate, dict)
+        and isinstance(profile_binding, dict)
+        and isinstance(migration_snapshot, dict)
+        and profile_candidate.get("profile_id")
+        == "urn:odeya:canonicalization:odeya-jcs-0.1"
+        == canonical_profile_core.get("profile_id")
+        == profile_binding.get("profile_id")
+        and profile_candidate.get("profile_version") == "0.1.0"
+        == canonical_profile_core.get("profile_version")
+        == profile_binding.get("profile_version")
+        and profile_candidate.get("profile_core_ref")
+        == "architecture/canonicalization-profile-core-candidate.json"
+        and profile_candidate.get("profile_evidence_ref")
+        == "architecture/canonicalization-profile-candidate-evidence.json"
+        and profile_candidate.get("profile_core_schema_id")
+        == "urn:odeya:schema:canonicalization-profile-core:0.1.0"
+        and profile_candidate.get("parameter_status")
+        == "candidate_parameters_frozen_for_review_profile_unissued"
+        == canonical_profile_core.get("candidate_status")
+        and profile_candidate.get("canonical_identity_issued") is False
+        and profile_candidate.get("current_consumer_migration_complete") is False
+        and migration_snapshot.get("current_consumer_migration_complete") is False
+        and profile_candidate.get("operator_acceptance_ref") is None
+        and profile_candidate.get("gate_a_disposition") == "blocked",
+        "canonical profile candidate must bind the exact unissued core/evidence boundary",
         errors,
     )
 
@@ -273,6 +326,15 @@ def main() -> int:
                 )
         prq009 = findings[8] if len(findings) > 8 and isinstance(findings[8], dict) else {}
         prq008 = findings[7] if len(findings) > 7 and isinstance(findings[7], dict) else {}
+        prq001 = findings[0] if findings and isinstance(findings[0], dict) else {}
+        require(
+            prq001.get("finding_id") == "PRQ-001"
+            and prq001.get("status") == "candidate_correction_in_progress"
+            and "nonrecursive core" in prq001.get("closure", "")
+            and "remain open" in prq001.get("closure", ""),
+            "PRQ-001 must expose the frozen-for-review but unissued profile boundary",
+            errors,
+        )
         require(
             prq008.get("finding_id") == "PRQ-008"
             and prq008.get("status") == "unresolved_blocking"
@@ -353,6 +415,16 @@ def main() -> int:
             and canonical_current.get("profile_status") == "blocked"
             and canonical_audit.get("gate_a_disposition") == "blocked",
             "canonical profile must remain blocked in start, current, and audit evidence",
+            errors,
+        )
+        require(
+            canonical_current.get("schema_count")
+            == canonical_audit.get("schema_count")
+            == migration_snapshot.get("schema_count")
+            and canonical_current.get("fixture_count")
+            == canonical_audit.get("fixture_count")
+            == migration_snapshot.get("fixture_count"),
+            "canonical current audit corpus counts must equal profile evidence",
             errors,
         )
 

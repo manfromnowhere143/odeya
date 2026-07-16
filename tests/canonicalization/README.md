@@ -1,8 +1,9 @@
 # Odeya canonical identity conformance suite
 
-Status: architecture-only evidence for proposed profile `odeya-jcs-0.1`.
-This directory is not Odeya runtime or product code. It exists to make the
-identity contract reviewable before Gate A.
+Status: architecture-only evidence for the exact `odeya-jcs-0.1` candidate
+parameters frozen for review. The profile is unissued and Gate A remains
+blocked. This directory is not Odeya runtime or product code. It exists to make
+the identity contract reviewable before Gate A.
 
 ## What this suite proves
 

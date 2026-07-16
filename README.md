@@ -81,7 +81,7 @@ They are requirements sources and bounded proof missions—not runtime dependenc
 
 ## Architecture checkpoint
 
-The current retained foundation contains 101 Draft 2020-12 schemas, 603 valid/adversarial cases, eight isolated contract suites, two architecture-evidence checks, and seven bounded safe TLA+ models with thirty mutation controls. These results establish structural and bounded semantic evidence only. [Gate A remains blocked](docs/ARCHITECTURE_STATUS.md), and its accountable review and operator decision have not occurred.
+The current retained foundation contains 103 Draft 2020-12 schemas, 620 valid/adversarial cases, nine isolated contract suites, two architecture-evidence checks, and seven bounded safe TLA+ models with thirty mutation controls. These results establish structural and bounded semantic evidence only. [Gate A remains blocked](docs/ARCHITECTURE_STATUS.md), and its accountable review and operator decision have not occurred.
 
 The architecture is a modular scientific kernel with isolated cognitive workers around it:
 
@@ -108,6 +108,7 @@ No license, domain purchase, company filing, outreach, product deployment, or pu
 - [Mathematical constitution](docs/MATHEMATICAL_CONSTITUTION.md)
 - [Physical-science constitution](docs/PHYSICAL_SCIENCE_CONSTITUTION.md)
 - [Security and authority](docs/SECURITY_AND_AUTHORITY.md)
+- [Canonical identity and serialization profile](docs/CANONICALIZATION_PROFILE.md)
 - [Module ownership and dependency manifest](docs/MODULE_DEPENDENCY_MANIFEST.md)
 - [Architecture review protocol](docs/ARCHITECTURE_REVIEW_PROTOCOL.md)
 - [Repository release engineering](docs/REPOSITORY_RELEASE.md)
@@ -142,7 +143,7 @@ See [repository release engineering](docs/REPOSITORY_RELEASE.md) for the exact C
 
 ## Next
 
-The next architecture mission closes canonical identity and version-axis blockers, promotes the fail-closed WorkLease resource through its still-missing identity and assignment evidence, then completes the verification-assignment cohort, T1 AuthorityAssignment, the command/event/state/reducer graph, the constitutional root/checkpoint/activation chain, and two non-sharing verifier implementations. Independent reducers, replay/recovery/correction-fanout evidence, rights-settled proof import, canonical migration closure, accountable review lanes, the exact candidate manifest, and Daniel’s exact-byte decision remain mandatory before Gate A. The [closure plan](docs/GATE_A_PREREQUISITE_CLOSURE_PLAN_2026-07-16.md) and [working handoff](docs/GATE_A_HANDOFF_WORKING_PACKET_2026-07-15.md) retain the dependency order and open limitations.
+The exact canonical-profile candidate parameters and eight version axes are now machine-bound for review without issuing an identity. The next architecture mission migrates or explicitly versions the remaining canonical blockers, promotes the fail-closed WorkLease resource through its still-missing WorkIntent/member/reducer and assignment evidence, then completes the verification-assignment cohort, T1 AuthorityAssignment, the command/event/state/reducer graph, the constitutional root/checkpoint/activation chain, and two non-sharing verifier implementations. Independent reducers, replay/recovery/correction-fanout evidence, rights-settled proof import, canonical migration closure, accountable review lanes, the exact candidate manifest, and Daniel’s exact-byte decision remain mandatory before Gate A. The [closure plan](docs/GATE_A_PREREQUISITE_CLOSURE_PLAN_2026-07-16.md) and [working handoff](docs/GATE_A_HANDOFF_WORKING_PACKET_2026-07-15.md) retain the dependency order and open limitations.
 
 Only an accepted Gate A candidate can authorize disposable Gate B probes; one bounded replayable engine slice begins only after a separate Gate C decision.
 

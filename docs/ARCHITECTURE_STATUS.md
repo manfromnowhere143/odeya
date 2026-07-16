@@ -26,24 +26,26 @@ This design fits the strongest retained lessons from the three proof missions. I
 ## Current machine evidence
 
 | Area | Retained working evidence | Bounded interpretation |
-|---|---|---|
-| Foundation corpus | 101 Draft 2020-12 schemas; 603 valid/adversarial shared-manifest cases; 7 founding cross-field groups; 8 mandatory isolated contract suites; 2 bounded architecture-evidence checks; 1 repository release-surface check | The full architecture validator passes. Structural and bounded semantic evidence is not runtime or Gate A evidence |
+| --- | --- | --- |
+| Foundation corpus | 103 Draft 2020-12 schemas; 620 valid/adversarial shared-manifest cases; 7 founding cross-field groups; 9 mandatory isolated contract suites; 2 bounded architecture-evidence checks; 1 repository release-surface check | The full architecture validator passes. Structural and bounded semantic evidence is not runtime or Gate A evidence |
 | Repository release surface | One exact README identity sentence and render-validated Mermaid source; architecture-only least-privilege workflows with full-SHA Action uses; exact-version Python/Node/Java inputs; hash-locked Python dependencies; integrity-locked npm dependencies; digest-verified fallback tool archives; Markdown, shell, workflow, bounded dependency-freshness, and fresh-clone harnesses | Local candidate only. No remote, required GitHub check, branch rule, visibility decision, push, runtime, or Gate A authority exists until the release gate is separately satisfied |
 | Command/event surface | `CommandEnvelope` 0.5.0 and `CommandReceipt` 0.4.0 are explicitly nonconstructible structural candidates over the 121-selector design vocabulary retained from exact historical `CommandEnvelope` 0.4.0 bytes; `ResearchEvent` 0.7.0 has 135 closed branches; 62 schema-valid event fixtures and 16 schema-valid replay traces are retained within 186 direct event/trace manifest cases | Every design command/event remains non-admitted until exact immutable members, identities, and activation exist |
-| Registry/root graph | Six registry/root/activation schema subjects validate; the proposed logical manifest v2 covers 9 layers, 30 modules, 47 aggregate owners, 101 schema owners, 121 command owners, and 135 event owners | Ownership and acyclic subject shape are present; no real registry snapshot, root, checkpoint, activation, or handler-set equality exists |
+| Registry/root graph | Six registry/root/activation schema subjects validate; the proposed logical manifest v2 covers 9 layers, 30 modules, 47 aggregate owners, 103 schema owners, 121 command owners, and 135 event owners | Ownership and acyclic subject shape are present; no real registry snapshot, root, checkpoint, activation, or handler-set equality exists |
 | Cognitive controls | 150 cases pass, including 18 bounded semantic checks over state views, graph deltas/transitions, WorkIntent/blocked WorkContract boundaries, model configuration, and routing plus retained local-dispatch refusals | Models remain proposal/evidence producers; routing is not dispatch or independence authority |
 | Verification | Eight terminal package fixtures plus assignment/completion/dispute event fixtures and 49 scoped shared-manifest cases | Profile-relative IV0–IV4 structure is present; semantic equality, reducer replay, registry admission, and independent review remain open |
 | Projection | Four schemas, eight fixtures, and 62 cases pass: 37 structural rejects plus 25 bounded semantic vectors | Snapshot/redaction/equivalence/impact shapes are closed locally; two independent reducers, real fanout, leakage/timing, accessibility, and exact release-set equality remain open |
 | Physical science | Eight acyclic schemas; 85 structural expectations and 32 bounded semantic expectations pass; one fixture per schema | Inbar unknown hardware is blocked and its experiment refused. Unit/frame algebra, covariance/propagation, real metrology/VVUQ/safety evidence, reducers, and accountable review remain open |
 | Mathematical science | `EstimandContract` and `ScientificResultEnvelope` 0.1.0 plus optional protocol/metric bindings; 57 cases pass: 38 structurally valid, 19 structurally invalid, 38 bounded semantic checks | Sentinel’s interval crossing zero remains `inconclusive`; it cannot become support, effect absence, equivalence, or an affirmative null without the required prospective contract |
-| Canonical identity | 64 vectors and 4 metamorphic relations agree across pinned Python and Node implementations; the current audit covers 101 schemas and 200 fixtures | The profile is still blocked: 122 unprofiled time paths, 61 number/decimal findings, 668 unscoped digest fields, 56 divergent common-definition names, 11 unpinned profile bindings, and 238 nonconformant fixture timestamps. The WorkLease candidate adds no new blocker in those classes |
+| Canonical identity | 64 vectors and 4 metamorphic relations agree across pinned Python and Node implementations; one exact nonrecursive profile core/evidence binding passes 1 safe reference and 26 known-bad mutations; the current audit covers 103 schemas and 200 fixtures | Candidate parser, RFC 8785, envelope, digest framing, future reference shape, 21 domains, and 8 version axes are frozen for review, but the profile is unissued and blocked: 122 unprofiled time paths, 61 number/decimal findings, 668 unscoped digest fields, 56 divergent common-definition names, 11 unpinned profile bindings, and 238 nonconformant fixture timestamps. The two new profile schemas add no blocker in those classes |
 | Bounded formal models | 7 distinct safe TLA+ models, 8 safe executions, and 30 intended counterexamples pass in one integrated sequential harness; the alternate cognitive execution uses a second seed/fingerprint profile | This is bounded model evidence on one model/checker/host lineage. It is not an independent proof or runtime verification |
 | First-slice admission | Candidate 0.2 retains exact representational sets—43 required / 78 outside commands, 60 event types, 25 aggregate/state/reducer families, 11 owners, and one P0 prerequisite—while correctly reopening C5/PRQ-009 as blocking; 12 safe references and 21 known-bads pass the bounded adversarial checker | C5 lacks a constructible resolved WorkIntent and complete 13-event assignment binding. Direct WorkLease review also found that ResearchEvent 0.7.0 release requires an unclaimed reservation after the flow has claimed it; reissue must preserve the claim for separate settlement. The remaining member/root/replay/review evidence is also missing. Nothing is admitted or executable |
 
-The current 101-resource schema set intentionally does not pretend to be a
+The current 103-resource schema set intentionally does not pretend to be a
 complete offline resolver. The exact `canonical-work-lease:0.1.0` resource is
 now present as an unissued, identity-unresolved candidate owned by `work`; it
-does not authorize a lease or execution. Four historical resource identities
+does not authorize a lease or execution. The canonical profile core/evidence
+schemas are likewise unissued candidates owned by `canonical`; their external
+raw-byte binding is review evidence, not canonical identity. Four historical resource identities
 still have no matching local current resource:
 `command-contract-registry:0.1.0`, `command-receipt:0.3.0`,
 `work-contract:0.1.0`, and the deliberately retained exact
@@ -56,7 +58,7 @@ The bounded scope, cohorts, C5 refusal boundary, and construction gaps are in th
 ## Readiness by Gate A area
 
 | Gate | Current state | What still blocks acceptance |
-|---|---|---|
+| --- | --- | --- |
 | G0 mission/boundary | Partial | Per-artifact rights decisions, exact import root, final company/user language, and operator sign-off |
 | G1 scientific/mathematical | Partial | Registry enrollment, cross-record/unit/method resolution, independent implementations, broader property vectors, and statistical/physical-domain review |
 | G2 domain/lifecycle | Blocked | C5/PRQ-009 lacks a resolved assignable WorkIntent and complete assignment cohort; after closing it, construct the remaining exact payload, command, event, state, and reducer members and run composite atomicity/replay evidence |
@@ -74,7 +76,7 @@ No row is passed.
 ## Critical blockers
 
 | ID | Severity | Current blocker | Required closure evidence |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | A-001 | Critical | The exact 43/60/25 representational scope exists, but no immutable admitted member set or activation exists | Build and cross-check the exact payload → state → reducer → event → command member graph and admitted-only equality |
 | A-002 | Critical | Exact construction gaps are 42 payloads, 43 command records, 60 event records, 25 state records, and 25 reducer records | Construct them in dependency order with exact versions, refusal vectors, independent replay, and member-set commitments |
 | A-003 | Critical | C1/C4/C6 choices, structural grant slots, and one bounded composite authority/resource/race model now pass, but exact member records, executable refinement/replay, and independent evidence are absent | Typed observation/settlement members, exact slot occurrences, database/reducer traces for both race orders, refinement mapping, heterogeneous-unit checks, and independent review |
@@ -94,7 +96,7 @@ No row is passed.
 ## Machine-family maturity
 
 | Family | Current role | Maturity |
-|---|---|---|
+| --- | --- | --- |
 | Command envelope/receipt 0.5.0/0.4.0 | Structural request/member/activation and settlement shapes with unresolved subject identities and comparison-probe digests | Nonconstructible, not admitted, and unusable for dispatch or settlement; a future resolved resource reissue is required |
 | Command record/registry 0.1.0/0.2.0 | Standalone member and registry-candidate shapes with independent command, payload, and schema identity axes | Structural only; record/registry/canonical/closure/membership/activation identities remain unresolved |
 | WorkIntent/blocked WorkContract 0.1.0/0.2.0 | Separates non-authoritative intent from a future exact post-assignment contract | Neither is assignable or constructible; C5/PRQ-009 and the exact 13-event cohort remain blocked |

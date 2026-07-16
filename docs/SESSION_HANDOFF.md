@@ -85,6 +85,11 @@ neither is Odeya authority, storage, namespace, runtime, or control plane.
 
 - Canonical workspace: `/Users/danielwahnich/workspace/odeya`
 - Active release branch: `agent/repository-release`
+- Isolated architecture candidate worktree:
+  `/Users/danielwahnich/workspace/odeya-t0-work-lease`
+- Isolated architecture branch: `agent/t0-work-lease-20260716`
+- Validated WorkLease predecessor:
+  `763e7d48889265835c76ef66878515467cdf09b6`
 - Unchanged local `main`: `f8c71c8e3174f07619e0bbd31cb3d6df5d848361`
 - Validated repository-release predecessor:
   `ff512c5211f6ace0816e7991913234ce7cb72e25`
@@ -186,6 +191,29 @@ The predecessor evidence is retained at
 predecessor commit. A descendant never inherits it. Diagnostic evidence under
 `/private/tmp` may disappear; absence requires reproduction, never invention.
 
+## Current isolated T0 architecture descendant
+
+The isolated architecture lane descends from the exact validated WorkLease
+commit named above. Its current candidate tree contains 103 schemas, 620 shared
+schema cases, nine isolated contract suites, 64 canonical vectors, four
+metamorphic relations, 20 architecture decisions, and the unchanged 43/60/25/11
+first-slice boundary.
+
+ADR 0020 adds a nonrecursive `odeya-jcs-0.1` profile core and an external
+candidate-evidence binding. The core freezes exact candidate parser limits,
+RFC 8785 serialization, canonical envelope, digest framing, future reference
+shape, 21 current domain constants, and eight version axes for review. The
+evidence binds exact raw bytes and retains one safe reference plus 26 known-bad
+mutations. It issues no canonical digest, admits no profile member, and does
+not close PRQ-001: the 103-schema/200-fixture migration audit remains blocked
+at 122 unprofiled time paths, 61 number/decimal findings, 668 unscoped digest
+fields, 56 divergent common-definition names, 11 unpinned profile bindings,
+and 238 nonconformant fixture timestamps.
+
+Resolve the current isolated branch `HEAD` and tree from Git. A later handoff
+message may name the resulting commit and retained fresh-clone evidence; this
+file cannot recursively contain the commit that contains it.
+
 ## Reproduce the current exact `HEAD`
 
 Reuse `.venv-architecture` only if its pinned dependencies are intact. The
@@ -280,11 +308,15 @@ A mission.
 
 ## Next architecture mission, in dependency order
 
-1. Complete T0 by closing PRQ-001–PRQ-010: freeze the candidate canonical
-   profile and version axes; close grant lifecycle, protocol origin, and
-   data-use authority contradictions; bind schema, payload, event, member, and
-   snapshot identities; separate core/evidence/seal/attestation subjects; and
-   retain typed blocked-construction receipts. The exact
+1. Complete T0 by closing PRQ-001–PRQ-010. ADR 0020 now freezes the exact
+   nonrecursive canonical-profile candidate parameters, 21 current digest
+   domains, future profile-reference shape, and eight version axes for review,
+   but no canonical profile identity is issued and all current consumer
+   migration remains blocked. Resolve or explicitly version the retained
+   migration findings; close grant lifecycle, protocol origin, and data-use
+   authority contradictions; bind schema, payload, event, member, and snapshot
+   identities; separate core/evidence/seal/attestation subjects; and retain
+   typed blocked-construction receipts. The exact
    `canonical-work-lease:0.1.0` resource is now present only as an unissued,
    identity-unresolved candidate; T0 must promote it through canonical profile,
    transitive migration, member/reducer, and accountable-review evidence, then

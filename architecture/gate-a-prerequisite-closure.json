@@ -11,7 +11,8 @@
     "docs/decisions/0016-separate-work-intent-from-assigned-work-contract.md",
     "docs/decisions/0017-close-first-slice-lifecycle-origins.md",
     "docs/decisions/0018-separate-registry-membership-from-history.md",
-    "docs/decisions/0019-materialize-fail-closed-work-lease-candidate.md"
+    "docs/decisions/0019-materialize-fail-closed-work-lease-candidate.md",
+    "docs/decisions/0020-freeze-nonrecursive-canonical-profile-candidate.md"
   ],
   "plan_ref": "docs/GATE_A_PREREQUISITE_CLOSURE_PLAN_2026-07-16.md",
   "exact_scope": {
@@ -54,6 +55,9 @@
     "source_candidate_schema_bytes_conform": false,
     "replacement_schema_identities_assigned": false,
     "complete_transitive_consumer_migration": false,
+    "candidate_profile_parameters_frozen_for_review": true,
+    "candidate_digest_input_framing_frozen_for_review": true,
+    "candidate_profile_reference_shape_frozen_for_review": true,
     "canonicalization_profile_frozen": false,
     "digest_input_framing_frozen": false,
     "replacement_digest_contract_shapes_frozen": false,
@@ -100,6 +104,18 @@
   ],
   "implicit_version_equality": "forbidden",
   "implicit_upcast": "forbidden",
+  "canonical_profile_candidate": {
+    "profile_id": "urn:odeya:canonicalization:odeya-jcs-0.1",
+    "profile_version": "0.1.0",
+    "profile_core_ref": "architecture/canonicalization-profile-core-candidate.json",
+    "profile_evidence_ref": "architecture/canonicalization-profile-candidate-evidence.json",
+    "profile_core_schema_id": "urn:odeya:schema:canonicalization-profile-core:0.1.0",
+    "parameter_status": "candidate_parameters_frozen_for_review_profile_unissued",
+    "canonical_identity_issued": false,
+    "current_consumer_migration_complete": false,
+    "operator_acceptance_ref": null,
+    "gate_a_disposition": "blocked"
+  },
   "canonical_profile_blockers_at_start": {
     "audit_ref": "tests/canonicalization/SCHEMA_AUDIT.json",
     "source_checkpoint": "f4429ce5ca71e58ebb5d65776a45ebb6a2a18889",
@@ -114,8 +130,10 @@
   },
   "canonical_profile_current_audit": {
     "audit_ref": "tests/canonicalization/SCHEMA_AUDIT.json",
-    "audit_raw_sha256": "sha256:6c19c973a5d94b6c96d1cff773da4465712aaf33f0753fabd676055ea90ce827",
+    "audit_raw_sha256": "sha256:9615d950a7f9e0a8f0fbbab242a5ed7130862385252a5879505cd75e0fb4493d",
     "profile_status": "blocked",
+    "schema_count": 103,
+    "fixture_count": 200,
     "unprofiled_datetime_paths": 122,
     "number_or_decimal_findings": 61,
     "unscoped_digest_fields": 668,
@@ -126,9 +144,9 @@
   "findings": [
     {
       "finding_id": "PRQ-001",
-      "title": "canonical profile not frozen",
-      "status": "blocking",
-      "closure": "resolve or explicitly version every retained canonical migration finding"
+      "title": "canonical profile candidate parameters frozen but profile remains unissued",
+      "status": "candidate_correction_in_progress",
+      "closure": "the nonrecursive core and external evidence binding now freeze exact candidate parser, serialization, envelope, digest framing, reference shape, 21 declared domains, and eight version axes for review; remain open until every retained migration finding is resolved or explicitly versioned, current consumers are transitively reissued, independent-host and accountable review evidence exists, and Daniel accepts the exact bytes"
     },
     {
       "finding_id": "PRQ-002",
@@ -182,7 +200,7 @@
       "finding_id": "PRQ-010",
       "title": "version axes are implicit",
       "status": "candidate_correction_in_progress",
-      "closure": "every legal cross-axis mapping is explicit and every implicit conversion fails closed"
+      "closure": "the profile core now binds the exact ordered eight-axis vocabulary and rejects implicit equality, conversion, reorder, or upcast; remain open until every legal cross-axis mapping is explicit in all current members and consumers and the complete corpus fails closed on every undeclared conversion"
     },
     {
       "finding_id": "PRQ-011",

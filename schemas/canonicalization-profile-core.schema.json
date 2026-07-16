@@ -1,0 +1,480 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:odeya:schema:canonicalization-profile-core:0.1.0",
+  "title": "Odeya Canonicalization Profile Core Candidate",
+  "description": "Closed architecture-time parameters for the proposed odeya-jcs-0.1 profile. This core has no self-digest, acceptance, registry membership, Gate A authority, or runtime authority; an external candidate-evidence record binds its exact raw bytes.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "artifact_class",
+    "profile_id",
+    "profile_version",
+    "candidate_status",
+    "bootstrap_boundary",
+    "parser_contract",
+    "serialization_contract",
+    "canonical_envelope_contract",
+    "canonical_object_digest_contract",
+    "prospective_profile_reference_contract",
+    "timestamp_contract",
+    "scientific_decimal_contract",
+    "collection_contract",
+    "domain_registry",
+    "version_axes",
+    "authority_boundary"
+  ],
+  "properties": {
+    "schema_version": { "const": "0.1.0" },
+    "artifact_class": { "const": "canonicalization_profile_core_candidate" },
+    "profile_id": { "const": "urn:odeya:canonicalization:odeya-jcs-0.1" },
+    "profile_version": { "const": "0.1.0" },
+    "candidate_status": {
+      "const": "candidate_parameters_frozen_for_review_profile_unissued"
+    },
+    "bootstrap_boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "core_contains_self_hash",
+        "core_raw_bytes_bound_externally",
+        "bootstrap_identity_kind",
+        "profile_aliases_allowed",
+        "mutable_locator_identity_allowed",
+        "operator_acceptance_required",
+        "operator_acceptance_ref"
+      ],
+      "properties": {
+        "core_contains_self_hash": { "const": false },
+        "core_raw_bytes_bound_externally": { "const": true },
+        "bootstrap_identity_kind": {
+          "const": "exact_raw_bytes_sha256_bound_by_external_candidate_evidence"
+        },
+        "profile_aliases_allowed": { "const": false },
+        "mutable_locator_identity_allowed": { "const": false },
+        "operator_acceptance_required": { "const": true },
+        "operator_acceptance_ref": { "type": "null" }
+      }
+    },
+    "parser_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "input_encoding",
+        "byte_order_mark",
+        "duplicate_object_names",
+        "trailing_data",
+        "comments_and_extensions",
+        "invalid_utf8",
+        "unpaired_surrogates",
+        "nonfinite_numbers",
+        "lexical_negative_zero",
+        "integer_domain",
+        "limits",
+        "limit_exceeded_disposition"
+      ],
+      "properties": {
+        "input_encoding": { "const": "utf-8" },
+        "byte_order_mark": { "const": "reject" },
+        "duplicate_object_names": { "const": "reject_before_mapping" },
+        "trailing_data": { "const": "reject" },
+        "comments_and_extensions": { "const": "reject" },
+        "invalid_utf8": { "const": "reject" },
+        "unpaired_surrogates": { "const": "reject" },
+        "nonfinite_numbers": { "const": "reject" },
+        "lexical_negative_zero": { "const": "reject" },
+        "integer_domain": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["minimum", "maximum", "outside_domain"],
+          "properties": {
+            "minimum": { "const": -9007199254740991 },
+            "maximum": { "const": 9007199254740991 },
+            "outside_domain": { "const": "reject" }
+          }
+        },
+        "limits": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "max_bytes",
+            "max_depth",
+            "max_object_members",
+            "max_array_items",
+            "max_string_code_points",
+            "max_number_token_bytes",
+            "max_scientific_decimal_bytes",
+            "max_total_nodes"
+          ],
+          "properties": {
+            "max_bytes": { "const": 1048576 },
+            "max_depth": { "const": 64 },
+            "max_object_members": { "const": 4096 },
+            "max_array_items": { "const": 10000 },
+            "max_string_code_points": { "const": 262144 },
+            "max_number_token_bytes": { "const": 128 },
+            "max_scientific_decimal_bytes": { "const": 128 },
+            "max_total_nodes": { "const": 20000 }
+          }
+        },
+        "limit_exceeded_disposition": { "const": "reject_without_identity" }
+      }
+    },
+    "serialization_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "standard",
+        "standard_reference",
+        "output_encoding",
+        "object_member_order",
+        "array_order",
+        "unicode_normalization",
+        "string_escaping",
+        "number_serialization"
+      ],
+      "properties": {
+        "standard": { "const": "RFC8785_JSON_Canonicalization_Scheme" },
+        "standard_reference": { "const": "https://www.rfc-editor.org/rfc/rfc8785" },
+        "output_encoding": { "const": "utf-8" },
+        "object_member_order": { "const": "raw_utf16_code_unit_ascending" },
+        "array_order": { "const": "preserve_declared_sequence" },
+        "unicode_normalization": { "const": "none" },
+        "string_escaping": { "const": "rfc8785" },
+        "number_serialization": { "const": "rfc8785_ecmascript_finite_ieee754" }
+      }
+    },
+    "canonical_envelope_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "exact_members",
+        "additional_members",
+        "profile_id_member",
+        "schema_id_member",
+        "subject_member",
+        "schema_resolution",
+        "schema_aliases_allowed",
+        "subject_schema_must_be_closed",
+        "self_digest_inside_subject"
+      ],
+      "properties": {
+        "exact_members": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "prefixItems": [
+            { "const": "profile_id" },
+            { "const": "schema_id" },
+            { "const": "subject" }
+          ],
+          "items": false
+        },
+        "additional_members": { "const": "reject" },
+        "profile_id_member": { "const": "exact_profile_id" },
+        "schema_id_member": { "const": "exact_versioned_retained_schema_resource_id" },
+        "subject_member": { "const": "closed_schema_valid_object" },
+        "schema_resolution": { "const": "preloaded_exact_resource_id_network_disabled" },
+        "schema_aliases_allowed": { "const": false },
+        "subject_schema_must_be_closed": { "const": true },
+        "self_digest_inside_subject": { "const": "forbidden" }
+      }
+    },
+    "canonical_object_digest_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "algorithm",
+        "preimage",
+        "output_lexical_form",
+        "comparison",
+        "profile_domain_separation",
+        "schema_domain_separation",
+        "signatures_inside_preimage",
+        "canonical_digest"
+      ],
+      "properties": {
+        "algorithm": { "const": "sha-256" },
+        "preimage": { "const": "utf8_rfc8785_bytes_of_exact_canonical_envelope" },
+        "output_lexical_form": { "const": "sha256_colon_64_lowercase_hex" },
+        "comparison": { "const": "constant_time" },
+        "profile_domain_separation": { "const": "profile_id_inside_envelope" },
+        "schema_domain_separation": { "const": "schema_id_inside_envelope" },
+        "signatures_inside_preimage": { "const": false },
+        "canonical_digest": {
+          "type": "null",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "subject": "canonicalization_profile_core_candidate",
+            "profile": "unissued",
+            "schema": "urn:odeya:schema:canonicalization-profile-core:0.1.0",
+            "algorithm": "sha-256",
+            "status": "not_constructible_until_profile_acceptance"
+          }
+        }
+      }
+    },
+    "prospective_profile_reference_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "exact_members",
+        "profile_id",
+        "profile_version",
+        "profile_core_schema_id",
+        "profile_core_raw_digest_lexical_form",
+        "admission_rule",
+        "legacy_name_object_id_or_bare_identifier_allowed",
+        "implicit_latest_allowed",
+        "current_consumer_migration_complete"
+      ],
+      "properties": {
+        "exact_members": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "prefixItems": [
+            { "const": "profile_id" },
+            { "const": "profile_version" },
+            { "const": "profile_core_schema_id" },
+            { "const": "profile_core_raw_digest" }
+          ],
+          "items": false
+        },
+        "profile_id": { "const": "urn:odeya:canonicalization:odeya-jcs-0.1" },
+        "profile_version": { "const": "0.1.0" },
+        "profile_core_schema_id": {
+          "const": "urn:odeya:schema:canonicalization-profile-core:0.1.0"
+        },
+        "profile_core_raw_digest_lexical_form": {
+          "const": "sha256_colon_64_lowercase_hex"
+        },
+        "admission_rule": { "const": "same_active_root_exact_member" },
+        "legacy_name_object_id_or_bare_identifier_allowed": { "const": false },
+        "implicit_latest_allowed": { "const": false },
+        "current_consumer_migration_complete": { "const": false }
+      }
+    },
+    "timestamp_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "lexical_form",
+        "calendar",
+        "year_range",
+        "offsets",
+        "leap_second_lexical_form",
+        "invalid_calendar_values",
+        "projection_localization"
+      ],
+      "properties": {
+        "lexical_form": { "const": "YYYY-MM-DDTHH:MM:SS.ffffffZ" },
+        "calendar": { "const": "proleptic_gregorian" },
+        "year_range": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["minimum", "maximum"],
+          "properties": {
+            "minimum": { "const": 1 },
+            "maximum": { "const": 9999 }
+          }
+        },
+        "offsets": { "const": "reject_non_z" },
+        "leap_second_lexical_form": { "const": "reject" },
+        "invalid_calendar_values": { "const": "reject" },
+        "projection_localization": { "const": "allowed_outside_canonical_identity" }
+      }
+    },
+    "scientific_decimal_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "lexical_pattern",
+        "binary_json_number_for_scientific_value",
+        "leading_plus",
+        "leading_zero",
+        "uppercase_exponent",
+        "positive_exponent_sign",
+        "lexical_negative_zero",
+        "trailing_zero_semantics",
+        "unit_conversion"
+      ],
+      "properties": {
+        "lexical_pattern": {
+          "const": "^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:e-?(?:0|[1-9][0-9]*))?$"
+        },
+        "binary_json_number_for_scientific_value": { "const": "reject" },
+        "leading_plus": { "const": "reject" },
+        "leading_zero": { "const": "reject" },
+        "uppercase_exponent": { "const": "reject" },
+        "positive_exponent_sign": { "const": "reject" },
+        "lexical_negative_zero": { "const": "reject" },
+        "trailing_zero_semantics": { "const": "declared_by_semantic_type_and_precision" },
+        "unit_conversion": { "const": "semantic_transformation_not_canonicalization" }
+      }
+    },
+    "collection_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "array_semantics_inferred",
+        "sequence_arrays",
+        "set_like_arrays",
+        "duplicate_set_members",
+        "normalization_rule_version_required",
+        "unordered_input_without_rule"
+      ],
+      "properties": {
+        "array_semantics_inferred": { "const": false },
+        "sequence_arrays": { "const": "preserve_declared_order" },
+        "set_like_arrays": { "const": "schema_specific_normalize_before_identity" },
+        "duplicate_set_members": { "const": "reject" },
+        "normalization_rule_version_required": { "const": true },
+        "unordered_input_without_rule": { "const": "reject_without_identity" }
+      }
+    },
+    "domain_registry": {
+      "type": "array",
+      "minItems": 21,
+      "maxItems": 21,
+      "items": { "$ref": "#/$defs/profile_domain_registration" }
+    },
+    "version_axes": {
+      "type": "array",
+      "minItems": 8,
+      "maxItems": 8,
+      "prefixItems": [
+        { "$ref": "#/$defs/command_semantic_version_axis" },
+        { "$ref": "#/$defs/logical_command_payload_version_axis" },
+        { "$ref": "#/$defs/payload_schema_resource_version_axis" },
+        { "$ref": "#/$defs/event_semantic_version_axis" },
+        { "$ref": "#/$defs/event_payload_logical_version_axis" },
+        { "$ref": "#/$defs/event_schema_resource_version_axis" },
+        { "$ref": "#/$defs/aggregate_state_member_version_axis" },
+        { "$ref": "#/$defs/reducer_member_version_axis" }
+      ],
+      "items": false
+    },
+    "authority_boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "canonical_identity_issued",
+        "profile_registry_member_exists",
+        "engine_contract_root_binding_exists",
+        "gate_a_complete",
+        "runtime_authorized",
+        "deployment_authorized",
+        "external_effects_authorized",
+        "publication_authorized"
+      ],
+      "properties": {
+        "canonical_identity_issued": { "const": false },
+        "profile_registry_member_exists": { "const": false },
+        "engine_contract_root_binding_exists": { "const": false },
+        "gate_a_complete": { "const": false },
+        "runtime_authorized": { "const": false },
+        "deployment_authorized": { "const": false },
+        "external_effects_authorized": { "const": false },
+        "publication_authorized": { "const": false }
+      }
+    }
+  },
+  "$defs": {
+    "profile_domain_registration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "domain_separator",
+        "subject_class",
+        "declaring_schema_id",
+        "registration_status"
+      ],
+      "properties": {
+        "domain_separator": {
+          "type": "string",
+          "pattern": "^odeya-[a-z0-9-]+-v[1-9][0-9]*$"
+        },
+        "subject_class": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "minLength": 1,
+          "maxLength": 96
+        },
+        "declaring_schema_id": {
+          "type": "string",
+          "pattern": "^urn:odeya:schema:[a-z0-9-]+:[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "registration_status": {
+          "const": "candidate_name_reserved_current_consumer_not_admitted"
+        }
+      }
+    },
+    "version_axis_base": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "axis_id",
+        "value_type",
+        "equality_policy",
+        "conversion_policy",
+        "implicit_upcast"
+      ],
+      "properties": {
+        "axis_id": { "type": "string" },
+        "value_type": { "const": "semantic_version" },
+        "equality_policy": { "const": "explicit_declared_binding_only" },
+        "conversion_policy": { "const": "explicit_versioned_conversion_rule_only" },
+        "implicit_upcast": { "const": "forbidden" }
+      }
+    },
+    "command_semantic_version_axis": {
+      "allOf": [
+        { "$ref": "#/$defs/version_axis_base" },
+        { "properties": { "axis_id": { "const": "command_semantic_version" } } }
+      ]
+    },
+    "logical_command_payload_version_axis": {
+      "allOf": [
+        { "$ref": "#/$defs/version_axis_base" },
+        { "properties": { "axis_id": { "const": "logical_command_payload_version" } } }
+      ]
+    },
+    "payload_schema_resource_version_axis": {
+      "allOf": [
+        { "$ref": "#/$defs/version_axis_base" },
+        { "properties": { "axis_id": { "const": "payload_schema_resource_version" } } }
+      ]
+    },
+    "event_semantic_version_axis": {
+      "allOf": [
+        { "$ref": "#/$defs/version_axis_base" },
+        { "properties": { "axis_id": { "const": "event_semantic_version" } } }
+      ]
+    },
+    "event_payload_logical_version_axis": {
+      "allOf": [
+        { "$ref": "#/$defs/version_axis_base" },
+        { "properties": { "axis_id": { "const": "event_payload_logical_version" } } }
+      ]
+    },
+    "event_schema_resource_version_axis": {
+      "allOf": [
+        { "$ref": "#/$defs/version_axis_base" },
+        { "properties": { "axis_id": { "const": "event_schema_resource_version" } } }
+      ]
+    },
+    "aggregate_state_member_version_axis": {
+      "allOf": [
+        { "$ref": "#/$defs/version_axis_base" },
+        { "properties": { "axis_id": { "const": "aggregate_state_member_version" } } }
+      ]
+    },
+    "reducer_member_version_axis": {
+      "allOf": [
+        { "$ref": "#/$defs/version_axis_base" },
+        { "properties": { "axis_id": { "const": "reducer_member_version" } } }
+      ]
+    }
+  }
+}

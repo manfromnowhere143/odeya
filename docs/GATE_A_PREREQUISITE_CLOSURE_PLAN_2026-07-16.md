@@ -84,10 +84,14 @@ verification material without changing the core scientific subject.
 
 ## Immediate contradictions to close
 
-### PRQ-001 — Canonical profile is not frozen
+### PRQ-001 — Candidate parameters frozen; canonical profile unissued
 
 The two retained implementations agree on the bounded vector suite, but the
-current 100-schema/198-fixture migration audit remains blocking: 122
+exact nonrecursive candidate core and evidence binding now freeze the parser,
+RFC 8785 serialization, canonical envelope, digest framing, future reference
+shape, 21 current domain names, and eight version axes for review. This is a
+candidate-parameter freeze, not profile issuance or acceptance. The current
+103-schema/200-fixture migration audit remains blocking: 122
 unprofiled date-time paths, 61 number/decimal findings, 668 unscoped digest
 fields, 56 divergent common definitions, 11 unpinned profile bindings, and
 238 nonconformant fixture timestamps. No final member digest may be
@@ -266,9 +270,10 @@ reject every mutation before any candidate can become immutable.
 
 ### T0 — Identity and prerequisite closure
 
-1. Freeze the candidate canonical profile name, schema/profile reference
-   shapes, digest domains, parser limits, key purposes, witness policy, and
-   trust bootstrap semantics.
+1. Retain the frozen-for-review canonical profile core and external raw-byte
+   evidence binding; migrate or explicitly version every current consumer and
+   blocker before profile issuance. Freeze the remaining key purposes, witness
+   policy, and trust-bootstrap semantics without fabricating acceptance.
 2. Add standalone member records and exact registry-snapshot identity.
 3. Split core/evidence/seal/attestation subjects and add typed blocked
    construction receipts.

@@ -1,10 +1,20 @@
 # Canonical Identity and Serialization Profile
 
-Status: proposed Odeya profile `odeya-jcs-0.1`, 2026-07-15. A pinned
-architecture-only suite now gives cross-runtime evidence for the bounded rules
-identified below. The profile is not frozen: the production schema migration,
-package/reference profiles, fuzzing, limit measurements, independent-host
-reproduction, and operator acceptance remain blocking.
+Status: exact candidate parameter set `odeya-jcs-0.1` frozen for review,
+2026-07-16. A pinned architecture-only suite gives cross-runtime evidence for
+the bounded rules identified below. The canonical profile is still unissued:
+production-schema migration, package/reference profiles, fuzzing, measured
+limits, independent-host reproduction, and exact-byte operator acceptance
+remain blocking.
+
+The machine-readable
+[`CanonicalizationProfileCore` candidate](../architecture/canonicalization-profile-core-candidate.json)
+is the parameter source of truth for this review tranche. It contains no
+self-digest. The separate
+[`candidate evidence binding`](../architecture/canonicalization-profile-candidate-evidence.json)
+binds its exact raw bytes, schema bytes, conformance artifacts, current digest
+domains, and migration snapshot. Raw-byte bootstrap identity is not a canonical
+object digest, profile admission, or Gate A authority.
 
 ## Purpose
 
@@ -19,7 +29,7 @@ Only the first two are digest questions. Scientific equivalence requires a regis
 ## Identity types
 
 | Identity | Input | Digest meaning |
-|---|---|---|
+| --- | --- | --- |
 | `ByteDigest` | Exact raw byte stream | Byte-for-byte identity only |
 | `CanonicalObjectDigest` | Canonical envelope encoded under `odeya-jcs-*` | Same profile, schema identity, and canonical object bytes |
 | `ArtifactIdentity` | Logical record referring to bytes plus provenance/rights/custody | Distinct even when raw bytes deduplicate |
@@ -61,28 +71,53 @@ Command, receipt, event, and checkpoint records carry closed digest-contract obj
 4. verifies that any digest/signature field within the record occurs only in the exact excluded set and never within an included subtree;
 5. constructs and JCS-encodes this closed logical input, where `digest_contract` is the exact contract object from the record and `resolved_subject_schema` is the immutable schema identity/digest resolved by the source named below:
 
-```json
-{
-  "digest_contract": { "algorithm": "sha-256", "domain_separator": "...", "...": "exact contract" },
-  "resolved_subject_schema": { "schema_id": "urn:odeya:schema:...", "schema_digest": "sha256:..." },
-  "projection": { "...": "exact pointer-selected tree" }
-}
-```
+    ```json
+    {
+      "digest_contract": { "algorithm": "sha-256", "domain_separator": "...", "...": "exact contract" },
+      "resolved_subject_schema": { "schema_id": "urn:odeya:schema:...", "schema_digest": "sha256:..." },
+      "projection": { "...": "exact pointer-selected tree" }
+    }
+    ```
 
 6. computes lowercase `sha256:` identity over those JCS bytes, compares it in constant time, then verifies external signatures over the declared digest and purpose context.
 
-This construction hashes the algorithm, domain, profile identity/digest, schema identity/digest, pointer contract, and selected data as one canonical object; it does not depend on the contract also appearing within its own projection. The current domains are distinct:
+This construction hashes the algorithm, domain, profile identity/digest, schema identity/digest, pointer contract, and selected data as one canonical object; it does not depend on the contract also appearing within its own projection.
 
-| Subject | Domain | Schema-binding source | Self/external fields excluded |
-|---|---|---|---|
-| command request | `odeya-command-request-v1` | exact `CommandEnvelope` schema plus bound payload contract | request digest, signature |
-| command result | `odeya-command-result-v1` | exact `CommandReceipt` result contract | none; digest/signature fields are outside `/result` |
-| command receipt | `odeya-command-receipt-v1` | exact `CommandReceipt` schema | receipt digest, signature |
-| policy decision | `odeya-policy-decision-v1` | explicit exact `PolicyDecision` schema ID/digest | decision digest, signature |
-| admission evidence bundle | `odeya-admission-evidence-bundle-v1` | explicit exact bundle schema ID/digest | bundle digest, signature |
-| event payload | `odeya-event-payload-v1` | logical `payload_type_id` plus an exact admitted payload-contract resource and digest | none; digest/attestation fields are outside `/payload` |
-| research event | `odeya-research-event-v1` | exact `ResearchEvent` schema | event digest, signature |
-| ledger checkpoint | `odeya-ledger-checkpoint-v1` | explicit exact checkpoint schema ID/digest | checkpoint digest, all signatures |
+The current candidate domain registry contains 21 distinct names. The four
+previously documented `v1` names for request, receipt, policy decision, and
+admission bundle were stale relative to the exact reissued schema bytes; this
+table now follows the machine-checked schema constants instead of preserving
+that prose drift:
+
+| Subject | Domain | Declaring schema resource |
+| --- | --- | --- |
+| admission evidence bundle | `odeya-admission-evidence-bundle-v2` | `admission-evidence-bundle:0.2.0` |
+| aggregate-state member | `odeya-aggregate-state-subject-member-v1` | `aggregate-state-subject-registry:0.1.0` |
+| aggregate-state registry | `odeya-aggregate-state-subject-registry-v1` | `aggregate-state-subject-registry:0.1.0` |
+| C0 registry bundle | `odeya-c0-registry-bundle-v1` | `c0-registry-bundle:0.1.0` |
+| command design vocabulary | `odeya-command-design-vocabulary-v1` | `command-design-vocabulary:0.1.0` |
+| command receipt | `odeya-command-receipt-v2` | `command-receipt:0.4.0` |
+| command request | `odeya-command-request-v2` | `command-envelope:0.5.0` |
+| command result | `odeya-command-result-v1` | `command-receipt:0.4.0` |
+| engine contract root | `odeya-engine-contract-root-v1` | `engine-contract-root:0.1.0` |
+| event-contract member | `odeya-event-contract-member-v1` | `event-contract-registry:0.1.0` |
+| event-contract registry | `odeya-event-contract-registry-v1` | `event-contract-registry:0.1.0` |
+| event payload | `odeya-event-payload-v1` | `research-event:0.7.0` |
+| ledger checkpoint | `odeya-ledger-checkpoint-v1` | `ledger-checkpoint:0.2.0` |
+| P0 constitutional recovery admission | `odeya-p0-constitutional-recovery-admission-v1` | `registry-activation:0.1.0` |
+| policy decision | `odeya-policy-decision-v2` | `policy-decision:0.2.0` |
+| reducer member | `odeya-reducer-registry-member-v1` | `reducer-registry:0.1.0` |
+| reducer registry | `odeya-reducer-registry-v1` | `reducer-registry:0.1.0` |
+| registry activation | `odeya-registry-activation-v1` | `registry-activation:0.1.0` |
+| research event | `odeya-research-event-v1` | `research-event:0.7.0` |
+| schema-registry member | `odeya-schema-registry-member-v1` | `schema-registry:0.1.0` |
+| schema registry | `odeya-schema-registry-v1` | `schema-registry:0.1.0` |
+
+Reservation of a name in this candidate table does not admit any current
+consumer. Every scoped digest contract still has to carry the exact future
+profile reference, subject schema identity, pointer partition, and excluded
+self/external fields. The dedicated checker rejects a missing domain, duplicate
+domain, domain-to-schema substitution, or undocumented domain constant.
 
 Signatures are external attestations: re-signing cannot alter subject identity. JSON Schema can require these fields and exact pointer arrays; it cannot construct the projection, recompute a digest, establish registry acceptance, perform constant-time comparison, or verify a signature. Those are independent semantic/conformance obligations.
 
@@ -243,7 +278,7 @@ Each vector contains input bytes, expected parse/admission result, expected cano
 
 ## Independent implementations
 
-Before Gate A can freeze this profile:
+Before Gate A can issue and admit this candidate profile:
 
 - one minimal reference implementation and one independently implemented verifier in different runtime/library paths must agree on every vector;
 - neither implementation may call the other or share canonicalization code;
@@ -260,7 +295,7 @@ shared inputs, exact expected bytes/digests/refusal codes, dependency/source
 locks, independently written runners, results, and comparison receipt.
 
 | Evidence | Result |
-|---|---|
+| --- | --- |
 | Python path | CPython 3.14.2 + Trail of Bits `rfc8785==0.1.4` |
 | Node path | Node.js 20.18.3 + Erdtman/Rundgren `canonicalize==3.0.0` |
 | Shared vectors | 64 total: 19 admissions, 45 fail-closed refusals |
@@ -296,7 +331,8 @@ Canonical identities are immutable within a profile. A new profile:
 
 The timestamp, exact-decimal, missingness, one string-set normalizer, exact
 reference shape, self-reference refusal, and envelope domain separation now
-have retained two-path evidence. The profile remains proposed until:
+have retained two-path evidence. The exact candidate parameters are frozen for
+review, but the profile remains unissued until:
 
 - every current architecture schema is migrated to or explicitly exempted from
   the timestamp, scientific-number, reference, and digest-scope rules;
@@ -311,5 +347,5 @@ have retained two-path evidence. The profile remains proposed until:
 - the operator signs the exact profile, vector, schema-registry, runner, and
   result digests.
 
-Until then, draft `sha256:` fields establish intended shape but not a frozen
-cross-runtime Odeya identity contract.
+Until then, draft `sha256:` fields establish intended shape but not an issued,
+admitted, or operator-accepted Odeya identity contract.
