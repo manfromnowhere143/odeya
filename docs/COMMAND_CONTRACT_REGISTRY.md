@@ -37,8 +37,9 @@ owning aggregate type
 creation versus existing-aggregate rule
 expected-position policy
 actor/principal classes
-authority-evidence modes and required roles
-grant roles + use consumption point + reservation policy
+closed authority alternatives and non-caller-selectable invocation path
+ordered assignment/grant role slots + use/exhaustion occurrence bindings
+action-instance/request/target binding + use consumption point + reservation policy
 risk/data/action ceiling
 required immutable input/reference types
 pure semantic rules and exact versions
@@ -62,7 +63,7 @@ The separation is constitutional and non-circular:
 3. the checkpoint commits the registry digest; the snapshot never embeds that checkpoint or activation; and
 4. admission proves membership, exact duplicated metadata equality, activation scope, and `activation_position <= target/current ledger position` against the selected canonical branch.
 
-Genesis uses a separately reviewed constitutional-bootstrap activation proof and first checkpoint procedure. It does not solve the cycle by permitting a self-issued snapshot, a mutable alias, or a snapshot whose bytes contain its future checkpoint. The activation position and branch/currentness predicates are semantic; JSON Schema only fixes their typed shape.
+Genesis uses a separately reviewed constitutional-bootstrap activation proof and first checkpoint procedure. The exact RegistryActivation embeds `P0.constitutional-recovery-admission`, binding the non-self-issued root, EngineContractRoot/C0, witnessed checkpoint, and clear recovery/fork/quarantine frontier. Envelope, receipt, and AdmissionEvidenceBundle carry the exact activation and P0 digests; an ordinary command cannot construct its own prerequisite. This does not solve the cycle by permitting a self-issued snapshot, a mutable alias, or a snapshot whose bytes contain its future checkpoint. Activation/P0 equality, position, branch, witness, and currentness predicates are semantic; JSON Schema only fixes their typed shape.
 
 Request, result, and receipt identities use exact domain-separated digest contracts with explicit JSON-Pointer inclusion/exclusion sets. Each digest excludes itself and each signature is an external attestation. The current schemas constrain those shapes but do not recompute bytes, verify signatures, resolve registry membership, or prove that the profile/schema digest is the accepted one.
 
@@ -109,6 +110,19 @@ It performs no network, model, filesystem, object-store, scheduler, clock, rando
 
 The event-batch alternatives are closed in the registry. A handler cannot emit a convenient event absent from its record. Kernel-produced cohort facts—such as grant reservation/use, resource reservation creation/claim/release/expiry/settlement, aggregate head, receipt, and outbox—are added only by the admission transaction under named rules. There is no caller-facing generic resource-reserve, claim, release, expire, or settle command: callers submit the domain start/cancel/observation request, and the resource-accounting kernel derives the exact cohort fixed by that command record.
 
+Authority is also a closed alternative, not one ambiguous role string. Each
+command record enumerates exact invocation paths (`caller`, deterministic
+internal observation, ingress, or constitutional ceremony), and the kernel
+selects exactly one from trusted context; the payload cannot select it. A
+bounded-grant path contains an ordered finite role-slot array. Every slot binds
+a distinct action-instance/request/target grant with `max_uses=1` in the first
+slice. Its accepted event alternative contains one separately identified
+`authority.grant_used` occurrence and one separately identified
+`authority.grant_exhausted` occurrence for every slot. Non-grant domain events
+cannot carry a grant-slot binding. Rejection, noop, and exact replay add no
+occurrences. Cross-array equality, slot order, event counts, and same-commit
+membership remain pure semantic checks over the structurally closed record.
+
 ## Command classes
 
 The founding registry separates:
@@ -149,7 +163,7 @@ Grant reservation/use/release and all resource-reservation lifecycle facts are a
 
 ## Initial closure scope and priority
 
-A-002 may close only for one explicitly named, dependency-closed Gate A admitted set. That set is derived from the accepted first-slice mission plus every constitutional, authority, data, recovery, effect, correction, and publication path it can reach; the current thirteen payload candidates do not by themselves define it. Every command in that set requires a complete record and exact payload bytes, while every command outside it remains non-executable design vocabulary. Expanding the set requires a new prospective registry/root activation.
+A-002 may close only for one explicitly named, dependency-closed Gate A admitted set. [The resolved first-slice candidate](FIRST_SLICE_ADMISSION_RESOLUTION_2026-07-16.md) now names the exact representational dependency set: 43 required commands, 60 event types, 25 aggregate/reducer families, 11 owner modules, and one separately admitted P0 prerequisite. Those counts are not registry admission: 42 payload contracts, all 43 command members, all 60 event members, all 25 state/reducer members, and the real root/checkpoint/P0/activation chain remain missing. Every required command needs complete record and exact payload bytes, while all 78 outside commands remain non-executable design vocabulary. Expanding the set requires a new prospective registry/root activation.
 
 Payload schema work proceeds by constitutional consequence, not UI order:
 
@@ -212,4 +226,4 @@ Each case must fail at the intended layer and retain the expected refusal, rejec
 
 ## Acceptance boundary
 
-A-002 remains open until its exact dependency-closed admitted set is named; the immutable registry-snapshot, activation, contract-record, selector, and refusal schemas/bytes exist; every discriminator in that set has exact payload bytes and executable semantics; active envelope/registry/handler equality and membership/activation proofs reproduce; historical replay and changed-reuse vectors pass; the command/event/reducer graph is machine-checked; semantic/race traces pass; and independent review closes critical/high findings. The remaining design vocabulary stays explicitly non-executable. Envelope and receipt validation alone establishes valuable structure, not executable command meaning.
+A-002 remains open even though the exact representational candidate is now named. It closes only when the immutable registry snapshot, contract records, selector/refusal bytes, witnessed root/checkpoint/P0/activation chain, and every exact payload/event/state/reducer member exist; active envelope/registry/handler equality and membership/activation proofs reproduce; historical replay and changed-reuse vectors pass; the command/event/reducer graph is machine-checked; composite semantic/race traces pass; and independent review closes critical/high findings. The remaining design vocabulary stays explicitly non-executable. Envelope and receipt validation alone establishes valuable structure, not executable command meaning.

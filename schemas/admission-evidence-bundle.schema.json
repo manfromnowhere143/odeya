@@ -2136,6 +2136,26 @@
         "registry_snapshot_digest": { "$ref": "#/$defs/digest" }
       }
     },
+    "registry_activation_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "activation_id",
+        "activation_sequence",
+        "schema_id",
+        "activation_digest",
+        "p0_prerequisite_id",
+        "p0_admission_digest"
+      ],
+      "properties": {
+        "activation_id": { "$ref": "#/$defs/identifier" },
+        "activation_sequence": { "type": "integer", "minimum": 1 },
+        "schema_id": { "const": "urn:odeya:schema:registry-activation:0.1.0" },
+        "activation_digest": { "$ref": "#/$defs/digest" },
+        "p0_prerequisite_id": { "const": "P0.constitutional-recovery-admission" },
+        "p0_admission_digest": { "$ref": "#/$defs/digest" }
+      }
+    },
     "command_binding": {
       "type": "object",
       "additionalProperties": false,
@@ -2146,6 +2166,7 @@
         "command_version",
         "command_schema_id",
         "command_schema_digest",
+        "command_registry_activation_ref",
         "command_contract_record_ref"
       ],
       "properties": {
@@ -2161,6 +2182,7 @@
           "pattern": "^urn:odeya:command-payload:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$"
         },
         "command_schema_digest": { "$ref": "#/$defs/digest" },
+        "command_registry_activation_ref": { "$ref": "#/$defs/registry_activation_reference" },
         "command_contract_record_ref": { "$ref": "#/$defs/command_contract_reference" }
       }
     },

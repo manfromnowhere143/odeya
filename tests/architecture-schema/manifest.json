@@ -5274,6 +5274,258 @@
       "mutations": [
         {"op": "replace", "path": "/decision/scientific_outcome", "value": "null_result"}
       ]
+    },
+    {
+      "name": "work-lease-acquired-valid-local-assignment-binding",
+      "schema": "schemas/research-event.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/work-lease-acquired-event.valid.json",
+      "expect": "valid"
+    },
+    {
+      "name": "work-lease-acquired-rejects-issued-as-canonical-prior-state",
+      "schema": "schemas/research-event.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/work-lease-acquired-event.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/payload/from", "value": "issued"}
+      ]
+    },
+    {
+      "name": "work-lease-acquired-rejects-already-claimed-reservation",
+      "schema": "schemas/research-event.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/work-lease-acquired-event.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/payload/reservation_claim_state", "value": "claimed"}
+      ]
+    },
+    {
+      "name": "attempt-started-valid-local-atomic-start-binding",
+      "schema": "schemas/research-event.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/local-attempt-started-event.valid.json",
+      "expect": "valid"
+    },
+    {
+      "name": "attempt-started-rejects-precommit-byte-visibility",
+      "schema": "schemas/research-event.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/local-attempt-started-event.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/payload/bytes_visible_at_commit", "value": true}
+      ]
+    },
+    {
+      "name": "attempt-started-requires-same-commit-reservation-claim-reference",
+      "schema": "schemas/research-event.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/local-attempt-started-event.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "remove", "path": "/payload/binding/reservation/reservation_claim_event_ref"}
+      ]
+    },
+    {
+      "name": "attempt-started-rejects-expired-lease-as-active-frontier",
+      "schema": "schemas/research-event.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/local-attempt-started-event.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/payload/lease_state_event_ref/event_type", "value": "work.lease_expired"}
+      ]
+    },
+    {
+      "name": "attempt-completed-valid-local-observation-report",
+      "schema": "schemas/research-event.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/local-attempt-completed-event.valid.json",
+      "expect": "valid"
+    },
+    {
+      "name": "attempt-completed-requires-actual-input-manifest",
+      "schema": "schemas/research-event.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/local-attempt-completed-event.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/payload/actual_input_manifest_ref", "value": null}
+      ]
+    },
+    {
+      "name": "attempt-completed-cannot-release-claimed-ceiling-before-settlement",
+      "schema": "schemas/research-event.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/local-attempt-completed-event.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/payload/claimed_ceiling_release_before_settlement_allowed", "value": true}
+      ]
+    },
+    {
+      "name": "attempt-completed-rejects-provider-or-model-use",
+      "schema": "schemas/research-event.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/local-attempt-completed-event.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/payload/provider_or_model_use_observation", "value": "violation"}
+      ]
+    },
+    {
+      "name": "command-contract-kernel-selection-cannot-be-caller-selected",
+      "schema": "schemas/command-contract-registry.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/command-contract-registry.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/members/structural.command_probe@0.1.0/authority_contract/alternative_selection/caller_may_select", "value": true}
+      ]
+    },
+    {
+      "name": "command-contract-bounded-authority-requires-grant-slots",
+      "schema": "schemas/command-contract-registry.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/command-contract-registry.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/members/structural.command_probe@0.1.0/authority_contract/alternatives/3/grant_slots", "value": []}
+      ]
+    },
+    {
+      "name": "command-contract-internal-deterministic-path-cannot-be-caller-invoked",
+      "schema": "schemas/command-contract-registry.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/command-contract-registry.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/members/structural.command_probe@0.1.0/authority_contract/alternatives/2/caller_invocation_permitted", "value": true}
+      ]
+    },
+    {
+      "name": "command-contract-first-slice-grant-is-single-use",
+      "schema": "schemas/command-contract-registry.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/command-contract-registry.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/members/structural.command_probe@0.1.0/authority_contract/alternatives/3/grant_slots/0/max_uses", "value": 2}
+      ]
+    },
+    {
+      "name": "command-contract-grant-used-event-requires-use-slot-binding",
+      "schema": "schemas/command-contract-registry.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/command-contract-registry.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/members/structural.command_probe@0.1.0/legal_event_alternatives/3/events/0/grant_slot_binding/grant_fact", "value": "exhaustion"}
+      ]
+    },
+    {
+      "name": "command-contract-domain-event-cannot-carry-grant-slot-binding",
+      "schema": "schemas/command-contract-registry.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/command-contract-registry.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/members/structural.command_probe@0.1.0/legal_event_alternatives/3/events/3/grant_slot_binding", "value": {"authority_alternative_id": "authority.caller-multigrant", "grant_slot_id": "grant.safety", "grant_fact": "use"}}
+      ]
+    },
+    {
+      "name": "command-contract-noop-cannot-retain-event-cohort",
+      "schema": "schemas/command-contract-registry.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/command-contract-registry.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/members/structural.command_probe@0.1.0/legal_event_alternatives/0/decision_kind", "value": "noop"}
+      ]
+    },
+    {
+      "name": "registry-activation-requires-nonrecursive-p0",
+      "schema": "schemas/registry-activation.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/registry-activation.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "remove", "path": "/p0_constitutional_recovery_admission"}
+      ]
+    },
+    {
+      "name": "registry-activation-p0-cannot-reference-its-own-activation",
+      "schema": "schemas/registry-activation.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/registry-activation.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/p0_constitutional_recovery_admission/nonrecursive_boundary/activation_reference_permitted", "value": true}
+      ]
+    },
+    {
+      "name": "registry-activation-p0-root-authority-cannot-be-self-issued",
+      "schema": "schemas/registry-activation.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/registry-activation.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/p0_constitutional_recovery_admission/root_authority_binding/self_issued", "value": true}
+      ]
+    },
+    {
+      "name": "registry-activation-p0-rejects-unresolved-fork",
+      "schema": "schemas/registry-activation.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/registry-activation.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/p0_constitutional_recovery_admission/current_recovery_frontier/unresolved_fork_count", "value": 1}
+      ]
+    },
+    {
+      "name": "registry-activation-p0-rejects-wall-clock-branch-selection",
+      "schema": "schemas/registry-activation.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/registry-activation.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/p0_constitutional_recovery_admission/current_recovery_frontier/wall_clock_branch_selection", "value": true}
+      ]
+    },
+    {
+      "name": "registry-activation-p0-rejects-ambiguous-open-recovery-case",
+      "schema": "schemas/registry-activation.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/registry-activation.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/p0_constitutional_recovery_admission/current_recovery_frontier/ambiguous_recovery_case_count", "value": 1}
+      ]
+    },
+    {
+      "name": "registry-activation-p0-rejects-any-open-recovery-case",
+      "schema": "schemas/registry-activation.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/registry-activation.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/p0_constitutional_recovery_admission/current_recovery_frontier/open_recovery_case_count", "value": 1}
+      ]
+    },
+    {
+      "name": "registry-activation-p0-cannot-enable-publication",
+      "schema": "schemas/registry-activation.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/registry-activation.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/p0_constitutional_recovery_admission/current_recovery_frontier/publication_enabled", "value": true}
+      ]
+    },
+    {
+      "name": "command-envelope-activation-binding-requires-p0-digest",
+      "schema": "schemas/command-envelope.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/command-envelope.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "remove", "path": "/command_registry_activation_ref/p0_admission_digest"}
+      ]
+    },
+    {
+      "name": "command-receipt-activation-binding-requires-p0-identity",
+      "schema": "schemas/command-receipt.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/command-receipt.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "remove", "path": "/command_registry_activation_ref/p0_prerequisite_id"}
+      ]
+    },
+    {
+      "name": "admission-evidence-command-binding-requires-p0-digest",
+      "schema": "schemas/admission-evidence-bundle.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/admission-evidence-bundle.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "remove", "path": "/command_binding/command_registry_activation_ref/p0_admission_digest"}
+      ]
     }
   ]
 }

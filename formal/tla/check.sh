@@ -44,7 +44,8 @@ java -cp "$JAR" tla2sany.SANY \
   ExternalEffects.tla \
   PublicationRelease.tla \
   CognitiveControl.tla \
-  ResourceReservation.tla
+  ResourceReservation.tla \
+  CompositeAuthorityResource.tla
 
 run_tlc() {
   local expectation="$1"
@@ -210,4 +211,23 @@ run_tlc counterexample resource-infer-actual-at-claim \
   ResourceReservation.infer-actual-at-claim.counterexample.cfg \
   ClaimDoesNotInventActualUse
 
-printf '\nAll six distinct safe models passed; the cognitive model also passed under the retained alternate fingerprint profile; all twenty-six negative controls produced the expected counterexample.\n'
+run_tlc pass composite-authority-resource-safe \
+  CompositeAuthorityResource.tla CompositeAuthorityResource.safe.cfg
+run_tlc counterexample composite-partial-grant-cohort \
+  CompositeAuthorityResource.tla \
+  CompositeAuthorityResource.partial-grant-cohort.counterexample.cfg \
+  AcceptedCohortConsumesAndExhaustsExactlyAllSlots
+run_tlc counterexample composite-release-after-claim \
+  CompositeAuthorityResource.tla \
+  CompositeAuthorityResource.release-after-claim.counterexample.cfg \
+  NoReleaseOrExpiryAfterClaim
+run_tlc counterexample composite-inferred-zero-partial-settlement \
+  CompositeAuthorityResource.tla \
+  CompositeAuthorityResource.inferred-zero-partial-settlement.counterexample.cfg \
+  SettlementRequiresExactEvidenceWithoutZeroInference
+run_tlc counterexample composite-wrong-race-order \
+  CompositeAuthorityResource.tla \
+  CompositeAuthorityResource.wrong-race-order.counterexample.cfg \
+  StartCannotFollowPreclaimTerminal
+
+printf '\nAll seven distinct safe models passed; the cognitive model also passed under the retained alternate fingerprint profile; all thirty negative controls produced the expected counterexample.\n'

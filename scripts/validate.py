@@ -80,6 +80,7 @@ REQUIRED_FILES = (
     "docs/PROOF_LAYER.md",
     "docs/FIRST_VERTICAL_SLICE.md",
     "docs/FIRST_SLICE_METHOD_PROFILE.md",
+    "docs/FIRST_SLICE_ADMISSION_RESOLUTION_2026-07-16.md",
     "docs/CANONICALIZATION_PROFILE.md",
     "docs/DATA_GOVERNANCE.md",
     "docs/PUBLICATION_PROTOCOL.md",
@@ -88,6 +89,7 @@ REQUIRED_FILES = (
     "docs/COMMAND_CONTRACT_REGISTRY.md",
     "docs/ARCHITECTURE_REVIEW_PROTOCOL.md",
     "architecture/module-dependency-manifest.json",
+    "architecture/first-slice-admission-resolution-candidate.json",
     "schemas/research-mission.schema.json",
     "schemas/protocol-snapshot.schema.json",
     "schemas/protocol-amendment.schema.json",
@@ -147,6 +149,9 @@ REQUIRED_FILES = (
     "tests/physical-contracts/cases.json",
     "tests/mathematical-contracts/check.py",
     "tests/mathematical-contracts/cases.json",
+    "tests/first-slice-resolution/check.py",
+    "tests/first-slice-resolution/cases.json",
+    "tests/first-slice-resolution/README.md",
     "tests/canonicalization/README.md",
     "tests/canonicalization/manifest.json",
     "tests/canonicalization/expectations.json",
@@ -163,6 +168,7 @@ REQUIRED_FILES = (
     "tests/canonicalization/results/node-canonicalize-3.0.0.json",
     "tests/canonicalization/results/comparison-receipt.json",
     "scripts/validate_module_manifest.py",
+    "scripts/validate_first_slice_resolution.py",
 )
 FORBIDDEN_IMPLEMENTATION_DIRS = (
     "apps",
@@ -176,6 +182,7 @@ ISOLATED_CONTRACT_SUITES = (
     "tests/projection-contracts/check.py",
     "tests/physical-contracts/check.py",
     "tests/mathematical-contracts/check.py",
+    "tests/first-slice-resolution/check.py",
 )
 MARKDOWN_LINK = re.compile(r"!?\[[^\]]*\]\(([^)]+)\)")
 EXTERNAL_PREFIXES = ("http://", "https://", "mailto:", "urn:", "data:")
@@ -1001,6 +1008,48 @@ def validate_module_dependency_evidence(errors: list[str]) -> dict[str, int]:
     }
 
 
+def validate_first_slice_resolution(errors: list[str]) -> dict[str, int]:
+    validator_path = ROOT / "scripts/validate_first_slice_resolution.py"
+    inventory_path = ROOT / "architecture/first-slice-admission-resolution-candidate.json"
+    empty = {"required": 0, "outside": 0, "events": 0, "aggregates": 0, "owners": 0}
+    if not validator_path.is_file() or not inventory_path.is_file():
+        return empty
+    try:
+        result = subprocess.run(
+            [sys.executable, str(validator_path)],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            timeout=30,
+            check=False,
+        )
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        add(errors, f"first-slice resolution validator failed to execute: {type(exc).__name__}")
+        return empty
+    if result.returncode != 0:
+        detail = [line[2:] for line in result.stdout.splitlines() if line.startswith("- ")]
+        if detail:
+            for message in detail[:20]:
+                add(errors, f"first-slice resolution: {message}")
+        else:
+            add(errors, "first-slice resolution validation failed")
+        return empty
+    inventory = load_json(
+        inventory_path,
+        errors,
+        "architecture/first-slice-admission-resolution-candidate.json",
+    )
+    if not isinstance(inventory, dict):
+        return empty
+    return {
+        "required": len(inventory.get("required_commands", [])),
+        "outside": len(inventory.get("outside_commands", [])),
+        "events": len(inventory.get("required_event_types", [])),
+        "aggregates": len(inventory.get("aggregate_dependencies", [])),
+        "owners": len(inventory.get("owner_modules", [])),
+    }
+
+
 def validate_isolated_contract_suites(errors: list[str]) -> int:
     """Run every mandatory contract-family suite under the pinned interpreter.
 
@@ -1080,6 +1129,7 @@ def main() -> int:
         canonical_fixture_audit_count,
     ) = validate_canonical_identity_evidence(errors)
     module_counts = validate_module_dependency_evidence(errors)
+    first_slice_counts = validate_first_slice_resolution(errors)
     decision_count = validate_decisions(errors)
 
     if errors:
@@ -1108,6 +1158,12 @@ def main() -> int:
         f"{module_counts['modules']} modules, {module_counts['aggregates']} aggregates, "
         f"{module_counts['schemas']} schemas, {module_counts['commands']} commands, "
         f"{module_counts['events']} events"
+    )
+    print(
+        "- exact first-slice resolution checked: "
+        f"{first_slice_counts['required']} required / {first_slice_counts['outside']} outside commands, "
+        f"{first_slice_counts['events']} events, {first_slice_counts['aggregates']} aggregates, "
+        f"{first_slice_counts['owners']} owners; activation remains blocked"
     )
     print(f"- {decision_count} architecture decisions")
     print(f"- {local_link_count} local Markdown links checked")

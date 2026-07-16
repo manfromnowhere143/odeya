@@ -214,8 +214,8 @@
     "dispatch_boundary": {
       "type": "object", "additionalProperties": false,
       "required": [
-        "current_frontier", "data_use_decisions", "materialized_input_manifest_ref",
-        "sandbox_policy_ref", "sandbox_observation_ref", "required_authority_grant_refs",
+        "current_frontier", "data_use_decisions", "prospective_materialization",
+        "sandbox_capability", "required_authority_grant_refs",
         "required_policy_refs", "dispatch_time_recheck_required", "recheck_dimensions",
         "lease_recheck",
         "resource_and_spend_reservation", "stale_or_revoked_disposition",
@@ -227,12 +227,22 @@
       "properties": {
         "current_frontier": {
           "type": "object", "additionalProperties": false,
-          "required": ["ledger_position", "checkpoint_ref", "legal_frontier_digest", "authority_policy_set_digest"],
+          "required": [
+            "ledger_position", "checkpoint_ref", "frontier_digest",
+            "legal_frontier_digest", "authority_policy_set_digest",
+            "lease_state_root_digest", "data_use_state_root_digest",
+            "resource_state_root_digest", "sandbox_policy_set_digest"
+          ],
           "properties": {
             "ledger_position": { "type": "integer", "minimum": 0 },
             "checkpoint_ref": { "$ref": "#/$defs/immutable_reference" },
+            "frontier_digest": { "$ref": "#/$defs/digest" },
             "legal_frontier_digest": { "$ref": "#/$defs/digest" },
-            "authority_policy_set_digest": { "$ref": "#/$defs/digest" }
+            "authority_policy_set_digest": { "$ref": "#/$defs/digest" },
+            "lease_state_root_digest": { "$ref": "#/$defs/digest" },
+            "data_use_state_root_digest": { "$ref": "#/$defs/digest" },
+            "resource_state_root_digest": { "$ref": "#/$defs/digest" },
+            "sandbox_policy_set_digest": { "$ref": "#/$defs/digest" }
           }
         },
         "data_use_decisions": {
@@ -248,9 +258,57 @@
             }
           }
         },
-        "materialized_input_manifest_ref": { "$ref": "#/$defs/artifact_reference" },
-        "sandbox_policy_ref": { "$ref": "#/$defs/immutable_reference" },
-        "sandbox_observation_ref": { "$ref": "#/$defs/artifact_reference" },
+        "prospective_materialization": {
+          "oneOf": [
+            {
+              "type": "object", "additionalProperties": false,
+              "required": [
+                "intent_ref", "source_input_manifest_ref", "prospective_input_manifest_ref",
+                "materialization_target_digest", "mount_mode", "materialization_consumption_point",
+                "bytes_visible_before_attempt_start_commit", "data_exposure_record_required",
+                "external_effect_authority_required"
+              ],
+              "properties": {
+                "intent_ref": { "$ref": "#/$defs/immutable_reference" },
+                "source_input_manifest_ref": { "$ref": "#/$defs/artifact_reference" },
+                "prospective_input_manifest_ref": { "$ref": "#/$defs/artifact_reference" },
+                "materialization_target_digest": { "$ref": "#/$defs/digest" },
+                "mount_mode": { "const": "read_only" },
+                "materialization_consumption_point": { "const": "after_attempt_start_commit" },
+                "bytes_visible_before_attempt_start_commit": { "const": false },
+                "data_exposure_record_required": { "const": false },
+                "external_effect_authority_required": { "const": false }
+              }
+            },
+            { "type": "null" }
+          ]
+        },
+        "sandbox_capability": {
+          "oneOf": [
+            {
+              "type": "object", "additionalProperties": false,
+              "required": [
+                "capability_ref", "sandbox_ref", "policy_ref", "preflight_observation_ref",
+                "launcher_profile_ref", "network_access", "ambient_credentials_present",
+                "provider_authority_granted", "model_authority_granted",
+                "external_effect_authority_granted"
+              ],
+              "properties": {
+                "capability_ref": { "$ref": "#/$defs/immutable_reference" },
+                "sandbox_ref": { "$ref": "#/$defs/immutable_reference" },
+                "policy_ref": { "$ref": "#/$defs/immutable_reference" },
+                "preflight_observation_ref": { "$ref": "#/$defs/artifact_reference" },
+                "launcher_profile_ref": { "$ref": "#/$defs/versioned_reference" },
+                "network_access": { "const": "none" },
+                "ambient_credentials_present": { "const": false },
+                "provider_authority_granted": { "const": false },
+                "model_authority_granted": { "const": false },
+                "external_effect_authority_granted": { "const": false }
+              }
+            },
+            { "type": "null" }
+          ]
+        },
         "required_authority_grant_refs": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/immutable_reference" } },
         "required_policy_refs": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/immutable_reference" } },
         "dispatch_time_recheck_required": { "const": true },
@@ -272,6 +330,7 @@
           "type": "object", "additionalProperties": false,
           "required": [
             "lease_record_ref", "bound_lease_frontier", "current_lease_state_evidence_ref",
+            "current_lease_state_event_ref", "current_controlled_time",
             "current_controlled_time_evidence_ref", "lease_recheck_required",
             "exact_record_and_frontier_match_required", "required_state_at_dispatch",
             "stale_expired_revoked_or_indeterminate_disposition"
@@ -290,6 +349,8 @@
               }
             },
             "current_lease_state_evidence_ref": { "$ref": "#/$defs/artifact_reference" },
+            "current_lease_state_event_ref": { "$ref": "#/$defs/immutable_reference" },
+            "current_controlled_time": { "$ref": "#/$defs/timestamp" },
             "current_controlled_time_evidence_ref": { "$ref": "#/$defs/artifact_reference" },
             "lease_recheck_required": { "const": true },
             "exact_record_and_frontier_match_required": { "const": true },
@@ -303,7 +364,22 @@
           "properties": {
             "reservation_ref": { "$ref": "#/$defs/immutable_reference" },
             "maximum_resource": { "$ref": "#/$defs/execution_budget" },
-            "over_reservation_dispatch_allowed": { "const": false }
+            "over_reservation_dispatch_allowed": { "const": false },
+            "reservation_created_event_ref": { "$ref": "#/$defs/resource_reservation_created_event_reference" },
+            "operational_dimension_keys": {
+              "type": "array", "minItems": 1, "uniqueItems": true,
+              "items": { "$ref": "#/$defs/identifier" }
+            },
+            "verification_capacity_dimension_keys": {
+              "type": "array", "minItems": 1, "uniqueItems": true,
+              "items": { "$ref": "#/$defs/identifier" }
+            },
+            "combined_non_fungible_reservation": { "const": true },
+            "cross_dimension_compensation_allowed": { "const": false },
+            "claim_command_type": { "const": "attempt.start" },
+            "claim_event_must_share_dispatch_commit": { "const": true },
+            "release_or_expiry_preclaim_only": { "const": true },
+            "claimed_ceiling_survives_terminal_attempt": { "const": true }
           }
         },
         "stale_or_revoked_disposition": { "const": "refuse" },
@@ -318,13 +394,23 @@
           "oneOf": [
             {
               "type": "object", "additionalProperties": false,
-              "required": ["sandbox_ref", "network_access", "external_egress_permitted", "provider_spend_permitted", "external_effect_dispatch_required"],
+              "required": [
+                "isolation_mode", "network_access", "external_egress_permitted",
+                "provider_or_model_access_permitted", "provider_spend_permitted",
+                "ambient_credentials_permitted", "external_effect_dispatch_required",
+                "input_mount_allowed_only_after_attempt_start_commit",
+                "process_spawn_allowed_only_after_attempt_start_commit"
+              ],
               "properties": {
-                "sandbox_ref": { "$ref": "#/$defs/immutable_reference" },
+                "isolation_mode": { "const": "deny_by_default" },
                 "network_access": { "const": "none" },
                 "external_egress_permitted": { "const": false },
+                "provider_or_model_access_permitted": { "const": false },
                 "provider_spend_permitted": { "const": false },
-                "external_effect_dispatch_required": { "const": false }
+                "ambient_credentials_permitted": { "const": false },
+                "external_effect_dispatch_required": { "const": false },
+                "input_mount_allowed_only_after_attempt_start_commit": { "const": true },
+                "process_spawn_allowed_only_after_attempt_start_commit": { "const": true }
               }
             },
             { "type": "null" }
@@ -375,9 +461,19 @@
             "properties": {
               "local_isolated": { "type": "object" },
               "governed_external_processing": { "type": "null" },
+              "prospective_materialization": { "type": "object" },
+              "sandbox_capability": { "type": "object" },
               "dispatch_command_type": { "const": "attempt.start" },
+              "required_authority_grant_refs": { "minItems": 5, "maxItems": 5 },
               "recheck_dimensions": { "not": { "contains": { "enum": ["exposure", "provider_configuration"] } } },
               "resource_and_spend_reservation": {
+                "required": [
+                  "reservation_created_event_ref", "operational_dimension_keys",
+                  "verification_capacity_dimension_keys", "combined_non_fungible_reservation",
+                  "cross_dimension_compensation_allowed", "claim_command_type",
+                  "claim_event_must_share_dispatch_commit", "release_or_expiry_preclaim_only",
+                  "claimed_ceiling_survives_terminal_attempt"
+                ],
                 "properties": {
                   "maximum_resource": {
                     "properties": {
@@ -397,6 +493,8 @@
             "properties": {
               "local_isolated": { "type": "null" },
               "governed_external_processing": { "type": "object" },
+              "prospective_materialization": { "type": "null" },
+              "sandbox_capability": { "type": "null" },
               "dispatch_command_type": { "const": "external_effect.start" },
               "recheck_dimensions": {
                 "allOf": [
@@ -448,6 +546,17 @@
             "event_digest": { "$ref": "#/$defs/digest" }
           }
         }
+      }
+    },
+    "resource_reservation_created_event_reference": {
+      "type": "object", "additionalProperties": false,
+      "required": ["event_type", "event_version", "event_id", "schema_id", "event_digest"],
+      "properties": {
+        "event_type": { "const": "resource.reservation_created" },
+        "event_version": { "const": "1.0.0" },
+        "event_id": { "$ref": "#/$defs/identifier" },
+        "schema_id": { "const": "urn:odeya:schema:research-event:0.6.0" },
+        "event_digest": { "$ref": "#/$defs/digest" }
       }
     },
     "research_state_view_reference": {

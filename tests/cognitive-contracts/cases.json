@@ -1319,6 +1319,78 @@
       "mutations": [
         {"op": "replace", "path": "/candidate_set/0/dimension_observations/1/upper_bound", "value": "8.7e-1"}
       ]
+    },
+    {
+      "name": "work-contract-local-dispatch-requires-exact-five-grant-references",
+      "schema": "schemas/work-contract.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/work-contract.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "remove", "path": "/dispatch_boundary/required_authority_grant_refs/4"}
+      ]
+    },
+    {
+      "name": "work-contract-local-materialization-rejects-precommit-byte-visibility",
+      "schema": "schemas/work-contract.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/work-contract.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/dispatch_boundary/prospective_materialization/bytes_visible_before_attempt_start_commit", "value": true}
+      ]
+    },
+    {
+      "name": "work-contract-local-sandbox-rejects-network-access",
+      "schema": "schemas/work-contract.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/work-contract.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/dispatch_boundary/sandbox_capability/network_access", "value": "restricted"}
+      ]
+    },
+    {
+      "name": "work-contract-local-reservation-requires-creation-event-binding",
+      "schema": "schemas/work-contract.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/work-contract.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "remove", "path": "/dispatch_boundary/resource_and_spend_reservation/reservation_created_event_ref"}
+      ]
+    },
+    {
+      "name": "work-contract-local-claimed-ceiling-cannot-release-before-settlement",
+      "schema": "schemas/work-contract.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/work-contract.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/dispatch_boundary/resource_and_spend_reservation/claimed_ceiling_survives_terminal_attempt", "value": false}
+      ]
+    },
+    {
+      "name": "work-contract-local-profile-rejects-nonzero-provider-spend",
+      "schema": "schemas/work-contract.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/work-contract.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/dispatch_boundary/resource_and_spend_reservation/maximum_resource/spend/amount", "value": "1"}
+      ]
+    },
+    {
+      "name": "work-contract-local-start-requires-current-lease-event",
+      "schema": "schemas/work-contract.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/work-contract.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "remove", "path": "/dispatch_boundary/lease_recheck/current_lease_state_event_ref"}
+      ]
+    },
+    {
+      "name": "work-contract-local-profile-requires-prospective-materialization",
+      "schema": "schemas/work-contract.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/work-contract.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/dispatch_boundary/prospective_materialization", "value": null}
+      ]
     }
   ]
 }

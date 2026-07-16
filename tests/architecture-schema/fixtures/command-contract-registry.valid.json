@@ -60,11 +60,176 @@
         "tool_or_model_output_is_authority": false
       },
       "authority_contract": {
-        "mode": "bounded_grant",
-        "required_role": "structural-role",
-        "assignment_required": true,
-        "grant_required": true,
-        "grant_consumption_point": "admission_commit",
+        "alternative_selection": {
+          "exactly_one_required": true,
+          "selected_by": "kernel_from_contract_payload_state_and_internal_trigger",
+          "caller_may_select": false,
+          "unmatched_or_ambiguous": "reject"
+        },
+        "alternatives": [
+          {
+            "alternative_id": "authority.ingress",
+            "invocation_path": "caller_ingress",
+            "caller_invocation_permitted": true,
+            "mode": "ingress_policy",
+            "selection_rule_refs": [
+              {
+                "rule_id": "rule.structural.select-ingress",
+                "version": "0.1.0",
+                "rule_digest": "sha256:4141414141414141414141414141414141414141414141414141414141414141"
+              }
+            ],
+            "internal_trigger_rule_refs": [],
+            "policy_decision_required": true,
+            "constitutional_artifact_required": false,
+            "assignment_slots": [],
+            "grant_slots": [],
+            "slot_order_contract": "array_order_equals_contiguous_zero_based_slot_order_with_unique_slot_ids",
+            "missing_or_extra_authority_evidence": "reject"
+          },
+          {
+            "alternative_id": "authority.bootstrap",
+            "invocation_path": "caller_ingress",
+            "caller_invocation_permitted": true,
+            "mode": "constitutional_bootstrap",
+            "selection_rule_refs": [
+              {
+                "rule_id": "rule.structural.select-bootstrap",
+                "version": "0.1.0",
+                "rule_digest": "sha256:4242424242424242424242424242424242424242424242424242424242424242"
+              }
+            ],
+            "internal_trigger_rule_refs": [],
+            "policy_decision_required": false,
+            "constitutional_artifact_required": true,
+            "assignment_slots": [],
+            "grant_slots": [],
+            "slot_order_contract": "array_order_equals_contiguous_zero_based_slot_order_with_unique_slot_ids",
+            "missing_or_extra_authority_evidence": "reject"
+          },
+          {
+            "alternative_id": "authority.internal-deadline",
+            "invocation_path": "internal_deterministic",
+            "caller_invocation_permitted": false,
+            "mode": "assignment_only",
+            "selection_rule_refs": [
+              {
+                "rule_id": "rule.structural.select-internal-deadline",
+                "version": "0.1.0",
+                "rule_digest": "sha256:4343434343434343434343434343434343434343434343434343434343434343"
+              }
+            ],
+            "internal_trigger_rule_refs": [
+              {
+                "rule_id": "rule.structural.controlled-deadline-trigger",
+                "version": "0.1.0",
+                "rule_digest": "sha256:4444444444444444444444444444444444444444444444444444444444444444"
+              }
+            ],
+            "policy_decision_required": true,
+            "constitutional_artifact_required": false,
+            "assignment_slots": [
+              {
+                "slot_id": "assignment.verification",
+                "slot_order": 0,
+                "role": "verification",
+                "assignment_required": true,
+                "distinct_effective_principal_group": null
+              }
+            ],
+            "grant_slots": [],
+            "slot_order_contract": "array_order_equals_contiguous_zero_based_slot_order_with_unique_slot_ids",
+            "missing_or_extra_authority_evidence": "reject"
+          },
+          {
+            "alternative_id": "authority.caller-multigrant",
+            "invocation_path": "caller_ingress",
+            "caller_invocation_permitted": true,
+            "mode": "bounded_grants",
+            "selection_rule_refs": [
+              {
+                "rule_id": "rule.structural.select-caller-multigrant",
+                "version": "0.1.0",
+                "rule_digest": "sha256:4545454545454545454545454545454545454545454545454545454545454545"
+              }
+            ],
+            "internal_trigger_rule_refs": [],
+            "policy_decision_required": true,
+            "constitutional_artifact_required": false,
+            "assignment_slots": [
+              {
+                "slot_id": "assignment.safety",
+                "slot_order": 0,
+                "role": "safety",
+                "assignment_required": true,
+                "distinct_effective_principal_group": "group.structural.separation"
+              },
+              {
+                "slot_id": "assignment.execution",
+                "slot_order": 1,
+                "role": "execution",
+                "assignment_required": true,
+                "distinct_effective_principal_group": "group.structural.separation"
+              },
+              {
+                "slot_id": "assignment.verification",
+                "slot_order": 2,
+                "role": "verification",
+                "assignment_required": true,
+                "distinct_effective_principal_group": "group.structural.separation"
+              }
+            ],
+            "grant_slots": [
+              {
+                "slot_id": "grant.safety",
+                "slot_order": 0,
+                "role": "safety",
+                "assignment_slot_id": "assignment.safety",
+                "cardinality": 1,
+                "grant_ids_distinct_across_slots": true,
+                "grant_identity_scope": "exact_action_instance",
+                "action_instance_binding_fields": ["grant_id", "command_id", "canonical_request_digest", "target_identity"],
+                "replay_mode": "single_use",
+                "max_uses": 1,
+                "consumption_point": "domain_commit",
+                "use_event_occurrences": 1,
+                "exhaustion_event_occurrences": 1
+              },
+              {
+                "slot_id": "grant.execution",
+                "slot_order": 1,
+                "role": "execution",
+                "assignment_slot_id": "assignment.execution",
+                "cardinality": 1,
+                "grant_ids_distinct_across_slots": true,
+                "grant_identity_scope": "exact_action_instance",
+                "action_instance_binding_fields": ["grant_id", "command_id", "canonical_request_digest", "target_identity"],
+                "replay_mode": "single_use",
+                "max_uses": 1,
+                "consumption_point": "domain_commit",
+                "use_event_occurrences": 1,
+                "exhaustion_event_occurrences": 1
+              },
+              {
+                "slot_id": "grant.verification",
+                "slot_order": 2,
+                "role": "verification",
+                "assignment_slot_id": "assignment.verification",
+                "cardinality": 1,
+                "grant_ids_distinct_across_slots": true,
+                "grant_identity_scope": "exact_action_instance",
+                "action_instance_binding_fields": ["grant_id", "command_id", "canonical_request_digest", "target_identity"],
+                "replay_mode": "single_use",
+                "max_uses": 1,
+                "consumption_point": "domain_commit",
+                "use_event_occurrences": 1,
+                "exhaustion_event_occurrences": 1
+              }
+            ],
+            "slot_order_contract": "array_order_equals_contiguous_zero_based_slot_order_with_unique_slot_ids",
+            "missing_or_extra_authority_evidence": "reject"
+          }
+        ],
         "caller_authority_assertion_sufficient": false
       },
       "required_evidence_families": [
@@ -86,16 +251,165 @@
       ],
       "legal_event_alternatives": [
         {
-          "alternative_id": "structural-origin",
+          "alternative_id": "structural-ingress",
+          "authority_alternative_ids": ["authority.ingress"],
           "decision_kind": "emit_atomic_ordered_batch",
           "events": [
             {
+              "occurrence_id": "occurrence.structural-ingress",
               "event_type": "structural.event_recorded",
               "event_version": "0.1.0",
               "event_member_digest": "sha256:5555555555555555555555555555555555555555555555555555555555555555",
-              "cohort_position": 0
+              "cohort_position": 0,
+              "grant_slot_binding": null
             }
           ],
+          "occurrence_order_contract": "array_order_equals_contiguous_zero_based_cohort_position_with_unique_occurrence_ids",
+          "grant_slot_event_contract": "emit_has_exact_use_and_exhaustion_per_selected_bounded_slot_noop_has_zero",
+          "cohort_rule_refs": [
+            {
+              "rule_id": "rule.structural.command-cohort",
+              "version": "0.1.0",
+              "rule_digest": "sha256:6666666666666666666666666666666666666666666666666666666666666666"
+            }
+          ]
+        },
+        {
+          "alternative_id": "structural-bootstrap",
+          "authority_alternative_ids": ["authority.bootstrap"],
+          "decision_kind": "emit_atomic_ordered_batch",
+          "events": [
+            {
+              "occurrence_id": "occurrence.structural-bootstrap",
+              "event_type": "structural.bootstrap_recorded",
+              "event_version": "0.1.0",
+              "event_member_digest": "sha256:5757575757575757575757575757575757575757575757575757575757575757",
+              "cohort_position": 0,
+              "grant_slot_binding": null
+            }
+          ],
+          "occurrence_order_contract": "array_order_equals_contiguous_zero_based_cohort_position_with_unique_occurrence_ids",
+          "grant_slot_event_contract": "emit_has_exact_use_and_exhaustion_per_selected_bounded_slot_noop_has_zero",
+          "cohort_rule_refs": [
+            {
+              "rule_id": "rule.structural.command-cohort",
+              "version": "0.1.0",
+              "rule_digest": "sha256:6666666666666666666666666666666666666666666666666666666666666666"
+            }
+          ]
+        },
+        {
+          "alternative_id": "structural-internal-deadline",
+          "authority_alternative_ids": ["authority.internal-deadline"],
+          "decision_kind": "emit_atomic_ordered_batch",
+          "events": [
+            {
+              "occurrence_id": "occurrence.structural-deadline",
+              "event_type": "structural.deadline_recorded",
+              "event_version": "0.1.0",
+              "event_member_digest": "sha256:5858585858585858585858585858585858585858585858585858585858585858",
+              "cohort_position": 0,
+              "grant_slot_binding": null
+            }
+          ],
+          "occurrence_order_contract": "array_order_equals_contiguous_zero_based_cohort_position_with_unique_occurrence_ids",
+          "grant_slot_event_contract": "emit_has_exact_use_and_exhaustion_per_selected_bounded_slot_noop_has_zero",
+          "cohort_rule_refs": [
+            {
+              "rule_id": "rule.structural.command-cohort",
+              "version": "0.1.0",
+              "rule_digest": "sha256:6666666666666666666666666666666666666666666666666666666666666666"
+            }
+          ]
+        },
+        {
+          "alternative_id": "structural-multigrant",
+          "authority_alternative_ids": ["authority.caller-multigrant"],
+          "decision_kind": "emit_atomic_ordered_batch",
+          "events": [
+            {
+              "occurrence_id": "occurrence.grant-use.safety",
+              "event_type": "authority.grant_used",
+              "event_version": "1.0.0",
+              "event_member_digest": "sha256:5959595959595959595959595959595959595959595959595959595959595959",
+              "cohort_position": 0,
+              "grant_slot_binding": {
+                "authority_alternative_id": "authority.caller-multigrant",
+                "grant_slot_id": "grant.safety",
+                "grant_fact": "use"
+              }
+            },
+            {
+              "occurrence_id": "occurrence.grant-use.execution",
+              "event_type": "authority.grant_used",
+              "event_version": "1.0.0",
+              "event_member_digest": "sha256:5959595959595959595959595959595959595959595959595959595959595959",
+              "cohort_position": 1,
+              "grant_slot_binding": {
+                "authority_alternative_id": "authority.caller-multigrant",
+                "grant_slot_id": "grant.execution",
+                "grant_fact": "use"
+              }
+            },
+            {
+              "occurrence_id": "occurrence.grant-use.verification",
+              "event_type": "authority.grant_used",
+              "event_version": "1.0.0",
+              "event_member_digest": "sha256:5959595959595959595959595959595959595959595959595959595959595959",
+              "cohort_position": 2,
+              "grant_slot_binding": {
+                "authority_alternative_id": "authority.caller-multigrant",
+                "grant_slot_id": "grant.verification",
+                "grant_fact": "use"
+              }
+            },
+            {
+              "occurrence_id": "occurrence.structural-domain",
+              "event_type": "structural.event_recorded",
+              "event_version": "0.1.0",
+              "event_member_digest": "sha256:5555555555555555555555555555555555555555555555555555555555555555",
+              "cohort_position": 3,
+              "grant_slot_binding": null
+            },
+            {
+              "occurrence_id": "occurrence.grant-exhaustion.safety",
+              "event_type": "authority.grant_exhausted",
+              "event_version": "1.0.0",
+              "event_member_digest": "sha256:6060606060606060606060606060606060606060606060606060606060606060",
+              "cohort_position": 4,
+              "grant_slot_binding": {
+                "authority_alternative_id": "authority.caller-multigrant",
+                "grant_slot_id": "grant.safety",
+                "grant_fact": "exhaustion"
+              }
+            },
+            {
+              "occurrence_id": "occurrence.grant-exhaustion.execution",
+              "event_type": "authority.grant_exhausted",
+              "event_version": "1.0.0",
+              "event_member_digest": "sha256:6060606060606060606060606060606060606060606060606060606060606060",
+              "cohort_position": 5,
+              "grant_slot_binding": {
+                "authority_alternative_id": "authority.caller-multigrant",
+                "grant_slot_id": "grant.execution",
+                "grant_fact": "exhaustion"
+              }
+            },
+            {
+              "occurrence_id": "occurrence.grant-exhaustion.verification",
+              "event_type": "authority.grant_exhausted",
+              "event_version": "1.0.0",
+              "event_member_digest": "sha256:6060606060606060606060606060606060606060606060606060606060606060",
+              "cohort_position": 6,
+              "grant_slot_binding": {
+                "authority_alternative_id": "authority.caller-multigrant",
+                "grant_slot_id": "grant.verification",
+                "grant_fact": "exhaustion"
+              }
+            }
+          ],
+          "occurrence_order_contract": "array_order_equals_contiguous_zero_based_cohort_position_with_unique_occurrence_ids",
+          "grant_slot_event_contract": "emit_has_exact_use_and_exhaustion_per_selected_bounded_slot_noop_has_zero",
           "cohort_rule_refs": [
             {
               "rule_id": "rule.structural.command-cohort",

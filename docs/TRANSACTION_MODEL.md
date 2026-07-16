@@ -56,6 +56,28 @@ The commit is the linearization point. Before it, no domain transition happened.
 
 The PolicyDecision, AdmissionEvidenceBundle and referenced decision/result records, event batch, command receipt, aggregate-head advance, authority consumption, resource reservation, and causally required outbox records are one database transaction. A failure rolls them all back. Network calls and long computation never occur while this transaction is open.
 
+For a multi-aggregate batch, commit visibility is indivisible. The stream
+allocator, every affected aggregate head, the receipt, checkpoint eligibility,
+and current-serving frontier advance only to the complete batch boundary. No
+reducer snapshot, checkpoint, receipt response, or projection advertised as
+current may end between two events in the batch. Replay that finds a missing,
+reordered, wrong-producer, or split mandatory cohort quarantines the affected
+scope; reducers never synthesize the missing companion.
+
+Two first-slice scientific consequences use this law directly:
+
+- `claim.supersede` compare-and-sets ClaimVersion and
+  DependencyInvalidationFrontier together, emitting supersession before the
+  monotone transitive invalid-source fence. Exact dependencies live in
+  immutable ClaimVersion references; reverse fanout is a rebuildable index.
+- `run.determine_validity` originates RunValidity and MeasurementDisposition
+  together. The only invalid branch is `invalid + no_valid_measurement`; a
+  partial pair, or `invalid + valid_measurement`, is unrepresentable.
+
+Any downstream eligibility or current-serving decision evaluates those exact
+complete frontiers, never an asynchronously caught-up fanout or one half of a
+scientific pair.
+
 ### Command idempotency
 
 `command_id` is globally unique within the idempotency scope and binds to actor, mission or owning aggregate, command type/version/schema, exact registry snapshot/activation/member record, target positions, authority evidence, causal inputs, complete payload, and canonical request digest.
@@ -170,6 +192,33 @@ Workflow callbacks are untrusted transport inputs. They are schema-validated, de
 
 The scheduler's internal retry policy may retry only activity classes that the Odeya work contract marks retryable. It cannot retry policy denial, protocol invalidity, suspected compromise, publication, irreversible physical action, or an ambiguous external write.
 
+### Bounded local verification profile
+
+The first proof slice does not import the general scheduler as scientific
+authority. `verification.assign` atomically binds one exact local WorkContract,
+LocalMaterializationIntent, active WorkLease, sandbox capability, current
+DataUseDecisions, and one combined non-fungible reservation; it does not mount
+bytes or launch work. `attempt.start` is the sole local dispatch-claim command.
+It rechecks all exact identities, consumes the five ordered safety/data-rights/
+resource/execution/verification grants, claims the reservation, records
+`attempt.started + verification.started`, and writes the stable local-launch
+outbox in one commit. Only after that commit may the launcher mount read-only
+inputs or spawn the sandbox.
+
+`attempt.report` records one terminal or completion-unknown execution fact plus
+actual input/code/environment, visibility, negative-flow, teardown, and raw
+resource-observation references. It neither settles ResourceLedger nor decides
+scientific validity. `verification.complete` separately consumes the immutable
+attempt/package evidence. Network, provider/model, ambient credential, external
+write, cloud, GPU, and spend capability is exactly zero in this profile.
+
+Assignment/start/invalidation/deadline lock verification, work-item, resource,
+and grant heads in the global order. Invalidation/deadline first may revoke or
+expire the lease and release/expire the active reservation. Start first makes
+the hold claimed forever until exact observation and settlement; crash,
+timeout, callback loss, revocation, invalidation, restore, or unknown visibility
+cannot release it or justify a blind retry.
+
 ## Resource reservation and settlement protocol
 
 A resource reservation is a child state machine owned by one `resource_budget` aggregate. Its vectors use a registered unit profile and are closed over non-fungible execution units, per-currency minor units, and five verification-capacity dimensions. Every transition is a canonical event cohort; a scheduler, worker, provider, or meter cannot mutate a hold directly.
@@ -183,6 +232,15 @@ A resource reservation is a child state machine owned by one `resource_budget` a
 **R3 — settle.** Only a claimed reservation with the required exact observations can record `resource.reservation_settled`. For each dimension, settlement proves `net = reserved_consumed + overage` and `ceiling = reserved_consumed + unused`; only `unused` returns to availability, `reserved_consumed` remains consumed, overage remains an explicit breach/liability, and the hold becomes zero. Money additionally proves `net = billed - refunded`; non-money uses actual use. Unknown usage cannot settle.
 
 A crash or recovery after R1 never rewinds to R0 and never releases capacity. The full ceiling stays held until exact evidence supports R3. This conservative rule prevents a restarted worker or dispatcher from double-claiming budget while the first attempt may still have consumed resources. Verification uses the same lifecycle: assignment/reservation, `verification.started`/claim, observed IV0–IV4 capacity use, and settlement are exact cohorts rather than a separate trust-budget mechanism.
+
+For the bounded local profile, one VerificationRun owns one combined vector
+covering its operational and IV0-IV4 coordinates. A clean replay is a distinct
+VerificationRun and reservation. `resource.record_observation` emits exactly one
+typed `resource.usage_observed`; when that observation completes the frozen
+profile, the same command batch may also emit settlement. Non-money dimensions
+require exact actual usage. Money dimensions require exact billed and refunded
+observations. Attempted use is diagnostic. An explicitly empty no-money domain
+is not a fabricated zero vector.
 
 ## External-effect protocol
 

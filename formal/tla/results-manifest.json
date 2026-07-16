@@ -1,12 +1,14 @@
 {
-  "schema_version": "0.2.0",
+  "schema_version": "0.3.0",
   "status": "bounded_architecture_model_check_candidate",
-  "recorded_at": "2026-07-15T22:11:39Z",
+  "recorded_at": "2026-07-16T00:09:53Z",
+  "evidence_composition": "single_post_integration_full_harness_execution",
   "toolchain_ref": "toolchain.lock.json",
   "toolchain_sha256": "0a6ff3fa84036efbc3e170977499add16d6afd9fec3e95550e0e84a9b2e4d90d",
   "harness": {
     "path": "check.sh",
-    "sha256": "b9bd8847dee96ab47a95c521795ce9374135d85d7f64a87c02cafcac70236449",
+    "sha256": "e2f6f752d77c61e4dbae1e2c11eacd3902b6a30a8530e72987381dd95c608bce",
+    "prior_retained_base_run_sha256": "b9bd8847dee96ab47a95c521795ce9374135d85d7f64a87c02cafcac70236449",
     "execution_order": "sequential_isolated_metadirs"
   },
   "execution_profile": {
@@ -29,16 +31,18 @@
     "metadir_cleanup": "harness_exit_trap",
     "command_template": "java -XX:+UseParallelGC -jar /tmp/odeya-tla/v1.7.4/tla2tools.jar -workers 1 -seed <seed> -fp <fingerprint-polynomial> -cleanup -metadir <tmp> -config <config> <module>"
   },
-  "retained_full_suite_run": {
+  "integrated_full_suite_run": {
+    "harness_sha256": "e2f6f752d77c61e4dbae1e2c11eacd3902b6a30a8530e72987381dd95c608bce",
     "exit_code": 0,
-    "completed_at": "2026-07-15T22:11:39Z",
-    "wall_seconds": 118.07,
-    "user_cpu_seconds": 124.50,
-    "system_cpu_seconds": 10.54,
+    "first_tlc_started_at": "2026-07-16T00:08:01Z",
+    "completed_at": "2026-07-16T00:09:53Z",
+    "observed_first_to_last_tlc_seconds": 112,
+    "runtime_precision": "whole_second_tlc_log_timestamps_excludes_pre_tlc_sany_time",
     "sany_result": "pass",
-    "safe_model_result": "6_of_6_distinct_models_pass",
-    "safe_execution_result": "7_of_7_pass_including_alternate_cognitive_fingerprint",
-    "negative_control_result": "26_of_26_expected_counterexamples"
+    "toolchain_result": "pinned_digest_verified",
+    "safe_model_result": "7_of_7_distinct_models_pass",
+    "safe_execution_result": "8_of_8_pass_including_alternate_cognitive_fingerprint",
+    "negative_control_result": "30_of_30_expected_counterexamples"
   },
   "models": [
     {
@@ -392,24 +396,80 @@
           "trace_depth": 3
         }
       ]
+    },
+    {
+      "module": "CompositeAuthorityResource.tla",
+      "sha256": "028e29374e8cd5930c2fd0452c1962015ab1265cf4a616a76b09749d6e8910c5",
+      "retained_execution_kind": "integrated_full_harness",
+      "safe_config": {
+        "path": "CompositeAuthorityResource.safe.cfg",
+        "sha256": "09a439bc57cb4d72413a71e6c391b52c768ff4c03badd434c36fbed78a096036",
+        "exit_code": 0,
+        "result": "pass",
+        "states_generated": 29764,
+        "distinct_states": 6411,
+        "states_left": 0,
+        "graph_depth": 11,
+        "fingerprint_collision_probability_optimistic": "8.1e-12"
+      },
+      "negative_controls": [
+        {
+          "path": "CompositeAuthorityResource.partial-grant-cohort.counterexample.cfg",
+          "sha256": "8ae063e8972b80962a09591e3b574504a3f64969a16ee003dd1bcde0184e86c1",
+          "exit_code": 12,
+          "violated_invariant": "AcceptedCohortConsumesAndExhaustsExactlyAllSlots",
+          "states_generated_before_stop": 4,
+          "distinct_states_before_stop": 4,
+          "trace_depth": 2
+        },
+        {
+          "path": "CompositeAuthorityResource.release-after-claim.counterexample.cfg",
+          "sha256": "da52692b51e187e3a1ff129ddce6ce695ef97b9c0deb3a6e048c16e78e10623f",
+          "exit_code": 12,
+          "violated_invariant": "NoReleaseOrExpiryAfterClaim",
+          "states_generated_before_stop": 41,
+          "distinct_states_before_stop": 39,
+          "trace_depth": 4
+        },
+        {
+          "path": "CompositeAuthorityResource.inferred-zero-partial-settlement.counterexample.cfg",
+          "sha256": "65e0d4545f5659ead39a556ade0c03100320e43e5124a31e3b19dbf2a0e02ab4",
+          "exit_code": 12,
+          "violated_invariant": "SettlementRequiresExactEvidenceWithoutZeroInference",
+          "states_generated_before_stop": 41,
+          "distinct_states_before_stop": 39,
+          "trace_depth": 4
+        },
+        {
+          "path": "CompositeAuthorityResource.wrong-race-order.counterexample.cfg",
+          "sha256": "5db50c6f2ef6d5833e4024ea464d131cc629578a68b71521053fa64ef362ef28",
+          "exit_code": 12,
+          "violated_invariant": "StartCannotFollowPreclaimTerminal",
+          "states_generated_before_stop": 389,
+          "distinct_states_before_stop": 217,
+          "trace_depth": 5
+        }
+      ]
     }
   ],
   "totals": {
-    "safe_models_passed": 6,
+    "aggregation_basis": "arithmetic_sum_of_separate_graphs_within_one_integrated_sequential_harness_invocation",
+    "safe_models_passed": 7,
     "safe_models_failed": 0,
-    "safe_executions_passed": 7,
+    "safe_executions_passed": 8,
     "supplemental_safe_executions_passed": 1,
-    "safe_states_generated_sum": 13128119,
-    "safe_distinct_states_sum_across_models": 1792823,
-    "safe_execution_states_generated_sum_including_supplemental": 25085464,
-    "safe_execution_distinct_states_sum_including_supplemental": 3361975,
-    "expected_counterexamples_reproduced": 26,
+    "safe_states_generated_sum": 13157883,
+    "safe_distinct_states_sum_across_models": 1799234,
+    "safe_execution_states_generated_sum_including_supplemental": 25115228,
+    "safe_execution_distinct_states_sum_including_supplemental": 3368386,
+    "expected_counterexamples_reproduced": 30,
     "unexpected_counterexamples": 0,
-    "counterexample_states_generated_before_stop_sum": 965842,
-    "counterexample_distinct_states_before_stop_sum": 199922
+    "counterexample_states_generated_before_stop_sum": 966317,
+    "counterexample_distinct_states_before_stop_sum": 200221
   },
   "open_findings": [
-    "FM-A-001"
+    "FM-A-001",
+    "FM-A-002"
   ],
-  "interpretation": "Safety invariants held for every reachable state in the declared finite configurations, subject to TLC fingerprinting and the explicit abstraction assumptions. CognitiveControl also passed the same bounded graph under a second retained seed and fingerprint polynomial; this is robustness evidence, not an independent proof, and the collision estimates are not multiplied. This is not implementation conformance or unbounded proof."
+  "interpretation": "Safety invariants held for every reachable state in the declared finite configurations during one integrated sequential harness invocation, subject to TLC fingerprinting and the explicit abstraction assumptions. The alternate CognitiveControl execution is the same model, configuration, checker, and host under a second seed and fingerprint polynomial; it is not an independent proof. This is not implementation conformance or unbounded proof."
 }

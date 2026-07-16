@@ -52,9 +52,9 @@ Status: proposed Gate A traceability ledger, 2026-07-15. This ledger answers one
 
 | ID | Source lesson | Odeya contract | Required closure evidence | Current state |
 |---|---|---|---|---|
-| MAE-001 | A mission loop described in prompts/docs is not runtime discipline | Deterministic lifecycle kernel and command/event/reducer registry | Every legal transition derives from machine registry; no model-only gate | Registry/root shapes and logical ownership pass; real member records and admissible first-slice closure are absent |
-| MAE-002 | Durable orchestration without research-native evidence semantics is not a research engine | Scientific object family, method registry, claim compiler, verification fabric | First slice traverses protocol to typed verdict/correction/refusal | Structural candidates only; the first-slice hypothesis is non-admissible until C1–C8 close, including C5 execution/materialization admission, and composite replay remains pending |
-| MAE-003 | A handoff/context packet is not canonical state | Event ledger, content-addressed artifacts, checkpoint/witness, derived handoff | Context loss reconstruction yields identical fold and detects stale packet | Structural/formal recovery candidates exist; C8 still lacks a machine-bound prerequisite registry/root/activation and composite reconstruction replay |
+| MAE-001 | A mission loop described in prompts/docs is not runtime discipline | Deterministic lifecycle kernel and command/event/reducer registry | Every legal transition derives from machine registry; no model-only gate | Exact 43/60/25 architecture scope passes cross-file validation; real immutable member records and activation are absent |
+| MAE-002 | Durable orchestration without research-native evidence semantics is not a research engine | Scientific object family, method registry, claim compiler, verification fabric | First slice traverses protocol to typed verdict/correction/refusal | C1-C8 producer/cohort choices now close representationally, including specialized lease/materialization/sandbox/attempt admission; exact members and composite replay remain pending |
+| MAE-003 | A handoff/context packet is not canonical state | Event ledger, content-addressed artifacts, checkpoint/witness, derived handoff | Context loss reconstruction yields identical fold and detects stale packet | RegistryActivation structurally embeds machine-bound P0 over root/C0, witnessed checkpoint, and clear recovery frontier; no real P0 instance or composite reconstruction replay exists |
 | MAE-004 | Provider/tool convenience cannot define the architecture | Provider-neutral ports, typed capability gateway, replaceable model/router records | Fallback is a new attempt; adapters cannot weaken policy/scientific semantics | Cognitive model/routing schemas pass locally; governed dispatch/materialization/replay pending |
 | MAE-005 | Self-reported completion, grounding, or learning is not evidence | External observation, verification package, grounded outcome, promotion quarantine | Fabricated tool/learning receipts and self-score cannot promote | Structural candidate; adversarial traces pending |
 
@@ -65,8 +65,8 @@ Status: proposed Gate A traceability ledger, 2026-07-15. This ledger answers one
 | XPM-001 | Positive, null/inconclusive, invalid, discrepant, corrected, blocked, and refused states receive equal fidelity | Composite fixture produces all states without vocabulary collapse | Nine fixtures selected and mapped; rights/import/reducer/admission/replay absent |
 | XPM-002 | Exact negative evidence is product value when it prevents an unsupported action or claim | Scorecard measures valid stop/refusal and avoided false claim, not paper count | Specified; evaluation run pending |
 | XPM-003 | Scientific truth, authority, rights, cost, safety, and publication remain orthogonal | Cross-axis mutation suite fails at the intended layer | Structural and bounded local suites expanded; exact cross-object/reducer semantics and review remain incomplete |
-| XPM-004 | Generated cognition proposes; deterministic control admits | Model direct-write, narrative-to-verdict, and consensus-as-evidence controls fail | Cognitive suite passes 142 cases / 14 bounded semantic; registry, execution, and reducer replay pending |
-| XPM-005 | Verification capacity must constrain generation | Claim-bearing candidate without required reserve cannot admit | Resource events/traces and bounded formal model exist; C1/C4/C6 and the C5 execution/materialization cohort remain open |
+| XPM-004 | Generated cognition proposes; deterministic control admits | Model direct-write, narrative-to-verdict, and consensus-as-evidence controls fail | Cognitive suite passes 150 cases / 14 bounded semantic; registry, execution, and reducer replay pending |
+| XPM-005 | Verification capacity must constrain generation | Claim-bearing candidate without required reserve cannot admit | One combined per-run reservation, ordered grant slots, typed settlement, and local start race are resolved and pass the fixed bounded composite model; exact members, refinement, and independent replay remain open |
 | XPM-006 | A correction or adverse result must reach memory, benchmark, UI, publication, and investor surfaces | Dependency fanout trace shows no stale current projection | Projection impact schema/vectors exist; real correction cohort, reducers, cache stores, and fanout trace pending |
 | XPM-007 | Exact source identity and usage permission precede “absorption” | No project bytes copied before per-artifact decision and immutable manifest | Enforced by policy; rights decisions absent |
 | XPM-008 | The proof missions are requirements sources, not training data or repositories to merge | Architecture candidate references pinned facts only; no runtime/source merge | Satisfied at current architecture boundary |
@@ -76,9 +76,9 @@ Status: proposed Gate A traceability ledger, 2026-07-15. This ledger answers one
 The important lessons are now represented, but they are not all closed. The remaining critical path is explicit:
 
 1. settle per-artifact rights and seal the exact import root;
-2. resolve C1–C8 and recompute the first-slice command/event/state/reducer scope before freezing any registry count;
-3. build and admit the resulting exact contract records plus the first-slice statistical/semantic methods using independent implementations and known-bad vectors;
-4. machine-bind the execution/materialization and checkpoint/witness/root/activation/recovery prerequisites;
+2. preserve or explicitly reopen the machine-checked 43-command/60-event/25-state-reducer/11-owner/one-P0 scope;
+3. build and admit the 42 payload, 43 command, 60 event, 25 state, and 25 reducer records plus first-slice statistical/semantic methods using independent implementations and known-bad vectors;
+4. instantiate the structurally bound execution/materialization and checkpoint/witness/root/P0/activation/recovery prerequisites;
 5. run the composite replay and every mutation above, including correction fanout and role/exposure/resource races;
 6. obtain independent statistical, physical-domain, security/privacy, and distributed-systems review; and
 7. bind the results to one clean candidate commit for Daniel's accept/reject/amend decision.

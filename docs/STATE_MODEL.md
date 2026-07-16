@@ -174,6 +174,12 @@ transport:
 
 Recomputing the same bytes is reproducibility. Replication requires new diagnostic data or measurement. Transport requires a predeclared external context.
 
+All three are orthogonal axes of the canonical `verification` aggregate.
+`Verification` is its sole registered reducer. Named Reproducibility,
+Replication, and Transport fold functions are internal pure components tested
+under that reducer; they are not separately registered canonical reducers and
+may not consume the same event a second time.
+
 ### Claim proposal and immutable version
 
 ```text

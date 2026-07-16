@@ -1,6 +1,6 @@
 # Authority and Separation Matrix
 
-Status: proposed constitutional contract, 2026-07-15. This matrix resolves role meanings and the leading human/service boundary. It remains blocked on operator acceptance, root-assignment evidence, and adversarial race review.
+Status: proposed constitutional contract, 2026-07-16. This matrix resolves role meanings and the leading human/service boundary. ADR 0014 additionally closes the first-slice authority alternatives and role-slot cardinality; the bounded composite model passes, while executable refinement, operator acceptance, root/P0 evidence, and independent race review remain blocked.
 
 ## First principle
 
@@ -113,6 +113,12 @@ Bootstrap steps:
 
 Rotation adds a new root-manifest version and checkpoint. It cannot delete the prior root or re-sign old events.
 
+The first mission command additionally requires the exact separately admitted
+`P0.constitutional-recovery-admission` embedded in RegistryActivation. P0 binds
+this non-self-issued root manifest, the EngineContractRoot/C0 bundle, witnessed
+checkpoint, and a clear current recovery/fork/quarantine frontier. It is not an
+assignment or grant and cannot be produced by an ordinary mission command.
+
 ## PolicyDecision admission record
 
 [`PolicyDecision` 0.1.0](../schemas/policy-decision.schema.json) is a pure immutable admission-cohort record, not an authority aggregate and not a caller field. The deterministic kernel produces it from the canonical request digest; exact CommandContractRecord; controlled time; locked aggregate/reference frontier; root, checkpoint, and policy-registry snapshot; exact policy bundle/rules; retained policy-input bytes; and engine build/configuration identity. Its disposition is `allow | deny | indeterminate`; outage, timeout, unsupported input, engine error, or conflicting rules can never become allow. Typed obligations name their exact enforcement point.
@@ -146,6 +152,31 @@ assignment recorded
 - A revocation committed before dispatch claim prevents dispatch. A dispatch claim committed first remains an in-flight historical fact and must be cancelled/reconciled.
 - Delegation can only produce a strict subset of role, action, resource, risk, data, time, use, concurrency, and target scope, with lower remaining depth.
 - A new grant never retroactively authorizes a prior action.
+
+### First-slice action-instance grants
+
+The bounded first-slice profile narrows ordinary `domain_commit` grants further:
+
+```text
+proposal < protocol < safety < data_rights < resource
+< execution < verification < outcome < publication
+```
+
+Every CommandContractRecord contains closed authority alternatives. Trusted
+kernel context selects exactly one; a caller cannot request the internal,
+ingress, bootstrap, or assignment-only path. A bounded alternative declares a
+finite ordered role-slot array. Each slot resolves to a distinct grant bound to
+the exact command ID, canonical request digest, target, role, and controlled
+time with `max_uses=1`.
+
+An accepted N-slot batch emits N separately identified
+`authority.grant_used(domain_commit)` occurrences before the domain cohort and
+N matching `authority.grant_exhausted` occurrences after it. Used and exhausted
+sets are equal. Missing, duplicate, extra, reused, wrong-role, wrong-order, or
+partially committed occurrences invalidate the whole batch. Rejection, noop,
+and exact idempotent replay emit none. This first-slice law does not silently
+change the separately modeled revocable `dispatch_claim` protocol for future
+external effects.
 
 ## Required semantic checks
 

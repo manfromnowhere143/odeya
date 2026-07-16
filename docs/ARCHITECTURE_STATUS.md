@@ -27,19 +27,19 @@ This design fits the strongest retained lessons from the three proof missions. I
 
 | Area | Retained working evidence | Bounded interpretation |
 |---|---|---|
-| Foundation corpus | 98 Draft 2020-12 schemas; 535 valid/adversarial shared-manifest cases; 7 founding cross-field groups; 4 mandatory isolated suites | The full architecture validator passes. Structural and bounded semantic evidence is not runtime or Gate A evidence |
-| Command/event surface | `CommandEnvelope` 0.4.0 exposes 121 design-only discriminators; `ResearchEvent` 0.6.0 has 135 closed branches; 58 direct event fixtures, 16 trace fixtures, and 219 scoped event/trace cases were retained | Every design command remains non-admitted until a real immutable member exists |
+| Foundation corpus | 98 Draft 2020-12 schemas; 564 valid/adversarial shared-manifest cases; 7 founding cross-field groups; 5 mandatory isolated suites | The full architecture validator passes. Structural and bounded semantic evidence is not runtime or Gate A evidence |
+| Command/event surface | `CommandEnvelope` 0.4.0 exposes 121 design-only discriminators; `ResearchEvent` 0.6.0 has 135 closed branches; 61 schema-valid event fixtures and 16 schema-valid replay traces are retained within 166 direct event/trace manifest cases | Every design command remains non-admitted until a real immutable member exists |
 | Registry/root graph | Six registry/root/activation schema subjects validate; the proposed logical manifest covers 9 layers, 30 modules, 47 aggregate owners, 98 schema owners, 121 command owners, and 135 event owners | Ownership and acyclic subject shape are present; no real registry snapshot, root, checkpoint, activation, or handler-set equality exists |
-| Cognitive controls | 142 cases pass, including 14 bounded semantic checks over state views, graph deltas/transitions, work contracts, model configuration, and routing | Models remain proposal/evidence producers; routing is not dispatch or independence authority |
+| Cognitive controls | 150 cases pass, including 14 bounded semantic checks over state views, graph deltas/transitions, work contracts, model configuration, and routing plus retained local-dispatch refusals | Models remain proposal/evidence producers; routing is not dispatch or independence authority |
 | Verification | Eight terminal package fixtures plus assignment/completion/dispute event fixtures and 49 scoped shared-manifest cases | Profile-relative IV0–IV4 structure is present; semantic equality, reducer replay, registry admission, and independent review remain open |
 | Projection | Four schemas, eight fixtures, and 62 cases pass: 37 structural rejects plus 25 bounded semantic vectors | Snapshot/redaction/equivalence/impact shapes are closed locally; two independent reducers, real fanout, leakage/timing, accessibility, and exact release-set equality remain open |
 | Physical science | Eight acyclic schemas; 85 structural expectations and 32 bounded semantic expectations pass; one fixture per schema | Inbar unknown hardware is blocked and its experiment refused. Unit/frame algebra, covariance/propagation, real metrology/VVUQ/safety evidence, reducers, and accountable review remain open |
 | Mathematical science | `EstimandContract` and `ScientificResultEnvelope` 0.1.0 plus optional protocol/metric bindings; 57 cases pass: 38 structurally valid, 19 structurally invalid, 38 bounded semantic checks | Sentinel’s interval crossing zero remains `inconclusive`; it cannot become support, effect absence, equivalence, or an affirmative null without the required prospective contract |
-| Canonical identity | 64 vectors and 4 metamorphic relations agree across pinned Python and Node implementations; audit 0.2 covers 98 schemas and 191 fixtures | The profile is still blocked: 116 unprofiled time paths, 62 number/decimal findings, 652 unscoped digest fields, 53 divergent common-definition names, 11 unpinned profile bindings, and 225 nonconformant fixture timestamps |
-| Bounded formal models | 6 distinct safe TLA+ models, 7 safe executions, and 26 intended counterexamples pass; the alternate cognitive execution uses a second seed/fingerprint profile | This is bounded model evidence on one model/checker/host lineage. It is not an independent proof or runtime verification |
-| First-slice admission | All 121 design names are audited. The current disputed partition is 44 provisionally required / 77 provisionally outside; 52 is an upper-bound event conflict-union and 23 state/reducer rows plus 10 owners are provisional | Only the 121-name current design vocabulary is exact; no Gate A bytes are frozen. The other counts may grow, shrink, or change after C1–C8 close and are not an admissible dependency closure |
+| Canonical identity | 64 vectors and 4 metamorphic relations agree across pinned Python and Node implementations; audit 0.2 covers 98 schemas and 194 fixtures | The profile is still blocked: 118 unprofiled time paths, 62 number/decimal findings, 675 unscoped digest fields, 56 divergent common-definition names, 11 unpinned profile bindings, and 233 nonconformant fixture timestamps |
+| Bounded formal models | 7 distinct safe TLA+ models, 8 safe executions, and 30 intended counterexamples pass in one integrated sequential harness; the alternate cognitive execution uses a second seed/fingerprint profile | This is bounded model evidence on one model/checker/host lineage. It is not an independent proof or runtime verification |
+| First-slice admission | C1-C8 decisions are resolved into an exact architecture-scope candidate: 43 required / 78 outside commands, 60 event types, 25 aggregate/state/reducer families, 11 owners, and one P0 prerequisite; 11 safe references and 12 known-bads pass the bounded adversarial checker | The representational sets are exact and machine-checked; 42 payloads, 43 command members, 60 event members, 25 state members, 25 reducer members, a real P0/root/checkpoint/activation chain, composite replay/refinement proof, and review remain missing. Nothing is admitted or executable |
 
-The exact first-slice refusal and construction order are in [First-Slice Admission Closure Plan](FIRST_SLICE_ADMISSION_CLOSURE_PLAN.md). The generated inventory is non-authoritative architecture evidence only.
+The resolved scope, cohorts, refusal boundary, and construction gaps are in the [First-Slice Admission Resolution Candidate](FIRST_SLICE_ADMISSION_RESOLUTION_2026-07-16.md). Its [machine inventory](../architecture/first-slice-admission-resolution-candidate.json) is exact architecture evidence, not an admitted registry. The earlier [closure plan](FIRST_SLICE_ADMISSION_CLOSURE_PLAN.md) is retained as the pre-resolution audit trail.
 
 ## Readiness by Gate A area
 
@@ -47,14 +47,14 @@ The exact first-slice refusal and construction order are in [First-Slice Admissi
 |---|---|---|
 | G0 mission/boundary | Partial | Per-artifact rights decisions, exact import root, final company/user language, and operator sign-off |
 | G1 scientific/mathematical | Partial | Registry enrollment, cross-record/unit/method resolution, independent implementations, broader property vectors, and statistical/physical-domain review |
-| G2 domain/lifecycle | Blocked | Resolve C1–C8, including execution/materialization, multi-grant cardinality, reducer ownership, and recovery prerequisites; then recompute the payload/member/state/reducer scope and run the composite replay |
+| G2 domain/lifecycle | Blocked | C1-C8 choices and candidate sets are exact; construct the 42 payload, 43 command, 60 event, 25 state, and 25 reducer members, then run composite atomicity/replay evidence |
 | G3 security/authority | Partial | Accepted root/assignment/grant/quorum contracts, real policy/member instances, race traces, independent security/privacy review, and operator decision |
 | G4 evidence/memory | Blocked | Canonical migration blockers, witnessed retained roots, exact provenance/export mappings, and deletion/legal-hold/recovery replay |
 | G5 evaluation/learning | Partial | Pinned holdouts/known-bads, validated graders, matched-budget oracles, contamination process, and grounded promotion evidence |
 | G6 modules/interfaces | Partial | The logical manifest passes, but real registry records, source/package import enforcement, port conformance, and handler equality do not exist |
 | G7 reliability/operations | Partial | Deployment-profile isolation/locking, RPO/RTO, witness/key/trust profiles, restore/fork trials, and independent distributed-systems review |
 | G8 UI/publication projections | Partial | Daniel’s exact design decision, independent reducers, fanout/noninterference and leakage tests, accessibility/human-factors review, and exact public release-settlement equality |
-| G9 implementation order | Blocked | The admission hypothesis is audited but non-freezable; no Gate B probe or Gate C increment may start until its dependencies and exact counts close and the operator authorizes it |
+| G9 implementation order | Blocked | The architecture-scope counts are exact, but no Gate B probe or Gate C increment may start until immutable members, P0/root/activation, proof, review, Gate A decision, and explicit operator authorization exist |
 | G10 red team/review | In progress | Close all critical/high findings on exact bytes; obtain accountable statistical, physical, security/privacy, distributed-systems, and accessibility determinations |
 
 No row is passed.
@@ -63,11 +63,11 @@ No row is passed.
 
 | ID | Severity | Current blocker | Required closure evidence |
 |---|---|---|---|
-| A-001 | Critical | No dependency-exact, admitted first-slice command/event/state/reducer scope exists | Resolve C1–C8, recompute the partition and event/state/reducer sets, then freeze finite alternatives and member-set equality |
-| A-002 | Critical | The working 44-command partition currently implies 43 missing payloads, 44 command records, a 52-name conflict-union, and 23 state/reducer rows, but those are not final cardinalities | Close dependencies first; rebuild the exact inventory in schema → state → reducer → event → command order and rerun every refusal vector |
-| A-003 | Critical | C1 resource algebra, C4 authority/reservation terminality, and C6 multi-grant use/exhaustion cardinality are unresolved | Exact observation/settlement events; one use per consumed grant; exhaustion for the exact zero-reaching subset; ordered race traces |
-| A-004 | Critical | C2 correction/invalidation and C3 invalid-run/no-measurement atomicity are unresolved | One legal producer cohort or formally reviewed fail-closed fence with no transient eligible interpretation |
-| A-005 | Critical | C5 local execution/materialization, C7 reproducibility reducer ownership, and C8 checkpoint/recovery/activation prerequisites are unresolved | A named lease/materialization/sandbox/reservation cohort, one reducer owner, and machine-bound coexistence with a separately admitted recovery/root prerequisite |
+| A-001 | Critical | The exact 43/60/25 representational scope exists, but no immutable admitted member set or activation exists | Build and cross-check the exact payload → state → reducer → event → command member graph and admitted-only equality |
+| A-002 | Critical | Exact construction gaps are 42 payloads, 43 command records, 60 event records, 25 state records, and 25 reducer records | Construct them in dependency order with exact versions, refusal vectors, independent replay, and member-set commitments |
+| A-003 | Critical | C1/C4/C6 choices, structural grant slots, and one bounded composite authority/resource/race model now pass, but exact member records, executable refinement/replay, and independent evidence are absent | Typed observation/settlement members, exact slot occurrences, database/reducer traces for both race orders, refinement mapping, heterogeneous-unit checks, and independent review |
+| A-004 | Critical | C2/C3 producer and atomic-cohort choices are resolved, but prospective exact event/payload members and atomic replay traces are absent | Exact correction-fence and validity-pair versions, no-interior-frontier enforcement, known-bads, two reducers, and replay quarantine evidence |
+| A-005 | Critical | C5/C7/C8 choices, local structural fixtures, and bounded adversarial evidence are resolved, but exact local execution/reducer members, materialization/refinement replay, and a real witnessed P0 activation instance are absent | Exact lease/materialization/sandbox/attempt records, sole Verification reducer record, clear root/C0/checkpoint/witness/P0 chain, composite recovery traces, and independent review |
 | A-006 | Critical | Publication settlement is not independently proven replay-complete | Exact seal/grant/effect identities, both arrival orders, ambiguity/reconciliation, withdrawal/correction fanout, and projection equality |
 | A-007 | High | Semantic rules are specified but not admitted with two implementations | Frozen registry entries, exact inputs/outputs, known-bad vectors, cross-object traces, and discrepancy handling |
 | A-008 | Critical | Canonicalization migration audit remains blocked despite two-path vector agreement | Resolve or explicitly version every audit finding, then rerun the retained audit and cross-runtime conformance |
@@ -108,9 +108,9 @@ Architecture validators, schemas, fixtures, bounded models, and review plans are
 
 ## Path from checkpoint to candidate
 
-1. Resolve C1–C8 and recompute the provisional 44/77 partition, 52-name conflict-union, and 23 state/reducer rows before freezing any count.
-2. Build the resulting exact payload, state, reducer, event, and command records in dependency order.
-3. Instantiate reviewed registry/root/C0/checkpoint/activation candidates and prove exact member/handler equality.
+1. Treat the machine-checked 43/78 command, 60-event, 25-aggregate, 11-owner, one-P0 scope as the sole construction candidate; any scope change restarts this audit.
+2. Build the 42 payload, 25 state, 25 reducer, 60 event, and 43 command records in dependency order with exact cohort/authority alternatives.
+3. Instantiate reviewed registry/root/C0/checkpoint/witness/P0/activation candidates and prove exact member/handler equality.
 4. Execute two independent reducers and two clean proof-mission verifier paths, including replay, recovery, correction fanout, and refusal cases.
 5. Close canonicalization migration blockers and obtain accountable domain/security/privacy/distributed/accessibility reviews.
 6. Produce an exact candidate manifest and clean commit; rerun every suite against those bytes.

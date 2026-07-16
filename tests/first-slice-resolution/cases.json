@@ -1,0 +1,537 @@
+{
+  "manifest_version": "0.1.0",
+  "inventory": "architecture/first-slice-admission-resolution-candidate.json",
+  "description": "Bounded architecture-only safe and adversarial cases for the prospective first-slice C1-C8 resolution. Passing confers no registry membership, activation, runtime authority, external-effect authority, publication authority, or Gate A acceptance.",
+  "required_adversarial_tags": [
+    "c1_partial_settlement",
+    "c1_inferred_zero",
+    "c1_refund_exceeds_billed",
+    "c2_split_supersession_invalidation",
+    "c3_illegal_validity_measurement_pair",
+    "c4_c6_partial_grant_cohort",
+    "c4_c6_extra_grant_cohort",
+    "c5_release_after_claim",
+    "c5_expiry_after_claim",
+    "c7_duplicate_reducer_authority",
+    "c8_stale_p0_frontier",
+    "c8_ambiguous_p0_frontier"
+  ],
+  "cases": [
+    {
+      "name": "c1-safe-final-exact-nonmoney-and-explicit-empty-money-domain",
+      "conflict_ids": ["C1"],
+      "kind": "safe_reference",
+      "model": "resource_settlement",
+      "expect": "accept",
+      "subject": {
+        "reservation": {
+          "non_money_dimensions": ["cpu_seconds", "memory_byte_seconds"],
+          "money_dimensions": []
+        },
+        "observation": {
+          "final": true,
+          "usage_event": true,
+          "settlement_event": true,
+          "actual_usage": {
+            "cpu_seconds": "12.500000",
+            "memory_byte_seconds": "4096"
+          },
+          "attempted_usage": {
+            "cpu_seconds": "13.000000",
+            "memory_byte_seconds": "4608"
+          },
+          "billed_money": {},
+          "refunded_money": {},
+          "explicit_empty_money_domain": true,
+          "inferred_zero_dimensions": []
+        }
+      }
+    },
+    {
+      "name": "c1-safe-nonfinal-typed-observation-without-settlement",
+      "conflict_ids": ["C1"],
+      "kind": "safe_reference",
+      "model": "resource_settlement",
+      "expect": "accept",
+      "subject": {
+        "reservation": {
+          "non_money_dimensions": ["cpu_seconds"],
+          "money_dimensions": ["spend_usd"]
+        },
+        "observation": {
+          "final": false,
+          "usage_event": true,
+          "settlement_event": false,
+          "actual_usage": {"cpu_seconds": "4.25"},
+          "attempted_usage": {"cpu_seconds": "4.50"},
+          "billed_money": {},
+          "refunded_money": {},
+          "explicit_empty_money_domain": false,
+          "inferred_zero_dimensions": []
+        }
+      }
+    },
+    {
+      "name": "c1-safe-final-money-settlement-retains-billed-and-refunded",
+      "conflict_ids": ["C1"],
+      "kind": "safe_reference",
+      "model": "resource_settlement",
+      "expect": "accept",
+      "subject": {
+        "reservation": {
+          "non_money_dimensions": ["cpu_seconds"],
+          "money_dimensions": ["spend_usd"]
+        },
+        "observation": {
+          "final": true,
+          "usage_event": true,
+          "settlement_event": true,
+          "actual_usage": {"cpu_seconds": "4.25"},
+          "attempted_usage": {"cpu_seconds": "4.50"},
+          "billed_money": {"spend_usd": "0.031"},
+          "refunded_money": {"spend_usd": "0.001"},
+          "explicit_empty_money_domain": false,
+          "inferred_zero_dimensions": []
+        }
+      }
+    },
+    {
+      "name": "c1-bad-final-partial-settlement-omits-reserved-dimension",
+      "conflict_ids": ["C1"],
+      "kind": "adversarial",
+      "adversarial_tag": "c1_partial_settlement",
+      "model": "resource_settlement",
+      "expect": "reject",
+      "subject": {
+        "reservation": {
+          "non_money_dimensions": ["cpu_seconds", "memory_byte_seconds"],
+          "money_dimensions": []
+        },
+        "observation": {
+          "final": true,
+          "usage_event": true,
+          "settlement_event": true,
+          "actual_usage": {"cpu_seconds": "12.5"},
+          "attempted_usage": {"cpu_seconds": "12.5", "memory_byte_seconds": "4096"},
+          "billed_money": {},
+          "refunded_money": {},
+          "explicit_empty_money_domain": true,
+          "inferred_zero_dimensions": []
+        }
+      }
+    },
+    {
+      "name": "c1-bad-unmeasured-dimension-inferred-as-zero",
+      "conflict_ids": ["C1"],
+      "kind": "adversarial",
+      "adversarial_tag": "c1_inferred_zero",
+      "model": "resource_settlement",
+      "expect": "reject",
+      "subject": {
+        "reservation": {
+          "non_money_dimensions": ["cpu_seconds", "memory_byte_seconds"],
+          "money_dimensions": []
+        },
+        "observation": {
+          "final": true,
+          "usage_event": true,
+          "settlement_event": true,
+          "actual_usage": {"cpu_seconds": "12.5", "memory_byte_seconds": "0"},
+          "attempted_usage": {"cpu_seconds": "12.5", "memory_byte_seconds": "4096"},
+          "billed_money": {},
+          "refunded_money": {},
+          "explicit_empty_money_domain": true,
+          "inferred_zero_dimensions": ["memory_byte_seconds"]
+        }
+      }
+    },
+    {
+      "name": "c1-bad-refund-exceeds-billed-money",
+      "conflict_ids": ["C1"],
+      "kind": "adversarial",
+      "adversarial_tag": "c1_refund_exceeds_billed",
+      "model": "resource_settlement",
+      "expect": "reject",
+      "subject": {
+        "reservation": {
+          "non_money_dimensions": ["cpu_seconds"],
+          "money_dimensions": ["spend_usd"]
+        },
+        "observation": {
+          "final": true,
+          "usage_event": true,
+          "settlement_event": true,
+          "actual_usage": {"cpu_seconds": "4.25"},
+          "attempted_usage": {"cpu_seconds": "4.50"},
+          "billed_money": {"spend_usd": "0.02"},
+          "refunded_money": {"spend_usd": "0.03"},
+          "explicit_empty_money_domain": false,
+          "inferred_zero_dimensions": []
+        }
+      }
+    },
+    {
+      "name": "c2-safe-supersession-and-invalidation-one-batch-one-producer",
+      "conflict_ids": ["C2"],
+      "kind": "safe_reference",
+      "model": "claim_correction",
+      "expect": "accept",
+      "subject": {
+        "command_type": "claim.supersede",
+        "producer_count": 1,
+        "atomic_commit": true,
+        "intermediate_visibility": false,
+        "batches": [[
+          "authority.grant_used(protocol)",
+          "authority.grant_used(verification)",
+          "claim.superseded",
+          "dependency.invalidation_recorded",
+          "authority.grant_exhausted(protocol)",
+          "authority.grant_exhausted(verification)"
+        ]]
+      }
+    },
+    {
+      "name": "c2-bad-supersession-visible-before-invalidation",
+      "conflict_ids": ["C2"],
+      "kind": "adversarial",
+      "adversarial_tag": "c2_split_supersession_invalidation",
+      "model": "claim_correction",
+      "expect": "reject",
+      "subject": {
+        "command_type": "claim.supersede",
+        "producer_count": 1,
+        "atomic_commit": false,
+        "intermediate_visibility": true,
+        "batches": [
+          ["claim.superseded"],
+          ["dependency.invalidation_recorded"]
+        ]
+      }
+    },
+    {
+      "name": "c3-safe-valid-run-with-valid-measurement",
+      "conflict_ids": ["C3"],
+      "kind": "safe_reference",
+      "model": "validity_measurement",
+      "expect": "accept",
+      "subject": {
+        "command_type": "run.determine_validity",
+        "producer_count": 1,
+        "atomic_commit": true,
+        "batches": [["run.validity_determined", "measurement.disposition_determined"]],
+        "run_validity": "valid",
+        "measurement_disposition": "valid_measurement"
+      }
+    },
+    {
+      "name": "c3-safe-invalid-run-has-no-valid-measurement",
+      "conflict_ids": ["C3"],
+      "kind": "safe_reference",
+      "model": "validity_measurement",
+      "expect": "accept",
+      "subject": {
+        "command_type": "run.determine_validity",
+        "producer_count": 1,
+        "atomic_commit": true,
+        "batches": [["run.validity_determined", "measurement.disposition_determined"]],
+        "run_validity": "invalid",
+        "measurement_disposition": "no_valid_measurement"
+      }
+    },
+    {
+      "name": "c3-bad-invalid-run-paired-with-valid-measurement",
+      "conflict_ids": ["C3"],
+      "kind": "adversarial",
+      "adversarial_tag": "c3_illegal_validity_measurement_pair",
+      "model": "validity_measurement",
+      "expect": "reject",
+      "subject": {
+        "command_type": "run.determine_validity",
+        "producer_count": 1,
+        "atomic_commit": true,
+        "batches": [["run.validity_determined", "measurement.disposition_determined"]],
+        "run_validity": "invalid",
+        "measurement_disposition": "valid_measurement"
+      }
+    },
+    {
+      "name": "c4-c6-safe-attempt-start-exact-ordered-five-grant-cohort",
+      "conflict_ids": ["C4", "C6"],
+      "kind": "safe_reference",
+      "model": "grant_cohort",
+      "expect": "accept",
+      "subject": {
+        "command_type": "attempt.start",
+        "path_id": "local_dispatch_claim",
+        "action_instance_id": "attempt-start.fixture.1",
+        "outcome": "committed",
+        "domain_commit": true,
+        "grants": [
+          {"role": "safety", "grant_id": "grant.safety.1", "action_instance_id": "attempt-start.fixture.1", "max_uses": 1, "uses": 1},
+          {"role": "data_rights", "grant_id": "grant.data-rights.1", "action_instance_id": "attempt-start.fixture.1", "max_uses": 1, "uses": 1},
+          {"role": "resource", "grant_id": "grant.resource.1", "action_instance_id": "attempt-start.fixture.1", "max_uses": 1, "uses": 1},
+          {"role": "execution", "grant_id": "grant.execution.1", "action_instance_id": "attempt-start.fixture.1", "max_uses": 1, "uses": 1},
+          {"role": "verification", "grant_id": "grant.verification.1", "action_instance_id": "attempt-start.fixture.1", "max_uses": 1, "uses": 1}
+        ],
+        "used_roles": ["safety", "data_rights", "resource", "execution", "verification"],
+        "exhausted_roles": ["safety", "data_rights", "resource", "execution", "verification"]
+      }
+    },
+    {
+      "name": "c4-c6-bad-attempt-start-partial-grant-cohort",
+      "conflict_ids": ["C4", "C6"],
+      "kind": "adversarial",
+      "adversarial_tag": "c4_c6_partial_grant_cohort",
+      "model": "grant_cohort",
+      "expect": "reject",
+      "subject": {
+        "command_type": "attempt.start",
+        "path_id": "local_dispatch_claim",
+        "action_instance_id": "attempt-start.fixture.2",
+        "outcome": "committed",
+        "domain_commit": true,
+        "grants": [
+          {"role": "safety", "grant_id": "grant.safety.2", "action_instance_id": "attempt-start.fixture.2", "max_uses": 1, "uses": 1},
+          {"role": "data_rights", "grant_id": "grant.data-rights.2", "action_instance_id": "attempt-start.fixture.2", "max_uses": 1, "uses": 1},
+          {"role": "resource", "grant_id": "grant.resource.2", "action_instance_id": "attempt-start.fixture.2", "max_uses": 1, "uses": 1},
+          {"role": "execution", "grant_id": "grant.execution.2", "action_instance_id": "attempt-start.fixture.2", "max_uses": 1, "uses": 1}
+        ],
+        "used_roles": ["safety", "data_rights", "resource", "execution"],
+        "exhausted_roles": ["safety", "data_rights", "resource", "execution"]
+      }
+    },
+    {
+      "name": "c4-c6-bad-attempt-start-extra-publication-grant",
+      "conflict_ids": ["C4", "C6"],
+      "kind": "adversarial",
+      "adversarial_tag": "c4_c6_extra_grant_cohort",
+      "model": "grant_cohort",
+      "expect": "reject",
+      "subject": {
+        "command_type": "attempt.start",
+        "path_id": "local_dispatch_claim",
+        "action_instance_id": "attempt-start.fixture.3",
+        "outcome": "committed",
+        "domain_commit": true,
+        "grants": [
+          {"role": "safety", "grant_id": "grant.safety.3", "action_instance_id": "attempt-start.fixture.3", "max_uses": 1, "uses": 1},
+          {"role": "data_rights", "grant_id": "grant.data-rights.3", "action_instance_id": "attempt-start.fixture.3", "max_uses": 1, "uses": 1},
+          {"role": "resource", "grant_id": "grant.resource.3", "action_instance_id": "attempt-start.fixture.3", "max_uses": 1, "uses": 1},
+          {"role": "execution", "grant_id": "grant.execution.3", "action_instance_id": "attempt-start.fixture.3", "max_uses": 1, "uses": 1},
+          {"role": "verification", "grant_id": "grant.verification.3", "action_instance_id": "attempt-start.fixture.3", "max_uses": 1, "uses": 1},
+          {"role": "publication", "grant_id": "grant.publication.3", "action_instance_id": "attempt-start.fixture.3", "max_uses": 1, "uses": 1}
+        ],
+        "used_roles": ["safety", "data_rights", "resource", "execution", "verification", "publication"],
+        "exhausted_roles": ["safety", "data_rights", "resource", "execution", "verification", "publication"]
+      }
+    },
+    {
+      "name": "c5-safe-start-wins-then-invalidation-fences-without-release",
+      "conflict_ids": ["C4", "C5"],
+      "kind": "safe_reference",
+      "model": "local_preclaim_race",
+      "expect": "accept",
+      "subject": {
+        "initial": {"lease": "active", "reservation": "reserved"},
+        "steps": [
+          {
+            "action": "start",
+            "outcome": "committed",
+            "events": ["resource.reservation_claimed", "attempt.started", "verification.started"]
+          },
+          {
+            "action": "invalidate",
+            "fencing_evidence": true,
+            "outcome": "committed",
+            "events": ["verification.invalidated", "work.lease_revoked"]
+          }
+        ]
+      }
+    },
+    {
+      "name": "c5-safe-controlled-deadline-wins-preclaim-and-start-rejects",
+      "conflict_ids": ["C4", "C5"],
+      "kind": "safe_reference",
+      "model": "local_preclaim_race",
+      "expect": "accept",
+      "subject": {
+        "initial": {"lease": "active", "reservation": "reserved"},
+        "steps": [
+          {
+            "action": "deadline",
+            "outcome": "committed",
+            "events": ["verification.invalidated", "work.lease_expired", "resource.reservation_expired"]
+          },
+          {"action": "start", "outcome": "rejected", "events": []}
+        ]
+      }
+    },
+    {
+      "name": "c5-bad-discretionary-invalidation-releases-after-start-claim",
+      "conflict_ids": ["C4", "C5"],
+      "kind": "adversarial",
+      "adversarial_tag": "c5_release_after_claim",
+      "model": "local_preclaim_race",
+      "expect": "reject",
+      "subject": {
+        "initial": {"lease": "active", "reservation": "reserved"},
+        "steps": [
+          {
+            "action": "start",
+            "outcome": "committed",
+            "events": ["resource.reservation_claimed", "attempt.started", "verification.started"]
+          },
+          {
+            "action": "invalidate",
+            "fencing_evidence": true,
+            "outcome": "committed",
+            "events": ["verification.invalidated", "work.lease_revoked", "resource.reservation_released"]
+          }
+        ]
+      }
+    },
+    {
+      "name": "c5-bad-controlled-deadline-expires-after-start-claim",
+      "conflict_ids": ["C4", "C5"],
+      "kind": "adversarial",
+      "adversarial_tag": "c5_expiry_after_claim",
+      "model": "local_preclaim_race",
+      "expect": "reject",
+      "subject": {
+        "initial": {"lease": "active", "reservation": "reserved"},
+        "steps": [
+          {
+            "action": "start",
+            "outcome": "committed",
+            "events": ["resource.reservation_claimed", "attempt.started", "verification.started"]
+          },
+          {
+            "action": "deadline",
+            "outcome": "committed",
+            "events": ["verification.invalidated", "work.lease_expired", "resource.reservation_expired"]
+          }
+        ]
+      }
+    },
+    {
+      "name": "c7-safe-verification-is-sole-reducer-and-axes-are-internal",
+      "conflict_ids": ["C7"],
+      "kind": "safe_reference",
+      "model": "verification_reducer_authority",
+      "expect": "accept",
+      "subject": {
+        "canonical_reducers": [
+          {"aggregate_type": "verification", "reducer_family": "Verification"}
+        ],
+        "internal_axes": ["reproducibility", "replication", "transport"],
+        "axes_are_internal": true
+      }
+    },
+    {
+      "name": "c7-bad-reproducibility-promoted-to-second-reducer-authority",
+      "conflict_ids": ["C7"],
+      "kind": "adversarial",
+      "adversarial_tag": "c7_duplicate_reducer_authority",
+      "model": "verification_reducer_authority",
+      "expect": "reject",
+      "subject": {
+        "canonical_reducers": [
+          {"aggregate_type": "verification", "reducer_family": "Verification"},
+          {"aggregate_type": "verification", "reducer_family": "Reproducibility"}
+        ],
+        "internal_axes": ["reproducibility", "replication", "transport"],
+        "axes_are_internal": false
+      }
+    },
+    {
+      "name": "c8-safe-current-clear-nonrecursive-p0-frontier",
+      "conflict_ids": ["C8"],
+      "kind": "safe_reference",
+      "model": "p0_frontier",
+      "expect": "accept",
+      "subject": {
+        "prerequisite_id": "P0.constitutional-recovery-admission",
+        "nonrecursive_boundary": true,
+        "root_authority_non_self_issued": true,
+        "exact_engine_contract_root_bound": true,
+        "exact_c0_registry_bundle_bound": true,
+        "witnessed_checkpoint": true,
+        "exact_activation_digest_bound": true,
+        "controlled_time_current": true,
+        "bounded_scope": true,
+        "recovery_frontier": {
+          "current": true,
+          "ledger_epoch_matches": true,
+          "root_matches": true,
+          "unresolved_fork_count": 0,
+          "quarantined": false,
+          "open_recovery_case_count": 0,
+          "ambiguous": false
+        },
+        "activation_expired": false,
+        "activation_superseded": false
+      }
+    },
+    {
+      "name": "c8-bad-stale-p0-recovery-frontier",
+      "conflict_ids": ["C8"],
+      "kind": "adversarial",
+      "adversarial_tag": "c8_stale_p0_frontier",
+      "model": "p0_frontier",
+      "expect": "reject",
+      "subject": {
+        "prerequisite_id": "P0.constitutional-recovery-admission",
+        "nonrecursive_boundary": true,
+        "root_authority_non_self_issued": true,
+        "exact_engine_contract_root_bound": true,
+        "exact_c0_registry_bundle_bound": true,
+        "witnessed_checkpoint": true,
+        "exact_activation_digest_bound": true,
+        "controlled_time_current": false,
+        "bounded_scope": true,
+        "recovery_frontier": {
+          "current": false,
+          "ledger_epoch_matches": true,
+          "root_matches": true,
+          "unresolved_fork_count": 0,
+          "quarantined": false,
+          "open_recovery_case_count": 0,
+          "ambiguous": false
+        },
+        "activation_expired": false,
+        "activation_superseded": false
+      }
+    },
+    {
+      "name": "c8-bad-ambiguous-open-recovery-and-fork-frontier",
+      "conflict_ids": ["C8"],
+      "kind": "adversarial",
+      "adversarial_tag": "c8_ambiguous_p0_frontier",
+      "model": "p0_frontier",
+      "expect": "reject",
+      "subject": {
+        "prerequisite_id": "P0.constitutional-recovery-admission",
+        "nonrecursive_boundary": true,
+        "root_authority_non_self_issued": true,
+        "exact_engine_contract_root_bound": true,
+        "exact_c0_registry_bundle_bound": true,
+        "witnessed_checkpoint": true,
+        "exact_activation_digest_bound": true,
+        "controlled_time_current": true,
+        "bounded_scope": true,
+        "recovery_frontier": {
+          "current": true,
+          "ledger_epoch_matches": true,
+          "root_matches": true,
+          "unresolved_fork_count": 1,
+          "quarantined": false,
+          "open_recovery_case_count": 1,
+          "ambiguous": true
+        },
+        "activation_expired": false,
+        "activation_superseded": false
+      }
+    }
+  ]
+}

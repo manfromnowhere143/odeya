@@ -17,3 +17,4 @@ Decision records preserve why Odeya chose a boundary and which evidence could ch
 | [0011](0011-governed-cognitive-system-not-monolithic-model.md) | Governed cognitive system, not a monolithic foundation model | Proposed |
 | [0012](0012-minimal-canonical-epistemic-graph.md) | One minimal canonical epistemic graph | Proposed |
 | [0013](0013-admitted-only-command-ingress.md) | Admit only registry-complete commands at ingress | Proposed |
+| [0014](0014-resolve-first-slice-atomic-admission.md) | Resolve the first-slice atomic admission boundary | Proposed |

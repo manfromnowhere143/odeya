@@ -1,12 +1,12 @@
 # Command and Event Catalog
 
-Status: architecture-closure candidate, 2026-07-15. This contract is non-executable and does not authorize product implementation. It replaces the legacy single-status event draft with the orthogonal event algebra in `research-event` 0.6.0 and adds language-neutral command/receipt envelopes.
+Status: architecture-closure candidate, 2026-07-16. This contract is non-executable and does not authorize product implementation. It replaces the legacy single-status event draft with the orthogonal event algebra in `research-event` and adds language-neutral command/receipt envelopes. [ADR 0014](decisions/0014-resolve-first-slice-atomic-admission.md) fixes the bounded first-slice producer/reducer choices; exact prospective member versions remain to be frozen.
 
 ## Canonical contracts
 
 - `schemas/command-envelope.schema.json` 0.4.0 currently binds the request identity and one of 121 declared design discriminators to its exact semantic version, payload-schema ID, immutable registry-snapshot reference, separate activation proof, exact contract-record reference, target stream family, aggregate owner, optimistic positions, actor, untrusted presented authority hints, causal inputs, payload, and a non-recursive request-digest contract. The hints are resolution inputs only: the caller cannot select an authority mode, derivation rule, or PolicyDecision. “Declared” does not mean admitted: under [ADR 0013](decisions/0013-admitted-only-command-ingress.md), this broad file is a red-team candidate and must be regenerated from the exact admitted registry so no discriminator lacks complete contract bytes.
 - `schemas/command-receipt.schema.json` 0.3.0 begins only after exact registry-member resolution and immutably settles one idempotency-scope plus command-ID pair. It binds the result to the resolved registry snapshot/activation/member record, a closed admission-evidence bundle, exact policy/validation records, and non-recursive result/receipt digest contracts.
-- `schemas/research-event.schema.json` 0.6.0 defines 135 event facts. Every event discriminator fixes one payload-schema ID, one stream family, one aggregate owner, one fact-time basis, one closed payload shape, and explicit payload/event digest contracts. Every command-bound event also carries an exact AdmissionEvidenceBundle reference.
+- `schemas/research-event.schema.json` currently defines 135 event discriminators after replacing generic `resource.observed` with typed `work.lease_expired`. Every discriminator fixes one payload-schema ID, one stream family, one aggregate owner, one fact-time basis, one closed payload shape, and explicit payload/event digest contracts. Every command-bound event also carries an exact AdmissionEvidenceBundle reference. This is still broad design vocabulary, not an admitted event registry.
 - `schemas/research-event-trace.schema.json` 0.3.0 binds ordered event vectors and typed command-receipt observations to orthogonal scientific, authority, data-governance, governed-processing, recovery, and resource-accounting axes. It structurally forbids the founding invalid-run/null, disputed-verification/eligibility, grant-reservation/dispatch-claim, rejected-processing/cohort, deletion-resurrection, incomplete-frontier reopen, missing-artifact reopen, fork-selection, restore-report-as-authority, claimed-resource release, inferred usage, unknown-as-zero, and unobserved-settlement contradictions.
 - [The state model](STATE_MODEL.md) defines the reducer axes and transition laws. Schema validity is necessary but never sufficient for transition legality.
 
@@ -29,7 +29,7 @@ The founding ledger has eight stream classes:
 
 A fake mission ID is forbidden. Proposal acceptance and mission-origin creation are two causal commits, not a cross-stream atomic transaction.
 
-Every event owns exactly one aggregate and advances exactly one aggregate version. The founding aggregate vocabulary is:
+Every event owns exactly one aggregate and advances exactly one aggregate version. A multi-aggregate batch advances every named head atomically; no checkpoint, receipt, canonical read frontier, or current projection may end at an interior batch position. The founding aggregate vocabulary is:
 
 `proposal`, `mission`, `protocol`, `work_graph`, `stage`, `work_item`, `attempt`, `resource_budget`, `blocker`, `artifact`, `run`, `measurement`, `metric`, `falsifier`, `verification`, `review`, `adjudication`, `claim_proposal`, `claim_version`, `dependency`, `external_effect`, `publication`, `authority_assignment`, `authority_grant`, `incident`, `handoff`, `grounded_outcome`, `strategy_candidate`, `data_asset`, `rights_assertion`, `data_use_decision`, `data_exposure`, `transformation`, `retention_schedule`, `deletion_case`, `legal_hold`, `ledger_checkpoint`, `backup`, `restore_case`, `recovery_decision`, `ledger_epoch`, and `recovery_control`.
 
@@ -84,7 +84,7 @@ The first root assignment does not self-grant. For an ordinary in-ledger command
 
 ## Canonical producer and reducer registry
 
-“Producer” names the only command or kernel boundary allowed to derive the event. “Reducer” is the sole aggregate projection that consumes it. An event delivered to any other reducer is rejected as a contract defect.
+“Producer” names the closed command or kernel boundary allowed to derive an exact event member version. “Reducer” is the sole aggregate projection that consumes it. An event delivered to any other reducer is rejected as a contract defect. The table can show broad design producers; an activated slice narrows each exact member to its admitted producer set.
 
 ### Intake, mission, protocol, and work
 
@@ -108,10 +108,11 @@ The first root assignment does not self-grant. For an ordinary in-ledger command
 | `work_graph.compiled` | `work_graph.compile` | work_graph / WorkGraph |
 | `stage.readiness_changed` | `stage.set_readiness` | stage / StageReadiness |
 | `stage.authorization_changed` | `stage.set_authorization` | stage / StageAuthorization |
-| `work.lease_acquired` | `work.acquire_lease` | work_item / WorkLease |
+| `work.lease_acquired` | `work.acquire_lease`; first-slice exact member: `verification.assign` | work_item / WorkLease |
 | `work.lease_renewed` | `work.renew_lease` | work_item / WorkLease |
-| `work.lease_released` | `work.release_lease` | work_item / WorkLease |
-| `work.lease_revoked` | `work.revoke_lease` | work_item / WorkLease |
+| `work.lease_released` | `work.release_lease`; first-slice exact member: `attempt.report` after observed terminal teardown | work_item / WorkLease |
+| `work.lease_revoked` | `work.revoke_lease`; first-slice exact member: `attempt.report` or `verification.invalidate` under a closed branch | work_item / WorkLease |
+| `work.lease_expired` | first-slice controlled-deadline branch of `verification.invalidate`; never caller-selectable | work_item / WorkLease |
 
 ### Attempts, resources, blockers, evidence, and science
 
@@ -122,14 +123,13 @@ The first root assignment does not self-grant. For an ordinary in-ledger command
 | `attempt.completion_unknown` | `attempt.report` | attempt / AttemptExecution |
 | `attempt.completed` | `attempt.report` | attempt / AttemptExecution |
 | `attempt.failed` | `attempt.report` | attempt / AttemptExecution |
-| `attempt.cancelled` | `attempt.report` | attempt / AttemptExecution |
-| `resource.reservation_created` | resource-accounting kernel in the exact admission/authorization cohort; never caller-produced | resource_budget / ResourceLedger |
-| `resource.reservation_claimed` | resource-accounting kernel in the exact work/effect/verification start cohort; never caller-produced | resource_budget / ResourceLedger |
+| `attempt.cancelled` | `attempt.report`; outside the bounded first slice | attempt / AttemptExecution |
+| `resource.reservation_created` | resource-accounting kernel in the exact admission/authorization cohort; first-slice caller command `verification.assign` | resource_budget / ResourceLedger |
+| `resource.reservation_claimed` | resource-accounting kernel in the exact work/effect/verification start cohort; first-slice caller command `attempt.start` | resource_budget / ResourceLedger |
 | `resource.reservation_released` | resource-accounting kernel in a winning pre-claim cancellation, rejection, revocation, or invalidation cohort | resource_budget / ResourceLedger |
-| `resource.reservation_expired` | controlled-time resource-accounting kernel before any claim commits | resource_budget / ResourceLedger |
-| `resource.usage_observed` | resource-accounting kernel from retained provider, meter, instrument, or operator-reviewed observation | resource_budget / ResourceLedger |
-| `resource.reservation_settled` | resource-accounting kernel after exact usage/billing/refund observations resolve | resource_budget / ResourceLedger |
-| `resource.observed` | `resource.record_observation` | resource_budget / ResourceLedger |
+| `resource.reservation_expired` | controlled-time resource-accounting kernel before any claim commits; first-slice controlled-deadline branch of `verification.invalidate` | resource_budget / ResourceLedger |
+| `resource.usage_observed` | `resource.record_observation` after resolving exact retained meter/instrument/reviewed evidence | resource_budget / ResourceLedger |
+| `resource.reservation_settled` | `resource.record_observation` only when the new typed observation completes the exact settlement profile and equations in the same batch | resource_budget / ResourceLedger |
 | `budget.exhausted` | `budget.record_exhaustion` | resource_budget / ResourceLedger |
 | `blocker.opened` | `blocker.open` | blocker / Blocker |
 | `blocker.resolved` | `blocker.resolve` | blocker / Blocker |
@@ -142,7 +142,7 @@ The first root assignment does not self-grant. For an ordinary in-ledger command
 | `artifact.unavailable` | `artifact.record_unavailability` | artifact / ArtifactCustody |
 | `artifact.tombstoned` | `artifact.tombstone` | artifact / ArtifactCustody |
 | `run.validity_determined` | `run.determine_validity` | run / RunValidity |
-| `measurement.disposition_determined` | `measurement.determine_disposition` | measurement / MeasurementDisposition |
+| `measurement.disposition_determined` | broad vocabulary: `measurement.determine_disposition`; first-slice exact member: `run.determine_validity` in the atomic validity pair | measurement / MeasurementDisposition |
 | `metric.observed` | `metric.record_observation` | metric / MetricObservation |
 | `falsifier.adjudicated` | `falsifier.adjudicate` | falsifier / Falsifier |
 | `review.recorded` | `review.record` | review / Review |
@@ -153,23 +153,23 @@ The first root assignment does not self-grant. For an ordinary in-ledger command
 |---|---|---|
 | `verification.requested` | `verification.request` | verification / Verification |
 | `verification.assigned` | `verification.assign` | verification / Verification |
-| `verification.started` | `verification.start` | verification / Verification |
+| `verification.started` | broad vocabulary: `verification.start`; first-slice exact member: `attempt.start` in the atomic local-start cohort | verification / Verification |
 | `verification.completed` | `verification.complete` | verification / Verification |
 | `verification.disputed` | `verification.dispute` | verification / Verification |
 | `verification.dispute_resolved` | `verification.resolve_dispute` | verification / Verification |
 | `verification.invalidated` | `verification.invalidate` | verification / Verification |
-| `reproducibility.determined` | `reproducibility.determine` | verification / Reproducibility |
-| `replication.started` | `replication.start` | verification / Replication |
-| `replication.determined` | `replication.determine` | verification / Replication |
-| `transport.started` | `transport.start` | verification / Transport |
-| `transport.determined` | `transport.determine` | verification / Transport |
+| `reproducibility.determined` | `reproducibility.determine` | verification / Verification |
+| `replication.started` | `replication.start` | verification / Verification |
+| `replication.determined` | `replication.determine` | verification / Verification |
+| `transport.started` | `transport.start` | verification / Verification |
+| `transport.determined` | `transport.determine` | verification / Verification |
 | `adjudication.recorded` | `adjudication.record` | adjudication / Adjudication |
 | `claim.proposed` | `claim.propose` | claim_proposal / ClaimProposal |
 | `claim.disposition_recorded` | `claim.record_disposition` | claim_proposal / ClaimProposal |
-| `claim.version_compiled` | `claim.compile_version` | claim_version / ClaimVersion |
+| `claim.version_compiled` | `claim.compile_version`; immutable exact ClaimVersion references are the canonical dependency-edge source | claim_version / ClaimVersion |
 | `claim.superseded` | `claim.supersede` | claim_version / ClaimVersion |
 | `claim.retracted` | `claim.retract` | claim_version / ClaimVersion |
-| `dependency.invalidation_recorded` | `dependency.record_invalidation` | dependency / Dependency |
+| `dependency.invalidation_recorded` | broad vocabulary: `dependency.record_invalidation`; first-slice exact member: `claim.supersede` in the atomic correction cohort | dependency / DependencyInvalidationFrontier |
 
 ### Authority, publication, effects, incidents, and learning
 
@@ -351,7 +351,7 @@ The isolated architecture audit currently finds:
 - 121 unique design discriminators in the current red-team envelope, each with one branch binding semantic version, payload-schema ID, stream family, and target aggregate; this count is not an admitted surface;
 - 135 unique event discriminators, each with one payload branch, one payload-schema ID, one stream-family rule, one aggregate owner, and one named reducer in this catalog;
 - no command or event discriminator missing from this catalog;
-- 58 schema-valid event fixtures and 16 schema-valid replay traces, including pre-mission, run-invalid, no-valid-measurement, adjudication-refusal, grant reservation/dispatch/cancel, verifier-dispute, publication, all 32 data/recovery branches, governed-processing refusal, and the six-event resource reservation/observation/settlement lifecycle;
+- 61 schema-valid event fixtures and 16 schema-valid replay traces, included within 166 direct `ResearchEvent`/`ResearchEventTrace` manifest cases and covering pre-mission, run-invalid, no-valid-measurement, adjudication-refusal, grant reservation/dispatch/cancel, verifier-dispute, publication, all 32 data/recovery branches, governed-processing refusal, and the typed local-attempt/resource lifecycle;
 - adversarial rejection of rights assertion as permission, authorized use without exact scope, unknown-exposure laundering, completed deletion with residual copies, hold-as-access-authority, checkpoint seal without verification evidence, backup-axis aliasing, restore report as reopen authority, failed recovery quorum without limitation, wall-clock fork choice, new epoch without constitutional selection, and open recovery scope without a complete security frontier.
 
 This resolves the original structural envelope/vocabulary inventory defects behind A-001 and demonstrates a candidate shape for the missing envelope/receipt portion of A-002:

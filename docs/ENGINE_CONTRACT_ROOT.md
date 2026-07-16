@@ -40,6 +40,7 @@ LedgerCheckpoint (commits exact C0 bundle and ledger frontier)
                   |
                   v
 RegistryActivation (root/snapshot + checkpoint + bounded scope)
+  + embedded P0 constitutional-recovery admission
 ```
 
 An arrow means "may contain an exact reference to." No reverse arrow is
@@ -164,18 +165,40 @@ The first checkpoint can witness that bundle; it cannot create its meaning.
 activation ID and sequence
 exact engine root and component snapshot refs
 exact checkpoint/epoch/branch and activation position
+non-self-issued root-authority manifest/bootstrap evidence
+external checkpoint-witness set and consistency verdict
+embedded P0 constitutional-recovery admission digest
+clear current recovery/fork/quarantine frontier and digest
 tenant/mission/namespace scope
 admitted command subset and required handler-conformance set
 not-before/not-after controlled-time bounds
-root-authority decision and grant-use evidence
+root-authority and policy decision evidence; no self-issued operational grant
 rollback/supersession target
 ```
 
+`P0.constitutional-recovery-admission` is embedded in the activation but has no
+back-reference to it, preserving acyclicity. P0 is not a command, event, grant,
+aggregate, policy result, or handoff assertion. The constitutional
+genesis/recovery ceremony creates it only after independently resolving the
+RootAuthorityManifest, EngineContractRoot, C0 bundle, witnessed checkpoint, and
+current recovery frontier. Its disposition is clear only when the selected
+epoch/branch has no unresolved fork, quarantine, restore ambiguity, or
+consistency failure. Fork detection, quarantine, recovery ambiguity, epoch or
+root change, checkpoint witness failure, expiry, or supersession invalidates
+the activation fail-closed.
+
+Every admitted CommandEnvelope, CommandReceipt, and AdmissionEvidenceBundle
+must bind the same activation ID, sequence, digest, P0 digest, root, checkpoint,
+scope, and recovery-frontier digest. JSON Schema can require those fields;
+admission must still prove byte equality, currentness, branch ordering, and
+scope coverage. No ordinary mission command may create or repair its own P0.
+
 Activation requires `activation_position <= target/current_position` on the
-selected branch. The enabled envelope discriminator set, enabled command member
-set, and conforming handler set must be exactly equal. Runtime handler evidence
-is intentionally absent from Gate A; therefore a Gate A root can be
-contract-admitted and checkpoint-ready while remaining operationally inactive.
+selected clear branch and exact equality with the P0 recovery frontier. The
+enabled envelope discriminator set, enabled command member set, and conforming
+handler set must be exactly equal. Runtime handler evidence is intentionally
+absent from Gate A; therefore a Gate A root can be contract-admitted and
+checkpoint-ready while remaining operationally inactive.
 
 Retirement is prospective. Historical receipt replay resolves the exact prior
 activation, root, member, schema, event, reducer, and rules. It never replays

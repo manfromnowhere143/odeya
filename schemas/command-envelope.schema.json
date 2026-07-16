@@ -54,7 +54,7 @@
       "$ref": "#/$defs/command_registry_snapshot_reference"
     },
     "command_registry_activation_ref": {
-      "$ref": "#/$defs/command_registry_activation_reference"
+      "$ref": "#/$defs/registry_activation_reference"
     },
     "command_contract_record_ref": {
       "$ref": "#/$defs/command_contract_record_reference"
@@ -3976,51 +3976,36 @@
         }
       }
     },
-    "command_registry_activation_reference": {
+    "registry_activation_reference": {
       "type": "object",
       "additionalProperties": false,
       "required": [
         "activation_id",
+        "activation_sequence",
         "schema_id",
-        "snapshot_digest",
-        "checkpoint_ref",
-        "activation_position",
-        "tenant_id",
-        "mission_scope",
-        "activation_proof_ref"
+        "activation_digest",
+        "p0_prerequisite_id",
+        "p0_admission_digest"
       ],
       "properties": {
         "activation_id": {
           "$ref": "#/$defs/identifier"
         },
-        "schema_id": {
-          "const": "urn:odeya:schema:command-registry-activation:0.1.0"
+        "activation_sequence": {
+          "type": "integer",
+          "minimum": 1
         },
-        "snapshot_digest": {
+        "schema_id": {
+          "const": "urn:odeya:schema:registry-activation:0.1.0"
+        },
+        "activation_digest": {
           "$ref": "#/$defs/digest"
         },
-        "checkpoint_ref": {
-          "$ref": "#/$defs/checkpoint_reference"
+        "p0_prerequisite_id": {
+          "const": "P0.constitutional-recovery-admission"
         },
-        "activation_position": {
-          "type": "integer",
-          "minimum": 0
-        },
-        "tenant_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "mission_scope": {
-          "oneOf": [
-            {
-              "$ref": "#/$defs/identifier"
-            },
-            {
-              "type": "null"
-            }
-          ]
-        },
-        "activation_proof_ref": {
-          "$ref": "#/$defs/artifact_reference"
+        "p0_admission_digest": {
+          "$ref": "#/$defs/digest"
         }
       }
     },

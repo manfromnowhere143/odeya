@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "urn:odeya:schema:registry-activation:0.1.0",
   "title": "Odeya RegistryActivation",
-  "description": "An immutable prospective decision selecting one checkpointed EngineContractRoot for a bounded runtime scope. It is downstream of the root and checkpoint and cannot change either subject's meaning. This contract does not itself prove handler deployment, authority, currentness, or branch ordering.",
+  "description": "An immutable prospective decision selecting one checkpointed EngineContractRoot for a bounded runtime scope. It embeds the nonrecursive P0 constitutional-recovery admission that must already bind non-self-issued root authority, the exact EngineContractRoot and C0 bundle, witnessed checkpoint evidence, and a current fail-closed recovery/fork/quarantine frontier. The activation is downstream of those subjects and cannot issue its own root authority or change any bound subject's meaning. Structural validity does not prove reference equality, signature truth, currentness, or branch ordering.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -15,6 +15,7 @@
     "c0_registry_bundle_ref",
     "root_checkpoint_ref",
     "activation_ledger_binding",
+    "p0_constitutional_recovery_admission",
     "scope",
     "command_surface",
     "handler_conformance",
@@ -49,6 +50,9 @@
         "ledger_epoch": { "$ref": "#/$defs/identifier" },
         "global_position": { "type": "integer", "minimum": 0 }
       }
+    },
+    "p0_constitutional_recovery_admission": {
+      "$ref": "#/$defs/p0_constitutional_recovery_admission"
     },
     "scope": {
       "type": "object",
@@ -267,6 +271,7 @@
       "required": [
         "checkpoint_id",
         "version",
+        "schema_id",
         "ledger_epoch",
         "inclusive_global_position",
         "digest"
@@ -274,9 +279,249 @@
       "properties": {
         "checkpoint_id": { "$ref": "#/$defs/identifier" },
         "version": { "type": "integer", "minimum": 1 },
+        "schema_id": { "const": "urn:odeya:schema:ledger-checkpoint:0.2.0" },
         "ledger_epoch": { "$ref": "#/$defs/identifier" },
         "inclusive_global_position": { "type": "integer", "minimum": 0 },
         "digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "root_authority_manifest_reference": {
+      "allOf": [
+        { "$ref": "#/$defs/subject_reference" },
+        {
+          "properties": {
+            "schema_id": { "const": "urn:odeya:schema:root-authority-manifest:0.1.0" }
+          }
+        }
+      ]
+    },
+    "engine_contract_root_reference": {
+      "allOf": [
+        { "$ref": "#/$defs/subject_reference" },
+        {
+          "properties": {
+            "schema_id": { "const": "urn:odeya:schema:engine-contract-root:0.1.0" }
+          }
+        }
+      ]
+    },
+    "c0_registry_bundle_reference": {
+      "allOf": [
+        { "$ref": "#/$defs/subject_reference" },
+        {
+          "properties": {
+            "schema_id": { "const": "urn:odeya:schema:c0-registry-bundle:0.1.0" }
+          }
+        }
+      ]
+    },
+    "witness_observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "witness_id",
+        "failure_domain_id",
+        "observation_ref",
+        "checkpoint_digest",
+        "consistency_verification"
+      ],
+      "properties": {
+        "witness_id": { "$ref": "#/$defs/identifier" },
+        "failure_domain_id": { "$ref": "#/$defs/identifier" },
+        "observation_ref": { "$ref": "#/$defs/artifact_reference" },
+        "checkpoint_digest": { "$ref": "#/$defs/digest" },
+        "consistency_verification": { "const": "pass" }
+      }
+    },
+    "p0_constitutional_recovery_admission": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "prerequisite_id",
+        "version",
+        "admission_status",
+        "nonrecursive_boundary",
+        "root_authority_binding",
+        "engine_contract_root_ref",
+        "c0_registry_bundle_ref",
+        "witnessed_checkpoint_binding",
+        "current_recovery_frontier",
+        "admission_evidence_refs",
+        "p0_digest_contract",
+        "p0_digest"
+      ],
+      "properties": {
+        "prerequisite_id": { "const": "P0.constitutional-recovery-admission" },
+        "version": { "const": "0.1.0" },
+        "admission_status": { "const": "admitted_before_registry_activation" },
+        "nonrecursive_boundary": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "activation_reference_permitted",
+            "parent_activation_digest_included",
+            "self_issued_root_authority_permitted",
+            "parent_root_and_c0_equality_required"
+          ],
+          "properties": {
+            "activation_reference_permitted": { "const": false },
+            "parent_activation_digest_included": { "const": false },
+            "self_issued_root_authority_permitted": { "const": false },
+            "parent_root_and_c0_equality_required": { "const": true }
+          }
+        },
+        "root_authority_binding": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "root_authority_manifest_ref",
+            "constitutional_assignment_ref",
+            "issuer_principal_id",
+            "assignment_ledger_position",
+            "issuance_mode",
+            "self_issued",
+            "activation_subject_may_issue_own_authority",
+            "authority_chain_verification_ref"
+          ],
+          "properties": {
+            "root_authority_manifest_ref": { "$ref": "#/$defs/root_authority_manifest_reference" },
+            "constitutional_assignment_ref": { "$ref": "#/$defs/artifact_reference" },
+            "issuer_principal_id": { "$ref": "#/$defs/identifier" },
+            "assignment_ledger_position": { "type": "integer", "minimum": 0 },
+            "issuance_mode": { "const": "preexisting_constitutional_assignment" },
+            "self_issued": { "const": false },
+            "activation_subject_may_issue_own_authority": { "const": false },
+            "authority_chain_verification_ref": { "$ref": "#/$defs/artifact_reference" }
+          }
+        },
+        "engine_contract_root_ref": { "$ref": "#/$defs/engine_contract_root_reference" },
+        "c0_registry_bundle_ref": { "$ref": "#/$defs/c0_registry_bundle_reference" },
+        "witnessed_checkpoint_binding": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "checkpoint_ref",
+            "signature_verification_ref",
+            "witness_policy_ref",
+            "witness_quorum_ref",
+            "witness_observations",
+            "independent_failure_domains_required",
+            "consistency_disposition",
+            "conflicting_view_refs"
+          ],
+          "properties": {
+            "checkpoint_ref": { "$ref": "#/$defs/checkpoint_reference" },
+            "signature_verification_ref": { "$ref": "#/$defs/artifact_reference" },
+            "witness_policy_ref": { "$ref": "#/$defs/artifact_reference" },
+            "witness_quorum_ref": { "$ref": "#/$defs/artifact_reference" },
+            "witness_observations": {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": { "$ref": "#/$defs/witness_observation" }
+            },
+            "independent_failure_domains_required": { "const": true },
+            "consistency_disposition": { "const": "pass" },
+            "conflicting_view_refs": {
+              "type": "array",
+              "maxItems": 0,
+              "items": { "$ref": "#/$defs/artifact_reference" }
+            }
+          }
+        },
+        "current_recovery_frontier": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "frontier_ref",
+            "ledger_epoch",
+            "frontier_position",
+            "frontier_digest",
+            "frontier_completeness",
+            "current_at_activation",
+            "fork_disposition",
+            "unresolved_fork_count",
+            "open_recovery_case_count",
+            "ambiguous_recovery_case_count",
+            "recovery_ambiguity_disposition",
+            "branch_selection_basis",
+            "wall_clock_branch_selection",
+            "recovery_control_state",
+            "quarantine_disposition",
+            "recovery_decision_ref",
+            "frontier_verification_ref",
+            "publication_enabled",
+            "spending_enabled",
+            "r2_plus_effects_enabled",
+            "physical_actions_enabled"
+          ],
+          "properties": {
+            "frontier_ref": { "$ref": "#/$defs/artifact_reference" },
+            "ledger_epoch": { "$ref": "#/$defs/identifier" },
+            "frontier_position": { "type": "integer", "minimum": 0 },
+            "frontier_digest": { "$ref": "#/$defs/digest" },
+            "frontier_completeness": { "const": "proven_complete" },
+            "current_at_activation": { "const": true },
+            "fork_disposition": {
+              "enum": ["no_fork_detected", "constitutionally_resolved_new_epoch"]
+            },
+            "unresolved_fork_count": { "const": 0 },
+            "open_recovery_case_count": { "const": 0 },
+            "ambiguous_recovery_case_count": { "const": 0 },
+            "recovery_ambiguity_disposition": { "const": "none_current" },
+            "branch_selection_basis": {
+              "enum": ["witnessed_continuity", "constitutional_recovery_decision"]
+            },
+            "wall_clock_branch_selection": { "const": false },
+            "recovery_control_state": { "const": "bounded_research_writes" },
+            "quarantine_disposition": { "const": "cleared_by_current_recovery_frontier" },
+            "recovery_decision_ref": {
+              "oneOf": [
+                { "$ref": "#/$defs/artifact_reference" },
+                { "type": "null" }
+              ]
+            },
+            "frontier_verification_ref": { "$ref": "#/$defs/artifact_reference" },
+            "publication_enabled": { "const": false },
+            "spending_enabled": { "const": false },
+            "r2_plus_effects_enabled": { "const": false },
+            "physical_actions_enabled": { "const": false }
+          },
+          "allOf": [
+            {
+              "if": {
+                "properties": { "fork_disposition": { "const": "no_fork_detected" } },
+                "required": ["fork_disposition"]
+              },
+              "then": {
+                "properties": {
+                  "branch_selection_basis": { "const": "witnessed_continuity" },
+                  "recovery_decision_ref": { "type": "null" }
+                }
+              }
+            },
+            {
+              "if": {
+                "properties": { "fork_disposition": { "const": "constitutionally_resolved_new_epoch" } },
+                "required": ["fork_disposition"]
+              },
+              "then": {
+                "properties": {
+                  "branch_selection_basis": { "const": "constitutional_recovery_decision" },
+                  "recovery_decision_ref": { "$ref": "#/$defs/artifact_reference" }
+                }
+              }
+            }
+          ]
+        },
+        "admission_evidence_refs": {
+          "type": "array",
+          "minItems": 2,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/artifact_reference" }
+        },
+        "p0_digest_contract": { "$ref": "#/$defs/p0_digest_contract" },
+        "p0_digest": { "$ref": "#/$defs/digest" }
       }
     },
     "artifact_reference": {
@@ -338,8 +583,8 @@
         "subject_schema_ref": { "$ref": "#/$defs/schema_reference" },
         "included_json_pointers": {
           "type": "array",
-          "minItems": 18,
-          "maxItems": 18,
+          "minItems": 19,
+          "maxItems": 19,
           "prefixItems": [
             { "const": "/schema_version" },
             { "const": "/activation_id" },
@@ -350,6 +595,7 @@
             { "const": "/c0_registry_bundle_ref" },
             { "const": "/root_checkpoint_ref" },
             { "const": "/activation_ledger_binding" },
+            { "const": "/p0_constitutional_recovery_admission" },
             { "const": "/scope" },
             { "const": "/command_surface" },
             { "const": "/handler_conformance" },
@@ -369,6 +615,54 @@
           "prefixItems": [
             { "const": "/activation_digest" },
             { "const": "/attestations" }
+          ],
+          "items": false
+        }
+      }
+    },
+    "p0_digest_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "algorithm",
+        "domain_separator",
+        "canonicalization_profile_ref",
+        "parent_schema_ref",
+        "subject_json_pointer",
+        "included_json_pointers",
+        "excluded_json_pointers"
+      ],
+      "properties": {
+        "algorithm": { "const": "sha256" },
+        "domain_separator": { "const": "odeya-p0-constitutional-recovery-admission-v1" },
+        "canonicalization_profile_ref": { "$ref": "#/$defs/profile_reference" },
+        "parent_schema_ref": { "$ref": "#/$defs/schema_reference" },
+        "subject_json_pointer": { "const": "/p0_constitutional_recovery_admission" },
+        "included_json_pointers": {
+          "type": "array",
+          "minItems": 11,
+          "maxItems": 11,
+          "prefixItems": [
+            { "const": "/prerequisite_id" },
+            { "const": "/version" },
+            { "const": "/admission_status" },
+            { "const": "/nonrecursive_boundary" },
+            { "const": "/root_authority_binding" },
+            { "const": "/engine_contract_root_ref" },
+            { "const": "/c0_registry_bundle_ref" },
+            { "const": "/witnessed_checkpoint_binding" },
+            { "const": "/current_recovery_frontier" },
+            { "const": "/admission_evidence_refs" },
+            { "const": "/p0_digest_contract" }
+          ],
+          "items": false
+        },
+        "excluded_json_pointers": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "prefixItems": [
+            { "const": "/p0_digest" }
           ],
           "items": false
         }

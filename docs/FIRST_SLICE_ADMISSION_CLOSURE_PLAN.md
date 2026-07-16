@@ -1,10 +1,12 @@
 # First-Slice Admission Closure Plan
 
-Status: non-freezable architecture-evidence hypothesis, 2026-07-16. This document is
-not a command registry, registry activation, engine-contract root, runtime
-surface, canonical mission trace, or Gate A acceptance record. It defines the
-current disputed *representational* admission hypothesis for the offline
-proof-mission truth compiler and records why its scope and counts are refused.
+Status: superseded pre-resolution architecture-evidence hypothesis, retained for
+audit, 2026-07-16. C1-C8 choices and recomputed candidate counts now live in
+[`FIRST_SLICE_ADMISSION_RESOLUTION_2026-07-16.md`](FIRST_SLICE_ADMISSION_RESOLUTION_2026-07-16.md)
+and its machine companion. This document remains the evidence of why the former
+44/77/52/23 working hypothesis was refused; it is not a command registry,
+RegistryActivation, EngineContractRoot, runtime surface, canonical mission
+trace, or Gate A acceptance record.
 
 ## Verdict
 
