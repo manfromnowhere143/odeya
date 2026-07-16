@@ -2,7 +2,7 @@
 
 Odeya is a private research engine that turns a thesis into a governed, replayable chain from question to evidence to warranted claim.
 
-> **Current state — 2026-07-16:** architecture foundation only. No executable research engine, autonomous-science capability, production deployment, or automatic publication is claimed. Runtime work remains blocked until the architecture gates are accepted.
+> **Current state — 2026-07-17:** architecture foundation only. No executable research engine, autonomous-science capability, production deployment, or automatic publication is claimed. Runtime work remains blocked until the architecture gates are accepted.
 
 The provisional web address is `odeya.danielwahnich.dev`. The apex domain, company, trademark, and public-release decisions remain separate.
 
@@ -81,7 +81,9 @@ They are requirements sources and bounded proof missions—not runtime dependenc
 
 ## Architecture checkpoint
 
-The current retained foundation contains 103 Draft 2020-12 schemas, 620 valid/adversarial cases, nine isolated contract suites, two architecture-evidence checks, and seven bounded safe TLA+ models with thirty mutation controls. These results establish structural and bounded semantic evidence only. [Gate A remains blocked](docs/ARCHITECTURE_STATUS.md), and its accountable review and operator decision have not occurred.
+The current retained foundation contains 112 Draft 2020-12 schemas, 660 valid/adversarial cases, 12 isolated contract suites, 3 architecture-evidence checks, and seven bounded safe TLA+ models with thirty mutation controls. These counts are bound to the validator run that measures them; the README previously stated four of them as fact while all four had drifted.
+
+Those results establish structural and bounded semantic evidence only. Their strength is bounded further: of 139 refusal statements across the lifecycle checker, 89 are reachable by a retained known-bad case and 50 are not, and the conditions inside all 139 are unmeasured. A passing suite is therefore weaker evidence than it reads — see [ADR 0030](docs/decisions/0030-statement-coverage-is-not-condition-coverage.md). [Gate A remains blocked](docs/ARCHITECTURE_STATUS.md), and its accountable review and operator decision have not occurred.
 
 The architecture is a modular scientific kernel with isolated cognitive workers around it:
 
@@ -139,11 +141,17 @@ After fetching the digest-verified JAR described in the [formal-model guide](for
 bash formal/tla/check.sh
 ```
 
+Which lifecycle guards have a known-bad proof is measured rather than assumed, and the measurement takes about ninety seconds:
+
+```bash
+python3 scripts/audit_lifecycle_guard_coverage.py
+```
+
 See [repository release engineering](docs/REPOSITORY_RELEASE.md) for the exact CI jobs, threat boundary, toolchain pins, and fresh-clone rehearsal. A green check is evidence about this repository snapshot; it is never scientific truth or Gate A acceptance.
 
 ## Next
 
-The exact canonical-profile parameters, nonrecursive WorkIntent core, and side-by-side WorkIntent 0.2 / canonical WorkLease 0.2 / WorkContract 0.3 successor cohort are machine-bound without issuing any canonical identity. WorkIntent 0.3 now replaces its three placeholder reference values with exact raw ResearchStateView/PlanningEpoch candidates and exact CandidateArtifact schema bytes, while explicitly keeping raw lineage distinct from canonical identity. Every predecessor remains resolvable; target and WorkIntent canonical digests, profile admission, and authority remain absent. The next architecture mission closes or versions the canonical migration findings, obtains profile acceptance, reissues profile-bound target identities, and only then constructs canonical members and the verification-assignment cohort. T1 AuthorityAssignment, the command/event/state/reducer graph, constitutional root/checkpoint/activation chain, independent reducers/verifiers, replay/recovery/correction-fanout evidence, rights-settled proof import, accountable reviews, exact candidate manifest, and Daniel’s exact-byte decision remain mandatory before Gate A. The [closure plan](docs/GATE_A_PREREQUISITE_CLOSURE_PLAN_2026-07-16.md) and [current handoff](docs/SESSION_HANDOFF.md) retain the dependency order and open limitations.
+The exact canonical-profile parameters, nonrecursive WorkIntent core, and side-by-side WorkIntent 0.2 / canonical WorkLease 0.2 / WorkContract 0.3 successor cohort are machine-bound without issuing any canonical identity. WorkIntent 0.3 now replaces its three placeholder reference values with exact raw ResearchStateView/PlanningEpoch candidates and exact CandidateArtifact schema bytes, while explicitly keeping raw lineage distinct from canonical identity. Every predecessor remains resolvable; target and WorkIntent canonical digests, profile admission, and authority remain absent. The next architecture mission closes or versions the canonical migration findings, obtains profile acceptance, reissues profile-bound target identities, and only then constructs canonical members and the verification-assignment cohort. T1 AuthorityAssignment, the command/event/state/reducer graph, constitutional root/checkpoint/activation chain, independent reducers/verifiers, replay/recovery/correction-fanout evidence, rights-settled proof import, accountable reviews, exact candidate manifest, and Daniel’s exact-byte decision remain mandatory before Gate A. Separately, the lifecycle evidence itself was corrected. Its suite asserted only that a known-bad trace was refused, never which guard refused it, so guards could be deleted with every validator green — including the 60-event and 25-family first-slice boundary counts this repository cites everywhere. Guard coverage is now measured by mutation and gated, at 89 of 139 refusal statements reachable. That figure is statement reachability only, and every earlier figure this lane published (69, 71, 75) was wrong in the same direction and corrected by independent review. The [closure plan](docs/GATE_A_PREREQUISITE_CLOSURE_PLAN_2026-07-16.md) and [current handoff](docs/SESSION_HANDOFF.md) retain the dependency order and open limitations.
 
 Only an accepted Gate A candidate can authorize disposable Gate B probes; one bounded replayable engine slice begins only after a separate Gate C decision.
 

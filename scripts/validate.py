@@ -1375,6 +1375,64 @@ def validate_decisions(errors: list[str]) -> int:
     return len(decisions)
 
 
+README_CHECKPOINT = re.compile(
+    r"The current retained foundation contains (\d+) Draft 2020-12 schemas, (\d+)\s+"
+    r"valid/adversarial cases, (\w+) isolated contract suites, (\w+)\s+"
+    r"architecture-evidence checks",
+    re.MULTILINE,
+)
+WORD_NUMBERS = {
+    "one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6,
+    "seven": 7, "eight": 8, "nine": 9, "ten": 10, "eleven": 11, "twelve": 12,
+    "thirteen": 13, "fourteen": 14, "fifteen": 15, "sixteen": 16,
+}
+
+
+def readme_checkpoint_errors(
+    schema_count: int,
+    schema_case_count: int,
+    suite_count: int,
+    evidence_check_count: int,
+) -> list[str]:
+    """Refuse a README whose checkpoint disagrees with this run's measurements.
+
+    The checkpoint sentence states counts as fact on the repository's front page.
+    Nothing verified them and all four drifted. A number published without a
+    check is a claim, not evidence, and the front door is the worst place to keep
+    one.
+    """
+
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    match = README_CHECKPOINT.search(readme)
+    if match is None:
+        return [
+            "README architecture checkpoint sentence is absent or reworded; it must "
+            "state the exact schema, case, suite, and evidence-check counts so they "
+            "can be bound to a measurement"
+        ]
+
+    def resolve(token: str) -> int | None:
+        if token.isdigit():
+            return int(token)
+        return WORD_NUMBERS.get(token.lower())
+
+    errors: list[str] = []
+    declared = (
+        ("Draft 2020-12 schemas", resolve(match.group(1)), schema_count),
+        ("valid/adversarial cases", resolve(match.group(2)), schema_case_count),
+        ("isolated contract suites", resolve(match.group(3)), suite_count),
+        ("architecture-evidence checks", resolve(match.group(4)), evidence_check_count),
+    )
+    for label, stated, actual in declared:
+        if stated is None:
+            errors.append(f"README checkpoint states an unreadable count for {label}")
+        elif stated != actual:
+            errors.append(
+                f"README checkpoint claims {stated} {label}; this run measured {actual}"
+            )
+    return errors
+
+
 def main() -> int:
     errors: list[str] = []
     validate_required(errors)
@@ -1396,6 +1454,20 @@ def main() -> int:
     module_counts = validate_module_dependency_evidence(errors)
     first_slice_counts = validate_first_slice_resolution(errors)
     decision_count = validate_decisions(errors)
+
+    # The README publishes an architecture checkpoint as fact. Nothing checked it,
+    # so it drifted: it advertised 103 schemas, 620 cases, nine suites and two
+    # evidence checks against an actual 112/660/12/3. A count asserted on the
+    # front door and proved nowhere is the same defect as a gate with no
+    # known-bad proof, one layer up. Bind it to what this run measured.
+    errors.extend(
+        readme_checkpoint_errors(
+            schema_count,
+            schema_case_count,
+            isolated_contract_suite_count,
+            architecture_evidence_check_count,
+        )
+    )
 
     if errors:
         print("Odeya foundation validation FAILED")
