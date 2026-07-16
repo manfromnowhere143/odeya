@@ -3422,6 +3422,145 @@
       ]
     },
     {
+      "name": "canonical-work-lease-valid-blocked-acquisition-candidate",
+      "schema": "schemas/canonical-work-lease.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/canonical-work-lease-acquired.valid.json",
+      "expect": "valid"
+    },
+    {
+      "name": "canonical-work-lease-valid-blocked-terminal-release-candidate",
+      "schema": "schemas/canonical-work-lease.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/canonical-work-lease-released.valid.json",
+      "expect": "valid"
+    },
+    {
+      "name": "canonical-work-lease-terminal-state-rejects-new-start-claim",
+      "schema": "schemas/canonical-work-lease.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/canonical-work-lease-released.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/lease_allows_new_start_claims", "value": true}
+      ]
+    },
+    {
+      "name": "canonical-work-lease-release-retains-claimed-reservation-for-settlement",
+      "schema": "schemas/canonical-work-lease.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/canonical-work-lease-released.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/reservation_frontier/claim_state_at_transition", "value": "unclaimed"},
+        {"op": "replace", "path": "/reservation_frontier/reservation_claim_event_ref", "value": null}
+      ]
+    },
+    {
+      "name": "canonical-work-lease-rejects-fabricated-canonical-identity",
+      "schema": "schemas/canonical-work-lease.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/canonical-work-lease-acquired.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/canonical_digest", "value": "sha256:0800000000000000000000000000000000000000000000000000000000000000"}
+      ]
+    },
+    {
+      "name": "canonical-work-lease-rejects-execution-authority-claim",
+      "schema": "schemas/canonical-work-lease.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/canonical-work-lease-acquired.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/record_authority_status", "value": "admitted_execution_authority"}
+      ]
+    },
+    {
+      "name": "canonical-work-lease-rejects-projection-label-as-canonical-state",
+      "schema": "schemas/canonical-work-lease.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/canonical-work-lease-acquired.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/lease_state", "value": "stale"}
+      ]
+    },
+    {
+      "name": "canonical-work-lease-acquisition-rejects-prior-active-event",
+      "schema": "schemas/canonical-work-lease.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/canonical-work-lease-acquired.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/transition/prior_active_event_ref",
+          "value": {
+            "event_id": "event.work-lease-acquired.prior.001",
+            "event_type": "work.lease_acquired",
+            "event_version": "1.0.0",
+            "digest": "sha256:0900000000000000000000000000000000000000000000000000000000000000"
+          }
+        }
+      ]
+    },
+    {
+      "name": "canonical-work-lease-acquisition-must-create-version-one",
+      "schema": "schemas/canonical-work-lease.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/canonical-work-lease-acquired.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/lease_version", "value": 2}
+      ]
+    },
+    {
+      "name": "canonical-work-lease-rejects-reordered-assignment-grant-roles",
+      "schema": "schemas/canonical-work-lease.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/canonical-work-lease-acquired.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/assignment_binding/ordered_grant_roles/0", "value": "verification"}
+      ]
+    },
+    {
+      "name": "canonical-work-lease-rejects-fabricated-resolved-assignment-cohort",
+      "schema": "schemas/canonical-work-lease.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/canonical-work-lease-acquired.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/assignment_binding/cohort_resolution_status", "value": "resolved"}
+      ]
+    },
+    {
+      "name": "canonical-work-lease-rejects-unprofiled-timestamp",
+      "schema": "schemas/canonical-work-lease.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/canonical-work-lease-acquired.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/temporal_bounds/expires_at", "value": "2026-07-16T10:10:00Z"}
+      ]
+    },
+    {
+      "name": "canonical-work-lease-rejects-event-state-mismatch",
+      "schema": "schemas/canonical-work-lease.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/canonical-work-lease-acquired.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/transition/event_ref/event_type", "value": "work.lease_released"}
+      ]
+    },
+    {
+      "name": "canonical-work-lease-rejects-outside-slice-renewal",
+      "schema": "schemas/canonical-work-lease.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/canonical-work-lease-acquired.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/transition/event_ref/event_type", "value": "work.lease_renewed"}
+      ]
+    },
+    {
+      "name": "canonical-work-lease-rejects-unknown-field",
+      "schema": "schemas/canonical-work-lease.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/canonical-work-lease-acquired.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "add", "path": "/projection_state", "value": "completed"}
+      ]
+    },
+    {
       "name": "cognitive-candidate-artifact-valid-untrusted",
       "schema": "schemas/candidate-artifact.schema.json",
       "fixture": "tests/cognitive-contracts/fixtures/candidate-artifact.valid.json",

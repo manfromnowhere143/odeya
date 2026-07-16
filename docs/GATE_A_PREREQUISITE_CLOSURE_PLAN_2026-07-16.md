@@ -171,13 +171,14 @@ before origin. `stale` and `completed`, if retained, are projection or derived
 dispositions and cannot silently become canonical reducer states.
 
 PRQ-008 remains `unresolved_blocking` even though the state algebra is now
-coherent: `ResearchEvent` 0.7.0 references
-`urn:odeya:schema:canonical-work-lease:0.1.0`, but no exact resource with that
-`$id` exists. No trace may treat the reference as resolved. If the
-representational slice requires that subject, it must be introduced as a
-separate reviewed tranche with a new schema artifact, positive/adversarial
-tests, exact module ownership, and transitive consumer review—not fabricated
-inside the event schema or this lifecycle closure.
+coherent and the exact
+`urn:odeya:schema:canonical-work-lease:0.1.0` resource exists as an unissued
+candidate. [ADR 0019](decisions/0019-materialize-fail-closed-work-lease-candidate.md)
+adds positive/adversarial schema cases, exact `work` ownership, raw-byte
+lineage, and direct-consumer review. Every instance still fails closed with a
+null profile and canonical digest and no execution authority. No trace may
+treat schema presence as resolved record identity, reducer correctness,
+assignment admission, registry membership, activation, or Gate A evidence.
 
 ### PRQ-009 — Assignment requires artifacts it is meant to create
 
@@ -217,6 +218,14 @@ assignment cohort: five ordered grant uses, reservation creation, lease
 acquisition, assignment, then five matching ordered grant exhaustions. Exact
 current DataUseDecision, zero-external-capability sandbox/policy, reservation,
 lease, grant, command, receipt, activation, and commit equalities are mandatory.
+
+Direct WorkLease consumer review adds one exact C5 blocker. `attempt.start`
+claims the reservation and `attempt.report` may later terminate the lease after
+observed teardown, but `ResearchEvent` 0.7.0 currently constrains
+`work.lease_released` to an unclaimed reservation with no claim event. The
+reissued event contract must retain the claimed reservation and claim-event
+identity while the lease terminates; only ResourceLedger settlement may clear
+the claimed hold. Lease release cannot silently settle resources.
 
 ### PRQ-010 — Version axes are implicit
 

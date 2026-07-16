@@ -12,6 +12,7 @@ import json
 import re
 import sys
 from copy import deepcopy
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Callable
 
@@ -22,6 +23,12 @@ SCHEMA_PATH = ROOT / "schemas/research-event.schema.json"
 INVENTORY_PATH = ROOT / "architecture/first-slice-admission-resolution-candidate.json"
 IDENTITY_MAP_PATH = ROOT / "architecture/first-slice-event-identity-map.json"
 DATA_USE_FIXTURE_PATH = ROOT / "tests/architecture-schema/fixtures/data-use-decided-event.valid.json"
+WORK_LEASE_SCHEMA_PATH = ROOT / "schemas/canonical-work-lease.schema.json"
+MODULE_MANIFEST_PATH = ROOT / "architecture/module-dependency-manifest.json"
+WORK_LEASE_FIXTURES = {
+    "acquired": ROOT / "tests/architecture-schema/fixtures/canonical-work-lease-acquired.valid.json",
+    "released": ROOT / "tests/architecture-schema/fixtures/canonical-work-lease-released.valid.json",
+}
 DIGEST = re.compile(r"^sha256:[0-9a-f]{64}$")
 PAYLOAD_TYPE_VERSION = re.compile(r":(\d+\.\d+\.\d+)$")
 EXPECTED_V2_PAYLOAD_TYPE_EVENTS = {
@@ -30,7 +37,7 @@ EXPECTED_V2_PAYLOAD_TYPE_EVENTS = {
     "verification.completed",
     "verification.disputed",
 }
-MISSING_CANONICAL_WORK_LEASE_ID = "urn:odeya:schema:canonical-work-lease:0.1.0"
+CANONICAL_WORK_LEASE_ID = "urn:odeya:schema:canonical-work-lease:0.1.0"
 
 
 def load_json(path: Path) -> Any:
@@ -161,17 +168,202 @@ def schema_contract_errors(
     if source.get("required_event_inventory_version") != inventory.get("version"):
         errors.append("identity map points at the wrong first-slice inventory version")
 
-    missing_resources = identity.get("missing_required_schema_resources", [])
-    expected_missing_work_lease = {
-        "schema_resource_id": MISSING_CANONICAL_WORK_LEASE_ID,
-        "resolution_status": "missing_unresolved_blocking",
+    if identity.get("version") != "0.2.0":
+        errors.append("event identity map did not advance to the WorkLease-aware 0.2.0 candidate")
+    if identity.get("missing_required_schema_resources") != []:
+        errors.append("identity map still claims a required schema resource is absent")
+
+    work_lease_raw = WORK_LEASE_SCHEMA_PATH.read_bytes()
+    work_lease_schema = load_json(WORK_LEASE_SCHEMA_PATH)
+    expected_work_lease_candidate = {
+        "schema_resource_id": CANONICAL_WORK_LEASE_ID,
+        "schema_path": "schemas/canonical-work-lease.schema.json",
+        "resource_presence_status": "present_unissued_candidate",
+        "schema_resource_raw_sha256": "sha256:" + hashlib.sha256(work_lease_raw).hexdigest(),
+        "schema_resource_byte_count": len(work_lease_raw),
+        "owner_module": "work",
+        "contract_kind": "candidate_record",
+        "scope_profile": "first_slice_local_verification_candidate",
+        "record_identity_resolution_status": "unresolved_blocking",
+        "record_authority_status": "not_admitted_not_execution_authority",
         "referenced_from": "schemas/research-event.schema.json#/$defs/canonical_work_lease_record_reference",
         "affected_first_slice_area": "local work-lease attempt and assignment payload references",
         "safe_trace_resolution_claimed": False,
-        "construction_disposition": "separate reviewed tranche with new resource identity tests and module ownership; never fabricated in this lifecycle lane",
+        "transitive_consumer_review": {
+            "schema_consumer_pointers": [
+                "schemas/research-event.schema.json#/$defs/canonical_work_lease_record_reference"
+            ],
+            "fixture_consumers": [
+                "tests/architecture-schema/fixtures/local-attempt-completed-event.valid.json",
+                "tests/architecture-schema/fixtures/local-attempt-started-event.valid.json",
+            ],
+            "candidate_fixtures": [
+                "tests/architecture-schema/fixtures/canonical-work-lease-acquired.valid.json",
+                "tests/architecture-schema/fixtures/canonical-work-lease-released.valid.json",
+            ],
+            "compatibility_findings": [
+                {
+                    "finding_id": "C5-WORK-LEASE-RELEASE-CLAIM-001",
+                    "status": "unresolved_blocking",
+                    "consumer": "schemas/research-event.schema.json#/oneOf/21/properties/payload",
+                    "current_consumer_contract": "work.lease_released requires reservation_claim_state=unclaimed and a null reservation_claim_event_ref",
+                    "required_first_slice_contract": "after attempt.start claims the reservation, lease release retains claimed plus the exact claim event and does not mutate ResourceLedger; settlement remains separate",
+                    "required_action": "reissue ResearchEvent and its EventContractRecord under PRQ-009 with exact release/claim/settlement vectors",
+                }
+            ],
+        },
+        "remaining_disposition": "schema resource absence is removed; canonical profile, record identity, assignment cohort, immutable registry membership, reducer evidence, and activation remain blocking",
     }
-    if missing_resources != [expected_missing_work_lease]:
-        errors.append("identity map does not expose the exact missing canonical WorkLease resource blocker")
+    if identity.get("required_schema_resource_candidates") != [expected_work_lease_candidate]:
+        errors.append("identity map does not bind the exact present-but-unissued WorkLease candidate")
+    if work_lease_schema.get("$id") != CANONICAL_WORK_LEASE_ID:
+        errors.append("canonical WorkLease candidate has the wrong schema resource identity")
+    if nested(work_lease_schema, "properties", "schema_version", "const") != "0.1.0":
+        errors.append("canonical WorkLease candidate instance version is not 0.1.0")
+    if nested(work_lease_schema, "properties", "scope_profile", "const") != "first_slice_local_verification_candidate":
+        errors.append("canonical WorkLease candidate is not bounded to the first-slice local profile")
+    if nested(work_lease_schema, "properties", "identity_resolution_status", "const") != "unresolved_blocking":
+        errors.append("canonical WorkLease candidate does not fail closed on identity")
+    if nested(work_lease_schema, "properties", "canonicalization_profile_ref", "type") != "null":
+        errors.append("canonical WorkLease candidate fabricates a canonicalization profile")
+    if nested(work_lease_schema, "properties", "canonical_digest", "type") != "null":
+        errors.append("canonical WorkLease candidate fabricates a canonical digest")
+    if nested(work_lease_schema, "properties", "record_authority_status", "const") != "not_admitted_not_execution_authority":
+        errors.append("canonical WorkLease candidate can claim execution authority")
+    expected_digest_scopes = {
+        "canonical_digest": {
+            "algorithm": "sha-256",
+            "subject": "canonical WorkLease record under its future admitted schema and canonicalization profile",
+            "profile_source": "/canonicalization_profile_ref",
+            "schema_source": CANONICAL_WORK_LEASE_ID,
+            "status": "not_computable_while_identity_resolution_status_is_unresolved_blocking",
+        },
+        "work_lease_record_digest": {
+            "algorithm": "sha-256",
+            "subject": "exact referenced canonical record bytes",
+            "profile_source": "referenced record registry member",
+            "schema_source": "schema_id sibling",
+            "status": "requires_offline_registry_resolution",
+        },
+        "work_lease_event_digest": {
+            "algorithm": "sha-256",
+            "subject": "exact referenced ResearchEvent canonical bytes",
+            "profile_source": "referenced event contract member",
+            "schema_source": "event_type and event_version siblings",
+            "status": "requires_offline_event_registry_resolution",
+        },
+        "work_lease_artifact_digest": {
+            "algorithm": "sha-256",
+            "subject": "exact artifact bytes",
+            "profile_source": "raw_bytes",
+            "schema_source": "media_type sibling",
+            "status": "requires_artifact_store_resolution",
+        },
+    }
+    observed_digest_scopes = {
+        "canonical_digest": nested(
+            work_lease_schema,
+            "properties",
+            "canonical_digest",
+            "x-odeya-digest-scope",
+        ),
+        **{
+            name: nested(
+                work_lease_schema,
+                "$defs",
+                name,
+                "x-odeya-digest-scope",
+            )
+            for name in (
+                "work_lease_record_digest",
+                "work_lease_event_digest",
+                "work_lease_artifact_digest",
+            )
+        },
+    }
+    if observed_digest_scopes != expected_digest_scopes:
+        errors.append("canonical WorkLease digest-scope annotations are absent or ambiguous")
+    if nested(
+        work_lease_schema,
+        "$defs",
+        "work_lease_timestamp",
+        "pattern",
+    ) != r"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{6}Z$":
+        errors.append("canonical WorkLease timestamps do not pin UTC microseconds")
+    expected_state_machine = {
+        "aggregate_absence_state": "unleased",
+        "canonical_states": ["unleased", "active", "released", "revoked", "expired"],
+        "record_states": ["active", "released", "revoked", "expired"],
+        "terminal_states": ["released", "revoked", "expired"],
+        "projection_only_labels": ["stale", "completed"],
+        "terminal_reentry_allowed": False,
+        "first_slice_transitions": [
+            {"event_type": "work.lease_acquired", "from": "unleased", "to": "active"},
+            {"event_type": "work.lease_released", "from": "active", "to": "released"},
+            {"event_type": "work.lease_revoked", "from": "active", "to": "revoked"},
+            {"event_type": "work.lease_expired", "from": "active", "to": "expired"},
+        ],
+        "first_slice_reservation_frontier": {
+            "work.lease_acquired": "unclaimed",
+            "work.lease_released": "claimed_requires_separate_settlement",
+            "work.lease_revoked": "unclaimed_or_claimed_requires_separate_settlement_if_claimed",
+            "work.lease_expired": "unclaimed",
+            "lease_transition_changes_resource_reservation_state": False,
+        },
+        "outside_first_slice_transition": {
+            "event_type": "work.lease_renewed",
+            "from": "active",
+            "to": "active",
+            "candidate_support_status": "outside_scope_not_constructible",
+        },
+    }
+    if work_lease_schema.get("x-odeya-work-lease-state-machine") != expected_state_machine:
+        errors.append("canonical WorkLease candidate state-machine annotation drifted")
+
+    release_branch = branches.get("work.lease_released")
+    release_layers = (
+        nested(release_branch[1], "properties", "payload", "allOf")
+        if release_branch is not None
+        else None
+    )
+    current_release_claim_state = None
+    current_release_claim_ref_type = None
+    if isinstance(release_layers, list) and len(release_layers) > 1:
+        current_release_claim_state = nested(
+            release_layers[1],
+            "properties",
+            "reservation_claim_state",
+            "const",
+        )
+        current_release_claim_ref_type = nested(
+            release_layers[1],
+            "properties",
+            "binding",
+            "properties",
+            "reservation",
+            "properties",
+            "reservation_claim_event_ref",
+            "type",
+        )
+    if current_release_claim_state != "unclaimed" or current_release_claim_ref_type != "null":
+        errors.append("recorded ResearchEvent release/claimed-reservation blocker no longer matches exact bytes")
+
+    module_manifest = load_json(MODULE_MANIFEST_PATH)
+    matching_owners = [
+        item
+        for item in module_manifest.get("schema_owners", [])
+        if isinstance(item, dict)
+        and item.get("schema_path") == "schemas/canonical-work-lease.schema.json"
+    ]
+    if matching_owners != [
+        {
+            "schema_path": "schemas/canonical-work-lease.schema.json",
+            "schema_id": CANONICAL_WORK_LEASE_ID,
+            "owner_module": "work",
+            "contract_kind": "candidate_record",
+        }
+    ]:
+        errors.append("canonical WorkLease candidate does not have exact work-module ownership")
     if nested(
         schema,
         "$defs",
@@ -191,7 +383,7 @@ def schema_contract_errors(
             for layer in lease_reference_layers
             if isinstance(layer, dict)
         }
-        if MISSING_CANONICAL_WORK_LEASE_ID not in lease_ids:
+        if CANONICAL_WORK_LEASE_ID not in lease_ids:
             errors.append("ResearchEvent canonical WorkLease reference ID drifted")
     defining_paths: list[str] = []
     for candidate_path in ROOT.rglob("*.schema.json"):
@@ -199,11 +391,11 @@ def schema_contract_errors(
             candidate = load_json(candidate_path)
         except (OSError, json.JSONDecodeError):
             continue
-        if isinstance(candidate, dict) and candidate.get("$id") == MISSING_CANONICAL_WORK_LEASE_ID:
+        if isinstance(candidate, dict) and candidate.get("$id") == CANONICAL_WORK_LEASE_ID:
             defining_paths.append(str(candidate_path.relative_to(ROOT)))
-    if defining_paths:
+    if defining_paths != ["schemas/canonical-work-lease.schema.json"]:
         errors.append(
-            "identity map calls canonical WorkLease missing but defining resources exist: "
+            "canonical WorkLease resource identity must have one exact defining path: "
             f"{sorted(defining_paths)}"
         )
 
@@ -566,6 +758,128 @@ def work_lease_trace_errors(subject: dict[str, Any]) -> list[str]:
     return errors
 
 
+def work_lease_record_candidate_errors(subject: dict[str, Any]) -> list[str]:
+    errors: list[str] = []
+    fixture_name = subject.get("fixture")
+    fixture_path = WORK_LEASE_FIXTURES.get(fixture_name)
+    if fixture_path is None:
+        return ["WorkLease record case does not name one retained fixture"]
+    record = deepcopy(load_json(fixture_path))
+    mutation = subject.get("mutation")
+    if mutation == "reverse_temporal_bounds":
+        record["temporal_bounds"]["not_before"], record["temporal_bounds"]["expires_at"] = (
+            record["temporal_bounds"]["expires_at"],
+            record["temporal_bounds"]["not_before"],
+        )
+    elif mutation == "mismatch_work_intent_artifact_digest":
+        record["work_intent_ref"]["artifact_ref"]["digest"] = (
+            "sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+        )
+    elif mutation == "terminal_allows_new_start_claim":
+        record["lease_allows_new_start_claims"] = True
+    elif mutation == "release_forgets_claimed_reservation":
+        record["reservation_frontier"]["claim_state_at_transition"] = "unclaimed"
+        record["reservation_frontier"]["reservation_claim_event_ref"] = None
+    elif mutation is not None:
+        return [f"unknown WorkLease record mutation {mutation!r}"]
+
+    if record.get("record_status") != "blocked_canonical_record_candidate":
+        errors.append("WorkLease record fixture is not a blocked candidate")
+    if record.get("identity_resolution_status") != "unresolved_blocking":
+        errors.append("WorkLease record fixture fabricates resolved identity")
+    if record.get("canonicalization_profile_ref") is not None or record.get("canonical_digest") is not None:
+        errors.append("WorkLease record fixture fabricates profile or canonical digest")
+    if record.get("record_authority_status") != "not_admitted_not_execution_authority":
+        errors.append("WorkLease record fixture claims execution authority")
+
+    work_intent = record.get("work_intent_ref", {})
+    if work_intent.get("schema_id") != "urn:odeya:schema:work-intent:0.1.0":
+        errors.append("WorkLease record fixture binds the wrong WorkIntent resource")
+    if work_intent.get("digest") != nested(work_intent, "artifact_ref", "digest"):
+        errors.append("WorkLease WorkIntent record and artifact digests differ")
+
+    assignment = record.get("assignment_binding", {})
+    if assignment.get("ordered_grant_roles") != [
+        "safety",
+        "data_rights",
+        "resource",
+        "execution",
+        "verification",
+    ]:
+        errors.append("WorkLease assignment binding does not retain the exact five-role order")
+    if nested(assignment, "assignment_event_ref", "event_type") != "verification.assigned":
+        errors.append("WorkLease assignment binding lacks the verification assignment event")
+    if assignment.get("cohort_resolution_status") != "unresolved_blocking":
+        errors.append("WorkLease assignment binding fabricates a resolved cohort")
+    if assignment.get("source_bytes_visible_at_assignment_commit") is not False:
+        errors.append("WorkLease assignment binding exposes source bytes at assignment")
+    if assignment.get("launch_outbox_created_at_assignment_commit") is not False:
+        errors.append("WorkLease assignment binding creates a launch outbox at assignment")
+
+    reservation = record.get("reservation_frontier", {})
+    if nested(reservation, "reservation_created_event_ref", "event_type") != "resource.reservation_created":
+        errors.append("WorkLease reservation frontier lacks its origin event")
+    claim_state = reservation.get("claim_state_at_transition")
+    claim_event_type = nested(reservation, "reservation_claim_event_ref", "event_type")
+    if claim_state == "unclaimed" and reservation.get("reservation_claim_event_ref") is not None:
+        errors.append("unclaimed WorkLease reservation frontier retains a claim event")
+    if claim_state == "claimed" and claim_event_type != "resource.reservation_claimed":
+        errors.append("claimed WorkLease reservation frontier lacks the claim event")
+    if reservation.get("lease_transition_changes_resource_reservation_state") is not False:
+        errors.append("WorkLease transition claims authority over ResourceLedger state")
+    if reservation.get("claimed_reservation_requires_separate_settlement") is not True:
+        errors.append("WorkLease frontier does not preserve separate claimed-reservation settlement")
+
+    bounds = record.get("temporal_bounds", {})
+    try:
+        not_before = datetime.fromisoformat(str(bounds.get("not_before", "")).replace("Z", "+00:00"))
+        expires_at = datetime.fromisoformat(str(bounds.get("expires_at", "")).replace("Z", "+00:00"))
+    except ValueError:
+        errors.append("WorkLease temporal bounds are not parseable fixed instants")
+    else:
+        if not not_before < expires_at:
+            errors.append("WorkLease not_before must precede expires_at")
+
+    transition = record.get("transition", {})
+    event_type = nested(transition, "event_ref", "event_type")
+    transitions = {
+        "work.lease_acquired": ("unleased", "active"),
+        "work.lease_released": ("active", "released"),
+        "work.lease_revoked": ("active", "revoked"),
+        "work.lease_expired": ("active", "expired"),
+    }
+    expected_transition = transitions.get(event_type)
+    if expected_transition is None:
+        errors.append("WorkLease record fixture uses an unknown transition event")
+    else:
+        if (transition.get("from"), transition.get("to")) != expected_transition:
+            errors.append("WorkLease record event and declared transition differ")
+        if record.get("lease_state") != expected_transition[1]:
+            errors.append("WorkLease record state differs from its transition result")
+    if event_type == "work.lease_acquired":
+        if record.get("lease_version") != 1 or transition.get("prior_active_event_ref") is not None:
+            errors.append("WorkLease acquisition is not version-one origin from aggregate absence")
+    else:
+        prior_type = nested(transition, "prior_active_event_ref", "event_type")
+        if record.get("lease_version", 0) < 2 or prior_type not in {
+            "work.lease_acquired",
+        }:
+            errors.append("non-origin WorkLease transition lacks an active predecessor")
+    if event_type == "work.lease_acquired":
+        if claim_state != "unclaimed" or reservation.get("reservation_claim_event_ref") is not None:
+            errors.append("WorkLease acquisition does not begin with an unclaimed reservation")
+    elif event_type == "work.lease_released":
+        if claim_state != "claimed" or claim_event_type != "resource.reservation_claimed":
+            errors.append("first-slice WorkLease release forgets the claimed reservation awaiting settlement")
+    elif event_type == "work.lease_expired":
+        if claim_state != "unclaimed" or reservation.get("reservation_claim_event_ref") is not None:
+            errors.append("first-slice WorkLease expiry is not the pre-claim deadline branch")
+    if record.get("lease_state") in {"released", "revoked", "expired"}:
+        if record.get("lease_allows_new_start_claims") is not False:
+            errors.append("terminal WorkLease record permits a new start claim")
+    return errors
+
+
 def identity_map_mutation_errors(subject: dict[str, Any]) -> list[str]:
     schema = load_json(SCHEMA_PATH)
     inventory = load_json(INVENTORY_PATH)
@@ -595,6 +909,7 @@ MODEL_CHECKERS: dict[str, Callable[[dict[str, Any]], list[str]]] = {
     "protocol_origin": protocol_origin_errors,
     "data_use_cohort": data_use_cohort_errors,
     "work_lease_trace": work_lease_trace_errors,
+    "work_lease_record_candidate": work_lease_record_candidate_errors,
     "identity_map_mutation": identity_map_mutation_errors,
 }
 
@@ -623,8 +938,6 @@ def main() -> int:
         expect = case.get("expect")
         if expect == "accept":
             safe_count += 1
-            if MISSING_CANONICAL_WORK_LEASE_ID in json.dumps(case.get("subject", {}), sort_keys=True):
-                failures.append(f"{name}: safe trace claims the missing canonical WorkLease resource")
             if errors:
                 failures.append(f"{name}: safe reference rejected: {'; '.join(errors)}")
         elif expect == "reject":

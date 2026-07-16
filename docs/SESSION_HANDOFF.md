@@ -284,10 +284,15 @@ A mission.
    profile and version axes; close grant lifecycle, protocol origin, and
    data-use authority contradictions; bind schema, payload, event, member, and
    snapshot identities; separate core/evidence/seal/attestation subjects; and
-   retain typed blocked-construction receipts. T0 also materializes the absent
-   exact `canonical-work-lease:0.1.0` resource, closes its transitive migration,
-   and resolves C5/PRQ-009 through the prospective non-authoritative
+   retain typed blocked-construction receipts. The exact
+   `canonical-work-lease:0.1.0` resource is now present only as an unissued,
+   identity-unresolved candidate; T0 must promote it through canonical profile,
+   transitive migration, member/reducer, and accountable-review evidence, then
+   resolve C5/PRQ-009 through the prospective non-authoritative
    WorkIntent/WorkContract and complete assignment-cohort prerequisites.
+   That reissue must also close `C5-WORK-LEASE-RELEASE-CLAIM-001`: release
+   retains the reservation claimed at attempt start for separate ResourceLedger
+   settlement; lease termination cannot erase or settle that claim.
 2. Only after all T0 evidence and exact schema/registry identities pass,
    construct and prove the T1 AuthorityAssignment vertical contract.
 3. Complete the exact 42 payload schemas, 43 command records, 60 event records,

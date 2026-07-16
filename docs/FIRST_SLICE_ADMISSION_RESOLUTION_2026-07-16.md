@@ -120,8 +120,11 @@ and exactly four logical-payload-v2 branches
 `verification.disputed`, and `reproducibility.determined`). Immutable payload
 contract resources, extraction/canonicalization, digest resolution,
 EventContractRecords, and activation still do not exist; the mapping is
-architecture evidence, not admission. It also records the referenced
-`urn:odeya:schema:canonical-work-lease:0.1.0` resource as missing and blocking.
+architecture evidence, not admission. Identity-map candidate 0.2.0 binds the
+referenced `urn:odeya:schema:canonical-work-lease:0.1.0` resource's exact raw
+bytes and ownership while keeping record identity and authority blocked.
+Schema presence does not resolve its canonical profile, assignment cohort,
+member/reducer, registry, or activation evidence.
 
 The containing ResearchEvent schema is reissued as 0.7.0 because the lifecycle
 closure changes required bytes and meaning. The former 0.6.0 candidate is
@@ -434,7 +437,11 @@ candidate is `unresolved_blocking`, has null canonicalization profile and
 canonical digest, and is not admitted or assignable. `ResearchEvent` 0.7.0
 therefore does not fabricate a WorkIntent reference, and the retained
 one-event `verification.assigned` fixture is not evidence of the required
-13-event cohort. At least the following remain:
+13-event cohort. Direct WorkLease consumer review also found
+`C5-WORK-LEASE-RELEASE-CLAIM-001`: `attempt.start` claims the reservation, but
+the current `work.lease_released` branch requires it to be unclaimed. Lease
+termination must preserve the claimed reservation and exact claim event while
+ResourceLedger settlement remains separate. At least the following remain:
 
 1. 42 exact command-payload schemas and 43 immutable command-contract members;
 2. 60 immutable event-contract members and their exact payload-contract bytes;
@@ -444,9 +451,9 @@ one-event `verification.assigned` fixture is not evidence of the required
 3. 25 state-subject and 25 reducer-contract members;
 4. a newly identified resolved WorkIntent, a WorkContract binding that intent
    and assignment commit, a reissued ResearchEvent/EventContractRecord with the
-   complete assignment bindings, and exact LocalMaterializationIntent,
-   WorkLease, attempt, correction-fence, validity-pair, multi-grant, and
-   resource-settlement vectors;
+   complete assignment bindings and corrected release/claim semantics, plus
+   exact LocalMaterializationIntent, WorkLease, attempt, correction-fence,
+   validity-pair, multi-grant, and resource-settlement vectors;
 5. a real EngineContractRoot/C0/checkpoint/witness/P0/RegistryActivation chain;
 6. bounded formal coverage still missing for correction/validity batch
    visibility, materialization visibility, P0 recovery currentness, and

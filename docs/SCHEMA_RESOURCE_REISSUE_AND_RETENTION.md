@@ -16,6 +16,11 @@ that existed at architecture checkpoint
 has changed. It inventories schema paths absent at that checkpoint separately;
 those are new candidates, not reissues and not proof of a predecessor.
 
+The current bounded comparison contains seven reissued existing paths and
+three new candidates. `canonical-work-lease:0.1.0` is one of those new
+candidates: its raw-byte lineage and path classification are checked, but its
+canonical record identity, admission, reducer, and authority remain blocked.
+
 ## Required reissue edge
 
 Each reissued existing path binds:

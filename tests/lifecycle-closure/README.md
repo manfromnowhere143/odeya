@@ -25,11 +25,21 @@ branches whose logical payload type identity is v2. It verifies the enclosing
 schema resource by exact raw digest and byte count while keeping every
 per-payload contract unresolved and null.
 
-The state-machine traces do not resolve a WorkLease record resource. The
-identity map records
-`urn:odeya:schema:canonical-work-lease:0.1.0` as missing and blocking because
-ResearchEvent references it but no such schema resource exists. Creating that
-resource requires a separate reviewed schema/test/ownership tranche.
+The state-machine traces do not resolve a WorkLease record identity. The exact
+`urn:odeya:schema:canonical-work-lease:0.1.0` resource now exists as a
+fail-closed unissued candidate. The identity map binds its exact raw bytes,
+module ownership, direct schema consumer, and retained fixture consumers while
+keeping canonical profile, record identity, authority, reducer, registry, and
+activation status blocked.
+
+The checker also loads the retained blocked acquisition and terminal-release
+record candidates. It verifies their exact five-role assignment binding,
+WorkIntent record/artifact digest equality, fixed `not_before < expires_at`
+relation, transition/state/version ancestry, and terminal start-claim refusal.
+Known-bad mutations reverse the time bounds, split the WorkIntent reference
+digest, permit a new start from a terminal lease, and make release forget the
+claimed reservation awaiting separate settlement. These are bounded fixture
+semantics, not a runtime clock, registry lookup, or reducer proof.
 
 Run from the repository root:
 
@@ -38,6 +48,6 @@ python3 tests/lifecycle-closure/check.py
 ```
 
 Passing is bounded consistency evidence only. It does not create immutable
-payload contracts, a canonical WorkLease resource, or EventContractRecords,
-prove payload digest resolution,
+payload contracts, an admitted canonical WorkLease record, or
+EventContractRecords, prove payload digest resolution,
 activate registries, authorize a runtime, or complete Gate A.

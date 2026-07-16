@@ -2,7 +2,7 @@
   "schema_version": "0.1.0",
   "artifact_class": "architecture_evidence_only",
   "identity_map_id": "odeya.first-slice-event-identity-map",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "status": "candidate_not_admitted_payload_contracts_unresolved",
   "generated_at": "2026-07-16",
   "source": {
@@ -58,14 +58,46 @@
     ],
     "branch_pointer_semantics": "JSON Pointer into the exact raw ResearchEvent 0.7.0 schema resource bound by ID, SHA-256, and byte count. It is not a standalone payload-schema resource and cannot be resolved through a latest alias."
   },
-  "missing_required_schema_resources": [
+  "missing_required_schema_resources": [],
+  "required_schema_resource_candidates": [
     {
       "schema_resource_id": "urn:odeya:schema:canonical-work-lease:0.1.0",
-      "resolution_status": "missing_unresolved_blocking",
+      "schema_path": "schemas/canonical-work-lease.schema.json",
+      "resource_presence_status": "present_unissued_candidate",
+      "schema_resource_raw_sha256": "sha256:bf7f511ffb525a64c18d84e9ab3eeeca1ac1b4d694cce2ee3bfd11f8590889ce",
+      "schema_resource_byte_count": 23087,
+      "owner_module": "work",
+      "contract_kind": "candidate_record",
+      "scope_profile": "first_slice_local_verification_candidate",
+      "record_identity_resolution_status": "unresolved_blocking",
+      "record_authority_status": "not_admitted_not_execution_authority",
       "referenced_from": "schemas/research-event.schema.json#/$defs/canonical_work_lease_record_reference",
       "affected_first_slice_area": "local work-lease attempt and assignment payload references",
       "safe_trace_resolution_claimed": false,
-      "construction_disposition": "separate reviewed tranche with new resource identity tests and module ownership; never fabricated in this lifecycle lane"
+      "transitive_consumer_review": {
+        "schema_consumer_pointers": [
+          "schemas/research-event.schema.json#/$defs/canonical_work_lease_record_reference"
+        ],
+        "fixture_consumers": [
+          "tests/architecture-schema/fixtures/local-attempt-completed-event.valid.json",
+          "tests/architecture-schema/fixtures/local-attempt-started-event.valid.json"
+        ],
+        "candidate_fixtures": [
+          "tests/architecture-schema/fixtures/canonical-work-lease-acquired.valid.json",
+          "tests/architecture-schema/fixtures/canonical-work-lease-released.valid.json"
+        ],
+        "compatibility_findings": [
+          {
+            "finding_id": "C5-WORK-LEASE-RELEASE-CLAIM-001",
+            "status": "unresolved_blocking",
+            "consumer": "schemas/research-event.schema.json#/oneOf/21/properties/payload",
+            "current_consumer_contract": "work.lease_released requires reservation_claim_state=unclaimed and a null reservation_claim_event_ref",
+            "required_first_slice_contract": "after attempt.start claims the reservation, lease release retains claimed plus the exact claim event and does not mutate ResourceLedger; settlement remains separate",
+            "required_action": "reissue ResearchEvent and its EventContractRecord under PRQ-009 with exact release/claim/settlement vectors"
+          }
+        ]
+      },
+      "remaining_disposition": "schema resource absence is removed; canonical profile, record identity, assignment cohort, immutable registry membership, reducer evidence, and activation remain blocking"
     }
   ],
   "mappings": [

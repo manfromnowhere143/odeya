@@ -276,13 +276,15 @@ def main() -> int:
         require(
             prq008.get("finding_id") == "PRQ-008"
             and prq008.get("status") == "unresolved_blocking"
-            and "urn:odeya:schema:canonical-work-lease:0.1.0" in prq008.get("closure", ""),
-            "PRQ-008 must expose the missing canonical WorkLease resource as unresolved_blocking",
+            and "urn:odeya:schema:canonical-work-lease:0.1.0" in prq008.get("closure", "")
+            and "present_unissued_candidate" in prq008.get("closure", ""),
+            "PRQ-008 must expose the present-but-unadmitted canonical WorkLease resource as unresolved_blocking",
             errors,
         )
         require(
             prq009.get("finding_id") == "PRQ-009"
-            and prq009.get("status") == "unresolved_blocking",
+            and prq009.get("status") == "unresolved_blocking"
+            and "preserve the claimed reservation" in prq009.get("closure", ""),
             "PRQ-009 must remain unresolved_blocking while C5 is not constructible",
             errors,
         )

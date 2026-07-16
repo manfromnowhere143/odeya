@@ -18,6 +18,10 @@
     "work_lease_stale_as_canonical",
     "work_lease_completed_as_canonical",
     "work_lease_reopen_terminal",
+    "work_lease_record_reversed_time",
+    "work_lease_record_reference_digest_mismatch",
+    "work_lease_record_terminal_start_claim",
+    "work_lease_release_forgets_claimed_reservation",
     "identity_fabricated_contract_digest",
     "identity_resolved_status_with_null",
     "identity_logical_type_resource_substitution",
@@ -847,6 +851,68 @@
         ]
       },
       "adversarial_tag": "work_lease_reopen_terminal"
+    },
+    {
+      "name": "work-lease-record-safe-blocked-acquisition-candidate",
+      "kind": "safe_reference",
+      "model": "work_lease_record_candidate",
+      "expect": "accept",
+      "subject": {
+        "fixture": "acquired"
+      }
+    },
+    {
+      "name": "work-lease-record-safe-blocked-terminal-release-candidate",
+      "kind": "safe_reference",
+      "model": "work_lease_record_candidate",
+      "expect": "accept",
+      "subject": {
+        "fixture": "released"
+      }
+    },
+    {
+      "name": "work-lease-record-bad-reversed-temporal-bounds",
+      "kind": "adversarial",
+      "model": "work_lease_record_candidate",
+      "expect": "reject",
+      "subject": {
+        "fixture": "acquired",
+        "mutation": "reverse_temporal_bounds"
+      },
+      "adversarial_tag": "work_lease_record_reversed_time"
+    },
+    {
+      "name": "work-lease-record-bad-work-intent-artifact-digest-mismatch",
+      "kind": "adversarial",
+      "model": "work_lease_record_candidate",
+      "expect": "reject",
+      "subject": {
+        "fixture": "acquired",
+        "mutation": "mismatch_work_intent_artifact_digest"
+      },
+      "adversarial_tag": "work_lease_record_reference_digest_mismatch"
+    },
+    {
+      "name": "work-lease-record-bad-terminal-new-start-claim",
+      "kind": "adversarial",
+      "model": "work_lease_record_candidate",
+      "expect": "reject",
+      "subject": {
+        "fixture": "released",
+        "mutation": "terminal_allows_new_start_claim"
+      },
+      "adversarial_tag": "work_lease_record_terminal_start_claim"
+    },
+    {
+      "name": "work-lease-record-bad-release-forgets-claimed-reservation",
+      "kind": "adversarial",
+      "model": "work_lease_record_candidate",
+      "expect": "reject",
+      "subject": {
+        "fixture": "released",
+        "mutation": "release_forgets_claimed_reservation"
+      },
+      "adversarial_tag": "work_lease_release_forgets_claimed_reservation"
     },
     {
       "name": "identity-map-safe-exact-resource-and-branch-binding",
