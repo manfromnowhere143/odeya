@@ -12,6 +12,15 @@
     "c4_c6_extra_grant_cohort",
     "c5_release_after_claim",
     "c5_expiry_after_claim",
+    "c5_assignment_missing_work_intent",
+    "c5_assignment_unresolved_work_intent",
+    "c5_assignment_missing_active_lease",
+    "c5_assignment_stale_data_use",
+    "c5_assignment_missing_sandbox",
+    "c5_assignment_batch_size_one",
+    "c5_assignment_split_cohort",
+    "c5_assignment_wrong_order",
+    "c5_assignment_partial_grants",
     "c7_duplicate_reducer_authority",
     "c8_stale_p0_frontier",
     "c8_ambiguous_p0_frontier"
@@ -415,6 +424,130 @@
       }
     },
     {
+      "name": "c5-safe-prospective-verification-assignment-obligation-is-exact-but-not-currently-constructible",
+      "conflict_ids": ["C5"],
+      "kind": "safe_reference",
+      "model": "verification_assign_obligation",
+      "expect": "accept",
+      "subject": {
+        "prospective_only": true,
+        "claims_current_constructibility": false,
+        "claims_current_admission": false,
+        "command_type": "verification.assign",
+        "path_id": "local_assignment",
+        "role_slot_order": ["safety", "data_rights", "resource", "execution", "verification"],
+        "batch_size": 13,
+        "event_order": [
+          "authority.grant_used(safety)",
+          "authority.grant_used(data_rights)",
+          "authority.grant_used(resource)",
+          "authority.grant_used(execution)",
+          "authority.grant_used(verification)",
+          "resource.reservation_created",
+          "work.lease_acquired",
+          "verification.assigned",
+          "authority.grant_exhausted(safety)",
+          "authority.grant_exhausted(data_rights)",
+          "authority.grant_exhausted(resource)",
+          "authority.grant_exhausted(execution)",
+          "authority.grant_exhausted(verification)"
+        ],
+        "atomic_commit": true,
+        "intermediate_visibility": false,
+        "binding_obligations": {
+          "resolved_admitted_assignable_work_intent_exact": true,
+          "work_contract_binds_work_intent_and_assignment_commit": true,
+          "active_current_data_use_decisions_complete": true,
+          "zero_external_capability_sandbox_and_policy_exact": true,
+          "created_reservation_exact": true,
+          "acquired_active_lease_exact": true,
+          "five_distinct_single_use_action_bound_grants_exact": true,
+          "command_receipt_activation_commit_equalities_exact": true
+        }
+      }
+    },
+    {
+      "name": "c5-bad-assignment-omits-resolved-work-intent-binding",
+      "conflict_ids": ["C5"],
+      "kind": "adversarial",
+      "adversarial_tag": "c5_assignment_missing_work_intent",
+      "model": "verification_assign_obligation",
+      "expect": "reject",
+      "subject": {"fixture": "canonical_prospective_assignment_obligation", "mutation": "missing_work_intent_binding"}
+    },
+    {
+      "name": "c5-bad-unresolved-null-work-intent-claimed-assignable",
+      "conflict_ids": ["C5"],
+      "kind": "adversarial",
+      "adversarial_tag": "c5_assignment_unresolved_work_intent",
+      "model": "verification_assign_obligation",
+      "expect": "reject",
+      "subject": {"fixture": "canonical_prospective_assignment_obligation", "mutation": "unresolved_null_work_intent_used_as_assignable"}
+    },
+    {
+      "name": "c5-bad-assignment-omits-active-lease-binding",
+      "conflict_ids": ["C5"],
+      "kind": "adversarial",
+      "adversarial_tag": "c5_assignment_missing_active_lease",
+      "model": "verification_assign_obligation",
+      "expect": "reject",
+      "subject": {"fixture": "canonical_prospective_assignment_obligation", "mutation": "missing_active_lease"}
+    },
+    {
+      "name": "c5-bad-assignment-uses-stale-or-incomplete-data-use-decisions",
+      "conflict_ids": ["C5"],
+      "kind": "adversarial",
+      "adversarial_tag": "c5_assignment_stale_data_use",
+      "model": "verification_assign_obligation",
+      "expect": "reject",
+      "subject": {"fixture": "canonical_prospective_assignment_obligation", "mutation": "stale_or_incomplete_data_use_decisions"}
+    },
+    {
+      "name": "c5-bad-assignment-omits-zero-external-capability-sandbox",
+      "conflict_ids": ["C5"],
+      "kind": "adversarial",
+      "adversarial_tag": "c5_assignment_missing_sandbox",
+      "model": "verification_assign_obligation",
+      "expect": "reject",
+      "subject": {"fixture": "canonical_prospective_assignment_obligation", "mutation": "missing_zero_external_capability_sandbox"}
+    },
+    {
+      "name": "c5-bad-assignment-pretends-one-event-sample-is-complete-cohort",
+      "conflict_ids": ["C5"],
+      "kind": "adversarial",
+      "adversarial_tag": "c5_assignment_batch_size_one",
+      "model": "verification_assign_obligation",
+      "expect": "reject",
+      "subject": {"fixture": "canonical_prospective_assignment_obligation", "mutation": "batch_size_one"}
+    },
+    {
+      "name": "c5-bad-assignment-splits-grant-exhaustions-from-domain-commit",
+      "conflict_ids": ["C5"],
+      "kind": "adversarial",
+      "adversarial_tag": "c5_assignment_split_cohort",
+      "model": "verification_assign_obligation",
+      "expect": "reject",
+      "subject": {"fixture": "canonical_prospective_assignment_obligation", "mutation": "split_cohort"}
+    },
+    {
+      "name": "c5-bad-assignment-acquires-lease-before-creating-reservation",
+      "conflict_ids": ["C5"],
+      "kind": "adversarial",
+      "adversarial_tag": "c5_assignment_wrong_order",
+      "model": "verification_assign_obligation",
+      "expect": "reject",
+      "subject": {"fixture": "canonical_prospective_assignment_obligation", "mutation": "wrong_event_order"}
+    },
+    {
+      "name": "c5-bad-assignment-omits-data-rights-grant-use-and-exhaustion",
+      "conflict_ids": ["C5"],
+      "kind": "adversarial",
+      "adversarial_tag": "c5_assignment_partial_grants",
+      "model": "verification_assign_obligation",
+      "expect": "reject",
+      "subject": {"fixture": "canonical_prospective_assignment_obligation", "mutation": "partial_grant_cohort"}
+    },
+    {
       "name": "c7-safe-verification-is-sole-reducer-and-axes-are-internal",
       "conflict_ids": ["C7"],
       "kind": "safe_reference",
@@ -452,12 +585,17 @@
       "expect": "accept",
       "subject": {
         "prerequisite_id": "P0.constitutional-recovery-admission",
-        "nonrecursive_boundary": true,
+        "nonrecursive_boundary": {
+          "activation_reference_permitted": false,
+          "activation_identity_included": false,
+          "activation_sequence_included": false,
+          "parent_activation_digest_included": false,
+          "outer_activation_must_bind_exact_p0_digest": true
+        },
         "root_authority_non_self_issued": true,
         "exact_engine_contract_root_bound": true,
         "exact_c0_registry_bundle_bound": true,
         "witnessed_checkpoint": true,
-        "exact_activation_digest_bound": true,
         "controlled_time_current": true,
         "bounded_scope": true,
         "recovery_frontier": {
@@ -469,8 +607,11 @@
           "open_recovery_case_count": 0,
           "ambiguous": false
         },
-        "activation_expired": false,
-        "activation_superseded": false
+        "outer_activation_binding": {
+          "exact_p0_digest_bound": true,
+          "expired": false,
+          "superseded": false
+        }
       }
     },
     {
@@ -482,12 +623,17 @@
       "expect": "reject",
       "subject": {
         "prerequisite_id": "P0.constitutional-recovery-admission",
-        "nonrecursive_boundary": true,
+        "nonrecursive_boundary": {
+          "activation_reference_permitted": false,
+          "activation_identity_included": false,
+          "activation_sequence_included": false,
+          "parent_activation_digest_included": false,
+          "outer_activation_must_bind_exact_p0_digest": true
+        },
         "root_authority_non_self_issued": true,
         "exact_engine_contract_root_bound": true,
         "exact_c0_registry_bundle_bound": true,
         "witnessed_checkpoint": true,
-        "exact_activation_digest_bound": true,
         "controlled_time_current": false,
         "bounded_scope": true,
         "recovery_frontier": {
@@ -499,8 +645,11 @@
           "open_recovery_case_count": 0,
           "ambiguous": false
         },
-        "activation_expired": false,
-        "activation_superseded": false
+        "outer_activation_binding": {
+          "exact_p0_digest_bound": true,
+          "expired": false,
+          "superseded": false
+        }
       }
     },
     {
@@ -512,12 +661,17 @@
       "expect": "reject",
       "subject": {
         "prerequisite_id": "P0.constitutional-recovery-admission",
-        "nonrecursive_boundary": true,
+        "nonrecursive_boundary": {
+          "activation_reference_permitted": false,
+          "activation_identity_included": false,
+          "activation_sequence_included": false,
+          "parent_activation_digest_included": false,
+          "outer_activation_must_bind_exact_p0_digest": true
+        },
         "root_authority_non_self_issued": true,
         "exact_engine_contract_root_bound": true,
         "exact_c0_registry_bundle_bound": true,
         "witnessed_checkpoint": true,
-        "exact_activation_digest_bound": true,
         "controlled_time_current": true,
         "bounded_scope": true,
         "recovery_frontier": {
@@ -529,8 +683,11 @@
           "open_recovery_case_count": 1,
           "ambiguous": true
         },
-        "activation_expired": false,
-        "activation_superseded": false
+        "outer_activation_binding": {
+          "exact_p0_digest_bound": true,
+          "expired": false,
+          "superseded": false
+        }
       }
     }
   ]

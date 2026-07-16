@@ -1,15 +1,17 @@
 {
-  "schema_version": "0.3.0",
+  "schema_version": "0.4.0",
+  "conformance_scope": "structural_fixture_only",
+  "identity_resolution_status": "unresolved_blocking",
+  "admission_status": "not_admitted",
+  "construction_status": "blocked_unresolved_command_contract_registry",
   "receipt_id": "receipt.command.proposal-submit.001",
   "command_id": "command.proposal-submit.001",
   "command_type": "proposal.submit",
   "command_version": "1.0.0",
-  "command_schema_id": "urn:odeya:command-payload:proposal.submit:1.0.0",
-  "command_schema_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
   "command_registry_snapshot_ref": {
     "registry_id": "command-registry.001",
-    "version": "0.1.0",
-    "schema_id": "urn:odeya:schema:command-registry-snapshot:0.1.0",
+    "version": "0.2.0",
+    "schema_id": "urn:odeya:schema:command-contract-registry:0.2.0",
     "digest": "sha256:1212121212121212121212121212121212121212121212121212121212121212"
   },
   "command_registry_activation_ref": {
@@ -28,13 +30,17 @@
     "registry_snapshot_digest": "sha256:1212121212121212121212121212121212121212121212121212121212121212",
     "command_type": "proposal.submit",
     "command_version": "1.0.0",
-    "command_schema_id": "urn:odeya:command-payload:proposal.submit:1.0.0",
-    "command_schema_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
     "membership_proof_ref": {
       "artifact_id": "proof.command-contract.proposal-submit.001",
       "digest": "sha256:1515151515151515151515151515151515151515151515151515151515151515",
       "media_type": "application/vnd.odeya.registry-membership-proof+json"
-    }
+    },
+    "payload_type_id": "urn:odeya:command-payload:proposal.submit:1.0.0",
+    "payload_schema_resource_id": "urn:odeya:schema:proposal-submit-command-payload:0.1.0",
+    "payload_schema_dialect_id": "https://json-schema.org/draft/2020-12/schema",
+    "payload_schema_blob_digest": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "payload_schema_canonical_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "payload_schema_closure_digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
   },
   "canonical_request_digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
   "idempotency_scope": {
@@ -58,7 +64,7 @@
     "bundle_ref": {
       "record_id": "admission-evidence.proposal-submit.001",
       "version": 1,
-      "schema_id": "urn:odeya:schema:admission-evidence-bundle:0.1.0",
+      "schema_id": "urn:odeya:schema:admission-evidence-bundle:0.2.0",
       "digest": "sha256:4747474747474747474747474747474747474747474747474747474747474747"
     },
     "evidence_profile_ref": {
@@ -71,7 +77,7 @@
       {
         "record_id": "policy-decision.proposal-submit.001",
         "version": 1,
-        "schema_id": "urn:odeya:schema:policy-decision:0.1.0",
+        "schema_id": "urn:odeya:schema:policy-decision:0.2.0",
         "digest": "sha256:3737373737373737373737373737373737373737373737373737373737373737"
       }
     ],
@@ -125,7 +131,9 @@
       "version": "0.1.0",
       "digest": "sha256:1616161616161616161616161616161616161616161616161616161616161616"
     },
-    "included_json_pointers": ["/result"],
+    "included_json_pointers": [
+      "/result"
+    ],
     "excluded_json_pointers": []
   },
   "result_digest": "sha256:7777777777777777777777777777777777777777777777777777777777777777",
@@ -143,25 +151,53 @@
     "canonicalization": "odeya-jcs-draft-0.1",
     "receipt_digest_contract": {
       "algorithm": "sha-256",
-      "domain_separator": "odeya-command-receipt-v1",
+      "domain_separator": "odeya-command-receipt-v2",
       "canonicalization_profile_ref": {
         "name": "odeya-jcs",
         "version": "0.1.0",
         "digest": "sha256:1616161616161616161616161616161616161616161616161616161616161616"
       },
       "included_json_pointers": [
-        "/schema_version", "/receipt_id", "/command_id", "/command_type",
-        "/command_version", "/command_schema_id", "/command_schema_digest",
-        "/command_registry_snapshot_ref", "/command_registry_activation_ref",
+        "/schema_version",
+        "/conformance_scope",
+        "/identity_resolution_status",
+        "/admission_status",
+        "/construction_status",
+        "/receipt_id",
+        "/command_id",
+        "/command_type",
+        "/command_version",
+        "/payload_type_id",
+        "/payload_schema_resource_id",
+        "/payload_schema_canonical_digest",
+        "/payload_schema_closure_digest",
+        "/command_registry_snapshot_ref",
+        "/command_registry_activation_ref",
         "/command_contract_record_ref",
-        "/canonical_request_digest", "/idempotency_scope", "/actor_binding",
-        "/target_binding", "/admission_evidence", "/received_at", "/settled_at", "/result",
-        "/result_digest_contract", "/result_digest", "/replay_contract",
-        "/integrity/canonicalization", "/integrity/receipt_digest_contract"
+        "/canonical_request_digest",
+        "/idempotency_scope",
+        "/actor_binding",
+        "/target_binding",
+        "/admission_evidence",
+        "/received_at",
+        "/settled_at",
+        "/result",
+        "/result_digest_contract",
+        "/result_digest",
+        "/replay_contract",
+        "/integrity/canonicalization",
+        "/integrity/receipt_digest_contract"
       ],
-      "excluded_json_pointers": ["/integrity/receipt_digest", "/integrity/signature_ref"]
+      "excluded_json_pointers": [
+        "/integrity/receipt_digest",
+        "/integrity/signature_ref"
+      ]
     },
     "receipt_digest": "sha256:9999999999999999999999999999999999999999999999999999999999999999",
     "signature_ref": null
-  }
+  },
+  "payload_type_id": "urn:odeya:command-payload:proposal.submit:1.0.0",
+  "payload_schema_resource_id": "urn:odeya:schema:proposal-submit-command-payload:0.1.0",
+  "payload_schema_canonical_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "payload_schema_closure_digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
 }

@@ -6,7 +6,7 @@ The central rule is that operational progress, evidence validity, scientific out
 
 ## Stream, aggregate, and reducer boundary
 
-`research-event` 0.6.0 carries a general stream rather than requiring a mission on every fact. Portfolio, proposal, constitutional-authority, data-governance, and global recovery history may exist outside a mission; mission, incident, mission-derived learning, and mission-scoped data-governance facts require an exact mission scope. Recovery facts forbid a mission scope. A projection key is:
+`research-event` 0.7.0 carries a general stream rather than requiring a mission on every fact. Portfolio, proposal, constitutional-authority, data-governance, and global recovery history may exist outside a mission; mission, incident, mission-derived learning, and mission-scoped data-governance facts require an exact mission scope. Recovery facts forbid a mission scope. A projection key is:
 
 ```text
 stream_id + stream_position + aggregate_type + aggregate_id +
@@ -38,13 +38,23 @@ control: open | paused | quarantined | closing | closed
 ### Protocol branch
 
 ```text
-seal: draft | validated | frozen | superseded
+canonical_seal: frozen | superseded
+pre_origin_evidence: draft | validated
 confirmatory_integrity:
   clean | exploratory_only | compromised | unknown | not_applicable
 exposure: outcome_blind | partial_outcome_exposure | full_outcome_exposure
 ```
 
 Exposure is a monotonic event history, not a mutable flag that can be cleared. `protocol.integrity_determined` records the exact consequence of the frozen rule over the retained exposure history; an amendment never silently restores `clean`.
+
+For the bounded first slice, `protocol.frozen` is the protocol aggregate's
+origin fact, not a transition from hidden canonical `draft` or `validated`
+state. It materializes version 1 from aggregate absence and retains the exact
+frozen `ProtocolSnapshot`, source-draft evidence, validation evidence,
+exposure-history digest, integrity rule, and atomic protocol-grant/integrity
+cohort fixed by [ADR 0017](decisions/0017-close-first-slice-lifecycle-origins.md).
+Draft and validation remain evidence until that origin commit succeeds; the
+`pre_origin_evidence` line above is an evidence vocabulary, not reducer state.
 
 ### Stage
 
@@ -56,10 +66,15 @@ authorization: not_required | missing | active | expired | revoked | exhausted
 ### Work item
 
 ```text
-lease: unleased | active | stale | revoked | completed
+lease: unleased | active | released | revoked | expired
 ```
 
-One worker may hold a proposal lease; only the kernel application service writes canonical state.
+The legal first-slice transitions are `unleased -> active` and
+`active -> released | revoked | expired`; all three terminal states are
+irreversible for that lease identity. `stale` and `completed` may appear in a
+derived work/UI projection, but they are not WorkLease states and must never be
+fed back into the canonical fold. One worker may hold a proposal lease; only
+the kernel application service writes canonical state.
 
 ### Attempt
 
@@ -436,6 +451,18 @@ Readiness never implies authorization, and authorization never implies readiness
 34. Release and expiry are legal only from `active`; settlement is legal only from `claimed` with exact observed usage/billing/refund evidence.
 35. Execution, per-currency money, and verification-capacity dimensions are non-fungible; cross-resource conversion and dimension compensation are forbidden.
 36. Resource settlement preserves both componentwise equations above, retains overage explicitly, and never coerces missing or unavailable use to zero.
+37. AuthorityGrant issue is `not_issued -> issued`; only a separate controlled
+    activation fact moves `issued -> active`. Expiry and revocation are legal
+    only from issued or active.
+38. A single-use grant's final `authority.grant_used` and
+    `authority.grant_exhausted` are one atomic commit; no consumed-active grant
+    may become globally visible.
+39. `data_use.decided` requires the exact `data_rights` bounded grant and the
+    ordered same-commit cohort `grant_used -> decision -> grant_exhausted`;
+    assignment-only authority is insufficient.
+40. First-slice WorkLease canonical state is exactly `unleased | active |
+    released | revoked | expired`; `stale` and `completed` are projection-only
+    descriptions.
 
 ## Derived terminal descriptions
 

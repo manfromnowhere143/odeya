@@ -76,7 +76,7 @@ Witnessing makes suffix truncation or split-view behavior detectable within the 
 
 ## Canonical recovery command/event lifecycle
 
-`command-envelope` 0.4.0 and `research-event` 0.6.0 now assign one owner/reducer to each founding recovery fact:
+The 121-selector design vocabulary retained from exact historical `command-envelope` 0.4.0 bytes, its nonconstructible 0.5.0 structural candidate, and `research-event` 0.7.0 assign one owner/reducer to each founding recovery fact. This mapping is architecture evidence, not admission:
 
 | Lifecycle | Commands | Canonical events | Owner |
 |---|---|---|---|

@@ -1,0 +1,469 @@
+{
+  "manifest_version": "0.1.0",
+  "description": "Finite architecture-only safe and adversarial cases for nonrecursive constitutional construction. Passing creates no real subject, witness, P0, activation, Gate A acceptance, or runtime authority.",
+  "required_adversarial_tags": [
+    "construction_phase_reordered",
+    "evidence_binds_seal_instead_of_core",
+    "existing_schema_falsely_claimed_conforming",
+    "digest_profile_falsely_claimed_frozen",
+    "core_and_seal_domain_collapse",
+    "reserved_domain_identity_drift",
+    "blocked_receipt_claims_admission",
+    "blocked_receipt_emits_p0_digest",
+    "placeholder_marked_usable_for_admission",
+    "blocked_receipt_missing_count_mismatch",
+    "p0_contains_activation_digest",
+    "activation_root_mismatch",
+    "activation_c0_mismatch",
+    "activation_checkpoint_mismatch",
+    "c0_component_set_mismatch",
+    "frontier_reference_digest_mismatch",
+    "frontier_position_after_activation",
+    "frontier_epoch_mismatch",
+    "witness_checkpoint_digest_mismatch",
+    "duplicate_witness_identity",
+    "duplicate_witness_failure_domain",
+    "handler_member_count_mismatch",
+    "handler_set_digest_mismatch",
+    "envelope_discriminator_count_mismatch",
+    "activation_sequence_without_predecessor",
+    "p0_scope_effect_escalation",
+    "activation_attestation_digest_mismatch",
+    "recovery_quorum_exceeds_principals",
+    "operational_root_single_principal_roles"
+  ],
+  "cases": [
+    {
+      "name": "construction-order-safe-reference",
+      "kind": "safe_reference",
+      "model": "construction_order",
+      "fixture": "tests/constitutional-construction/fixtures/construction-order.valid.json",
+      "expect": "accept"
+    },
+    {
+      "name": "construction-order-rejects-reordered-seal-before-evidence",
+      "kind": "adversarial",
+      "adversarial_tag": "construction_phase_reordered",
+      "model": "construction_order",
+      "fixture": "tests/constitutional-construction/fixtures/construction-order.valid.json",
+      "expect": "reject",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/phase_order",
+          "value": [
+            "canonicalize_core_projection",
+            "compute_core_digest",
+            "assemble_seal_subject_from_unchanged_core_and_ordered_evidence_refs",
+            "produce_evidence_over_core_digest",
+            "compute_seal_digest",
+            "produce_external_attestations_over_seal_digest"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "construction-order-rejects-evidence-over-future-seal",
+      "kind": "adversarial",
+      "adversarial_tag": "evidence_binds_seal_instead_of_core",
+      "model": "construction_order",
+      "fixture": "tests/constitutional-construction/fixtures/construction-order.valid.json",
+      "expect": "reject",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/family_profiles/engine_contract_root/evidence_binding_target",
+          "value": "seal_digest"
+        }
+      ]
+    },
+    {
+      "name": "construction-order-rejects-existing-schema-conformance-claim",
+      "kind": "adversarial",
+      "adversarial_tag": "existing_schema_falsely_claimed_conforming",
+      "model": "construction_order",
+      "fixture": "tests/constitutional-construction/fixtures/construction-order.valid.json",
+      "expect": "reject",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/family_profiles/engine_contract_root/existing_schema_bytes_conform",
+          "value": true
+        }
+      ]
+    },
+    {
+      "name": "construction-order-rejects-false-canonical-profile-freeze",
+      "kind": "adversarial",
+      "adversarial_tag": "digest_profile_falsely_claimed_frozen",
+      "model": "construction_order",
+      "fixture": "tests/constitutional-construction/fixtures/construction-order.valid.json",
+      "expect": "reject",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/unresolved_profile_prerequisites/canonicalization_profile_frozen",
+          "value": true
+        }
+      ]
+    },
+    {
+      "name": "construction-order-rejects-core-seal-domain-collapse",
+      "kind": "adversarial",
+      "adversarial_tag": "core_and_seal_domain_collapse",
+      "model": "construction_order",
+      "fixture": "tests/constitutional-construction/fixtures/construction-order.valid.json",
+      "expect": "reject",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/family_profiles/engine_contract_root/reserved_seal_digest_domain_separator",
+          "value": "odeya-engine-contract-root-core-v1"
+        }
+      ]
+    },
+    {
+      "name": "construction-order-rejects-valid-looking-reserved-domain-drift",
+      "kind": "adversarial",
+      "adversarial_tag": "reserved_domain_identity_drift",
+      "model": "construction_order",
+      "fixture": "tests/constitutional-construction/fixtures/construction-order.valid.json",
+      "expect": "reject",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/family_profiles/engine_contract_root/reserved_seal_digest_domain_separator",
+          "value": "odeya-c0-registry-bundle-seal-v1"
+        }
+      ]
+    },
+    {
+      "name": "blocked-construction-receipt-safe-reference",
+      "kind": "safe_reference",
+      "model": "blocked_receipt",
+      "fixture": "tests/constitutional-construction/fixtures/blocked-construction-receipt.valid.json",
+      "expect": "accept"
+    },
+    {
+      "name": "blocked-receipt-cannot-claim-admission",
+      "kind": "adversarial",
+      "adversarial_tag": "blocked_receipt_claims_admission",
+      "model": "blocked_receipt",
+      "fixture": "tests/constitutional-construction/fixtures/blocked-construction-receipt.valid.json",
+      "expect": "reject",
+      "mutations": [
+        { "op": "replace", "path": "/disposition/admission_claim", "value": "admitted" }
+      ]
+    },
+    {
+      "name": "blocked-receipt-cannot-emit-p0-digest",
+      "kind": "adversarial",
+      "adversarial_tag": "blocked_receipt_emits_p0_digest",
+      "model": "blocked_receipt",
+      "fixture": "tests/constitutional-construction/fixtures/blocked-construction-receipt.valid.json",
+      "expect": "reject",
+      "mutations": [
+        {
+          "op": "add",
+          "path": "/p0_digest",
+          "value": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      ]
+    },
+    {
+      "name": "blocked-receipt-placeholder-cannot-be-admission-input",
+      "kind": "adversarial",
+      "adversarial_tag": "placeholder_marked_usable_for_admission",
+      "model": "blocked_receipt",
+      "fixture": "tests/constitutional-construction/fixtures/blocked-construction-receipt.valid.json",
+      "expect": "reject",
+      "mutations": [
+        { "op": "replace", "path": "/observed_inputs/0/usable_for_admission", "value": true }
+      ]
+    },
+    {
+      "name": "blocked-receipt-missing-count-must-equal-missing-subjects",
+      "kind": "adversarial",
+      "adversarial_tag": "blocked_receipt_missing_count_mismatch",
+      "model": "blocked_receipt",
+      "fixture": "tests/constitutional-construction/fixtures/blocked-construction-receipt.valid.json",
+      "expect": "reject",
+      "mutations": [
+        { "op": "replace", "path": "/construction_boundary/missing_real_subject_count", "value": 1 }
+      ]
+    },
+    {
+      "name": "constitutional-chain-safe-structural-reference",
+      "kind": "safe_reference",
+      "model": "constitutional_chain",
+      "fixture": "tests/constitutional-construction/fixtures/constitutional-chain.safe.json",
+      "expect": "accept"
+    },
+    {
+      "name": "p0-rejects-parent-activation-digest",
+      "kind": "adversarial",
+      "adversarial_tag": "p0_contains_activation_digest",
+      "model": "constitutional_chain",
+      "fixture": "tests/constitutional-construction/fixtures/constitutional-chain.safe.json",
+      "expect": "reject",
+      "mutations": [
+        {
+          "op": "add",
+          "path": "/p0/activation_digest",
+          "value": "sha256:7777777777777777777777777777777777777777777777777777777777777777"
+        }
+      ]
+    },
+    {
+      "name": "activation-outer-root-must-equal-p0-root",
+      "kind": "adversarial",
+      "adversarial_tag": "activation_root_mismatch",
+      "model": "constitutional_chain",
+      "fixture": "tests/constitutional-construction/fixtures/constitutional-chain.safe.json",
+      "expect": "reject",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/activation/engine_contract_root_digest",
+          "value": "sha256:a111111111111111111111111111111111111111111111111111111111111111"
+        }
+      ]
+    },
+    {
+      "name": "activation-outer-c0-must-equal-p0-c0",
+      "kind": "adversarial",
+      "adversarial_tag": "activation_c0_mismatch",
+      "model": "constitutional_chain",
+      "fixture": "tests/constitutional-construction/fixtures/constitutional-chain.safe.json",
+      "expect": "reject",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/activation/c0_registry_bundle_digest",
+          "value": "sha256:a222222222222222222222222222222222222222222222222222222222222222"
+        }
+      ]
+    },
+    {
+      "name": "activation-outer-checkpoint-must-equal-p0-checkpoint",
+      "kind": "adversarial",
+      "adversarial_tag": "activation_checkpoint_mismatch",
+      "model": "constitutional_chain",
+      "fixture": "tests/constitutional-construction/fixtures/constitutional-chain.safe.json",
+      "expect": "reject",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/activation/checkpoint_digest",
+          "value": "sha256:a333333333333333333333333333333333333333333333333333333333333333"
+        }
+      ]
+    },
+    {
+      "name": "c0-components-must-equal-root-components",
+      "kind": "adversarial",
+      "adversarial_tag": "c0_component_set_mismatch",
+      "model": "constitutional_chain",
+      "fixture": "tests/constitutional-construction/fixtures/constitutional-chain.safe.json",
+      "expect": "reject",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/c0_registry_bundle/component_digests/event_contract_registry",
+          "value": "sha256:a282828282828282828282828282828282828282828282828282828282828282"
+        }
+      ]
+    },
+    {
+      "name": "p0-frontier-reference-digest-must-equal-frontier-digest",
+      "kind": "adversarial",
+      "adversarial_tag": "frontier_reference_digest_mismatch",
+      "model": "constitutional_chain",
+      "fixture": "tests/constitutional-construction/fixtures/constitutional-chain.safe.json",
+      "expect": "reject",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/p0/frontier/ref_digest",
+          "value": "sha256:a444444444444444444444444444444444444444444444444444444444444444"
+        }
+      ]
+    },
+    {
+      "name": "p0-frontier-cannot-postdate-activation",
+      "kind": "adversarial",
+      "adversarial_tag": "frontier_position_after_activation",
+      "model": "constitutional_chain",
+      "fixture": "tests/constitutional-construction/fixtures/constitutional-chain.safe.json",
+      "expect": "reject",
+      "mutations": [
+        { "op": "replace", "path": "/p0/frontier/position", "value": 102 }
+      ]
+    },
+    {
+      "name": "p0-frontier-epoch-must-equal-checkpoint-and-activation",
+      "kind": "adversarial",
+      "adversarial_tag": "frontier_epoch_mismatch",
+      "model": "constitutional_chain",
+      "fixture": "tests/constitutional-construction/fixtures/constitutional-chain.safe.json",
+      "expect": "reject",
+      "mutations": [
+        { "op": "replace", "path": "/p0/frontier/ledger_epoch", "value": "ledger-epoch.other" }
+      ]
+    },
+    {
+      "name": "witness-must-observe-bound-checkpoint",
+      "kind": "adversarial",
+      "adversarial_tag": "witness_checkpoint_digest_mismatch",
+      "model": "constitutional_chain",
+      "fixture": "tests/constitutional-construction/fixtures/constitutional-chain.safe.json",
+      "expect": "reject",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/p0/witnesses/1/checkpoint_digest",
+          "value": "sha256:a333333333333333333333333333333333333333333333333333333333333333"
+        }
+      ]
+    },
+    {
+      "name": "witness-identities-must-be-distinct",
+      "kind": "adversarial",
+      "adversarial_tag": "duplicate_witness_identity",
+      "model": "constitutional_chain",
+      "fixture": "tests/constitutional-construction/fixtures/constitutional-chain.safe.json",
+      "expect": "reject",
+      "mutations": [
+        { "op": "replace", "path": "/p0/witnesses/1/witness_id", "value": "witness.alpha" }
+      ]
+    },
+    {
+      "name": "witness-failure-domains-must-be-distinct",
+      "kind": "adversarial",
+      "adversarial_tag": "duplicate_witness_failure_domain",
+      "model": "constitutional_chain",
+      "fixture": "tests/constitutional-construction/fixtures/constitutional-chain.safe.json",
+      "expect": "reject",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/p0/witnesses/1/failure_domain_id",
+          "value": "failure-domain.alpha"
+        }
+      ]
+    },
+    {
+      "name": "handler-member-count-must-equal-command-surface",
+      "kind": "adversarial",
+      "adversarial_tag": "handler_member_count_mismatch",
+      "model": "constitutional_chain",
+      "fixture": "tests/constitutional-construction/fixtures/constitutional-chain.safe.json",
+      "expect": "reject",
+      "mutations": [
+        { "op": "replace", "path": "/activation/handler_conformance/declared_member_count", "value": 1 }
+      ]
+    },
+    {
+      "name": "handler-set-digest-must-equal-command-surface",
+      "kind": "adversarial",
+      "adversarial_tag": "handler_set_digest_mismatch",
+      "model": "constitutional_chain",
+      "fixture": "tests/constitutional-construction/fixtures/constitutional-chain.safe.json",
+      "expect": "reject",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/activation/handler_conformance/set_digest",
+          "value": "sha256:a666666666666666666666666666666666666666666666666666666666666666"
+        }
+      ]
+    },
+    {
+      "name": "declared-command-count-must-equal-envelope-discriminators",
+      "kind": "adversarial",
+      "adversarial_tag": "envelope_discriminator_count_mismatch",
+      "model": "constitutional_chain",
+      "fixture": "tests/constitutional-construction/fixtures/constitutional-chain.safe.json",
+      "expect": "reject",
+      "mutations": [
+        { "op": "replace", "path": "/activation/command_surface/declared_member_count", "value": 3 }
+      ]
+    },
+    {
+      "name": "sequence-two-activation-requires-predecessor",
+      "kind": "adversarial",
+      "adversarial_tag": "activation_sequence_without_predecessor",
+      "model": "constitutional_chain",
+      "fixture": "tests/constitutional-construction/fixtures/constitutional-chain.safe.json",
+      "expect": "reject",
+      "mutations": [
+        { "op": "replace", "path": "/activation/activation_sequence", "value": 2 }
+      ]
+    },
+    {
+      "name": "p0-bounded-recovery-cannot-escalate-effects",
+      "kind": "adversarial",
+      "adversarial_tag": "p0_scope_effect_escalation",
+      "model": "constitutional_chain",
+      "fixture": "tests/constitutional-construction/fixtures/constitutional-chain.safe.json",
+      "expect": "reject",
+      "mutations": [
+        { "op": "replace", "path": "/activation/scope/risk_ceiling", "value": "R4" },
+        { "op": "replace", "path": "/activation/scope/environment_classes", "value": ["production"] },
+        { "op": "replace", "path": "/activation/scope/permitted_action_classes", "value": ["external_dispatch"] },
+        { "op": "replace", "path": "/activation/scope/external_effects_enabled", "value": true }
+      ]
+    },
+    {
+      "name": "activation-attestation-must-sign-activation-seal",
+      "kind": "adversarial",
+      "adversarial_tag": "activation_attestation_digest_mismatch",
+      "model": "constitutional_chain",
+      "fixture": "tests/constitutional-construction/fixtures/constitutional-chain.safe.json",
+      "expect": "reject",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/activation/attestations/0/signed_digest",
+          "value": "sha256:a777777777777777777777777777777777777777777777777777777777777777"
+        }
+      ]
+    },
+    {
+      "name": "recovery-quorum-cannot-exceed-distinct-principals",
+      "kind": "adversarial",
+      "adversarial_tag": "recovery_quorum_exceeds_principals",
+      "model": "constitutional_chain",
+      "fixture": "tests/constitutional-construction/fixtures/constitutional-chain.safe.json",
+      "expect": "reject",
+      "mutations": [
+        { "op": "replace", "path": "/root_authority/recovery/quorum", "value": 3 }
+      ]
+    },
+    {
+      "name": "operational-root-cannot-collapse-critical-roles-to-one-principal",
+      "kind": "adversarial",
+      "adversarial_tag": "operational_root_single_principal_roles",
+      "model": "constitutional_chain",
+      "fixture": "tests/constitutional-construction/fixtures/constitutional-chain.safe.json",
+      "expect": "reject",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/root_authority/role_bindings",
+          "value": {
+            "proposal": "principal.alpha",
+            "protocol": "principal.alpha",
+            "safety": "principal.alpha",
+            "data_rights": "principal.alpha",
+            "resource": "principal.alpha",
+            "execution": "principal.alpha",
+            "verification": "principal.alpha",
+            "outcome": "principal.alpha",
+            "publication": "principal.alpha"
+          }
+        }
+      ]
+    }
+  ]
+}

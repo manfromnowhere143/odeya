@@ -285,14 +285,14 @@
       ]
     },
     {
-      "name": "command-envelope-rejects-mismatched-payload-schema-id",
+      "name": "command-envelope-rejects-mismatched-logical-payload-type",
       "schema": "schemas/command-envelope.schema.json",
       "fixture": "tests/architecture-schema/fixtures/command-envelope.valid.json",
       "expect": "invalid",
       "mutations": [
         {
           "op": "replace",
-          "path": "/command_schema_id",
+          "path": "/payload_type_id",
           "value": "urn:odeya:command-payload:proposal.decide:1.0.0"
         }
       ]
@@ -334,6 +334,42 @@
       "schema": "schemas/research-event.schema.json",
       "fixture": "tests/architecture-schema/fixtures/research-event.valid.json",
       "expect": "valid"
+    },
+    {
+      "name": "research-event-unresolved-contract-rejects-fabricated-digest",
+      "schema": "schemas/research-event.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/research-event.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/payload_contract_digest", "value": "sha256:1111111111111111111111111111111111111111111111111111111111111111"}
+      ]
+    },
+    {
+      "name": "research-event-null-contract-digest-rejects-resolved-label",
+      "schema": "schemas/research-event.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/research-event.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/payload_contract_resolution_status", "value": "resolved_exact"}
+      ]
+    },
+    {
+      "name": "research-event-rejects-logical-payload-type-resource-id-substitution",
+      "schema": "schemas/research-event.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/research-event.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/payload_type_id", "value": "urn:odeya:schema:research-event:0.7.0"}
+      ]
+    },
+    {
+      "name": "research-event-unresolved-contract-cannot-claim-authority",
+      "schema": "schemas/research-event.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/research-event.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/event_contract_authority_status", "value": "admitted_dispatchable_replay_authoritative"}
+      ]
     },
     {
       "name": "research-event-valid-human-release-decision",
@@ -604,14 +640,14 @@
       ]
     },
     {
-      "name": "research-event-rejects-mismatched-payload-schema-id",
+      "name": "research-event-rejects-mismatched-logical-payload-type-id",
       "schema": "schemas/research-event.schema.json",
       "fixture": "tests/architecture-schema/fixtures/research-event.valid.json",
       "expect": "invalid",
       "mutations": [
         {
           "op": "replace",
-          "path": "/payload_schema_id",
+          "path": "/payload_type_id",
           "value": "urn:odeya:event-payload:proposal.decided:1.0.0"
         }
       ]
@@ -2515,10 +2551,117 @@
       "expect": "valid"
     },
     {
+      "name": "research-event-valid-protocol-frozen-origin-from-absence",
+      "schema": "schemas/research-event.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/protocol-frozen-origin-event.valid.json",
+      "expect": "valid"
+    },
+    {
+      "name": "protocol-frozen-origin-rejects-hidden-prior-canonical-state",
+      "schema": "schemas/research-event.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/protocol-frozen-origin-event.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/payload/prior_canonical_protocol_ref", "value": "protocol.hidden-draft.001"}
+      ]
+    },
+    {
+      "name": "protocol-frozen-origin-must-assert-aggregate-absence",
+      "schema": "schemas/research-event.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/protocol-frozen-origin-event.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/payload/origin_from_aggregate_absence", "value": false}
+      ]
+    },
+    {
+      "name": "protocol-frozen-origin-requires-validation-evidence",
+      "schema": "schemas/research-event.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/protocol-frozen-origin-event.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "remove", "path": "/payload/validation_evidence_refs/0"}
+      ]
+    },
+    {
+      "name": "protocol-frozen-origin-rejects-split-integrity-order",
+      "schema": "schemas/research-event.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/protocol-frozen-origin-event.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/payload/grant_commit_binding/batch_order/2", "value": "authority.grant_exhausted(protocol)"}
+      ]
+    },
+    {
+      "name": "protocol-frozen-origin-requires-bounded-protocol-grant",
+      "schema": "schemas/research-event.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/protocol-frozen-origin-event.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/authority_evidence/mode", "value": "assigned_role"}
+      ]
+    },
+    {
+      "name": "protocol-frozen-origin-requires-exact-four-event-position",
+      "schema": "schemas/research-event.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/protocol-frozen-origin-event.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/commit/batch_index", "value": 0},
+        {"op": "replace", "path": "/commit/batch_size", "value": 1}
+      ]
+    },
+    {
       "name": "research-event-valid-data-use-decided",
       "schema": "schemas/research-event.schema.json",
       "fixture": "tests/architecture-schema/fixtures/data-use-decided-event.valid.json",
       "expect": "valid"
+    },
+    {
+      "name": "data-use-decision-rejects-assigned-role-without-bounded-grant",
+      "schema": "schemas/research-event.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/data-use-decided-event.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/authority_evidence/mode", "value": "assigned_role"}
+      ]
+    },
+    {
+      "name": "data-use-decision-rejects-domain-event-outside-atomic-grant-cohort",
+      "schema": "schemas/research-event.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/data-use-decided-event.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/commit/batch_index", "value": 0},
+        {"op": "replace", "path": "/commit/batch_size", "value": 1}
+      ]
+    },
+    {
+      "name": "data-use-decision-requires-atomic-grant-commit-binding",
+      "schema": "schemas/research-event.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/data-use-decided-event.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "remove", "path": "/payload/grant_commit_binding"}
+      ]
+    },
+    {
+      "name": "data-use-decision-rejects-wrong-authority-slot",
+      "schema": "schemas/research-event.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/data-use-decided-event.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/payload/grant_commit_binding/role_slot", "value": "protocol"}
+      ]
+    },
+    {
+      "name": "data-use-decision-requires-final-use-exhaustion-in-same-cohort",
+      "schema": "schemas/research-event.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/data-use-decided-event.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "remove", "path": "/payload/grant_commit_binding/grant_exhaustion_event_ref"}
+      ]
     },
     {
       "name": "research-event-valid-data-use-revoked",
@@ -3249,18 +3392,33 @@
       ]
     },
     {
-      "name": "cognitive-work-contract-valid-proposed",
+      "name": "cognitive-work-contract-valid-blocked-candidate",
       "schema": "schemas/work-contract.schema.json",
-      "fixture": "tests/cognitive-contracts/fixtures/work-contract.valid.json",
+      "fixture": "tests/cognitive-contracts/fixtures/work-contract.blocked-candidate.valid.json",
       "expect": "valid"
     },
     {
-      "name": "cognitive-work-contract-rejects-caller-supplied-authority",
+      "name": "cognitive-work-contract-rejects-invented-canonical-identity",
       "schema": "schemas/work-contract.schema.json",
-      "fixture": "tests/cognitive-contracts/fixtures/work-contract.valid.json",
+      "fixture": "tests/cognitive-contracts/fixtures/work-contract.blocked-candidate.valid.json",
       "expect": "invalid",
       "mutations": [
-        {"op": "replace", "path": "/authority_boundary/caller_supplied_authority_accepted", "value": true}
+        {"op": "replace", "path": "/canonical_digest", "value": "sha256:0000000000000000000000000000000000000000000000000000000000000000"}
+      ]
+    },
+    {
+      "name": "cognitive-work-intent-valid-unresolved-prospective-candidate",
+      "schema": "schemas/work-intent.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/work-intent.valid.json",
+      "expect": "valid"
+    },
+    {
+      "name": "cognitive-work-intent-rejects-active-authority",
+      "schema": "schemas/work-intent.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/work-intent.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/prospective_authority_boundary/authority_grant_refs", "value": ["grant.fabricated.001"]}
       ]
     },
     {
@@ -3455,7 +3613,7 @@
       "fixture": "tests/architecture-schema/fixtures/command-envelope.valid.json",
       "expect": "invalid",
       "mutations": [
-        {"op": "remove", "path": "/request_digest_contract/included_json_pointers/6"}
+        {"op": "remove", "path": "/request_digest_contract/included_json_pointers/12"}
       ]
     },
     {
@@ -3482,7 +3640,7 @@
       "fixture": "tests/architecture-schema/fixtures/command-envelope.valid.json",
       "expect": "invalid",
       "mutations": [
-        {"op": "remove", "path": "/request_digest_contract/included_json_pointers/7"}
+        {"op": "remove", "path": "/request_digest_contract/included_json_pointers/13"}
       ]
     },
     {
@@ -3509,7 +3667,7 @@
       "fixture": "tests/architecture-schema/fixtures/command-receipt.valid.json",
       "expect": "invalid",
       "mutations": [
-        {"op": "remove", "path": "/integrity/receipt_digest_contract/included_json_pointers/9"}
+        {"op": "remove", "path": "/integrity/receipt_digest_contract/included_json_pointers/15"}
       ]
     },
     {
@@ -3536,7 +3694,7 @@
       "fixture": "tests/architecture-schema/fixtures/command-receipt.valid.json",
       "expect": "invalid",
       "mutations": [
-        {"op": "remove", "path": "/integrity/receipt_digest_contract/included_json_pointers/8"}
+        {"op": "remove", "path": "/integrity/receipt_digest_contract/included_json_pointers/14"}
       ]
     },
     {
@@ -3554,7 +3712,43 @@
       "fixture": "tests/architecture-schema/fixtures/research-event.valid.json",
       "expect": "invalid",
       "mutations": [
-        {"op": "remove", "path": "/integrity/event_digest_contract/included_json_pointers/20"}
+        {"op": "remove", "path": "/integrity/event_digest_contract/included_json_pointers/22"}
+      ]
+    },
+    {
+      "name": "research-event-digest-scope-cannot-omit-logical-payload-type",
+      "schema": "schemas/research-event.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/research-event.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "remove", "path": "/integrity/event_digest_contract/included_json_pointers/4"}
+      ]
+    },
+    {
+      "name": "research-event-digest-scope-cannot-omit-payload-contract-resolution-status",
+      "schema": "schemas/research-event.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/research-event.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "remove", "path": "/integrity/event_digest_contract/included_json_pointers/5"}
+      ]
+    },
+    {
+      "name": "research-event-digest-scope-cannot-omit-payload-contract-digest",
+      "schema": "schemas/research-event.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/research-event.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "remove", "path": "/integrity/event_digest_contract/included_json_pointers/6"}
+      ]
+    },
+    {
+      "name": "research-event-digest-scope-cannot-omit-event-contract-authority-status",
+      "schema": "schemas/research-event.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/research-event.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "remove", "path": "/integrity/event_digest_contract/included_json_pointers/7"}
       ]
     },
     {
@@ -3734,7 +3928,7 @@
       "fixture": "tests/architecture-schema/fixtures/command-receipt.valid.json",
       "expect": "invalid",
       "mutations": [
-        {"op": "remove", "path": "/integrity/receipt_digest_contract/included_json_pointers/14"}
+        {"op": "remove", "path": "/integrity/receipt_digest_contract/included_json_pointers/20"}
       ]
     },
     {
@@ -3816,6 +4010,21 @@
       ]
     },
     {
+      "name": "command-contract-record-valid-structural-only-unresolved-subject",
+      "schema": "schemas/command-contract-record.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/command-contract-record.valid.json",
+      "expect": "valid"
+    },
+    {
+      "name": "command-contract-record-rejects-invented-canonical-digest",
+      "schema": "schemas/command-contract-record.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/command-contract-record.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/record_digest", "value": "sha256:0000000000000000000000000000000000000000000000000000000000000000"}
+      ]
+    },
+    {
       "name": "command-contract-registry-valid-structural-only-subject",
       "schema": "schemas/command-contract-registry.schema.json",
       "fixture": "tests/architecture-schema/fixtures/command-contract-registry.valid.json",
@@ -3836,7 +4045,7 @@
       "fixture": "tests/architecture-schema/fixtures/command-contract-registry.valid.json",
       "expect": "invalid",
       "mutations": [
-        {"op": "remove", "path": "/members/structural.command_probe@0.1.0/payload_contract"}
+        {"op": "remove", "path": "/members/proposal.submit@1.0.0/payload_contract"}
       ]
     },
     {
@@ -3845,7 +4054,7 @@
       "fixture": "tests/architecture-schema/fixtures/command-contract-registry.valid.json",
       "expect": "invalid",
       "mutations": [
-        {"op": "replace", "path": "/members/structural.command_probe@0.1.0/payload_contract/nullable", "value": true}
+        {"op": "replace", "path": "/members/proposal.submit@1.0.0/payload_contract/nullable", "value": true}
       ]
     },
     {
@@ -3854,7 +4063,7 @@
       "fixture": "tests/architecture-schema/fixtures/command-contract-registry.valid.json",
       "expect": "invalid",
       "mutations": [
-        {"op": "add", "path": "/members/structural.command_probe@0.1.0/parent_registry_digest", "value": "sha256:0000000000000000000000000000000000000000000000000000000000000000"}
+        {"op": "add", "path": "/members/proposal.submit@1.0.0/parent_registry_digest", "value": "sha256:0000000000000000000000000000000000000000000000000000000000000000"}
       ]
     },
     {
@@ -3863,16 +4072,16 @@
       "fixture": "tests/architecture-schema/fixtures/command-contract-registry.valid.json",
       "expect": "invalid",
       "mutations": [
-        {"op": "replace", "path": "/members/structural.command_probe@0.1.0/handler_port_contract/runtime_conformance_evidence_in_subject", "value": true}
+        {"op": "replace", "path": "/members/proposal.submit@1.0.0/handler_port_contract/runtime_conformance_evidence_in_subject", "value": true}
       ]
     },
     {
-      "name": "command-contract-registry-digest-scope-must-include-its-contract",
+      "name": "command-contract-registry-rejects-invented-registry-digest",
       "schema": "schemas/command-contract-registry.schema.json",
       "fixture": "tests/architecture-schema/fixtures/command-contract-registry.valid.json",
       "expect": "invalid",
       "mutations": [
-        {"op": "replace", "path": "/registry_digest_contract/included_json_pointers/16", "value": "/registry_digest"}
+        {"op": "replace", "path": "/registry_digest", "value": "sha256:0000000000000000000000000000000000000000000000000000000000000000"}
       ]
     },
     {
@@ -5371,7 +5580,7 @@
       "fixture": "tests/architecture-schema/fixtures/command-contract-registry.valid.json",
       "expect": "invalid",
       "mutations": [
-        {"op": "replace", "path": "/members/structural.command_probe@0.1.0/authority_contract/alternative_selection/caller_may_select", "value": true}
+        {"op": "replace", "path": "/members/proposal.submit@1.0.0/authority_contract/alternative_selection/caller_may_select", "value": true}
       ]
     },
     {
@@ -5380,7 +5589,7 @@
       "fixture": "tests/architecture-schema/fixtures/command-contract-registry.valid.json",
       "expect": "invalid",
       "mutations": [
-        {"op": "replace", "path": "/members/structural.command_probe@0.1.0/authority_contract/alternatives/3/grant_slots", "value": []}
+        {"op": "replace", "path": "/members/proposal.submit@1.0.0/authority_contract/alternatives/3/grant_slots", "value": []}
       ]
     },
     {
@@ -5389,7 +5598,7 @@
       "fixture": "tests/architecture-schema/fixtures/command-contract-registry.valid.json",
       "expect": "invalid",
       "mutations": [
-        {"op": "replace", "path": "/members/structural.command_probe@0.1.0/authority_contract/alternatives/2/caller_invocation_permitted", "value": true}
+        {"op": "replace", "path": "/members/proposal.submit@1.0.0/authority_contract/alternatives/2/caller_invocation_permitted", "value": true}
       ]
     },
     {
@@ -5398,7 +5607,7 @@
       "fixture": "tests/architecture-schema/fixtures/command-contract-registry.valid.json",
       "expect": "invalid",
       "mutations": [
-        {"op": "replace", "path": "/members/structural.command_probe@0.1.0/authority_contract/alternatives/3/grant_slots/0/max_uses", "value": 2}
+        {"op": "replace", "path": "/members/proposal.submit@1.0.0/authority_contract/alternatives/3/grant_slots/0/max_uses", "value": 2}
       ]
     },
     {
@@ -5407,7 +5616,7 @@
       "fixture": "tests/architecture-schema/fixtures/command-contract-registry.valid.json",
       "expect": "invalid",
       "mutations": [
-        {"op": "replace", "path": "/members/structural.command_probe@0.1.0/legal_event_alternatives/3/events/0/grant_slot_binding/grant_fact", "value": "exhaustion"}
+        {"op": "replace", "path": "/members/proposal.submit@1.0.0/legal_event_alternatives/3/events/0/grant_slot_binding/grant_fact", "value": "exhaustion"}
       ]
     },
     {
@@ -5416,7 +5625,7 @@
       "fixture": "tests/architecture-schema/fixtures/command-contract-registry.valid.json",
       "expect": "invalid",
       "mutations": [
-        {"op": "replace", "path": "/members/structural.command_probe@0.1.0/legal_event_alternatives/3/events/3/grant_slot_binding", "value": {"authority_alternative_id": "authority.caller-multigrant", "grant_slot_id": "grant.safety", "grant_fact": "use"}}
+        {"op": "replace", "path": "/members/proposal.submit@1.0.0/legal_event_alternatives/3/events/3/grant_slot_binding", "value": {"authority_alternative_id": "authority.caller-multigrant", "grant_slot_id": "grant.safety", "grant_fact": "use"}}
       ]
     },
     {
@@ -5425,7 +5634,7 @@
       "fixture": "tests/architecture-schema/fixtures/command-contract-registry.valid.json",
       "expect": "invalid",
       "mutations": [
-        {"op": "replace", "path": "/members/structural.command_probe@0.1.0/legal_event_alternatives/0/decision_kind", "value": "noop"}
+        {"op": "replace", "path": "/members/proposal.submit@1.0.0/legal_event_alternatives/0/decision_kind", "value": "noop"}
       ]
     },
     {

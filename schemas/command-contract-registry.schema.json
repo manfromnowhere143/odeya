@@ -1,20 +1,23 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:command-contract-registry:0.1.0",
-  "title": "Odeya CommandContractRegistry",
-  "description": "An immutable admitted-only registry of complete prospective command contracts. Presence means contract-admitted within this exact subject, never deployed, active, authorized, or executed. Reserved design vocabulary and nullable payload contracts are forbidden.",
+  "$id": "urn:odeya:schema:command-contract-registry:0.2.0",
+  "title": "Odeya CommandContractRegistry Structural Candidate",
+  "description": "A closed structural-only registry candidate over standalone CommandContractRecord subjects. Neither records nor registry are admitted: canonical identity, retained resource closure, cross-record equality, membership proofs, activation evidence, and independent review remain unresolved. The logical payload type and exact schema resource/dialect/blob/canonical/closure identities have distinct fields. Validation resolves only explicitly preloaded local schema resources with network access disabled. A future resource reissue may introduce admitted registry subjects only after all blockers close.",
   "type": "object",
   "additionalProperties": false,
   "required": [
     "schema_version",
     "registry_kind",
+    "conformance_scope",
+    "identity_resolution_status",
+    "admission_status",
     "registry_id",
     "version",
-    "conformance_scope",
     "supersedes_registry_subject_ref",
     "canonicalization_profile_ref",
     "admission_contract",
     "ordering_contract",
+    "schema_resolution_contract",
     "members",
     "member_set_commitment",
     "historical_read_policy",
@@ -27,15 +30,15 @@
     "external_attestations"
   ],
   "properties": {
-    "schema_version": { "const": "0.1.0" },
+    "schema_version": { "const": "0.2.0" },
     "registry_kind": { "const": "command_contract_registry" },
+    "conformance_scope": { "const": "structural_fixture_only" },
+    "identity_resolution_status": { "const": "unresolved_blocking" },
+    "admission_status": { "const": "not_admitted" },
     "registry_id": { "$ref": "#/$defs/identifier" },
     "version": { "$ref": "#/$defs/semantic_version" },
-    "conformance_scope": { "enum": ["registry_subject", "structural_fixture_only"] },
-    "supersedes_registry_subject_ref": {
-      "oneOf": [{ "$ref": "#/$defs/subject_reference" }, { "type": "null" }]
-    },
-    "canonicalization_profile_ref": { "$ref": "#/$defs/profile_reference" },
+    "supersedes_registry_subject_ref": { "type": "null" },
+    "canonicalization_profile_ref": { "type": "null" },
     "admission_contract": {
       "type": "object",
       "additionalProperties": false,
@@ -49,7 +52,7 @@
         "handler_deployment_proved"
       ],
       "properties": {
-        "members_are_contract_admitted": { "const": true },
+        "members_are_contract_admitted": { "const": false },
         "reserved_design_vocabulary_membership": { "const": "forbidden" },
         "nullable_payload_contracts": { "const": "forbidden" },
         "content_digest_dependency_order": { "const": "schema_to_state_to_reducer_to_event_to_command" },
@@ -68,15 +71,63 @@
         "duplicate_member_keys": { "const": "reject" }
       }
     },
+    "schema_resolution_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "record_schema_resource_id",
+        "resource_loading",
+        "network_access",
+        "unresolved_resource_disposition",
+        "payload_closure_digest_required",
+        "reference_cycles"
+      ],
+      "properties": {
+        "record_schema_resource_id": { "const": "urn:odeya:schema:command-contract-record:0.1.0" },
+        "resource_loading": { "const": "preloaded_exact_resource_id_only" },
+        "network_access": { "const": "disabled" },
+        "unresolved_resource_disposition": { "const": "reject_before_decider" },
+        "payload_closure_digest_required": { "const": true },
+        "reference_cycles": { "const": "forbidden" }
+      }
+    },
     "members": {
       "type": "object",
       "minProperties": 1,
       "maxProperties": 512,
       "propertyNames": { "$ref": "#/$defs/member_key" },
-      "additionalProperties": { "$ref": "#/$defs/command_contract" }
+      "additionalProperties": { "$ref": "urn:odeya:schema:command-contract-record:0.1.0" }
     },
-    "member_set_commitment": { "$ref": "#/$defs/member_set_commitment" },
-    "historical_read_policy": { "$ref": "#/$defs/historical_read_policy" },
+    "member_set_commitment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "member_count", "ordered_record_digests_digest"],
+      "properties": {
+        "status": { "const": "unresolved_blocking" },
+        "member_count": { "type": "integer", "minimum": 1, "maximum": 512 },
+        "ordered_record_digests_digest": { "type": "null" }
+      }
+    },
+    "historical_read_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "resolution",
+        "current_resolution_status",
+        "retained_contracts_required",
+        "mutable_aliases_allowed",
+        "unresolved_member",
+        "retired_exact_retry"
+      ],
+      "properties": {
+        "resolution": { "const": "exact_member_version_and_digest" },
+        "current_resolution_status": { "const": "unavailable_until_identity_resolution" },
+        "retained_contracts_required": { "const": true },
+        "mutable_aliases_allowed": { "const": false },
+        "unresolved_member": { "const": "block_before_envelope" },
+        "retired_exact_retry": { "const": "resolve_historical_contract_after_admission" }
+      }
+    },
     "source_manifest_ref": { "$ref": "#/$defs/artifact_reference" },
     "generator_identity_ref": { "$ref": "#/$defs/artifact_reference" },
     "review_evidence_refs": { "$ref": "#/$defs/nonempty_artifact_array" },
@@ -86,39 +137,26 @@
       "uniqueItems": true,
       "items": { "$ref": "#/$defs/known_limitation" }
     },
-    "registry_digest_contract": { "$ref": "#/$defs/registry_digest_contract" },
-    "registry_digest": { "$ref": "#/$defs/digest" },
-    "external_attestations": {
-      "type": "array",
-      "uniqueItems": true,
-      "items": { "$ref": "#/$defs/attestation" }
-    }
+    "registry_digest_contract": { "type": "null" },
+    "registry_digest": { "type": "null" },
+    "external_attestations": { "type": "array", "maxItems": 0 }
   },
   "$defs": {
-    "identifier": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$" },
-    "semantic_version": { "type": "string", "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$" },
-    "member_key": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}@(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$" },
-    "digest": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
-    "subject_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["subject_id", "version", "schema_id", "canonical_digest"],
-      "properties": {
-        "subject_id": { "$ref": "#/$defs/identifier" },
-        "version": { "$ref": "#/$defs/semantic_version" },
-        "schema_id": { "type": "string", "format": "uri" },
-        "canonical_digest": { "$ref": "#/$defs/digest" }
-      }
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$"
     },
-    "profile_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["profile_id", "version", "digest"],
-      "properties": {
-        "profile_id": { "$ref": "#/$defs/identifier" },
-        "version": { "$ref": "#/$defs/semantic_version" },
-        "digest": { "$ref": "#/$defs/digest" }
-      }
+    "semantic_version": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
+    },
+    "member_key": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}@(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
     },
     "artifact_reference": {
       "type": "object",
@@ -136,535 +174,6 @@
       "uniqueItems": true,
       "items": { "$ref": "#/$defs/artifact_reference" }
     },
-    "schema_bytes_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["schema_member_key", "schema_id", "semantic_version", "byte_digest", "byte_count", "dialect", "root_json_type", "schema_member_digest"],
-      "properties": {
-        "schema_member_key": { "$ref": "#/$defs/member_key" },
-        "schema_id": { "type": "string", "format": "uri" },
-        "semantic_version": { "$ref": "#/$defs/semantic_version" },
-        "byte_digest": { "$ref": "#/$defs/digest" },
-        "byte_count": { "type": "integer", "minimum": 2 },
-        "dialect": { "const": "https://json-schema.org/draft/2020-12/schema" },
-        "root_json_type": { "const": "object" },
-        "schema_member_digest": { "$ref": "#/$defs/digest" }
-      }
-    },
-    "rule_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["rule_id", "version", "rule_digest"],
-      "properties": {
-        "rule_id": { "$ref": "#/$defs/identifier" },
-        "version": { "$ref": "#/$defs/semantic_version" },
-        "rule_digest": { "$ref": "#/$defs/digest" }
-      }
-    },
-    "authority_role": {
-      "enum": [
-        "proposal",
-        "protocol",
-        "safety",
-        "data_rights",
-        "resource",
-        "execution",
-        "verification",
-        "outcome",
-        "publication"
-      ]
-    },
-    "grant_slot_event_binding": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["authority_alternative_id", "grant_slot_id", "grant_fact"],
-      "properties": {
-        "authority_alternative_id": { "$ref": "#/$defs/identifier" },
-        "grant_slot_id": { "$ref": "#/$defs/identifier" },
-        "grant_fact": { "enum": ["use", "exhaustion"] }
-      }
-    },
-    "event_member_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["occurrence_id", "event_type", "event_version", "event_member_digest", "cohort_position", "grant_slot_binding"],
-      "properties": {
-        "occurrence_id": { "$ref": "#/$defs/identifier" },
-        "event_type": { "$ref": "#/$defs/identifier" },
-        "event_version": { "$ref": "#/$defs/semantic_version" },
-        "event_member_digest": { "$ref": "#/$defs/digest" },
-        "cohort_position": { "type": "integer", "minimum": 0 },
-        "grant_slot_binding": {
-          "oneOf": [
-            { "$ref": "#/$defs/grant_slot_event_binding" },
-            { "type": "null" }
-          ]
-        }
-      },
-      "allOf": [
-        {
-          "if": {
-            "properties": { "event_type": { "const": "authority.grant_used" } },
-            "required": ["event_type"]
-          },
-          "then": {
-            "properties": {
-              "grant_slot_binding": {
-                "allOf": [
-                  { "$ref": "#/$defs/grant_slot_event_binding" },
-                  { "properties": { "grant_fact": { "const": "use" } } }
-                ]
-              }
-            }
-          },
-          "else": {
-            "if": {
-              "properties": { "event_type": { "const": "authority.grant_exhausted" } },
-              "required": ["event_type"]
-            },
-            "then": {
-              "properties": {
-                "grant_slot_binding": {
-                  "allOf": [
-                    { "$ref": "#/$defs/grant_slot_event_binding" },
-                    { "properties": { "grant_fact": { "const": "exhaustion" } } }
-                  ]
-                }
-              }
-            },
-            "else": { "properties": { "grant_slot_binding": { "type": "null" } } }
-          }
-        }
-      ]
-    },
-    "actor_contract": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["allowed_principal_types", "authenticated_identity_required", "caller_may_self_approve", "tool_or_model_output_is_authority"],
-      "properties": {
-        "allowed_principal_types": {
-          "type": "array",
-          "minItems": 1,
-          "uniqueItems": true,
-          "items": { "enum": ["human", "service", "worker", "operator"] }
-        },
-        "authenticated_identity_required": { "const": true },
-        "caller_may_self_approve": { "const": false },
-        "tool_or_model_output_is_authority": { "const": false }
-      }
-    },
-    "assignment_role_slot": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["slot_id", "slot_order", "role", "assignment_required", "distinct_effective_principal_group"],
-      "properties": {
-        "slot_id": { "$ref": "#/$defs/identifier" },
-        "slot_order": { "type": "integer", "minimum": 0 },
-        "role": { "$ref": "#/$defs/authority_role" },
-        "assignment_required": { "const": true },
-        "distinct_effective_principal_group": {
-          "oneOf": [
-            { "$ref": "#/$defs/identifier" },
-            { "type": "null" }
-          ]
-        }
-      }
-    },
-    "grant_role_slot": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "slot_id",
-        "slot_order",
-        "role",
-        "assignment_slot_id",
-        "cardinality",
-        "grant_ids_distinct_across_slots",
-        "grant_identity_scope",
-        "action_instance_binding_fields",
-        "replay_mode",
-        "max_uses",
-        "consumption_point",
-        "use_event_occurrences",
-        "exhaustion_event_occurrences"
-      ],
-      "properties": {
-        "slot_id": { "$ref": "#/$defs/identifier" },
-        "slot_order": { "type": "integer", "minimum": 0 },
-        "role": { "$ref": "#/$defs/authority_role" },
-        "assignment_slot_id": { "$ref": "#/$defs/identifier" },
-        "cardinality": { "const": 1 },
-        "grant_ids_distinct_across_slots": { "const": true },
-        "grant_identity_scope": { "const": "exact_action_instance" },
-        "action_instance_binding_fields": {
-          "type": "array",
-          "minItems": 4,
-          "maxItems": 4,
-          "prefixItems": [
-            { "const": "grant_id" },
-            { "const": "command_id" },
-            { "const": "canonical_request_digest" },
-            { "const": "target_identity" }
-          ],
-          "items": false
-        },
-        "replay_mode": { "const": "single_use" },
-        "max_uses": { "const": 1 },
-        "consumption_point": { "enum": ["domain_commit", "dispatch_claim"] },
-        "use_event_occurrences": { "const": 1 },
-        "exhaustion_event_occurrences": { "const": 1 }
-      }
-    },
-    "authority_alternative": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "alternative_id",
-        "invocation_path",
-        "caller_invocation_permitted",
-        "mode",
-        "selection_rule_refs",
-        "internal_trigger_rule_refs",
-        "policy_decision_required",
-        "constitutional_artifact_required",
-        "assignment_slots",
-        "grant_slots",
-        "slot_order_contract",
-        "missing_or_extra_authority_evidence"
-      ],
-      "properties": {
-        "alternative_id": { "$ref": "#/$defs/identifier" },
-        "invocation_path": { "enum": ["caller_ingress", "internal_deterministic"] },
-        "caller_invocation_permitted": { "type": "boolean" },
-        "mode": { "enum": ["ingress_policy", "constitutional_bootstrap", "assignment_only", "bounded_grants"] },
-        "selection_rule_refs": { "$ref": "#/$defs/nonempty_rule_array" },
-        "internal_trigger_rule_refs": {
-          "type": "array",
-          "uniqueItems": true,
-          "items": { "$ref": "#/$defs/rule_reference" }
-        },
-        "policy_decision_required": { "type": "boolean" },
-        "constitutional_artifact_required": { "type": "boolean" },
-        "assignment_slots": {
-          "type": "array",
-          "uniqueItems": true,
-          "items": { "$ref": "#/$defs/assignment_role_slot" }
-        },
-        "grant_slots": {
-          "type": "array",
-          "uniqueItems": true,
-          "items": { "$ref": "#/$defs/grant_role_slot" }
-        },
-        "slot_order_contract": { "const": "array_order_equals_contiguous_zero_based_slot_order_with_unique_slot_ids" },
-        "missing_or_extra_authority_evidence": { "const": "reject" }
-      },
-      "allOf": [
-        {
-          "if": { "properties": { "invocation_path": { "const": "caller_ingress" } }, "required": ["invocation_path"] },
-          "then": {
-            "properties": {
-              "caller_invocation_permitted": { "const": true },
-              "internal_trigger_rule_refs": { "maxItems": 0 }
-            }
-          },
-          "else": {
-            "properties": {
-              "caller_invocation_permitted": { "const": false },
-              "internal_trigger_rule_refs": { "minItems": 1 }
-            }
-          }
-        },
-        {
-          "if": { "properties": { "mode": { "const": "ingress_policy" } }, "required": ["mode"] },
-          "then": {
-            "properties": {
-              "policy_decision_required": { "const": true },
-              "constitutional_artifact_required": { "const": false },
-              "assignment_slots": { "maxItems": 0 },
-              "grant_slots": { "maxItems": 0 }
-            }
-          }
-        },
-        {
-          "if": { "properties": { "mode": { "const": "constitutional_bootstrap" } }, "required": ["mode"] },
-          "then": {
-            "properties": {
-              "policy_decision_required": { "const": false },
-              "constitutional_artifact_required": { "const": true },
-              "assignment_slots": { "maxItems": 0 },
-              "grant_slots": { "maxItems": 0 }
-            }
-          }
-        },
-        {
-          "if": { "properties": { "mode": { "const": "assignment_only" } }, "required": ["mode"] },
-          "then": {
-            "properties": {
-              "policy_decision_required": { "const": true },
-              "constitutional_artifact_required": { "const": false },
-              "assignment_slots": { "minItems": 1 },
-              "grant_slots": { "maxItems": 0 }
-            }
-          }
-        },
-        {
-          "if": { "properties": { "mode": { "const": "bounded_grants" } }, "required": ["mode"] },
-          "then": {
-            "properties": {
-              "policy_decision_required": { "const": true },
-              "constitutional_artifact_required": { "const": false },
-              "assignment_slots": { "minItems": 1 },
-              "grant_slots": { "minItems": 1 }
-            }
-          }
-        }
-      ]
-    },
-    "authority_contract": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["alternative_selection", "alternatives", "caller_authority_assertion_sufficient"],
-      "properties": {
-        "alternative_selection": {
-          "type": "object",
-          "additionalProperties": false,
-          "required": ["exactly_one_required", "selected_by", "caller_may_select", "unmatched_or_ambiguous"],
-          "properties": {
-            "exactly_one_required": { "const": true },
-            "selected_by": { "const": "kernel_from_contract_payload_state_and_internal_trigger" },
-            "caller_may_select": { "const": false },
-            "unmatched_or_ambiguous": { "const": "reject" }
-          }
-        },
-        "alternatives": {
-          "type": "array",
-          "minItems": 1,
-          "uniqueItems": true,
-          "items": { "$ref": "#/$defs/authority_alternative" }
-        },
-        "caller_authority_assertion_sufficient": { "const": false }
-      }
-    },
-    "target_contract": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["owning_module", "aggregate_type", "allowed_stream_types", "target_existence", "origin_event_permitted", "aggregate_id_source"],
-      "properties": {
-        "owning_module": { "$ref": "#/$defs/identifier" },
-        "aggregate_type": { "$ref": "#/$defs/identifier" },
-        "allowed_stream_types": {
-          "type": "array",
-          "minItems": 1,
-          "uniqueItems": true,
-          "items": { "$ref": "#/$defs/identifier" }
-        },
-        "target_existence": { "enum": ["must_be_absent", "must_exist", "may_exist"] },
-        "origin_event_permitted": { "type": "boolean" },
-        "aggregate_id_source": { "enum": ["target_selector", "payload_bound", "server_derived"] }
-      },
-      "allOf": [
-        {
-          "if": { "properties": { "target_existence": { "const": "must_be_absent" } }, "required": ["target_existence"] },
-          "then": { "properties": { "origin_event_permitted": { "const": true } } }
-        }
-      ]
-    },
-    "payload_contract": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["payload_required", "nullable", "schema_ref", "payload_json_pointer", "validation_mode"],
-      "properties": {
-        "payload_required": { "const": true },
-        "nullable": { "const": false },
-        "schema_ref": { "$ref": "#/$defs/schema_bytes_reference" },
-        "payload_json_pointer": { "const": "" },
-        "validation_mode": { "const": "exact_schema_bytes_before_decider" }
-      }
-    },
-    "event_alternative": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "alternative_id",
-        "authority_alternative_ids",
-        "decision_kind",
-        "events",
-        "occurrence_order_contract",
-        "grant_slot_event_contract",
-        "cohort_rule_refs"
-      ],
-      "properties": {
-        "alternative_id": { "$ref": "#/$defs/identifier" },
-        "authority_alternative_ids": {
-          "type": "array",
-          "minItems": 1,
-          "uniqueItems": true,
-          "items": { "$ref": "#/$defs/identifier" }
-        },
-        "decision_kind": { "enum": ["emit_atomic_ordered_batch", "noop"] },
-        "events": {
-          "type": "array",
-          "uniqueItems": true,
-          "items": { "$ref": "#/$defs/event_member_reference" }
-        },
-        "occurrence_order_contract": { "const": "array_order_equals_contiguous_zero_based_cohort_position_with_unique_occurrence_ids" },
-        "grant_slot_event_contract": { "const": "emit_has_exact_use_and_exhaustion_per_selected_bounded_slot_noop_has_zero" },
-        "cohort_rule_refs": { "$ref": "#/$defs/nonempty_rule_array" }
-      },
-      "allOf": [
-        {
-          "if": { "properties": { "decision_kind": { "const": "emit_atomic_ordered_batch" } }, "required": ["decision_kind"] },
-          "then": { "properties": { "events": { "minItems": 1 } } },
-          "else": { "properties": { "events": { "maxItems": 0 } } }
-        }
-      ]
-    },
-    "nonempty_rule_array": {
-      "type": "array",
-      "minItems": 1,
-      "uniqueItems": true,
-      "items": { "$ref": "#/$defs/rule_reference" }
-    },
-    "limits": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["max_envelope_bytes", "max_payload_bytes", "max_json_depth", "max_object_members", "max_array_items", "max_reference_count", "rule_timeout_milliseconds"],
-      "properties": {
-        "max_envelope_bytes": { "type": "integer", "minimum": 128 },
-        "max_payload_bytes": { "type": "integer", "minimum": 2 },
-        "max_json_depth": { "type": "integer", "minimum": 1 },
-        "max_object_members": { "type": "integer", "minimum": 1 },
-        "max_array_items": { "type": "integer", "minimum": 0 },
-        "max_reference_count": { "type": "integer", "minimum": 0 },
-        "rule_timeout_milliseconds": { "type": "integer", "minimum": 1 }
-      }
-    },
-    "idempotency_contract": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["scope_fields", "request_identity", "exact_historical_retry", "changed_reuse", "duplicate_execution"],
-      "properties": {
-        "scope_fields": {
-          "type": "array",
-          "minItems": 3,
-          "uniqueItems": true,
-          "items": { "enum": ["tenant_id", "namespace", "command_id", "command_type", "command_version"] },
-          "allOf": [
-            { "contains": { "const": "tenant_id" } },
-            { "contains": { "const": "namespace" } },
-            { "contains": { "const": "command_id" } }
-          ]
-        },
-        "request_identity": { "const": "canonical_envelope_and_payload_digest" },
-        "exact_historical_retry": { "const": "return_same_receipt" },
-        "changed_reuse": { "const": "refuse_without_new_receipt" },
-        "duplicate_execution": { "const": "forbidden" }
-      }
-    },
-    "handler_port_contract": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["port_id", "port_version", "input_schema_ref", "decision_output_schema_ref", "deterministic_for_bound_inputs", "direct_state_mutation", "external_io", "runtime_conformance_evidence_in_subject"],
-      "properties": {
-        "port_id": { "$ref": "#/$defs/identifier" },
-        "port_version": { "$ref": "#/$defs/semantic_version" },
-        "input_schema_ref": { "$ref": "#/$defs/schema_bytes_reference" },
-        "decision_output_schema_ref": { "$ref": "#/$defs/schema_bytes_reference" },
-        "deterministic_for_bound_inputs": { "const": true },
-        "direct_state_mutation": { "const": false },
-        "external_io": { "const": false },
-        "runtime_conformance_evidence_in_subject": { "const": false }
-      }
-    },
-    "trace_contract": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["positive", "negative", "boundary", "race", "replay", "compatibility"],
-      "properties": {
-        "positive": { "$ref": "#/$defs/nonempty_artifact_array" },
-        "negative": { "$ref": "#/$defs/nonempty_artifact_array" },
-        "boundary": { "$ref": "#/$defs/nonempty_artifact_array" },
-        "race": { "$ref": "#/$defs/nonempty_artifact_array" },
-        "replay": { "$ref": "#/$defs/nonempty_artifact_array" },
-        "compatibility": { "$ref": "#/$defs/nonempty_artifact_array" }
-      }
-    },
-    "command_contract": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "member_key",
-        "command_type",
-        "command_version",
-        "payload_contract",
-        "target_contract",
-        "actor_contract",
-        "authority_contract",
-        "required_evidence_families",
-        "pure_rule_refs",
-        "legal_event_alternatives",
-        "rejection_semantics",
-        "limits",
-        "idempotency_contract",
-        "handler_port_contract",
-        "trace_contract",
-        "review_evidence_refs",
-        "member_digest_contract",
-        "member_digest"
-      ],
-      "properties": {
-        "member_key": { "$ref": "#/$defs/member_key" },
-        "command_type": { "$ref": "#/$defs/identifier" },
-        "command_version": { "$ref": "#/$defs/semantic_version" },
-        "payload_contract": { "$ref": "#/$defs/payload_contract" },
-        "target_contract": { "$ref": "#/$defs/target_contract" },
-        "actor_contract": { "$ref": "#/$defs/actor_contract" },
-        "authority_contract": { "$ref": "#/$defs/authority_contract" },
-        "required_evidence_families": {
-          "type": "array",
-          "minItems": 1,
-          "uniqueItems": true,
-          "items": { "enum": ["schema", "reference", "state_frontier", "policy", "authority", "rights", "resource", "semantic", "transition", "event_cohort"] }
-        },
-        "pure_rule_refs": { "$ref": "#/$defs/nonempty_rule_array" },
-        "legal_event_alternatives": {
-          "type": "array",
-          "minItems": 1,
-          "uniqueItems": true,
-          "items": { "$ref": "#/$defs/event_alternative" }
-        },
-        "rejection_semantics": { "const": "reject_without_domain_events" },
-        "limits": { "$ref": "#/$defs/limits" },
-        "idempotency_contract": { "$ref": "#/$defs/idempotency_contract" },
-        "handler_port_contract": { "$ref": "#/$defs/handler_port_contract" },
-        "trace_contract": { "$ref": "#/$defs/trace_contract" },
-        "review_evidence_refs": { "$ref": "#/$defs/nonempty_artifact_array" },
-        "member_digest_contract": { "$ref": "#/$defs/command_member_digest_contract" },
-        "member_digest": { "$ref": "#/$defs/digest" }
-      }
-    },
-    "member_set_commitment": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["algorithm", "member_count", "ordered_member_digests_digest"],
-      "properties": {
-        "algorithm": { "const": "odeya-canonical-map-commitment-v1" },
-        "member_count": { "type": "integer", "minimum": 1 },
-        "ordered_member_digests_digest": { "$ref": "#/$defs/digest" }
-      }
-    },
-    "historical_read_policy": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["resolution", "retained_contracts_required", "mutable_aliases_allowed", "unresolved_member", "retired_exact_retry"],
-      "properties": {
-        "resolution": { "const": "exact_member_version_and_digest" },
-        "retained_contracts_required": { "const": true },
-        "mutable_aliases_allowed": { "const": false },
-        "unresolved_member": { "const": "block_before_envelope" },
-        "retired_exact_retry": { "const": "resolve_historical_contract" }
-      }
-    },
     "known_limitation": {
       "type": "object",
       "additionalProperties": false,
@@ -674,116 +183,6 @@
         "severity": { "enum": ["low", "moderate", "high", "critical"] },
         "statement": { "type": "string", "minLength": 1, "maxLength": 2048 },
         "consequence": { "type": "string", "minLength": 1, "maxLength": 2048 }
-      }
-    },
-    "attestation": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["attestation_id", "subject_digest", "signer_id", "algorithm", "signature_ref"],
-      "properties": {
-        "attestation_id": { "$ref": "#/$defs/identifier" },
-        "subject_digest": { "$ref": "#/$defs/digest" },
-        "signer_id": { "$ref": "#/$defs/identifier" },
-        "algorithm": { "type": "string", "minLength": 1, "maxLength": 127 },
-        "signature_ref": { "$ref": "#/$defs/artifact_reference" }
-      }
-    },
-    "schema_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["schema_id", "schema_digest"],
-      "properties": {
-        "schema_id": { "type": "string", "format": "uri" },
-        "schema_digest": { "$ref": "#/$defs/digest" }
-      }
-    },
-    "command_member_digest_contract": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["algorithm", "domain_separator", "canonicalization_profile_ref", "subject_schema_ref", "included_json_pointers", "excluded_json_pointers"],
-      "properties": {
-        "algorithm": { "const": "sha256" },
-        "domain_separator": { "const": "odeya-command-contract-member-v1" },
-        "canonicalization_profile_ref": { "$ref": "#/$defs/profile_reference" },
-        "subject_schema_ref": { "$ref": "#/$defs/schema_reference" },
-        "included_json_pointers": {
-          "type": "array",
-          "minItems": 17,
-          "maxItems": 17,
-          "prefixItems": [
-            { "const": "/member_key" },
-            { "const": "/command_type" },
-            { "const": "/command_version" },
-            { "const": "/payload_contract" },
-            { "const": "/target_contract" },
-            { "const": "/actor_contract" },
-            { "const": "/authority_contract" },
-            { "const": "/required_evidence_families" },
-            { "const": "/pure_rule_refs" },
-            { "const": "/legal_event_alternatives" },
-            { "const": "/rejection_semantics" },
-            { "const": "/limits" },
-            { "const": "/idempotency_contract" },
-            { "const": "/handler_port_contract" },
-            { "const": "/trace_contract" },
-            { "const": "/review_evidence_refs" },
-            { "const": "/member_digest_contract" }
-          ],
-          "items": false
-        },
-        "excluded_json_pointers": {
-          "type": "array",
-          "minItems": 1,
-          "maxItems": 1,
-          "prefixItems": [{ "const": "/member_digest" }],
-          "items": false
-        }
-      }
-    },
-    "registry_digest_contract": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["algorithm", "domain_separator", "canonicalization_profile_ref", "subject_schema_ref", "included_json_pointers", "excluded_json_pointers"],
-      "properties": {
-        "algorithm": { "const": "sha256" },
-        "domain_separator": { "const": "odeya-command-contract-registry-v1" },
-        "canonicalization_profile_ref": { "$ref": "#/$defs/profile_reference" },
-        "subject_schema_ref": { "$ref": "#/$defs/schema_reference" },
-        "included_json_pointers": {
-          "type": "array",
-          "minItems": 17,
-          "maxItems": 17,
-          "prefixItems": [
-            { "const": "/schema_version" },
-            { "const": "/registry_kind" },
-            { "const": "/registry_id" },
-            { "const": "/version" },
-            { "const": "/conformance_scope" },
-            { "const": "/supersedes_registry_subject_ref" },
-            { "const": "/canonicalization_profile_ref" },
-            { "const": "/admission_contract" },
-            { "const": "/ordering_contract" },
-            { "const": "/members" },
-            { "const": "/member_set_commitment" },
-            { "const": "/historical_read_policy" },
-            { "const": "/source_manifest_ref" },
-            { "const": "/generator_identity_ref" },
-            { "const": "/review_evidence_refs" },
-            { "const": "/known_limitations" },
-            { "const": "/registry_digest_contract" }
-          ],
-          "items": false
-        },
-        "excluded_json_pointers": {
-          "type": "array",
-          "minItems": 2,
-          "maxItems": 2,
-          "prefixItems": [
-            { "const": "/registry_digest" },
-            { "const": "/external_attestations" }
-          ],
-          "items": false
-        }
       }
     }
   }

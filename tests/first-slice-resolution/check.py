@@ -11,6 +11,7 @@ import hashlib
 import json
 import re
 import sys
+from copy import deepcopy
 from decimal import Decimal, InvalidOperation
 from pathlib import Path
 from typing import Any, Callable
@@ -21,6 +22,24 @@ CASES_PATH = ROOT / "tests/first-slice-resolution/cases.json"
 EXPECTED_CONFLICTS = {f"C{index}" for index in range(1, 9)}
 EXPECTED_P0 = "P0.constitutional-recovery-admission"
 EXPECTED_AXES = ["reproducibility", "replication", "transport"]
+VERIFICATION_ASSIGN_ROLES = ["safety", "data_rights", "resource", "execution", "verification"]
+VERIFICATION_ASSIGN_EVENTS = [
+    *(f"authority.grant_used({role})" for role in VERIFICATION_ASSIGN_ROLES),
+    "resource.reservation_created",
+    "work.lease_acquired",
+    "verification.assigned",
+    *(f"authority.grant_exhausted({role})" for role in VERIFICATION_ASSIGN_ROLES),
+]
+VERIFICATION_ASSIGN_BINDINGS = [
+    "one resolved admitted assignable WorkIntent resource ID version canonical digest and exact retained bytes",
+    "one post-assignment WorkContract whose source WorkIntent identity and assignment commit identity equal the command result",
+    "the complete active current DataUseDecision set for every governed input at the assignment commit position",
+    "the exact zero-external-capability sandbox profile and governing policy decision",
+    "the exact resource reservation created in this commit",
+    "the exact active WorkLease acquired in this commit",
+    "five distinct action-instance-bound single-use grants in the declared global role-slot order",
+    "one command ID request digest receipt ID admission evidence bundle registry activation and commit identity equal across the entire cohort",
+]
 NONNEGATIVE_DECIMAL = re.compile(r"^(0|[1-9][0-9]*)(\.[0-9]+)?$")
 
 
@@ -47,18 +66,21 @@ def exact_nonnegative_decimal(value: Any) -> bool:
 
 def inventory_errors(inventory: dict[str, Any]) -> list[str]:
     errors: list[str] = []
-    if inventory.get("status") != "resolved_scope_candidate_not_admitted":
-        errors.append("inventory status is not resolved_scope_candidate_not_admitted")
+    if inventory.get("schema_version") != "0.2.0" or inventory.get("version") != "0.2.0":
+        errors.append("materially changed inventory was not reissued as exact version 0.2.0")
+    if inventory.get("status") != "bounded_scope_candidate_c5_blocked_not_admitted":
+        errors.append("inventory status does not expose the blocking C5 boundary")
 
     scope = inventory.get("scope_verdict", {})
     required_scope = {
-        "c1_through_c8_choices_resolved": True,
+        "c1_through_c8_choices_resolved": False,
         "representational_member_sets_exact": True,
         "activation_dependency_complete": False,
         "immutable_registry_members_exist": False,
         "engine_contract_root_exists": False,
         "constitutional_prerequisite_instance_exists": False,
         "registry_activation_exists": False,
+        "may_construct_verification_assignment_member": False,
         "may_freeze_registry_snapshot": False,
         "may_activate": False,
         "may_start_runtime_implementation": False,
@@ -91,6 +113,8 @@ def inventory_errors(inventory: dict[str, Any]) -> list[str]:
         errors.append("command partition contains duplicate members")
     if len(events) != len(set(events)):
         errors.append("required event set contains duplicate members")
+    if counts.get("unresolved_c1_through_c8_choices") != 1:
+        errors.append("counts.unresolved_c1_through_c8_choices is not exactly one")
 
     required_events = {
         "resource.usage_observed",
@@ -117,9 +141,11 @@ def inventory_errors(inventory: dict[str, Any]) -> list[str]:
     }
     if set(conflict_map) != EXPECTED_CONFLICTS:
         errors.append("resolved_conflicts is not exactly C1 through C8")
-    for conflict_id in sorted(EXPECTED_CONFLICTS):
+    for conflict_id in sorted(EXPECTED_CONFLICTS - {"C5"}):
         if conflict_map.get(conflict_id, {}).get("disposition") != "resolved":
             errors.append(f"{conflict_id} is not marked resolved")
+    if conflict_map.get("C5", {}).get("disposition") != "unresolved_blocking":
+        errors.append("C5 is not marked unresolved_blocking")
 
     aggregate_pairs = [
         (item.get("aggregate_type"), item.get("reducer_family"))
@@ -164,12 +190,56 @@ def inventory_errors(inventory: dict[str, Any]) -> list[str]:
         represented = set(cohorts.get(name, []))
         if not required_members <= represented:
             errors.append(f"atomic_cohorts.{name} lacks {sorted(required_members - represented)}")
+    if cohorts.get("verification_assign_local") != VERIFICATION_ASSIGN_EVENTS:
+        errors.append("atomic_cohorts.verification_assign_local is not the exact ordered 13-event cohort")
+
+    unresolved = inventory.get("unresolved_prerequisites", [])
+    if not isinstance(unresolved, list) or len(unresolved) != 1:
+        errors.append("inventory does not expose exactly one unresolved prerequisite")
+    else:
+        prq = unresolved[0]
+        if prq.get("prerequisite_id") != "PRQ-009" or prq.get("status") != "unresolved_blocking":
+            errors.append("the sole unresolved prerequisite is not blocking PRQ-009")
+        contract = prq.get("prospective_assignment_contract", {})
+        if contract.get("command_type") != "verification.assign" or contract.get("path_id") != "local_assignment":
+            errors.append("PRQ-009 does not bind verification.assign/local_assignment")
+        if contract.get("role_slot_order") != VERIFICATION_ASSIGN_ROLES:
+            errors.append("PRQ-009 role-slot order is not exact")
+        if contract.get("batch_size_exact") != len(VERIFICATION_ASSIGN_EVENTS):
+            errors.append("PRQ-009 exact batch size is not 13")
+        if contract.get("event_order_exact") != VERIFICATION_ASSIGN_EVENTS:
+            errors.append("PRQ-009 event order is not the exact assignment cohort")
+        if prq.get("required_exact_bindings") != VERIFICATION_ASSIGN_BINDINGS:
+            errors.append("PRQ-009 exact binding obligations drifted")
+        blockers = prq.get("current_blockers", [])
+        required_blocker_terms = ("unresolved_blocking", "null canonical digest", "one-event sample batch")
+        joined_blockers = " ".join(blockers)
+        for term in required_blocker_terms:
+            if term not in joined_blockers:
+                errors.append(f"PRQ-009 current blockers omit {term!r}")
 
     prerequisites = inventory.get("external_prerequisites", [])
     if len(prerequisites) != 1 or prerequisites[0].get("prerequisite_id") != EXPECTED_P0:
         errors.append("inventory does not expose exactly the nonrecursive P0 prerequisite")
     elif not prerequisites[0].get("not_a_command_event_grant_aggregate_or_policy_result"):
         errors.append("P0 lost its non-command/event/grant/aggregate/policy boundary")
+    if prerequisites:
+        required_bindings = prerequisites[0].get("required_bindings", [])
+        expected_independent_binding = (
+            "activation_independent_subject_excluding_activation_identity_sequence_reference_and_digest"
+        )
+        if expected_independent_binding not in required_bindings:
+            errors.append("P0 required bindings do not explicitly exclude activation identity")
+        if "registry_activation_identity_sequence_and_digest" in required_bindings:
+            errors.append("P0 recursively requires its parent activation identity/digest")
+        expected_outer_requirements = [
+            "constructed_after_p0_seal",
+            "embeds_exact_p0_subject",
+            "binds_exact_p0_digest",
+            "binds_activation_identity_sequence_and_digest_for_later_commands",
+        ]
+        if prerequisites[0].get("outer_registry_activation_requirements") != expected_outer_requirements:
+            errors.append("outer RegistryActivation requirements do not bind the already-sealed P0")
     if prerequisites and prerequisites[0].get("current_instance_status") != "missing":
         errors.append("candidate inventory incorrectly claims a current P0 instance")
 
@@ -404,6 +474,114 @@ def local_preclaim_race_errors(subject: dict[str, Any], _: dict[str, Any]) -> li
     return errors
 
 
+def verification_assign_obligation_errors(subject: dict[str, Any], inventory: dict[str, Any]) -> list[str]:
+    """Check a prospective obligation, never a currently constructible event."""
+
+    if subject.get("fixture") == "canonical_prospective_assignment_obligation":
+        mutation = subject.get("mutation")
+        subject = canonical_verification_assign_obligation()
+        bindings = subject["binding_obligations"]
+        if mutation == "missing_work_intent_binding":
+            bindings["resolved_admitted_assignable_work_intent_exact"] = False
+        elif mutation == "unresolved_null_work_intent_used_as_assignable":
+            bindings["resolved_admitted_assignable_work_intent_exact"] = False
+            subject["claims_current_constructibility"] = True
+        elif mutation == "missing_active_lease":
+            bindings["acquired_active_lease_exact"] = False
+        elif mutation == "stale_or_incomplete_data_use_decisions":
+            bindings["active_current_data_use_decisions_complete"] = False
+        elif mutation == "missing_zero_external_capability_sandbox":
+            bindings["zero_external_capability_sandbox_and_policy_exact"] = False
+        elif mutation == "batch_size_one":
+            subject["batch_size"] = 1
+            subject["event_order"] = ["verification.assigned"]
+        elif mutation == "split_cohort":
+            subject["event_order"] = [
+                VERIFICATION_ASSIGN_EVENTS[:8],
+                VERIFICATION_ASSIGN_EVENTS[8:],
+            ]
+        elif mutation == "wrong_event_order":
+            subject["event_order"][5], subject["event_order"][6] = (
+                subject["event_order"][6],
+                subject["event_order"][5],
+            )
+        elif mutation == "partial_grant_cohort":
+            subject["event_order"] = [
+                event
+                for event in subject["event_order"]
+                if event not in {"authority.grant_used(data_rights)", "authority.grant_exhausted(data_rights)"}
+            ]
+            subject["batch_size"] = len(subject["event_order"])
+        else:
+            return [f"unknown canonical assignment mutation {mutation!r}"]
+
+    errors: list[str] = []
+    if subject.get("prospective_only") is not True:
+        errors.append("assignment obligation is not explicitly prospective-only")
+    if subject.get("claims_current_constructibility") is not False:
+        errors.append("assignment obligation claims current constructibility")
+    if subject.get("claims_current_admission") is not False:
+        errors.append("assignment obligation claims current admission")
+    if subject.get("command_type") != "verification.assign" or subject.get("path_id") != "local_assignment":
+        errors.append("assignment obligation does not bind verification.assign/local_assignment")
+    if subject.get("role_slot_order") != VERIFICATION_ASSIGN_ROLES:
+        errors.append("assignment role slots are missing, extra, duplicated, or out of order")
+    events = subject.get("event_order", [])
+    if subject.get("batch_size") != len(VERIFICATION_ASSIGN_EVENTS):
+        errors.append("assignment batch size is not exactly 13")
+    if events != VERIFICATION_ASSIGN_EVENTS:
+        errors.append("assignment events are missing, extra, split, duplicated, or out of order")
+    if subject.get("atomic_commit") is not True or subject.get("intermediate_visibility") is not False:
+        errors.append("assignment cohort is not one atomic commit without interior visibility")
+    bindings = subject.get("binding_obligations", {})
+    required_true = (
+        "resolved_admitted_assignable_work_intent_exact",
+        "work_contract_binds_work_intent_and_assignment_commit",
+        "active_current_data_use_decisions_complete",
+        "zero_external_capability_sandbox_and_policy_exact",
+        "created_reservation_exact",
+        "acquired_active_lease_exact",
+        "five_distinct_single_use_action_bound_grants_exact",
+        "command_receipt_activation_commit_equalities_exact",
+    )
+    for field in required_true:
+        if bindings.get(field) is not True:
+            errors.append(f"assignment binding obligation {field} is not true")
+    if set(bindings) != set(required_true):
+        errors.append("assignment binding obligation set is not closed and exact")
+    unresolved = inventory.get("unresolved_prerequisites", [])
+    if len(unresolved) != 1 or unresolved[0].get("prerequisite_id") != "PRQ-009":
+        errors.append("assignment obligation is not anchored to blocking PRQ-009")
+    elif unresolved[0].get("prospective_assignment_contract", {}).get("event_order_exact") != events:
+        errors.append("assignment obligation event order disagrees with PRQ-009")
+    return errors
+
+
+def canonical_verification_assign_obligation() -> dict[str, Any]:
+    return {
+        "prospective_only": True,
+        "claims_current_constructibility": False,
+        "claims_current_admission": False,
+        "command_type": "verification.assign",
+        "path_id": "local_assignment",
+        "role_slot_order": deepcopy(VERIFICATION_ASSIGN_ROLES),
+        "batch_size": len(VERIFICATION_ASSIGN_EVENTS),
+        "event_order": deepcopy(VERIFICATION_ASSIGN_EVENTS),
+        "atomic_commit": True,
+        "intermediate_visibility": False,
+        "binding_obligations": {
+            "resolved_admitted_assignable_work_intent_exact": True,
+            "work_contract_binds_work_intent_and_assignment_commit": True,
+            "active_current_data_use_decisions_complete": True,
+            "zero_external_capability_sandbox_and_policy_exact": True,
+            "created_reservation_exact": True,
+            "acquired_active_lease_exact": True,
+            "five_distinct_single_use_action_bound_grants_exact": True,
+            "command_receipt_activation_commit_equalities_exact": True,
+        },
+    }
+
+
 def verification_reducer_errors(subject: dict[str, Any], inventory: dict[str, Any]) -> list[str]:
     errors: list[str] = []
     expected = [{"aggregate_type": "verification", "reducer_family": "Verification"}]
@@ -426,12 +604,10 @@ def verification_reducer_errors(subject: dict[str, Any], inventory: dict[str, An
 def p0_frontier_errors(subject: dict[str, Any], _: dict[str, Any]) -> list[str]:
     errors: list[str] = []
     required_true = (
-        "nonrecursive_boundary",
         "root_authority_non_self_issued",
         "exact_engine_contract_root_bound",
         "exact_c0_registry_bundle_bound",
         "witnessed_checkpoint",
-        "exact_activation_digest_bound",
         "controlled_time_current",
         "bounded_scope",
     )
@@ -440,6 +616,15 @@ def p0_frontier_errors(subject: dict[str, Any], _: dict[str, Any]) -> list[str]:
     for field in required_true:
         if subject.get(field) is not True:
             errors.append(f"P0 {field} is not proven true")
+    expected_boundary = {
+        "activation_reference_permitted": False,
+        "activation_identity_included": False,
+        "activation_sequence_included": False,
+        "parent_activation_digest_included": False,
+        "outer_activation_must_bind_exact_p0_digest": True,
+    }
+    if subject.get("nonrecursive_boundary") != expected_boundary:
+        errors.append("P0 is not exactly activation-independent")
     frontier = subject.get("recovery_frontier", {})
     for field in ("current", "ledger_epoch_matches", "root_matches"):
         if frontier.get(field) is not True:
@@ -452,10 +637,13 @@ def p0_frontier_errors(subject: dict[str, Any], _: dict[str, Any]) -> list[str]:
         errors.append("recovery frontier contains an open recovery case")
     if frontier.get("ambiguous") is not False:
         errors.append("recovery frontier is ambiguous")
-    if subject.get("activation_expired") is not False:
-        errors.append("activation is expired")
-    if subject.get("activation_superseded") is not False:
-        errors.append("activation is superseded")
+    outer_activation = subject.get("outer_activation_binding", {})
+    if outer_activation.get("exact_p0_digest_bound") is not True:
+        errors.append("outer activation does not bind the exact sealed P0 digest")
+    if outer_activation.get("expired") is not False:
+        errors.append("outer activation is expired")
+    if outer_activation.get("superseded") is not False:
+        errors.append("outer activation is superseded")
     return errors
 
 
@@ -465,6 +653,7 @@ CHECKERS: dict[str, Callable[[dict[str, Any], dict[str, Any]], list[str]]] = {
     "validity_measurement": validity_measurement_errors,
     "grant_cohort": grant_cohort_errors,
     "local_preclaim_race": local_preclaim_race_errors,
+    "verification_assign_obligation": verification_assign_obligation_errors,
     "verification_reducer_authority": verification_reducer_errors,
     "p0_frontier": p0_frontier_errors,
 }

@@ -1,17 +1,23 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:command-envelope:0.4.0",
+  "$id": "urn:odeya:schema:command-envelope:0.5.0",
   "title": "Odeya CommandEnvelope",
-  "description": "Language-neutral, fail-closed request envelope for a registered Odeya command across research, data-governance, and recovery streams. It binds the exact command-registry snapshot, separate activation proof, and exact member record resolved by admission; mutable aliases such as latest are unrepresentable. Payload semantics are fixed by the referenced command schema and registry record. Presented authority hints are explicitly untrusted inputs to resolve; callers cannot select an authority mode, submit a derivation rule or PolicyDecision, or manufacture authority. Kernel admission evidence determines the evaluated authority basis. JSON Schema does not prove snapshot activation, membership, scope approval, digest equality, or currentness.",
+  "description": "Language-neutral structural candidate for a fail-closed Odeya command request. This 0.5 resource is deliberately nonconstructible and not admitted while the exact CommandContractRecord and CommandContractRegistry identities remain unresolved; non-null digests in fixtures are comparison probes, not proof that resolution or admission occurred. It binds the canonical CommandContractRegistry subject name, a separate activation-proof shape, and a standalone member-reference shape; mutable aliases such as latest are unrepresentable. The logical payload_type_id is distinct from the exact JSON Schema resource plus canonical and closure digests; the record supplies dialect and source-blob identity. Presented authority hints are untrusted. JSON Schema does not prove activation, membership, identity equality, scope approval, currentness, or admission, and a future schema-resource reissue is required before construction can be admitted.",
   "type": "object",
   "additionalProperties": false,
   "required": [
     "schema_version",
+    "conformance_scope",
+    "identity_resolution_status",
+    "admission_status",
+    "construction_status",
     "command_id",
     "command_type",
     "command_version",
-    "command_schema_id",
-    "command_schema_digest",
+    "payload_type_id",
+    "payload_schema_resource_id",
+    "payload_schema_canonical_digest",
+    "payload_schema_closure_digest",
     "command_registry_snapshot_ref",
     "command_registry_activation_ref",
     "command_contract_record_ref",
@@ -31,7 +37,19 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.4.0"
+      "const": "0.5.0"
+    },
+    "conformance_scope": {
+      "const": "structural_fixture_only"
+    },
+    "identity_resolution_status": {
+      "const": "unresolved_blocking"
+    },
+    "admission_status": {
+      "const": "not_admitted"
+    },
+    "construction_status": {
+      "const": "blocked_unresolved_command_contract_registry"
     },
     "command_id": {
       "$ref": "#/$defs/identifier"
@@ -43,11 +61,18 @@
       "type": "string",
       "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
     },
-    "command_schema_id": {
+    "payload_type_id": {
       "type": "string",
       "pattern": "^urn:odeya:command-payload:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$"
     },
-    "command_schema_digest": {
+    "payload_schema_resource_id": {
+      "type": "string",
+      "pattern": "^urn:odeya:schema:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "payload_schema_canonical_digest": {
+      "$ref": "#/$defs/digest"
+    },
+    "payload_schema_closure_digest": {
       "$ref": "#/$defs/digest"
     },
     "command_registry_snapshot_ref": {
@@ -286,7 +311,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:proposal.submit:1.0.0"
         },
         "target": {
@@ -306,7 +331,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -318,7 +343,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:proposal.decide:1.0.0"
         },
         "target": {
@@ -338,7 +363,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -350,7 +375,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:proposal.withdraw:1.0.0"
         },
         "target": {
@@ -370,7 +395,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -382,7 +407,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:mission.create_origin:1.0.0"
         },
         "target": {
@@ -399,7 +424,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -411,7 +436,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:mission.compile_contract:1.0.0"
         },
         "target": {
@@ -428,7 +453,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -440,7 +465,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:mission.advance_phase:1.0.0"
         },
         "target": {
@@ -457,7 +482,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -469,7 +494,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:mission.change_control:1.0.0"
         },
         "target": {
@@ -486,7 +511,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -498,7 +523,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:mission.close:1.0.0"
         },
         "target": {
@@ -515,7 +540,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -527,7 +552,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:mission.record_handoff:1.0.0"
         },
         "target": {
@@ -544,7 +569,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -556,7 +581,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:protocol.record_exposure:1.0.0"
         },
         "target": {
@@ -573,7 +598,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -585,7 +610,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:protocol.freeze:1.0.0"
         },
         "target": {
@@ -602,7 +627,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -614,7 +639,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:protocol.amend:1.0.0"
         },
         "target": {
@@ -631,7 +656,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -643,7 +668,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:protocol.fork:1.0.0"
         },
         "target": {
@@ -660,7 +685,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -672,7 +697,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:protocol.supersede:1.0.0"
         },
         "target": {
@@ -689,7 +714,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -701,7 +726,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:work_graph.compile:1.0.0"
         },
         "target": {
@@ -718,7 +743,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -730,7 +755,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:stage.set_readiness:1.0.0"
         },
         "target": {
@@ -747,7 +772,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -759,7 +784,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:stage.set_authorization:1.0.0"
         },
         "target": {
@@ -776,7 +801,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -788,7 +813,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:work.acquire_lease:1.0.0"
         },
         "target": {
@@ -805,7 +830,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -817,7 +842,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:work.renew_lease:1.0.0"
         },
         "target": {
@@ -834,7 +859,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -846,7 +871,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:work.release_lease:1.0.0"
         },
         "target": {
@@ -863,7 +888,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -875,7 +900,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:work.revoke_lease:1.0.0"
         },
         "target": {
@@ -892,7 +917,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -904,7 +929,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:attempt.start:1.0.0"
         },
         "target": {
@@ -921,7 +946,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -933,7 +958,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:attempt.report:1.0.0"
         },
         "target": {
@@ -950,7 +975,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -962,7 +987,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:resource.record_observation:1.0.0"
         },
         "target": {
@@ -979,7 +1004,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -991,7 +1016,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:budget.record_exhaustion:1.0.0"
         },
         "target": {
@@ -1008,7 +1033,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -1020,7 +1045,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:blocker.open:1.0.0"
         },
         "target": {
@@ -1037,7 +1062,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -1049,7 +1074,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:blocker.resolve:1.0.0"
         },
         "target": {
@@ -1066,7 +1091,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -1078,7 +1103,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:blocker.supersede:1.0.0"
         },
         "target": {
@@ -1095,7 +1120,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -1107,7 +1132,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:artifact.record:1.0.0"
         },
         "target": {
@@ -1124,7 +1149,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -1136,7 +1161,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:artifact.record_validation:1.0.0"
         },
         "target": {
@@ -1153,7 +1178,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -1165,7 +1190,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:artifact.promote:1.0.0"
         },
         "target": {
@@ -1182,7 +1207,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -1194,7 +1219,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:artifact.quarantine:1.0.0"
         },
         "target": {
@@ -1211,7 +1236,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -1223,7 +1248,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:artifact.record_corruption:1.0.0"
         },
         "target": {
@@ -1240,7 +1265,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -1252,7 +1277,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:artifact.record_unavailability:1.0.0"
         },
         "target": {
@@ -1269,7 +1294,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -1281,7 +1306,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:artifact.tombstone:1.0.0"
         },
         "target": {
@@ -1298,7 +1323,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -1310,7 +1335,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:run.determine_validity:1.0.0"
         },
         "target": {
@@ -1327,7 +1352,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -1339,7 +1364,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:measurement.determine_disposition:1.0.0"
         },
         "target": {
@@ -1356,7 +1381,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -1368,7 +1393,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:metric.record_observation:1.0.0"
         },
         "target": {
@@ -1385,7 +1410,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -1397,7 +1422,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:falsifier.adjudicate:1.0.0"
         },
         "target": {
@@ -1414,7 +1439,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -1426,7 +1451,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:verification.request:1.0.0"
         },
         "target": {
@@ -1443,7 +1468,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -1455,7 +1480,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:verification.assign:1.0.0"
         },
         "target": {
@@ -1472,7 +1497,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -1484,7 +1509,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:verification.start:1.0.0"
         },
         "target": {
@@ -1501,7 +1526,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -1513,7 +1538,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:verification.complete:1.0.0"
         },
         "target": {
@@ -1530,7 +1555,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -1542,7 +1567,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:verification.dispute:1.0.0"
         },
         "target": {
@@ -1559,7 +1584,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -1571,7 +1596,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:verification.resolve_dispute:1.0.0"
         },
         "target": {
@@ -1588,7 +1613,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -1600,7 +1625,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:verification.invalidate:1.0.0"
         },
         "target": {
@@ -1617,7 +1642,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -1629,7 +1654,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:reproducibility.determine:1.0.0"
         },
         "target": {
@@ -1646,7 +1671,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -1658,7 +1683,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:replication.start:1.0.0"
         },
         "target": {
@@ -1675,7 +1700,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -1687,7 +1712,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:replication.determine:1.0.0"
         },
         "target": {
@@ -1704,7 +1729,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -1716,7 +1741,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:transport.start:1.0.0"
         },
         "target": {
@@ -1733,7 +1758,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -1745,7 +1770,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:transport.determine:1.0.0"
         },
         "target": {
@@ -1762,7 +1787,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -1774,7 +1799,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:review.record:1.0.0"
         },
         "target": {
@@ -1791,7 +1816,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -1803,7 +1828,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:adjudication.record:1.0.0"
         },
         "target": {
@@ -1820,7 +1845,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -1832,7 +1857,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:claim.propose:1.0.0"
         },
         "target": {
@@ -1849,7 +1874,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -1861,7 +1886,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:claim.record_disposition:1.0.0"
         },
         "target": {
@@ -1878,7 +1903,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -1890,7 +1915,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:claim.compile_version:1.0.0"
         },
         "target": {
@@ -1907,7 +1932,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -1919,7 +1944,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:claim.supersede:1.0.0"
         },
         "target": {
@@ -1936,7 +1961,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -1948,7 +1973,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:claim.retract:1.0.0"
         },
         "target": {
@@ -1965,7 +1990,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -1977,7 +2002,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:dependency.record_invalidation:1.0.0"
         },
         "target": {
@@ -1994,7 +2019,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -2006,7 +2031,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:authority.record_root_assignment:1.0.0"
         },
         "target": {
@@ -2026,7 +2051,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -2038,7 +2063,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:authority.record_assignment:1.0.0"
         },
         "target": {
@@ -2058,7 +2083,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -2070,7 +2095,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:authority.issue_grant:1.0.0"
         },
         "target": {
@@ -2090,7 +2115,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -2102,7 +2127,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:authority.observe_activation:1.0.0"
         },
         "target": {
@@ -2122,7 +2147,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -2134,7 +2159,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:authority.observe_expiry:1.0.0"
         },
         "target": {
@@ -2154,7 +2179,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -2166,7 +2191,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:authority.revoke_grant:1.0.0"
         },
         "target": {
@@ -2186,7 +2211,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -2198,7 +2223,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:publication.compile_candidate:1.0.0"
         },
         "target": {
@@ -2215,7 +2240,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -2227,7 +2252,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:release.request:1.0.0"
         },
         "target": {
@@ -2244,7 +2269,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -2256,7 +2281,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:release.decide:1.0.0"
         },
         "target": {
@@ -2273,7 +2298,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -2285,7 +2310,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:publication.seal:1.0.0"
         },
         "target": {
@@ -2302,7 +2327,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -2314,7 +2339,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:publication.start_release:1.0.0"
         },
         "target": {
@@ -2331,7 +2356,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -2343,7 +2368,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:publication.record_release_settlement:1.0.0"
         },
         "target": {
@@ -2360,7 +2385,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -2372,7 +2397,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:publication.correct:1.0.0"
         },
         "target": {
@@ -2389,7 +2414,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -2401,7 +2426,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:publication.withdraw:1.0.0"
         },
         "target": {
@@ -2418,7 +2443,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -2430,7 +2455,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:external_effect.authorize:1.0.0"
         },
         "target": {
@@ -2447,7 +2472,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -2459,7 +2484,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:external_effect.start:1.0.0"
         },
         "target": {
@@ -2476,7 +2501,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -2488,7 +2513,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:external_effect.cancel:1.0.0"
         },
         "target": {
@@ -2505,7 +2530,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -2517,7 +2542,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:external_effect.report_completion:1.0.0"
         },
         "target": {
@@ -2534,7 +2559,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -2546,7 +2571,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:external_effect.start_reconciliation:1.0.0"
         },
         "target": {
@@ -2563,7 +2588,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -2575,7 +2600,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:external_effect.complete_reconciliation:1.0.0"
         },
         "target": {
@@ -2592,7 +2617,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -2604,7 +2629,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:external_effect.fail_reconciliation:1.0.0"
         },
         "target": {
@@ -2621,7 +2646,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -2633,7 +2658,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:incident.open:1.0.0"
         },
         "target": {
@@ -2654,7 +2679,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -2666,7 +2691,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:incident.transition:1.0.0"
         },
         "target": {
@@ -2687,7 +2712,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -2699,7 +2724,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:grounded_outcome.record:1.0.0"
         },
         "target": {
@@ -2719,7 +2744,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -2731,7 +2756,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:strategy.record_candidate:1.0.0"
         },
         "target": {
@@ -2751,7 +2776,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -2763,7 +2788,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:data_asset.record:1.0.0"
         },
         "target": {
@@ -2783,7 +2808,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -2795,7 +2820,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:data_asset.change_lifecycle:1.0.0"
         },
         "target": {
@@ -2815,7 +2840,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -2827,7 +2852,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:rights_assertion.record:1.0.0"
         },
         "target": {
@@ -2847,7 +2872,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -2859,7 +2884,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:data_use.decide:1.0.0"
         },
         "target": {
@@ -2879,7 +2904,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -2891,7 +2916,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:strategy.authorize_shadow:1.0.0"
         },
         "target": {
@@ -2911,7 +2936,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -2923,7 +2948,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:strategy.record_shadow:1.0.0"
         },
         "target": {
@@ -2943,7 +2968,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -2955,7 +2980,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:strategy.authorize_canary:1.0.0"
         },
         "target": {
@@ -2975,7 +3000,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -2987,7 +3012,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:strategy.decide_promotion:1.0.0"
         },
         "target": {
@@ -3007,7 +3032,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -3019,7 +3044,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:strategy.rollback:1.0.0"
         },
         "target": {
@@ -3039,7 +3064,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -3051,7 +3076,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:data_use.revoke:1.0.0"
         },
         "target": {
@@ -3071,7 +3096,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -3083,7 +3108,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:data_exposure.record_intent:1.0.0"
         },
         "target": {
@@ -3103,7 +3128,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -3115,7 +3140,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:data_exposure.record_observation:1.0.0"
         },
         "target": {
@@ -3135,7 +3160,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -3147,7 +3172,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:data_exposure.record_settlement:1.0.0"
         },
         "target": {
@@ -3167,7 +3192,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -3179,7 +3204,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:transformation.record:1.0.0"
         },
         "target": {
@@ -3199,7 +3224,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -3211,7 +3236,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:retention.record_schedule:1.0.0"
         },
         "target": {
@@ -3231,7 +3256,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -3243,7 +3268,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:deletion.open_case:1.0.0"
         },
         "target": {
@@ -3263,7 +3288,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -3275,7 +3300,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:deletion.record_progress:1.0.0"
         },
         "target": {
@@ -3295,7 +3320,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -3307,7 +3332,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:deletion.close_case:1.0.0"
         },
         "target": {
@@ -3327,7 +3352,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -3339,7 +3364,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:legal_hold.issue:1.0.0"
         },
         "target": {
@@ -3359,7 +3384,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -3371,7 +3396,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:legal_hold.release:1.0.0"
         },
         "target": {
@@ -3391,7 +3416,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -3403,7 +3428,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:legal_hold.observe_expiry:1.0.0"
         },
         "target": {
@@ -3423,7 +3448,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -3435,7 +3460,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:ledger_checkpoint.propose:1.0.0"
         },
         "target": {
@@ -3452,7 +3477,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -3464,7 +3489,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:ledger_checkpoint.seal:1.0.0"
         },
         "target": {
@@ -3481,7 +3506,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -3493,7 +3518,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:ledger_checkpoint.record_witness_observation:1.0.0"
         },
         "target": {
@@ -3510,7 +3535,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -3522,7 +3547,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:ledger_checkpoint.record_consistency_failure:1.0.0"
         },
         "target": {
@@ -3539,7 +3564,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -3551,7 +3576,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:backup.record_write_observation:1.0.0"
         },
         "target": {
@@ -3568,7 +3593,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -3580,7 +3605,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:backup.record_verification_observation:1.0.0"
         },
         "target": {
@@ -3597,7 +3622,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -3609,7 +3634,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:backup.record_recoverability_observation:1.0.0"
         },
         "target": {
@@ -3626,7 +3651,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -3638,7 +3663,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:restore.open_case:1.0.0"
         },
         "target": {
@@ -3655,7 +3680,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -3667,7 +3692,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:recovery.record_current_policy_frontier:1.0.0"
         },
         "target": {
@@ -3684,7 +3709,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -3696,7 +3721,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:restore.record_report:1.0.0"
         },
         "target": {
@@ -3713,7 +3738,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -3725,7 +3750,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:recovery.record_decision:1.0.0"
         },
         "target": {
@@ -3742,7 +3767,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -3754,7 +3779,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:recovery.enter_quarantine:1.0.0"
         },
         "target": {
@@ -3771,7 +3796,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -3783,7 +3808,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:ledger.record_fork:1.0.0"
         },
         "target": {
@@ -3800,7 +3825,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -3812,7 +3837,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:ledger.begin_epoch:1.0.0"
         },
         "target": {
@@ -3829,7 +3854,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -3841,7 +3866,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:restore.close_case:1.0.0"
         },
         "target": {
@@ -3858,7 +3883,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     },
@@ -3870,7 +3895,7 @@
         "command_version": {
           "const": "1.0.0"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:command-payload:recovery.change_service_scope:1.0.0"
         },
         "target": {
@@ -3887,7 +3912,7 @@
       "required": [
         "command_type",
         "command_version",
-        "command_schema_id",
+        "payload_type_id",
         "target"
       ]
     }
@@ -3925,32 +3950,6 @@
         }
       }
     },
-    "checkpoint_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "checkpoint_id",
-        "version",
-        "inclusive_global_position",
-        "digest"
-      ],
-      "properties": {
-        "checkpoint_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "version": {
-          "type": "integer",
-          "minimum": 1
-        },
-        "inclusive_global_position": {
-          "type": "integer",
-          "minimum": 0
-        },
-        "digest": {
-          "$ref": "#/$defs/digest"
-        }
-      }
-    },
     "command_registry_snapshot_reference": {
       "type": "object",
       "additionalProperties": false,
@@ -3969,7 +3968,7 @@
           "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
         },
         "schema_id": {
-          "const": "urn:odeya:schema:command-registry-snapshot:0.1.0"
+          "const": "urn:odeya:schema:command-contract-registry:0.2.0"
         },
         "digest": {
           "$ref": "#/$defs/digest"
@@ -4020,8 +4019,12 @@
         "registry_snapshot_digest",
         "command_type",
         "command_version",
-        "command_schema_id",
-        "command_schema_digest",
+        "payload_type_id",
+        "payload_schema_resource_id",
+        "payload_schema_dialect_id",
+        "payload_schema_blob_digest",
+        "payload_schema_canonical_digest",
+        "payload_schema_closure_digest",
         "membership_proof_ref"
       ],
       "properties": {
@@ -4048,11 +4051,24 @@
           "type": "string",
           "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
         },
-        "command_schema_id": {
+        "payload_type_id": {
           "type": "string",
           "pattern": "^urn:odeya:command-payload:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$"
         },
-        "command_schema_digest": {
+        "payload_schema_resource_id": {
+          "type": "string",
+          "pattern": "^urn:odeya:schema:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "payload_schema_dialect_id": {
+          "const": "https://json-schema.org/draft/2020-12/schema"
+        },
+        "payload_schema_blob_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "payload_schema_canonical_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "payload_schema_closure_digest": {
           "$ref": "#/$defs/digest"
         },
         "membership_proof_ref": {
@@ -4075,7 +4091,7 @@
           "const": "sha-256"
         },
         "domain_separator": {
-          "const": "odeya-command-request-v1"
+          "const": "odeya-command-request-v2"
         },
         "canonicalization_profile_ref": {
           "$ref": "#/$defs/versioned_identity"
@@ -4083,11 +4099,17 @@
         "included_json_pointers": {
           "const": [
             "/schema_version",
+            "/conformance_scope",
+            "/identity_resolution_status",
+            "/admission_status",
+            "/construction_status",
             "/command_id",
             "/command_type",
             "/command_version",
-            "/command_schema_id",
-            "/command_schema_digest",
+            "/payload_type_id",
+            "/payload_schema_resource_id",
+            "/payload_schema_canonical_digest",
+            "/payload_schema_closure_digest",
             "/command_registry_snapshot_ref",
             "/command_registry_activation_ref",
             "/command_contract_record_ref",

@@ -80,11 +80,20 @@ This construction hashes the algorithm, domain, profile identity/digest, schema 
 | command receipt | `odeya-command-receipt-v1` | exact `CommandReceipt` schema | receipt digest, signature |
 | policy decision | `odeya-policy-decision-v1` | explicit exact `PolicyDecision` schema ID/digest | decision digest, signature |
 | admission evidence bundle | `odeya-admission-evidence-bundle-v1` | explicit exact bundle schema ID/digest | bundle digest, signature |
-| event payload | `odeya-event-payload-v1` | exact event `payload_schema_id` and digest | none; digest/attestation fields are outside `/payload` |
+| event payload | `odeya-event-payload-v1` | logical `payload_type_id` plus an exact admitted payload-contract resource and digest | none; digest/attestation fields are outside `/payload` |
 | research event | `odeya-research-event-v1` | exact `ResearchEvent` schema | event digest, signature |
 | ledger checkpoint | `odeya-ledger-checkpoint-v1` | explicit exact checkpoint schema ID/digest | checkpoint digest, all signatures |
 
 Signatures are external attestations: re-signing cannot alter subject identity. JSON Schema can require these fields and exact pointer arrays; it cannot construct the projection, recompute a digest, establish registry acceptance, perform constant-time comparison, or verify a signature. Those are independent semantic/conformance obligations.
+
+`ResearchEvent` 0.7.0 deliberately separates the logical
+`payload_type_id` from the enclosing JSON Schema resource identity. Its
+per-payload contract is still `unresolved_blocking`, so
+`payload_contract_digest` is null and no event is admitted, dispatchable, or
+replay-authoritative. A resolved payload-contract digest may be constructed
+only after a new `ResearchEvent` resource identity freezes the exact branch
+extraction and canonicalization profile; it must not be inferred from the
+logical URN or the current branch pointer.
 
 ## Parser safety before JCS
 

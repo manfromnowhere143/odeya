@@ -1,12 +1,16 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:policy-decision:0.1.0",
+  "$id": "urn:odeya:schema:policy-decision:0.2.0",
   "title": "Odeya PolicyDecision",
-  "description": "A pure immutable result produced by the admission kernel from exact request, policy, engine, controlled-time, and canonical-frontier inputs. It is a policy filter, never an assignment or grant. Callers cannot mint or select it. Structural validity does not prove input truth, policy activation, deterministic evaluation, obligation enforcement, digest equality, or signature validity.",
+  "description": "A closed structural candidate for a pure immutable policy result. This 0.2 resource is deliberately nonconstructible and not admitted while the exact CommandContractRecord and CommandContractRegistry identities remain unresolved; decision and digest values in fixtures are comparison probes, not proof that evaluation occurred. A future admitted result would bind an exact request, registry, member, policy, engine, controlled time, and canonical frontier. Logical payload type is separate from schema resource, canonical, and closure identity. It is never an assignment or grant. Structural validity does not prove input truth, registry or policy activation, deterministic evaluation, obligation enforcement, digest equality, or signature validity, and a future schema-resource reissue is required before construction can be admitted.",
   "type": "object",
   "additionalProperties": false,
   "required": [
     "schema_version",
+    "conformance_scope",
+    "identity_resolution_status",
+    "admission_status",
+    "construction_status",
     "decision_id",
     "version",
     "production_boundary",
@@ -23,53 +27,100 @@
     "integrity"
   ],
   "properties": {
-    "schema_version": { "const": "0.1.0" },
-    "decision_id": { "$ref": "#/$defs/identifier" },
-    "version": { "type": "integer", "const": 1 },
-    "production_boundary": { "const": "admission_kernel" },
-    "request_binding": { "$ref": "#/$defs/request_binding" },
-    "evaluation_frontier": { "$ref": "#/$defs/evaluation_frontier" },
-    "policy_identity": { "$ref": "#/$defs/policy_identity" },
-    "input_binding": { "$ref": "#/$defs/input_binding" },
-    "decision": { "$ref": "#/$defs/decision" },
+    "schema_version": {
+      "const": "0.2.0"
+    },
+    "conformance_scope": {"const": "structural_fixture_only"},
+    "identity_resolution_status": {"const": "unresolved_blocking"},
+    "admission_status": {"const": "not_admitted"},
+    "construction_status": {"const": "blocked_unresolved_command_contract_registry"},
+    "decision_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "version": {
+      "type": "integer",
+      "const": 1
+    },
+    "production_boundary": {
+      "const": "admission_kernel"
+    },
+    "request_binding": {
+      "$ref": "#/$defs/request_binding"
+    },
+    "evaluation_frontier": {
+      "$ref": "#/$defs/evaluation_frontier"
+    },
+    "policy_identity": {
+      "$ref": "#/$defs/policy_identity"
+    },
+    "input_binding": {
+      "$ref": "#/$defs/input_binding"
+    },
+    "decision": {
+      "$ref": "#/$defs/decision"
+    },
     "obligations": {
       "type": "array",
       "maxItems": 64,
       "uniqueItems": true,
-      "items": { "$ref": "#/$defs/obligation" }
+      "items": {
+        "$ref": "#/$defs/obligation"
+      }
     },
     "reason_codes": {
       "type": "array",
       "minItems": 1,
       "maxItems": 64,
       "uniqueItems": true,
-      "items": { "$ref": "#/$defs/reason" }
+      "items": {
+        "$ref": "#/$defs/reason"
+      }
     },
     "limitations": {
       "type": "array",
       "maxItems": 64,
       "uniqueItems": true,
-      "items": { "$ref": "#/$defs/limitation" }
+      "items": {
+        "$ref": "#/$defs/limitation"
+      }
     },
-    "created_at": { "$ref": "#/$defs/timestamp" },
-    "created_by": { "$ref": "#/$defs/kernel_identity" },
-    "integrity": { "$ref": "#/$defs/integrity" }
+    "created_at": {
+      "$ref": "#/$defs/timestamp"
+    },
+    "created_by": {
+      "$ref": "#/$defs/kernel_identity"
+    },
+    "integrity": {
+      "$ref": "#/$defs/integrity"
+    }
   },
   "allOf": [
     {
       "if": {
         "properties": {
           "decision": {
-            "properties": { "disposition": { "const": "allow" } },
-            "required": ["disposition"]
+            "properties": {
+              "disposition": {
+                "const": "allow"
+              }
+            },
+            "required": [
+              "disposition"
+            ]
           }
         },
-        "required": ["decision"]
+        "required": [
+          "decision"
+        ]
       },
       "then": {
         "properties": {
           "decision": {
-            "properties": { "evaluation_status": { "const": "evaluated" } }
+            "properties": {
+              "evaluation_status": {
+                "const": "evaluated"
+              }
+            }
           }
         }
       }
@@ -78,18 +129,32 @@
       "if": {
         "properties": {
           "decision": {
-            "properties": { "disposition": { "const": "deny" } },
-            "required": ["disposition"]
+            "properties": {
+              "disposition": {
+                "const": "deny"
+              }
+            },
+            "required": [
+              "disposition"
+            ]
           }
         },
-        "required": ["decision"]
+        "required": [
+          "decision"
+        ]
       },
       "then": {
         "properties": {
           "decision": {
-            "properties": { "evaluation_status": { "const": "evaluated" } }
+            "properties": {
+              "evaluation_status": {
+                "const": "evaluated"
+              }
+            }
           },
-          "obligations": { "maxItems": 0 }
+          "obligations": {
+            "maxItems": 0
+          }
         }
       }
     },
@@ -97,11 +162,19 @@
       "if": {
         "properties": {
           "decision": {
-            "properties": { "disposition": { "const": "indeterminate" } },
-            "required": ["disposition"]
+            "properties": {
+              "disposition": {
+                "const": "indeterminate"
+              }
+            },
+            "required": [
+              "disposition"
+            ]
           }
         },
-        "required": ["decision"]
+        "required": [
+          "decision"
+        ]
       },
       "then": {
         "properties": {
@@ -119,7 +192,9 @@
               }
             }
           },
-          "obligations": { "maxItems": 0 }
+          "obligations": {
+            "maxItems": 0
+          }
         }
       }
     }
@@ -142,51 +217,115 @@
     "artifact_reference": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["artifact_id", "digest", "media_type"],
+      "required": [
+        "artifact_id",
+        "digest",
+        "media_type"
+      ],
       "properties": {
-        "artifact_id": { "$ref": "#/$defs/identifier" },
-        "digest": { "$ref": "#/$defs/digest" },
-        "media_type": { "type": "string", "minLength": 1, "maxLength": 255 }
+        "artifact_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        }
       }
     },
     "versioned_reference": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["object_id", "version", "schema_id", "digest"],
+      "required": [
+        "object_id",
+        "version",
+        "schema_id",
+        "digest"
+      ],
       "properties": {
-        "object_id": { "$ref": "#/$defs/identifier" },
-        "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+        "object_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
         "schema_id": {
           "type": "string",
           "pattern": "^urn:odeya:schema:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$"
         },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        }
+      }
+    },
+    "command_registry_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["object_id", "version", "schema_id", "digest"],
+      "properties": {
+        "object_id": { "$ref": "#/$defs/identifier" },
+        "version": { "const": "0.2.0" },
+        "schema_id": { "const": "urn:odeya:schema:command-contract-registry:0.2.0" },
         "digest": { "$ref": "#/$defs/digest" }
       }
     },
     "typed_record_reference": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["record_id", "version", "schema_id", "digest"],
+      "required": [
+        "record_id",
+        "version",
+        "schema_id",
+        "digest"
+      ],
       "properties": {
-        "record_id": { "$ref": "#/$defs/identifier" },
-        "version": { "type": "integer", "minimum": 1 },
+        "record_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
         "schema_id": {
           "type": "string",
           "pattern": "^urn:odeya:schema:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$"
         },
-        "digest": { "$ref": "#/$defs/digest" }
+        "digest": {
+          "$ref": "#/$defs/digest"
+        }
       }
     },
     "command_contract_reference": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["record_id", "version", "schema_id", "digest", "registry_snapshot_digest"],
+      "required": [
+        "record_id",
+        "version",
+        "schema_id",
+        "digest",
+        "registry_snapshot_digest"
+      ],
       "properties": {
-        "record_id": { "$ref": "#/$defs/identifier" },
-        "version": { "type": "integer", "minimum": 1 },
-        "schema_id": { "const": "urn:odeya:schema:command-contract-record:0.1.0" },
-        "digest": { "$ref": "#/$defs/digest" },
-        "registry_snapshot_digest": { "$ref": "#/$defs/digest" }
+        "record_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "schema_id": {
+          "const": "urn:odeya:schema:command-contract-record:0.1.0"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "registry_snapshot_digest": {
+          "$ref": "#/$defs/digest"
+        }
       }
     },
     "request_binding": {
@@ -197,56 +336,124 @@
         "canonical_request_digest",
         "command_type",
         "command_version",
-        "command_schema_id",
-        "command_schema_digest",
+        "payload_type_id",
+        "payload_schema_resource_id",
+        "payload_schema_canonical_digest",
+        "payload_schema_closure_digest",
         "command_contract_record_ref",
         "actor_binding_digest",
         "target_binding_digest",
         "authority_claim_digest"
       ],
       "properties": {
-        "command_id": { "$ref": "#/$defs/identifier" },
-        "canonical_request_digest": { "$ref": "#/$defs/digest" },
+        "command_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "canonical_request_digest": {
+          "$ref": "#/$defs/digest"
+        },
         "command_type": {
           "type": "string",
           "pattern": "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$"
         },
-        "command_version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
-        "command_schema_id": {
+        "command_version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "payload_type_id": {
           "type": "string",
           "pattern": "^urn:odeya:command-payload:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$"
         },
-        "command_schema_digest": { "$ref": "#/$defs/digest" },
-        "command_contract_record_ref": { "$ref": "#/$defs/command_contract_reference" },
-        "actor_binding_digest": { "$ref": "#/$defs/digest" },
-        "target_binding_digest": { "$ref": "#/$defs/digest" },
-        "authority_claim_digest": { "$ref": "#/$defs/digest" }
+        "payload_schema_resource_id": {
+          "type": "string",
+          "pattern": "^urn:odeya:schema:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "payload_schema_canonical_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "payload_schema_closure_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "command_contract_record_ref": {
+          "$ref": "#/$defs/command_contract_reference"
+        },
+        "actor_binding_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "target_binding_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "authority_claim_digest": {
+          "$ref": "#/$defs/digest"
+        }
       }
     },
     "checkpoint_reference": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["checkpoint_id", "version", "schema_id", "ledger_epoch", "inclusive_global_position", "digest"],
+      "required": [
+        "checkpoint_id",
+        "version",
+        "schema_id",
+        "ledger_epoch",
+        "inclusive_global_position",
+        "digest"
+      ],
       "properties": {
-        "checkpoint_id": { "$ref": "#/$defs/identifier" },
-        "version": { "type": "integer", "minimum": 1 },
-        "schema_id": { "const": "urn:odeya:schema:ledger-checkpoint:0.2.0" },
-        "ledger_epoch": { "$ref": "#/$defs/identifier" },
-        "inclusive_global_position": { "type": "integer", "minimum": 0 },
-        "digest": { "$ref": "#/$defs/digest" }
+        "checkpoint_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "schema_id": {
+          "const": "urn:odeya:schema:ledger-checkpoint:0.2.0"
+        },
+        "ledger_epoch": {
+          "$ref": "#/$defs/identifier"
+        },
+        "inclusive_global_position": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        }
       }
     },
     "aggregate_head_reference": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["stream_id", "stream_position", "aggregate_type", "aggregate_id", "aggregate_version", "head_digest"],
+      "required": [
+        "stream_id",
+        "stream_position",
+        "aggregate_type",
+        "aggregate_id",
+        "aggregate_version",
+        "head_digest"
+      ],
       "properties": {
-        "stream_id": { "$ref": "#/$defs/identifier" },
-        "stream_position": { "type": "integer", "minimum": -1 },
-        "aggregate_type": { "$ref": "#/$defs/identifier" },
-        "aggregate_id": { "$ref": "#/$defs/identifier" },
-        "aggregate_version": { "type": "integer", "minimum": -1 },
-        "head_digest": { "$ref": "#/$defs/digest" }
+        "stream_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "stream_position": {
+          "type": "integer",
+          "minimum": -1
+        },
+        "aggregate_type": {
+          "$ref": "#/$defs/identifier"
+        },
+        "aggregate_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "aggregate_version": {
+          "type": "integer",
+          "minimum": -1
+        },
+        "head_digest": {
+          "$ref": "#/$defs/digest"
+        }
       }
     },
     "evaluation_frontier": {
@@ -259,31 +466,61 @@
         "aggregate_head_refs",
         "reference_set_digest",
         "root_authority_manifest_ref",
+        "command_registry_snapshot_ref",
         "policy_registry_snapshot_ref",
         "controlled_time"
       ],
       "properties": {
-        "ledger_epoch": { "$ref": "#/$defs/identifier" },
-        "checkpoint_ref": { "$ref": "#/$defs/checkpoint_reference" },
-        "evaluated_global_position": { "type": "integer", "minimum": 0 },
+        "ledger_epoch": {
+          "$ref": "#/$defs/identifier"
+        },
+        "checkpoint_ref": {
+          "$ref": "#/$defs/checkpoint_reference"
+        },
+        "evaluated_global_position": {
+          "type": "integer",
+          "minimum": 0
+        },
         "aggregate_head_refs": {
           "type": "array",
           "minItems": 1,
           "maxItems": 128,
           "uniqueItems": true,
-          "items": { "$ref": "#/$defs/aggregate_head_reference" }
+          "items": {
+            "$ref": "#/$defs/aggregate_head_reference"
+          }
         },
-        "reference_set_digest": { "$ref": "#/$defs/digest" },
-        "root_authority_manifest_ref": { "$ref": "#/$defs/typed_record_reference" },
-        "policy_registry_snapshot_ref": { "$ref": "#/$defs/versioned_reference" },
+        "reference_set_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "root_authority_manifest_ref": {
+          "$ref": "#/$defs/typed_record_reference"
+        },
+        "command_registry_snapshot_ref": {
+          "$ref": "#/$defs/command_registry_reference"
+        },
+        "policy_registry_snapshot_ref": {
+          "$ref": "#/$defs/versioned_reference"
+        },
         "controlled_time": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["value", "source_ref", "uncertainty_ms"],
+          "required": [
+            "value",
+            "source_ref",
+            "uncertainty_ms"
+          ],
           "properties": {
-            "value": { "$ref": "#/$defs/timestamp" },
-            "source_ref": { "$ref": "#/$defs/artifact_reference" },
-            "uncertainty_ms": { "type": "integer", "minimum": 0 }
+            "value": {
+              "$ref": "#/$defs/timestamp"
+            },
+            "source_ref": {
+              "$ref": "#/$defs/artifact_reference"
+            },
+            "uncertainty_ms": {
+              "type": "integer",
+              "minimum": 0
+            }
           }
         }
       }
@@ -299,13 +536,17 @@
         "decision_semantics_profile_ref"
       ],
       "properties": {
-        "policy_bundle_ref": { "$ref": "#/$defs/versioned_reference" },
+        "policy_bundle_ref": {
+          "$ref": "#/$defs/versioned_reference"
+        },
         "rule_refs": {
           "type": "array",
           "minItems": 1,
           "maxItems": 128,
           "uniqueItems": true,
-          "items": { "$ref": "#/$defs/versioned_reference" }
+          "items": {
+            "$ref": "#/$defs/versioned_reference"
+          }
         },
         "entrypoint": {
           "type": "string",
@@ -316,16 +557,35 @@
         "engine_identity": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["name", "version", "build_digest", "configuration_digest", "execution_profile_ref"],
+          "required": [
+            "name",
+            "version",
+            "build_digest",
+            "configuration_digest",
+            "execution_profile_ref"
+          ],
           "properties": {
-            "name": { "$ref": "#/$defs/identifier" },
-            "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
-            "build_digest": { "$ref": "#/$defs/digest" },
-            "configuration_digest": { "$ref": "#/$defs/digest" },
-            "execution_profile_ref": { "$ref": "#/$defs/versioned_reference" }
+            "name": {
+              "$ref": "#/$defs/identifier"
+            },
+            "version": {
+              "type": "string",
+              "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+            },
+            "build_digest": {
+              "$ref": "#/$defs/digest"
+            },
+            "configuration_digest": {
+              "$ref": "#/$defs/digest"
+            },
+            "execution_profile_ref": {
+              "$ref": "#/$defs/versioned_reference"
+            }
           }
         },
-        "decision_semantics_profile_ref": { "$ref": "#/$defs/versioned_reference" }
+        "decision_semantics_profile_ref": {
+          "$ref": "#/$defs/versioned_reference"
+        }
       }
     },
     "input_binding": {
@@ -343,18 +603,37 @@
           "type": "string",
           "pattern": "^urn:odeya:schema:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$"
         },
-        "input_schema_digest": { "$ref": "#/$defs/digest" },
-        "input_digest": { "$ref": "#/$defs/digest" },
-        "retained_input_ref": { "$ref": "#/$defs/artifact_reference" },
-        "input_reference_set_digest": { "$ref": "#/$defs/digest" }
+        "input_schema_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "input_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "retained_input_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        },
+        "input_reference_set_digest": {
+          "$ref": "#/$defs/digest"
+        }
       }
     },
     "decision": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["disposition", "evaluation_status", "authority_effect", "recheck_point"],
+      "required": [
+        "disposition",
+        "evaluation_status",
+        "authority_effect",
+        "recheck_point"
+      ],
       "properties": {
-        "disposition": { "enum": ["allow", "deny", "indeterminate"] },
+        "disposition": {
+          "enum": [
+            "allow",
+            "deny",
+            "indeterminate"
+          ]
+        },
         "evaluation_status": {
           "enum": [
             "evaluated",
@@ -366,16 +645,33 @@
             "conflicting_rules"
           ]
         },
-        "authority_effect": { "const": "policy_filter_only" },
-        "recheck_point": { "enum": ["admission_commit", "dispatch_claim", "admission_and_dispatch"] }
+        "authority_effect": {
+          "const": "policy_filter_only"
+        },
+        "recheck_point": {
+          "enum": [
+            "admission_commit",
+            "dispatch_claim",
+            "admission_and_dispatch"
+          ]
+        }
       }
     },
     "obligation": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["obligation_id", "obligation_type", "enforcement_point", "parameters_schema_id", "parameters_ref", "mandatory"],
+      "required": [
+        "obligation_id",
+        "obligation_type",
+        "enforcement_point",
+        "parameters_schema_id",
+        "parameters_ref",
+        "mandatory"
+      ],
       "properties": {
-        "obligation_id": { "$ref": "#/$defs/identifier" },
+        "obligation_id": {
+          "$ref": "#/$defs/identifier"
+        },
         "obligation_type": {
           "enum": [
             "require_assignment",
@@ -393,92 +689,179 @@
           ]
         },
         "enforcement_point": {
-          "enum": ["admission_commit", "dispatch_claim", "post_effect", "settlement", "publication_release"]
+          "enum": [
+            "admission_commit",
+            "dispatch_claim",
+            "post_effect",
+            "settlement",
+            "publication_release"
+          ]
         },
         "parameters_schema_id": {
           "type": "string",
           "pattern": "^urn:odeya:policy-obligation:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$"
         },
-        "parameters_ref": { "$ref": "#/$defs/artifact_reference" },
-        "mandatory": { "const": true }
+        "parameters_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        },
+        "mandatory": {
+          "const": true
+        }
       }
     },
     "reason": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["code", "rule_ref", "evidence_refs"],
+      "required": [
+        "code",
+        "rule_ref",
+        "evidence_refs"
+      ],
       "properties": {
-        "code": { "$ref": "#/$defs/identifier" },
-        "rule_ref": { "$ref": "#/$defs/versioned_reference" },
+        "code": {
+          "$ref": "#/$defs/identifier"
+        },
+        "rule_ref": {
+          "$ref": "#/$defs/versioned_reference"
+        },
         "evidence_refs": {
           "type": "array",
           "maxItems": 32,
           "uniqueItems": true,
-          "items": { "$ref": "#/$defs/artifact_reference" }
+          "items": {
+            "$ref": "#/$defs/artifact_reference"
+          }
         }
       }
     },
     "limitation": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["code", "consequence", "evidence_refs"],
+      "required": [
+        "code",
+        "consequence",
+        "evidence_refs"
+      ],
       "properties": {
-        "code": { "$ref": "#/$defs/identifier" },
-        "consequence": { "enum": ["none", "narrowed_allow", "deny", "indeterminate"] },
+        "code": {
+          "$ref": "#/$defs/identifier"
+        },
+        "consequence": {
+          "enum": [
+            "none",
+            "narrowed_allow",
+            "deny",
+            "indeterminate"
+          ]
+        },
         "evidence_refs": {
           "type": "array",
           "maxItems": 32,
           "uniqueItems": true,
-          "items": { "$ref": "#/$defs/artifact_reference" }
+          "items": {
+            "$ref": "#/$defs/artifact_reference"
+          }
         }
       }
     },
     "kernel_identity": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["principal_id", "principal_type", "execution_identity", "build_digest"],
+      "required": [
+        "principal_id",
+        "principal_type",
+        "execution_identity",
+        "build_digest"
+      ],
       "properties": {
-        "principal_id": { "$ref": "#/$defs/identifier" },
-        "principal_type": { "const": "deterministic_service" },
-        "execution_identity": { "$ref": "#/$defs/identifier" },
-        "build_digest": { "$ref": "#/$defs/digest" }
+        "principal_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "principal_type": {
+          "const": "deterministic_service"
+        },
+        "execution_identity": {
+          "$ref": "#/$defs/identifier"
+        },
+        "build_digest": {
+          "$ref": "#/$defs/digest"
+        }
       }
     },
     "integrity": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["canonicalization", "digest_contract", "decision_digest", "signature_ref"],
+      "required": [
+        "canonicalization",
+        "digest_contract",
+        "decision_digest",
+        "signature_ref"
+      ],
       "properties": {
-        "canonicalization": { "const": "odeya-jcs-draft-0.1" },
+        "canonicalization": {
+          "const": "odeya-jcs-draft-0.1"
+        },
         "digest_contract": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["algorithm", "domain_separator", "canonicalization_profile_ref", "schema_binding", "included_json_pointers", "excluded_json_pointers"],
+          "required": [
+            "algorithm",
+            "domain_separator",
+            "canonicalization_profile_ref",
+            "schema_binding",
+            "included_json_pointers",
+            "excluded_json_pointers"
+          ],
           "properties": {
-            "algorithm": { "const": "sha-256" },
-            "domain_separator": { "const": "odeya-policy-decision-v1" },
+            "algorithm": {
+              "const": "sha-256"
+            },
+            "domain_separator": {
+              "const": "odeya-policy-decision-v2"
+            },
             "canonicalization_profile_ref": {
               "type": "object",
               "additionalProperties": false,
-              "required": ["name", "version", "digest"],
+              "required": [
+                "name",
+                "version",
+                "digest"
+              ],
               "properties": {
-                "name": { "const": "odeya-jcs" },
-                "version": { "const": "0.1.0" },
-                "digest": { "$ref": "#/$defs/digest" }
+                "name": {
+                  "const": "odeya-jcs"
+                },
+                "version": {
+                  "const": "0.1.0"
+                },
+                "digest": {
+                  "$ref": "#/$defs/digest"
+                }
               }
             },
             "schema_binding": {
               "type": "object",
               "additionalProperties": false,
-              "required": ["schema_id", "schema_digest"],
+              "required": [
+                "schema_id",
+                "schema_digest"
+              ],
               "properties": {
-                "schema_id": { "const": "urn:odeya:schema:policy-decision:0.1.0" },
-                "schema_digest": { "$ref": "#/$defs/digest" }
+                "schema_id": {
+                  "const": "urn:odeya:schema:policy-decision:0.2.0"
+                },
+                "schema_digest": {
+                  "$ref": "#/$defs/digest"
+                }
               }
             },
             "included_json_pointers": {
               "const": [
                 "/schema_version",
+                "/conformance_scope",
+                "/identity_resolution_status",
+                "/admission_status",
+                "/construction_status",
                 "/decision_id",
                 "/version",
                 "/production_boundary",
@@ -497,15 +880,24 @@
               ]
             },
             "excluded_json_pointers": {
-              "const": ["/integrity/decision_digest", "/integrity/signature_ref"]
+              "const": [
+                "/integrity/decision_digest",
+                "/integrity/signature_ref"
+              ]
             }
           }
         },
-        "decision_digest": { "$ref": "#/$defs/digest" },
+        "decision_digest": {
+          "$ref": "#/$defs/digest"
+        },
         "signature_ref": {
           "oneOf": [
-            { "$ref": "#/$defs/artifact_reference" },
-            { "type": "null" }
+            {
+              "$ref": "#/$defs/artifact_reference"
+            },
+            {
+              "type": "null"
+            }
           ]
         }
       }

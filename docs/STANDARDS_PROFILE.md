@@ -1,6 +1,6 @@
 # Odeya Standards Profile
 
-Status: proposed baseline, checked 2026-07-15. This document distinguishes external semantic standards from replaceable product choices. Exact frozen copies, digests, validators, and conformance vectors remain blocking work under the pre-implementation gate.
+Status: proposed baseline, checked 2026-07-16. This document distinguishes external semantic standards from replaceable product choices. Exact frozen copies, digests, validators, and conformance vectors remain blocking work under the pre-implementation gate.
 
 ## Conformance record
 
@@ -32,10 +32,13 @@ Every adopted standard receives a versioned record containing:
 | Workflow research package | [Workflow Run RO-Crate 0.5](https://w3id.org/ro/wfrun/workflow/0.5) | Optional execution-profile export after compatibility test | G4 |
 | Supply-chain maturity | [SLSA 1.2](https://slsa.dev/spec/v1.2/) | Measurable source/build provenance target | G3/G9 |
 | Attestation predicate | [in-toto Attestation 1.2.0](https://github.com/in-toto/attestation/tree/v1.2.0/spec) | Signed build and release statements | G3 |
+| Attestation envelope | [DSSE 1.0.2](https://github.com/secure-systems-lab/dsse/blob/v1.0.2/protocol.md) | Authenticate exact payload bytes plus payload type; signatures remain external to the subject | G3/G4 |
 | Signing bundle | [Sigstore Bundle 0.3.2](https://docs.sigstore.dev/about/bundle/) | Portable signature/verification material | G3 |
+| Root succession comparison | [TUF 1.0.35](https://github.com/theupdateframework/specification/blob/v1.0.35/tuf-spec.md) | Threshold root rotation, rollback/freeze refusal, and consistent-snapshot comparison; not Odeya's registry format | G3/G7 |
 | Transparency architecture | [RFC 9943 SCITT Architecture](https://www.rfc-editor.org/rfc/rfc9943.html) | Candidate architecture for independently receipted, replayable checkpoint statements; not a scientific-validity layer | G3/G4/G7 |
 | Verifiable receipts | [RFC 9942 COSE Receipts](https://www.rfc-editor.org/rfc/rfc9942.html) with the selected VDS profile | Candidate portable inclusion/consistency receipt format | G3/G4/G7 |
 | Append-only VDS | [RFC 9162 CT v2 Merkle construction](https://www.rfc-editor.org/rfc/rfc9162.html), only through an accepted Odeya/SCITT profile | Candidate inclusion and consistency proof construction; CT certificate semantics do not transfer | G4/G7 |
+| Checkpoint witnessing | [C2SP checkpoint](https://c2sp.org/tlog-checkpoint), [cosignature](https://c2sp.org/tlog-cosignature), and [witness](https://c2sp.org/tlog-witness) formats | Maintained comparison profiles for signed checkpoints and independent witness cosignatures | G3/G7 |
 | SBOM | [SPDX 3.0.1](https://spdx.github.io/spdx-spec/v3.0.1/) or [CycloneDX 1.7](https://cyclonedx.org/specification/overview/) | Select exactly one canonical source; optionally export the other | G3 |
 | Container artifacts | OCI Image/Distribution 1.1.1 and Runtime 1.3.0 | Portable worker image and runtime contracts | G3/G9 |
 | Secure development | [NIST SSDF 1.1](https://csrc.nist.gov/pubs/sp/800/218/final) | Development-control baseline | G3 |
@@ -51,6 +54,78 @@ Every adopted standard receives a versioned record containing:
 | Publication metadata | DataCite 4.7, Crossref 5.5, CRediT, JATS 1.4, CodeMeta 3.1, Citation File Format 1.2 | Select profile by release type | G8 |
 
 Version numbers above are a review baseline, not an instruction to follow “latest.” Each must be rechecked and frozen before implementation.
+
+## 2026 constitutional-integrity alignment
+
+The standards review fixes the following Odeya-owned architecture laws. The
+external specifications are comparison evidence and interoperability profiles;
+none is delegated authority over scientific meaning, admission, or recovery.
+
+- [JSON Schema Draft 2020-12](https://json-schema.org/draft/2020-12) defines
+  structural vocabularies, identifiers, and reference behavior. It cannot prove
+  cross-object digest equality, registry membership, lifecycle reachability,
+  witness independence, current authority, or scientific validity. Those remain
+  separate fail-closed semantic checks.
+- [RFC 8785 JCS](https://www.rfc-editor.org/info/rfc8785/) plus its
+  [verified errata](https://www.rfc-editor.org/errata/rfc8785) is the bounded
+  JSON canonicalization primitive. Odeya refuses negative-zero ambiguity and
+  never treats JCS as a scientific-number, schema-resolution, or signature
+  policy.
+- [DSSE 1.0.2](https://github.com/secure-systems-lab/dsse/blob/v1.0.2/protocol.md) authenticates both payload
+  bytes and payload type to resist type-confusion. Odeya attestations therefore
+  sign an already-computed immutable core or seal identity; signatures and
+  evidence that depend on that identity cannot be members of the same digest
+  preimage.
+- A [Sigstore Bundle 0.3.2](https://docs.sigstore.dev/about/bundle/) may retain
+  a signature, certificate or key hint, transparency-log material, inclusion
+  proof, and timestamp evidence for offline verification. The verifier must
+  still obtain or recompute the subject artifact digest. Bundle presence alone
+  never proves that the subject is the expected Odeya core, that a witness is
+  independent, or that a scientific claim is sound.
+- [SLSA 1.2 artifact verification](https://slsa.dev/spec/v1.2/verifying-artifacts)
+  requires verification of the envelope, artifact subject, builder identity,
+  build type, and external parameters against explicit expectations. Odeya
+  therefore records provenance and a separate verification decision; the
+  existence of provenance never promotes an artifact, reducer, verifier, or
+  release.
+- [The Update Framework 1.0.35](https://github.com/theupdateframework/specification/blob/v1.0.35/tuf-spec.md)
+  provides the comparison model for root succession, threshold roles,
+  rollback/freeze refusal, consistent snapshots, and old-plus-new root
+  authorization during key rotation. Odeya applies those properties to
+  retained root/C0/bootstrap history without copying TUF's package-distribution
+  object model into the scientific ledger.
+- [Tessera](https://pkg.go.dev/github.com/transparency-dev/tessera) distinguishes
+  sequencing, integration, and publication by a checkpoint, and leaves
+  ecosystem admission to the log personality. Odeya likewise keeps command and
+  scientific admission in its deterministic kernel; a transparency substrate
+  may commit accepted checkpoint statements but cannot decide what is eligible
+  to enter them.
+- [RFC 9162](https://www.rfc-editor.org/rfc/rfc9162.html) supplies reviewed
+  Merkle inclusion and consistency constructions. These prove bounded log
+  properties under the selected profile, not statement correctness or a unique
+  global view. Odeya additionally requires monitored checkpoint continuity and
+  [C2SP witness cosignatures](https://c2sp.org/tlog-cosignature) from distinct,
+  policy-qualified failure domains before P0 may call a checkpoint witnessed.
+- [in-toto Attestation Framework](https://in-toto.io/docs/specs/) statements
+  and envelopes are portable evidence carriers. Their predicates remain typed
+  claims by identified issuers; they do not collapse generation, review,
+  replication, adjudication, and publication into one signature.
+
+These comparisons support one nonrecursive construction law:
+
+```text
+immutable core digest
+  -> evidence and decisions that name the core digest
+  -> immutable seal binding the core and exact evidence set
+  -> external attestations, transparency inclusion, and witness observations
+```
+
+An attestation may sign the core or seal according to its declared purpose. It
+never enters the preimage of the identity it signs. A later signature,
+timestamp, witness, or inclusion proof can add verification material without
+changing the scientific subject's identity. Any claim of currentness is a
+separate policy decision over retained history, controlled time, and the exact
+trusted root—not a field smuggled into a timeless content digest.
 
 ## Odeya canonical JSON profile
 

@@ -75,6 +75,46 @@ No reverse reference is valid. In particular, a member cannot hash a parent
 snapshot or a future checkpoint, and C0 cannot embed an activation that points
 back through a checkpoint.
 
+## Snapshot membership is not transparency history
+
+A registry snapshot and the history of registry snapshots are separate
+subjects with separate orderings:
+
+```text
+registry snapshot
+  = deterministic map ordered by the frozen member-key byte profile
+  = commits exact (member_key, member_digest) leaves
+  = produces external member-inclusion receipts
+
+registry history
+  = insertion-ordered append-only log of registry-snapshot digests
+  = publishes signed checkpoints
+  = produces inclusion and checkpoint-consistency proofs
+  = receives external witness observations/cosignatures
+```
+
+The history must never be sorted into member-key order, and the registry must
+never claim temporal append-only semantics merely because its members are
+deterministically sorted. A member-inclusion receipt carries the exact registry
+family/version/digest, member key/digest, commitment profile/root, leaf index,
+tree size, and inclusion path. It is derived evidence and remains outside both
+the member and registry digest.
+
+A history checkpoint carries the log identity/origin, insertion-ordered tree
+size/root, signing purpose and key identity, and exact prior-checkpoint
+continuity. Consistency proofs and independent witness cosignatures remain
+outside the checkpoint identity they verify. A proof establishes only the
+bounded membership or append-only property of the selected construction. It
+does not establish semantic admission, scientific validity, completeness,
+currentness, witness independence, or a globally unique view.
+
+Root succession is an authenticated historical path rather than a mutable
+`current` alias. Every replacement retains monotonically advancing exact root
+versions, old-plus-new threshold authorization, controlled-time expiry/freeze
+checks, rollback refusal, and every intermediate root needed by an older
+trusted reader. Historical replay resolves the exact prior root and never
+silently migrates it.
+
 ## Schema registry
 
 [`SchemaRegistry`](../schemas/schema-registry.schema.json) binds exact raw

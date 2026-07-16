@@ -1,15 +1,35 @@
 {
-  "schema_version": "0.1.0",
+  "schema_version": "0.2.0",
   "artifact_class": "architecture_evidence",
   "inventory_id": "odeya.first-slice-admission-resolution-candidate",
-  "version": "0.1.0",
-  "status": "resolved_scope_candidate_not_admitted",
+  "version": "0.2.0",
+  "status": "bounded_scope_candidate_c5_blocked_not_admitted",
   "generated_at": "2026-07-16T00:00:00.000000Z",
-  "source_checkpoint": "63212488b919b7d8fedce83bc3be344064d7cfe6",
+  "source_checkpoint": "f4429ce5ca71e58ebb5d65776a45ebb6a2a18889",
+  "supersedes_candidate": {
+    "inventory_id": "odeya.first-slice-admission-resolution-candidate",
+    "version": "0.1.0",
+    "source_commit": "f4429ce5ca71e58ebb5d65776a45ebb6a2a18889",
+    "git_blob": "a7983e273d043966c93786f0edeb42bdf173d84a",
+    "raw_sha256": "sha256:83a16f9f6b2eff834f0bc7869fb6188e4ee04af7201a1338341a4ea2a1f508dc",
+    "canonical_digest": null,
+    "canonical_digest_status": "not_computed_no_frozen_artifact_profile"
+  },
   "supersedes_scope_hypothesis": "architecture/first-slice-admission-gap-inventory.json",
+  "command_vocabulary_source_retention": {
+    "mode": "historical_git_blob_architecture_only",
+    "status": "retained_not_registry_admitted_blocking",
+    "source_commit": "f4429ce5ca71e58ebb5d65776a45ebb6a2a18889",
+    "source_path": "schemas/command-envelope.schema.json",
+    "source_schema_id": "urn:odeya:schema:command-envelope:0.4.0",
+    "source_git_blob": "6e500377e176f686918390cfea63e165df0c6fcf",
+    "source_raw_sha256": "sha256:ad8b96a589051624dfc59d4a429a6529e3b91f7e18a9005cc615b9fa73dbbc30",
+    "source_byte_count": 103272,
+    "current_command_envelope_candidate_is_not_a_replacement_source": true
+  },
   "decision_ref": "docs/decisions/0014-resolve-first-slice-atomic-admission.md",
   "scope_verdict": {
-    "c1_through_c8_choices_resolved": true,
+    "c1_through_c8_choices_resolved": false,
     "representational_member_sets_exact": true,
     "representational_dependency_bounded": true,
     "activation_dependency_complete": false,
@@ -18,6 +38,7 @@
     "constitutional_prerequisite_instance_exists": false,
     "registry_activation_exists": false,
     "may_construct_missing_contract_candidates": true,
+    "may_construct_verification_assignment_member": false,
     "may_freeze_registry_snapshot": false,
     "may_activate": false,
     "may_start_runtime_implementation": false
@@ -37,7 +58,7 @@
     "owner_modules_exact": 11,
     "external_constitutional_prerequisites_exact": 1,
     "accepted_external_constitutional_prerequisites": 0,
-    "unresolved_c1_through_c8_choices": 0,
+    "unresolved_c1_through_c8_choices": 1,
     "global_command_design_vocabulary_after_delta": 121,
     "global_event_design_vocabulary_after_delta": 135
   },
@@ -380,11 +401,19 @@
       "authority.grant_exhausted(verification)"
     ],
     "verification_assign_local": [
-      "five authority.grant_used occurrences in global role-slot order",
+      "authority.grant_used(safety)",
+      "authority.grant_used(data_rights)",
+      "authority.grant_used(resource)",
+      "authority.grant_used(execution)",
+      "authority.grant_used(verification)",
       "resource.reservation_created",
       "work.lease_acquired",
       "verification.assigned",
-      "five authority.grant_exhausted occurrences in global role-slot order"
+      "authority.grant_exhausted(safety)",
+      "authority.grant_exhausted(data_rights)",
+      "authority.grant_exhausted(resource)",
+      "authority.grant_exhausted(execution)",
+      "authority.grant_exhausted(verification)"
     ],
     "attempt_start_local": [
       "five authority.grant_used occurrences in global role-slot order",
@@ -417,10 +446,10 @@
     {"conflict_id": "C2", "disposition": "resolved", "decision": "claim.supersede solely produces atomic supersession plus dependency invalidation source fence; exact edges remain in ClaimVersion"},
     {"conflict_id": "C3", "disposition": "resolved", "decision": "run.determine_validity solely produces the atomic run-validity plus measurement-disposition pair"},
     {"conflict_id": "C4", "disposition": "resolved", "decision": "bootstrap and maintenance are nonrecursive; start, invalidation, and controlled expiry are one serializable preclaim race; claimed holds never release or expire"},
-    {"conflict_id": "C5", "disposition": "resolved", "decision": "specialized local verification uses verification.assign then attempt.start/report with exact lease, materialization, sandbox, reservation, and zero-external-capability bindings"},
+    {"conflict_id": "C5", "disposition": "unresolved_blocking", "decision": "the prospective local assignment order and required bindings are bounded, but no constructible resolved WorkIntent identity or full exact assignment cohort is currently bound; PRQ-009 must close before an assignment member may be constructed"},
     {"conflict_id": "C6", "disposition": "resolved", "decision": "closed authority alternatives contain ordered distinct action-instance-bound single-use role slots; used and exhausted sets are equal"},
     {"conflict_id": "C7", "disposition": "resolved", "decision": "Verification is the sole canonical reducer; reproducibility, replication, and transport are internal orthogonal fold axes"},
-    {"conflict_id": "C8", "disposition": "resolved", "decision": "RegistryActivation embeds nonrecursive P0 and every command/evidence bundle binds its exact activation and clear recovery frontier"}
+    {"conflict_id": "C8", "disposition": "resolved", "decision": "P0 is constructed and sealed without any activation identity, sequence, reference, or digest; the later RegistryActivation embeds and binds the exact P0 digest, and every command/evidence bundle binds that exact activation and clear recovery frontier"}
   ],
   "external_prerequisites": [
     {
@@ -433,9 +462,15 @@
         "engine_contract_root",
         "c0_registry_bundle",
         "witnessed_root_checkpoint",
-        "registry_activation_identity_sequence_and_digest",
+        "activation_independent_subject_excluding_activation_identity_sequence_reference_and_digest",
         "clear_current_recovery_fork_quarantine_frontier",
         "controlled_time_and_bounded_scope"
+      ],
+      "outer_registry_activation_requirements": [
+        "constructed_after_p0_seal",
+        "embeds_exact_p0_subject",
+        "binds_exact_p0_digest",
+        "binds_activation_identity_sequence_and_digest_for_later_commands"
       ],
       "invalidated_by": [
         "root_or_c0_change",
@@ -449,7 +484,69 @@
       "current_instance_status": "missing"
     }
   ],
+  "unresolved_prerequisites": [
+    {
+      "prerequisite_id": "PRQ-009",
+      "status": "unresolved_blocking",
+      "blocks": [
+        "C5",
+        "verification.assign command member construction",
+        "verification.assigned EventContractRecord construction",
+        "verification assignment dispatch"
+      ],
+      "prospective_assignment_contract": {
+        "command_type": "verification.assign",
+        "path_id": "local_assignment",
+        "role_slot_order": [
+          "safety",
+          "data_rights",
+          "resource",
+          "execution",
+          "verification"
+        ],
+        "batch_size_exact": 13,
+        "event_order_exact": [
+          "authority.grant_used(safety)",
+          "authority.grant_used(data_rights)",
+          "authority.grant_used(resource)",
+          "authority.grant_used(execution)",
+          "authority.grant_used(verification)",
+          "resource.reservation_created",
+          "work.lease_acquired",
+          "verification.assigned",
+          "authority.grant_exhausted(safety)",
+          "authority.grant_exhausted(data_rights)",
+          "authority.grant_exhausted(resource)",
+          "authority.grant_exhausted(execution)",
+          "authority.grant_exhausted(verification)"
+        ]
+      },
+      "required_exact_bindings": [
+        "one resolved admitted assignable WorkIntent resource ID version canonical digest and exact retained bytes",
+        "one post-assignment WorkContract whose source WorkIntent identity and assignment commit identity equal the command result",
+        "the complete active current DataUseDecision set for every governed input at the assignment commit position",
+        "the exact zero-external-capability sandbox profile and governing policy decision",
+        "the exact resource reservation created in this commit",
+        "the exact active WorkLease acquired in this commit",
+        "five distinct action-instance-bound single-use grants in the declared global role-slot order",
+        "one command ID request digest receipt ID admission evidence bundle registry activation and commit identity equal across the entire cohort"
+      ],
+      "current_blockers": [
+        "the retained WorkIntent candidate is unresolved_blocking with null canonicalization profile and null canonical digest and is not admitted or assignable",
+        "ResearchEvent 0.7.0 intentionally contains no fabricated resolved WorkIntent binding",
+        "the verification.assigned architecture fixture is a one-event sample batch and does not prove the exact 13-event cohort",
+        "the verification.assigned payload does not yet bind the exact WorkIntent WorkContract lease current data-use decisions sandbox policy and five-grant cohort"
+      ],
+      "required_future_reissues": [
+        "a newly identified resolved WorkIntent contract resource",
+        "a WorkContract resource binding that exact resolved WorkIntent and assignment commit",
+        "a newly identified ResearchEvent resource with the complete assignment bindings",
+        "an EventContractRecord binding the reissued ResearchEvent bytes and exact verification.assigned branch"
+      ]
+    }
+  ],
   "construction_gaps": [
+    "missing urn:odeya:schema:canonical-work-lease:0.1.0 resource required by ResearchEvent local-attempt references; separate reviewed schema/test/ownership tranche required",
     "42 exact command-payload schemas",
     "43 immutable CommandContractRecords",
     "60 immutable EventContractRecords with prospective exact member versions",
@@ -471,7 +568,7 @@
     "external_effects_authorized": false,
     "publication_authorized": false,
     "public_repository_authorized": false,
-    "reason": "C1-C8 architecture choices and candidate sets are exact and one fixed-profile bounded composite model passes, but immutable member records, the constitutional instance chain, complete replay/refinement proofs, independent evidence, review, and operator acceptance do not yet exist"
+    "reason": "C1-C4 and C6-C8 have bounded representational decisions, but C5 and PRQ-009 remain blocked on a constructible resolved WorkIntent and a complete exact verification-assignment cohort; immutable member records, the constitutional instance chain, complete replay/refinement proofs, independent evidence, review, and operator acceptance also do not yet exist"
   },
   "sources": [
     "docs/FIRST_SLICE_ADMISSION_RESOLUTION_2026-07-16.md",
@@ -481,7 +578,11 @@
     "docs/STATE_MODEL.md",
     "docs/COMMAND_EVENT_CATALOG.md",
     "docs/ENGINE_CONTRACT_ROOT.md",
+    "docs/CONSTITUTIONAL_CONSTRUCTION_AND_SEALING.md",
+    "docs/decisions/0015-nonrecursive-constitutional-construction.md",
     "docs/COMMAND_CONTRACT_REGISTRY.md",
+    "architecture/constitutional-construction-order.schema.json",
+    "architecture/blocked-construction-receipt.schema.json",
     "schemas/command-contract-registry.schema.json",
     "schemas/event-contract-registry.schema.json",
     "schemas/registry-activation.schema.json",
@@ -490,6 +591,7 @@
     "schemas/work-contract.schema.json",
     "formal/tla/CompositeAuthorityResource.tla",
     "formal/tla/results-manifest.json",
-    "tests/first-slice-resolution/cases.json"
+    "tests/first-slice-resolution/cases.json",
+    "tests/constitutional-construction/cases.json"
   ]
 }

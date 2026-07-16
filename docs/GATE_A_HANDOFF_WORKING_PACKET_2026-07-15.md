@@ -29,20 +29,29 @@ Daniel owns the UI/UX lane. Preserve concurrent work, especially:
 
 These paths are not part of the scoped architecture checkpoint merely because they appear in `git status`.
 
+The final read-only integration audit found one known UI-lane drift that must
+remain visible without crossing ownership boundaries: the untracked UI
+mothership/fixture/handoff drafts still describe
+`release_decision_payload.publication_grant_ref` as a current contradiction,
+but `ResearchEvent` 0.7.0 removed that field when the publication cycle was
+corrected. Those UI files were not edited or staged here; their owner must
+reconcile the wording before a later UI checkpoint.
+
 ## Repository identity
 
 - Workspace: `/Users/danielwahnich/workspace/odeya`
 - Branch: `main`
-- Starting commit: `369bbb87f1e9bea05733df44d36bcf177451371f`
+- Source architecture checkpoint: `f4429ce5ca71e58ebb5d65776a45ebb6a2a18889`
+- Source architecture tree: `029b5161f883de41e93565b29ba895ee492a7d47`
 - Foundational local architecture checkpoint: `63212488b919b7d8fedce83bc3be344064d7cfe6`
 - Foundational checkpoint tree: `979f5c46ec098fdb2e7598c6dc428ce45288788e`
-- Current scoped first-slice architecture checkpoint: `e6072718209e59c124ed6387373317b1feb1c955`
-- Current scoped checkpoint tree: `406f2f0f852c72230fe893aacd51211a5dd87b65`
+- Current prerequisite-closure architecture checkpoint: pending scoped local commit after exact-index validation
+- Current prerequisite-closure tree: pending scoped local commit after exact-index validation
 - Remote: none at handoff anchoring time
-- Pinned architecture environment: `/tmp/odeya-architecture-venv`
+- Pinned architecture environment: `/Users/danielwahnich/workspace/odeya/.venv-architecture`
 - Product/runtime implementation lock: intact
 
-The C1-C8 architecture delta is committed in the current scoped checkpoint. The remaining modified or untracked worktree paths are Daniel's intentional concurrent UI/UX lane and are not disposable. Never use destructive reset/checkout operations or indiscriminate staging.
+The prerequisite-closure tranche is based on the exact source checkpoint above and remains a working-tree candidate until its architecture-only index is exported, replayed, and committed. The remaining UI/UX paths are Daniel's intentional concurrent lane and are not disposable. Never use destructive reset/checkout operations or indiscriminate staging.
 
 ## Proof-mission facts that must survive every handoff
 
@@ -94,22 +103,28 @@ Maestro remains a technical reference for agentic technique only. Its runtime-di
 ### Foundation and ownership
 
 - Full validator: **pass**.
-- 98 JSON schemas.
-- 564 shared valid/adversarial cases.
+- 100 JSON schemas.
+- 588 shared valid/adversarial cases.
 - 7 founding cross-field fixture groups.
-- 5 mandatory isolated contract-family suites.
-- Logical manifest: 9 layers, 30 modules, 47 aggregates, 98 schemas, 121 command owners, and 135 event owners.
-- Module manifest digest: `sha256:989e430897841551c8ddbb09cbaac94bb780a02936538122ed244b269b831b11`.
+- 8 mandatory isolated contract-family suites.
+- 2 bounded architecture-evidence checks for Gate-prerequisite consistency and schema-resource reissue lineage.
+- Logical manifest v2: 9 layers, 30 modules, 47 aggregates, 100 schemas, 121 command owners, and 135 event owners.
+- Module manifest digest: `sha256:04fb8f17c0775b20dac3c328ca1c3831483a25581be38cc5f521e8898ac52b96`.
 
 The 121/135 figures are design-vocabulary and ownership counts, not admitted contracts.
 
 ### Command, event, registry, and verification
 
-- `research-event` 0.6.0: 135 closed discriminators.
-- 61 direct event fixtures and 16 adverse/recovery trace fixtures.
-- 166 shared-manifest cases directly target `ResearchEvent` or `ResearchEventTrace`.
+- `research-event` 0.7.0: 135 closed discriminators.
+- 62 direct event fixtures and 16 adverse/recovery trace fixtures.
+- 186 shared-manifest cases directly target `ResearchEvent` or `ResearchEventTrace`.
 - Non-executable command design vocabulary: 121/121 members are `not_contract_admitted`.
-- Command-envelope source identity: `sha256:ad8b96a589051624dfc59d4a429a6529e3b91f7e18a9005cc615b9fa73dbbc30`.
+- Historical command-envelope 0.4.0 vocabulary source identity: `sha256:ad8b96a589051624dfc59d4a429a6529e3b91f7e18a9005cc615b9fa73dbbc30`.
+- `CommandEnvelope` 0.5.0 / `CommandReceipt` 0.4.0 are nonconstructible structural candidates; `CommandContractRecord` 0.1.0 and `CommandContractRegistry` 0.2.0 keep exact identity resolution blocked and confer no dispatch or settlement authority.
+- Command cross-object identity: 19 typed non-admission cases pass. The checker deliberately does not claim complete dialect/blob equality, reference-version/digest-to-resolved-subject equality, actor/target projection, digest recomputation, cryptographic membership, activation, or EngineContractRoot proof; PRQ-012 remains open pending the complete corpus and a second independent implementation.
+- Schema-resource lineage: 7 existing resources reissued, 2 new candidates inventoried, and 8 false-lineage mutations rejected; predecessor retention remains Git-object-only and blocking.
+- Offline resolution/transitive migration remains incomplete: the current schema set references absent `canonical-work-lease:0.1.0`, historical `command-contract-registry:0.1.0`, historical `command-receipt:0.3.0`, historical `work-contract:0.1.0`, and the deliberately retained exact `command-envelope:0.4.0` vocabulary source. None may be aliased to a newer resource ID.
+- Several retained structural fixtures still bind those historical IDs, including research-state/root/C0/activation, event-trace, candidate-artifact, and external-effect fixtures. The three “safe” constitutional-construction references prove only the prospective replacement shape; they are not a current digest-coherent root/checkpoint/P0/activation chain.
 - Vocabulary scoped digest: `sha256:a480f0b28bb9a8106560f2cdb474e484f6cf2cda0104d4f81e3e7392af5d93e6`.
 - Registry/root lane: 6/6 structural schema subjects and fixtures pass.
 - Verification lane: eight terminal package fixtures, four verification-event fixtures, and 49 scoped shared-manifest cases.
@@ -118,8 +133,8 @@ No real registry member, root, checkpoint, activation, reducer, handler, or veri
 
 ### Cognitive, projection, physical, and mathematical contracts
 
-- Cognitive: 150 cases pass; 14 have bounded local semantic checks.
-- First-slice resolution: 11/11 safe references accepted and 12/12 known-bad C1-C8 cases rejected.
+- Cognitive: 150 cases pass; 18 have bounded local semantic checks.
+- First-slice resolution: 12/12 safe references accepted and 21/21 known-bad cases rejected; the prospective C5 assignment reference specifies future obligations and does not claim current constructibility.
 - Projection: 62 pass; 37 structural rejects and 25 bounded semantic vectors cover all 25 named adversarial vectors.
 - Physical: 85 structural expectations and 32 bounded semantic expectations pass over an 8-schema DAG and 8 pinned fixtures.
 - Mathematical: 57 pass; 38 structurally valid, 19 structurally invalid, and 38 bounded semantic checks.
@@ -129,25 +144,27 @@ Sentinel’s interval [-0.127, +0.065] is retained as `inconclusive` and rejecte
 ### First-slice resolution boundary
 
 The foundational checkpoint retained a deliberately non-freezable 44/77/52/23 hypothesis.
-The current scoped checkpoint's [First-Slice Admission Resolution Candidate](FIRST_SLICE_ADMISSION_RESOLUTION_2026-07-16.md), [ADR 0014](decisions/0014-resolve-first-slice-atomic-admission.md), and [machine inventory](../architecture/first-slice-admission-resolution-candidate.json) resolve C1-C8 into one exact architecture-scope candidate:
+The reissued 0.2 [First-Slice Admission Resolution Candidate](FIRST_SLICE_ADMISSION_RESOLUTION_2026-07-16.md), [ADR 0014](decisions/0014-resolve-first-slice-atomic-admission.md), and [machine inventory](../architecture/first-slice-admission-resolution-candidate.json) retain one exact representational scope while reopening C5/PRQ-009 as blocking:
 
 - 43 required and 78 outside command names;
 - 60 exact required event discriminators;
 - 25 aggregate/state/reducer families across 11 owner modules; and
-- one separately admitted `P0.constitutional-recovery-admission` prerequisite.
+- one `P0.constitutional-recovery-admission` prerequisite that must be admitted separately.
 
-Key decisions are one typed ResourceLedger path; atomic claim-correction and
+Bounded decisions are one typed ResourceLedger path; atomic claim-correction and
 run/measurement cohorts; nonrecursive authority with ordered action-instance
-single-use grant slots; a specialized local verification assignment plus
+single-use grant slots; a prospective specialized local verification assignment plus
 attempt start/report path; one canonical Verification reducer; and an embedded
 P0 binding root/C0, witnessed checkpoint, and clear recovery/fork/quarantine
 frontier.
 
-These are exact representational sets, not admission. The current construction
+These are exact representational sets, not admission. C5 has no constructible
+resolved WorkIntent or complete exact 13-event assignment binding and therefore
+remains blocked. The current additional construction
 gaps are 42 payload schemas, 43 CommandContractRecords, 60 EventContractRecords,
 25 state-subject records, 25 reducer records, and a real witnessed
 root/checkpoint/P0/activation instance chain. A fixed-profile bounded composite
-authority/resource/race model now passes; executable refinement, full C1-C8
+authority/resource/race model now passes; executable refinement, full bounded
 replay, independent reducers, review, and operator acceptance remain absent.
 
 ### Canonical identity and migration audit
@@ -156,9 +173,9 @@ replay, independent reducers, review, and operator acceptance remain absent.
 - 4 metamorphic relations pass.
 - Source-lock SHA-256: `9e203d9a5c96987aa3125e9d950509e663a8892227f491797549db3b6e8f55bb`.
 - Audit-generator SHA-256: `0e0e93077756fe38de1e1b339af356cd0d8b7d273f315c3736c3d6a1dd6a7bcd`.
-- `SCHEMA_AUDIT.json` SHA-256: `14e05ba802b032617c5567541c334d7a2e6f64397638ff6981394baec214688e`.
-- Audit 0.2 covers all 98 schemas and 194 fixtures across architecture, review, cognitive, projection, physical, mathematical, and first-slice roots.
-- Disposition remains `blocked`: 118 unprofiled date-time paths, 62 number/decimal findings, 675 unscoped digest fields, 56 divergent common-definition names, 11 unpinned profile bindings, and 233 nonconformant fixture timestamps.
+- `SCHEMA_AUDIT.json` SHA-256: `b1c201e31b87ea1af5b52fe88dd85b6b98fc190710b66d37012beb4bfbde6c6b`.
+- The current audit covers all 100 schemas and 198 fixtures across architecture, review, cognitive, projection, physical, and mathematical roots.
+- Disposition remains `blocked`: 122 unprofiled date-time paths, 61 number/decimal findings, 668 unscoped digest fields, 56 divergent common-definition names, 11 unpinned profile bindings, and 238 nonconformant fixture timestamps.
 
 Cross-runtime vector agreement does not erase the migration blockers.
 
@@ -187,15 +204,20 @@ Run from `/Users/danielwahnich/workspace/odeya`:
 ```bash
 git status --short --branch
 git diff --check
-/tmp/odeya-architecture-venv/bin/python tests/cognitive-contracts/check.py
-/tmp/odeya-architecture-venv/bin/python tests/projection-contracts/check.py
-/tmp/odeya-architecture-venv/bin/python tests/physical-contracts/check.py
-/tmp/odeya-architecture-venv/bin/python tests/mathematical-contracts/check.py
-/tmp/odeya-architecture-venv/bin/python tests/canonicalization/audit_schemas.py --check
-/tmp/odeya-architecture-venv/bin/python tests/canonicalization/compare_results.py
-/tmp/odeya-architecture-venv/bin/python scripts/validate_module_manifest.py
-/tmp/odeya-architecture-venv/bin/python scripts/validate_first_slice_resolution.py
-/tmp/odeya-architecture-venv/bin/python scripts/validate.py
+.venv-architecture/bin/python tests/cognitive-contracts/check.py
+.venv-architecture/bin/python tests/projection-contracts/check.py
+.venv-architecture/bin/python tests/physical-contracts/check.py
+.venv-architecture/bin/python tests/mathematical-contracts/check.py
+.venv-architecture/bin/python tests/lifecycle-closure/check.py
+.venv-architecture/bin/python tests/constitutional-construction/check.py
+.venv-architecture/bin/python tests/command-identity-contracts/check.py
+.venv-architecture/bin/python tests/canonicalization/audit_schemas.py --check
+.venv-architecture/bin/python tests/canonicalization/compare_results.py
+.venv-architecture/bin/python scripts/validate_schema_resource_reissues.py
+.venv-architecture/bin/python scripts/validate_gate_a_prerequisites.py
+.venv-architecture/bin/python scripts/validate_module_manifest.py
+.venv-architecture/bin/python scripts/validate_first_slice_resolution.py
+.venv-architecture/bin/python scripts/validate.py
 bash formal/tla/check.sh
 ```
 
@@ -238,19 +260,22 @@ Before interpreting a failure, inspect whether any owner is actively editing the
 
 - Frozen Gate A candidate manifest: **not created**
 - Foundational architecture checkpoint: **`63212488b919b7d8fedce83bc3be344064d7cfe6`**
-- Current scoped first-slice architecture checkpoint: **`e6072718209e59c124ed6387373317b1feb1c955`**
-- Current scoped checkpoint tree: **`406f2f0f852c72230fe893aacd51211a5dd87b65`**
-- C1-C8 resolution delta: **committed in the current scoped checkpoint after exact-index export validation and independent scope, identity, and packaging audits**
-- Full validator: **pass — 98 schemas, 564 shared cases, 7 founding semantic groups, 5 isolated suites, 64 canonical cases, 4 metamorphic relations, 98-schema/194-fixture audit, 30 modules, 47 aggregates, 121 design commands, 135 events**
-- Cognitive: **150 pass / 14 bounded semantic**
-- First-slice adversarial: **11/11 safe references / 12/12 intended refusals**
+- Source architecture checkpoint/tree: **`f4429ce5ca71e58ebb5d65776a45ebb6a2a18889` / `029b5161f883de41e93565b29ba895ee492a7d47`**
+- Current prerequisite-closure checkpoint/tree: **pending scoped local commit after exact-index validation**
+- Full validator: **pass — 100 schemas, 588 shared cases, 7 founding semantic groups, 8 isolated suites, 2 architecture-evidence checks, 64 canonical cases, 4 metamorphic relations, 100-schema/198-fixture audit, 30 modules, 47 aggregates, 121 design commands, 135 events**
+- Cognitive: **150 pass / 18 bounded semantic**
+- Command identity: **19 typed non-admission cases; PRQ-012 remains open**
+- Lifecycle closure: **60 event identities / 25 families; 11 safe / 21 adversarial traces**
+- Constitutional construction: **3 safe structural references / 29 intended refusals**
+- First-slice adversarial: **12/12 safe references / 21/21 intended refusals**
+- Schema-resource lineage: **7 reissues / 2 new candidates / 8 intended false claims rejected; offline retention remains blocked**
 - Projection: **62 pass / 25 bounded semantic vectors**
 - Physical: **85 structural / 32 bounded semantic**
 - Mathematical: **57 pass / 38 bounded semantic**
 - Formal: **7/7 distinct models, 8/8 safe executions, 30/30 intended negatives**
 - Canonical source lock: **`9e203d9a5c96987aa3125e9d950509e663a8892227f491797549db3b6e8f55bb`**
-- Canonical audit: **current and blocked; `14e05ba802b032617c5567541c334d7a2e6f64397638ff6981394baec214688e`**
-- Module manifest: **pass; `sha256:989e430897841551c8ddbb09cbaac94bb780a02936538122ed244b269b831b11`**
+- Canonical audit: **current and blocked; `b1c201e31b87ea1af5b52fe88dd85b6b98fc190710b66d37012beb4bfbde6c6b`**
+- Module manifest: **v2 pass; `sha256:04fb8f17c0775b20dac3c328ca1c3831483a25581be38cc5f521e8898ac52b96`; v1 predecessor replayed from exact Git bytes**
 - Preserved UI/UX paths: **listed above; verify after staging**
 - Independent review determinations: **pending**
 - Daniel’s exact-byte decision: **not requested; pending**

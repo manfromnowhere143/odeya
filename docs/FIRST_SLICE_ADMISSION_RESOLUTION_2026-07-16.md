@@ -1,27 +1,49 @@
 # First-Slice Admission Resolution Candidate
 
-Status: exact architecture-scope candidate, not admitted, 2026-07-16.
+Status: bounded architecture-scope candidate with C5/PRQ-009 blocked; not
+admitted, 2026-07-16.
 
 Source checkpoint:
-`63212488b919b7d8fedce83bc3be344064d7cfe6`.
+`f4429ce5ca71e58ebb5d65776a45ebb6a2a18889`.
+
+This is candidate 0.2.0. It supersedes candidate 0.1.0 at that checkpoint
+(Git blob `a7983e273d043966c93786f0edeb42bdf173d84a`, raw SHA-256
+`sha256:83a16f9f6b2eff834f0bc7869fb6188e4ee04af7201a1338341a4ea2a1f508dc`).
+No canonical predecessor digest is claimed because no frozen artifact
+canonicalization profile exists.
+
+The 121-name command vocabulary remains an immutable planning extraction from
+the retained `CommandEnvelope` 0.4.0 Git bytes at this checkpoint (blob
+`6e500377e176f686918390cfea63e165df0c6fcf`, raw SHA-256
+`sha256:ad8b96a589051624dfc59d4a429a6529e3b91f7e18a9005cc615b9fa73dbbc30`,
+103272 bytes). Retention through Git is architecture-only and blocking; those
+bytes are not an admitted registry member. The current 0.5.0 envelope candidate
+is not silently substituted as the vocabulary source.
 
 Machine companion:
 [`architecture/first-slice-admission-resolution-candidate.json`](../architecture/first-slice-admission-resolution-candidate.json).
 
-Decision record:
-[`ADR 0014`](decisions/0014-resolve-first-slice-atomic-admission.md).
+Exact event/payload branch companion:
+[`architecture/first-slice-event-identity-map.json`](../architecture/first-slice-event-identity-map.json).
+
+Decision records:
+[`ADR 0014`](decisions/0014-resolve-first-slice-atomic-admission.md) and
+[`ADR 0017`](decisions/0017-close-first-slice-lifecycle-origins.md).
 
 This document supersedes the unresolved scope hypothesis in
 [`FIRST_SLICE_ADMISSION_CLOSURE_PLAN.md`](FIRST_SLICE_ADMISSION_CLOSURE_PLAN.md)
-for C1-C8 decisions and candidate counts. The older plan remains retained as
+for candidate counts and the bounded C1-C4/C6-C8 decisions. C5 is reopened as
+blocking because the retained evidence has no constructible resolved
+WorkIntent or complete assignment cohort. The older plan remains retained as
 the audit trail showing why those choices were refused. This resolution is not
 an immutable registry, RegistryActivation, EngineContractRoot, proof-mission
 trace, Gate A decision, runtime surface, or implementation authorization.
 
 ## Verdict
 
-C1-C8 now have one coherent architectural resolution. The resulting candidate
-scope is exact as a representational set:
+C1-C4 and C6-C8 now have bounded architectural resolutions. C5 and PRQ-009
+remain explicitly unresolved. The resulting candidate scope is exact as a
+representational set, but it is not construction-complete:
 
 | Item | Exact candidate count | What it does and does not mean |
 |---|---:|---|
@@ -34,7 +56,7 @@ scope is exact as a representational set:
 | Aggregate/state/reducer families | 25 | exact dependency set; 0 first-slice member records exist |
 | Owner modules | 11 | exact logical ownership set; not runtime packages |
 | Separately admitted prerequisites | 1 | P0 is required; 0 accepted P0/activation instances exist |
-| Unresolved C1-C8 choices | 0 | contract construction, proof, replay, and review gaps remain |
+| Unresolved C1-C8 choices | 1 | C5/PRQ-009 lacks a constructible resolved WorkIntent and complete exact assignment binding |
 
 The set is dependency-bounded only at the architecture-representation level.
 It is not dependency-complete for activation until every exact member and the
@@ -68,6 +90,44 @@ The old 52-name conflict union becomes 60 exact event discriminators:
 The `work_item / WorkLease / work` and
 `attempt / AttemptExecution / work` rows enter the aggregate dependency set,
 raising it from 23 to 25 and owner modules from 10 to 11.
+
+## Lifecycle prerequisite closure
+
+ADR 0017 closes four construction prerequisites without adding or removing a
+command, event discriminator, aggregate, reducer family, or owner module. The
+candidate counts remain exactly 43 commands, 60 events, 25 families, and 11
+owners.
+
+- AuthorityGrant issue is `not_issued -> issued`; controlled activation is the
+  separate `issued -> active` fact. Expiry/revocation are legal from issued or
+  active, and a single-use grant's final use/exhaustion is atomic.
+- `protocol.frozen` is the protocol aggregate's origin from absence, creating
+  version 1 with the exact frozen snapshot and draft, validation, exposure,
+  integrity, and bounded-protocol-grant evidence. There is no hidden canonical
+  draft/version-zero state.
+- `data_use.decided` consumes the exact `data_rights` bounded grant in the
+  ordered atomic `grant_used -> decision -> grant_exhausted` cohort;
+  assignment-only authority is rejected.
+- WorkLease canonical state is exactly `unleased | active | released | revoked
+  | expired`; stale/completed are projection-only work descriptions.
+
+The identity companion binds every one of the 60 event types to its exact
+event semantic version, logical payload type ID/version, owner, and exact
+ResearchEvent resource bytes plus branch pointer. Event and logical payload
+type versions are independent. The current map retains 60 event-v1 branches
+and exactly four logical-payload-v2 branches
+(`verification.assigned`, `verification.completed`,
+`verification.disputed`, and `reproducibility.determined`). Immutable payload
+contract resources, extraction/canonicalization, digest resolution,
+EventContractRecords, and activation still do not exist; the mapping is
+architecture evidence, not admission. It also records the referenced
+`urn:odeya:schema:canonical-work-lease:0.1.0` resource as missing and blocking.
+
+The containing ResearchEvent schema is reissued as 0.7.0 because the lifecycle
+closure changes required bytes and meaning. The former 0.6.0 candidate is
+historical Git evidence only and was never issued; it is not retained as a
+current alias. This reissue changes neither the 135-branch global vocabulary
+nor the exact 60-event first-slice set.
 
 ## C1 — one resource truth path
 
@@ -162,6 +222,17 @@ The authority modes are closed:
   lease observations; the target grant never authorizes its own lifecycle;
 - `bounded_grants`: ordinary consequential commands.
 
+The AuthorityGrant lifecycle is also closed before member construction:
+
+```text
+not_issued -> issued
+issued     -> active | expired | revoked
+active     -> exhausted | expired | revoked
+```
+
+Issue never skips directly to active. Expiry and revocation accept only issued
+or active source state; no terminal state can be reopened.
+
 Every bounded grant is distinct, action-instance-bound, single-use, and bound
 to the exact command ID, request digest, target, role slot, controlled-time
 window, and `domain_commit` consumption point. The global role-slot order is:
@@ -200,17 +271,27 @@ The bounded slice uses a specialized local verification profile. It does not
 import general work-graph/stage orchestration, provider/model dispatch,
 data-exposure settlement, or external effects.
 
-Before assignment, the input artifacts, DataUseDecisions, WorkContract, local
-materialization intent, sandbox policy/capability, and resource profile exist
-as exact immutable candidates. No source byte is mounted.
+Its WorkLease fold has exactly five states: `unleased`, `active`, `released`,
+`revoked`, and `expired`. Acquisition moves unleased to active; the other
+three events terminate an active lease. Stale/completed labels may be derived
+for UI or wider work projections but are never canonical lease facts.
+
+Before assignment, the input artifacts, current DataUseDecisions, resolved
+assignable WorkIntent, local materialization intent, sandbox
+policy/capability, and resource profile must exist as exact immutable
+candidates. The WorkContract is a post-assignment artifact and cannot be used
+as the prospective input from which its own lease and reservation are created.
+No source byte is mounted.
 
 The canonical sequence is:
 
-1. `verification.assign` rechecks the exact rights, protocol, independence,
-   resource, sandbox, and worker identities. One transaction consumes its five
-   action-bound grants, creates the combined reservation, records
-   `work.lease_acquired(unleased -> active)`, records `verification.assigned`
-   with all exact bindings, and exhausts those five grants. It creates no launch
+1. `verification.assign` must recheck the exact WorkIntent, rights, protocol,
+   independence, resource, sandbox, and worker identities. Its prospective
+   exact 13-event transaction is five ordered `authority.grant_used` events,
+   `resource.reservation_created`, `work.lease_acquired(unleased -> active)`,
+   `verification.assigned`, then the matching five ordered
+   `authority.grant_exhausted` events. The resulting WorkContract must bind the
+   exact WorkIntent and assignment commit. The transaction creates no launch
    outbox and permits no byte visibility.
 2. `attempt.start` locks and rechecks the current activation/frontier, artifact
    digests, DataUseDecisions, WorkContract, local intent, sandbox capability,
@@ -348,14 +429,24 @@ At minimum the next contract tranche must retain known-bad cases for:
 
 ## What remains blocked
 
-C1-C8 are resolved as decisions, but Gate A is not closeable yet. At least the
-following remain:
+C5/PRQ-009 is unresolved and Gate A is not closeable. The current WorkIntent
+candidate is `unresolved_blocking`, has null canonicalization profile and
+canonical digest, and is not admitted or assignable. `ResearchEvent` 0.7.0
+therefore does not fabricate a WorkIntent reference, and the retained
+one-event `verification.assigned` fixture is not evidence of the required
+13-event cohort. At least the following remain:
 
 1. 42 exact command-payload schemas and 43 immutable command-contract members;
-2. 60 immutable event-contract members with prospective exact payload versions;
+2. 60 immutable event-contract members and their exact payload-contract bytes;
+   the 60-row logical-type/enclosing-schema branch mapping is architecture
+   evidence, but payload-contract digest resolution and member admission remain
+   unconstructed;
 3. 25 state-subject and 25 reducer-contract members;
-4. exact LocalMaterializationIntent, WorkLease, attempt, correction-fence,
-   validity-pair, multi-grant, and resource-settlement vectors;
+4. a newly identified resolved WorkIntent, a WorkContract binding that intent
+   and assignment commit, a reissued ResearchEvent/EventContractRecord with the
+   complete assignment bindings, and exact LocalMaterializationIntent,
+   WorkLease, attempt, correction-fence, validity-pair, multi-grant, and
+   resource-settlement vectors;
 5. a real EngineContractRoot/C0/checkpoint/witness/P0/RegistryActivation chain;
 6. bounded formal coverage still missing for correction/validity batch
    visibility, materialization visibility, P0 recovery currentness, and

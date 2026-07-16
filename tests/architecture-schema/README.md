@@ -14,9 +14,9 @@ JSON object members, enables RFC 3339 `date-time` format assertions, and refuses
 dependency-version drift. Run it in an isolated environment:
 
 ```bash
-python3 -m venv /tmp/odeya-architecture-venv
-/tmp/odeya-architecture-venv/bin/python -m pip install -r requirements-architecture.txt
-/tmp/odeya-architecture-venv/bin/python scripts/validate.py
+python3 -m venv .venv-architecture
+.venv-architecture/bin/python -m pip install -r requirements-architecture.txt
+.venv-architecture/bin/python scripts/validate.py
 ```
 
 These are structural tests. Ordering of timestamps, digest recomputation,
@@ -56,13 +56,16 @@ recomputation, schema/profile bytes, signatures, reducer equivalence, or C0
 bundle compatibility; the semantic validators and conformance vectors must do
 that independently.
 
-The admission family makes the post-registry boundary explicit. A valid
-schema-unresolvable receipt first binds an admitted member and exact payload
-schema identity; mutating it to `unknown_command` is rejected because no
-truthful member-bound receipt exists. CommandEnvelope 0.4.0 exposes only typed
-`untrusted_resolve_only` authority hints and rejects caller-selected authority
-modes, derivation rules, trusted-hint claims, loose assignment strings, and
-PolicyDecision references. PolicyDecision fixtures keep
+The admission family makes the future post-registry boundary explicit while
+all current 0.4 receipt subjects remain nonconstructible and not admitted. The
+schema-unresolvable structural fixture models the shape that would follow a
+resolved member and exact payload-schema identity; mutating it to
+`unknown_command` is rejected because no truthful member-bound receipt could
+exist. CommandEnvelope 0.5.0 retains the exact 0.4.0 design vocabulary as
+historical source evidence, exposes only typed `untrusted_resolve_only`
+authority hints, and rejects caller-selected authority modes, derivation
+rules, trusted-hint claims, loose assignment strings, and PolicyDecision
+references. PolicyDecision fixtures keep
 `allow | deny | indeterminate`, evaluation status, obligations, exact
 policy/rule/engine/frontier inputs, and non-self-referential identity separate;
 AdmissionEvidenceBundle fixtures bind the CommandContractRecord-selected exact

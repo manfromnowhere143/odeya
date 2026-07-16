@@ -1,17 +1,13 @@
 {
-  "schema_version": "0.1.0",
+  "schema_version": "0.2.0",
   "registry_kind": "command_contract_registry",
-  "registry_id": "registry.command.structural-probe",
-  "version": "0.1.0",
+  "registry_id": "command-registry.001",
+  "version": "0.2.0",
   "conformance_scope": "structural_fixture_only",
   "supersedes_registry_subject_ref": null,
-  "canonicalization_profile_ref": {
-    "profile_id": "odeya-canonical-json",
-    "version": "1.0.0",
-    "digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
-  },
+  "canonicalization_profile_ref": null,
   "admission_contract": {
-    "members_are_contract_admitted": true,
+    "members_are_contract_admitted": false,
     "reserved_design_vocabulary_membership": "forbidden",
     "nullable_payload_contracts": "forbidden",
     "content_digest_dependency_order": "schema_to_state_to_reducer_to_event_to_command",
@@ -25,36 +21,65 @@
     "duplicate_member_keys": "reject"
   },
   "members": {
-    "structural.command_probe@0.1.0": {
-      "member_key": "structural.command_probe@0.1.0",
-      "command_type": "structural.command_probe",
-      "command_version": "0.1.0",
+    "proposal.submit@1.0.0": {
+      "member_key": "proposal.submit@1.0.0",
+      "command_type": "proposal.submit",
+      "command_version": "1.0.0",
       "payload_contract": {
         "payload_required": true,
         "nullable": false,
         "schema_ref": {
-          "schema_member_key": "urn:odeya:schema:structural-command-probe:0.1.0@0.1.0",
-          "schema_id": "urn:odeya:schema:structural-command-probe:0.1.0",
+          "schema_member_key": "urn:odeya:schema:proposal-submit-command-payload:0.1.0@0.1.0",
+          "resource_id": "urn:odeya:schema:proposal-submit-command-payload:0.1.0",
           "semantic_version": "0.1.0",
-          "byte_digest": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
-          "byte_count": 4096,
-          "dialect": "https://json-schema.org/draft/2020-12/schema",
+          "dialect_id": "https://json-schema.org/draft/2020-12/schema",
+          "blob_identity": {
+            "algorithm": "sha256",
+            "blob_digest": null,
+            "byte_count": null,
+            "media_type": "application/schema+json",
+            "status": "retained_bytes_unavailable"
+          },
+          "canonical_identity": {
+            "algorithm": "sha256",
+            "canonical_digest": null,
+            "canonicalization_profile_ref": null,
+            "status": "not_computed"
+          },
+          "closure_identity": {
+            "algorithm": "sha256",
+            "root_resource_id": "urn:odeya:schema:proposal-submit-command-payload:0.1.0",
+            "resource_count": null,
+            "ordered_resource_canonical_digests_digest": null,
+            "closure_digest": null,
+            "resolution_mode": "preloaded_exact_resource_id",
+            "network_access": "disabled",
+            "unresolved_reference_disposition": "reject",
+            "reference_cycles": "forbidden",
+            "status": "not_computed"
+          },
           "root_json_type": "object",
-          "schema_member_digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333"
+          "identity_resolution_status": "unresolved_blocking"
         },
         "payload_json_pointer": "",
-        "validation_mode": "exact_schema_bytes_before_decider"
+        "validation_mode": "exact_preloaded_schema_closure_before_decider",
+        "identity_resolution_status": "structural_fixture_unresolved"
       },
       "target_contract": {
         "owning_module": "structural-module",
         "aggregate_type": "structural-aggregate",
-        "allowed_stream_types": ["mission"],
+        "allowed_stream_types": [
+          "mission"
+        ],
         "target_existence": "must_be_absent",
         "origin_event_permitted": true,
         "aggregate_id_source": "target_selector"
       },
       "actor_contract": {
-        "allowed_principal_types": ["human", "service"],
+        "allowed_principal_types": [
+          "human",
+          "service"
+        ],
         "authenticated_identity_required": true,
         "caller_may_self_approve": false,
         "tool_or_model_output_is_authority": false
@@ -188,7 +213,12 @@
                 "cardinality": 1,
                 "grant_ids_distinct_across_slots": true,
                 "grant_identity_scope": "exact_action_instance",
-                "action_instance_binding_fields": ["grant_id", "command_id", "canonical_request_digest", "target_identity"],
+                "action_instance_binding_fields": [
+                  "grant_id",
+                  "command_id",
+                  "canonical_request_digest",
+                  "target_identity"
+                ],
                 "replay_mode": "single_use",
                 "max_uses": 1,
                 "consumption_point": "domain_commit",
@@ -203,7 +233,12 @@
                 "cardinality": 1,
                 "grant_ids_distinct_across_slots": true,
                 "grant_identity_scope": "exact_action_instance",
-                "action_instance_binding_fields": ["grant_id", "command_id", "canonical_request_digest", "target_identity"],
+                "action_instance_binding_fields": [
+                  "grant_id",
+                  "command_id",
+                  "canonical_request_digest",
+                  "target_identity"
+                ],
                 "replay_mode": "single_use",
                 "max_uses": 1,
                 "consumption_point": "domain_commit",
@@ -218,7 +253,12 @@
                 "cardinality": 1,
                 "grant_ids_distinct_across_slots": true,
                 "grant_identity_scope": "exact_action_instance",
-                "action_instance_binding_fields": ["grant_id", "command_id", "canonical_request_digest", "target_identity"],
+                "action_instance_binding_fields": [
+                  "grant_id",
+                  "command_id",
+                  "canonical_request_digest",
+                  "target_identity"
+                ],
                 "replay_mode": "single_use",
                 "max_uses": 1,
                 "consumption_point": "domain_commit",
@@ -252,7 +292,9 @@
       "legal_event_alternatives": [
         {
           "alternative_id": "structural-ingress",
-          "authority_alternative_ids": ["authority.ingress"],
+          "authority_alternative_ids": [
+            "authority.ingress"
+          ],
           "decision_kind": "emit_atomic_ordered_batch",
           "events": [
             {
@@ -276,7 +318,9 @@
         },
         {
           "alternative_id": "structural-bootstrap",
-          "authority_alternative_ids": ["authority.bootstrap"],
+          "authority_alternative_ids": [
+            "authority.bootstrap"
+          ],
           "decision_kind": "emit_atomic_ordered_batch",
           "events": [
             {
@@ -300,7 +344,9 @@
         },
         {
           "alternative_id": "structural-internal-deadline",
-          "authority_alternative_ids": ["authority.internal-deadline"],
+          "authority_alternative_ids": [
+            "authority.internal-deadline"
+          ],
           "decision_kind": "emit_atomic_ordered_batch",
           "events": [
             {
@@ -324,7 +370,9 @@
         },
         {
           "alternative_id": "structural-multigrant",
-          "authority_alternative_ids": ["authority.caller-multigrant"],
+          "authority_alternative_ids": [
+            "authority.caller-multigrant"
+          ],
           "decision_kind": "emit_atomic_ordered_batch",
           "events": [
             {
@@ -430,7 +478,11 @@
         "rule_timeout_milliseconds": 500
       },
       "idempotency_contract": {
-        "scope_fields": ["tenant_id", "namespace", "command_id"],
+        "scope_fields": [
+          "tenant_id",
+          "namespace",
+          "command_id"
+        ],
         "request_identity": "canonical_envelope_and_payload_digest",
         "exact_historical_retry": "return_same_receipt",
         "changed_reuse": "refuse_without_new_receipt",
@@ -441,23 +493,69 @@
         "port_version": "0.1.0",
         "input_schema_ref": {
           "schema_member_key": "urn:odeya:schema:structural-command-port-input:0.1.0@0.1.0",
-          "schema_id": "urn:odeya:schema:structural-command-port-input:0.1.0",
+          "resource_id": "urn:odeya:schema:structural-command-port-input:0.1.0",
           "semantic_version": "0.1.0",
-          "byte_digest": "sha256:7777777777777777777777777777777777777777777777777777777777777777",
-          "byte_count": 4096,
-          "dialect": "https://json-schema.org/draft/2020-12/schema",
+          "dialect_id": "https://json-schema.org/draft/2020-12/schema",
+          "blob_identity": {
+            "algorithm": "sha256",
+            "blob_digest": null,
+            "byte_count": null,
+            "media_type": "application/schema+json",
+            "status": "retained_bytes_unavailable"
+          },
+          "canonical_identity": {
+            "algorithm": "sha256",
+            "canonical_digest": null,
+            "canonicalization_profile_ref": null,
+            "status": "not_computed"
+          },
+          "closure_identity": {
+            "algorithm": "sha256",
+            "root_resource_id": "urn:odeya:schema:structural-command-port-input:0.1.0",
+            "resource_count": null,
+            "ordered_resource_canonical_digests_digest": null,
+            "closure_digest": null,
+            "resolution_mode": "preloaded_exact_resource_id",
+            "network_access": "disabled",
+            "unresolved_reference_disposition": "reject",
+            "reference_cycles": "forbidden",
+            "status": "not_computed"
+          },
           "root_json_type": "object",
-          "schema_member_digest": "sha256:8888888888888888888888888888888888888888888888888888888888888888"
+          "identity_resolution_status": "unresolved_blocking"
         },
         "decision_output_schema_ref": {
           "schema_member_key": "urn:odeya:schema:structural-command-port-output:0.1.0@0.1.0",
-          "schema_id": "urn:odeya:schema:structural-command-port-output:0.1.0",
+          "resource_id": "urn:odeya:schema:structural-command-port-output:0.1.0",
           "semantic_version": "0.1.0",
-          "byte_digest": "sha256:9999999999999999999999999999999999999999999999999999999999999999",
-          "byte_count": 4096,
-          "dialect": "https://json-schema.org/draft/2020-12/schema",
+          "dialect_id": "https://json-schema.org/draft/2020-12/schema",
+          "blob_identity": {
+            "algorithm": "sha256",
+            "blob_digest": null,
+            "byte_count": null,
+            "media_type": "application/schema+json",
+            "status": "retained_bytes_unavailable"
+          },
+          "canonical_identity": {
+            "algorithm": "sha256",
+            "canonical_digest": null,
+            "canonicalization_profile_ref": null,
+            "status": "not_computed"
+          },
+          "closure_identity": {
+            "algorithm": "sha256",
+            "root_resource_id": "urn:odeya:schema:structural-command-port-output:0.1.0",
+            "resource_count": null,
+            "ordered_resource_canonical_digests_digest": null,
+            "closure_digest": null,
+            "resolution_mode": "preloaded_exact_resource_id",
+            "network_access": "disabled",
+            "unresolved_reference_disposition": "reject",
+            "reference_cycles": "forbidden",
+            "status": "not_computed"
+          },
           "root_json_type": "object",
-          "schema_member_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          "identity_resolution_status": "unresolved_blocking"
         },
         "deterministic_for_bound_inputs": true,
         "direct_state_mutation": false,
@@ -465,12 +563,48 @@
         "runtime_conformance_evidence_in_subject": false
       },
       "trace_contract": {
-        "positive": [{ "artifact_id": "trace.command.positive", "digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "media_type": "application/json" }],
-        "negative": [{ "artifact_id": "trace.command.negative", "digest": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "media_type": "application/json" }],
-        "boundary": [{ "artifact_id": "trace.command.boundary", "digest": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", "media_type": "application/json" }],
-        "race": [{ "artifact_id": "trace.command.race", "digest": "sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", "media_type": "application/json" }],
-        "replay": [{ "artifact_id": "trace.command.replay", "digest": "sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "media_type": "application/json" }],
-        "compatibility": [{ "artifact_id": "trace.command.compatibility", "digest": "sha256:1212121212121212121212121212121212121212121212121212121212121212", "media_type": "application/json" }]
+        "positive": [
+          {
+            "artifact_id": "trace.command.positive",
+            "digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "media_type": "application/json"
+          }
+        ],
+        "negative": [
+          {
+            "artifact_id": "trace.command.negative",
+            "digest": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "media_type": "application/json"
+          }
+        ],
+        "boundary": [
+          {
+            "artifact_id": "trace.command.boundary",
+            "digest": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+            "media_type": "application/json"
+          }
+        ],
+        "race": [
+          {
+            "artifact_id": "trace.command.race",
+            "digest": "sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+            "media_type": "application/json"
+          }
+        ],
+        "replay": [
+          {
+            "artifact_id": "trace.command.replay",
+            "digest": "sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+            "media_type": "application/json"
+          }
+        ],
+        "compatibility": [
+          {
+            "artifact_id": "trace.command.compatibility",
+            "digest": "sha256:1212121212121212121212121212121212121212121212121212121212121212",
+            "media_type": "application/json"
+          }
+        ]
       },
       "review_evidence_refs": [
         {
@@ -479,57 +613,49 @@
           "media_type": "application/json"
         }
       ],
-      "member_digest_contract": {
-        "algorithm": "sha256",
-        "domain_separator": "odeya-command-contract-member-v1",
-        "canonicalization_profile_ref": {
-          "profile_id": "odeya-canonical-json",
-          "version": "1.0.0",
-          "digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
-        },
-        "subject_schema_ref": {
-          "schema_id": "urn:odeya:schema:command-contract-registry:0.1.0",
-          "schema_digest": "sha256:1414141414141414141414141414141414141414141414141414141414141414"
-        },
-        "included_json_pointers": [
-          "/member_key",
-          "/command_type",
-          "/command_version",
-          "/payload_contract",
-          "/target_contract",
-          "/actor_contract",
-          "/authority_contract",
-          "/required_evidence_families",
-          "/pure_rule_refs",
-          "/legal_event_alternatives",
-          "/rejection_semantics",
-          "/limits",
-          "/idempotency_contract",
-          "/handler_port_contract",
-          "/trace_contract",
-          "/review_evidence_refs",
-          "/member_digest_contract"
-        ],
-        "excluded_json_pointers": ["/member_digest"]
-      },
-      "member_digest": "sha256:1515151515151515151515151515151515151515151515151515151515151515"
+      "schema_version": "0.1.0",
+      "record_kind": "command_contract_record",
+      "conformance_scope": "structural_fixture_only",
+      "record_id": "command-contract.proposal-submit.001",
+      "record_version": 1,
+      "payload_type_id": "urn:odeya:command-payload:proposal.submit:1.0.0",
+      "record_digest_contract": null,
+      "record_digest": null,
+      "identity_resolution_status": "unresolved_blocking",
+      "admission_status": "not_admitted",
+      "canonicalization_profile_ref": null
     }
   },
   "member_set_commitment": {
-    "algorithm": "odeya-canonical-map-commitment-v1",
+    "status": "unresolved_blocking",
     "member_count": 1,
-    "ordered_member_digests_digest": "sha256:1616161616161616161616161616161616161616161616161616161616161616"
+    "ordered_record_digests_digest": null
   },
   "historical_read_policy": {
     "resolution": "exact_member_version_and_digest",
     "retained_contracts_required": true,
     "mutable_aliases_allowed": false,
     "unresolved_member": "block_before_envelope",
-    "retired_exact_retry": "resolve_historical_contract"
+    "retired_exact_retry": "resolve_historical_contract_after_admission",
+    "current_resolution_status": "unavailable_until_identity_resolution"
   },
-  "source_manifest_ref": { "artifact_id": "manifest.command.structural-probe", "digest": "sha256:1717171717171717171717171717171717171717171717171717171717171717", "media_type": "application/json" },
-  "generator_identity_ref": { "artifact_id": "generator.command.structural-probe", "digest": "sha256:1818181818181818181818181818181818181818181818181818181818181818", "media_type": "application/json" },
-  "review_evidence_refs": [{ "artifact_id": "review.command-registry.structural-probe", "digest": "sha256:1919191919191919191919191919191919191919191919191919191919191919", "media_type": "application/json" }],
+  "source_manifest_ref": {
+    "artifact_id": "manifest.command.structural-probe",
+    "digest": "sha256:1717171717171717171717171717171717171717171717171717171717171717",
+    "media_type": "application/json"
+  },
+  "generator_identity_ref": {
+    "artifact_id": "generator.command.structural-probe",
+    "digest": "sha256:1818181818181818181818181818181818181818181818181818181818181818",
+    "media_type": "application/json"
+  },
+  "review_evidence_refs": [
+    {
+      "artifact_id": "review.command-registry.structural-probe",
+      "digest": "sha256:1919191919191919191919191919191919191919191919191919191919191919",
+      "media_type": "application/json"
+    }
+  ],
   "known_limitations": [
     {
       "limitation_id": "structural-only",
@@ -538,39 +664,17 @@
       "consequence": "The exact dependency-closed Gate A admitted command set and all real member instances remain unresolved."
     }
   ],
-  "registry_digest_contract": {
-    "algorithm": "sha256",
-    "domain_separator": "odeya-command-contract-registry-v1",
-    "canonicalization_profile_ref": {
-      "profile_id": "odeya-canonical-json",
-      "version": "1.0.0",
-      "digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
-    },
-    "subject_schema_ref": {
-      "schema_id": "urn:odeya:schema:command-contract-registry:0.1.0",
-      "schema_digest": "sha256:1414141414141414141414141414141414141414141414141414141414141414"
-    },
-    "included_json_pointers": [
-      "/schema_version",
-      "/registry_kind",
-      "/registry_id",
-      "/version",
-      "/conformance_scope",
-      "/supersedes_registry_subject_ref",
-      "/canonicalization_profile_ref",
-      "/admission_contract",
-      "/ordering_contract",
-      "/members",
-      "/member_set_commitment",
-      "/historical_read_policy",
-      "/source_manifest_ref",
-      "/generator_identity_ref",
-      "/review_evidence_refs",
-      "/known_limitations",
-      "/registry_digest_contract"
-    ],
-    "excluded_json_pointers": ["/registry_digest", "/external_attestations"]
+  "registry_digest_contract": null,
+  "registry_digest": null,
+  "external_attestations": [],
+  "schema_resolution_contract": {
+    "record_schema_resource_id": "urn:odeya:schema:command-contract-record:0.1.0",
+    "resource_loading": "preloaded_exact_resource_id_only",
+    "network_access": "disabled",
+    "unresolved_resource_disposition": "reject_before_decider",
+    "payload_closure_digest_required": true,
+    "reference_cycles": "forbidden"
   },
-  "registry_digest": "sha256:2020202020202020202020202020202020202020202020202020202020202020",
-  "external_attestations": []
+  "identity_resolution_status": "unresolved_blocking",
+  "admission_status": "not_admitted"
 }

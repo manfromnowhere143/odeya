@@ -1,14 +1,27 @@
 # Command and Event Catalog
 
-Status: architecture-closure candidate, 2026-07-16. This contract is non-executable and does not authorize product implementation. It replaces the legacy single-status event draft with the orthogonal event algebra in `research-event` and adds language-neutral command/receipt envelopes. [ADR 0014](decisions/0014-resolve-first-slice-atomic-admission.md) fixes the bounded first-slice producer/reducer choices; exact prospective member versions remain to be frozen.
+Status: architecture-closure candidate, 2026-07-16. This contract is non-executable and does not authorize product implementation. It replaces the legacy single-status event draft with the orthogonal event algebra in `research-event` and adds language-neutral command/receipt envelopes. [ADR 0014](decisions/0014-resolve-first-slice-atomic-admission.md) fixes the bounded first-slice producer/reducer choices; [ADR 0017](decisions/0017-close-first-slice-lifecycle-origins.md) closes their prerequisite lifecycle algebra and exact event/payload branch mapping. Immutable member construction, admission, and activation remain blocked.
 
 ## Canonical contracts
 
-- `schemas/command-envelope.schema.json` 0.4.0 currently binds the request identity and one of 121 declared design discriminators to its exact semantic version, payload-schema ID, immutable registry-snapshot reference, separate activation proof, exact contract-record reference, target stream family, aggregate owner, optimistic positions, actor, untrusted presented authority hints, causal inputs, payload, and a non-recursive request-digest contract. The hints are resolution inputs only: the caller cannot select an authority mode, derivation rule, or PolicyDecision. “Declared” does not mean admitted: under [ADR 0013](decisions/0013-admitted-only-command-ingress.md), this broad file is a red-team candidate and must be regenerated from the exact admitted registry so no discriminator lacks complete contract bytes.
-- `schemas/command-receipt.schema.json` 0.3.0 begins only after exact registry-member resolution and immutably settles one idempotency-scope plus command-ID pair. It binds the result to the resolved registry snapshot/activation/member record, a closed admission-evidence bundle, exact policy/validation records, and non-recursive result/receipt digest contracts.
-- `schemas/research-event.schema.json` currently defines 135 event discriminators after replacing generic `resource.observed` with typed `work.lease_expired`. Every discriminator fixes one payload-schema ID, one stream family, one aggregate owner, one fact-time basis, one closed payload shape, and explicit payload/event digest contracts. Every command-bound event also carries an exact AdmissionEvidenceBundle reference. This is still broad design vocabulary, not an admitted event registry.
+- `schemas/command-envelope.schema.json` 0.5.0 retains the 121 explicit mappings from the exact historical 0.4.0 design vocabulary while adding a fail-closed structural-only boundary: identity is unresolved, construction is blocked, admission is false, and fixture digests are comparison probes. Its request, registry, activation, standalone member, logical payload, schema resource, canonical, and closure fields are separate typed identities. The hints are resolution inputs only: the caller cannot select an authority mode, derivation rule, or PolicyDecision. Under [ADR 0013](decisions/0013-admitted-only-command-ingress.md), it authorizes no handler and a future admitted resource must be generated from exact immutable registry members.
+- `schemas/command-receipt.schema.json` 0.4.0 is likewise a nonconstructible structural candidate. It shapes a future exact post-resolution settlement but cannot assert that member resolution, activation, policy evaluation, admission, execution, or settlement occurred. A future admitted reissue may begin only after exact registry/member/activation identity resolution and must bind the result to a closed admission-evidence bundle, exact policy/validation records, and non-recursive result/receipt digest contracts.
+- `schemas/research-event.schema.json` 0.7.0 currently defines 135 event discriminators after replacing generic `resource.observed` with typed `work.lease_expired` and closing the prerequisite lifecycle origins. Every discriminator fixes one logical `payload_type_id`, one stream family, one aggregate owner, one fact-time basis, and one closed embedded payload shape. The per-payload contracts remain `unresolved_blocking` with null digests, so every event is explicitly non-admitted, non-dispatchable, and non-replay-authoritative. Every command-bound event also carries an exact AdmissionEvidenceBundle reference. This is broad design vocabulary, not an admitted event registry; the superseded unissued 0.6.0 candidate is historical Git evidence only.
 - `schemas/research-event-trace.schema.json` 0.3.0 binds ordered event vectors and typed command-receipt observations to orthogonal scientific, authority, data-governance, governed-processing, recovery, and resource-accounting axes. It structurally forbids the founding invalid-run/null, disputed-verification/eligibility, grant-reservation/dispatch-claim, rejected-processing/cohort, deletion-resurrection, incomplete-frontier reopen, missing-artifact reopen, fork-selection, restore-report-as-authority, claimed-resource release, inferred usage, unknown-as-zero, and unobserved-settlement contradictions.
 - [The state model](STATE_MODEL.md) defines the reducer axes and transition laws. Schema validity is necessary but never sufficient for transition legality.
+
+The architecture-only
+[`first-slice-event-identity-map`](../architecture/first-slice-event-identity-map.json)
+binds all 60 exact first-slice event types to their event semantic version,
+logical payload type ID/version, aggregate owner, and exact ResearchEvent
+0.7.0 resource ID/raw digest/byte count/branch pointer. Event and logical
+payload-type versions are independent: all 60 candidate events currently
+use event version 1, while `verification.assigned`,
+`verification.completed`, `verification.disputed`, and
+`reproducibility.determined` bind logical payload type version 2. Exact
+per-payload contract extraction/canonicalization and digest resolution remain
+unconstructed and non-admitted; no reader may substitute the enclosing schema
+resource, a latest alias, or infer either version from the other.
 
 A command is an untrusted request. A receipt is the durable admission result. An event is an immutable retained fact. A worker callback, model answer, provider receipt, UI action, timer, or human click changes no canonical state until admitted through a registered command.
 
@@ -114,6 +127,18 @@ The first root assignment does not self-grant. For an ordinary in-ledger command
 | `work.lease_revoked` | `work.revoke_lease`; first-slice exact member: `attempt.report` or `verification.invalidate` under a closed branch | work_item / WorkLease |
 | `work.lease_expired` | first-slice controlled-deadline branch of `verification.invalidate`; never caller-selectable | work_item / WorkLease |
 
+In the bounded slice, `protocol.frozen` is the count-preserving origin fact for
+the protocol aggregate: absence becomes version 1 only with an exact frozen
+`ProtocolSnapshot`, draft/validation/exposure/integrity evidence, and the
+ordered same-commit cohort `grant_used(protocol) -> protocol.frozen ->
+protocol.integrity_determined -> grant_exhausted(protocol)`. Draft and
+validation are pre-origin evidence, not hidden canonical states.
+
+For the first slice, WorkLease state is exactly `unleased | active | released
+| revoked | expired`: acquire is `unleased -> active`, and release, revoke,
+and expiry are terminal transitions from active. `stale` and `completed` are
+projection-only work descriptions, never WorkLease reducer states.
+
 ### Attempts, resources, blockers, evidence, and science
 
 | Event | Sole producer | Aggregate / reducer |
@@ -209,6 +234,12 @@ The first root assignment does not self-grant. For an ordinary in-ledger command
 | `strategy.promotion_decided` | `strategy.decide_promotion` | strategy_candidate / StrategyCandidate |
 | `strategy.rolled_back` | `strategy.rollback` | strategy_candidate / StrategyCandidate |
 
+AuthorityGrant issue and activation are distinct facts:
+`not_issued --grant_issued--> issued --grant_activated--> active`. Expiry and
+revocation are legal from issued or active. A first-slice single-use grant is
+exhausted atomically with its final use; an active-but-consumed grant may never
+become visible between commits.
+
 ### Data governance
 
 | Event | Sole producer | Aggregate / reducer |
@@ -230,7 +261,7 @@ The first root assignment does not self-grant. For an ordinary in-ledger command
 | `legal_hold.released` | `legal_hold.release` | legal_hold / LegalHold |
 | `legal_hold.expired` | `legal_hold.observe_expiry` | legal_hold / LegalHold |
 
-`rights_assertion.recorded` is an external evidence fact with `authority_effect=evidence_only_no_permission`; only `data_use.decided` can create bounded data-use authority. Exposure intent is also not dispatch: its closed high-consequence command payload requires `recording_intent_does_not_dispatch=true` and names the separate external-effect identity through which bytes may later cross a boundary. Observation and settlement remain distinct, and `completion_unknown` is never reduced to zero or `confirmed_not_exposed`.
+`rights_assertion.recorded` is an external evidence fact with `authority_effect=evidence_only_no_permission`; only `data_use.decided` can create bounded data-use authority. The first-slice decision requires the exact `data_rights` bounded grant and one ordered atomic commit: `authority.grant_used(data_rights) -> data_use.decided -> authority.grant_exhausted(data_rights)`. Assignment-only authority, a split commit, missing exhaustion, or a different role slot is invalid. Exposure intent is also not dispatch: its closed high-consequence command payload requires `recording_intent_does_not_dispatch=true` and names the separate external-effect identity through which bytes may later cross a boundary. Observation and settlement remain distinct, and `completion_unknown` is never reduced to zero or `confirmed_not_exposed`.
 
 ### Ledger integrity and recovery
 
@@ -349,7 +380,7 @@ Once an exact admitted member and all required envelope bindings resolve, payloa
 The isolated architecture audit currently finds:
 
 - 121 unique design discriminators in the current red-team envelope, each with one branch binding semantic version, payload-schema ID, stream family, and target aggregate; this count is not an admitted surface;
-- 135 unique event discriminators, each with one payload branch, one payload-schema ID, one stream-family rule, one aggregate owner, and one named reducer in this catalog;
+- 135 unique event discriminators, each with one payload branch, one logical payload type ID, one stream-family rule, one aggregate owner, and one named reducer in this catalog; none has a resolved per-payload contract digest in ResearchEvent 0.7.0;
 - no command or event discriminator missing from this catalog;
 - 61 schema-valid event fixtures and 16 schema-valid replay traces, included within 166 direct `ResearchEvent`/`ResearchEventTrace` manifest cases and covering pre-mission, run-invalid, no-valid-measurement, adjudication-refusal, grant reservation/dispatch/cancel, verifier-dispute, publication, all 32 data/recovery branches, governed-processing refusal, and the typed local-attempt/resource lifecycle;
 - adversarial rejection of rights assertion as permission, authorized use without exact scope, unknown-exposure laundering, completed deletion with residual copies, hold-as-access-authority, checkpoint seal without verification evidence, backup-axis aliasing, restore report as reopen authority, failed recovery quorum without limitation, wall-clock fork choice, new epoch without constitutional selection, and open recovery scope without a complete security frontier.
@@ -367,7 +398,7 @@ This resolves the original structural envelope/vocabulary inventory defects behi
 It does **not** close A-001 or A-002 as Gate A blockers yet. The remaining gaps are explicit:
 
 1. Thirteen separate closed payload-schema candidates now exist: the three external-effect candidates plus ten high-consequence data/recovery candidates for data-use decide/revoke, exposure intent, deletion closure, hold issue/release, checkpoint seal, recovery decision, epoch start, and recovery scope change. Envelope/receipt references now require exact snapshot, activation, and contract-record identities, but the immutable registry/activation/record and bounded selector/refusal schemas/bytes do not yet exist, none of the thirteen candidates is enrolled, and the exact dependency-closed Gate A admitted set is not named. The other 108 of 121 design payload contracts do not exist. ADR 0013 therefore requires an admitted-only generated envelope and keeps all non-enrolled names outside executable ingress rather than treating missing contracts as reserved members.
-2. Event payload contracts are embedded in the envelope candidate, but the separately addressed payload-schema bytes and accepted registry digests do not yet exist. An instance digest is format-checked, not recomputed or matched to a registry.
+2. Event payload shapes are embedded in the ResearchEvent candidate, but exact separately addressed payload-contract resources, extraction/canonicalization profiles, and accepted registry digests do not exist. ResearchEvent 0.7.0 therefore carries `unresolved_blocking` plus a null contract digest; its instance digest fields are format-checked, not recomputed or matched to an admitted registry. The referenced `urn:odeya:schema:canonical-work-lease:0.1.0` resource is also missing and blocks local-attempt reference resolution.
 3. Reducer ownership is complete as a catalog mapping, but reducer input/output contracts, machine-readable transition tables, reducer versions/digests, and independent replay implementations remain absent.
 4. `authority.assignment_recorded` still has two deliberately disjoint producer branches—constitutional root and ordinary assignment. Gate A should split the event or freeze a machine-readable branch registry so “one producer” is literal, not prose.
 5. Data-governance and recovery vocabulary coverage is structurally complete for the founding lifecycles, but reference existence, rights-subset reasoning, lineage/deletion fanout, witness/signature verification, frontier completeness, branch selection, and service-scope legality remain semantic checks.

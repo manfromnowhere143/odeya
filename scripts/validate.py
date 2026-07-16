@@ -19,10 +19,13 @@ from urllib.parse import unquote
 try:
     from jsonschema import Draft202012Validator, FormatChecker
     from jsonschema.exceptions import SchemaError
+    from referencing import Registry, Resource
 except ImportError:  # Reported as a validation error rather than a traceback.
     Draft202012Validator = None  # type: ignore[assignment]
     FormatChecker = None  # type: ignore[assignment]
     SchemaError = Exception  # type: ignore[assignment,misc]
+    Registry = None  # type: ignore[assignment,misc]
+    Resource = None  # type: ignore[assignment,misc]
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -88,12 +91,25 @@ REQUIRED_FILES = (
     "docs/MODULE_DEPENDENCY_MANIFEST.md",
     "docs/COMMAND_CONTRACT_REGISTRY.md",
     "docs/ARCHITECTURE_REVIEW_PROTOCOL.md",
+    "docs/CONSTITUTIONAL_CONSTRUCTION_AND_SEALING.md",
+    "docs/GATE_A_PREREQUISITE_CLOSURE_PLAN_2026-07-16.md",
+    "docs/SCHEMA_RESOURCE_REISSUE_AND_RETENTION.md",
+    "docs/decisions/0015-nonrecursive-constitutional-construction.md",
+    "docs/decisions/0016-separate-work-intent-from-assigned-work-contract.md",
+    "docs/decisions/0017-close-first-slice-lifecycle-origins.md",
+    "docs/decisions/0018-separate-registry-membership-from-history.md",
     "architecture/module-dependency-manifest.json",
     "architecture/first-slice-admission-resolution-candidate.json",
+    "architecture/first-slice-event-identity-map.json",
+    "architecture/gate-a-prerequisite-closure.json",
+    "architecture/schema-resource-reissue-ledger.json",
+    "architecture/constitutional-construction-order.schema.json",
+    "architecture/blocked-construction-receipt.schema.json",
     "schemas/research-mission.schema.json",
     "schemas/protocol-snapshot.schema.json",
     "schemas/protocol-amendment.schema.json",
     "schemas/run-manifest.schema.json",
+    "schemas/command-contract-record.schema.json",
     "schemas/command-envelope.schema.json",
     "schemas/command-receipt.schema.json",
     "schemas/research-event.schema.json",
@@ -139,6 +155,7 @@ REQUIRED_FILES = (
     "schemas/grounded-outcome.schema.json",
     "schemas/strategy-candidate.schema.json",
     "schemas/promotion-decision.schema.json",
+    "schemas/work-intent.schema.json",
     "requirements-architecture.txt",
     "tests/architecture-schema/manifest.json",
     "tests/cognitive-contracts/check.py",
@@ -152,6 +169,17 @@ REQUIRED_FILES = (
     "tests/first-slice-resolution/check.py",
     "tests/first-slice-resolution/cases.json",
     "tests/first-slice-resolution/README.md",
+    "tests/lifecycle-closure/check.py",
+    "tests/lifecycle-closure/cases.json",
+    "tests/lifecycle-closure/README.md",
+    "tests/constitutional-construction/check.py",
+    "tests/constitutional-construction/cases.json",
+    "tests/constitutional-construction/README.md",
+    "tests/constitutional-construction/fixtures/construction-order.valid.json",
+    "tests/constitutional-construction/fixtures/blocked-construction-receipt.valid.json",
+    "tests/constitutional-construction/fixtures/constitutional-chain.safe.json",
+    "tests/command-identity-contracts/check.py",
+    "tests/command-identity-contracts/cases.json",
     "tests/canonicalization/README.md",
     "tests/canonicalization/manifest.json",
     "tests/canonicalization/expectations.json",
@@ -169,6 +197,8 @@ REQUIRED_FILES = (
     "tests/canonicalization/results/comparison-receipt.json",
     "scripts/validate_module_manifest.py",
     "scripts/validate_first_slice_resolution.py",
+    "scripts/validate_gate_a_prerequisites.py",
+    "scripts/validate_schema_resource_reissues.py",
 )
 FORBIDDEN_IMPLEMENTATION_DIRS = (
     "apps",
@@ -183,6 +213,13 @@ ISOLATED_CONTRACT_SUITES = (
     "tests/physical-contracts/check.py",
     "tests/mathematical-contracts/check.py",
     "tests/first-slice-resolution/check.py",
+    "tests/lifecycle-closure/check.py",
+    "tests/constitutional-construction/check.py",
+    "tests/command-identity-contracts/check.py",
+)
+ARCHITECTURE_EVIDENCE_CHECKS = (
+    "scripts/validate_gate_a_prerequisites.py",
+    "scripts/validate_schema_resource_reissues.py",
 )
 MARKDOWN_LINK = re.compile(r"!?\[[^\]]*\]\(([^)]+)\)")
 EXTERNAL_PREFIXES = ("http://", "https://", "mailto:", "urn:", "data:")
@@ -249,7 +286,12 @@ def validate_jsonschema_dependencies(errors: list[str]) -> tuple[bool, bool]:
                 f"{requirement_line}",
             )
 
-    if Draft202012Validator is None or FormatChecker is None:
+    if (
+        Draft202012Validator is None
+        or FormatChecker is None
+        or Registry is None
+        or Resource is None
+    ):
         add(
             errors,
             "architecture validation dependency missing; run "
@@ -500,6 +542,39 @@ def format_error_path(error: object) -> str:
     return "/" + "/".join(escaped)
 
 
+def build_preloaded_schema_registry(
+    schemas: dict[str, dict], errors: list[str]
+) -> object | None:
+    """Build the complete local schema registry without a retrieval callback.
+
+    `referencing.Registry()` fails on a resource that was not explicitly
+    preloaded. Supplying no retrieval function is intentional: fixture
+    validation must never resolve an HTTP(S), file, or mutable external
+    resource. Command-contract payload closure digests are separately recorded
+    in their subjects; this registry supplies only the closed repository
+    resource set needed to validate structural fixtures.
+    """
+
+    if Registry is None or Resource is None:
+        return None
+    registry = Registry()
+    for schema_name, schema in sorted(schemas.items()):
+        resource_id = schema.get("$id")
+        if not isinstance(resource_id, str):
+            add(errors, f"{schema_name} cannot be preloaded without a string $id")
+            continue
+        try:
+            resource = Resource.from_contents(schema)
+            registry = registry.with_resource(resource_id, resource)
+        except Exception as exc:  # The precise referencing exception is version-owned.
+            add(
+                errors,
+                f"{schema_name} could not be preloaded into the network-disabled "
+                f"schema registry: {type(exc).__name__}",
+            )
+    return registry
+
+
 def validate_schema_fixtures(
     errors: list[str], schemas: dict[str, dict], dependency_ready: bool
 ) -> int:
@@ -512,6 +587,10 @@ def validate_schema_fixtures(
     )
     if not isinstance(loaded, dict) or not isinstance(loaded.get("cases"), list):
         add(errors, "architecture schema manifest must contain a cases array")
+        return 0
+
+    schema_registry = build_preloaded_schema_registry(schemas, errors)
+    if schema_registry is None:
         return 0
 
     names: set[str] = set()
@@ -545,7 +624,11 @@ def validate_schema_fixtures(
         instance = load_json(fixture_path, errors, fixture_path.relative_to(ROOT).as_posix())
         if instance is None:
             continue
-        validator = Draft202012Validator(schemas[schema_name], format_checker=FormatChecker())
+        validator = Draft202012Validator(
+            schemas[schema_name],
+            format_checker=FormatChecker(),
+            registry=schema_registry,
+        )
         base_errors = list(validator.iter_errors(instance))
         mutations = raw_case.get("mutations")
         if expectation == "valid" and mutations is not None:
@@ -1097,6 +1180,51 @@ def validate_isolated_contract_suites(errors: list[str]) -> int:
     return passed
 
 
+def validate_architecture_evidence_checks(errors: list[str]) -> int:
+    """Run bounded lineage/prerequisite checks without calling them contracts.
+
+    These checks verify internal evidence consistency and explicit blockers.
+    Their success is neither Gate A acceptance nor runtime authority.
+    """
+
+    passed = 0
+    for relative in ARCHITECTURE_EVIDENCE_CHECKS:
+        path = ROOT / relative
+        if not path.is_file():
+            add(errors, f"architecture evidence check is missing: {relative}")
+            continue
+        try:
+            result = subprocess.run(
+                [sys.executable, str(path)],
+                cwd=ROOT,
+                capture_output=True,
+                text=True,
+                timeout=30,
+                check=False,
+            )
+        except (OSError, subprocess.TimeoutExpired) as exc:
+            add(
+                errors,
+                f"architecture evidence check {relative} failed to execute: "
+                f"{type(exc).__name__}",
+            )
+            continue
+        if result.returncode != 0:
+            detail = [
+                line.strip()
+                for line in (result.stdout + "\n" + result.stderr).splitlines()
+                if line.strip()
+            ]
+            if detail:
+                for message in detail[:20]:
+                    add(errors, f"architecture evidence check {relative}: {message}")
+            else:
+                add(errors, f"architecture evidence check failed without output: {relative}")
+            continue
+        passed += 1
+    return passed
+
+
 def validate_decisions(errors: list[str]) -> int:
     decision_dir = ROOT / "docs/decisions"
     decisions = sorted(decision_dir.glob("[0-9][0-9][0-9][0-9]-*.md"))
@@ -1122,6 +1250,7 @@ def main() -> int:
     validate_foundation_invariants(errors)
     semantic_fixture_check_count = validate_architecture_semantic_fixtures(errors)
     isolated_contract_suite_count = validate_isolated_contract_suites(errors)
+    architecture_evidence_check_count = validate_architecture_evidence_checks(errors)
     (
         canonical_case_count,
         canonical_relation_count,
@@ -1144,6 +1273,10 @@ def main() -> int:
     print(f"- {schema_case_count} valid/adversarial schema cases")
     print(f"- {semantic_fixture_check_count} founding cross-field fixture groups checked")
     print(f"- {isolated_contract_suite_count} isolated contract-family suites passed")
+    print(
+        f"- {architecture_evidence_check_count} architecture evidence checks passed; "
+        "blockers remain explicit"
+    )
     print(
         f"- {canonical_case_count} canonical identity cases reconciled across "
         "two pinned implementations"

@@ -1,0 +1,151 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:odeya:architecture-schema:blocked-construction-receipt:0.1.0",
+  "title": "Odeya Blocked Constitutional Construction Receipt",
+  "description": "A fail-closed architecture receipt recording why a constitutional subject could not be constructed. Every instance is necessarily blocked, non-admitted, non-activated, and non-authoritative. It can inventory synthetic or unresolved inputs but can never carry or imply a witnessed checkpoint, admitted P0, RegistryActivation, Gate A acceptance, or runtime authority.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "receipt_id",
+    "created_at",
+    "target_kind",
+    "disposition",
+    "construction_boundary",
+    "blockers",
+    "missing_real_subjects",
+    "observed_inputs",
+    "forbidden_materializations",
+    "non_authority_statement"
+  ],
+  "properties": {
+    "schema_version": { "const": "0.1.0" },
+    "receipt_id": { "$ref": "#/$defs/identifier" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "target_kind": {
+      "enum": [
+        "engine_contract_root",
+        "c0_registry_bundle",
+        "ledger_checkpoint",
+        "p0_constitutional_recovery_admission",
+        "registry_activation",
+        "complete_constitutional_chain"
+      ]
+    },
+    "disposition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "construction_status",
+        "admission_claim",
+        "activation_claim",
+        "gate_a_claim",
+        "runtime_authority"
+      ],
+      "properties": {
+        "construction_status": { "const": "blocked" },
+        "admission_claim": { "const": "not_admitted" },
+        "activation_claim": { "const": "not_activated" },
+        "gate_a_claim": { "const": "not_accepted" },
+        "runtime_authority": { "const": "none" }
+      }
+    },
+    "construction_boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "placeholder_or_synthetic_inputs_present",
+        "all_required_real_inputs_verified",
+        "missing_real_subject_count",
+        "cross_object_equality_verified",
+        "cryptographic_evidence_verified",
+        "independent_review_verified"
+      ],
+      "properties": {
+        "placeholder_or_synthetic_inputs_present": { "type": "boolean" },
+        "all_required_real_inputs_verified": { "const": false },
+        "missing_real_subject_count": { "type": "integer", "minimum": 1 },
+        "cross_object_equality_verified": { "const": false },
+        "cryptographic_evidence_verified": { "const": false },
+        "independent_review_verified": { "const": false }
+      }
+    },
+    "blockers": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["blocker_code", "reason", "required_resolution"],
+        "properties": {
+          "blocker_code": { "$ref": "#/$defs/identifier" },
+          "reason": { "type": "string", "minLength": 1, "maxLength": 2048 },
+          "required_resolution": { "type": "string", "minLength": 1, "maxLength": 2048 }
+        }
+      }
+    },
+    "missing_real_subjects": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "non_self_issued_root_authority_manifest",
+          "engine_contract_root",
+          "c0_registry_bundle",
+          "witnessed_ledger_checkpoint",
+          "p0_constitutional_recovery_admission",
+          "registry_activation",
+          "handler_conformance_evidence",
+          "independent_review_evidence"
+        ]
+      }
+    },
+    "observed_inputs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["input_id", "provenance", "usable_for_admission"],
+        "properties": {
+          "input_id": { "$ref": "#/$defs/identifier" },
+          "provenance": {
+            "enum": ["synthetic_placeholder", "structural_fixture", "unresolved_candidate"]
+          },
+          "usable_for_admission": { "const": false }
+        }
+      }
+    },
+    "forbidden_materializations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "must_not_emit_witnessed_checkpoint_claim",
+        "must_not_emit_p0_digest_or_admission",
+        "must_not_emit_activation_digest_or_activation",
+        "must_not_emit_handler_conformance_claim",
+        "must_not_emit_gate_a_acceptance",
+        "must_not_emit_runtime_authority"
+      ],
+      "properties": {
+        "must_not_emit_witnessed_checkpoint_claim": { "const": true },
+        "must_not_emit_p0_digest_or_admission": { "const": true },
+        "must_not_emit_activation_digest_or_activation": { "const": true },
+        "must_not_emit_handler_conformance_claim": { "const": true },
+        "must_not_emit_gate_a_acceptance": { "const": true },
+        "must_not_emit_runtime_authority": { "const": true }
+      }
+    },
+    "non_authority_statement": {
+      "const": "This receipt records a blocked construction attempt only; it creates no admitted subject, activation, Gate A acceptance, or runtime authority."
+    }
+  },
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$"
+    }
+  }
+}

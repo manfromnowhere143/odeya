@@ -107,7 +107,8 @@ The view does not point back to its digest-bearing receipt. Neither subject embe
 The receipt must distinguish `omitted_by_budget`, `forbidden_by_policy`, `unavailable`, `stale`, `superseded`, and `not_relevant`. An empty omission list is a positive claim and requires a completed search/coverage rule; absence cannot imply completeness.
 
 The receipt records failures instead of disappearing them. Only `pass` may be
-bound into a `WorkContract`, and `pass` requires complete evidence and
+named by a prospective `WorkIntent` and later included in the atomic assignment
+cohort from which a future `WorkContract` is derived; `pass` requires complete evidence and
 contradiction coverage, completed omission search, no unresolved taint or
 contamination, passing negative and applicable clean-room checks, a satisfied
 budget, and deterministic replay. `indeterminate` and `not_run` use reason
@@ -207,49 +208,63 @@ candidate is selected; selection requires a passing hard filter, complete
 registered-unit objectives, Pareto-frontier status, and resource packing of
 `fits`.
 
+### 5a. `WorkIntent`
+
+`WorkIntent` is the closed prospective planning record between selection and
+assignment. It can bind the objective, permitted deliverable classes,
+candidate-worker requirements, data constraints, output contract, and bounded
+estimates. It is intentionally non-authoritative:
+
+- no active lease or current worker is represented;
+- authority grants and resource reservations are empty or null;
+- it grants no dispatch, materialization, external-effect, or spend authority;
+- no bytes may cross an execution boundary from the intent; and
+- its current canonical identity is unresolved, so it is not admitted or
+  assignable.
+
+The required order is `WorkIntent -> admitted verification.assign atomic
+commit -> post-assignment derived WorkContract -> separately admitted dispatch
+claim`. The assignment commit must bind the exact canonical intent identity and
+atomically establish the worker principal, active lease, authority grants,
+active data-use decisions, sandbox capability, resource reservation, and
+passing state-compilation bundle. A prospective planner cannot populate those
+current facts early.
+
 ### 6. `WorkContract`
 
-A lease-bounded instruction to one worker capability:
+A future `WorkContract` is a post-assignment deterministic control artifact,
+not a proposal and not dispatch authority. Its constructible form must be
+derived from one exact successful `verification.assign` commit and bind that
+commit's complete atomic cohort:
 
 ```text
-mission, stage, attempt, branch, and principal correlation group
-exact ResearchStateView digest
-single objective and permitted deliverable classes
-allowed tools/capabilities and forbidden effects
-data purpose, class, exposure, residency, and egress limits
-exact active DataUseDecision and ExposureIntent references
-current authority/policy/data frontier and provider-configuration observation
-resource, context, wall-time, and retry ceilings
-reserved spend/resource envelope and dispatch-time recheck rule
-output schema and artifact-custody requirements
-required evidence dispositions and known-bad checks
-exact canonical lease record, issuance event, reducer frontier, and constraints
-cancellation, checkpoint, and handoff semantics
+exact canonical WorkIntent identity
+exact verification.assigned event/commit identity
+worker principal and active canonical lease
+current authority grants and active data-use decisions
+sandbox capability and resource reservation
+passing state-compilation bundle
+deterministic derivation rule and exact committed input set
 ```
 
-The worker receives capability handles, never ambient credentials. A contract
-binds an exact immutable canonical lease record and issuance event, the exact
-checkpoint/ledger/head/reducer/root frontier at which that lease was eligible,
-its scope, and a constraint snapshot that must equal the dereferenced lease
-record. Copied `lease_id` and expiry fields are insufficient. Expiry or
-cancellation blocks new dispatch/claims but does not rewrite already observed
-external facts. A `WorkContract` is not permission to send bytes to a
-model/provider: before the boundary is crossed, a separately admitted dispatch
-claim rechecks the exact lease record and bound frontier against current lease
-state and controlled time, as well as current DataUseDecision, ExposureIntent,
-provider configuration, authority, policy, resource/spend reservation, view
-position, and revocation. It atomically records the dispatch/exposure start
-before the external call. A stale, expired, revoked, mismatched, or
-indeterminate lease refuses dispatch.
+The current `work-contract:0.2.0` resource is only a blocked candidate. It
+contains no assignment facts, has a null canonical digest/profile, declares
+itself nonconstructible and nondispatchable, and requires a future immutable
+resource reissue after a canonical `WorkIntent` and exact assignment cohort
+exist. Historical consumers that still name `work-contract:0.1.0` are explicit
+migration blockers; they are not silently redirected to the blocked candidate.
 
-The work contract binds an exact passing state-compilation bundle. Its context
-window is an input-size ceiling distinct from cumulative execution-token
-limits. Worker checkpoints contain recoverable candidate progress only;
-canonical state is excluded and is reconstructed from the ledger.
+A future constructed contract still provides capability handles, never ambient
+credentials. Before any bytes or spend cross an execution boundary, a separate
+dispatch admission must recheck the exact lease, grants, data decisions,
+sandbox, policy, resource reservation, controlled time, positions, expiry, and
+revocation, and atomically commit its own dispatch/exposure claim. Assignment or
+WorkContract construction alone never starts work.
 
 Calls to external model, tool, data, or paid-compute providers reuse Odeya's existing `external_effect.authorize -> external_effect.start -> observation/reconciliation` boundary with a work-dispatch effect class; they do not invent an agent-private network path. Fully local execution still requires the exact worker lease, data materialization intent, sandbox capability, and resource reservation before bytes become visible to the process.
 
-The work-contract canonical identity is issued externally; the contract subject cannot embed its own payload/canonical digest.
+The future work-contract canonical identity is issued externally; the contract
+subject cannot embed its own payload/canonical digest.
 
 ### 7. `CandidateArtifact`
 
@@ -401,13 +416,13 @@ The following are safety properties, not aspirational behaviors:
 | COG-013 | Context loss, worker death, or model replacement cannot lose canonical scientific state or duplicate a settled effect. |
 | COG-014 | Cross-mission memory promotion requires evidence, applicability, independence, and contamination review; similarity alone cannot transfer a rule. |
 | COG-015 | Claim eligibility is a pure consequence of frozen protocol, admitted evidence, verifier results, and adjudication—not model identity or narrative quality. |
-| COG-016 | No model/tool/provider dispatch, data exposure, or spend begins from a WorkContract alone; a current dispatch-claim transaction rechecks exact rights, exposure intent, provider configuration, authority, policy, budget, position, revocation, and expiry. |
+| COG-016 | No model/tool/provider dispatch, data exposure, or spend begins from a WorkIntent, assignment commit, or WorkContract alone; a current dispatch-claim transaction rechecks exact rights, exposure intent, provider configuration, authority, policy, budget, position, revocation, and expiry. |
 | COG-017 | A ModelConfigurationRecord or RoutingDecision cannot authorize dispatch, establish verifier independence, or turn provider claims, unknown identity, or expired evaluation evidence into eligibility. |
 | COG-018 | Routing retains the exact candidate partition and hard exclusions; selection requires complete current evidence and a Pareto-eligible candidate, while fallback creates a new decision and attempt. |
 | COG-019 | A nonexistent epistemic aggregate is represented by proven absence and null state identity; no canonical version-0 graph, root, head, or origin event may be fabricated. |
 | COG-020 | Proposed node lineage has no canonical supersession effect; only an admitted explicit supersession edge may supersede, and correction admission preserves non-resurrection and dependency fanout. |
 | COG-021 | A transition proposes a graph delta if and only if it reports at least one typed change; edge-only, evidence-disposition-only, and contract-only changes do not require a fabricated hypothesis edit. |
-| COG-022 | A WorkContract binds one exact canonical lease record and reducer frontier, and dispatch rechecks that same record/frontier against current lease state and controlled time. |
+| COG-022 | A constructible WorkContract is derived only after one exact canonical WorkIntent and one exact successful assignment cohort bind the worker, canonical lease, grants, data decisions, sandbox, reservation, and passing compilation bundle; dispatch rechecks those facts against current state and controlled time. |
 
 ## Verification backpressure
 

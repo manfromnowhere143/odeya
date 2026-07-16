@@ -1,18 +1,24 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:command-receipt:0.3.0",
+  "$id": "urn:odeya:schema:command-receipt:0.4.0",
   "title": "Odeya CommandReceipt",
-  "description": "Immutable post-registry settlement of one canonical command ID and request digest. A CommandReceipt exists only after exact registry activation/member resolution; unknown commands, malformed ingress, and changed-digest ID reuse are ingress refusals and cannot create a competing receipt. The receipt binds the resolved registry identities, a closed admission-evidence bundle, exact policy/validation records, and domain-separated result/receipt digest contracts. A schema-unresolvable receipt is allowed only when the member record resolved and its exact payload-schema identity is known but retained schema bytes were unavailable. Schema validation does not prove those semantics, recompute digests, prove membership/currentness/evidence completeness, or verify an external signature attestation.",
+  "description": "Closed structural candidate for immutable post-registry command settlement. This 0.4 resource is deliberately nonconstructible and not admitted while the exact CommandContractRecord and CommandContractRegistry identities remain unresolved; result and digest values in fixtures are comparison probes and do not assert that a receipt exists. A future admitted CommandReceipt may exist only after exact registry activation and standalone member resolution. Logical payload_type_id is distinct from schema resource, canonical, and closure identity; the member reference also separates dialect and source-blob identity. Schema validation does not prove admission, activation, membership, identity equality, currentness, evidence completeness, or external attestations, and a future schema-resource reissue is required before receipt construction can be admitted.",
   "type": "object",
   "additionalProperties": false,
   "required": [
     "schema_version",
+    "conformance_scope",
+    "identity_resolution_status",
+    "admission_status",
+    "construction_status",
     "receipt_id",
     "command_id",
     "command_type",
     "command_version",
-    "command_schema_id",
-    "command_schema_digest",
+    "payload_type_id",
+    "payload_schema_resource_id",
+    "payload_schema_canonical_digest",
+    "payload_schema_closure_digest",
     "command_registry_snapshot_ref",
     "command_registry_activation_ref",
     "command_contract_record_ref",
@@ -31,8 +37,12 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.3.0"
+      "const": "0.4.0"
     },
+    "conformance_scope": {"const": "structural_fixture_only"},
+    "identity_resolution_status": {"const": "unresolved_blocking"},
+    "admission_status": {"const": "not_admitted"},
+    "construction_status": {"const": "blocked_unresolved_command_contract_registry"},
     "receipt_id": {
       "$ref": "#/$defs/identifier"
     },
@@ -47,11 +57,18 @@
       "type": "string",
       "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
     },
-    "command_schema_id": {
+    "payload_type_id": {
       "type": "string",
       "pattern": "^urn:odeya:command-payload:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$"
     },
-    "command_schema_digest": {
+    "payload_schema_resource_id": {
+      "type": "string",
+      "pattern": "^urn:odeya:schema:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "payload_schema_canonical_digest": {
+      "$ref": "#/$defs/digest"
+    },
+    "payload_schema_closure_digest": {
       "$ref": "#/$defs/digest"
     },
     "command_registry_snapshot_ref": {
@@ -234,17 +251,6 @@
         }
       }
     },
-    "checkpoint_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["checkpoint_id", "version", "inclusive_global_position", "digest"],
-      "properties": {
-        "checkpoint_id": {"$ref": "#/$defs/identifier"},
-        "version": {"type": "integer", "minimum": 1},
-        "inclusive_global_position": {"type": "integer", "minimum": 0},
-        "digest": {"$ref": "#/$defs/digest"}
-      }
-    },
     "command_registry_snapshot_reference": {
       "type": "object",
       "additionalProperties": false,
@@ -254,7 +260,7 @@
       "properties": {
         "registry_id": {"$ref": "#/$defs/identifier"},
         "version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
-        "schema_id": {"const": "urn:odeya:schema:command-registry-snapshot:0.1.0"},
+        "schema_id": {"const": "urn:odeya:schema:command-contract-registry:0.2.0"},
         "digest": {"$ref": "#/$defs/digest"}
       }
     },
@@ -279,7 +285,10 @@
       "additionalProperties": false,
       "required": [
         "record_id", "version", "schema_id", "digest", "registry_snapshot_digest",
-        "command_type", "command_version", "command_schema_id", "command_schema_digest",
+        "command_type", "command_version", "payload_type_id",
+        "payload_schema_resource_id", "payload_schema_dialect_id",
+        "payload_schema_blob_digest", "payload_schema_canonical_digest",
+        "payload_schema_closure_digest",
         "membership_proof_ref"
       ],
       "properties": {
@@ -290,11 +299,18 @@
         "registry_snapshot_digest": {"$ref": "#/$defs/digest"},
         "command_type": {"type": "string", "pattern": "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$"},
         "command_version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
-        "command_schema_id": {
+        "payload_type_id": {
           "type": "string",
           "pattern": "^urn:odeya:command-payload:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$"
         },
-        "command_schema_digest": {"$ref": "#/$defs/digest"},
+        "payload_schema_resource_id": {
+          "type": "string",
+          "pattern": "^urn:odeya:schema:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "payload_schema_dialect_id": { "const": "https://json-schema.org/draft/2020-12/schema" },
+        "payload_schema_blob_digest": {"$ref": "#/$defs/digest"},
+        "payload_schema_canonical_digest": {"$ref": "#/$defs/digest"},
+        "payload_schema_closure_digest": {"$ref": "#/$defs/digest"},
         "membership_proof_ref": {"$ref": "#/$defs/artifact_reference"}
       }
     },
@@ -305,7 +321,7 @@
       "properties": {
         "record_id": {"$ref": "#/$defs/identifier"},
         "version": {"type": "integer", "minimum": 1},
-        "schema_id": {"const": "urn:odeya:schema:admission-evidence-bundle:0.1.0"},
+        "schema_id": {"const": "urn:odeya:schema:admission-evidence-bundle:0.2.0"},
         "digest": {"$ref": "#/$defs/digest"}
       }
     },
@@ -316,7 +332,7 @@
       "properties": {
         "record_id": {"$ref": "#/$defs/identifier"},
         "version": {"type": "integer", "minimum": 1},
-        "schema_id": {"const": "urn:odeya:schema:policy-decision:0.1.0"},
+        "schema_id": {"const": "urn:odeya:schema:policy-decision:0.2.0"},
         "digest": {"$ref": "#/$defs/digest"}
       }
     },
@@ -390,12 +406,14 @@
       "required": ["algorithm", "domain_separator", "canonicalization_profile_ref", "included_json_pointers", "excluded_json_pointers"],
       "properties": {
         "algorithm": {"const": "sha-256"},
-        "domain_separator": {"const": "odeya-command-receipt-v1"},
+        "domain_separator": {"const": "odeya-command-receipt-v2"},
         "canonicalization_profile_ref": {"$ref": "#/$defs/versioned_identity"},
         "included_json_pointers": {
           "const": [
-            "/schema_version", "/receipt_id", "/command_id", "/command_type",
-            "/command_version", "/command_schema_id", "/command_schema_digest",
+            "/schema_version", "/conformance_scope", "/identity_resolution_status",
+            "/admission_status", "/construction_status", "/receipt_id", "/command_id", "/command_type",
+            "/command_version", "/payload_type_id", "/payload_schema_resource_id",
+            "/payload_schema_canonical_digest", "/payload_schema_closure_digest",
             "/command_registry_snapshot_ref", "/command_registry_activation_ref",
             "/command_contract_record_ref",
             "/canonical_request_digest", "/idempotency_scope", "/actor_binding",

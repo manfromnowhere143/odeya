@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import subprocess
 import sys
 from pathlib import Path
 from typing import Any
@@ -18,8 +19,9 @@ ROOT = Path(__file__).resolve().parents[1]
 INVENTORY = ROOT / "architecture/first-slice-admission-resolution-candidate.json"
 VOCABULARY = ROOT / "architecture/command-design-vocabulary.json"
 EVENT_SCHEMA = ROOT / "schemas/research-event.schema.json"
-COMMAND_SCHEMA = ROOT / "schemas/command-envelope.schema.json"
 MODULE_MANIFEST = ROOT / "architecture/module-dependency-manifest.json"
+HISTORICAL_COMMAND_ENVELOPE_BLOB = "6e500377e176f686918390cfea63e165df0c6fcf"
+HISTORICAL_COMMAND_ENVELOPE_ID = "urn:odeya:schema:command-envelope:0.4.0"
 
 
 class DuplicateKey(ValueError):
@@ -40,6 +42,21 @@ def load(path: Path) -> dict[str, Any]:
     if not isinstance(value, dict):
         raise ValueError(f"JSON root is not an object: {path.relative_to(ROOT)}")
     return value
+
+
+def load_git_blob(blob_id: str) -> tuple[dict[str, Any], bytes]:
+    completed = subprocess.run(
+        ["git", "cat-file", "blob", blob_id],
+        cwd=ROOT,
+        check=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+    raw = completed.stdout
+    value = json.loads(raw.decode("utf-8"), object_pairs_hook=strict_pairs)
+    if not isinstance(value, dict):
+        raise ValueError(f"Git blob {blob_id} JSON root is not an object")
+    return value, raw
 
 
 def string_list(value: Any, label: str, errors: list[str]) -> list[str]:
@@ -122,9 +139,18 @@ def main() -> int:
         inventory = load(INVENTORY)
         vocabulary = load(VOCABULARY)
         event_schema = load(EVENT_SCHEMA)
-        command_schema = load(COMMAND_SCHEMA)
         module_manifest = load(MODULE_MANIFEST)
-    except (OSError, json.JSONDecodeError, DuplicateKey, ValueError) as exc:
+        historical_command_schema, historical_command_schema_bytes = load_git_blob(
+            HISTORICAL_COMMAND_ENVELOPE_BLOB
+        )
+    except (
+        OSError,
+        json.JSONDecodeError,
+        UnicodeDecodeError,
+        DuplicateKey,
+        ValueError,
+        subprocess.CalledProcessError,
+    ) as exc:
         print(f"Odeya first-slice resolution validation FAILED\n- {exc}")
         return 1
 
@@ -164,23 +190,24 @@ def main() -> int:
         extra = sorted((set(required) | set(outside)) - set(vocabulary_commands))
         errors.append(f"command partition differs from design vocabulary: missing={missing}, extra={extra}")
 
-    command_enum = collect_property_constants(command_schema, "command_type")
-    if not command_enum:
-        errors.append("CommandEnvelope command_type discriminator set is unavailable")
-    if set(command_enum) != set(vocabulary_commands):
-        errors.append("CommandEnvelope design enum and command vocabulary are unequal")
+    historical_command_enum = collect_property_constants(historical_command_schema, "command_type")
+    if historical_command_enum != sorted(vocabulary_commands):
+        errors.append("historical Envelope 0.4 extraction and command vocabulary are unequal")
 
-    command_schema_bytes = COMMAND_SCHEMA.read_bytes()
     source_ref = vocabulary.get("source_envelope_candidate_ref")
     if not isinstance(source_ref, dict):
         errors.append("command vocabulary source_envelope_candidate_ref must be an object")
     else:
-        expected_source_digest = "sha256:" + hashlib.sha256(command_schema_bytes).hexdigest()
-        if source_ref.get("schema_id") != command_schema.get("$id"):
-            errors.append("command vocabulary source schema ID differs from CommandEnvelope")
+        expected_source_digest = "sha256:" + hashlib.sha256(historical_command_schema_bytes).hexdigest()
+        if historical_command_schema.get("$id") != HISTORICAL_COMMAND_ENVELOPE_ID:
+            errors.append("retained historical CommandEnvelope blob has the wrong schema ID")
+        if source_ref.get("schema_id") != HISTORICAL_COMMAND_ENVELOPE_ID:
+            errors.append("command vocabulary source schema ID differs from retained historical Envelope 0.4")
+        if source_ref.get("semantic_version") != "0.4.0":
+            errors.append("command vocabulary source semantic version is not historical 0.4.0")
         if source_ref.get("byte_digest") != expected_source_digest:
             errors.append("command vocabulary source byte digest is stale")
-        if source_ref.get("byte_count") != len(command_schema_bytes):
+        if source_ref.get("byte_count") != len(historical_command_schema_bytes):
             errors.append("command vocabulary source byte count is stale")
 
     digest_contract = vocabulary.get("vocabulary_digest_contract")
@@ -368,13 +395,43 @@ def main() -> int:
     if not isinstance(conflicts, list):
         errors.append("resolved_conflicts must be an array")
         conflicts = []
-    conflict_ids = [
-        record.get("conflict_id")
-        for record in conflicts
-        if isinstance(record, dict) and record.get("disposition") == "resolved"
-    ]
+    conflict_ids = [record.get("conflict_id") for record in conflicts if isinstance(record, dict)]
     if conflict_ids != [f"C{index}" for index in range(1, 9)]:
-        errors.append("resolved_conflicts must contain ordered resolved C1 through C8")
+        errors.append("resolved_conflicts must contain ordered C1 through C8")
+    else:
+        for record in conflicts:
+            conflict_id = record.get("conflict_id")
+            expected_disposition = "unresolved_blocking" if conflict_id == "C5" else "resolved"
+            if record.get("disposition") != expected_disposition:
+                errors.append(
+                    f"{conflict_id} disposition must be {expected_disposition!r}, "
+                    f"got {record.get('disposition')!r}"
+                )
+
+    unresolved = inventory.get("unresolved_prerequisites")
+    if not isinstance(unresolved, list) or len(unresolved) != 1:
+        errors.append("exactly one unresolved prerequisite is required")
+    else:
+        prq = unresolved[0]
+        expected_roles = ["safety", "data_rights", "resource", "execution", "verification"]
+        expected_assignment_events = [
+            *(f"authority.grant_used({role})" for role in expected_roles),
+            "resource.reservation_created",
+            "work.lease_acquired",
+            "verification.assigned",
+            *(f"authority.grant_exhausted({role})" for role in expected_roles),
+        ]
+        if prq.get("prerequisite_id") != "PRQ-009" or prq.get("status") != "unresolved_blocking":
+            errors.append("the sole unresolved prerequisite must be blocking PRQ-009")
+        contract = prq.get("prospective_assignment_contract", {})
+        if contract.get("role_slot_order") != expected_roles:
+            errors.append("PRQ-009 assignment role-slot order is not exact")
+        if contract.get("batch_size_exact") != len(expected_assignment_events):
+            errors.append("PRQ-009 assignment batch size is not exactly 13")
+        if contract.get("event_order_exact") != expected_assignment_events:
+            errors.append("PRQ-009 assignment event order is not exact")
+        if inventory.get("atomic_cohorts", {}).get("verification_assign_local") != expected_assignment_events:
+            errors.append("verification_assign_local cohort differs from PRQ-009")
 
     prerequisites = inventory.get("external_prerequisites")
     if not isinstance(prerequisites, list) or len(prerequisites) != 1:
@@ -389,12 +446,41 @@ def main() -> int:
     expected_count(counts, "aggregate_state_reducer_families_exact", len(aggregates), errors)
     expected_count(counts, "owner_modules_exact", len(owners), errors)
     expected_count(counts, "external_constitutional_prerequisites_exact", len(prerequisites or []), errors)
-    expected_count(counts, "unresolved_c1_through_c8_choices", 0, errors)
-    expected_count(counts, "global_command_design_vocabulary_after_delta", len(command_enum), errors)
+    expected_count(counts, "unresolved_c1_through_c8_choices", 1, errors)
+    expected_count(counts, "global_command_design_vocabulary_after_delta", len(vocabulary_commands), errors)
     expected_count(counts, "global_event_design_vocabulary_after_delta", len(event_enum), errors)
 
-    if inventory.get("status") != "resolved_scope_candidate_not_admitted":
-        errors.append("inventory status must remain resolved_scope_candidate_not_admitted")
+    if inventory.get("schema_version") != "0.2.0" or inventory.get("version") != "0.2.0":
+        errors.append("materially changed inventory must be reissued as exact version 0.2.0")
+    if inventory.get("status") != "bounded_scope_candidate_c5_blocked_not_admitted":
+        errors.append("inventory status must expose the blocking C5 boundary")
+    if inventory.get("source_checkpoint") != "f4429ce5ca71e58ebb5d65776a45ebb6a2a18889":
+        errors.append("inventory source checkpoint differs from the 0.2 tranche origin")
+    predecessor = inventory.get("supersedes_candidate", {})
+    expected_predecessor = {
+        "inventory_id": "odeya.first-slice-admission-resolution-candidate",
+        "version": "0.1.0",
+        "source_commit": "f4429ce5ca71e58ebb5d65776a45ebb6a2a18889",
+        "git_blob": "a7983e273d043966c93786f0edeb42bdf173d84a",
+        "raw_sha256": "sha256:83a16f9f6b2eff834f0bc7869fb6188e4ee04af7201a1338341a4ea2a1f508dc",
+        "canonical_digest": None,
+        "canonical_digest_status": "not_computed_no_frozen_artifact_profile",
+    }
+    if predecessor != expected_predecessor:
+        errors.append("inventory 0.1 predecessor lineage is not exact")
+    expected_vocabulary_retention = {
+        "mode": "historical_git_blob_architecture_only",
+        "status": "retained_not_registry_admitted_blocking",
+        "source_commit": "f4429ce5ca71e58ebb5d65776a45ebb6a2a18889",
+        "source_path": "schemas/command-envelope.schema.json",
+        "source_schema_id": HISTORICAL_COMMAND_ENVELOPE_ID,
+        "source_git_blob": HISTORICAL_COMMAND_ENVELOPE_BLOB,
+        "source_raw_sha256": "sha256:ad8b96a589051624dfc59d4a429a6529e3b91f7e18a9005cc615b9fa73dbbc30",
+        "source_byte_count": 103272,
+        "current_command_envelope_candidate_is_not_a_replacement_source": True,
+    }
+    if inventory.get("command_vocabulary_source_retention") != expected_vocabulary_retention:
+        errors.append("historical command-vocabulary source retention boundary is not exact")
     sources = string_list(inventory.get("sources"), "sources", errors)
     if len(sources) != len(set(sources)):
         errors.append("sources contains duplicates")
@@ -416,6 +502,7 @@ def main() -> int:
         errors.append("scope_verdict must be an object")
     else:
         for key in (
+            "c1_through_c8_choices_resolved",
             "immutable_registry_members_exist",
             "engine_contract_root_exists",
             "constitutional_prerequisite_instance_exists",
@@ -426,6 +513,8 @@ def main() -> int:
         ):
             if scope.get(key) is not False:
                 errors.append(f"scope_verdict.{key} must remain false")
+        if scope.get("may_construct_verification_assignment_member") is not False:
+            errors.append("scope_verdict.may_construct_verification_assignment_member must remain false")
 
     if errors:
         print("Odeya first-slice resolution validation FAILED")
@@ -437,7 +526,7 @@ def main() -> int:
     print(f"- {len(required)} required / {len(outside)} outside commands")
     print(f"- {len(events)} required event discriminators")
     print(f"- {len(aggregates)} aggregate/reducer families / {len(owners)} owner modules")
-    print("- C1-C8 choices resolved; immutable records, P0 instance, complete replay/refinement proof, and review remain blocked")
+    print("- C1-C4/C6-C8 bounded; C5/PRQ-009, immutable records, P0 instance, complete replay/refinement proof, and review remain blocked")
     return 0
 
 

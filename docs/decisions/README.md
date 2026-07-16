@@ -18,3 +18,7 @@ Decision records preserve why Odeya chose a boundary and which evidence could ch
 | [0012](0012-minimal-canonical-epistemic-graph.md) | One minimal canonical epistemic graph | Proposed |
 | [0013](0013-admitted-only-command-ingress.md) | Admit only registry-complete commands at ingress | Proposed |
 | [0014](0014-resolve-first-slice-atomic-admission.md) | Resolve the first-slice atomic admission boundary | Proposed |
+| [0015](0015-nonrecursive-constitutional-construction.md) | Freeze nonrecursive core, evidence, seal, and attestation construction | Proposed |
+| [0016](0016-separate-work-intent-from-assigned-work-contract.md) | Separate prospective work intent, assignment, and post-assignment work contracts | Proposed |
+| [0017](0017-close-first-slice-lifecycle-origins.md) | Close first-slice lifecycle origins and exact event/payload identity | Proposed |
+| [0018](0018-separate-registry-membership-from-history.md) | Separate registry snapshot membership from transparency history | Proposed |

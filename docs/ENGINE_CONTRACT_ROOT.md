@@ -62,6 +62,16 @@ Membership proofs, signatures, witness attestations, storage locations, and
 activation evidence are external wrappers. Re-signing, relocating, witnessing,
 or activating a subject cannot change its canonical digest.
 
+A prospective replacement
+[constitutional construction contract](CONSTITUTIONAL_CONSTRUCTION_AND_SEALING.md)
+defines directed construction inside each node: hash a core projection that
+excludes evidence references and final digest fields, bind evidence to that
+core digest, seal the unchanged core plus canonically ordered evidence refs,
+then keep attestations outside the final seal digest. The current root/C0/
+checkpoint/P0/activation schema bytes do not yet implement that two-digest
+profile. Assigning replacement identities and migrating the transitive consumer
+graph remain blocking; this document does not claim current-schema conformance.
+
 ## Registry families
 
 The founding root binds exactly these semantic families:
@@ -193,11 +203,14 @@ scope, and recovery-frontier digest. JSON Schema can require those fields;
 admission must still prove byte equality, currentness, branch ordering, and
 scope coverage. No ordinary mission command may create or repair its own P0.
 
-Activation requires `activation_position <= target/current_position` on the
-selected clear branch and exact equality with the P0 recovery frontier. The
-enabled envelope discriminator set, enabled command member set, and conforming
-handler set must be exactly equal. Runtime handler evidence is intentionally
-absent from Gate A; therefore a Gate A root can be contract-admitted and
+Activation requires
+`checkpoint_position <= P0.frontier_position < activation_position <= target/current_position`
+on one selected clear epoch/branch. The P0 frontier reference digest must equal
+the resolved frontier digest, and the outer activation's root, C0, checkpoint,
+and P0 bindings must equal the embedded P0 subjects exactly. The enabled
+envelope discriminator set, enabled command member set, and conforming handler
+set must also be exactly equal. Runtime handler evidence is intentionally absent
+from Gate A; therefore a Gate A root can be contract-admitted and
 checkpoint-ready while remaining operationally inactive.
 
 Retirement is prospective. Historical receipt replay resolves the exact prior

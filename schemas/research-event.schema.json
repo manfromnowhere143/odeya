@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:research-event:0.6.0",
+  "$id": "urn:odeya:schema:research-event:0.7.0",
   "title": "Odeya ResearchEvent",
-  "description": "Immutable, hash-linked event envelope for portfolio, pre-mission, mission, authority, incident, learning, data-governance, and recovery streams. Every event owns exactly one aggregate and one orthogonal fact; payload type, aggregate owner, and time basis are discriminated by event type. Domain-separated payload and event digest contracts name exact JSON Pointer subjects and exclude the enclosing event digest and external signature attestation; schema validation does not recompute or cryptographically verify them.",
+  "description": "Architecture-only candidate event envelope for portfolio, pre-mission, mission, authority, incident, learning, data-governance, and recovery streams. Every branch owns exactly one aggregate and one orthogonal fact. The urn:odeya:event-payload logical type is distinct from this JSON Schema resource identity. ResearchEvent 0.7.0 has no frozen per-branch contract extraction/canonicalization profile, so its payload contract digest is necessarily null and every instance is not admitted, not dispatchable, and not replay-authoritative. A future resolved form requires a new ResearchEvent resource identity. Domain-separated digest shapes name exact JSON Pointer subjects; schema validation does not recompute or cryptographically verify them.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -10,8 +10,10 @@
     "event_id",
     "event_type",
     "event_version",
-    "payload_schema_id",
-    "payload_schema_digest",
+    "payload_type_id",
+    "payload_contract_resolution_status",
+    "payload_contract_digest",
+    "event_contract_authority_status",
     "stream",
     "mission_scope",
     "aggregate",
@@ -31,7 +33,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.6.0"
+      "const": "0.7.0"
     },
     "event_id": {
       "$ref": "#/$defs/identifier"
@@ -178,12 +180,21 @@
     "event_version": {
       "const": "1.0.0"
     },
-    "payload_schema_id": {
+    "payload_type_id": {
       "type": "string",
-      "pattern": "^urn:odeya:event-payload:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$"
+      "pattern": "^urn:odeya:event-payload:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$",
+      "description": "Logical event-payload type identity selected by the event branch. This URN is not a JSON Schema resource $id."
     },
-    "payload_schema_digest": {
-      "$ref": "#/$defs/digest"
+    "payload_contract_resolution_status": {
+      "const": "unresolved_blocking",
+      "description": "ResearchEvent 0.7.0 has no frozen per-branch extraction/canonicalization profile, so every candidate event is blocked and non-authoritative."
+    },
+    "payload_contract_digest": {
+      "type": "null",
+      "description": "Null if and only if payload_contract_resolution_status is unresolved_blocking. A future non-null exact branch-contract digest requires a new ResearchEvent resource identity."
+    },
+    "event_contract_authority_status": {
+      "const": "not_admitted_not_dispatchable_not_replay_authoritative"
     },
     "stream": {
       "$ref": "#/$defs/stream"
@@ -698,7 +709,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:proposal.submitted:1.0.0"
         },
         "aggregate": {
@@ -733,7 +744,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -747,7 +758,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:proposal.decided:1.0.0"
         },
         "aggregate": {
@@ -789,7 +800,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -803,7 +814,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:proposal.withdrawn:1.0.0"
         },
         "aggregate": {
@@ -848,7 +859,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -862,7 +873,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:mission.origin_recorded:1.0.0"
         },
         "aggregate": {
@@ -897,7 +908,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -911,7 +922,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:mission.contract_compiled:1.0.0"
         },
         "aggregate": {
@@ -946,7 +957,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -960,7 +971,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:mission.phase_advanced:1.0.0"
         },
         "aggregate": {
@@ -1025,7 +1036,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -1039,7 +1050,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:mission.control_changed:1.0.0"
         },
         "aggregate": {
@@ -1090,7 +1101,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -1104,7 +1115,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:handoff.recorded:1.0.0"
         },
         "aggregate": {
@@ -1139,7 +1150,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -1153,7 +1164,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:mission.closed:1.0.0"
         },
         "aggregate": {
@@ -1198,7 +1209,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -1212,7 +1223,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:protocol.exposure_recorded:1.0.0"
         },
         "aggregate": {
@@ -1240,7 +1251,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -1254,7 +1265,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:protocol.integrity_determined:1.0.0"
         },
         "aggregate": {
@@ -1282,7 +1293,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -1296,13 +1307,23 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:protocol.frozen:1.0.0"
         },
         "aggregate": {
           "properties": {
             "aggregate_type": {
               "const": "protocol"
+            }
+          }
+        },
+        "commit": {
+          "properties": {
+            "batch_index": {
+              "const": 1
+            },
+            "batch_size": {
+              "const": 4
             }
           }
         },
@@ -1314,36 +1335,36 @@
           }
         },
         "payload": {
-          "allOf": [
-            {
-              "$ref": "#/$defs/transition_payload"
+          "$ref": "#/$defs/protocol_frozen_origin_payload"
+        },
+        "authority_evidence": {
+          "properties": {
+            "mode": {
+              "const": "bounded_grants"
             },
-            {
-              "properties": {
-                "axis": {
-                  "const": "protocol_seal"
-                },
-                "from": {
-                  "enum": [
-                    "draft",
-                    "validated"
-                  ]
-                },
-                "to": {
-                  "const": "frozen"
-                }
-              }
+            "assignment_refs": {
+              "minItems": 1
+            },
+            "grant_refs": {
+              "minItems": 1,
+              "maxItems": 1
+            },
+            "grant_use_event_refs": {
+              "minItems": 1,
+              "maxItems": 1
             }
-          ]
+          }
         }
       },
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
+        "commit",
         "fact_time",
-        "payload"
+        "payload",
+        "authority_evidence"
       ]
     },
     {
@@ -1354,7 +1375,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:protocol.amended:1.0.0"
         },
         "aggregate": {
@@ -1389,7 +1410,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -1403,7 +1424,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:protocol.forked:1.0.0"
         },
         "aggregate": {
@@ -1438,7 +1459,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -1452,7 +1473,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:protocol.superseded:1.0.0"
         },
         "aggregate": {
@@ -1493,7 +1514,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -1507,7 +1528,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:work_graph.compiled:1.0.0"
         },
         "aggregate": {
@@ -1542,7 +1563,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -1556,7 +1577,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:stage.readiness_changed:1.0.0"
         },
         "aggregate": {
@@ -1605,7 +1626,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -1619,7 +1640,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:stage.authorization_changed:1.0.0"
         },
         "aggregate": {
@@ -1672,7 +1693,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -1686,7 +1707,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:work.lease_acquired:1.0.0"
         },
         "aggregate": {
@@ -1747,7 +1768,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -1761,7 +1782,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:authority.grant_activated:1.0.0"
         },
         "aggregate": {
@@ -1802,7 +1823,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -1816,7 +1837,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:work.lease_renewed:1.0.0"
         },
         "aggregate": {
@@ -1877,7 +1898,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -1891,7 +1912,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:work.lease_released:1.0.0"
         },
         "aggregate": {
@@ -1952,7 +1973,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -1966,7 +1987,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:work.lease_revoked:1.0.0"
         },
         "aggregate": {
@@ -2053,7 +2074,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -2067,7 +2088,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:work.lease_expired:1.0.0"
         },
         "aggregate": {
@@ -2128,7 +2149,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -2142,7 +2163,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:attempt.started:1.0.0"
         },
         "aggregate": {
@@ -2194,7 +2215,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -2208,7 +2229,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:attempt.interrupted:1.0.0"
         },
         "aggregate": {
@@ -2249,7 +2270,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -2263,7 +2284,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:attempt.completion_unknown:1.0.0"
         },
         "aggregate": {
@@ -2322,7 +2343,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -2336,7 +2357,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:attempt.completed:1.0.0"
         },
         "aggregate": {
@@ -2410,7 +2431,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -2424,7 +2445,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:attempt.failed:1.0.0"
         },
         "aggregate": {
@@ -2468,7 +2489,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -2482,7 +2503,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:attempt.cancelled:1.0.0"
         },
         "aggregate": {
@@ -2523,7 +2544,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -2537,7 +2558,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:resource.reservation_created:1.0.0"
         },
         "aggregate": {
@@ -2582,7 +2603,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "actor",
@@ -2598,7 +2619,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:resource.reservation_claimed:1.0.0"
         },
         "aggregate": {
@@ -2643,7 +2664,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "actor",
@@ -2659,7 +2680,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:resource.reservation_released:1.0.0"
         },
         "aggregate": {
@@ -2697,7 +2718,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "actor",
@@ -2713,7 +2734,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:resource.reservation_expired:1.0.0"
         },
         "aggregate": {
@@ -2751,7 +2772,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "actor",
@@ -2767,7 +2788,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:resource.usage_observed:1.0.0"
         },
         "aggregate": {
@@ -2805,7 +2826,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "actor",
@@ -2821,7 +2842,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:resource.reservation_settled:1.0.0"
         },
         "aggregate": {
@@ -2859,7 +2880,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "actor",
@@ -2875,7 +2896,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:budget.exhausted:1.0.0"
         },
         "aggregate": {
@@ -2916,7 +2937,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -2930,7 +2951,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:blocker.opened:1.0.0"
         },
         "aggregate": {
@@ -2965,7 +2986,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -2979,7 +3000,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:blocker.resolved:1.0.0"
         },
         "aggregate": {
@@ -3014,7 +3035,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -3028,7 +3049,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:blocker.superseded:1.0.0"
         },
         "aggregate": {
@@ -3063,7 +3084,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -3077,7 +3098,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:artifact.recorded:1.0.0"
         },
         "aggregate": {
@@ -3115,7 +3136,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -3129,7 +3150,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:artifact.validated:1.0.0"
         },
         "aggregate": {
@@ -3167,7 +3188,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -3181,7 +3202,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:artifact.promoted:1.0.0"
         },
         "aggregate": {
@@ -3219,7 +3240,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -3233,7 +3254,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:artifact.quarantined:1.0.0"
         },
         "aggregate": {
@@ -3275,7 +3296,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -3289,7 +3310,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:artifact.corrupt_detected:1.0.0"
         },
         "aggregate": {
@@ -3333,7 +3354,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -3347,7 +3368,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:artifact.unavailable:1.0.0"
         },
         "aggregate": {
@@ -3390,7 +3411,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -3404,7 +3425,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:artifact.tombstoned:1.0.0"
         },
         "aggregate": {
@@ -3449,7 +3470,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -3463,7 +3484,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:run.validity_determined:1.0.0"
         },
         "aggregate": {
@@ -3491,7 +3512,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -3505,7 +3526,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:measurement.disposition_determined:1.0.0"
         },
         "aggregate": {
@@ -3533,7 +3554,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -3547,7 +3568,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:metric.observed:1.0.0"
         },
         "aggregate": {
@@ -3575,7 +3596,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -3589,7 +3610,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:falsifier.adjudicated:1.0.0"
         },
         "aggregate": {
@@ -3617,7 +3638,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -3631,7 +3652,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:verification.requested:1.0.0"
         },
         "aggregate": {
@@ -3666,7 +3687,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -3680,7 +3701,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:verification.assigned:2.0.0"
         },
         "aggregate": {
@@ -3708,7 +3729,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -3722,7 +3743,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:verification.started:1.0.0"
         },
         "aggregate": {
@@ -3763,7 +3784,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -3777,7 +3798,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:verification.completed:2.0.0"
         },
         "aggregate": {
@@ -3805,7 +3826,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -3819,7 +3840,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:verification.disputed:2.0.0"
         },
         "aggregate": {
@@ -3854,7 +3875,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -3868,7 +3889,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:verification.dispute_resolved:2.0.0"
         },
         "aggregate": {
@@ -3903,7 +3924,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -3917,7 +3938,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:verification.invalidated:1.0.0"
         },
         "aggregate": {
@@ -3966,7 +3987,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -3980,7 +4001,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:reproducibility.determined:2.0.0"
         },
         "aggregate": {
@@ -4024,7 +4045,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -4038,7 +4059,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:replication.started:1.0.0"
         },
         "aggregate": {
@@ -4082,7 +4103,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -4096,7 +4117,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:replication.determined:2.0.0"
         },
         "aggregate": {
@@ -4139,7 +4160,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -4153,7 +4174,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:transport.started:1.0.0"
         },
         "aggregate": {
@@ -4197,7 +4218,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -4211,7 +4232,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:transport.determined:2.0.0"
         },
         "aggregate": {
@@ -4254,7 +4275,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -4268,7 +4289,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:review.recorded:1.0.0"
         },
         "aggregate": {
@@ -4303,7 +4324,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -4317,7 +4338,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:adjudication.recorded:1.0.0"
         },
         "aggregate": {
@@ -4345,7 +4366,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -4359,7 +4380,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:claim.proposed:1.0.0"
         },
         "aggregate": {
@@ -4394,7 +4415,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -4408,7 +4429,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:claim.disposition_recorded:1.0.0"
         },
         "aggregate": {
@@ -4458,7 +4479,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -4472,7 +4493,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:claim.version_compiled:1.0.0"
         },
         "aggregate": {
@@ -4500,7 +4521,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -4514,7 +4535,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:claim.superseded:1.0.0"
         },
         "aggregate": {
@@ -4558,7 +4579,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -4572,7 +4593,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:claim.retracted:1.0.0"
         },
         "aggregate": {
@@ -4617,7 +4638,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -4631,7 +4652,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:dependency.invalidation_recorded:1.0.0"
         },
         "aggregate": {
@@ -4659,7 +4680,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -4673,7 +4694,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:authority.assignment_recorded:1.0.0"
         },
         "aggregate": {
@@ -4701,7 +4722,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -4715,7 +4736,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:authority.grant_issued:1.0.0"
         },
         "aggregate": {
@@ -4746,7 +4767,7 @@
                   "const": "not_issued"
                 },
                 "to": {
-                  "const": "active"
+                  "const": "issued"
                 }
               }
             }
@@ -4756,7 +4777,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -4770,7 +4791,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:authority.grant_use_reserved:1.0.0"
         },
         "aggregate": {
@@ -4798,7 +4819,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -4812,7 +4833,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:authority.grant_use_reservation_released:1.0.0"
         },
         "aggregate": {
@@ -4840,7 +4861,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -4854,7 +4875,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:authority.grant_used:1.0.0"
         },
         "aggregate": {
@@ -4882,7 +4903,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -4896,7 +4917,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:authority.grant_exhausted:1.0.0"
         },
         "aggregate": {
@@ -4937,7 +4958,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -4951,7 +4972,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:authority.grant_expired:1.0.0"
         },
         "aggregate": {
@@ -4995,7 +5016,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -5009,7 +5030,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:authority.grant_revoked:1.0.0"
         },
         "aggregate": {
@@ -5053,7 +5074,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -5067,7 +5088,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:publication.candidate_compiled:1.0.0"
         },
         "aggregate": {
@@ -5095,7 +5116,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -5109,7 +5130,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:release.requested:1.0.0"
         },
         "aggregate": {
@@ -5137,7 +5158,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -5151,7 +5172,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:release.decided:1.0.0"
         },
         "aggregate": {
@@ -5179,7 +5200,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -5193,7 +5214,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:publication.sealed:1.0.0"
         },
         "aggregate": {
@@ -5221,7 +5242,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -5235,7 +5256,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:publication.release_started:1.0.0"
         },
         "aggregate": {
@@ -5273,7 +5294,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -5287,7 +5308,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:publication.release_settled:1.0.0"
         },
         "aggregate": {
@@ -5331,7 +5352,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -5345,7 +5366,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:publication.corrected:1.0.0"
         },
         "aggregate": {
@@ -5380,7 +5401,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -5394,7 +5415,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:publication.withdrawn:1.0.0"
         },
         "aggregate": {
@@ -5435,7 +5456,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -5449,7 +5470,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:external_effect.authorized:1.0.0"
         },
         "aggregate": {
@@ -5538,7 +5559,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -5552,7 +5573,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:external_effect.started:1.0.0"
         },
         "aggregate": {
@@ -5641,7 +5662,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -5655,7 +5676,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:external_effect.cancelled_before_dispatch:1.0.0"
         },
         "aggregate": {
@@ -5757,7 +5778,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -5771,7 +5792,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:external_effect.completion_reported:1.0.0"
         },
         "aggregate": {
@@ -5813,7 +5834,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -5827,7 +5848,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:external_effect.reconciliation_started:1.0.0"
         },
         "aggregate": {
@@ -5868,7 +5889,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -5882,7 +5903,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:external_effect.reconciliation_completed:1.0.0"
         },
         "aggregate": {
@@ -5920,7 +5941,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -5934,7 +5955,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:external_effect.reconciliation_failed:1.0.0"
         },
         "aggregate": {
@@ -5975,7 +5996,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -5989,7 +6010,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:incident.opened:1.0.0"
         },
         "aggregate": {
@@ -6027,7 +6048,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -6041,7 +6062,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:incident.transitioned:1.0.0"
         },
         "aggregate": {
@@ -6088,7 +6109,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -6102,7 +6123,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:grounded_outcome.recorded:1.0.0"
         },
         "aggregate": {
@@ -6137,7 +6158,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -6151,7 +6172,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:strategy.candidate_recorded:1.0.0"
         },
         "aggregate": {
@@ -6186,7 +6207,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -6200,7 +6221,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:strategy.shadow_authorized:1.0.0"
         },
         "aggregate": {
@@ -6238,7 +6259,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -6252,7 +6273,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:strategy.shadow_recorded:1.0.0"
         },
         "aggregate": {
@@ -6287,7 +6308,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -6301,7 +6322,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:strategy.canary_authorized:1.0.0"
         },
         "aggregate": {
@@ -6339,7 +6360,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -6353,7 +6374,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:strategy.promotion_decided:1.0.0"
         },
         "aggregate": {
@@ -6394,7 +6415,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -6408,7 +6429,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:strategy.rolled_back:1.0.0"
         },
         "aggregate": {
@@ -6452,7 +6473,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "aggregate",
         "fact_time",
         "payload"
@@ -6466,7 +6487,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:data_asset.recorded:1.0.0"
         },
         "stream": {
@@ -6518,7 +6539,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "stream",
         "aggregate",
         "fact_time",
@@ -6534,7 +6555,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:data_asset.lifecycle_changed:1.0.0"
         },
         "stream": {
@@ -6582,7 +6603,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "stream",
         "aggregate",
         "fact_time",
@@ -6598,7 +6619,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:rights_assertion.recorded:1.0.0"
         },
         "stream": {
@@ -6646,7 +6667,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "stream",
         "aggregate",
         "fact_time",
@@ -6662,7 +6683,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:data_use.decided:1.0.0"
         },
         "stream": {
@@ -6679,6 +6700,16 @@
           "properties": {
             "aggregate_type": {
               "const": "data_use_decision"
+            }
+          }
+        },
+        "commit": {
+          "properties": {
+            "batch_index": {
+              "const": 1
+            },
+            "batch_size": {
+              "const": 3
             }
           }
         },
@@ -6708,15 +6739,32 @@
                 },
                 "revocation_evidence_ref": {
                   "type": "null"
+                },
+                "grant_commit_binding": {
+                  "$ref": "#/$defs/data_rights_grant_commit_binding"
                 }
-              }
+              },
+              "required": [
+                "grant_commit_binding"
+              ]
             }
           ]
         },
         "authority_evidence": {
           "properties": {
             "mode": {
-              "const": "assigned_role"
+              "const": "bounded_grants"
+            },
+            "assignment_refs": {
+              "minItems": 1
+            },
+            "grant_refs": {
+              "minItems": 1,
+              "maxItems": 1
+            },
+            "grant_use_event_refs": {
+              "minItems": 1,
+              "maxItems": 1
             }
           }
         }
@@ -6724,9 +6772,10 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "stream",
         "aggregate",
+        "commit",
         "fact_time",
         "payload",
         "authority_evidence"
@@ -6740,7 +6789,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:data_use.revoked:1.0.0"
         },
         "stream": {
@@ -6792,7 +6841,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "stream",
         "aggregate",
         "fact_time",
@@ -6808,7 +6857,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:data_exposure.intent_recorded:1.0.0"
         },
         "stream": {
@@ -6870,7 +6919,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "stream",
         "aggregate",
         "fact_time",
@@ -6886,7 +6935,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:data_exposure.observation_recorded:1.0.0"
         },
         "stream": {
@@ -6949,7 +6998,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "stream",
         "aggregate",
         "fact_time",
@@ -6965,7 +7014,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:data_exposure.settlement_recorded:1.0.0"
         },
         "stream": {
@@ -7027,7 +7076,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "stream",
         "aggregate",
         "fact_time",
@@ -7043,7 +7092,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:transformation.recorded:1.0.0"
         },
         "stream": {
@@ -7091,7 +7140,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "stream",
         "aggregate",
         "fact_time",
@@ -7107,7 +7156,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:retention.schedule_recorded:1.0.0"
         },
         "stream": {
@@ -7155,7 +7204,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "stream",
         "aggregate",
         "fact_time",
@@ -7171,7 +7220,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:deletion.case_opened:1.0.0"
         },
         "stream": {
@@ -7229,7 +7278,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "stream",
         "aggregate",
         "fact_time",
@@ -7245,7 +7294,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:deletion.progress_recorded:1.0.0"
         },
         "stream": {
@@ -7304,7 +7353,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "stream",
         "aggregate",
         "fact_time",
@@ -7320,7 +7369,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:deletion.case_closed:1.0.0"
         },
         "stream": {
@@ -7377,7 +7426,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "stream",
         "aggregate",
         "fact_time",
@@ -7393,7 +7442,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:legal_hold.issued:1.0.0"
         },
         "stream": {
@@ -7451,7 +7500,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "stream",
         "aggregate",
         "fact_time",
@@ -7467,7 +7516,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:legal_hold.released:1.0.0"
         },
         "stream": {
@@ -7525,7 +7574,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "stream",
         "aggregate",
         "fact_time",
@@ -7541,7 +7590,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:legal_hold.expired:1.0.0"
         },
         "stream": {
@@ -7599,7 +7648,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "stream",
         "aggregate",
         "fact_time",
@@ -7615,7 +7664,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:ledger_checkpoint.proposed:1.0.0"
         },
         "stream": {
@@ -7688,7 +7737,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "stream",
         "aggregate",
         "fact_time",
@@ -7704,7 +7753,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:ledger_checkpoint.sealed:1.0.0"
         },
         "stream": {
@@ -7777,7 +7826,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "stream",
         "aggregate",
         "fact_time",
@@ -7793,7 +7842,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:ledger_checkpoint.witness_observed:1.0.0"
         },
         "stream": {
@@ -7861,7 +7910,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "stream",
         "aggregate",
         "fact_time",
@@ -7877,7 +7926,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:ledger_checkpoint.consistency_failed:1.0.0"
         },
         "stream": {
@@ -7941,7 +7990,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "stream",
         "aggregate",
         "fact_time",
@@ -7957,7 +8006,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:backup.write_observed:1.0.0"
         },
         "stream": {
@@ -8006,7 +8055,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "stream",
         "aggregate",
         "fact_time",
@@ -8022,7 +8071,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:backup.verification_observed:1.0.0"
         },
         "stream": {
@@ -8071,7 +8120,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "stream",
         "aggregate",
         "fact_time",
@@ -8087,7 +8136,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:backup.recoverability_observed:1.0.0"
         },
         "stream": {
@@ -8136,7 +8185,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "stream",
         "aggregate",
         "fact_time",
@@ -8152,7 +8201,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:restore.case_opened:1.0.0"
         },
         "stream": {
@@ -8216,7 +8265,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "stream",
         "aggregate",
         "fact_time",
@@ -8232,7 +8281,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:recovery.current_policy_frontier_recorded:1.0.0"
         },
         "stream": {
@@ -8299,7 +8348,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "stream",
         "aggregate",
         "fact_time",
@@ -8315,7 +8364,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:restore.report_recorded:1.0.0"
         },
         "stream": {
@@ -8383,7 +8432,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "stream",
         "aggregate",
         "fact_time",
@@ -8399,7 +8448,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:recovery.decision_recorded:1.0.0"
         },
         "stream": {
@@ -8444,7 +8493,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "stream",
         "aggregate",
         "fact_time",
@@ -8460,7 +8509,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:recovery.quarantine_entered:1.0.0"
         },
         "stream": {
@@ -8512,7 +8561,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "stream",
         "aggregate",
         "fact_time",
@@ -8528,7 +8577,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:ledger.fork_detected:1.0.0"
         },
         "stream": {
@@ -8589,7 +8638,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "stream",
         "aggregate",
         "fact_time",
@@ -8605,7 +8654,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:ledger.epoch_started:1.0.0"
         },
         "stream": {
@@ -8666,7 +8715,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "stream",
         "aggregate",
         "fact_time",
@@ -8682,7 +8731,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:restore.case_closed:1.0.0"
         },
         "stream": {
@@ -8743,7 +8792,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "stream",
         "aggregate",
         "fact_time",
@@ -8759,7 +8808,7 @@
         "event_version": {
           "const": "1.0.0"
         },
-        "payload_schema_id": {
+        "payload_type_id": {
           "const": "urn:odeya:event-payload:recovery.service_scope_changed:1.0.0"
         },
         "stream": {
@@ -8808,7 +8857,7 @@
       "required": [
         "event_type",
         "event_version",
-        "payload_schema_id",
+        "payload_type_id",
         "stream",
         "aggregate",
         "fact_time",
@@ -9399,7 +9448,7 @@
         "algorithm",
         "domain_separator",
         "canonicalization_profile_ref",
-        "payload_schema_binding_source",
+        "payload_contract_binding_source",
         "included_json_pointers",
         "excluded_json_pointers"
       ],
@@ -9413,8 +9462,8 @@
         "canonicalization_profile_ref": {
           "$ref": "#/$defs/versioned_identity"
         },
-        "payload_schema_binding_source": {
-          "const": "event.payload_schema_id+event.payload_schema_digest"
+        "payload_contract_binding_source": {
+          "const": "event.payload_type_id+event.payload_contract_resolution_status+event.payload_contract_digest"
         },
         "included_json_pointers": {
           "const": [
@@ -9452,8 +9501,10 @@
             "/event_id",
             "/event_type",
             "/event_version",
-            "/payload_schema_id",
-            "/payload_schema_digest",
+            "/payload_type_id",
+            "/payload_contract_resolution_status",
+            "/payload_contract_digest",
+            "/event_contract_authority_status",
             "/stream",
             "/mission_scope",
             "/aggregate",
@@ -11733,6 +11784,80 @@
         }
       }
     },
+    "protocol_snapshot_reference": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/schema_bound_record_reference"
+        },
+        {
+          "properties": {
+            "schema_id": {
+              "const": "urn:odeya:schema:protocol-snapshot:0.1.0"
+            }
+          },
+          "required": [
+            "schema_id"
+          ]
+        }
+      ]
+    },
+    "protocol_frozen_origin_payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "axis",
+        "prior_canonical_protocol_ref",
+        "origin_from_aggregate_absence",
+        "first_materialized_version",
+        "frozen_protocol_snapshot_ref",
+        "source_draft_evidence_ref",
+        "validation_evidence_refs",
+        "exposure_history_digest",
+        "integrity_rule_ref",
+        "grant_commit_binding",
+        "reason_code"
+      ],
+      "properties": {
+        "axis": {
+          "const": "protocol_seal"
+        },
+        "prior_canonical_protocol_ref": {
+          "type": "null"
+        },
+        "origin_from_aggregate_absence": {
+          "const": true
+        },
+        "first_materialized_version": {
+          "const": 1
+        },
+        "frozen_protocol_snapshot_ref": {
+          "$ref": "#/$defs/protocol_snapshot_reference"
+        },
+        "source_draft_evidence_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        },
+        "validation_evidence_refs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/artifact_reference"
+          }
+        },
+        "exposure_history_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "integrity_rule_ref": {
+          "$ref": "#/$defs/versioned_identity"
+        },
+        "grant_commit_binding": {
+          "$ref": "#/$defs/protocol_grant_commit_binding"
+        },
+        "reason_code": {
+          "$ref": "#/$defs/identifier"
+        }
+      }
+    },
     "protocol_integrity_payload": {
       "type": "object",
       "additionalProperties": false,
@@ -12989,6 +13114,91 @@
         }
       }
     },
+    "protocol_grant_commit_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "role_slot",
+        "grant_id",
+        "grant_use_event_ref",
+        "grant_exhaustion_event_ref",
+        "integrity_event_ref",
+        "consumption_point",
+        "max_uses",
+        "batch_order"
+      ],
+      "properties": {
+        "role_slot": {
+          "const": "protocol"
+        },
+        "grant_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "grant_use_event_ref": {
+          "$ref": "#/$defs/identifier"
+        },
+        "grant_exhaustion_event_ref": {
+          "$ref": "#/$defs/identifier"
+        },
+        "integrity_event_ref": {
+          "$ref": "#/$defs/identifier"
+        },
+        "consumption_point": {
+          "const": "domain_commit"
+        },
+        "max_uses": {
+          "const": 1
+        },
+        "batch_order": {
+          "const": [
+            "authority.grant_used(protocol)",
+            "protocol.frozen",
+            "protocol.integrity_determined",
+            "authority.grant_exhausted(protocol)"
+          ]
+        }
+      }
+    },
+    "data_rights_grant_commit_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "role_slot",
+        "grant_id",
+        "grant_use_event_ref",
+        "grant_exhaustion_event_ref",
+        "consumption_point",
+        "max_uses",
+        "batch_order"
+      ],
+      "properties": {
+        "role_slot": {
+          "const": "data_rights"
+        },
+        "grant_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "grant_use_event_ref": {
+          "$ref": "#/$defs/identifier"
+        },
+        "grant_exhaustion_event_ref": {
+          "$ref": "#/$defs/identifier"
+        },
+        "consumption_point": {
+          "const": "domain_commit"
+        },
+        "max_uses": {
+          "const": 1
+        },
+        "batch_order": {
+          "const": [
+            "authority.grant_used(data_rights)",
+            "data_use.decided",
+            "authority.grant_exhausted(data_rights)"
+          ]
+        }
+      }
+    },
     "grant_use_reservation_payload": {
       "type": "object",
       "additionalProperties": false,
@@ -14131,7 +14341,7 @@
           "minimum": 1
         },
         "schema_id": {
-          "const": "urn:odeya:schema:admission-evidence-bundle:0.1.0"
+          "const": "urn:odeya:schema:admission-evidence-bundle:0.2.0"
         },
         "digest": {
           "$ref": "#/$defs/digest"
@@ -14156,7 +14366,7 @@
           "minimum": 1
         },
         "schema_id": {
-          "const": "urn:odeya:schema:policy-decision:0.1.0"
+          "const": "urn:odeya:schema:policy-decision:0.2.0"
         },
         "digest": {
           "$ref": "#/$defs/digest"
@@ -14217,7 +14427,7 @@
         {
           "properties": {
             "schema_id": {
-              "const": "urn:odeya:schema:work-contract:0.1.0"
+              "const": "urn:odeya:schema:work-contract:0.2.0"
             }
           },
           "required": [
@@ -14648,6 +14858,9 @@
           },
           "uniqueItems": true,
           "minItems": 1
+        },
+        "grant_commit_binding": {
+          "$ref": "#/$defs/data_rights_grant_commit_binding"
         }
       },
       "allOf": [

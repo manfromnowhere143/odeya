@@ -15,9 +15,14 @@ Every fixture is synthetic and explicitly `proposed_non_authoritative`,
 `derived_non_authoritative`, `deterministic_control_artifact`, or
 `untrusted_candidate`. The model-configuration fixture is an
 `immutable_non_authoritative_observation`; the routing fixture is a
-`derived_non_authoritative_determination`. The `WorkContract` fixture is the deterministic control
-artifact: it binds an exact canonical lease record, issuance event, reducer
-frontier, and already-issued constraints but is never dispatch authority.
+`derived_non_authoritative_determination`. The `WorkIntent` fixture is a
+prospective, non-authoritative, non-assignable planning candidate with no lease,
+grant, reservation, materialization, dispatch, or spend authority. The
+`WorkContract` fixture is not a constructed contract: it is an explicitly
+blocked 0.2 candidate with null canonical identity and no current assignment
+facts. A future reissued WorkContract may be derived only after an exact
+canonical WorkIntent and one admitted atomic assignment cohort exist, and it
+still will not be dispatch authority.
 Fixture digests, identities, grants, receipts, reviews, experiments, evidence,
 verifications, and adjudications are placeholders, not claims that those
 activities occurred.
@@ -39,15 +44,17 @@ construction order is:
    record whose construction and digest scope are separately defined.
 
 The same external-binding rule applies to every proposed or derived subject in
-this package, including a `WorkContract`. Adding an enclosing
+this package, including a `WorkIntent` and a future constructible
+`WorkContract`. Adding an enclosing
 `canonical_payload_digest`, self-reference, or mutual content-digest cycle is a
 schema error.
 
 A receipt is an observation, not an optimistic success certificate. Failed,
 indeterminate, and not-run compilations remain retainable audit records. Only a
 receipt whose compilation result, replay, coverage, contamination, clean-room,
-negative-flow, and budget checks all pass is eligible for a `WorkContract`
-state-compilation bundle.
+negative-flow, and budget checks all pass may be named prospectively by a
+`WorkIntent` and later included in the atomic assignment cohort from which a
+future WorkContract is derived.
 
 ## Logical ownership only
 

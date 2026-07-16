@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import subprocess
 import sys
 from pathlib import Path
 
@@ -27,6 +28,27 @@ PURE_FORBIDDEN = {
     "secret_store",
     "external_dispatch",
 }
+EXPECTED_MANIFEST_VERSION = 2
+PREDECESSOR_SOURCE_CHECKPOINT = "f4429ce5ca71e58ebb5d65776a45ebb6a2a18889"
+PREDECESSOR_PATH = "architecture/module-dependency-manifest.json"
+PREDECESSOR_GIT_BLOB = "c8647fab17deda16f369a09f8c0941ffb64d6388"
+PREDECESSOR_RAW_SHA256 = (
+    "18132d94d4f9579f11ca7d5a373fa8d60bbcadafbcf8ef062a5f6cfe516e8fb4"
+)
+PREDECESSOR_BYTE_COUNT = 53857
+PREDECESSOR_MANIFEST_VERSION = 1
+PREDECESSOR_MANIFEST_DIGEST = (
+    "sha256:989e430897841551c8ddbb09cbaac94bb780a02936538122ed244b269b831b11"
+)
+EXPECTED_PREDECESSOR_IDENTITY = (
+    f"predecessor_identity:source_checkpoint={PREDECESSOR_SOURCE_CHECKPOINT};"
+    f"git_blob=sha1:{PREDECESSOR_GIT_BLOB};"
+    f"raw_sha256={PREDECESSOR_RAW_SHA256};"
+    f"byte_count={PREDECESSOR_BYTE_COUNT};"
+    f"manifest_version={PREDECESSOR_MANIFEST_VERSION};"
+    f"manifest_digest={PREDECESSOR_MANIFEST_DIGEST};"
+    "retention=historical_git_blob_architecture_only_not_registry_admitted"
+)
 
 
 class DuplicateKeyError(ValueError):
@@ -77,6 +99,79 @@ def exact_safe_jcs_bytes(value: object) -> bytes:
     ).encode("utf-8")
 
 
+def git_bytes(*args: str) -> bytes:
+    result = subprocess.run(
+        ["git", *args],
+        cwd=ROOT,
+        check=False,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+    if result.returncode != 0:
+        stderr = result.stderr.decode("utf-8", errors="replace").strip()
+        raise ValueError(f"git {' '.join(args)} failed: {stderr}")
+    return result.stdout
+
+
+def validate_predecessor_identity(errors: list[str]) -> None:
+    """Recompute the v1 lineage claim from the exact historical Git object."""
+
+    try:
+        git_bytes(
+            "merge-base",
+            "--is-ancestor",
+            PREDECESSOR_SOURCE_CHECKPOINT,
+            "HEAD",
+        )
+        resolved_commit = git_bytes(
+            "rev-parse", "--verify", f"{PREDECESSOR_SOURCE_CHECKPOINT}^{{commit}}"
+        ).decode("ascii").strip()
+        if resolved_commit != PREDECESSOR_SOURCE_CHECKPOINT:
+            errors.append("module manifest predecessor commit identity drifted")
+
+        resolved_blob = git_bytes(
+            "rev-parse",
+            "--verify",
+            f"{PREDECESSOR_SOURCE_CHECKPOINT}:{PREDECESSOR_PATH}",
+        ).decode("ascii").strip()
+        if resolved_blob != PREDECESSOR_GIT_BLOB:
+            errors.append(
+                "module manifest predecessor path does not resolve to the declared blob"
+            )
+
+        object_type = git_bytes("cat-file", "-t", PREDECESSOR_GIT_BLOB).decode(
+            "ascii"
+        ).strip()
+        if object_type != "blob":
+            errors.append("module manifest predecessor object is not a Git blob")
+            return
+        raw = git_bytes("cat-file", "blob", PREDECESSOR_GIT_BLOB)
+        if len(raw) != PREDECESSOR_BYTE_COUNT:
+            errors.append("module manifest predecessor byte count drifted")
+        if hashlib.sha256(raw).hexdigest() != PREDECESSOR_RAW_SHA256:
+            errors.append("module manifest predecessor raw SHA-256 drifted")
+
+        predecessor = json.loads(
+            raw.decode("utf-8"), object_pairs_hook=reject_duplicates
+        )
+        if not isinstance(predecessor, dict):
+            errors.append("module manifest predecessor root is not an object")
+            return
+        if predecessor.get("version") != PREDECESSOR_MANIFEST_VERSION:
+            errors.append("module manifest predecessor version drifted")
+        if predecessor.get("manifest_digest") != PREDECESSOR_MANIFEST_DIGEST:
+            errors.append("module manifest predecessor declared digest drifted")
+        digest_view = dict(predecessor)
+        digest_view.pop("manifest_digest", None)
+        calculated_digest = (
+            "sha256:" + hashlib.sha256(exact_safe_jcs_bytes(digest_view)).hexdigest()
+        )
+        if calculated_digest != PREDECESSOR_MANIFEST_DIGEST:
+            errors.append("module manifest predecessor digest does not verify")
+    except (UnicodeDecodeError, json.JSONDecodeError, DuplicateKeyError, ValueError) as exc:
+        errors.append(f"module manifest predecessor lineage is not replayable: {exc}")
+
+
 def collect_discriminator_aggregates(
     node: object,
     discriminator: str,
@@ -111,6 +206,15 @@ def collect_discriminator_aggregates(
 def validate() -> tuple[list[str], dict[str, int]]:
     errors: list[str] = []
     manifest = load(MANIFEST_PATH)
+
+    if manifest.get("version") != EXPECTED_MANIFEST_VERSION:
+        errors.append(
+            f"module manifest must be reissued as version {EXPECTED_MANIFEST_VERSION}"
+        )
+    known_limitations = manifest.get("known_limitations", [])
+    if EXPECTED_PREDECESSOR_IDENTITY not in known_limitations:
+        errors.append("module manifest is missing the exact version-1 predecessor identity")
+    validate_predecessor_identity(errors)
 
     layers = manifest.get("layers", [])
     layer_map = {

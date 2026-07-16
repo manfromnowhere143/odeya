@@ -1,6 +1,10 @@
 # Command Contract Registry
 
-Status: proposed Gate A contract, 2026-07-15, governed by [ADR 0013](decisions/0013-admitted-only-command-ingress.md). The current envelope/receipt schemas are structurally present, but the envelope still exposes 121 command discriminators while only thirteen separate closed payload-schema candidates exist: `external_effect.authorize`, `external_effect.start`, `external_effect.cancel`, plus ten high-consequence data-governance/recovery commands. No immutable machine command registry is enrolled. The 121-discriminator file is therefore an architecture/red-team candidate that must be regenerated as an admitted-only surface; it does not claim A-002 closure or authorize handlers.
+Status: proposed Gate A contract, 2026-07-16, governed by [ADR 0013](decisions/0013-admitted-only-command-ingress.md) and [ADR 0016](decisions/0016-separate-work-intent-from-assigned-work-contract.md). `CommandContractRecord` 0.1, `CommandContractRegistry` 0.2, `CommandEnvelope` 0.5, `CommandReceipt` 0.4, `PolicyDecision` 0.2, and `AdmissionEvidenceBundle` 0.2 are closed structural candidates only. Every current candidate declares unresolved identity, non-admission, and—where it could otherwise look executable—blocked construction. Record and registry digests are null; the non-null values in envelope/receipt/policy/bundle fixtures are synthetic equality probes, not membership, activation, admission, or settlement evidence. No immutable machine command registry is enrolled. A future resource reissue is required after exact canonical record/registry identities and proofs exist. The envelope still exposes 121 command discriminators while only thirteen separate closed payload-schema candidates exist; it remains architecture/red-team evidence and authorizes no handler.
+
+The normative flow below describes the future admitted system. It must not be
+read as a claim that the current structural candidates have reached any step in
+that flow.
 
 ## Separation of concerns
 
@@ -54,7 +58,17 @@ positive, negative, stale, authority, race, and replay trace IDs
 owner, review, effective/expiry/supersession evidence
 ```
 
-The admitted registry snapshot is canonicalized and sealed as one ordered set. It is the source set for generated envelope discriminator branches. Command admission binds the exact record and snapshot digest. `latest` resolution is forbidden. `CommandEnvelope` 0.4.0 and `CommandReceipt` 0.3.0 structurally require three distinct references: the immutable snapshot, the immutable member record, and a separate activation record/proof. Envelope authority fields are only typed `presented_authority_hints` with `trust_level=untrusted_resolve_only`; they cannot carry a caller-selected mode, derivation rule, PolicyDecision, or authorization verdict. The kernel derives the applicable authority basis from the exact contract record and current canonical state.
+The standalone 0.1 record candidate separates six identity axes:
+`payload_type_id`, root schema resource ID, dialect, retained source-blob
+identity, canonical identity/profile, and transitive closure identity. These
+axes are independent; command version, logical payload version, and schema
+resource version are never inferred from one another. Validation is restricted
+to an explicitly preloaded exact-resource registry with network access disabled,
+unresolved references rejected before the decider, and reference cycles
+forbidden. The current fixture deliberately leaves blob, canonical, closure,
+and record digests unresolved and is not a registry member for admission.
+
+The future admitted registry snapshot is canonicalized and sealed as one ordered set. It is the source set for generated envelope discriminator branches. Command admission binds the exact record and snapshot digest. `latest` resolution is forbidden. `CommandEnvelope` 0.5.0 and `CommandReceipt` 0.4.0 structurally require three distinct references: the immutable `CommandContractRegistry` subject, the immutable standalone member record, and a separate activation record/proof. The record does not embed its parent registry, membership proof, activation proof, or generated envelope identity; those bindings remain external so the content graph is acyclic. Envelope authority fields are only typed `presented_authority_hints` with `trust_level=untrusted_resolve_only`; they cannot carry a caller-selected mode, derivation rule, PolicyDecision, or authorization verdict. The kernel derives the applicable authority basis from the exact contract record and current canonical state.
 
 The separation is constitutional and non-circular:
 
@@ -67,7 +81,7 @@ Genesis uses a separately reviewed constitutional-bootstrap activation proof and
 
 Request, result, and receipt identities use exact domain-separated digest contracts with explicit JSON-Pointer inclusion/exclusion sets. Each digest excludes itself and each signature is an external attestation. The current schemas constrain those shapes but do not recompute bytes, verify signatures, resolve registry membership, or prove that the profile/schema digest is the accepted one.
 
-Every admitted CommandContractRecord also selects an exact AdmissionEvidenceProfile. That profile closes the required stage and evidence families by command/result: payload and reference validation, PolicyDecision, semantic-rule results, rights/data, authority/grant, resource/verification-capacity, risk, transition, and effect admission. A pure immutable [`AdmissionEvidenceBundle`](../schemas/admission-evidence-bundle.schema.json) indexes the exact records, controlled-time/reference frontier, and explicit `not_run_due_to_prior_failure` stages. The [`PolicyDecision`](../schemas/policy-decision.schema.json) is generated by the admission kernel over exact retained policy input/bundle/rule/engine/frontier bytes; it is a filter only, never an assignment or grant. Receipts bind the bundle and the important typed records. Mutable state snapshots and caller-supplied policy-decision IDs are forbidden.
+Every future admitted CommandContractRecord also selects an exact AdmissionEvidenceProfile. That profile closes the required stage and evidence families by command/result: payload and reference validation, PolicyDecision, semantic-rule results, rights/data, authority/grant, resource/verification-capacity, risk, transition, and effect admission. A future admitted [`AdmissionEvidenceBundle`](../schemas/admission-evidence-bundle.schema.json) indexes the exact records, controlled-time/reference frontier, and explicit `not_run_due_to_prior_failure` stages. The [`PolicyDecision`](../schemas/policy-decision.schema.json) is a future admission-kernel result over exact retained policy input/bundle/rule/engine/frontier bytes; it is a filter only, never an assignment or grant. Their current 0.2 fixtures are structural and non-authoritative. Mutable state snapshots and caller-supplied policy-decision IDs are forbidden.
 
 The CommandReceipt boundary starts after exact member resolution. Unknown/unadmitted commands, malformed ingress, invalid membership, and changed-digest ID reuse are pre-receipt refusals because no truthful new member-bound receipt can exist. A `schema_unresolvable` receipt requires a resolved member and exact schema identity/digest whose bytes were unavailable; `schema_invalid` requires those bytes to have resolved and rejected the payload.
 
@@ -163,7 +177,7 @@ Grant reservation/use/release and all resource-reservation lifecycle facts are a
 
 ## Initial closure scope and priority
 
-A-002 may close only for one explicitly named, dependency-closed Gate A admitted set. [The resolved first-slice candidate](FIRST_SLICE_ADMISSION_RESOLUTION_2026-07-16.md) now names the exact representational dependency set: 43 required commands, 60 event types, 25 aggregate/reducer families, 11 owner modules, and one separately admitted P0 prerequisite. Those counts are not registry admission: 42 payload contracts, all 43 command members, all 60 event members, all 25 state/reducer members, and the real root/checkpoint/P0/activation chain remain missing. Every required command needs complete record and exact payload bytes, while all 78 outside commands remain non-executable design vocabulary. Expanding the set requires a new prospective registry/root activation.
+A-002 may close only for one explicitly named, dependency-closed Gate A admitted set. [The bounded first-slice scope candidate](FIRST_SLICE_ADMISSION_RESOLUTION_2026-07-16.md) names the exact representational dependency set: 43 required commands, 60 event types, 25 aggregate/reducer families, 11 owner modules, and one P0 prerequisite that must be admitted separately. Those counts are not registry admission: C5/PRQ-009, 42 payload contracts, all 43 command members, all 60 event members, all 25 state/reducer members, and the real root/checkpoint/P0/activation chain remain blocked or missing. Every required command needs a complete record and exact payload bytes, while all 78 outside commands remain non-executable design vocabulary. Expanding the set requires a new prospective registry/root activation.
 
 Payload schema work proceeds by constitutional consequence, not UI order:
 

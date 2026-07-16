@@ -1,0 +1,169 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:odeya:architecture-schema:constitutional-construction-order:0.1.0",
+  "title": "Odeya Constitutional Core-Evidence-Seal Construction Order",
+  "description": "Architecture-only prospective replacement/integration contract freezing a nonrecursive order for future constitutional identity schemas. The named 0.1 source candidates do not yet implement or conform to this two-digest profile; assigning replacement schema identities and migrating the transitive consumer graph remain blocking. Conformance is not subject admission, P0 admission, RegistryActivation, Gate A acceptance, or runtime authority.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "contract_id",
+    "status",
+    "authority_disposition",
+    "unresolved_profile_prerequisites",
+    "phase_order",
+    "invariants",
+    "family_profiles"
+  ],
+  "properties": {
+    "schema_version": { "const": "0.1.0" },
+    "contract_id": { "const": "odeya.constitutional-core-evidence-seal-order" },
+    "status": { "const": "prospective_architecture_contract" },
+    "authority_disposition": { "const": "none" },
+    "unresolved_profile_prerequisites": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "canonicalization_profile_frozen",
+        "digest_input_framing_frozen",
+        "replacement_digest_contract_shapes_frozen",
+        "disposition"
+      ],
+      "properties": {
+        "canonicalization_profile_frozen": { "const": false },
+        "digest_input_framing_frozen": { "const": false },
+        "replacement_digest_contract_shapes_frozen": { "const": false },
+        "disposition": { "const": "blocking_no_constitutional_digest_may_be_constructed" }
+      }
+    },
+    "phase_order": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 6,
+      "prefixItems": [
+        { "const": "canonicalize_core_projection" },
+        { "const": "compute_core_digest" },
+        { "const": "produce_evidence_over_core_digest" },
+        { "const": "assemble_seal_subject_from_unchanged_core_and_ordered_evidence_refs" },
+        { "const": "compute_seal_digest" },
+        { "const": "produce_external_attestations_over_seal_digest" }
+      ],
+      "items": false
+    },
+    "invariants": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "core_excludes_evidence_references",
+        "core_excludes_digest_contract_and_subject_digest",
+        "core_excludes_external_attestations",
+        "evidence_binds_only_the_core_digest",
+        "seal_binds_unchanged_core_and_ordered_evidence_references",
+        "external_attestations_bind_only_the_seal_digest",
+        "external_attestations_are_excluded_from_the_seal_digest",
+        "child_core_excludes_parent_wrapper_identity",
+        "p0_is_activation_independent"
+      ],
+      "properties": {
+        "core_excludes_evidence_references": { "const": true },
+        "core_excludes_digest_contract_and_subject_digest": { "const": true },
+        "core_excludes_external_attestations": { "const": true },
+        "evidence_binds_only_the_core_digest": { "const": true },
+        "seal_binds_unchanged_core_and_ordered_evidence_references": { "const": true },
+        "external_attestations_bind_only_the_seal_digest": { "const": true },
+        "external_attestations_are_excluded_from_the_seal_digest": { "const": true },
+        "child_core_excludes_parent_wrapper_identity": { "const": true },
+        "p0_is_activation_independent": { "const": true }
+      }
+    },
+    "family_profiles": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "engine_contract_root",
+        "c0_registry_bundle",
+        "ledger_checkpoint",
+        "p0_constitutional_recovery_admission",
+        "registry_activation"
+      ],
+      "properties": {
+        "engine_contract_root": { "$ref": "#/$defs/family_profile" },
+        "c0_registry_bundle": { "$ref": "#/$defs/family_profile" },
+        "ledger_checkpoint": { "$ref": "#/$defs/family_profile" },
+        "p0_constitutional_recovery_admission": { "$ref": "#/$defs/family_profile" },
+        "registry_activation": { "$ref": "#/$defs/family_profile" }
+      }
+    }
+  },
+  "$defs": {
+    "json_pointer": {
+      "type": "string",
+      "pattern": "^/",
+      "minLength": 2,
+      "maxLength": 255
+    },
+    "family_profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_candidate_schema_id",
+        "replacement_schema_id_status",
+        "existing_schema_bytes_conform",
+        "integration_disposition",
+        "reserved_core_digest_domain_separator",
+        "reserved_seal_digest_domain_separator",
+        "core_projection_excluded_json_pointers",
+        "evidence_reference_json_pointers",
+        "seal_digest_json_pointer",
+        "external_attestation_json_pointers",
+        "forbidden_parent_json_pointers",
+        "evidence_binding_target",
+        "external_attestation_binding_target",
+        "seal_uses_unchanged_core_projection",
+        "construction_status"
+      ],
+      "properties": {
+        "source_candidate_schema_id": { "type": "string", "format": "uri" },
+        "replacement_schema_id_status": { "const": "not_assigned" },
+        "existing_schema_bytes_conform": { "const": false },
+        "integration_disposition": { "const": "blocking_transitive_version_migration_required" },
+        "reserved_core_digest_domain_separator": {
+          "type": "string",
+          "pattern": "^odeya-[a-z0-9-]+-core-v1$",
+          "maxLength": 127
+        },
+        "reserved_seal_digest_domain_separator": {
+          "type": "string",
+          "pattern": "^odeya-[a-z0-9-]+-seal-v1$",
+          "maxLength": 127
+        },
+        "core_projection_excluded_json_pointers": {
+          "type": "array",
+          "minItems": 2,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/json_pointer" }
+        },
+        "evidence_reference_json_pointers": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/json_pointer" }
+        },
+        "seal_digest_json_pointer": { "$ref": "#/$defs/json_pointer" },
+        "external_attestation_json_pointers": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/json_pointer" }
+        },
+        "forbidden_parent_json_pointers": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/json_pointer" }
+        },
+        "evidence_binding_target": { "const": "core_digest" },
+        "external_attestation_binding_target": { "const": "seal_digest" },
+        "seal_uses_unchanged_core_projection": { "const": true },
+        "construction_status": { "const": "prospective_contract_only" }
+      }
+    }
+  }
+}
