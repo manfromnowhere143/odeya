@@ -311,23 +311,28 @@ single-use at one atomic commit, and the exact five-state WorkLease vocabulary
 that is law 40 of the state model. They were blocked on absent evidence, not on
 a decision, which made them autonomous work rather than work waiting on Daniel.
 
-ADR 0026 closed that gap in dependency order. Coverage is now **46 of 71** and
-four of five auditable models are guard-complete: `authority_grant_trace` 11/11,
-`protocol_origin` 12/12, `data_use_cohort` 11/11, `work_lease_trace` 8/8. Every
-guard named by PRQ-006, PRQ-007, and PRQ-008 is proved, each by a retained trace
-breaking exactly one field of its model's safe reference and probed to isolate
-to a single error. Their closure records are corrected: a stale "blocked on
-absent evidence" would mislead as much as the original silence did.
+ADR 0026 and ADR 0028 closed that gap in dependency order. Coverage is now
+**75 of 75**: all five auditable models are guard-complete —
+`authority_grant_trace` 11/11, `protocol_origin` 12/12, `data_use_cohort` 11/11,
+`work_lease_trace` 8/8, `work_lease_record_candidate` 33/33. Every guard named by
+PRQ-006, PRQ-007, and PRQ-008 is proved. Their closure records are corrected: a
+stale "blocked on absent evidence" would mislead as much as the original silence.
 
-**25 guards remain unproved, all in `work_lease_record_candidate` (4 of 29).**
-They are the most consequential left — blocked-candidate status, fabricated
-identity, execution-authority claims, the five-role assignment order,
-reservation claim/settlement separation, and the refusal to let a lease
-transition claim ResourceLedger authority. Several are exactly the refusals that
-keep the first slice fail-closed, and none is proved. That model validates a
-retained fixture rather than a synthetic subject, so each variant must break a
-real candidate record without making it structurally invalid for an unrelated
-reason. That is the next lifecycle unit.
+ADR 0028 required widening what a known-bad case may express.
+`work_lease_record_candidate` validates a retained fixture and accepted only four
+named string mutations, so 23 of its guards were unprovable by construction — a
+closed mutation vocabulary silently bounds what evidence can exist. It now also
+accepts one bounded replace, the exact shape `identity_map_mutation` already
+uses. The denominator grew 71 to 75 because that vocabulary carries four hygiene
+guards of its own; all four are proved.
+
+**The suite is still not guard-complete: five of its six models are.**
+`identity_map_mutation_errors` remains unmeasured, because it returns refusals
+directly and delegates to `schema_contract_errors`, which branch mutation cannot
+attribute. Unmeasured is not proved and is not zero. That model and
+`schema_contract_errors` need a different method and are the next lifecycle
+unit. Coverage is also not correctness: 75 guards are exercised, none is shown
+to enforce the right rule.
 
 The measurement is retained at `architecture/lifecycle-guard-coverage.json` and
 reproduced by `scripts/audit_lifecycle_guard_coverage.py` (~90s). Do not

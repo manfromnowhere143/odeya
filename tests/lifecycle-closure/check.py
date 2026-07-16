@@ -780,6 +780,28 @@ def work_lease_record_candidate_errors(subject: dict[str, Any]) -> list[str]:
     elif mutation == "release_forgets_claimed_reservation":
         record["reservation_frontier"]["claim_state_at_transition"] = "unclaimed"
         record["reservation_frontier"]["reservation_claim_event_ref"] = None
+    elif isinstance(mutation, dict):
+        # The named mutations above are a closed vocabulary, and every guard they
+        # cannot reach was therefore unprovable by construction: ADR 0025 measured
+        # 4 of 29 proved here for exactly that reason. One bounded replace, the
+        # same shape identity_map_mutation already uses, lets a known-bad case
+        # break exactly one field of the retained fixture. It widens what a case
+        # may express; it does not weaken a guard.
+        if mutation.get("op") != "replace":
+            return ["WorkLease record mutation is not one bounded replace operation"]
+        path = mutation.get("path")
+        if not isinstance(path, list) or not path:
+            return ["WorkLease record mutation path is absent"]
+        cursor: Any = record
+        try:
+            for segment in path[:-1]:
+                cursor = cursor[segment]
+            final = path[-1]
+            if isinstance(cursor, list) and not isinstance(final, int):
+                return ["WorkLease record list mutation index is not an integer"]
+            cursor[final] = mutation.get("value")
+        except (KeyError, IndexError, TypeError):
+            return ["WorkLease record mutation path does not resolve"]
     elif mutation is not None:
         return [f"unknown WorkLease record mutation {mutation!r}"]
 
