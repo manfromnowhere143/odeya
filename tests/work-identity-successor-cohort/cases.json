@@ -1,0 +1,234 @@
+{
+  "suite_version": "0.1.0",
+  "description": "Safe and adversarial checks for the side-by-side WorkIntent 0.2, canonical WorkLease 0.2, and WorkContract 0.3 successor cohort.",
+  "cases": [
+    {
+      "name": "exact-successor-cohort-is-safe-but-unissued",
+      "kind": "safe",
+      "expected_errors": [],
+      "mutations": []
+    },
+    {
+      "name": "work-intent-rejects-canonical-digest-fabrication",
+      "kind": "adversarial",
+      "expected_errors": ["work_intent_identity_or_authority_escalated"],
+      "mutations": [{"target": "work_intent", "op": "replace", "path": "/canonical_digest", "value": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}]
+    },
+    {
+      "name": "work-intent-rejects-profile-alias",
+      "kind": "adversarial",
+      "expected_errors": ["work_intent_identity_or_authority_escalated"],
+      "mutations": [{"target": "work_intent", "op": "replace", "path": "/canonicalization_profile_ref/profile_id", "value": "urn:odeya:canonicalization:latest"}]
+    },
+    {
+      "name": "work-intent-rejects-core-semantic-mutation",
+      "kind": "adversarial",
+      "expected_errors": ["work_intent_core_projection_mismatch", "candidate_raw_binding_mismatch"],
+      "mutations": [{"target": "work_intent", "op": "replace", "path": "/identity_subject/semantic_core/objective", "value": "Unreviewed changed objective."}]
+    },
+    {
+      "name": "work-intent-rejects-source-reference-id-mismatch",
+      "kind": "adversarial",
+      "expected_errors": ["work_intent_reference_binding_mismatch"],
+      "mutations": [{"target": "work_intent", "op": "replace", "path": "/identity_subject/nested_reference_bindings/0/legacy_reference_id", "value": "research-state-view.substituted"}]
+    },
+    {
+      "name": "work-intent-rejects-planning-reference-digest-mismatch",
+      "kind": "adversarial",
+      "expected_errors": ["work_intent_reference_binding_mismatch"],
+      "mutations": [{"target": "work_intent", "op": "replace", "path": "/identity_subject/nested_reference_bindings/1/legacy_reference_digest", "value": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"}]
+    },
+    {
+      "name": "work-intent-rejects-target-schema-digest-substitution",
+      "kind": "adversarial",
+      "expected_errors": ["work_intent_reference_binding_mismatch"],
+      "mutations": [{"target": "work_intent", "op": "replace", "path": "/identity_subject/nested_reference_bindings/0/target_schema_raw_digest", "value": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"}]
+    },
+    {
+      "name": "work-intent-cannot-hide-output-schema-mismatch",
+      "kind": "adversarial",
+      "expected_errors": ["output_schema_mismatch_status_escalated"],
+      "mutations": [{"target": "work_intent", "op": "replace", "path": "/identity_subject/nested_reference_bindings/2/reference_identity_status", "value": "admitted"}]
+    },
+    {
+      "name": "work-intent-cannot-claim-assignable",
+      "kind": "adversarial",
+      "expected_errors": ["work_intent_identity_or_authority_escalated"],
+      "mutations": [{"target": "work_intent", "op": "replace", "path": "/authority_boundary/work_intent_assignable", "value": true}]
+    },
+    {
+      "name": "work-lease-rejects-canonical-digest-fabrication",
+      "kind": "adversarial",
+      "expected_errors": ["work_lease_identity_or_authority_escalated"],
+      "mutations": [{"target": "work_lease", "op": "replace", "path": "/canonical_digest", "value": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"}]
+    },
+    {
+      "name": "work-lease-rejects-predecessor-subject-mutation",
+      "kind": "adversarial",
+      "expected_errors": ["work_lease_predecessor_projection_mismatch", "candidate_raw_binding_mismatch"],
+      "mutations": [{"target": "work_lease", "op": "replace", "path": "/identity_subject/lease_record/lease_id", "value": "lease.substituted"}]
+    },
+    {
+      "name": "work-lease-rejects-successor-object-id-mismatch",
+      "kind": "adversarial",
+      "expected_errors": ["work_lease_successor_binding_mismatch"],
+      "mutations": [{"target": "work_lease", "op": "replace", "path": "/identity_subject/work_intent_successor_binding/legacy_object_id", "value": "work-intent.substituted"}]
+    },
+    {
+      "name": "work-lease-rejects-successor-schema-substitution",
+      "kind": "adversarial",
+      "expected_errors": ["work_lease_successor_binding_mismatch"],
+      "mutations": [{"target": "work_lease", "op": "replace", "path": "/identity_subject/work_intent_successor_binding/successor_work_intent_schema_id", "value": "urn:odeya:schema:work-intent:0.1.0"}]
+    },
+    {
+      "name": "work-lease-rejects-successor-candidate-digest-drift",
+      "kind": "adversarial",
+      "expected_errors": ["work_lease_successor_binding_mismatch"],
+      "mutations": [{"target": "work_lease", "op": "replace", "path": "/identity_subject/work_intent_successor_binding/successor_candidate_raw_digest", "value": "sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"}]
+    },
+    {
+      "name": "work-lease-cannot-claim-start-authority",
+      "kind": "adversarial",
+      "expected_errors": ["work_lease_identity_or_authority_escalated"],
+      "mutations": [{"target": "work_lease", "op": "replace", "path": "/authority_boundary/start_claim_authorized", "value": true}]
+    },
+    {
+      "name": "work-contract-rejects-canonical-digest-fabrication",
+      "kind": "adversarial",
+      "expected_errors": ["work_contract_identity_or_authority_escalated"],
+      "mutations": [{"target": "work_contract", "op": "replace", "path": "/canonical_digest", "value": "sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"}]
+    },
+    {
+      "name": "work-contract-rejects-predecessor-subject-mutation",
+      "kind": "adversarial",
+      "expected_errors": ["work_contract_predecessor_projection_mismatch", "candidate_raw_binding_mismatch"],
+      "mutations": [{"target": "work_contract", "op": "replace", "path": "/identity_subject/work_contract_candidate/work_contract_candidate_id", "value": "work-contract.substituted"}]
+    },
+    {
+      "name": "work-contract-rejects-successor-object-id-mismatch",
+      "kind": "adversarial",
+      "expected_errors": ["work_contract_successor_binding_mismatch"],
+      "mutations": [{"target": "work_contract", "op": "replace", "path": "/identity_subject/work_intent_successor_binding/legacy_object_id", "value": "work-intent.substituted"}]
+    },
+    {
+      "name": "work-contract-rejects-successor-schema-digest-drift",
+      "kind": "adversarial",
+      "expected_errors": ["work_contract_successor_binding_mismatch"],
+      "mutations": [{"target": "work_contract", "op": "replace", "path": "/identity_subject/work_intent_successor_binding/successor_work_intent_schema_raw_digest", "value": "sha256:0101010101010101010101010101010101010101010101010101010101010101"}]
+    },
+    {
+      "name": "work-contract-cannot-claim-constructed",
+      "kind": "adversarial",
+      "expected_errors": ["work_contract_identity_or_authority_escalated"],
+      "mutations": [{"target": "work_contract", "op": "replace", "path": "/authority_boundary/work_contract_constructed", "value": true}]
+    },
+    {
+      "name": "evidence-rejects-predecessor-commit-substitution",
+      "kind": "adversarial",
+      "expected_errors": ["predecessor_checkpoint_mismatch"],
+      "mutations": [{"target": "evidence", "op": "replace", "path": "/predecessor_checkpoint/commit", "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}]
+    },
+    {
+      "name": "evidence-cannot-deny-side-by-side-retention",
+      "kind": "adversarial",
+      "expected_errors": ["retention_boundary_escalated_or_weakened"],
+      "mutations": [{"target": "evidence", "op": "replace", "path": "/retention_boundary/predecessor_resources_retained_side_by_side", "value": false}]
+    },
+    {
+      "name": "evidence-cannot-claim-same-path-mutation",
+      "kind": "adversarial",
+      "expected_errors": ["retention_boundary_escalated_or_weakened"],
+      "mutations": [{"target": "evidence", "op": "replace", "path": "/retention_boundary/same_path_schema_mutation_used", "value": true}]
+    },
+    {
+      "name": "evidence-cannot-claim-complete-offline-registry",
+      "kind": "adversarial",
+      "expected_errors": ["retention_boundary_escalated_or_weakened"],
+      "mutations": [{"target": "evidence", "op": "replace", "path": "/retention_boundary/complete_offline_schema_registry", "value": true}]
+    },
+    {
+      "name": "evidence-rejects-missing-successor-resource",
+      "kind": "adversarial",
+      "expected_errors": ["successor_resource_inventory_mismatch"],
+      "mutations": [{"target": "evidence", "op": "remove", "path": "/successor_resources/2"}]
+    },
+    {
+      "name": "evidence-rejects-successor-resource-reorder",
+      "kind": "adversarial",
+      "expected_errors": ["successor_resource_inventory_mismatch"],
+      "mutations": [{"target": "evidence", "op": "replace", "path": "/successor_resources/0/resource_role", "value": "canonical_work_lease"}]
+    },
+    {
+      "name": "evidence-rejects-successor-raw-digest-drift",
+      "kind": "adversarial",
+      "expected_errors": ["resource_raw_binding_mismatch"],
+      "mutations": [{"target": "evidence", "op": "replace", "path": "/successor_resources/0/successor_raw_digest", "value": "sha256:0202020202020202020202020202020202020202020202020202020202020202"}]
+    },
+    {
+      "name": "evidence-rejects-mutable-successor-alias",
+      "kind": "adversarial",
+      "expected_errors": ["successor_resource_inventory_mismatch"],
+      "mutations": [{"target": "evidence", "op": "replace", "path": "/successor_resources/0/successor_schema_id", "value": "urn:odeya:schema:work-intent:latest"}]
+    },
+    {
+      "name": "evidence-rejects-missing-dependency-edge",
+      "kind": "adversarial",
+      "expected_errors": ["successor_dependency_graph_mismatch"],
+      "mutations": [{"target": "evidence", "op": "remove", "path": "/dependency_edges/2"}]
+    },
+    {
+      "name": "evidence-rejects-dependency-substitution",
+      "kind": "adversarial",
+      "expected_errors": ["successor_dependency_graph_mismatch"],
+      "mutations": [{"target": "evidence", "op": "replace", "path": "/dependency_edges/1/dependency_schema_id", "value": "urn:odeya:schema:work-intent:0.1.0"}]
+    },
+    {
+      "name": "evidence-cannot-invent-canonical-digest-issuance",
+      "kind": "adversarial",
+      "expected_errors": ["bounded_equality_claim_escalated_or_weakened"],
+      "mutations": [{"target": "evidence", "op": "replace", "path": "/bounded_equality_evidence/canonical_digest_issued", "value": true}]
+    },
+    {
+      "name": "evidence-cannot-invent-cross-record-canonical-equality",
+      "kind": "adversarial",
+      "expected_errors": ["bounded_equality_claim_escalated_or_weakened"],
+      "mutations": [{"target": "evidence", "op": "replace", "path": "/bounded_equality_evidence/cross_record_canonical_identity_equality_proven", "value": true}]
+    },
+    {
+      "name": "evidence-cannot-invent-assignment-cohort",
+      "kind": "adversarial",
+      "expected_errors": ["bounded_equality_claim_escalated_or_weakened"],
+      "mutations": [{"target": "evidence", "op": "replace", "path": "/bounded_equality_evidence/assignment_cohort_complete", "value": true}]
+    },
+    {
+      "name": "evidence-requires-all-unresolved-findings",
+      "kind": "adversarial",
+      "expected_errors": ["unresolved_finding_inventory_incomplete"],
+      "mutations": [{"target": "evidence", "op": "remove", "path": "/unresolved_findings/5"}]
+    },
+    {
+      "name": "evidence-cannot-invent-profile-issuance",
+      "kind": "adversarial",
+      "expected_errors": ["acceptance_fabricated"],
+      "mutations": [{"target": "evidence", "op": "replace", "path": "/acceptance_boundary/profile_issued", "value": true}]
+    },
+    {
+      "name": "evidence-cannot-invent-gate-a-acceptance",
+      "kind": "adversarial",
+      "expected_errors": ["acceptance_fabricated"],
+      "mutations": [{"target": "evidence", "op": "replace", "path": "/acceptance_boundary/gate_a_accepted", "value": true}]
+    },
+    {
+      "name": "evidence-cannot-invent-operator-acceptance",
+      "kind": "adversarial",
+      "expected_errors": ["acceptance_fabricated"],
+      "mutations": [{"target": "evidence", "op": "replace", "path": "/acceptance_boundary/operator_acceptance_ref", "value": "operator-decision.fabricated"}]
+    },
+    {
+      "name": "evidence-cannot-authorize-runtime",
+      "kind": "adversarial",
+      "expected_errors": ["cohort_authority_fabricated"],
+      "mutations": [{"target": "evidence", "op": "replace", "path": "/authority_boundary/runtime_authorized", "value": true}]
+    }
+  ]
+}

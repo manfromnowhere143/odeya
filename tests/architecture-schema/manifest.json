@@ -6114,6 +6114,201 @@
       "mutations": [
         {"op": "replace", "path": "/authority_boundary/runtime_authorized", "value": true}
       ]
+    },
+    {
+      "name": "work-intent-profile-bound-successor-valid-blocked-candidate",
+      "schema": "schemas/work-intent-profile-bound-candidate.schema.json",
+      "fixture": "architecture/work-intent-profile-bound-candidate.json",
+      "expect": "valid"
+    },
+    {
+      "name": "work-intent-profile-bound-successor-rejects-canonical-digest",
+      "schema": "schemas/work-intent-profile-bound-candidate.schema.json",
+      "fixture": "architecture/work-intent-profile-bound-candidate.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/canonical_digest", "value": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}
+      ]
+    },
+    {
+      "name": "work-intent-profile-bound-successor-rejects-profile-alias",
+      "schema": "schemas/work-intent-profile-bound-candidate.schema.json",
+      "fixture": "architecture/work-intent-profile-bound-candidate.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/canonicalization_profile_ref/profile_id", "value": "urn:odeya:canonicalization:latest"}
+      ]
+    },
+    {
+      "name": "work-intent-profile-bound-successor-rejects-target-schema-drift",
+      "schema": "schemas/work-intent-profile-bound-candidate.schema.json",
+      "fixture": "architecture/work-intent-profile-bound-candidate.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/identity_subject/nested_reference_bindings/0/target_schema_raw_digest", "value": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"}
+      ]
+    },
+    {
+      "name": "work-intent-profile-bound-successor-cannot-claim-assignable",
+      "schema": "schemas/work-intent-profile-bound-candidate.schema.json",
+      "fixture": "architecture/work-intent-profile-bound-candidate.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/authority_boundary/work_intent_assignable", "value": true}
+      ]
+    },
+    {
+      "name": "canonical-work-lease-profile-bound-successor-valid-blocked-candidate",
+      "schema": "schemas/canonical-work-lease-profile-bound-candidate.schema.json",
+      "fixture": "architecture/canonical-work-lease-profile-bound-candidate.json",
+      "expect": "valid"
+    },
+    {
+      "name": "canonical-work-lease-profile-bound-successor-rejects-canonical-digest",
+      "schema": "schemas/canonical-work-lease-profile-bound-candidate.schema.json",
+      "fixture": "architecture/canonical-work-lease-profile-bound-candidate.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/canonical_digest", "value": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"}
+      ]
+    },
+    {
+      "name": "canonical-work-lease-profile-bound-successor-rejects-work-intent-substitution",
+      "schema": "schemas/canonical-work-lease-profile-bound-candidate.schema.json",
+      "fixture": "architecture/canonical-work-lease-profile-bound-candidate.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/identity_subject/work_intent_successor_binding/successor_work_intent_schema_id", "value": "urn:odeya:schema:work-intent:0.1.0"}
+      ]
+    },
+    {
+      "name": "canonical-work-lease-profile-bound-successor-cannot-authorize-start",
+      "schema": "schemas/canonical-work-lease-profile-bound-candidate.schema.json",
+      "fixture": "architecture/canonical-work-lease-profile-bound-candidate.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/authority_boundary/start_claim_authorized", "value": true}
+      ]
+    },
+    {
+      "name": "work-contract-profile-bound-successor-valid-blocked-candidate",
+      "schema": "schemas/work-contract-profile-bound-candidate.schema.json",
+      "fixture": "architecture/work-contract-profile-bound-candidate.json",
+      "expect": "valid"
+    },
+    {
+      "name": "work-contract-profile-bound-successor-rejects-canonical-digest",
+      "schema": "schemas/work-contract-profile-bound-candidate.schema.json",
+      "fixture": "architecture/work-contract-profile-bound-candidate.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/canonical_digest", "value": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"}
+      ]
+    },
+    {
+      "name": "work-contract-profile-bound-successor-rejects-work-intent-substitution",
+      "schema": "schemas/work-contract-profile-bound-candidate.schema.json",
+      "fixture": "architecture/work-contract-profile-bound-candidate.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/identity_subject/work_intent_successor_binding/successor_work_intent_schema_id", "value": "urn:odeya:schema:work-intent:0.1.0"}
+      ]
+    },
+    {
+      "name": "work-contract-profile-bound-successor-cannot-claim-constructed",
+      "schema": "schemas/work-contract-profile-bound-candidate.schema.json",
+      "fixture": "architecture/work-contract-profile-bound-candidate.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/authority_boundary/work_contract_constructed", "value": true}
+      ]
+    },
+    {
+      "name": "work-identity-successor-cohort-evidence-valid-blocked-candidate",
+      "schema": "schemas/work-identity-successor-cohort-evidence.schema.json",
+      "fixture": "architecture/work-identity-successor-cohort-evidence.json",
+      "expect": "valid"
+    },
+    {
+      "name": "work-identity-successor-cohort-evidence-rejects-status-escalation",
+      "schema": "schemas/work-identity-successor-cohort-evidence.schema.json",
+      "fixture": "architecture/work-identity-successor-cohort-evidence.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/candidate_status", "value": "accepted"}
+      ]
+    },
+    {
+      "name": "work-identity-successor-cohort-evidence-requires-all-successors",
+      "schema": "schemas/work-identity-successor-cohort-evidence.schema.json",
+      "fixture": "architecture/work-identity-successor-cohort-evidence.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "remove", "path": "/successor_resources/2"}
+      ]
+    },
+    {
+      "name": "work-identity-successor-cohort-evidence-rejects-successor-hash-drift",
+      "schema": "schemas/work-identity-successor-cohort-evidence.schema.json",
+      "fixture": "architecture/work-identity-successor-cohort-evidence.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/successor_resources/0/successor_raw_digest", "value": "sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"}
+      ]
+    },
+    {
+      "name": "work-identity-successor-cohort-evidence-rejects-same-path-mutation-claim",
+      "schema": "schemas/work-identity-successor-cohort-evidence.schema.json",
+      "fixture": "architecture/work-identity-successor-cohort-evidence.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/retention_boundary/same_path_schema_mutation_used", "value": true}
+      ]
+    },
+    {
+      "name": "work-identity-successor-cohort-evidence-cannot-invent-complete-registry",
+      "schema": "schemas/work-identity-successor-cohort-evidence.schema.json",
+      "fixture": "architecture/work-identity-successor-cohort-evidence.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/retention_boundary/complete_offline_schema_registry", "value": true}
+      ]
+    },
+    {
+      "name": "work-identity-successor-cohort-evidence-cannot-invent-canonical-digest",
+      "schema": "schemas/work-identity-successor-cohort-evidence.schema.json",
+      "fixture": "architecture/work-identity-successor-cohort-evidence.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/bounded_equality_evidence/canonical_digest_issued", "value": true}
+      ]
+    },
+    {
+      "name": "work-identity-successor-cohort-evidence-cannot-invent-profile-issuance",
+      "schema": "schemas/work-identity-successor-cohort-evidence.schema.json",
+      "fixture": "architecture/work-identity-successor-cohort-evidence.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/acceptance_boundary/profile_issued", "value": true}
+      ]
+    },
+    {
+      "name": "work-identity-successor-cohort-evidence-cannot-accept-gate-a",
+      "schema": "schemas/work-identity-successor-cohort-evidence.schema.json",
+      "fixture": "architecture/work-identity-successor-cohort-evidence.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/acceptance_boundary/gate_a_accepted", "value": true}
+      ]
+    },
+    {
+      "name": "work-identity-successor-cohort-evidence-cannot-authorize-runtime",
+      "schema": "schemas/work-identity-successor-cohort-evidence.schema.json",
+      "fixture": "architecture/work-identity-successor-cohort-evidence.json",
+      "expect": "invalid",
+      "mutations": [
+        {"op": "replace", "path": "/authority_boundary/runtime_authorized", "value": true}
+      ]
     }
   ]
 }

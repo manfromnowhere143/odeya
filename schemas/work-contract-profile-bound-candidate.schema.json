@@ -1,0 +1,260 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:odeya:schema:work-contract:0.3.0",
+  "title": "Odeya Profile-Bound WorkContract Successor Candidate",
+  "description": "Side-by-side immutable successor wrapper for blocked WorkContract 0.2. It retains the exact nonconstructible predecessor candidate and binds its legacy WorkIntent reference to the present WorkIntent 0.2 successor resource. No resolved WorkIntent identity, assignment commit, exact cohort, derived WorkContract, dispatch claim, or runtime authority is asserted.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "artifact_class",
+    "candidate_status",
+    "canonicalization_profile_ref",
+    "identity_subject",
+    "canonical_digest",
+    "canonical_identity_status",
+    "registry_member_ref",
+    "admission_ref",
+    "operator_acceptance_ref",
+    "authority_boundary"
+  ],
+  "properties": {
+    "schema_version": { "const": "0.3.0" },
+    "artifact_class": {
+      "const": "work_contract_profile_bound_successor_candidate"
+    },
+    "candidate_status": {
+      "const": "successor_materialized_work_intent_successor_bound_construction_blocked"
+    },
+    "canonicalization_profile_ref": {
+      "$ref": "#/$defs/work_contract_successor_profile_ref"
+    },
+    "identity_subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "predecessor_binding",
+        "work_contract_candidate",
+        "work_intent_successor_binding"
+      ],
+      "properties": {
+        "predecessor_binding": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schema_path",
+            "schema_id",
+            "schema_raw_digest",
+            "schema_bytes",
+            "fixture_path",
+            "fixture_raw_digest",
+            "fixture_bytes"
+          ],
+          "properties": {
+            "schema_path": { "const": "schemas/work-contract.schema.json" },
+            "schema_id": {
+              "const": "urn:odeya:schema:work-contract:0.2.0"
+            },
+            "schema_raw_digest": {
+              "const": "sha256:75c60d00b365c2aabc24e449d6f0c840a8c04334b06b3cf30e2f80e7dfe4cb2a",
+              "x-odeya-digest-scope": {
+                "kind": "raw_schema_resource_digest",
+                "subject": "schemas/work-contract.schema.json raw bytes",
+                "profile": "not_a_canonical_object_digest",
+                "schema": "urn:odeya:schema:work-contract:0.2.0",
+                "algorithm": "sha-256",
+                "status": "immutable_predecessor_binding"
+              }
+            },
+            "schema_bytes": { "const": 9649 },
+            "fixture_path": {
+              "const": "tests/cognitive-contracts/fixtures/work-contract.blocked-candidate.valid.json"
+            },
+            "fixture_raw_digest": {
+              "const": "sha256:64084f6402038e82fc12a72e35c7f02d551a090027c1db2320d62df525694cfb",
+              "x-odeya-digest-scope": {
+                "kind": "raw_fixture_digest",
+                "subject": "work-contract.blocked-candidate.valid.json raw bytes",
+                "profile": "not_a_canonical_object_digest",
+                "schema": "urn:odeya:schema:work-contract:0.2.0",
+                "algorithm": "sha-256",
+                "status": "architecture_fixture_binding"
+              }
+            },
+            "fixture_bytes": { "const": 3560 }
+          }
+        },
+        "work_contract_candidate": {
+          "$ref": "urn:odeya:schema:work-contract:0.2.0"
+        },
+        "work_intent_successor_binding": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "work_contract_pointer",
+            "legacy_work_intent_schema_id",
+            "legacy_object_id",
+            "legacy_version",
+            "legacy_canonical_digest",
+            "successor_work_intent_schema_id",
+            "successor_work_intent_schema_raw_digest",
+            "successor_work_intent_schema_bytes",
+            "successor_candidate_raw_digest",
+            "successor_candidate_bytes",
+            "successor_canonical_digest",
+            "binding_status",
+            "admission_ref"
+          ],
+          "properties": {
+            "work_contract_pointer": { "const": "/work_intent_ref" },
+            "legacy_work_intent_schema_id": {
+              "const": "urn:odeya:schema:work-intent:0.1.0"
+            },
+            "legacy_object_id": {
+              "$ref": "#/$defs/work_contract_successor_identifier"
+            },
+            "legacy_version": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            "legacy_canonical_digest": {
+              "type": "null",
+              "x-odeya-digest-scope": {
+                "kind": "canonical_object_digest",
+                "subject": "legacy WorkIntent 0.1 candidate",
+                "profile": "unresolved",
+                "schema": "urn:odeya:schema:work-intent:0.1.0",
+                "algorithm": "sha-256",
+                "status": "not_constructible"
+              }
+            },
+            "successor_work_intent_schema_id": {
+              "const": "urn:odeya:schema:work-intent:0.2.0"
+            },
+            "successor_work_intent_schema_raw_digest": {
+              "const": "sha256:be42e222ed5a8223599bba9dbf7f0034490bacea2576317ba97db76e8e85ef6e",
+              "x-odeya-digest-scope": {
+                "kind": "raw_schema_resource_digest",
+                "subject": "schemas/work-intent-profile-bound-candidate.schema.json raw bytes",
+                "profile": "not_a_canonical_object_digest",
+                "schema": "urn:odeya:schema:work-intent:0.2.0",
+                "algorithm": "sha-256",
+                "status": "exact_successor_schema_binding"
+              }
+            },
+            "successor_work_intent_schema_bytes": { "const": 13915 },
+            "successor_candidate_raw_digest": {
+              "const": "sha256:874d8d362184ef042295e199fc548b7bdaeedc9b484fc95f4cc1ca4366647587",
+              "x-odeya-digest-scope": {
+                "kind": "raw_file_digest",
+                "subject": "architecture/work-intent-profile-bound-candidate.json raw bytes",
+                "profile": "not_a_canonical_object_digest",
+                "schema": "urn:odeya:schema:work-intent:0.2.0",
+                "algorithm": "sha-256",
+                "status": "successor_candidate_bootstrap_binding"
+              }
+            },
+            "successor_candidate_bytes": { "const": 8656 },
+            "successor_canonical_digest": {
+              "type": "null",
+              "x-odeya-digest-scope": {
+                "kind": "canonical_object_digest",
+                "subject": "WorkIntent 0.2 identity subject",
+                "profile": "urn:odeya:canonicalization:odeya-jcs-0.1 unissued",
+                "schema": "urn:odeya:schema:work-intent:0.2.0",
+                "algorithm": "sha-256",
+                "status": "not_constructible"
+              }
+            },
+            "binding_status": {
+              "const": "successor_present_identity_unissued_derivation_blocked"
+            },
+            "admission_ref": { "type": "null" }
+          }
+        }
+      }
+    },
+    "canonical_digest": {
+      "type": "null",
+      "x-odeya-digest-scope": {
+        "kind": "canonical_object_digest",
+        "subject": "identity_subject under work-contract:0.3.0 envelope",
+        "profile": "urn:odeya:canonicalization:odeya-jcs-0.1 unissued",
+        "schema": "urn:odeya:schema:work-contract:0.3.0",
+        "algorithm": "sha-256",
+        "status": "not_constructible_until_profile_work_intent_assignment_cohort_derivation_and_admission"
+      }
+    },
+    "canonical_identity_status": {
+      "const": "not_constructible_work_intent_successor_and_assignment_cohort_unresolved"
+    },
+    "registry_member_ref": { "type": "null" },
+    "admission_ref": { "type": "null" },
+    "operator_acceptance_ref": { "type": "null" },
+    "authority_boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "work_contract_constructed",
+        "work_contract_admitted",
+        "assignment_authorized",
+        "lease_authorized",
+        "materialization_authorized",
+        "dispatch_authorized",
+        "runtime_authorized",
+        "deployment_authorized",
+        "external_effects_authorized"
+      ],
+      "properties": {
+        "work_contract_constructed": { "const": false },
+        "work_contract_admitted": { "const": false },
+        "assignment_authorized": { "const": false },
+        "lease_authorized": { "const": false },
+        "materialization_authorized": { "const": false },
+        "dispatch_authorized": { "const": false },
+        "runtime_authorized": { "const": false },
+        "deployment_authorized": { "const": false },
+        "external_effects_authorized": { "const": false }
+      }
+    }
+  },
+  "$defs": {
+    "work_contract_successor_identifier": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 128,
+      "pattern": "^[a-z0-9][a-z0-9._:-]+$"
+    },
+    "work_contract_successor_profile_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profile_id",
+        "profile_version",
+        "profile_core_schema_id",
+        "profile_core_raw_digest"
+      ],
+      "properties": {
+        "profile_id": {
+          "const": "urn:odeya:canonicalization:odeya-jcs-0.1"
+        },
+        "profile_version": { "const": "0.1.0" },
+        "profile_core_schema_id": {
+          "const": "urn:odeya:schema:canonicalization-profile-core:0.1.0"
+        },
+        "profile_core_raw_digest": {
+          "const": "sha256:7fcdb930cb8e89000b2f2bd13da820fc3de1f0bb28d59e6082f4cf8e6cbf54af",
+          "x-odeya-digest-scope": {
+            "kind": "raw_file_digest",
+            "subject": "architecture/canonicalization-profile-core-candidate.json raw bytes",
+            "profile": "not_a_canonical_object_digest",
+            "schema": "urn:odeya:schema:canonicalization-profile-core:0.1.0",
+            "algorithm": "sha-256",
+            "status": "candidate_profile_unissued"
+          }
+        }
+      }
+    }
+  }
+}

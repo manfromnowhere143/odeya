@@ -88,6 +88,12 @@ neither is Odeya authority, storage, namespace, runtime, or control plane.
 - Isolated architecture candidate worktree:
   `/Users/danielwahnich/workspace/odeya-t0-work-lease`
 - Isolated architecture branch: `agent/t0-work-lease-20260716`
+- Validated immediate WorkIntent-identity predecessor:
+  `6ec40b4635815c64ba9d8c5ec084d7f480e16db1`
+- Validated immediate predecessor tree:
+  `e7044da26ad273de8491a34705e87c8899173f29`
+- Retained immediate-predecessor rehearsal evidence:
+  `/Users/danielwahnich/workspace/odeya-release-evidence/6ec40b4635815c64ba9d8c5ec084d7f480e16db1/rehearsal-evidence-manifest.json`
 - Validated canonical-profile predecessor:
   `c9ce09d49fa38e11eed4ff40ee484e6e0ed9593f`
 - Validated canonical-profile predecessor tree:
@@ -128,7 +134,7 @@ test "$(git symbolic-ref --short HEAD)" = agent/t0-work-lease-20260716
 test "$(git rev-parse main)" = f8c71c8e3174f07619e0bbd31cb3d6df5d848361
 test -z "$(git remote)"
 git merge-base --is-ancestor \
-  c9ce09d49fa38e11eed4ff40ee484e6e0ed9593f HEAD
+  6ec40b4635815c64ba9d8c5ec084d7f480e16db1 HEAD
 git diff --cached --name-only
 git diff --check
 test "$(git -C /Users/danielwahnich/workspace/odeya symbolic-ref --short HEAD)" = \
@@ -204,10 +210,10 @@ predecessor commit. A descendant never inherits it. Diagnostic evidence under
 
 ## Current isolated T0 architecture descendant
 
-The isolated architecture lane descends from the exact validated
-canonical-profile commit named above. Its current candidate tree contains 105
-schemas, 631 shared schema cases, ten isolated contract suites, 64 canonical
-vectors, four metamorphic relations, 21 architecture decisions, and the
+The isolated architecture lane descends from the exact validated immediate
+predecessor named above. Its current candidate tree contains 109 schemas, 654
+shared schema cases, eleven isolated contract suites, 64 canonical vectors,
+four metamorphic relations, 22 architecture decisions, and the
 unchanged 43/60/25/11 first-slice boundary.
 
 ADR 0020 adds a nonrecursive `odeya-jcs-0.1` profile core and an external
@@ -216,7 +222,7 @@ RFC 8785 serialization, canonical envelope, digest framing, future reference
 shape, 21 current domain constants, and eight version axes for review. The
 evidence binds exact raw bytes and retains one safe reference plus 26 known-bad
 mutations. It issues no canonical digest, admits no profile member, and does
-not close PRQ-001: the 105-schema/200-fixture migration audit remains blocked
+not close PRQ-001: the 109-schema/200-fixture migration audit remains blocked
 at 122 unprofiled time paths, 61 number/decimal findings, 668 unscoped digest
 fields, 56 divergent common-definition names, 11 unpinned profile bindings,
 and 236 nonconformant fixture timestamps.
@@ -230,13 +236,22 @@ binding fixes exact current bytes for WorkIntent 0.1 and its two direct schema
 consumers. It does not replace any of them, issue a canonical digest, or make a
 WorkIntent assignable.
 
-The next exact migration unit is ordered WorkIntent 0.2, canonical WorkLease
-0.2, and WorkContract 0.3 in one reviewed commit with immediate-predecessor
-lineage. Before that reissue, replace the core's three legacy digest-reference
-shapes with exact profile/schema-bound references. Migrate the cognitive,
-lifecycle, shared-manifest, and fixture consumers in the same unit. Preserve
-all null/false admission and authority boundaries, and do not claim that this
-constructs the thirteen-event assignment cohort.
+ADR 0022 materializes side-by-side WorkIntent 0.2, canonical WorkLease 0.2,
+and WorkContract 0.3 successors while retaining all three predecessor resources
+byte-for-byte. One exact cohort record binds the predecessor commit/tree,
+successor schema/artifact bytes, and three dependency edges; its dedicated
+suite rejects 37 known-bad mutations. No same-path schema mutation, mutable
+alias, or implicit latest is used. The source-view and planning-epoch values
+remain synthetic, the legacy output-schema digest mismatches the exact target
+schema bytes, and all canonical identity/admission/authority fields remain
+blocked.
+
+The next exact identity unit replaces those synthetic values and the output
+schema mismatch through new immutable successor resources, then issues and
+admits the canonical profile before computing any canonical digest. After that,
+construct registry memberships and only then the exact thirteen-event
+assignment cohort. Preserve all null/false authority boundaries until each
+separate prerequisite is evidenced.
 
 Resolve the current isolated branch `HEAD` and tree from Git. A later handoff
 message may name the resulting commit and retained fresh-clone evidence; this
@@ -341,19 +356,20 @@ A mission.
    nonrecursive canonical-profile candidate parameters, 21 current digest
    domains, future profile-reference shape, and eight version axes for review,
    while ADR 0021 freezes the first nonrecursive WorkIntent semantic-core and
-   external binding candidate. Neither identity is issued. First replace the
-   core's three legacy digest-reference shapes, then atomically reissue
-   WorkIntent 0.2, canonical WorkLease 0.2, and WorkContract 0.3 with exact
-   immediate-predecessor lineage and all direct test/fixture consumers. Keep
-   admission, assignment, lease, dispatch, and runtime blocked. Then resolve or
-   explicitly version the retained
+   external binding candidate. ADR 0022 now retains the three immutable
+   predecessors and adds exact side-by-side WorkIntent 0.2, canonical WorkLease
+   0.2, and WorkContract 0.3 successor resources plus bounded lineage. None is
+   admitted. Replace synthetic source/planning references and the output-schema
+   digest mismatch only through new immutable successors, then issue/admit the
+   profile before any canonical digest. Keep admission, assignment, lease,
+   dispatch, and runtime blocked. Then resolve or explicitly version the retained
    migration findings; close grant lifecycle, protocol origin, and data-use
    authority contradictions; bind schema, payload, event, member, and snapshot
    identities; separate core/evidence/seal/attestation subjects; and retain
    typed blocked-construction receipts. The exact
-   `canonical-work-lease:0.1.0` resource is now present only as an unissued,
-   identity-unresolved candidate; T0 must promote it through canonical profile,
-   transitive migration, member/reducer, and accountable-review evidence, then
+   `canonical-work-lease:0.1.0` resource and its 0.2 successor are present only
+   as unissued, identity-unresolved candidates; T0 must promote a later exact
+   identity through canonical profile, member/reducer, and accountable-review evidence, then
    resolve C5/PRQ-009 through the prospective non-authoritative
    WorkIntent/WorkContract and complete assignment-cohort prerequisites.
    That reissue must also close `C5-WORK-LEASE-RELEASE-CLAIM-001`: release
