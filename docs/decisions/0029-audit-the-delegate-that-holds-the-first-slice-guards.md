@@ -16,9 +16,12 @@ models guard-complete. `identity_map_mutation_errors` was recorded as
 unmeasured, on the stated grounds that it returns refusals directly and
 delegates to `schema_contract_errors`, which branch mutation "cannot attribute".
 
-That reasoning was half right and the conclusion was wrong. The model does hold
-no guard of its own. But its delegate holds 64, uses `errors.append`, and is
-auditable by exactly the method already in use. It was never audited because it
+That reasoning was half right and the conclusion was wrong. This decision
+originally added: "the model does hold no guard of its own." ADR 0031 retracts
+that too — the model holds five `return`-guards, and this decision's own
+eleventh case proves one of them, the unknown-target refusal it calls a hygiene
+guard two sections later. The delegate meanwhile holds 64 guards, uses
+`errors.append`, and is auditable by exactly the method already in use. It was never audited because it
 was never named in `AUDITED_MODELS`. Declaring the caller unmeasured while
 leaving the callee unmeasured too made 64 guards invisible, and 75/75 described
 only what had been chosen to look at.

@@ -86,26 +86,24 @@ RECORD = ROOT / "architecture/lifecycle-guard-coverage.json"
 # declared unauditable below rather than reported as zero, because a silent zero
 # reads as clean.
 AUDITED_MODELS = (
+    "branch_map",
     "schema_contract_errors",
+    "data_fixture_errors",
     "authority_grant_trace_errors",
     "protocol_origin_errors",
     "data_use_cohort_errors",
     "work_lease_trace_errors",
     "work_lease_record_candidate_errors",
+    "identity_map_mutation_errors",
 )
 
-NOT_AUDITABLE = (
-    {
-        "function": "identity_map_mutation_errors",
-        "reason": (
-            "returns refusal lists directly instead of appending to a local errors "
-            "list, so it holds no guard of its own. Its guards live in "
-            "schema_contract_errors, which is audited directly. Reporting this "
-            "model as unmeasured was correct; leaving its delegate unaudited was "
-            "not, and hid 60 unproved guards including the first-slice boundary."
-        ),
-    },
-)
+# Every refusal-bearing function in the checker is audited. Two prior versions
+# of this tuple made false exclusions, both caught by independent review:
+# identity_map_mutation_errors was declared to "hold no guard of its own" while
+# holding five return-guards (one of which a retained case already proved), and
+# data_fixture_errors was in neither list at all -- the silent zero this file
+# warns about, committed by this file.
+NOT_AUDITABLE: tuple = ()
 
 
 def sha256_file(path: Path) -> str:

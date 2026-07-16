@@ -166,7 +166,7 @@ def schema_contract_errors(
     if source.get("required_event_inventory_id") != inventory.get("inventory_id"):
         errors.append("identity map points at the wrong first-slice inventory")
     if source.get("required_event_inventory_version") != inventory.get("version"):
-        errors.append("identity map points at the wrong first-slice inventory version")
+        errors.append("identity map points at the wrong version of the first-slice inventory")
 
     if identity.get("version") != "0.2.0":
         errors.append("event identity map did not advance to the WorkLease-aware 0.2.0 candidate")

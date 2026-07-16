@@ -101,6 +101,12 @@
     "schema_contract_duplicate_event_types",
     "schema_contract_not_exact_sixty_set",
     "schema_contract_unknown_mutation_target",
+    "identity_map_mutation_not_replace",
+    "identity_map_mutation_path_absent",
+    "identity_map_mutation_list_index_not_integer",
+    "identity_map_mutation_path_unresolvable",
+    "schema_contract_branch_missing_event_type",
+    "schema_contract_branch_duplicate_event_type",
     "identity_source_byte_count_drift"
   ],
   "cases": [
@@ -2402,7 +2408,7 @@
         }
       },
       "adversarial_tag": "schema_contract_wrong_inventory_version",
-      "expected_refusal_contains": "identity map points at the wrong first-slice inventory version"
+      "expected_refusal_contains": "identity map points at the wrong version of the first-slice inventory"
     },
     {
       "name": "identity-map-bad-duplicate-event-types",
@@ -2461,6 +2467,119 @@
       },
       "adversarial_tag": "schema_contract_unknown_mutation_target",
       "expected_refusal_contains": "identity-map mutation names an unknown target"
+    },
+    {
+      "name": "identity-map-bad-mutation-not-a-replace",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "op": "delete",
+          "path": [
+            "source"
+          ],
+          "target": "identity"
+        }
+      },
+      "adversarial_tag": "identity_map_mutation_not_replace",
+      "expected_refusal_contains": "identity-map mutation is not one bounded replace operation"
+    },
+    {
+      "name": "identity-map-bad-mutation-path-absent",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "op": "replace",
+          "path": [],
+          "value": 1
+        }
+      },
+      "adversarial_tag": "identity_map_mutation_path_absent",
+      "expected_refusal_contains": "identity-map mutation path is absent"
+    },
+    {
+      "name": "identity-map-bad-mutation-list-index-not-integer",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "op": "replace",
+          "path": [
+            "mappings",
+            "first"
+          ],
+          "value": {}
+        }
+      },
+      "adversarial_tag": "identity_map_mutation_list_index_not_integer",
+      "expected_refusal_contains": "identity-map list mutation index is not an integer"
+    },
+    {
+      "name": "identity-map-bad-mutation-path-unresolvable",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "op": "replace",
+          "path": [
+            "no_such",
+            "deeper"
+          ],
+          "value": 1
+        }
+      },
+      "adversarial_tag": "identity_map_mutation_path_unresolvable",
+      "expected_refusal_contains": "identity-map mutation path does not resolve"
+    },
+    {
+      "name": "identity-map-bad-branch-missing-event-type-const",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "schema",
+          "op": "replace",
+          "path": [
+            "oneOf",
+            0,
+            "properties",
+            "event_type"
+          ],
+          "value": {
+            "type": "string"
+          }
+        }
+      },
+      "adversarial_tag": "schema_contract_branch_missing_event_type",
+      "expected_refusal_contains": "lacks an exact event_type const"
+    },
+    {
+      "name": "identity-map-bad-branch-duplicate-event-type",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "schema",
+          "op": "replace",
+          "path": [
+            "oneOf",
+            1,
+            "properties",
+            "event_type",
+            "const"
+          ],
+          "value": "proposal.submitted"
+        }
+      },
+      "adversarial_tag": "schema_contract_branch_duplicate_event_type",
+      "expected_refusal_contains": "has multiple branches"
     },
     {
       "name": "work-lease-record-safe-blocked-acquisition-candidate",

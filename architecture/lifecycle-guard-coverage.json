@@ -6,17 +6,34 @@
   "status": "candidate_measurement_not_admitted",
   "method": "each errors.append branch of a declared lifecycle model is disabled one at a time in an isolated copy; a guard is proved only when the suite fails without it",
   "subject": "tests/lifecycle-closure/check.py",
-  "subject_sha256": "sha256:b41e2fa4939fa96d030350b3f5dd81ee881cd064cdac5e131c5530d6209a2df4",
+  "subject_sha256": "sha256:0ae2a73dc7e35afe047fc1c345c74633a9a8497ce77acdef9a2551cf24b4d7a6",
   "models": [
+    {
+      "function": "branch_map",
+      "branch_count": 2,
+      "proved_count": 2,
+      "branches": [
+        {
+          "guard": "ResearchEvent branch {} lacks an exact event_type const",
+          "proved": true,
+          "proved_by": "identity-map-bad-branch-missing-event-type-const"
+        },
+        {
+          "guard": "ResearchEvent event_type {} has multiple branches",
+          "proved": true,
+          "proved_by": "identity-map-bad-branch-duplicate-event-type"
+        }
+      ]
+    },
     {
       "function": "schema_contract_errors",
       "branch_count": 64,
-      "proved_count": 14,
+      "proved_count": 15,
       "branches": [
         {
           "guard": "branch_errors",
-          "proved": false,
-          "proved_by": null
+          "proved": true,
+          "proved_by": "identity-map-bad-branch-missing-event-type-const"
         },
         {
           "guard": "ResearchEvent global branch count changed from 135 to {}",
@@ -119,7 +136,7 @@
           "proved_by": "identity-map-bad-wrong-inventory-id"
         },
         {
-          "guard": "identity map points at the wrong first-slice inventory version",
+          "guard": "identity map points at the wrong version of the first-slice inventory",
           "proved": true,
           "proved_by": "identity-map-bad-wrong-inventory-version"
         },
@@ -330,6 +347,63 @@
         },
         {
           "guard": "data-use grant/domain/exhaustion order is not exact",
+          "proved": false,
+          "proved_by": null
+        }
+      ]
+    },
+    {
+      "function": "data_fixture_errors",
+      "branch_count": 10,
+      "proved_count": 0,
+      "branches": [
+        {
+          "guard": "data-use fixture does not retain unresolved payload-contract status",
+          "proved": false,
+          "proved_by": null
+        },
+        {
+          "guard": "data-use fixture fabricates a per-branch payload-contract digest",
+          "proved": false,
+          "proved_by": null
+        },
+        {
+          "guard": "data-use fixture claims authority despite unresolved branch contract",
+          "proved": false,
+          "proved_by": null
+        },
+        {
+          "guard": "data-use fixture authority mode is not bounded_grants",
+          "proved": false,
+          "proved_by": null
+        },
+        {
+          "guard": "data-use fixture has no assignment evidence",
+          "proved": false,
+          "proved_by": null
+        },
+        {
+          "guard": "data-use fixture does not bind exactly one grant and use event",
+          "proved": false,
+          "proved_by": null
+        },
+        {
+          "guard": "data-use fixture authority grant and payload grant differ",
+          "proved": false,
+          "proved_by": null
+        },
+        {
+          "guard": "data-use fixture authority and payload grant-use events differ",
+          "proved": false,
+          "proved_by": null
+        },
+        {
+          "guard": "data-use fixture does not retain the exact three-event commit position",
+          "proved": false,
+          "proved_by": null
+        },
+        {
+          "guard": "data-use fixture lacks same-cohort final-use exhaustion",
           "proved": false,
           "proved_by": null
         }
@@ -744,18 +818,45 @@
           "proved_by": "work-lease-record-bad-terminal-new-start-claim"
         }
       ]
-    }
-  ],
-  "not_auditable": [
+    },
     {
       "function": "identity_map_mutation_errors",
-      "reason": "returns refusal lists directly instead of appending to a local errors list, so it holds no guard of its own. Its guards live in schema_contract_errors, which is audited directly. Reporting this model as unmeasured was correct; leaving its delegate unaudited was not, and hid 60 unproved guards including the first-slice boundary."
+      "branch_count": 5,
+      "proved_count": 5,
+      "branches": [
+        {
+          "guard": "identity-map mutation is not one bounded replace operation",
+          "proved": true,
+          "proved_by": "identity-map-bad-mutation-not-a-replace"
+        },
+        {
+          "guard": "identity-map mutation path is absent",
+          "proved": true,
+          "proved_by": "identity-map-bad-mutation-path-absent"
+        },
+        {
+          "guard": "identity-map mutation names an unknown target {}",
+          "proved": true,
+          "proved_by": "identity-map-bad-unknown-mutation-target"
+        },
+        {
+          "guard": "identity-map list mutation index is not an integer",
+          "proved": true,
+          "proved_by": "identity-map-bad-mutation-list-index-not-integer"
+        },
+        {
+          "guard": "identity-map mutation path does not resolve",
+          "proved": true,
+          "proved_by": "identity-map-bad-mutation-path-unresolvable"
+        }
+      ]
     }
   ],
+  "not_auditable": [],
   "summary": {
-    "branch_count": 139,
-    "proved": 89,
-    "unproved": 50
+    "branch_count": 156,
+    "proved": 97,
+    "unproved": 59
   },
   "boundary": "architecture evidence about retained bytes only; not a runtime, an admitted member, an independently reproduced verdict, or Gate A acceptance"
 }

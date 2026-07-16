@@ -326,7 +326,11 @@ accepts one bounded replace, the exact shape `identity_map_mutation` already
 uses. The denominator grew 71 to 75 because that vocabulary carries four hygiene
 guards of its own; all four are proved.
 
-**ADR 0029 retracted the 75/75 headline. Coverage is 89 of 139.** That figure
+**ADR 0029 retracted the 75/75 headline; ADR 0031 corrected it again to 97 of
+156 by auditing every refusal-bearing function** — including
+`identity_map_mutation_errors` (five return-guards, despite ADR 0029's claim it
+held none), `data_fixture_errors` (0/10, unprovable until a fixture-mutation
+vocabulary exists), and `branch_map` (2/2). The 89-of-139 figure
 had audited only the five models it named; `identity_map_mutation_errors` holds
 no guard of its own and delegates to `schema_contract_errors`, which holds 64 and
 was never in `AUDITED_MODELS`. It measured 4/64. Among the unproved were the

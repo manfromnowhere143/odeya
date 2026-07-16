@@ -91,10 +91,10 @@ exact nonrecursive candidate core and evidence binding now freeze the parser,
 RFC 8785 serialization, canonical envelope, digest framing, future reference
 shape, 21 current domain names, and eight version axes for review. This is a
 candidate-parameter freeze, not profile issuance or acceptance. The current
-103-schema/200-fixture migration audit remains blocking: 122
+112-schema/200-fixture migration audit remains blocking: 122
 unprofiled date-time paths, 61 number/decimal findings, 668 unscoped digest
 fields, 56 divergent common definitions, 11 unpinned profile bindings, and
-238 nonconformant fixture timestamps. No final member digest may be
+236 nonconformant fixture timestamps. No final member digest may be
 represented as frozen while those identity inputs remain unresolved. The
 machine inventory separately preserves the exact tranche-start audit and
 counts rather than rewriting history.

@@ -1378,7 +1378,8 @@ def validate_decisions(errors: list[str]) -> int:
 README_CHECKPOINT = re.compile(
     r"The current retained foundation contains (\d+) Draft 2020-12 schemas, (\d+)\s+"
     r"valid/adversarial cases, (\w+) isolated contract suites, (\w+)\s+"
-    r"architecture-evidence checks",
+    r"architecture-evidence checks, and (\w+) bounded safe TLA\+ models with\s+"
+    r"(\w+) mutation controls",
     re.MULTILINE,
 )
 WORD_NUMBERS = {
@@ -1402,26 +1403,41 @@ def readme_checkpoint_errors(
     one.
     """
 
-    readme = (ROOT / "README.md").read_text(encoding="utf-8")
-    match = README_CHECKPOINT.search(readme)
-    if match is None:
+    readme_path = ROOT / "README.md"
+    if not readme_path.exists():
+        return ["README.md is absent; the checkpoint sentence cannot be verified"]
+    readme = readme_path.read_text(encoding="utf-8")
+    matches = list(README_CHECKPOINT.finditer(readme))
+    if not matches:
         return [
             "README architecture checkpoint sentence is absent or reworded; it must "
-            "state the exact schema, case, suite, and evidence-check counts so they "
-            "can be bound to a measurement"
+            "state the exact schema, case, suite, evidence-check, TLA-model, and "
+            "mutation-control counts so they can be bound to a measurement"
         ]
+    if len(matches) > 1:
+        # Independent review defeated the first-match version of this gate with a
+        # second, differently-numbered checkpoint sentence. One sentence, exactly.
+        return [
+            f"README contains {len(matches)} checkpoint sentences; exactly one is "
+            "permitted so the binding cannot be split across contradictory copies"
+        ]
+    match = matches[0]
 
     def resolve(token: str) -> int | None:
         if token.isdigit():
             return int(token)
         return WORD_NUMBERS.get(token.lower())
 
+    tla_models = len(sorted((ROOT / "formal/tla").glob("*.tla")))
+    mutation_controls = len(sorted((ROOT / "formal/tla").glob("*.counterexample.cfg")))
     errors: list[str] = []
     declared = (
         ("Draft 2020-12 schemas", resolve(match.group(1)), schema_count),
         ("valid/adversarial cases", resolve(match.group(2)), schema_case_count),
         ("isolated contract suites", resolve(match.group(3)), suite_count),
         ("architecture-evidence checks", resolve(match.group(4)), evidence_check_count),
+        ("bounded safe TLA+ models", resolve(match.group(5)), tla_models),
+        ("mutation controls", resolve(match.group(6)), mutation_controls),
     )
     for label, stated, actual in declared:
         if stated is None:
