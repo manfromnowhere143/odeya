@@ -5,22 +5,39 @@ Canonical workspace: `/Users/danielwahnich/workspace/odeya`.
 Run first in a new session:
 
 ```bash
+bash -euo pipefail <<'BASH'
+cd /Users/danielwahnich/workspace/odeya
+source scripts/ci/sanitize-git-environment.sh
 git status --short --branch
+sed -n '1,360p' docs/SESSION_HANDOFF.md
 python3 -m venv .venv-architecture
-.venv-architecture/bin/python -m pip install -r requirements-architecture.txt
+.venv-architecture/bin/python -m pip install \
+  --no-input \
+  --require-hashes \
+  --only-binary=:all: \
+  --requirement tools/repository-release/requirements-architecture.lock
 .venv-architecture/bin/python scripts/validate.py
+BASH
 ```
 
-If the isolated environment already contains the exact pinned dependencies, reuse it and run only the final command. Never treat a structural validation pass as architecture acceptance.
+Status inspection and handoff reading are mandatory in every session. If the
+isolated environment already contains the exact pinned dependencies, skip only
+environment creation and dependency installation, then run the validator.
+Never treat a structural validation pass as architecture acceptance.
 
 ## Session recovery
 
-Before changing any Gate A artifact, read
+Before changing any repository artifact, read
+[`docs/SESSION_HANDOFF.md`](docs/SESSION_HANDOFF.md). It is the canonical
+operational recovery entrypoint for the current branch, protected concurrent
+work, exact release-evidence procedure, external-model freezes, and next safe
+mission order. Then, before changing any Gate A artifact, read
 [`docs/GATE_A_HANDOFF_WORKING_PACKET_2026-07-15.md`](docs/GATE_A_HANDOFF_WORKING_PACKET_2026-07-15.md).
-It records the current scoped architecture checkpoint, exact restart sequence,
-remaining blockers, and concurrent UI/UX paths that must stay outside architecture
-staging. Revalidate the packet's evidence from repository bytes; the packet is a
-recovery aid, not Gate A authority.
+It records a dated detailed architecture checkpoint, restart sequence,
+remaining blockers, and concurrent UI/UX paths that must stay outside
+architecture staging. Its operational repository identity is superseded by
+`docs/SESSION_HANDOFF.md`. Revalidate the packet's evidence from repository
+bytes; the packet is a recovery aid, not Gate A authority.
 
 ## Repository boundary
 
