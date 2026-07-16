@@ -172,9 +172,19 @@ CURRENT_STAGE="foundation"
 # reproduces the record from the exact bytes, so the exact-commit rehearsal is
 # where that must happen.
 CURRENT_STAGE="lifecycle-guard-coverage"
-.venv-architecture/bin/python scripts/audit_lifecycle_guard_coverage.py \
-  --check --python .venv-architecture/bin/python \
-  2>&1 | tee artifacts/rehearsal/lifecycle-guard-coverage.log
+if [[ -f scripts/audit_lifecycle_guard_coverage.py ]]; then
+  .venv-architecture/bin/python scripts/audit_lifecycle_guard_coverage.py \
+    --check --python .venv-architecture/bin/python \
+    2>&1 | tee artifacts/rehearsal/lifecycle-guard-coverage.log
+else
+  # This commit predates the audit tool. Skipping is fail-closed, not fail-open:
+  # validate.py above already refuses a retained coverage record whose audit
+  # tool is absent, so a commit reaching this branch has no record to reproduce.
+  # Without this branch the rehearsal cannot replay any commit older than the
+  # tool, which is how this stage first failed.
+  printf 'audit tool absent at %s; no retained coverage record to reproduce\n' \
+    "$EXPECTED_COMMIT" 2>&1 | tee artifacts/rehearsal/lifecycle-guard-coverage.log
+fi
 
 CURRENT_STAGE="release-surface"
 bash scripts/ci/check-repository-release.sh
