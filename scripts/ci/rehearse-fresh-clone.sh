@@ -165,6 +165,17 @@ CURRENT_STAGE="foundation"
 .venv-architecture/bin/python scripts/validate.py \
   2>&1 | tee artifacts/rehearsal/foundation.log
 
+# The cheap gate inside validate.py binds the guard-coverage record to the
+# checker digest and to its own arithmetic. It cannot detect a record that was
+# falsified consistently: flipping a guard to unproved, or deleting an unproved
+# guard by name and correcting the counts, both survive it. Only re-measuring
+# reproduces the record from the exact bytes, so the exact-commit rehearsal is
+# where that must happen.
+CURRENT_STAGE="lifecycle-guard-coverage"
+.venv-architecture/bin/python scripts/audit_lifecycle_guard_coverage.py \
+  --check --python .venv-architecture/bin/python \
+  2>&1 | tee artifacts/rehearsal/lifecycle-guard-coverage.log
+
 CURRENT_STAGE="release-surface"
 bash scripts/ci/check-repository-release.sh
 

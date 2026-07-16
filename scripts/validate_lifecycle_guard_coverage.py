@@ -8,12 +8,21 @@ the retained record still describes the exact checker bytes it claims to
 describe, that its counts are internally consistent, and that every guard
 without a known-bad proof stays explicitly enumerated.
 
-That split is what makes the gate honest. Changing the checker changes its
-digest, which invalidates the record and forces the guards to be re-proved.
-Leaving the checker alone costs one hash. Negative evidence is retained rather
-than summarized: an unproved guard must remain visible by name, because the
-count alone would let a guard quietly lose its proof while the total stayed
-flat.
+Changing the checker changes its digest, which invalidates the record and forces
+the guards to be re-proved. Leaving the checker alone costs one hash.
+
+What this gate cannot do, stated plainly because an earlier version of this file
+implied otherwise. It cannot detect a falsified record. Flipping a guard to
+unproved, or deleting an unproved guard by name, survives it as long as the
+counts are corrected to match — an independent reviewer demonstrated both. This
+gate enforces the checker digest and the record's internal arithmetic; nothing
+here binds the record's content to an actual measurement, and nothing can
+without re-measuring. `scripts/audit_lifecycle_guard_coverage.py --check` is the
+only real check, and the exact-commit fresh-clone rehearsal runs it.
+
+Negative evidence is still retained by name rather than summarized, so a reader
+can see which guards are unproved without re-running the audit. That is for
+review, not for enforcement; the count is not self-defending.
 
 This validates retained bytes. It does not prove the guards are correct, admit
 a member, supply an independently reproduced verdict, or accept Gate A.

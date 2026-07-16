@@ -297,11 +297,11 @@ smaller and more falsifiable than any new candidate resource. That review is one
 non-authoritative pass, not a retained accountable Gate A review determination.
 
 ADR 0025 answered the prior question — whether a guard is exercised at all — by
-disabling every guard in turn and running the suite. Of 69 guards in the five
-auditable lifecycle models, **24 are proved and 45 can be removed with the suite
-green**. Only AuthorityGrant is complete, at 11 of 11, and only because ADR 0024
+disabling every guard in turn and running the suite. Of 71 guards in the five
+auditable lifecycle models, **24 were proved and 47 could be removed with the
+suite green**. Only AuthorityGrant is complete, at 11 of 11, and only because ADR 0024
 and this tranche completed it. `protocol_origin` is 3 of 12, `data_use_cohort` 4
-of 11, `work_lease_trace` 2 of 8, `work_lease_record_candidate` 4 of 27.
+of 11, `work_lease_trace` 2 of 8, `work_lease_record_candidate` 4 of 29.
 `identity_map_mutation` is unmeasured rather than proved.
 
 That was subtractive: **PRQ-006, PRQ-007, and PRQ-008 could not close on that
@@ -311,7 +311,7 @@ single-use at one atomic commit, and the exact five-state WorkLease vocabulary
 that is law 40 of the state model. They were blocked on absent evidence, not on
 a decision, which made them autonomous work rather than work waiting on Daniel.
 
-ADR 0026 closed that gap in dependency order. Coverage is now **46 of 69** and
+ADR 0026 closed that gap in dependency order. Coverage is now **46 of 71** and
 four of five auditable models are guard-complete: `authority_grant_trace` 11/11,
 `protocol_origin` 12/12, `data_use_cohort` 11/11, `work_lease_trace` 8/8. Every
 guard named by PRQ-006, PRQ-007, and PRQ-008 is proved, each by a retained trace
@@ -319,7 +319,7 @@ breaking exactly one field of its model's safe reference and probed to isolate
 to a single error. Their closure records are corrected: a stale "blocked on
 absent evidence" would mislead as much as the original silence did.
 
-**23 guards remain unproved, all in `work_lease_record_candidate` (4 of 27).**
+**25 guards remain unproved, all in `work_lease_record_candidate` (4 of 29).**
 They are the most consequential left — blocked-candidate status, fabricated
 identity, execution-authority claims, the five-role assignment order,
 reservation claim/settlement separation, and the refusal to let a lease
@@ -329,13 +329,25 @@ retained fixture rather than a synthetic subject, so each variant must break a
 real candidate record without making it structurally invalid for an unrelated
 reason. That is the next lifecycle unit.
 
-The measurement is retained at `architecture/lifecycle-guard-coverage.json`,
-reproduced by `scripts/audit_lifecycle_guard_coverage.py` (~90s), and gated
-cheaply by `scripts/validate_lifecycle_guard_coverage.py` in the default
-validator. The record is pinned to the exact checker digest, so changing the
-checker forces its guards to be re-proved. Both halves of the ratchet were
-confirmed to fire. Do not hand-edit that record; regenerate it, and note that it
-is untracked until committed, so `git checkout` cannot restore it.
+The measurement is retained at `architecture/lifecycle-guard-coverage.json` and
+reproduced by `scripts/audit_lifecycle_guard_coverage.py` (~90s). Do not
+hand-edit that record; regenerate it.
+
+Two enforcement facts matter, both established by independent review after this
+lane published the opposite. The cheap gate
+(`scripts/validate_lifecycle_guard_coverage.py`, in the default validator)
+enforces the checker digest and the record's arithmetic only. **It cannot detect
+a falsified record**: flipping a guard to unproved, or deleting an unproved guard
+by name, passes it once the counts are corrected. Only re-measurement catches
+that, so ADR 0027 wires `--check` into `scripts/ci/rehearse-fresh-clone.sh`. Any
+coverage claim must come from the rehearsal, never from `validate.py`.
+
+And **the denominator is not self-defending**. `discover()` matches
+`errors.append`, `errors.extend`, `errors += [...]`, and early `return [...]`. A
+guard added through any other construct is invisible to the audit and to both
+gates — exactly as two `return [...]` guards were, uncounted, until ADR 0027.
+Extend `discover()` before adding a new refusal construct, and treat the guard
+count as a claim requiring review rather than as a measurement.
 
 Extend the same audit to `schema_contract_errors`, which the harness cannot
 currently reach.

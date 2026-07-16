@@ -10,7 +10,8 @@
 ## Context
 
 ADR 0025 measured which lifecycle guards have a known-bad proof and found 24 of
-69. Three prerequisite findings named properties among the 45 with none: the
+69, a denominator ADR 0027 later corrected to 71. Three prerequisite findings
+named properties among the unproved ones: the
 protocol origin materializing version 1 from absence (PRQ-006), the data-use
 grant being single-use at one atomic commit (PRQ-007), and the exact five-state
 WorkLease vocabulary that is law 40 of the state model (PRQ-008).
@@ -45,9 +46,11 @@ Coverage after this decision, measured by mutation rather than asserted:
 | `protocol_origin_errors` | 3/12 | 12/12 |
 | `data_use_cohort_errors` | 4/11 | 11/11 |
 | `work_lease_trace_errors` | 2/8 | 8/8 |
-| `work_lease_record_candidate_errors` | 4/27 | 4/27 |
+| `work_lease_record_candidate_errors` | 4/29 | 4/29 |
 
-Four of five auditable models are now guard-complete: 46 of 69, from 24.
+Four of five auditable models are now guard-complete: 46 of 71, from 24.
+The denominator is 71, not the 69 this decision originally reported; see
+ADR 0027.
 
 ## Non-decisions
 
@@ -60,7 +63,7 @@ This decision does not:
   cohort — which no amount of guard coverage addresses;
 - prove any guard is correct. A guard is now exercised; whether what it enforces
   is right is a separate question these traces cannot answer;
-- close the 23 remaining `work_lease_record_candidate_errors` gaps, which are
+- close the 25 remaining `work_lease_record_candidate_errors` gaps, which are
   the largest single block of unproved guards left in this suite;
 - measure `identity_map_mutation_errors`, `schema_contract_errors`, or the six
   suites that assert refusal without attribution across 229 known-bad cases; or

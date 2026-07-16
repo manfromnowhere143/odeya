@@ -36,7 +36,10 @@ required-tag list, or document claims.
 
 Every `errors.append` branch of the five auditable lifecycle models was
 disabled, one at a time, against an isolated copy. Of 69 guards, **24 are proved
-and 45 have no known-bad proof**:
+and 45 have no known-bad proof**. ADR 0027 later corrected that denominator to
+71: discovery matched only `errors.append` and never saw two `return [...]`
+guards, both unproved. The corrected figures are 24 of 71 proved, 47 with no
+proof:
 
 | model | proved | guards |
 | --- | ---: | ---: |
@@ -44,7 +47,7 @@ and 45 have no known-bad proof**:
 | `protocol_origin_errors` | 3 | 12 |
 | `data_use_cohort_errors` | 4 | 11 |
 | `work_lease_trace_errors` | 2 | 8 |
-| `work_lease_record_candidate_errors` | 4 | 27 |
+| `work_lease_record_candidate_errors` | 4 | 29 |
 
 `identity_map_mutation_errors` returns refusal lists directly and delegates to
 `schema_contract_errors`, so branch mutation cannot attribute its guards. Its
@@ -71,10 +74,12 @@ exercises. They cannot be closed on this evidence.
 
 Retain the measurement as evidence and gate it:
 
-- `scripts/audit_lifecycle_guard_coverage.py` discovers each guard by AST rather
-  than by hand, so a guard added later cannot be silently omitted, disables each
-  in an isolated copy, and records whether the suite fails without it. It
-  refuses to report at all if the unmutated control does not pass;
+- `scripts/audit_lifecycle_guard_coverage.py` discovers each guard by AST,
+  disables each in an isolated copy, and records whether the suite fails without
+  it. It refuses to report at all if the unmutated control does not pass. This
+  decision originally claimed a guard therefore could not be silently omitted.
+  That claim was false and ADR 0027 retracts it: discovery matched only
+  `errors.append`, so two `return [...]` guards were never seen;
 - `architecture/lifecycle-guard-coverage.json` retains every guard by name with
   its verdict and, where proved, the exact known-bad case that establishes it;
   and
@@ -84,13 +89,17 @@ Retain the measurement as evidence and gate it:
 The measurement costs roughly ninety seconds and the gate costs one hash. The
 record is therefore pinned to the exact checker digest: changing the checker
 invalidates the record and forces its guards to be re-proved, while leaving the
-checker alone is free. Both halves were confirmed to fire — appending one comment
-to the checker fails the gate, and flipping a single guard to unproved while
-leaving the summary untouched fails it too.
+checker alone is free. Appending one comment to the checker fails the gate, and
+an arithmetically inconsistent record fails it.
 
-The 45 unproved guards are retained by name rather than summarized. Negative
-evidence is first-class, and a count alone would let a guard quietly lose its
-proof while the total stayed flat.
+This decision further claimed that retaining unproved guards by name stops one
+from quietly losing its proof while the total stays flat. That is also false and
+ADR 0027 retracts it: the cheap gate checks the checker digest and the record's
+own arithmetic, and a consistently falsified record passes. Only re-measurement
+detects it, which ADR 0027 wires into the exact-commit rehearsal.
+
+The unproved guards are still retained by name rather than summarized, for
+review rather than for enforcement.
 
 ## Non-decisions
 
@@ -113,7 +122,7 @@ added to a lifecycle model without the record showing whether anything proves
 it, and a proof cannot be lost without the gate firing.
 
 The immediate consequence is subtractive and should be read plainly: the
-lifecycle closure suite has been passing green while 45 of its 69 guards were
+lifecycle closure suite has been passing green while 47 of its 71 guards were
 unproved, and three prerequisite findings rest on properties among them. The
 suite's own README asserts several of those properties as established. The
 correct response is to fill the gaps in dependency order, beginning with the

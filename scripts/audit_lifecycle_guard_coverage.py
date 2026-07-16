@@ -9,11 +9,31 @@ a missing class. ADR 0024 bound each trace to its own guard; this tool answers
 the prior question of whether a guard is exercised at all.
 
 Method. Every `errors.append(...)` inside a declared lifecycle model is one
-guard. Each is discovered by AST rather than by hand, so a guard added later
-cannot be silently omitted from the audit. Each is then disabled, one at a time,
-in an isolated copy of the tree, and the suite is run. A guard is proved only
-when disabling it makes the suite fail. A guard whose removal leaves the suite
-green has no evidence, whatever any trace, tag, or document claims.
+guard. Each is discovered by AST, disabled one at a time in an isolated copy of
+the tree, and the suite is run. A guard is proved only when disabling it makes
+the suite fail. A guard whose removal leaves the suite green has no evidence,
+whatever any trace, tag, or document claims.
+
+Why a proved verdict here cannot be a false positive. The mutation replaces only
+the refusal itself — an `errors.append(...)` span with `pass`, an early
+`return [...]` with `return []` — leaving every surrounding statement intact,
+including any `after = ...` assignment in the same block. It removes one refusal
+and changes nothing else. Removing a refusal can only shrink the error list. A
+safe reference expects an empty list and stays empty, so it cannot begin
+failing. An adversarial case expects a non-empty list containing its declared
+guard, so it can only fail by being accepted outright or by losing that guard,
+and both outcomes are attributable to the guard just removed.
+
+Where this method is actually weak: discovery, not mutation. A proved verdict is
+trustworthy; the denominator is only as honest as `discover()`. An earlier
+version of this tool matched only `errors.append` and therefore never saw two
+`return [...]` guards, reporting a contented 69 when the count was 71 — both
+missing guards were unproved, so the coverage claim was inflated by a silent
+omission of exactly the kind this tool exists to catch. It was found by an
+independent reviewer, not by the tool or its author. Adding a guard through a
+construct `discover()` does not match still makes it invisible here. Treat the
+denominator as a claim requiring review, never as a measurement that defends
+itself, and extend `discover()` before adding a new refusal construct.
 
 The measurement is expensive, so it is not part of the default validator. It is
 retained as `architecture/lifecycle-guard-coverage.json` and pinned to the exact
@@ -74,19 +94,32 @@ def sha256_file(path: Path) -> str:
     return "sha256:" + hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def message_template(node: ast.Call) -> str:
+def message_template_from(argument: ast.expr) -> str:
     """Stable identity for a guard: its message shape, not its line number."""
-    argument = node.args[0]
     if isinstance(argument, ast.Constant):
         return str(argument.value)
     if isinstance(argument, ast.JoinedStr):
         return "".join(
             part.value if isinstance(part, ast.Constant) else "{}" for part in argument.values
         )
-    return ast.dump(argument)
+    return ast.unparse(argument)
+
+
+def message_template(node: ast.Call) -> str:
+    return message_template_from(node.args[0])
 
 
 def discover(source: str) -> dict[str, list[dict[str, Any]]]:
+    """Find every construct in a model that can produce a refusal.
+
+    Discovery is the weak point of this method, not mutation. An earlier version
+    matched only `errors.append` and therefore scored two `return [...]` guards
+    out of existence, reporting a contented 69 when the real count was 71. A
+    dormant guard added through `errors.extend` was likewise invisible to the
+    audit and to the gate. Every construct that can put a refusal into the
+    returned list must be matched here, and anything new must be added, or the
+    denominator quietly lies.
+    """
     tree = ast.parse(source)
     found: dict[str, list[dict[str, Any]]] = {}
     for node in ast.walk(tree):
@@ -94,18 +127,50 @@ def discover(source: str) -> dict[str, list[dict[str, Any]]]:
             continue
         branches: list[dict[str, Any]] = []
         for inner in ast.walk(node):
+            guard: str | None = None
+            replacement: str | None = None
+
+            # errors.append(...) / errors.extend(...)
             if (
                 isinstance(inner, ast.Call)
                 and isinstance(inner.func, ast.Attribute)
-                and inner.func.attr == "append"
+                and inner.func.attr in {"append", "extend"}
                 and isinstance(inner.func.value, ast.Name)
                 and inner.func.value.id == "errors"
             ):
+                guard = message_template(inner)
+                replacement = "pass"
+
+            # errors += [...]
+            elif (
+                isinstance(inner, ast.AugAssign)
+                and isinstance(inner.target, ast.Name)
+                and inner.target.id == "errors"
+            ):
+                guard = f"errors += {ast.unparse(inner.value)}"
+                replacement = "pass"
+
+            # return ["..."] — an early refusal that never touches `errors`
+            elif (
+                isinstance(inner, ast.Return)
+                and isinstance(inner.value, ast.List)
+                and inner.value.elts
+            ):
+                elements = inner.value.elts
+                guard = (
+                    message_template_from(elements[0])
+                    if len(elements) == 1
+                    else ast.unparse(inner.value)
+                )
+                replacement = "return []"
+
+            if guard is not None and replacement is not None:
                 branches.append(
                     {
-                        "guard": message_template(inner),
+                        "guard": guard,
                         "lineno": inner.lineno,
                         "end_lineno": inner.end_lineno,
+                        "replacement": replacement,
                     }
                 )
         branches.sort(key=lambda b: b["lineno"])
@@ -155,7 +220,7 @@ def measure(python: str) -> dict[str, Any]:
                 )
                 mutated = lines[:]
                 mutated[branch["lineno"] - 1 : branch["end_lineno"]] = [
-                    " " * indent + "pass\n"
+                    " " * indent + branch["replacement"] + "\n"
                 ]
                 target.write_text("".join(mutated))
                 suite_passed, first = run_suite(work, python)
