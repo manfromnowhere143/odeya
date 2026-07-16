@@ -67,15 +67,17 @@ grant being single-use at domain commit, the exact five-state WorkLease
 vocabulary, and the immediate exhaustion of a final grant use, all of which the
 sections above assert as established.
 
-ADR 0024, ADR 0026 and ADR 0028 closed that. Coverage is now **75 of 75**: all
-five auditable models are guard-complete — `authority_grant_trace` 11/11,
-`protocol_origin` 12/12, `data_use_cohort` 11/11, `work_lease_trace` 8/8,
-`work_lease_record_candidate` 33/33.
+ADR 0024, 0026, 0028 and 0029 closed most of that. Coverage is **89 of 139**:
+`authority_grant_trace` 11/11, `protocol_origin` 12/12, `data_use_cohort` 11/11,
+`work_lease_trace` 8/8, `work_lease_record_candidate` 33/33, and
+`schema_contract_errors` **14/64**.
 
-The suite is not guard-complete; five of its six models are.
-`identity_map_mutation` remains **unmeasured**, because it returns refusals
-directly and delegates to `schema_contract_errors`, which branch mutation cannot
-attribute. Unmeasured is not proved and is not zero.
+**50 guards remain unproved**, all in `schema_contract_errors`. ADR 0029
+retracted an earlier 75/75 headline that had simply never audited that function:
+`identity_map_mutation` holds no guard of its own and delegates to it, and
+scoring the caller while ignoring the callee hid 64 guards — including the
+first-slice boundary counts, which had no known-bad proof through every tranche
+that cited them.
 
 The retained record at `architecture/lifecycle-guard-coverage.json` names every
 unproved guard, and `scripts/audit_lifecycle_guard_coverage.py` reproduces the

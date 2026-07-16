@@ -913,7 +913,17 @@ def identity_map_mutation_errors(subject: dict[str, Any]) -> list[str]:
         path = mutation.get("path")
         if not isinstance(path, list) or not path:
             return ["identity-map mutation path is absent"]
-        current: Any = identity
+        # This model loads three inputs but could mutate only the identity map,
+        # so every guard reading the schema or the inventory was unprovable by
+        # construction -- 4 of 64, including the 60-event and 25-family
+        # first-slice boundary guards. Naming the target widens what a case may
+        # express without weakening a guard. load_json re-reads each call, so a
+        # mutated input cannot leak into another case.
+        targets = {"identity": identity, "schema": schema, "inventory": inventory}
+        target_name = mutation.get("target", "identity")
+        if target_name not in targets:
+            return [f"identity-map mutation names an unknown target {target_name!r}"]
+        current: Any = targets[target_name]
         try:
             for segment in path[:-1]:
                 current = current[segment]

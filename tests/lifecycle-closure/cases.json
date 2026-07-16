@@ -90,6 +90,17 @@
     "identity_logical_type_resource_substitution",
     "identity_wrong_branch_pointer",
     "identity_source_digest_drift",
+    "schema_contract_required_event_count_not_sixty",
+    "schema_contract_family_count_not_twenty_five",
+    "schema_contract_not_exact_research_event_resource",
+    "schema_contract_research_event_instance_version",
+    "schema_contract_stale_schema_identity",
+    "schema_contract_stale_instance_version",
+    "schema_contract_wrong_inventory_id",
+    "schema_contract_wrong_inventory_version",
+    "schema_contract_duplicate_event_types",
+    "schema_contract_not_exact_sixty_set",
+    "schema_contract_unknown_mutation_target",
     "identity_source_byte_count_drift"
   ],
   "cases": [
@@ -2240,6 +2251,216 @@
       },
       "adversarial_tag": "work_lease_declared_to_drift",
       "expected_refusal_contains": "declared_to does not equal legal WorkLease result"
+    },
+    {
+      "name": "identity-map-bad-required-event-count-not-sixty",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "inventory",
+          "op": "replace",
+          "path": [
+            "counts",
+            "required_event_types_exact"
+          ],
+          "value": 59
+        }
+      },
+      "adversarial_tag": "schema_contract_required_event_count_not_sixty",
+      "expected_refusal_contains": "first-slice required event count is not preserved at exactly 60"
+    },
+    {
+      "name": "identity-map-bad-aggregate-family-count-not-twenty-five",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "inventory",
+          "op": "replace",
+          "path": [
+            "counts",
+            "aggregate_state_reducer_families_exact"
+          ],
+          "value": 24
+        }
+      },
+      "adversarial_tag": "schema_contract_family_count_not_twenty_five",
+      "expected_refusal_contains": "first-slice aggregate/reducer-family count is not preserved at exactly 25"
+    },
+    {
+      "name": "identity-map-bad-not-exact-research-event-resource",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "schema",
+          "op": "replace",
+          "path": [
+            "$id"
+          ],
+          "value": "urn:odeya:schema:research-event:0.8.0"
+        }
+      },
+      "adversarial_tag": "schema_contract_not_exact_research_event_resource",
+      "expected_refusal_contains": "lifecycle closure is not carried by exact ResearchEvent 0.7.0"
+    },
+    {
+      "name": "identity-map-bad-research-event-instance-version",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "schema",
+          "op": "replace",
+          "path": [
+            "properties",
+            "schema_version",
+            "const"
+          ],
+          "value": "0.8.0"
+        }
+      },
+      "adversarial_tag": "schema_contract_research_event_instance_version",
+      "expected_refusal_contains": "ResearchEvent instance version is not exactly 0.7.0"
+    },
+    {
+      "name": "identity-map-bad-stale-schema-identity",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "identity",
+          "op": "replace",
+          "path": [
+            "source",
+            "schema_resource_id"
+          ],
+          "value": "urn:odeya:schema:research-event:0.6.0"
+        }
+      },
+      "adversarial_tag": "schema_contract_stale_schema_identity",
+      "expected_refusal_contains": "identity map ResearchEvent schema identity is stale"
+    },
+    {
+      "name": "identity-map-bad-stale-instance-version",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "identity",
+          "op": "replace",
+          "path": [
+            "source",
+            "schema_resource_version"
+          ],
+          "value": "0.6.0"
+        }
+      },
+      "adversarial_tag": "schema_contract_stale_instance_version",
+      "expected_refusal_contains": "identity map ResearchEvent instance version is stale"
+    },
+    {
+      "name": "identity-map-bad-wrong-inventory-id",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "identity",
+          "op": "replace",
+          "path": [
+            "source",
+            "required_event_inventory_id"
+          ],
+          "value": "odeya.not-the-first-slice"
+        }
+      },
+      "adversarial_tag": "schema_contract_wrong_inventory_id",
+      "expected_refusal_contains": "identity map points at the wrong first-slice inventory"
+    },
+    {
+      "name": "identity-map-bad-wrong-inventory-version",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "identity",
+          "op": "replace",
+          "path": [
+            "source",
+            "required_event_inventory_version"
+          ],
+          "value": "9.9.9"
+        }
+      },
+      "adversarial_tag": "schema_contract_wrong_inventory_version",
+      "expected_refusal_contains": "identity map points at the wrong first-slice inventory version"
+    },
+    {
+      "name": "identity-map-bad-duplicate-event-types",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "identity",
+          "op": "replace",
+          "path": [
+            "mappings",
+            1,
+            "event_type"
+          ],
+          "value": "adjudication.recorded"
+        }
+      },
+      "adversarial_tag": "schema_contract_duplicate_event_types",
+      "expected_refusal_contains": "event identity map contains duplicate event types"
+    },
+    {
+      "name": "identity-map-bad-not-the-exact-sixty-set",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "identity",
+          "op": "replace",
+          "path": [
+            "mappings",
+            0,
+            "event_type"
+          ],
+          "value": "not.a.first_slice_event"
+        }
+      },
+      "adversarial_tag": "schema_contract_not_exact_sixty_set",
+      "expected_refusal_contains": "event identity map is not exactly the 60-event first-slice set"
+    },
+    {
+      "name": "identity-map-bad-unknown-mutation-target",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "nowhere",
+          "op": "replace",
+          "path": [
+            "source"
+          ],
+          "value": null
+        }
+      },
+      "adversarial_tag": "schema_contract_unknown_mutation_target",
+      "expected_refusal_contains": "identity-map mutation names an unknown target"
     },
     {
       "name": "work-lease-record-safe-blocked-acquisition-candidate",

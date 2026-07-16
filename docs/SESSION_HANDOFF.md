@@ -326,13 +326,26 @@ accepts one bounded replace, the exact shape `identity_map_mutation` already
 uses. The denominator grew 71 to 75 because that vocabulary carries four hygiene
 guards of its own; all four are proved.
 
-**The suite is still not guard-complete: five of its six models are.**
-`identity_map_mutation_errors` remains unmeasured, because it returns refusals
-directly and delegates to `schema_contract_errors`, which branch mutation cannot
-attribute. Unmeasured is not proved and is not zero. That model and
-`schema_contract_errors` need a different method and are the next lifecycle
-unit. Coverage is also not correctness: 75 guards are exercised, none is shown
-to enforce the right rule.
+**ADR 0029 retracted the 75/75 headline. Coverage is 89 of 139.** That figure
+had audited only the five models it named; `identity_map_mutation_errors` holds
+no guard of its own and delegates to `schema_contract_errors`, which holds 64 and
+was never in `AUDITED_MODELS`. It measured 4/64. Among the unproved were the
+43/60/25/11 boundary guards themselves — the 60-event count, the 25-family count,
+the exact identity-map set — which every tranche cites and the validator prints
+on every run, with nothing proving they fire. Now 14/64 after eleven cases; the
+mutation gained a `target` (identity|schema|inventory) because the model could
+mutate only one of its three inputs, which is the same closed-vocabulary defect
+ADR 0028 fixed one model earlier.
+
+**50 guards remain unproved, all in `schema_contract_errors`** — branch-level
+payload identity and the canonical WorkLease candidate's authority boundary.
+That is the next lifecycle unit. Coverage is also not correctness: 89 guards are
+exercised, none is shown to enforce the right rule.
+
+Read the denominator with suspicion. It has been 69, then 71, then 75, then 139;
+every figure was published as fact and every one was wrong, because the
+measurement is only as wide as where it was pointed and nothing reveals where it
+was not.
 
 The measurement is retained at `architecture/lifecycle-guard-coverage.json` and
 reproduced by `scripts/audit_lifecycle_guard_coverage.py` (~90s). Do not

@@ -71,6 +71,7 @@ RECORD = ROOT / "architecture/lifecycle-guard-coverage.json"
 # declared unauditable below rather than reported as zero, because a silent zero
 # reads as clean.
 AUDITED_MODELS = (
+    "schema_contract_errors",
     "authority_grant_trace_errors",
     "protocol_origin_errors",
     "data_use_cohort_errors",
@@ -82,9 +83,11 @@ NOT_AUDITABLE = (
     {
         "function": "identity_map_mutation_errors",
         "reason": (
-            "returns refusal lists directly and delegates to schema_contract_errors "
-            "instead of appending to a local errors list, so branch mutation cannot "
-            "attribute its guards. Its coverage is unmeasured, not proved."
+            "returns refusal lists directly instead of appending to a local errors "
+            "list, so it holds no guard of its own. Its guards live in "
+            "schema_contract_errors, which is audited directly. Reporting this "
+            "model as unmeasured was correct; leaving its delegate unaudited was "
+            "not, and hid 60 unproved guards including the first-slice boundary."
         ),
     },
 )
