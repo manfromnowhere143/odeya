@@ -304,14 +304,30 @@ and this tranche completed it. `protocol_origin` is 3 of 12, `data_use_cohort` 4
 of 11, `work_lease_trace` 2 of 8, `work_lease_record_candidate` 4 of 27.
 `identity_map_mutation` is unmeasured rather than proved.
 
-That is now the sharpest blocker in T0, and it is subtractive: **PRQ-006,
-PRQ-007, and PRQ-008 cannot close on the current evidence.** Each names a
-property that no known-bad trace exercises — the protocol origin materializing
-version 1 from absence, the data-use grant being single-use at one atomic
-commit, and the exact five-state WorkLease vocabulary that is law 40 of the
-state model. Their closure records now say so. They are blocked on absent
-evidence, not on a decision, which makes them autonomous work rather than
-work waiting on Daniel.
+That was subtractive: **PRQ-006, PRQ-007, and PRQ-008 could not close on that
+evidence.** Each named a property that no known-bad trace exercised — the
+protocol origin materializing version 1 from absence, the data-use grant being
+single-use at one atomic commit, and the exact five-state WorkLease vocabulary
+that is law 40 of the state model. They were blocked on absent evidence, not on
+a decision, which made them autonomous work rather than work waiting on Daniel.
+
+ADR 0026 closed that gap in dependency order. Coverage is now **46 of 69** and
+four of five auditable models are guard-complete: `authority_grant_trace` 11/11,
+`protocol_origin` 12/12, `data_use_cohort` 11/11, `work_lease_trace` 8/8. Every
+guard named by PRQ-006, PRQ-007, and PRQ-008 is proved, each by a retained trace
+breaking exactly one field of its model's safe reference and probed to isolate
+to a single error. Their closure records are corrected: a stale "blocked on
+absent evidence" would mislead as much as the original silence did.
+
+**23 guards remain unproved, all in `work_lease_record_candidate` (4 of 27).**
+They are the most consequential left — blocked-candidate status, fabricated
+identity, execution-authority claims, the five-role assignment order,
+reservation claim/settlement separation, and the refusal to let a lease
+transition claim ResourceLedger authority. Several are exactly the refusals that
+keep the first slice fail-closed, and none is proved. That model validates a
+retained fixture rather than a synthetic subject, so each variant must break a
+real candidate record without making it structurally invalid for an unrelated
+reason. That is the next lifecycle unit.
 
 The measurement is retained at `architecture/lifecycle-guard-coverage.json`,
 reproduced by `scripts/audit_lifecycle_guard_coverage.py` (~90s), and gated
@@ -321,9 +337,8 @@ checker forces its guards to be re-proved. Both halves of the ratchet were
 confirmed to fire. Do not hand-edit that record; regenerate it, and note that it
 is untracked until committed, so `git checkout` cannot restore it.
 
-The next lifecycle unit is to fill the 45 in dependency order, starting with the
-guards named by PRQ-006, PRQ-007, and PRQ-008. Extend the same audit to
-`schema_contract_errors`, which the harness cannot currently reach.
+Extend the same audit to `schema_contract_errors`, which the harness cannot
+currently reach.
 
 Three further follow-ons are open. Six suites still assert refusal
 without attribution across 229 known-bad cases — `cognitive-contracts` (107),

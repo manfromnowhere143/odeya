@@ -61,19 +61,27 @@ guard. ADR 0024 records the correction and the exact mutations that were blind.
 
 The properties described above are what the checker attempts to enforce. They
 are not all evidenced. ADR 0025 disabled every guard in turn and ran the suite:
-of 69 guards, 24 are proved and **45 can be removed with the suite green**. Only
-`AuthorityGrant` is complete, at 11 of 11. `protocol_origin` is 3 of 12,
-`data_use_cohort` 4 of 11, `work_lease_trace` 2 of 8, and
-`work_lease_record_candidate` 4 of 27. `identity_map_mutation` is unmeasured
-rather than proved, because it delegates instead of appending refusals.
+of 69 guards only 24 were proved, and 45 could be removed with the suite green —
+including the protocol origin materializing version 1 from absence, the data-use
+grant being single-use at domain commit, the exact five-state WorkLease
+vocabulary, and the immediate exhaustion of a final grant use, all of which the
+sections above assert as established.
 
-Read the sections above against that record. Several properties they state — the
-protocol origin materializing version 1 from absence, the data-use grant being
-single-use at domain commit, the exact five-state WorkLease vocabulary, and the
-immediate exhaustion of a final grant use — describe guards that, before
-ADR 0024 and ADR 0025, nothing exercised. The retained record at
-`architecture/lifecycle-guard-coverage.json` names every unproved guard, and
-`scripts/audit_lifecycle_guard_coverage.py` reproduces the measurement.
+ADR 0024 and ADR 0026 closed most of that. Coverage is now **46 of 69**, and four
+of five auditable models are guard-complete: `authority_grant_trace` 11/11,
+`protocol_origin` 12/12, `data_use_cohort` 11/11, `work_lease_trace` 8/8.
+
+**23 guards remain unproved**, all in `work_lease_record_candidate` (4 of 27).
+They are the consequential ones: blocked-candidate status, fabricated identity,
+execution-authority claims, the five-role assignment order, reservation
+claim/settlement separation, and the refusal to let a lease transition claim
+ResourceLedger authority. `identity_map_mutation` is unmeasured rather than
+proved, because it delegates instead of appending refusals.
+
+The retained record at `architecture/lifecycle-guard-coverage.json` names every
+unproved guard, and `scripts/audit_lifecycle_guard_coverage.py` reproduces the
+measurement. Coverage is not correctness: a proved guard is exercised, not
+shown to enforce the right thing.
 
 Run from the repository root:
 

@@ -21,13 +21,37 @@
     "protocol_hidden_prior_state",
     "protocol_missing_validation_evidence",
     "protocol_split_freeze_integrity",
+    "protocol_origin_not_from_absence",
+    "protocol_first_version_not_one",
+    "protocol_snapshot_wrong_schema_resource",
+    "protocol_missing_source_draft_evidence",
+    "protocol_unprofiled_exposure_history_digest",
+    "protocol_missing_integrity_rule_identity",
+    "protocol_assigned_role_authority",
+    "protocol_cohort_order_not_exact",
+    "protocol_missing_grant_use_event_ref",
+    "protocol_missing_integrity_event_ref",
+    "protocol_missing_grant_exhaustion_event_ref",
     "data_use_assigned_role",
     "data_use_split_grant_cohort",
     "data_use_wrong_grant_order",
+    "data_use_missing_assignment_evidence",
+    "data_use_not_exactly_one_grant",
+    "data_use_wrong_authority_slot",
+    "data_use_payload_grant_differs",
+    "data_use_payload_use_event_differs",
+    "data_use_grant_not_single_use",
+    "data_use_batch_size_not_three",
     "data_use_missing_exhaustion",
     "work_lease_stale_as_canonical",
     "work_lease_completed_as_canonical",
     "work_lease_reopen_terminal",
+    "work_lease_vocabulary_not_exact",
+    "work_lease_projection_labels_incomplete",
+    "work_lease_does_not_start_unleased",
+    "work_lease_unknown_event",
+    "work_lease_declared_from_drift",
+    "work_lease_declared_to_drift",
     "work_lease_record_reversed_time",
     "work_lease_record_reference_digest_mismatch",
     "work_lease_record_terminal_start_claim",
@@ -812,6 +836,603 @@
       "expected_refusal_contains": "protocol freeze is not at index 1 of one four-event commit"
     },
     {
+      "name": "protocol-bad-origin-not-from-absence",
+      "kind": "adversarial",
+      "model": "protocol_origin",
+      "expect": "reject",
+      "subject": {
+        "prior_canonical_protocol_ref": null,
+        "origin_from_aggregate_absence": false,
+        "first_materialized_version": 1,
+        "frozen_protocol_snapshot_ref": {
+          "object_id": "protocol-snapshot.001",
+          "version": 1,
+          "schema_id": "urn:odeya:schema:protocol-snapshot:0.1.0",
+          "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "artifact_ref": {
+            "artifact_id": "artifact.protocol-snapshot.001",
+            "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "media_type": "application/json"
+          }
+        },
+        "source_draft_evidence_ref": {
+          "artifact_id": "artifact.protocol-draft.001",
+          "digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "media_type": "application/json"
+        },
+        "validation_evidence_refs": [
+          {
+            "artifact_id": "artifact.protocol-validation.001",
+            "digest": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "media_type": "application/json"
+          }
+        ],
+        "exposure_history_digest": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "integrity_rule_ref": {
+          "name": "protocol-integrity",
+          "version": "1.0.0",
+          "digest": "sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+        },
+        "authority_mode": "bounded_grants",
+        "role_slot": "protocol",
+        "commit_batch_index": 1,
+        "commit_batch_size": 4,
+        "batch_order": [
+          "authority.grant_used(protocol)",
+          "protocol.frozen",
+          "protocol.integrity_determined",
+          "authority.grant_exhausted(protocol)"
+        ],
+        "grant_use_event_ref": "event.grant-used.protocol.001",
+        "integrity_event_ref": "event.protocol-integrity.001",
+        "grant_exhaustion_event_ref": "event.grant-exhausted.protocol.001"
+      },
+      "adversarial_tag": "protocol_origin_not_from_absence",
+      "expected_refusal_contains": "protocol origin is not explicitly from aggregate absence"
+    },
+    {
+      "name": "protocol-bad-first-version-not-one",
+      "kind": "adversarial",
+      "model": "protocol_origin",
+      "expect": "reject",
+      "subject": {
+        "prior_canonical_protocol_ref": null,
+        "origin_from_aggregate_absence": true,
+        "first_materialized_version": 2,
+        "frozen_protocol_snapshot_ref": {
+          "object_id": "protocol-snapshot.001",
+          "version": 1,
+          "schema_id": "urn:odeya:schema:protocol-snapshot:0.1.0",
+          "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "artifact_ref": {
+            "artifact_id": "artifact.protocol-snapshot.001",
+            "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "media_type": "application/json"
+          }
+        },
+        "source_draft_evidence_ref": {
+          "artifact_id": "artifact.protocol-draft.001",
+          "digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "media_type": "application/json"
+        },
+        "validation_evidence_refs": [
+          {
+            "artifact_id": "artifact.protocol-validation.001",
+            "digest": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "media_type": "application/json"
+          }
+        ],
+        "exposure_history_digest": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "integrity_rule_ref": {
+          "name": "protocol-integrity",
+          "version": "1.0.0",
+          "digest": "sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+        },
+        "authority_mode": "bounded_grants",
+        "role_slot": "protocol",
+        "commit_batch_index": 1,
+        "commit_batch_size": 4,
+        "batch_order": [
+          "authority.grant_used(protocol)",
+          "protocol.frozen",
+          "protocol.integrity_determined",
+          "authority.grant_exhausted(protocol)"
+        ],
+        "grant_use_event_ref": "event.grant-used.protocol.001",
+        "integrity_event_ref": "event.protocol-integrity.001",
+        "grant_exhaustion_event_ref": "event.grant-exhausted.protocol.001"
+      },
+      "adversarial_tag": "protocol_first_version_not_one",
+      "expected_refusal_contains": "protocol origin does not materialize version 1"
+    },
+    {
+      "name": "protocol-bad-snapshot-wrong-schema-resource",
+      "kind": "adversarial",
+      "model": "protocol_origin",
+      "expect": "reject",
+      "subject": {
+        "prior_canonical_protocol_ref": null,
+        "origin_from_aggregate_absence": true,
+        "first_materialized_version": 1,
+        "frozen_protocol_snapshot_ref": {
+          "object_id": "protocol-snapshot.001",
+          "version": 1,
+          "schema_id": "urn:odeya:schema:protocol-snapshot:0.2.0",
+          "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "artifact_ref": {
+            "artifact_id": "artifact.protocol-snapshot.001",
+            "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "media_type": "application/json"
+          }
+        },
+        "source_draft_evidence_ref": {
+          "artifact_id": "artifact.protocol-draft.001",
+          "digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "media_type": "application/json"
+        },
+        "validation_evidence_refs": [
+          {
+            "artifact_id": "artifact.protocol-validation.001",
+            "digest": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "media_type": "application/json"
+          }
+        ],
+        "exposure_history_digest": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "integrity_rule_ref": {
+          "name": "protocol-integrity",
+          "version": "1.0.0",
+          "digest": "sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+        },
+        "authority_mode": "bounded_grants",
+        "role_slot": "protocol",
+        "commit_batch_index": 1,
+        "commit_batch_size": 4,
+        "batch_order": [
+          "authority.grant_used(protocol)",
+          "protocol.frozen",
+          "protocol.integrity_determined",
+          "authority.grant_exhausted(protocol)"
+        ],
+        "grant_use_event_ref": "event.grant-used.protocol.001",
+        "integrity_event_ref": "event.protocol-integrity.001",
+        "grant_exhaustion_event_ref": "event.grant-exhausted.protocol.001"
+      },
+      "adversarial_tag": "protocol_snapshot_wrong_schema_resource",
+      "expected_refusal_contains": "protocol origin lacks an exact frozen ProtocolSnapshot reference"
+    },
+    {
+      "name": "protocol-bad-missing-source-draft-evidence",
+      "kind": "adversarial",
+      "model": "protocol_origin",
+      "expect": "reject",
+      "subject": {
+        "prior_canonical_protocol_ref": null,
+        "origin_from_aggregate_absence": true,
+        "first_materialized_version": 1,
+        "frozen_protocol_snapshot_ref": {
+          "object_id": "protocol-snapshot.001",
+          "version": 1,
+          "schema_id": "urn:odeya:schema:protocol-snapshot:0.1.0",
+          "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "artifact_ref": {
+            "artifact_id": "artifact.protocol-snapshot.001",
+            "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "media_type": "application/json"
+          }
+        },
+        "source_draft_evidence_ref": null,
+        "validation_evidence_refs": [
+          {
+            "artifact_id": "artifact.protocol-validation.001",
+            "digest": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "media_type": "application/json"
+          }
+        ],
+        "exposure_history_digest": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "integrity_rule_ref": {
+          "name": "protocol-integrity",
+          "version": "1.0.0",
+          "digest": "sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+        },
+        "authority_mode": "bounded_grants",
+        "role_slot": "protocol",
+        "commit_batch_index": 1,
+        "commit_batch_size": 4,
+        "batch_order": [
+          "authority.grant_used(protocol)",
+          "protocol.frozen",
+          "protocol.integrity_determined",
+          "authority.grant_exhausted(protocol)"
+        ],
+        "grant_use_event_ref": "event.grant-used.protocol.001",
+        "integrity_event_ref": "event.protocol-integrity.001",
+        "grant_exhaustion_event_ref": "event.grant-exhausted.protocol.001"
+      },
+      "adversarial_tag": "protocol_missing_source_draft_evidence",
+      "expected_refusal_contains": "protocol origin lacks exact source-draft evidence"
+    },
+    {
+      "name": "protocol-bad-unprofiled-exposure-history-digest",
+      "kind": "adversarial",
+      "model": "protocol_origin",
+      "expect": "reject",
+      "subject": {
+        "prior_canonical_protocol_ref": null,
+        "origin_from_aggregate_absence": true,
+        "first_materialized_version": 1,
+        "frozen_protocol_snapshot_ref": {
+          "object_id": "protocol-snapshot.001",
+          "version": 1,
+          "schema_id": "urn:odeya:schema:protocol-snapshot:0.1.0",
+          "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "artifact_ref": {
+            "artifact_id": "artifact.protocol-snapshot.001",
+            "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "media_type": "application/json"
+          }
+        },
+        "source_draft_evidence_ref": {
+          "artifact_id": "artifact.protocol-draft.001",
+          "digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "media_type": "application/json"
+        },
+        "validation_evidence_refs": [
+          {
+            "artifact_id": "artifact.protocol-validation.001",
+            "digest": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "media_type": "application/json"
+          }
+        ],
+        "exposure_history_digest": "not-a-digest",
+        "integrity_rule_ref": {
+          "name": "protocol-integrity",
+          "version": "1.0.0",
+          "digest": "sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+        },
+        "authority_mode": "bounded_grants",
+        "role_slot": "protocol",
+        "commit_batch_index": 1,
+        "commit_batch_size": 4,
+        "batch_order": [
+          "authority.grant_used(protocol)",
+          "protocol.frozen",
+          "protocol.integrity_determined",
+          "authority.grant_exhausted(protocol)"
+        ],
+        "grant_use_event_ref": "event.grant-used.protocol.001",
+        "integrity_event_ref": "event.protocol-integrity.001",
+        "grant_exhaustion_event_ref": "event.grant-exhausted.protocol.001"
+      },
+      "adversarial_tag": "protocol_unprofiled_exposure_history_digest",
+      "expected_refusal_contains": "protocol origin lacks an exact exposure-history digest"
+    },
+    {
+      "name": "protocol-bad-missing-integrity-rule-identity",
+      "kind": "adversarial",
+      "model": "protocol_origin",
+      "expect": "reject",
+      "subject": {
+        "prior_canonical_protocol_ref": null,
+        "origin_from_aggregate_absence": true,
+        "first_materialized_version": 1,
+        "frozen_protocol_snapshot_ref": {
+          "object_id": "protocol-snapshot.001",
+          "version": 1,
+          "schema_id": "urn:odeya:schema:protocol-snapshot:0.1.0",
+          "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "artifact_ref": {
+            "artifact_id": "artifact.protocol-snapshot.001",
+            "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "media_type": "application/json"
+          }
+        },
+        "source_draft_evidence_ref": {
+          "artifact_id": "artifact.protocol-draft.001",
+          "digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "media_type": "application/json"
+        },
+        "validation_evidence_refs": [
+          {
+            "artifact_id": "artifact.protocol-validation.001",
+            "digest": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "media_type": "application/json"
+          }
+        ],
+        "exposure_history_digest": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "integrity_rule_ref": null,
+        "authority_mode": "bounded_grants",
+        "role_slot": "protocol",
+        "commit_batch_index": 1,
+        "commit_batch_size": 4,
+        "batch_order": [
+          "authority.grant_used(protocol)",
+          "protocol.frozen",
+          "protocol.integrity_determined",
+          "authority.grant_exhausted(protocol)"
+        ],
+        "grant_use_event_ref": "event.grant-used.protocol.001",
+        "integrity_event_ref": "event.protocol-integrity.001",
+        "grant_exhaustion_event_ref": "event.grant-exhausted.protocol.001"
+      },
+      "adversarial_tag": "protocol_missing_integrity_rule_identity",
+      "expected_refusal_contains": "protocol origin lacks an exact integrity rule identity"
+    },
+    {
+      "name": "protocol-bad-assigned-role-authority",
+      "kind": "adversarial",
+      "model": "protocol_origin",
+      "expect": "reject",
+      "subject": {
+        "prior_canonical_protocol_ref": null,
+        "origin_from_aggregate_absence": true,
+        "first_materialized_version": 1,
+        "frozen_protocol_snapshot_ref": {
+          "object_id": "protocol-snapshot.001",
+          "version": 1,
+          "schema_id": "urn:odeya:schema:protocol-snapshot:0.1.0",
+          "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "artifact_ref": {
+            "artifact_id": "artifact.protocol-snapshot.001",
+            "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "media_type": "application/json"
+          }
+        },
+        "source_draft_evidence_ref": {
+          "artifact_id": "artifact.protocol-draft.001",
+          "digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "media_type": "application/json"
+        },
+        "validation_evidence_refs": [
+          {
+            "artifact_id": "artifact.protocol-validation.001",
+            "digest": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "media_type": "application/json"
+          }
+        ],
+        "exposure_history_digest": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "integrity_rule_ref": {
+          "name": "protocol-integrity",
+          "version": "1.0.0",
+          "digest": "sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+        },
+        "authority_mode": "assigned_roles",
+        "role_slot": "protocol",
+        "commit_batch_index": 1,
+        "commit_batch_size": 4,
+        "batch_order": [
+          "authority.grant_used(protocol)",
+          "protocol.frozen",
+          "protocol.integrity_determined",
+          "authority.grant_exhausted(protocol)"
+        ],
+        "grant_use_event_ref": "event.grant-used.protocol.001",
+        "integrity_event_ref": "event.protocol-integrity.001",
+        "grant_exhaustion_event_ref": "event.grant-exhausted.protocol.001"
+      },
+      "adversarial_tag": "protocol_assigned_role_authority",
+      "expected_refusal_contains": "protocol freeze lacks the bounded protocol grant"
+    },
+    {
+      "name": "protocol-bad-cohort-order-reversed",
+      "kind": "adversarial",
+      "model": "protocol_origin",
+      "expect": "reject",
+      "subject": {
+        "prior_canonical_protocol_ref": null,
+        "origin_from_aggregate_absence": true,
+        "first_materialized_version": 1,
+        "frozen_protocol_snapshot_ref": {
+          "object_id": "protocol-snapshot.001",
+          "version": 1,
+          "schema_id": "urn:odeya:schema:protocol-snapshot:0.1.0",
+          "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "artifact_ref": {
+            "artifact_id": "artifact.protocol-snapshot.001",
+            "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "media_type": "application/json"
+          }
+        },
+        "source_draft_evidence_ref": {
+          "artifact_id": "artifact.protocol-draft.001",
+          "digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "media_type": "application/json"
+        },
+        "validation_evidence_refs": [
+          {
+            "artifact_id": "artifact.protocol-validation.001",
+            "digest": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "media_type": "application/json"
+          }
+        ],
+        "exposure_history_digest": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "integrity_rule_ref": {
+          "name": "protocol-integrity",
+          "version": "1.0.0",
+          "digest": "sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+        },
+        "authority_mode": "bounded_grants",
+        "role_slot": "protocol",
+        "commit_batch_index": 1,
+        "commit_batch_size": 4,
+        "batch_order": [
+          "protocol.frozen",
+          "authority.grant_used(protocol)",
+          "protocol.integrity_determined",
+          "authority.grant_exhausted(protocol)"
+        ],
+        "grant_use_event_ref": "event.grant-used.protocol.001",
+        "integrity_event_ref": "event.protocol-integrity.001",
+        "grant_exhaustion_event_ref": "event.grant-exhausted.protocol.001"
+      },
+      "adversarial_tag": "protocol_cohort_order_not_exact",
+      "expected_refusal_contains": "protocol grant-use/freeze/integrity/exhaustion order is not exact"
+    },
+    {
+      "name": "protocol-bad-missing-grant-use-event-ref",
+      "kind": "adversarial",
+      "model": "protocol_origin",
+      "expect": "reject",
+      "subject": {
+        "prior_canonical_protocol_ref": null,
+        "origin_from_aggregate_absence": true,
+        "first_materialized_version": 1,
+        "frozen_protocol_snapshot_ref": {
+          "object_id": "protocol-snapshot.001",
+          "version": 1,
+          "schema_id": "urn:odeya:schema:protocol-snapshot:0.1.0",
+          "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "artifact_ref": {
+            "artifact_id": "artifact.protocol-snapshot.001",
+            "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "media_type": "application/json"
+          }
+        },
+        "source_draft_evidence_ref": {
+          "artifact_id": "artifact.protocol-draft.001",
+          "digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "media_type": "application/json"
+        },
+        "validation_evidence_refs": [
+          {
+            "artifact_id": "artifact.protocol-validation.001",
+            "digest": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "media_type": "application/json"
+          }
+        ],
+        "exposure_history_digest": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "integrity_rule_ref": {
+          "name": "protocol-integrity",
+          "version": "1.0.0",
+          "digest": "sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+        },
+        "authority_mode": "bounded_grants",
+        "role_slot": "protocol",
+        "commit_batch_index": 1,
+        "commit_batch_size": 4,
+        "batch_order": [
+          "authority.grant_used(protocol)",
+          "protocol.frozen",
+          "protocol.integrity_determined",
+          "authority.grant_exhausted(protocol)"
+        ],
+        "grant_use_event_ref": "",
+        "integrity_event_ref": "event.protocol-integrity.001",
+        "grant_exhaustion_event_ref": "event.grant-exhausted.protocol.001"
+      },
+      "adversarial_tag": "protocol_missing_grant_use_event_ref",
+      "expected_refusal_contains": "protocol origin lacks grant_use_event_ref"
+    },
+    {
+      "name": "protocol-bad-missing-integrity-event-ref",
+      "kind": "adversarial",
+      "model": "protocol_origin",
+      "expect": "reject",
+      "subject": {
+        "prior_canonical_protocol_ref": null,
+        "origin_from_aggregate_absence": true,
+        "first_materialized_version": 1,
+        "frozen_protocol_snapshot_ref": {
+          "object_id": "protocol-snapshot.001",
+          "version": 1,
+          "schema_id": "urn:odeya:schema:protocol-snapshot:0.1.0",
+          "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "artifact_ref": {
+            "artifact_id": "artifact.protocol-snapshot.001",
+            "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "media_type": "application/json"
+          }
+        },
+        "source_draft_evidence_ref": {
+          "artifact_id": "artifact.protocol-draft.001",
+          "digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "media_type": "application/json"
+        },
+        "validation_evidence_refs": [
+          {
+            "artifact_id": "artifact.protocol-validation.001",
+            "digest": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "media_type": "application/json"
+          }
+        ],
+        "exposure_history_digest": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "integrity_rule_ref": {
+          "name": "protocol-integrity",
+          "version": "1.0.0",
+          "digest": "sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+        },
+        "authority_mode": "bounded_grants",
+        "role_slot": "protocol",
+        "commit_batch_index": 1,
+        "commit_batch_size": 4,
+        "batch_order": [
+          "authority.grant_used(protocol)",
+          "protocol.frozen",
+          "protocol.integrity_determined",
+          "authority.grant_exhausted(protocol)"
+        ],
+        "grant_use_event_ref": "event.grant-used.protocol.001",
+        "integrity_event_ref": "",
+        "grant_exhaustion_event_ref": "event.grant-exhausted.protocol.001"
+      },
+      "adversarial_tag": "protocol_missing_integrity_event_ref",
+      "expected_refusal_contains": "protocol origin lacks integrity_event_ref"
+    },
+    {
+      "name": "protocol-bad-missing-grant-exhaustion-event-ref",
+      "kind": "adversarial",
+      "model": "protocol_origin",
+      "expect": "reject",
+      "subject": {
+        "prior_canonical_protocol_ref": null,
+        "origin_from_aggregate_absence": true,
+        "first_materialized_version": 1,
+        "frozen_protocol_snapshot_ref": {
+          "object_id": "protocol-snapshot.001",
+          "version": 1,
+          "schema_id": "urn:odeya:schema:protocol-snapshot:0.1.0",
+          "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "artifact_ref": {
+            "artifact_id": "artifact.protocol-snapshot.001",
+            "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "media_type": "application/json"
+          }
+        },
+        "source_draft_evidence_ref": {
+          "artifact_id": "artifact.protocol-draft.001",
+          "digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "media_type": "application/json"
+        },
+        "validation_evidence_refs": [
+          {
+            "artifact_id": "artifact.protocol-validation.001",
+            "digest": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "media_type": "application/json"
+          }
+        ],
+        "exposure_history_digest": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "integrity_rule_ref": {
+          "name": "protocol-integrity",
+          "version": "1.0.0",
+          "digest": "sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+        },
+        "authority_mode": "bounded_grants",
+        "role_slot": "protocol",
+        "commit_batch_index": 1,
+        "commit_batch_size": 4,
+        "batch_order": [
+          "authority.grant_used(protocol)",
+          "protocol.frozen",
+          "protocol.integrity_determined",
+          "authority.grant_exhausted(protocol)"
+        ],
+        "grant_use_event_ref": "event.grant-used.protocol.001",
+        "integrity_event_ref": "event.protocol-integrity.001",
+        "grant_exhaustion_event_ref": ""
+      },
+      "adversarial_tag": "protocol_missing_grant_exhaustion_event_ref",
+      "expected_refusal_contains": "protocol origin lacks grant_exhaustion_event_ref"
+    },
+    {
       "name": "data-use-safe-exact-bounded-grant-cohort",
       "kind": "safe_reference",
       "model": "data_use_cohort",
@@ -973,6 +1594,243 @@
       },
       "adversarial_tag": "data_use_missing_exhaustion",
       "expected_refusal_contains": "data-use final grant use is not exhausted in the cohort"
+    },
+    {
+      "name": "data-use-bad-missing-assignment-evidence",
+      "kind": "adversarial",
+      "model": "data_use_cohort",
+      "expect": "reject",
+      "subject": {
+        "authority_mode": "bounded_grants",
+        "assignment_refs": [],
+        "grant_refs": [
+          "grant.data-rights.001"
+        ],
+        "grant_use_event_refs": [
+          "event.grant-used.data-rights.001"
+        ],
+        "role_slot": "data_rights",
+        "grant_id": "grant.data-rights.001",
+        "grant_use_event_ref": "event.grant-used.data-rights.001",
+        "grant_exhaustion_event_ref": "event.grant-exhausted.data-rights.001",
+        "consumption_point": "domain_commit",
+        "max_uses": 1,
+        "commit_batch_index": 1,
+        "commit_batch_size": 3,
+        "atomic_commit": true,
+        "batch_order": [
+          "authority.grant_used(data_rights)",
+          "data_use.decided",
+          "authority.grant_exhausted(data_rights)"
+        ]
+      },
+      "adversarial_tag": "data_use_missing_assignment_evidence",
+      "expected_refusal_contains": "data-use decision lacks assignment evidence"
+    },
+    {
+      "name": "data-use-bad-two-data-rights-grants",
+      "kind": "adversarial",
+      "model": "data_use_cohort",
+      "expect": "reject",
+      "subject": {
+        "authority_mode": "bounded_grants",
+        "assignment_refs": [
+          "assignment.data-rights.001"
+        ],
+        "grant_refs": [
+          "grant.data-rights.001",
+          "grant.data-rights.002"
+        ],
+        "grant_use_event_refs": [
+          "event.grant-used.data-rights.001"
+        ],
+        "role_slot": "data_rights",
+        "grant_id": "grant.data-rights.001",
+        "grant_use_event_ref": "event.grant-used.data-rights.001",
+        "grant_exhaustion_event_ref": "event.grant-exhausted.data-rights.001",
+        "consumption_point": "domain_commit",
+        "max_uses": 1,
+        "commit_batch_index": 1,
+        "commit_batch_size": 3,
+        "atomic_commit": true,
+        "batch_order": [
+          "authority.grant_used(data_rights)",
+          "data_use.decided",
+          "authority.grant_exhausted(data_rights)"
+        ]
+      },
+      "adversarial_tag": "data_use_not_exactly_one_grant",
+      "expected_refusal_contains": "data-use decision must retain exactly one data_rights grant and use event"
+    },
+    {
+      "name": "data-use-bad-wrong-authority-slot",
+      "kind": "adversarial",
+      "model": "data_use_cohort",
+      "expect": "reject",
+      "subject": {
+        "authority_mode": "bounded_grants",
+        "assignment_refs": [
+          "assignment.data-rights.001"
+        ],
+        "grant_refs": [
+          "grant.data-rights.001"
+        ],
+        "grant_use_event_refs": [
+          "event.grant-used.data-rights.001"
+        ],
+        "role_slot": "compute",
+        "grant_id": "grant.data-rights.001",
+        "grant_use_event_ref": "event.grant-used.data-rights.001",
+        "grant_exhaustion_event_ref": "event.grant-exhausted.data-rights.001",
+        "consumption_point": "domain_commit",
+        "max_uses": 1,
+        "commit_batch_index": 1,
+        "commit_batch_size": 3,
+        "atomic_commit": true,
+        "batch_order": [
+          "authority.grant_used(data_rights)",
+          "data_use.decided",
+          "authority.grant_exhausted(data_rights)"
+        ]
+      },
+      "adversarial_tag": "data_use_wrong_authority_slot",
+      "expected_refusal_contains": "data-use decision consumes the wrong authority slot"
+    },
+    {
+      "name": "data-use-bad-payload-grant-differs-from-evidence",
+      "kind": "adversarial",
+      "model": "data_use_cohort",
+      "expect": "reject",
+      "subject": {
+        "authority_mode": "bounded_grants",
+        "assignment_refs": [
+          "assignment.data-rights.001"
+        ],
+        "grant_refs": [
+          "grant.data-rights.001"
+        ],
+        "grant_use_event_refs": [
+          "event.grant-used.data-rights.001"
+        ],
+        "role_slot": "data_rights",
+        "grant_id": "grant.data-rights.999",
+        "grant_use_event_ref": "event.grant-used.data-rights.001",
+        "grant_exhaustion_event_ref": "event.grant-exhausted.data-rights.001",
+        "consumption_point": "domain_commit",
+        "max_uses": 1,
+        "commit_batch_index": 1,
+        "commit_batch_size": 3,
+        "atomic_commit": true,
+        "batch_order": [
+          "authority.grant_used(data_rights)",
+          "data_use.decided",
+          "authority.grant_exhausted(data_rights)"
+        ]
+      },
+      "adversarial_tag": "data_use_payload_grant_differs",
+      "expected_refusal_contains": "data-use payload grant differs from authority evidence"
+    },
+    {
+      "name": "data-use-bad-payload-use-event-differs-from-evidence",
+      "kind": "adversarial",
+      "model": "data_use_cohort",
+      "expect": "reject",
+      "subject": {
+        "authority_mode": "bounded_grants",
+        "assignment_refs": [
+          "assignment.data-rights.001"
+        ],
+        "grant_refs": [
+          "grant.data-rights.001"
+        ],
+        "grant_use_event_refs": [
+          "event.grant-used.data-rights.001"
+        ],
+        "role_slot": "data_rights",
+        "grant_id": "grant.data-rights.001",
+        "grant_use_event_ref": "event.grant-used.data-rights.999",
+        "grant_exhaustion_event_ref": "event.grant-exhausted.data-rights.001",
+        "consumption_point": "domain_commit",
+        "max_uses": 1,
+        "commit_batch_index": 1,
+        "commit_batch_size": 3,
+        "atomic_commit": true,
+        "batch_order": [
+          "authority.grant_used(data_rights)",
+          "data_use.decided",
+          "authority.grant_exhausted(data_rights)"
+        ]
+      },
+      "adversarial_tag": "data_use_payload_use_event_differs",
+      "expected_refusal_contains": "data-use payload use-event differs from authority evidence"
+    },
+    {
+      "name": "data-use-bad-grant-not-single-use",
+      "kind": "adversarial",
+      "model": "data_use_cohort",
+      "expect": "reject",
+      "subject": {
+        "authority_mode": "bounded_grants",
+        "assignment_refs": [
+          "assignment.data-rights.001"
+        ],
+        "grant_refs": [
+          "grant.data-rights.001"
+        ],
+        "grant_use_event_refs": [
+          "event.grant-used.data-rights.001"
+        ],
+        "role_slot": "data_rights",
+        "grant_id": "grant.data-rights.001",
+        "grant_use_event_ref": "event.grant-used.data-rights.001",
+        "grant_exhaustion_event_ref": "event.grant-exhausted.data-rights.001",
+        "consumption_point": "domain_commit",
+        "max_uses": 2,
+        "commit_batch_index": 1,
+        "commit_batch_size": 3,
+        "atomic_commit": true,
+        "batch_order": [
+          "authority.grant_used(data_rights)",
+          "data_use.decided",
+          "authority.grant_exhausted(data_rights)"
+        ]
+      },
+      "adversarial_tag": "data_use_grant_not_single_use",
+      "expected_refusal_contains": "data-use grant is not single-use at domain commit"
+    },
+    {
+      "name": "data-use-bad-batch-size-not-three",
+      "kind": "adversarial",
+      "model": "data_use_cohort",
+      "expect": "reject",
+      "subject": {
+        "authority_mode": "bounded_grants",
+        "assignment_refs": [
+          "assignment.data-rights.001"
+        ],
+        "grant_refs": [
+          "grant.data-rights.001"
+        ],
+        "grant_use_event_refs": [
+          "event.grant-used.data-rights.001"
+        ],
+        "role_slot": "data_rights",
+        "grant_id": "grant.data-rights.001",
+        "grant_use_event_ref": "event.grant-used.data-rights.001",
+        "grant_exhaustion_event_ref": "event.grant-exhausted.data-rights.001",
+        "consumption_point": "domain_commit",
+        "max_uses": 1,
+        "commit_batch_index": 1,
+        "commit_batch_size": 4,
+        "atomic_commit": true,
+        "batch_order": [
+          "authority.grant_used(data_rights)",
+          "data_use.decided",
+          "authority.grant_exhausted(data_rights)"
+        ]
+      },
+      "adversarial_tag": "data_use_batch_size_not_three",
+      "expected_refusal_contains": "data-use decision is not index 1 of exactly three events"
     },
     {
       "name": "work-lease-safe-release",
@@ -1176,6 +2034,183 @@
       },
       "adversarial_tag": "work_lease_reopen_terminal",
       "expected_refusal_contains": "cannot apply work.lease_acquired from 'released'"
+    },
+    {
+      "name": "work-lease-bad-canonical-vocabulary-reordered",
+      "kind": "adversarial",
+      "model": "work_lease_trace",
+      "expect": "reject",
+      "subject": {
+        "initial_state": "unleased",
+        "canonical_states": [
+          "unleased",
+          "active",
+          "revoked",
+          "released",
+          "expired"
+        ],
+        "projection_only_labels": [
+          "stale",
+          "completed"
+        ],
+        "steps": [
+          {
+            "event_type": "work.lease_acquired",
+            "declared_from": "unleased",
+            "declared_to": "active"
+          },
+          {
+            "event_type": "work.lease_released",
+            "declared_from": "active",
+            "declared_to": "released"
+          }
+        ]
+      },
+      "adversarial_tag": "work_lease_vocabulary_not_exact",
+      "expected_refusal_contains": "WorkLease canonical vocabulary is not the exact five-state sequence"
+    },
+    {
+      "name": "work-lease-bad-projection-labels-incomplete",
+      "kind": "adversarial",
+      "model": "work_lease_trace",
+      "expect": "reject",
+      "subject": {
+        "initial_state": "unleased",
+        "canonical_states": [
+          "unleased",
+          "active",
+          "released",
+          "revoked",
+          "expired"
+        ],
+        "projection_only_labels": [
+          "stale"
+        ],
+        "steps": [
+          {
+            "event_type": "work.lease_acquired",
+            "declared_from": "unleased",
+            "declared_to": "active"
+          },
+          {
+            "event_type": "work.lease_released",
+            "declared_from": "active",
+            "declared_to": "released"
+          }
+        ]
+      },
+      "adversarial_tag": "work_lease_projection_labels_incomplete",
+      "expected_refusal_contains": "stale/completed are not explicitly projection-only labels"
+    },
+    {
+      "name": "work-lease-bad-does-not-start-unleased",
+      "kind": "adversarial",
+      "model": "work_lease_trace",
+      "expect": "reject",
+      "subject": {
+        "initial_state": "active",
+        "canonical_states": [
+          "unleased",
+          "active",
+          "released",
+          "revoked",
+          "expired"
+        ],
+        "projection_only_labels": [
+          "stale",
+          "completed"
+        ],
+        "steps": []
+      },
+      "adversarial_tag": "work_lease_does_not_start_unleased",
+      "expected_refusal_contains": "WorkLease trace does not start unleased"
+    },
+    {
+      "name": "work-lease-bad-unknown-lease-event",
+      "kind": "adversarial",
+      "model": "work_lease_trace",
+      "expect": "reject",
+      "subject": {
+        "initial_state": "unleased",
+        "canonical_states": [
+          "unleased",
+          "active",
+          "released",
+          "revoked",
+          "expired"
+        ],
+        "projection_only_labels": [
+          "stale",
+          "completed"
+        ],
+        "steps": [
+          {
+            "event_type": "work.lease_renewed",
+            "declared_from": "unleased",
+            "declared_to": "active"
+          }
+        ]
+      },
+      "adversarial_tag": "work_lease_unknown_event",
+      "expected_refusal_contains": "uses a projection label or unknown WorkLease event"
+    },
+    {
+      "name": "work-lease-bad-declared-from-drift",
+      "kind": "adversarial",
+      "model": "work_lease_trace",
+      "expect": "reject",
+      "subject": {
+        "initial_state": "unleased",
+        "canonical_states": [
+          "unleased",
+          "active",
+          "released",
+          "revoked",
+          "expired"
+        ],
+        "projection_only_labels": [
+          "stale",
+          "completed"
+        ],
+        "steps": [
+          {
+            "event_type": "work.lease_acquired",
+            "declared_from": "active",
+            "declared_to": "active"
+          }
+        ]
+      },
+      "adversarial_tag": "work_lease_declared_from_drift",
+      "expected_refusal_contains": "declared_from does not equal folded WorkLease state"
+    },
+    {
+      "name": "work-lease-bad-declared-to-drift",
+      "kind": "adversarial",
+      "model": "work_lease_trace",
+      "expect": "reject",
+      "subject": {
+        "initial_state": "unleased",
+        "canonical_states": [
+          "unleased",
+          "active",
+          "released",
+          "revoked",
+          "expired"
+        ],
+        "projection_only_labels": [
+          "stale",
+          "completed"
+        ],
+        "steps": [
+          {
+            "event_type": "work.lease_acquired",
+            "declared_from": "unleased",
+            "declared_to": "expired"
+          }
+        ]
+      },
+      "adversarial_tag": "work_lease_declared_to_drift",
+      "expected_refusal_contains": "declared_to does not equal legal WorkLease result"
     },
     {
       "name": "work-lease-record-safe-blocked-acquisition-candidate",
