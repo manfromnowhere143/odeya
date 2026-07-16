@@ -45,8 +45,8 @@ reconcile the wording before a later UI checkpoint.
 - Source architecture tree: `029b5161f883de41e93565b29ba895ee492a7d47`
 - Foundational local architecture checkpoint: `63212488b919b7d8fedce83bc3be344064d7cfe6`
 - Foundational checkpoint tree: `979f5c46ec098fdb2e7598c6dc428ce45288788e`
-- Current prerequisite-closure architecture checkpoint: pending scoped local commit after exact-index validation
-- Current prerequisite-closure tree: pending scoped local commit after exact-index validation
+- Current prerequisite-closure architecture checkpoint: `f8644edcd0a0217b2487f5e5ff218bd65dbe3bda`
+- Current prerequisite-closure tree: `d6fce27d464bc16cfaeda7a4e194e8ef75aa4730`
 - Remote: none at handoff anchoring time
 - Pinned architecture environment: `/Users/danielwahnich/workspace/odeya/.venv-architecture`
 - Product/runtime implementation lock: intact
@@ -261,7 +261,7 @@ Before interpreting a failure, inspect whether any owner is actively editing the
 - Frozen Gate A candidate manifest: **not created**
 - Foundational architecture checkpoint: **`63212488b919b7d8fedce83bc3be344064d7cfe6`**
 - Source architecture checkpoint/tree: **`f4429ce5ca71e58ebb5d65776a45ebb6a2a18889` / `029b5161f883de41e93565b29ba895ee492a7d47`**
-- Current prerequisite-closure checkpoint/tree: **pending scoped local commit after exact-index validation**
+- Current prerequisite-closure checkpoint/tree: **`f8644edcd0a0217b2487f5e5ff218bd65dbe3bda` / `d6fce27d464bc16cfaeda7a4e194e8ef75aa4730`**
 - Full validator: **pass — 100 schemas, 588 shared cases, 7 founding semantic groups, 8 isolated suites, 2 architecture-evidence checks, 64 canonical cases, 4 metamorphic relations, 100-schema/198-fixture audit, 30 modules, 47 aggregates, 121 design commands, 135 events**
 - Cognitive: **150 pass / 18 bounded semantic**
 - Command identity: **19 typed non-admission cases; PRQ-012 remains open**
