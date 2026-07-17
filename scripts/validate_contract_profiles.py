@@ -22,7 +22,7 @@ SUITES = {
     "command-identity-contracts": (19, 2, 17),
     "constitutional-construction": (32, 3, 29),
     "first-slice-resolution": (33, 12, 21),
-    "lifecycle-closure": (32, 11, 21),
+    "lifecycle-closure": (133, 14, 119),
     "mathematical-contracts": (57, 20, 37),
     "physical-contracts": (85, 14, 71),
     "projection-contracts": (62, 8, 54),

@@ -23,6 +23,23 @@ this operational handoff; then dated historical packets and chat. A newer
 document does not silently overrule an accepted decision, and an older count or
 hash does not silently describe a descendant commit.
 
+## Public repository boundary
+
+The architecture repository publishes in full at
+`https://github.com/manfromnowhere143/odeya` (ADR 0047): every schema,
+suite, validator, fixture, ADR, workflow, and this handoff — mission soul
+included, because it is the soul of the project. The published history is
+the complete owner-authored commit trail; nothing is squashed and nothing
+is attributed to tools.
+
+What stays local, by design, is evidence and tooling *about* the
+repository rather than repository content: the fresh-clone rehearsal
+evidence under `/Users/danielwahnich/workspace/odeya-release-evidence/`
+(cited by commit hash, reproducible by anyone from the public bytes), the
+session-scratch convergence tooling, and the operator's private session
+memory. Sibling proof missions publish separately under the same owner:
+`sentinel`, `telos`, and Inbar when its own lane completes.
+
 ## Mission soul
 
 Odeya turns a thesis into a governed, replayable chain from question to
