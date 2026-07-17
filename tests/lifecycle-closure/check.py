@@ -105,10 +105,10 @@ def schema_contract_errors(
     errors.extend(branch_errors)
     if len(branches) != 135:
         errors.append(f"ResearchEvent global branch count changed from 135 to {len(branches)}")
-    if schema.get("$id") != "urn:odeya:schema:research-event:0.8.0":
-        errors.append("lifecycle closure is not carried by exact ResearchEvent 0.8.0")
-    if nested(schema, "properties", "schema_version", "const") != "0.8.0":
-        errors.append("ResearchEvent instance version is not exactly 0.8.0")
+    if schema.get("$id") != "urn:odeya:schema:research-event:0.9.0":
+        errors.append("lifecycle closure is not carried by exact ResearchEvent 0.9.0")
+    if nested(schema, "properties", "schema_version", "const") != "0.9.0":
+        errors.append("ResearchEvent instance version is not exactly 0.9.0")
     required_envelope_fields = {
         "payload_type_id",
         "payload_contract_resolution_status",

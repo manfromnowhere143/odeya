@@ -434,8 +434,15 @@ fixed point (ADR 0039). D2a executed: 102 of 122 datetime paths
 pinned across 45 reissued schemas; the transitive-consumer closure lawfully
 reissued 59 resources in total (ResearchEvent moved to 0.8.0; the work-identity
 family's checks migrated to post-wave semantics: predecessors verify against
-their ledgered commits, never live files). Remaining D2: ResearchEvent's own 20
-paths (tranche D2b). Next: D2b, then D3-D8, then D9 pins.**
+their ledgered commits, never live files). D2b executed: ResearchEvent
+reissued 0.9.0 with its 20 paths pinned, eight consumers lawfully reissued
+behind it, 62 fixture instances and the identity map's 62 byte-bindings
+migrated (ADR 0041). Class D2 is CLOSED by measurement: 273 profiled datetime
+paths, zero unprofiled, alongside D1's zero. The closure engine is now
+reusable (exact full-URN repoints only; ledger repointed JSON-aware so
+predecessor history is unreachable; frozen vectors excluded). Next: D3 (127
+decimal migrations), D4 (2), D5a (668 digest scopes), D6-D8 (55 defs), then
+D9 pins strictly last.**
 Residue for the reissue wave is recorded in the candidate's
 decimal_closure_residue).
 
