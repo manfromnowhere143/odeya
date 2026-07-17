@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:projection-redaction-manifest:0.7.0",
+  "$id": "urn:odeya:schema:projection-redaction-manifest:0.8.0",
   "title": "Odeya ProjectionRedactionManifest",
   "description": "A retained, derived and non-authoritative disclosure compilation over exact source objects, audience, purpose, policy and frontier. It cannot widen rights, establish completeness, create evidence, or authorize publication. Its target is a logical projection identity only, preventing a projection/manifest content-digest cycle.",
   "type": "object",
@@ -30,7 +30,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.7.0"
+      "const": "0.8.0"
     },
     "record_status": {
       "const": "derived_non_authoritative_disclosure_compilation"
@@ -141,7 +141,7 @@
           "$ref": "#/$defs/c0_registry_bundle_reference"
         },
         "canonicalization_profile_ref": {
-          "$ref": "#/$defs/versioned_reference"
+          "$ref": "#/$defs/projection_redaction_manifest_versioned_reference"
         },
         "ledger_checkpoint": {
           "oneOf": [
@@ -180,7 +180,7 @@
           }
         },
         "rule_profile_ref": {
-          "$ref": "#/$defs/versioned_reference"
+          "$ref": "#/$defs/projection_redaction_manifest_versioned_reference"
         },
         "compiled_at": {
           "$ref": "#/$defs/timestamp"
@@ -231,7 +231,7 @@
           }
         },
         "field_object_set_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/projection_redaction_manifest_artifact_reference"
         },
         "source_ledger_position": {
           "oneOf": [
@@ -348,10 +348,10 @@
             "$ref": "#/$defs/exact_record_reference"
           },
           "after_artifact_ref": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/projection_redaction_manifest_artifact_reference"
           },
           "rule_ref": {
-            "$ref": "#/$defs/versioned_reference"
+            "$ref": "#/$defs/projection_redaction_manifest_versioned_reference"
           },
           "semantic_loss": {
             "enum": [
@@ -457,7 +457,7 @@
           "const": true
         },
         "provenance_chain_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/projection_redaction_manifest_artifact_reference"
         },
         "withholding_does_not_fabricate_provenance": {
           "const": true
@@ -508,7 +508,7 @@
           "const": true
         },
         "comparison_evidence_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/projection_redaction_manifest_artifact_reference"
         }
       }
     },
@@ -533,7 +533,7 @@
           "$ref": "#/$defs/timestamp"
         },
         "lease_profile_ref": {
-          "$ref": "#/$defs/versioned_reference"
+          "$ref": "#/$defs/projection_redaction_manifest_versioned_reference"
         },
         "recompile_on_policy_or_rights_change": {
           "const": true
@@ -565,7 +565,7 @@
           "$ref": "#/$defs/exact_record_reference"
         },
         "fanout_rule_ref": {
-          "$ref": "#/$defs/versioned_reference"
+          "$ref": "#/$defs/projection_redaction_manifest_versioned_reference"
         },
         "cache_and_pointer_invalidation_required": {
           "const": true
@@ -775,62 +775,6 @@
       "format": "date-time",
       "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
     },
-    "artifact_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "artifact_id",
-        "digest",
-        "media_type"
-      ],
-      "properties": {
-        "artifact_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "byte_digest",
-            "subject": "exact retained artifact or profile document bytes",
-            "algorithm": "sha-256",
-            "profile": "not_a_canonical_object_digest",
-            "status": "accepted_disposition_annotation"
-          }
-        },
-        "media_type": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 127
-        }
-      }
-    },
-    "versioned_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "id",
-        "version",
-        "digest"
-      ],
-      "properties": {
-        "id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "version": {
-          "$ref": "#/$defs/semantic_version"
-        },
-        "digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "canonical_object_digest",
-            "domain_resolution": "target_resolved_via_sibling_reference",
-            "algorithm": "sha-256",
-            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
-            "status": "target_resolved_domain"
-          }
-        }
-      }
-    },
     "canonicalization_binding": {
       "type": "object",
       "additionalProperties": false,
@@ -841,7 +785,7 @@
       ],
       "properties": {
         "profile_id": {
-          "$ref": "#/$defs/identifier"
+          "const": "urn:odeya:canonicalization:odeya-jcs-0.1"
         },
         "version": {
           "$ref": "#/$defs/semantic_version"
@@ -912,7 +856,7 @@
               "const": "0.1.0"
             },
             "schema_id": {
-              "const": "urn:odeya:schema:engine-contract-root:0.5.0"
+              "const": "urn:odeya:schema:engine-contract-root:0.6.0"
             }
           }
         }
@@ -932,7 +876,7 @@
               "const": "0.1.0"
             },
             "schema_id": {
-              "const": "urn:odeya:schema:c0-registry-bundle:0.5.0"
+              "const": "urn:odeya:schema:c0-registry-bundle:0.6.0"
             }
           }
         }
@@ -996,7 +940,7 @@
                   "const": "0.2.0"
                 },
                 "schema_id": {
-                  "const": "urn:odeya:schema:ledger-checkpoint:0.7.0"
+                  "const": "urn:odeya:schema:ledger-checkpoint:0.8.0"
                 }
               }
             }
@@ -1056,7 +1000,7 @@
           }
         },
         "provenance_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/projection_redaction_manifest_artifact_reference"
         },
         "rights_decision_ref": {
           "$ref": "#/$defs/exact_record_reference"
@@ -1127,6 +1071,62 @@
         },
         "mutual_content_digest_cycle_allowed": {
           "const": false
+        }
+      }
+    },
+    "projection_redaction_manifest_artifact_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "digest",
+        "media_type"
+      ],
+      "properties": {
+        "artifact_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "exact retained artifact or profile document bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 127
+        }
+      }
+    },
+    "projection_redaction_manifest_versioned_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "version",
+        "digest"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "$ref": "#/$defs/semantic_version"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain_resolution": "target_resolved_via_sibling_reference",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "target_resolved_domain"
+          }
         }
       }
     }

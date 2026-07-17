@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:c0-registry-bundle:0.5.0",
+  "$id": "urn:odeya:schema:c0-registry-bundle:0.6.0",
   "title": "Odeya C0RegistryBundle",
   "description": "An immutable bootstrap-verifiable bundle binding one EngineContractRoot, its exact component subjects, and the constitutional trust seed. It contains no activation or checkpoint reference, preventing a future-checkpoint digest cycle.",
   "type": "object",
@@ -23,7 +23,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.5.0"
+      "const": "0.6.0"
     },
     "bundle_id": {
       "$ref": "#/$defs/identifier"
@@ -252,19 +252,19 @@
       ],
       "properties": {
         "bootstrap_manifest_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/c0_registry_bundle_artifact_reference"
         },
         "root_authority_manifest_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/c0_registry_bundle_artifact_reference"
         },
         "trust_root_set_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/c0_registry_bundle_artifact_reference"
         },
         "genesis_rule_ref": {
-          "$ref": "#/$defs/rule_reference"
+          "$ref": "#/$defs/c0_registry_bundle_rule_reference"
         },
         "distribution_manifest_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/c0_registry_bundle_artifact_reference"
         }
       }
     },
@@ -297,7 +297,7 @@
       "minItems": 2,
       "uniqueItems": true,
       "items": {
-        "$ref": "#/$defs/artifact_reference"
+        "$ref": "#/$defs/c0_registry_bundle_artifact_reference"
       }
     },
     "review_evidence_refs": {
@@ -305,7 +305,7 @@
       "minItems": 1,
       "uniqueItems": true,
       "items": {
-        "$ref": "#/$defs/artifact_reference"
+        "$ref": "#/$defs/c0_registry_bundle_artifact_reference"
       }
     },
     "known_limitations": {
@@ -466,35 +466,6 @@
         }
       }
     },
-    "artifact_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "artifact_id",
-        "digest",
-        "media_type"
-      ],
-      "properties": {
-        "artifact_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "byte_digest",
-            "subject": "exact retained artifact or profile document bytes",
-            "algorithm": "sha-256",
-            "profile": "not_a_canonical_object_digest",
-            "status": "accepted_disposition_annotation"
-          }
-        },
-        "media_type": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 127
-        }
-      }
-    },
     "schema_bytes_reference": {
       "type": "object",
       "additionalProperties": false,
@@ -529,33 +500,6 @@
         },
         "dialect": {
           "const": "https://json-schema.org/draft/2020-12/schema"
-        }
-      }
-    },
-    "rule_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "rule_id",
-        "version",
-        "registry_digest"
-      ],
-      "properties": {
-        "rule_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "version": {
-          "$ref": "#/$defs/semantic_version"
-        },
-        "registry_digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "canonical_object_digest",
-            "domain": "odeya-validation-rule-registry-v1",
-            "algorithm": "sha-256",
-            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
-            "status": "prospective_domain_reserved_not_declared"
-          }
         }
       }
     },
@@ -724,6 +668,62 @@
             }
           ],
           "items": false
+        }
+      }
+    },
+    "c0_registry_bundle_artifact_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "digest",
+        "media_type"
+      ],
+      "properties": {
+        "artifact_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "exact retained artifact or profile document bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 127
+        }
+      }
+    },
+    "c0_registry_bundle_rule_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "rule_id",
+        "version",
+        "registry_digest"
+      ],
+      "properties": {
+        "rule_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "$ref": "#/$defs/semantic_version"
+        },
+        "registry_digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-validation-rule-registry-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
         }
       }
     }

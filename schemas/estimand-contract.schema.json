@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:estimand-contract:0.7.0",
+  "$id": "urn:odeya:schema:estimand-contract:0.8.0",
   "title": "Odeya EstimandContract",
   "description": "An immutable prospective mathematical contract for one closed claim type. It fixes exact population, unit, exposure, comparator, outcome, time, intercurrent-event, summary, contrast, scale, uncertainty, multiplicity, missingness, sequential, method, and decision semantics before affected outcome access. It is not a result, claim, or authority grant.",
   "type": "object",
@@ -39,7 +39,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.7.0"
+      "const": "0.8.0"
     },
     "record_status": {
       "const": "prospective_immutable_contract"
@@ -64,7 +64,7 @@
       ]
     },
     "claim_type": {
-      "$ref": "#/$defs/claim_type"
+      "$ref": "#/$defs/estimand_contract_claim_type_subset"
     },
     "population": {
       "type": "object",
@@ -83,13 +83,13 @@
           "$ref": "#/$defs/identifier"
         },
         "definition_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/estimand_contract_artifact_reference"
         },
         "inclusion_rule_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/estimand_contract_artifact_reference"
         },
         "exclusion_rule_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/estimand_contract_artifact_reference"
         },
         "sampling_frame_ref": {
           "$ref": "#/$defs/nullable_artifact_reference"
@@ -100,11 +100,11 @@
           "maxItems": 64,
           "uniqueItems": true,
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/estimand_contract_artifact_reference"
           }
         },
         "transport_scope_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/estimand_contract_artifact_reference"
         }
       }
     },
@@ -134,14 +134,14 @@
           ]
         },
         "definition_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/estimand_contract_artifact_reference"
         },
         "clustering_key_refs": {
           "type": "array",
           "maxItems": 32,
           "uniqueItems": true,
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/estimand_contract_artifact_reference"
           }
         },
         "repeated_measure_policy": {
@@ -214,10 +214,10 @@
           "else": {
             "properties": {
               "exposure_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/estimand_contract_artifact_reference"
               },
               "assignment_or_observation_rule_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/estimand_contract_artifact_reference"
               }
             }
           }
@@ -277,10 +277,10 @@
           "else": {
             "properties": {
               "comparator_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/estimand_contract_artifact_reference"
               },
               "comparability_rule_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/estimand_contract_artifact_reference"
               }
             }
           }
@@ -303,7 +303,7 @@
           "$ref": "#/$defs/identifier"
         },
         "definition_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/estimand_contract_artifact_reference"
         },
         "quantity_kind": {
           "enum": [
@@ -330,7 +330,7 @@
           ]
         },
         "ascertainment_rule_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/estimand_contract_artifact_reference"
         }
       }
     },
@@ -345,7 +345,7 @@
       ],
       "properties": {
         "time_origin_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/estimand_contract_artifact_reference"
         },
         "horizon": {
           "type": "object",
@@ -375,10 +375,10 @@
           }
         },
         "assessment_window_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/estimand_contract_artifact_reference"
         },
         "censoring_rule_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/estimand_contract_artifact_reference"
         }
       }
     },
@@ -406,7 +406,7 @@
           "$ref": "#/$defs/nullable_artifact_reference"
         },
         "handling_rule_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/estimand_contract_artifact_reference"
         }
       },
       "allOf": [
@@ -431,7 +431,7 @@
           "else": {
             "properties": {
               "event_definition_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/estimand_contract_artifact_reference"
               }
             }
           }
@@ -644,7 +644,7 @@
           ]
         },
         "rule_ref": {
-          "$ref": "#/$defs/method_reference"
+          "$ref": "#/$defs/estimand_contract_method_reference"
         },
         "null_or_reference_value": {
           "oneOf": [
@@ -773,7 +773,7 @@
         "method_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/method_reference"
+              "$ref": "#/$defs/estimand_contract_method_reference"
             },
             {
               "type": "null"
@@ -857,7 +857,7 @@
                 }
               },
               "method_ref": {
-                "$ref": "#/$defs/method_reference"
+                "$ref": "#/$defs/estimand_contract_method_reference"
               },
               "channels": {
                 "minItems": 1
@@ -978,7 +978,7 @@
                 }
               },
               "plan_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/estimand_contract_artifact_reference"
               },
               "selection_adjustment": {
                 "not": {
@@ -1022,7 +1022,7 @@
       ],
       "properties": {
         "plan_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/estimand_contract_artifact_reference"
         },
         "primary_strategy": {
           "enum": [
@@ -1036,7 +1036,7 @@
           ]
         },
         "mechanism_assumption_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/estimand_contract_artifact_reference"
         },
         "sensitivity_plan_refs": {
           "type": "array",
@@ -1044,7 +1044,7 @@
           "maxItems": 32,
           "uniqueItems": true,
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/estimand_contract_artifact_reference"
           }
         },
         "unknown_is_absent": {
@@ -1076,7 +1076,7 @@
           ]
         },
         "plan_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/estimand_contract_artifact_reference"
         },
         "planned_look_count": {
           "oneOf": [
@@ -1090,7 +1090,7 @@
           ]
         },
         "stopping_rule_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/estimand_contract_artifact_reference"
         },
         "unplanned_peeking_disposition": {
           "const": "invalidates_fixed_horizon_or_requires_anytime_valid_reanalysis"
@@ -1170,7 +1170,7 @@
                 ]
               },
               "manifest_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/estimand_contract_artifact_reference"
               },
               "dependency_group_id": {
                 "$ref": "#/$defs/identifier"
@@ -1179,7 +1179,7 @@
           }
         },
         "role_overlap_rule_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/estimand_contract_artifact_reference"
         },
         "role_disjointness_required": {
           "const": true
@@ -1203,25 +1203,25 @@
       ],
       "properties": {
         "estimator_ref": {
-          "$ref": "#/$defs/method_reference"
+          "$ref": "#/$defs/estimand_contract_method_reference"
         },
         "implementation_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/estimand_contract_artifact_reference"
         },
         "design_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/estimand_contract_artifact_reference"
         },
         "assumption_refs": {
-          "$ref": "#/$defs/nonempty_artifact_array"
+          "$ref": "#/$defs/estimand_contract_nonempty_artifact_array"
         },
         "diagnostic_refs": {
-          "$ref": "#/$defs/nonempty_artifact_array"
+          "$ref": "#/$defs/estimand_contract_nonempty_artifact_array"
         },
         "sensitivity_refs": {
-          "$ref": "#/$defs/nonempty_artifact_array"
+          "$ref": "#/$defs/estimand_contract_nonempty_artifact_array"
         },
         "conformance_refs": {
-          "$ref": "#/$defs/nonempty_artifact_array"
+          "$ref": "#/$defs/estimand_contract_nonempty_artifact_array"
         }
       }
     },
@@ -1257,10 +1257,10 @@
           "type": "boolean"
         },
         "authority_decision_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/estimand_contract_artifact_reference"
         },
         "canonicalization_profile_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/estimand_contract_artifact_reference"
         },
         "immutable_after_freeze": {
           "const": true
@@ -1298,7 +1298,7 @@
       "$ref": "#/$defs/timestamp"
     },
     "created_by": {
-      "$ref": "#/$defs/principal"
+      "$ref": "#/$defs/estimand_contract_principal"
     }
   },
   "allOf": [
@@ -1752,66 +1752,15 @@
       "format": "date-time",
       "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
     },
-    "claim_type": {
-      "enum": [
-        "descriptive",
-        "associational",
-        "predictive",
-        "causal",
-        "equivalence",
-        "noninferiority",
-        "safety",
-        "optimization",
-        "physical_validation"
-      ]
-    },
-    "artifact_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "artifact_id",
-        "digest",
-        "media_type"
-      ],
-      "properties": {
-        "artifact_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "byte_digest",
-            "subject": "exact retained artifact or profile document bytes",
-            "algorithm": "sha-256",
-            "profile": "not_a_canonical_object_digest",
-            "status": "accepted_disposition_annotation"
-          }
-        },
-        "media_type": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 255
-        }
-      }
-    },
     "nullable_artifact_reference": {
       "oneOf": [
         {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/estimand_contract_artifact_reference"
         },
         {
           "type": "null"
         }
       ]
-    },
-    "nonempty_artifact_array": {
-      "type": "array",
-      "minItems": 1,
-      "maxItems": 128,
-      "uniqueItems": true,
-      "items": {
-        "$ref": "#/$defs/artifact_reference"
-      }
     },
     "mission_spec_reference": {
       "type": "object",
@@ -1835,7 +1784,7 @@
           "minimum": 1
         },
         "schema_id": {
-          "const": "urn:odeya:schema:research-mission:0.8.0"
+          "const": "urn:odeya:schema:research-mission:0.9.0"
         },
         "digest": {
           "$ref": "#/$defs/digest",
@@ -1845,44 +1794,6 @@
             "algorithm": "sha-256",
             "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
             "status": "target_resolved_domain"
-          }
-        }
-      }
-    },
-    "method_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "method_id",
-        "version",
-        "registry_digest",
-        "method_record_digest"
-      ],
-      "properties": {
-        "method_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "version": {
-          "$ref": "#/$defs/semantic_version"
-        },
-        "registry_digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "canonical_object_digest",
-            "domain": "odeya-method-registry-v1",
-            "algorithm": "sha-256",
-            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
-            "status": "prospective_domain_reserved_not_declared"
-          }
-        },
-        "method_record_digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "canonical_object_digest",
-            "domain": "odeya-method-record-v1",
-            "algorithm": "sha-256",
-            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
-            "status": "prospective_domain_reserved_not_declared"
           }
         }
       }
@@ -1930,74 +1841,15 @@
         }
       ]
     },
-    "quantity": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "value",
-        "unit_ref"
-      ],
-      "properties": {
-        "value": {
-          "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "decimal",
-            "precision",
-            "semantic_type",
-            "unit"
-          ],
-          "properties": {
-            "decimal": {
-              "type": "string",
-              "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
-            },
-            "semantic_type": {
-              "const": "registered_quantity"
-            },
-            "unit": {
-              "type": "string",
-              "minLength": 1
-            },
-            "precision": {
-              "type": "string",
-              "pattern": "^(?:0|[1-9][0-9]{0,2}|exact_lexical)$"
-            }
-          }
-        },
-        "unit_ref": {
-          "$ref": "#/$defs/unit_reference"
-        }
-      }
-    },
     "nullable_quantity": {
       "oneOf": [
         {
-          "$ref": "#/$defs/quantity"
+          "$ref": "#/$defs/estimand_contract_quantity"
         },
         {
           "type": "null"
         }
       ]
-    },
-    "principal": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "principal_id",
-        "principal_type"
-      ],
-      "properties": {
-        "principal_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "principal_type": {
-          "enum": [
-            "human",
-            "deterministic_service"
-          ]
-        }
-      }
     },
     "descriptive_contract": {
       "type": "object",
@@ -2012,10 +1864,10 @@
           "const": "descriptive"
         },
         "sampling_design_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/estimand_contract_artifact_reference"
         },
         "target_functional_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/estimand_contract_artifact_reference"
         }
       }
     },
@@ -2045,16 +1897,16 @@
           ]
         },
         "exposure_variable_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/estimand_contract_artifact_reference"
         },
         "outcome_variable_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/estimand_contract_artifact_reference"
         },
         "adjustment_set_ref": {
           "$ref": "#/$defs/nullable_artifact_reference"
         },
         "temporal_order_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/estimand_contract_artifact_reference"
         }
       }
     },
@@ -2075,22 +1927,22 @@
           "const": "predictive"
         },
         "prediction_target_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/estimand_contract_artifact_reference"
         },
         "information_set_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/estimand_contract_artifact_reference"
         },
         "loss_ref": {
-          "$ref": "#/$defs/method_reference"
+          "$ref": "#/$defs/estimand_contract_method_reference"
         },
         "split_plan_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/estimand_contract_artifact_reference"
         },
         "calibration_plan_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/estimand_contract_artifact_reference"
         },
         "shift_scope_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/estimand_contract_artifact_reference"
         }
       }
     },
@@ -2112,25 +1964,25 @@
           "const": "causal"
         },
         "intervention_policy_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/estimand_contract_artifact_reference"
         },
         "comparator_policy_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/estimand_contract_artifact_reference"
         },
         "causal_model_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/estimand_contract_artifact_reference"
         },
         "identification_argument_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/estimand_contract_artifact_reference"
         },
         "target_trial_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/estimand_contract_artifact_reference"
         },
         "sensitivity_plan_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/estimand_contract_artifact_reference"
         },
         "interference_rule_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/estimand_contract_artifact_reference"
         }
       }
     },
@@ -2206,13 +2058,13 @@
           }
         },
         "margin_rationale_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/estimand_contract_artifact_reference"
         },
         "design_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/estimand_contract_artifact_reference"
         },
         "test_method_ref": {
-          "$ref": "#/$defs/method_reference"
+          "$ref": "#/$defs/estimand_contract_method_reference"
         },
         "margin_frozen_prospectively": {
           "const": true
@@ -2273,13 +2125,13 @@
           ]
         },
         "margin_rationale_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/estimand_contract_artifact_reference"
         },
         "design_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/estimand_contract_artifact_reference"
         },
         "test_method_ref": {
-          "$ref": "#/$defs/method_reference"
+          "$ref": "#/$defs/estimand_contract_method_reference"
         },
         "margin_frozen_prospectively": {
           "const": true
@@ -2308,16 +2160,16 @@
           "const": "safety"
         },
         "hazard_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/estimand_contract_artifact_reference"
         },
         "exposure_denominator_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/estimand_contract_artifact_reference"
         },
         "operating_domain_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/estimand_contract_artifact_reference"
         },
         "risk_functional_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/estimand_contract_artifact_reference"
         },
         "tolerated_upper_bound": {
           "type": "object",
@@ -2347,10 +2199,10 @@
           }
         },
         "stress_plan_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/estimand_contract_artifact_reference"
         },
         "negative_control_refs": {
-          "$ref": "#/$defs/nonempty_artifact_array"
+          "$ref": "#/$defs/estimand_contract_nonempty_artifact_array"
         },
         "zero_failures_requires_upper_bound": {
           "const": true
@@ -2374,22 +2226,22 @@
           "const": "optimization"
         },
         "decision_space_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/estimand_contract_artifact_reference"
         },
         "objective_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/estimand_contract_artifact_reference"
         },
         "constraint_refs": {
-          "$ref": "#/$defs/nonempty_artifact_array"
+          "$ref": "#/$defs/estimand_contract_nonempty_artifact_array"
         },
         "baseline_policy_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/estimand_contract_artifact_reference"
         },
         "optimality_criterion_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/estimand_contract_artifact_reference"
         },
         "feasibility_rule_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/estimand_contract_artifact_reference"
         }
       }
     },
@@ -2415,25 +2267,25 @@
           "const": "physical_validation"
         },
         "physical_system_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/estimand_contract_artifact_reference"
         },
         "asset_configuration_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/estimand_contract_artifact_reference"
         },
         "physical_model_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/estimand_contract_artifact_reference"
         },
         "physical_measurement_plan_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/estimand_contract_artifact_reference"
         },
         "validation_partition_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/estimand_contract_artifact_reference"
         },
         "discrepancy_method_ref": {
-          "$ref": "#/$defs/method_reference"
+          "$ref": "#/$defs/estimand_contract_method_reference"
         },
         "acceptance_rule_ref": {
-          "$ref": "#/$defs/method_reference"
+          "$ref": "#/$defs/estimand_contract_method_reference"
         },
         "physical_world_measurement_required": {
           "const": true
@@ -2478,6 +2330,154 @@
         {
           "$ref": "#/$defs/physical_validation_contract"
         }
+      ]
+    },
+    "estimand_contract_artifact_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "digest",
+        "media_type"
+      ],
+      "properties": {
+        "artifact_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "exact retained artifact or profile document bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        }
+      }
+    },
+    "estimand_contract_method_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "method_id",
+        "version",
+        "registry_digest",
+        "method_record_digest"
+      ],
+      "properties": {
+        "method_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "$ref": "#/$defs/semantic_version"
+        },
+        "registry_digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-method-registry-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
+        },
+        "method_record_digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-method-record-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
+        }
+      }
+    },
+    "estimand_contract_nonempty_artifact_array": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 128,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/estimand_contract_artifact_reference"
+      }
+    },
+    "estimand_contract_principal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "principal_id",
+        "principal_type"
+      ],
+      "properties": {
+        "principal_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "principal_type": {
+          "enum": [
+            "human",
+            "deterministic_service"
+          ]
+        }
+      }
+    },
+    "estimand_contract_quantity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "value",
+        "unit_ref"
+      ],
+      "properties": {
+        "value": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "decimal",
+            "precision",
+            "semantic_type",
+            "unit"
+          ],
+          "properties": {
+            "decimal": {
+              "type": "string",
+              "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+            },
+            "semantic_type": {
+              "const": "registered_quantity"
+            },
+            "unit": {
+              "type": "string",
+              "minLength": 1
+            },
+            "precision": {
+              "type": "string",
+              "pattern": "^(?:0|[1-9][0-9]{0,2}|exact_lexical)$"
+            }
+          }
+        },
+        "unit_ref": {
+          "$ref": "#/$defs/unit_reference"
+        }
+      }
+    },
+    "estimand_contract_claim_type_subset": {
+      "enum": [
+        "descriptive",
+        "associational",
+        "predictive",
+        "causal",
+        "equivalence",
+        "noninferiority",
+        "safety",
+        "optimization",
+        "physical_validation"
       ]
     }
   }

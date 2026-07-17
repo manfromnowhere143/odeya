@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:external-effect-cancel-command:0.3.0",
+  "$id": "urn:odeya:schema:external-effect-cancel-command:0.4.0",
   "x-odeya-command-payload-id": "urn:odeya:command-payload:external_effect.cancel:1.0.0",
   "title": "Cancel Authorized External Effect Command Payload",
   "description": "Requests cancellation only while an effect remains authorized and undispatched. Admission closes the intent and releases or invalidates its exact reservations; it cannot cancel an in-flight call or synthesize not-applied settlement. The required effect class must equal the class retained by the authorized effect; that cross-record equality is a semantic check.",
@@ -19,10 +19,10 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.3.0"
+      "const": "0.4.0"
     },
     "effect_id": {
-      "$ref": "#/$defs/identifier"
+      "$ref": "#/$defs/external_effect_cancel_command_identifier"
     },
     "effect_class": {
       "enum": [
@@ -39,14 +39,14 @@
       "const": "authorized"
     },
     "authorization_event_ref": {
-      "$ref": "#/$defs/identifier"
+      "$ref": "#/$defs/external_effect_cancel_command_identifier"
     },
     "grant_use_reservation_refs": {
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,
       "items": {
-        "$ref": "#/$defs/identifier"
+        "$ref": "#/$defs/external_effect_cancel_command_identifier"
       }
     },
     "expected_effect_payload_digest": {
@@ -77,22 +77,22 @@
       "minItems": 1,
       "uniqueItems": true,
       "items": {
-        "$ref": "#/$defs/artifact_reference"
+        "$ref": "#/$defs/external_effect_cancel_command_artifact_reference"
       }
     }
   },
   "$defs": {
-    "identifier": {
+    "digest": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "external_effect_cancel_command_identifier": {
       "type": "string",
       "minLength": 1,
       "maxLength": 256,
       "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]*$"
     },
-    "digest": {
-      "type": "string",
-      "pattern": "^sha256:[a-f0-9]{64}$"
-    },
-    "artifact_reference": {
+    "external_effect_cancel_command_artifact_reference": {
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -102,7 +102,7 @@
       ],
       "properties": {
         "artifact_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/external_effect_cancel_command_identifier"
         },
         "digest": {
           "$ref": "#/$defs/digest",

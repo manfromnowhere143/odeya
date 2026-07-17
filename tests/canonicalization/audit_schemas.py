@@ -346,6 +346,50 @@ def generic_decimal_uses(schema: dict[str, Any]) -> list[str]:
     return sorted(results)
 
 
+def load_enum_vocabularies() -> dict[str, tuple[str, ...]]:
+    """Closed central vocabularies from the profile core; fail closed."""
+    path = ROOT / "architecture/canonicalization-profile-core-candidate.json"
+    try:
+        vocab = load(path)["enum_vocabularies"]
+    except (OSError, ValueError, KeyError, TypeError):
+        return {}
+    out: dict[str, tuple[str, ...]] = {}
+    for family, values in vocab.items():
+        if isinstance(values, list) and all(isinstance(v, str) for v in values):
+            out[family] = tuple(values)
+    return out
+
+
+ENUM_VOCABULARIES = load_enum_vocabularies()
+
+
+def enum_vocabulary_violations(schema: dict[str, Any]) -> list[str]:
+    """Every context enum for a centrally closed vocabulary must be a subset.
+
+    A definition named `<family>` or `<anything>_<family>_subset` declares a
+    per-context subset of the frozen central vocabulary; a value outside the
+    vocabulary is a violation, and an empty registry fails closed to zero
+    exemptions (every family name then counts as a violation).
+    """
+    violations: list[str] = []
+    for name, body in (schema.get("$defs") or {}).items():
+        for family, allowed in ENUM_VOCABULARIES.items():
+            if name == family or name.endswith(f"_{family}_subset"):
+                values = body.get("enum") if isinstance(body, dict) else None
+                if not isinstance(values, list):
+                    violations.append(f"{name}: vocabulary definition has no enum")
+                    continue
+                alien = sorted(set(values) - set(allowed))
+                if alien:
+                    violations.append(f"{name}: values outside the closed vocabulary: {alien}")
+    if not ENUM_VOCABULARIES:
+        for name in (schema.get("$defs") or {}):
+            for family in ("claim_type", "operation", "scientific_outcome"):
+                if name == family or name.endswith(f"_{family}_subset"):
+                    violations.append(f"{name}: central vocabulary registry unavailable")
+    return violations
+
+
 def detector_self_test() -> list[str]:
     """Known-bad proofs for the governed-decimal exemption (ADR 0024).
 
@@ -397,6 +441,24 @@ def detector_self_test() -> list[str]:
             }
         )
 
+    pinned_binding = {"properties": {"canonicalization_profile": {
+        "type": "object",
+        "properties": {"profile_id": {"const": PROFILE_ID}}}}}
+    rec = canonical_profile_bindings(pinned_binding)
+    if not (rec and rec[0]["pins_candidate_profile"]):
+        failures.append("object-shaped profile pin was not recognized")
+    free_binding = {"properties": {"canonicalization_profile": {
+        "type": "object",
+        "properties": {"profile_id": {"type": "string"}}}}}
+    rec = canonical_profile_bindings(free_binding)
+    if not rec or rec[0]["pins_candidate_profile"]:
+        failures.append("a free profile binding counted as pinned; the pin gate is dead")
+    subset_schema = {"$defs": {"claim_type": {"enum": list(ENUM_VOCABULARIES.get("claim_type", ())[:2])}}}
+    if enum_vocabulary_violations(subset_schema):
+        failures.append("a declared vocabulary subset was refused")
+    alien_schema = {"$defs": {"x_claim_type_subset": {"enum": ["not_a_vocabulary_value"]}}}
+    if not enum_vocabulary_violations(alien_schema):
+        failures.append("an alien vocabulary value produced no violation; the subset gate is dead")
     if audit_of(scalar()):
         failures.append("governed scalar decimal was counted as a finding")
     if audit_of(matrix()):
@@ -479,6 +541,26 @@ def canonical_profile_bindings(schema: dict[str, Any]) -> list[dict[str, Any]]:
             continue
         resolved = resolve_local(schema, node)
         constant = resolved.get("const") if isinstance(resolved, dict) else None
+        if constant is None and isinstance(resolved, dict):
+            # object-shaped binding: it pins through an identifying member
+            # whose (resolved) const is the candidate profile identity; a
+            # wrong member const can never count, because the equality below
+            # demands the exact profile URN
+            def member_const(container):
+                for member_name in ("profile_id", "artifact_id", "object_id", "component_id", "id"):
+                    candidate = (container.get("properties") or {}).get(member_name)
+                    candidate = resolve_local(schema, candidate) if isinstance(candidate, dict) else None
+                    if isinstance(candidate, dict) and isinstance(candidate.get("const"), str):
+                        return candidate["const"]
+                return None
+            constant = member_const(resolved)
+            if constant is None:
+                for branch in resolved.get("allOf", []) or []:
+                    branch = resolve_local(schema, branch)
+                    if isinstance(branch, dict):
+                        constant = member_const(branch)
+                        if constant is not None:
+                            break
         bindings.append(
             {
                 "path": pointer(parts),
@@ -514,6 +596,11 @@ def main() -> int:
         digests = digest_fields(schema)
         profile_bindings = canonical_profile_bindings(schema)
         dangling_refs = dangling_local_refs(schema)
+        vocabulary_violations = enum_vocabulary_violations(schema)
+        if vocabulary_violations:
+            for violation in vocabulary_violations:
+                print(f"enum vocabulary violation in {relative}: {violation}", file=sys.stderr)
+            return 2
         schema_records.append(
             {
                 "path": relative,

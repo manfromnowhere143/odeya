@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:safety-envelope:0.6.0",
+  "$id": "urn:odeya:schema:safety-envelope:0.7.0",
   "title": "Odeya SafetyEnvelope",
   "description": "An immutable recommendation-only physical safety envelope. It binds the asset/model/evidence scope, safe set, disturbance and uncertainty sets, actuator/latency/estimation limits, monitor/fallback/switching behavior, hazards, and validity. It grants no actuator authority; execution requires a separate authority service and gateway.",
   "type": "object",
@@ -36,7 +36,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.6.0"
+      "const": "0.7.0"
     },
     "safety_envelope_id": {
       "$ref": "#/$defs/identifier"
@@ -65,16 +65,16 @@
       "$ref": "#/$defs/evidence_vector_reference"
     },
     "operational_domain_ref": {
-      "$ref": "#/$defs/artifact_reference"
+      "$ref": "#/$defs/safety_envelope_artifact_reference"
     },
     "safe_set": {
       "$ref": "#/$defs/safe_set"
     },
     "disturbance_set_ref": {
-      "$ref": "#/$defs/artifact_reference"
+      "$ref": "#/$defs/safety_envelope_artifact_reference"
     },
     "state_estimation_error_ref": {
-      "$ref": "#/$defs/artifact_reference"
+      "$ref": "#/$defs/safety_envelope_artifact_reference"
     },
     "actuator_limits": {
       "type": "array",
@@ -94,7 +94,7 @@
       "maxItems": 128,
       "uniqueItems": true,
       "items": {
-        "$ref": "#/$defs/artifact_reference"
+        "$ref": "#/$defs/safety_envelope_artifact_reference"
       }
     },
     "stability_evidence_refs": {
@@ -103,7 +103,7 @@
       "maxItems": 128,
       "uniqueItems": true,
       "items": {
-        "$ref": "#/$defs/artifact_reference"
+        "$ref": "#/$defs/safety_envelope_artifact_reference"
       }
     },
     "runtime_assurance": {
@@ -116,10 +116,10 @@
       "$ref": "#/$defs/failure_behavior"
     },
     "hazard_analysis_ref": {
-      "$ref": "#/$defs/artifact_reference"
+      "$ref": "#/$defs/safety_envelope_artifact_reference"
     },
     "risk_assessment_ref": {
-      "$ref": "#/$defs/artifact_reference"
+      "$ref": "#/$defs/safety_envelope_artifact_reference"
     },
     "validity": {
       "$ref": "#/$defs/validity"
@@ -149,7 +149,7 @@
       "maxItems": 64,
       "uniqueItems": true,
       "items": {
-        "$ref": "#/$defs/artifact_reference"
+        "$ref": "#/$defs/safety_envelope_artifact_reference"
       }
     },
     "safety_envelope_digest": {
@@ -242,35 +242,6 @@
       "format": "date-time",
       "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
     },
-    "artifact_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "artifact_id",
-        "digest",
-        "media_type"
-      ],
-      "properties": {
-        "artifact_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "byte_digest",
-            "subject": "exact retained artifact or profile document bytes",
-            "algorithm": "sha-256",
-            "profile": "not_a_canonical_object_digest",
-            "status": "accepted_disposition_annotation"
-          }
-        },
-        "media_type": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 255
-        }
-      }
-    },
     "record_reference": {
       "type": "object",
       "additionalProperties": false,
@@ -312,7 +283,7 @@
         {
           "properties": {
             "schema_id": {
-              "const": "urn:odeya:schema:asset-configuration-snapshot:0.5.0"
+              "const": "urn:odeya:schema:asset-configuration-snapshot:0.6.0"
             }
           }
         }
@@ -326,7 +297,7 @@
         {
           "properties": {
             "schema_id": {
-              "const": "urn:odeya:schema:physical-model-record:0.6.0"
+              "const": "urn:odeya:schema:physical-model-record:0.7.0"
             }
           }
         }
@@ -340,7 +311,7 @@
         {
           "properties": {
             "schema_id": {
-              "const": "urn:odeya:schema:physical-evidence-vector:0.6.0"
+              "const": "urn:odeya:schema:physical-evidence-vector:0.7.0"
             }
           }
         }
@@ -354,7 +325,7 @@
         {
           "properties": {
             "schema_id": {
-              "const": "urn:odeya:schema:physical-quantity:0.5.0"
+              "const": "urn:odeya:schema:physical-quantity:0.6.0"
             }
           }
         }
@@ -373,7 +344,7 @@
       ],
       "properties": {
         "definition_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/safety_envelope_artifact_reference"
         },
         "state_quantity_refs": {
           "type": "array",
@@ -443,7 +414,7 @@
           "$ref": "#/$defs/physical_quantity_reference"
         },
         "evidence_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/safety_envelope_artifact_reference"
         }
       }
     },
@@ -460,19 +431,19 @@
       ],
       "properties": {
         "advanced_controller_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/safety_envelope_artifact_reference"
         },
         "trusted_fallback_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/safety_envelope_artifact_reference"
         },
         "independent_monitor_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/safety_envelope_artifact_reference"
         },
         "switching_horizon_ref": {
           "$ref": "#/$defs/physical_quantity_reference"
         },
         "common_mode_analysis_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/safety_envelope_artifact_reference"
         },
         "monitor_independence_disposition": {
           "enum": [
@@ -502,13 +473,13 @@
           ]
         },
         "fallback_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/safety_envelope_artifact_reference"
         },
         "operator_alert_required": {
           "const": true
         },
         "evidence_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/safety_envelope_artifact_reference"
         }
       }
     },
@@ -543,11 +514,11 @@
           "maxItems": 64,
           "uniqueItems": true,
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/safety_envelope_artifact_reference"
           }
         },
         "controlled_time_source_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/safety_envelope_artifact_reference"
         }
       }
     },
@@ -588,6 +559,35 @@
         },
         "execution_requires_separate_authority_service": {
           "const": true
+        }
+      }
+    },
+    "safety_envelope_artifact_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "digest",
+        "media_type"
+      ],
+      "properties": {
+        "artifact_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "exact retained artifact or profile document bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
         }
       }
     }

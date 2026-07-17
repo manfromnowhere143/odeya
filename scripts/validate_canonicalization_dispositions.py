@@ -330,8 +330,16 @@ def self_test(candidate: dict, audit: dict, derived: dict | None = None) -> int:
     checks = [
         ("class count tampered", lambda c: c["classes"][0].__setitem__("count", c["classes"][0]["count"] + 1)),
         ("total tampered consistently", lambda c: c.__setitem__("total_findings", c["total_findings"] - 1)),
-        ("defs assignment class flipped", lambda c: c["defs_assignments"][0].__setitem__("class", "D6" if c["defs_assignments"][0]["class"] != "D6" else "D7")),
-        ("touched schema dropped", lambda c: (c["touched_schema_union"].pop(), c.__setitem__("touched_schema_union_count", c["touched_schema_union_count"] - 1))),
+        # the defs wave executed; the assignment table is empty by
+        # measurement, so the known-bad proof is a fabricated assignment
+        ("defs phantom assignment injected", lambda c: c["defs_assignments"].append({
+            "definition_name": "fabricated_definition",
+            "class": "D7",
+            "occurrence_count": 1,
+            "variant_count": 2,
+            "variant_sha256": ["0" * 64, "1" * 64]})),
+        # zero findings touch zero schemas; the fabrication proof appends
+        ("touched schema fabricated", lambda c: (c["touched_schema_union"].append("schemas/fabricated.schema.json"), c.__setitem__("touched_schema_union_count", c["touched_schema_union_count"] + 1))),
         ("acceptance pre-filled", lambda c: c["operator_acceptance"].__setitem__("D1", "accepted")),
         ("status promoted", lambda c: c.__setitem__("status", "accepted_partition")),
         ("corpus digest swapped", lambda c: c["partition_basis"].__setitem__("schema_corpus_sha256", "0" * 64)),
@@ -353,8 +361,6 @@ def self_test(candidate: dict, audit: dict, derived: dict | None = None) -> int:
             "proposed_subject_class_or_domain": "fabricated bytes",
             "requires_new_domain_registration": False})),
         ("duplicate class row prepended", lambda c: c["classes"].insert(0, dict(c["classes"][4], count=9999))),
-        ("duplicate defs row prepended", lambda c: c["defs_assignments"].insert(0, dict(c["defs_assignments"][0], **{"class": "D6" if c["defs_assignments"][0]["class"] != "D6" else "D7"}))),
-        ("duplicate union entry appended", lambda c: c["touched_schema_union"].append(c["touched_schema_union"][0])),
         ("comparator declaration gutted", lambda c: c["defs_comparator"].__setitem__("vocabulary_keys", ["enum"])),
     ]
     if all(mutate(label, fn) for label, fn in checks):

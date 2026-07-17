@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:operator-architecture-decision:0.3.0",
+  "$id": "urn:odeya:schema:operator-architecture-decision:0.4.0",
   "title": "Odeya OperatorArchitectureDecision",
   "description": "Daniel's explicit Gate A decision over one common candidate digest and eight lane determinations. Every outcome preserves the runtime implementation lock; Gate A can authorize only continued architecture work or separately governed Gate B consideration/probes.",
   "type": "object",
@@ -27,7 +27,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.3.0"
+      "const": "0.4.0"
     },
     "decision_id": {
       "$ref": "#/$defs/identifier"
@@ -105,10 +105,10 @@
       ],
       "properties": {
         "common_candidate_digest_check": {
-          "$ref": "#/$defs/check_result"
+          "$ref": "#/$defs/operator_architecture_decision_check_result"
         },
         "lane_set_complete": {
-          "$ref": "#/$defs/check_result"
+          "$ref": "#/$defs/operator_architecture_decision_check_result"
         },
         "determination_set_digest": {
           "$ref": "#/$defs/digest",
@@ -195,7 +195,7 @@
               "const": "operator_decision_candidate"
             },
             "carry_forward_check": {
-              "$ref": "#/$defs/check_result"
+              "$ref": "#/$defs/operator_architecture_decision_check_result"
             }
           }
         },
@@ -590,26 +590,6 @@
         }
       }
     },
-    "check_result": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "result",
-        "evidence_ref"
-      ],
-      "properties": {
-        "result": {
-          "enum": [
-            "pass",
-            "fail",
-            "indeterminate"
-          ]
-        },
-        "evidence_ref": {
-          "$ref": "#/$defs/artifact_reference"
-        }
-      }
-    },
     "artifact_reference": {
       "type": "object",
       "additionalProperties": false,
@@ -691,6 +671,26 @@
             "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
             "status": "target_resolved_domain"
           }
+        }
+      }
+    },
+    "operator_architecture_decision_check_result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "result",
+        "evidence_ref"
+      ],
+      "properties": {
+        "result": {
+          "enum": [
+            "pass",
+            "fail",
+            "indeterminate"
+          ]
+        },
+        "evidence_ref": {
+          "$ref": "#/$defs/artifact_reference"
         }
       }
     }

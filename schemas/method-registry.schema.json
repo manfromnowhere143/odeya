@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:method-registry:0.6.0",
+  "$id": "urn:odeya:schema:method-registry:0.7.0",
   "title": "Odeya MethodRegistry",
   "description": "An immutable versioned registry of scientific, statistical, measurement, numerical, and physical methods. Structural validity does not admit a method: exact guarantees, assumptions, vectors, independent implementations, and accountable review are separate semantic obligations.",
   "type": "object",
@@ -24,7 +24,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.6.0"
+      "const": "0.7.0"
     },
     "registry_id": {
       "$ref": "#/$defs/identifier"
@@ -59,7 +59,7 @@
       ],
       "properties": {
         "profile_id": {
-          "$ref": "#/$defs/identifier"
+          "const": "urn:odeya:canonicalization:odeya-jcs-0.1"
         },
         "version": {
           "$ref": "#/$defs/semantic_version"
@@ -120,7 +120,7 @@
       "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
     },
     "sealed_by": {
-      "$ref": "#/$defs/human_principal"
+      "$ref": "#/$defs/method_registry_human_principal"
     },
     "registry_digest": {
       "$ref": "#/$defs/digest",
@@ -240,26 +240,6 @@
             "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
             "status": "target_resolved_domain"
           }
-        }
-      }
-    },
-    "human_principal": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "principal_id",
-        "principal_type",
-        "authority_grant_ref"
-      ],
-      "properties": {
-        "principal_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "principal_type": {
-          "const": "human"
-        },
-        "authority_grant_ref": {
-          "$ref": "#/$defs/identifier"
         }
       }
     },
@@ -1018,6 +998,26 @@
           }
         }
       ]
+    },
+    "method_registry_human_principal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "principal_id",
+        "principal_type",
+        "authority_grant_ref"
+      ],
+      "properties": {
+        "principal_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "principal_type": {
+          "const": "human"
+        },
+        "authority_grant_ref": {
+          "$ref": "#/$defs/identifier"
+        }
+      }
     }
   }
 }

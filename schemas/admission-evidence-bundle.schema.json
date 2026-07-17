@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:admission-evidence-bundle:0.7.0",
+  "$id": "urn:odeya:schema:admission-evidence-bundle:0.8.0",
   "title": "Odeya AdmissionEvidenceBundle",
   "description": "A closed structural candidate for the exact deterministic evidence used by one post-registry command admission. This 0.2 resource separates logical payload type identity from schema resource, canonical, and closure identity and binds the canonical CommandContractRegistry subject. It is deliberately nonconstructible and not admitted while the referenced CommandContractRecord and CommandContractRegistry identities remain unresolved; accepted/noop values in fixtures exercise shape only and are not admission evidence. The bundle retains references and input/frontier digests, never mutable state snapshots. Structural validity does not prove reference truth, evidence-profile applicability, evidence-record resolution, rule execution, currentness, digest equality, membership, activation, or that any receipt disposition follows from the underlying evidence.",
   "type": "object",
@@ -26,7 +26,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.7.0"
+      "const": "0.8.0"
     },
     "conformance_scope": {
       "const": "structural_fixture_only"
@@ -41,7 +41,7 @@
       "const": "blocked_unresolved_command_contract_registry"
     },
     "bundle_id": {
-      "$ref": "#/$defs/identifier"
+      "$ref": "#/$defs/admission_evidence_bundle_identifier"
     },
     "version": {
       "type": "integer",
@@ -54,7 +54,7 @@
       "$ref": "#/$defs/command_binding"
     },
     "evidence_profile_ref": {
-      "$ref": "#/$defs/versioned_reference"
+      "$ref": "#/$defs/admission_evidence_bundle_versioned_reference"
     },
     "evaluation_frontier": {
       "$ref": "#/$defs/evaluation_frontier"
@@ -2126,12 +2126,6 @@
     }
   ],
   "$defs": {
-    "identifier": {
-      "type": "string",
-      "minLength": 2,
-      "maxLength": 128,
-      "pattern": "^[a-z0-9][a-z0-9._:-]+$"
-    },
     "digest": {
       "type": "string",
       "pattern": "^sha256:[a-f0-9]{64}$"
@@ -2140,68 +2134,6 @@
       "type": "string",
       "format": "date-time",
       "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
-    },
-    "artifact_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "artifact_id",
-        "digest",
-        "media_type"
-      ],
-      "properties": {
-        "artifact_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "byte_digest",
-            "subject": "exact retained artifact or profile document bytes",
-            "algorithm": "sha-256",
-            "profile": "not_a_canonical_object_digest",
-            "status": "accepted_disposition_annotation"
-          }
-        },
-        "media_type": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 255
-        }
-      }
-    },
-    "versioned_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "object_id",
-        "version",
-        "schema_id",
-        "digest"
-      ],
-      "properties": {
-        "object_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "version": {
-          "type": "string",
-          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
-        },
-        "schema_id": {
-          "type": "string",
-          "pattern": "^urn:odeya:schema:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$"
-        },
-        "digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "canonical_object_digest",
-            "domain_resolution": "target_resolved_via_sibling_reference",
-            "algorithm": "sha-256",
-            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
-            "status": "target_resolved_domain"
-          }
-        }
-      }
     },
     "command_registry_reference": {
       "type": "object",
@@ -2214,13 +2146,13 @@
       ],
       "properties": {
         "object_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/admission_evidence_bundle_identifier"
         },
         "version": {
           "const": "0.2.0"
         },
         "schema_id": {
-          "const": "urn:odeya:schema:command-contract-registry:0.6.0"
+          "const": "urn:odeya:schema:command-contract-registry:0.7.0"
         },
         "digest": {
           "$ref": "#/$defs/digest",
@@ -2246,14 +2178,14 @@
       ],
       "properties": {
         "record_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/admission_evidence_bundle_identifier"
         },
         "version": {
           "type": "integer",
           "minimum": 1
         },
         "schema_id": {
-          "const": "urn:odeya:schema:command-contract-record:0.5.0"
+          "const": "urn:odeya:schema:command-contract-record:0.6.0"
         },
         "digest": {
           "$ref": "#/$defs/digest",
@@ -2290,14 +2222,14 @@
       ],
       "properties": {
         "activation_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/admission_evidence_bundle_identifier"
         },
         "activation_sequence": {
           "type": "integer",
           "minimum": 1
         },
         "schema_id": {
-          "const": "urn:odeya:schema:registry-activation:0.6.0"
+          "const": "urn:odeya:schema:registry-activation:0.7.0"
         },
         "activation_digest": {
           "$ref": "#/$defs/digest",
@@ -2341,7 +2273,7 @@
       ],
       "properties": {
         "command_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/admission_evidence_bundle_identifier"
         },
         "canonical_request_digest": {
           "$ref": "#/$defs/digest",
@@ -2410,17 +2342,17 @@
       ],
       "properties": {
         "checkpoint_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/admission_evidence_bundle_identifier"
         },
         "version": {
           "type": "integer",
           "minimum": 1
         },
         "schema_id": {
-          "const": "urn:odeya:schema:ledger-checkpoint:0.7.0"
+          "const": "urn:odeya:schema:ledger-checkpoint:0.8.0"
         },
         "ledger_epoch": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/admission_evidence_bundle_identifier"
         },
         "inclusive_global_position": {
           "type": "integer",
@@ -2456,7 +2388,7 @@
       ],
       "properties": {
         "ledger_epoch": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/admission_evidence_bundle_identifier"
         },
         "checkpoint_ref": {
           "$ref": "#/$defs/checkpoint_reference"
@@ -2496,7 +2428,7 @@
               "$ref": "#/$defs/timestamp"
             },
             "source_ref": {
-              "$ref": "#/$defs/artifact_reference"
+              "$ref": "#/$defs/admission_evidence_bundle_artifact_reference"
             },
             "uncertainty_ms": {
               "type": "integer",
@@ -2505,16 +2437,16 @@
           }
         },
         "root_authority_manifest_ref": {
-          "$ref": "#/$defs/versioned_reference"
+          "$ref": "#/$defs/admission_evidence_bundle_versioned_reference"
         },
         "command_registry_snapshot_ref": {
           "$ref": "#/$defs/command_registry_reference"
         },
         "policy_registry_snapshot_ref": {
-          "$ref": "#/$defs/versioned_reference"
+          "$ref": "#/$defs/admission_evidence_bundle_versioned_reference"
         },
         "semantic_rule_registry_snapshot_ref": {
-          "$ref": "#/$defs/versioned_reference"
+          "$ref": "#/$defs/admission_evidence_bundle_versioned_reference"
         }
       }
     },
@@ -2552,7 +2484,7 @@
           ]
         },
         "reason_code": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/admission_evidence_bundle_identifier"
         }
       },
       "allOf": [
@@ -2865,7 +2797,7 @@
           "maxItems": 128,
           "uniqueItems": true,
           "items": {
-            "$ref": "#/$defs/identifier"
+            "$ref": "#/$defs/admission_evidence_bundle_identifier"
           }
         },
         "reason_codes": {
@@ -2874,7 +2806,7 @@
           "maxItems": 32,
           "uniqueItems": true,
           "items": {
-            "$ref": "#/$defs/identifier"
+            "$ref": "#/$defs/admission_evidence_bundle_identifier"
           }
         }
       },
@@ -2954,7 +2886,7 @@
           ]
         },
         "record_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/admission_evidence_bundle_identifier"
         },
         "version": {
           "type": "integer",
@@ -2990,7 +2922,7 @@
           "then": {
             "properties": {
               "schema_id": {
-                "const": "urn:odeya:schema:policy-decision:0.7.0"
+                "const": "urn:odeya:schema:policy-decision:0.8.0"
               }
             }
           }
@@ -3027,13 +2959,13 @@
       ],
       "properties": {
         "principal_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/admission_evidence_bundle_identifier"
         },
         "principal_type": {
           "const": "deterministic_service"
         },
         "execution_identity": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/admission_evidence_bundle_identifier"
         },
         "build_digest": {
           "$ref": "#/$defs/digest",
@@ -3114,7 +3046,7 @@
               ],
               "properties": {
                 "schema_id": {
-                  "const": "urn:odeya:schema:admission-evidence-bundle:0.7.0"
+                  "const": "urn:odeya:schema:admission-evidence-bundle:0.8.0"
                 },
                 "schema_digest": {
                   "$ref": "#/$defs/digest",
@@ -3171,12 +3103,80 @@
         "signature_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/artifact_reference"
+              "$ref": "#/$defs/admission_evidence_bundle_artifact_reference"
             },
             {
               "type": "null"
             }
           ]
+        }
+      }
+    },
+    "admission_evidence_bundle_identifier": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 128,
+      "pattern": "^[a-z0-9][a-z0-9._:-]+$"
+    },
+    "admission_evidence_bundle_artifact_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "digest",
+        "media_type"
+      ],
+      "properties": {
+        "artifact_id": {
+          "$ref": "#/$defs/admission_evidence_bundle_identifier"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "exact retained artifact or profile document bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        }
+      }
+    },
+    "admission_evidence_bundle_versioned_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "object_id",
+        "version",
+        "schema_id",
+        "digest"
+      ],
+      "properties": {
+        "object_id": {
+          "$ref": "#/$defs/admission_evidence_bundle_identifier"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "schema_id": {
+          "type": "string",
+          "pattern": "^urn:odeya:schema:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain_resolution": "target_resolved_via_sibling_reference",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "target_resolved_domain"
+          }
         }
       }
     }

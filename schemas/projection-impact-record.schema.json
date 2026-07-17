@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:projection-impact-record:0.7.0",
+  "$id": "urn:odeya:schema:projection-impact-record:0.8.0",
   "title": "Odeya ProjectionImpactRecord",
   "description": "A deterministic, derived and non-authoritative dependency/fanout computation for correction, invalidation, retraction, rights, deletion, recovery, effect, or release facts. It records affected logical projections and fail-closed transitions without authorizing a pointer, cache, deletion, release, or recovery action.",
   "type": "object",
@@ -23,7 +23,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.7.0"
+      "const": "0.8.0"
     },
     "record_status": {
       "const": "derived_non_authoritative_impact_computation"
@@ -95,7 +95,7 @@
           "$ref": "#/$defs/ledger_point"
         },
         "affected_scope_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/projection_impact_record_artifact_reference"
         },
         "deletion_retention_disposition": {
           "enum": [
@@ -125,7 +125,7 @@
           "$ref": "#/$defs/c0_registry_bundle_reference"
         },
         "canonicalization_profile_ref": {
-          "$ref": "#/$defs/versioned_reference"
+          "$ref": "#/$defs/projection_impact_record_versioned_reference"
         },
         "checkpoint_ref": {
           "allOf": [
@@ -141,7 +141,7 @@
                   "const": "0.2.0"
                 },
                 "schema_id": {
-                  "const": "urn:odeya:schema:ledger-checkpoint:0.7.0"
+                  "const": "urn:odeya:schema:ledger-checkpoint:0.8.0"
                 }
               }
             }
@@ -173,7 +173,7 @@
       ],
       "properties": {
         "selection_rule_ref": {
-          "$ref": "#/$defs/versioned_reference"
+          "$ref": "#/$defs/projection_impact_record_versioned_reference"
         },
         "candidate_projection_count": {
           "type": "integer",
@@ -205,7 +205,7 @@
           "const": 0
         },
         "coverage_evidence_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/projection_impact_record_artifact_reference"
         }
       }
     },
@@ -280,7 +280,7 @@
           "const": false
         },
         "proof_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/projection_impact_record_artifact_reference"
         }
       }
     },
@@ -296,12 +296,12 @@
           "$ref": "#/$defs/timestamp"
         },
         "clock_profile_ref": {
-          "$ref": "#/$defs/versioned_reference"
+          "$ref": "#/$defs/projection_impact_record_versioned_reference"
         }
       }
     },
     "construction": {
-      "$ref": "#/$defs/non_recursive_construction"
+      "$ref": "#/$defs/projection_impact_record_non_recursive_construction"
     },
     "authority_semantics": {
       "type": "object",
@@ -410,62 +410,6 @@
       "format": "date-time",
       "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
     },
-    "artifact_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "artifact_id",
-        "digest",
-        "media_type"
-      ],
-      "properties": {
-        "artifact_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "byte_digest",
-            "subject": "exact retained artifact or profile document bytes",
-            "algorithm": "sha-256",
-            "profile": "not_a_canonical_object_digest",
-            "status": "accepted_disposition_annotation"
-          }
-        },
-        "media_type": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 127
-        }
-      }
-    },
-    "versioned_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "id",
-        "version",
-        "digest"
-      ],
-      "properties": {
-        "id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "version": {
-          "$ref": "#/$defs/semantic_version"
-        },
-        "digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "canonical_object_digest",
-            "domain_resolution": "target_resolved_via_sibling_reference",
-            "algorithm": "sha-256",
-            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
-            "status": "target_resolved_domain"
-          }
-        }
-      }
-    },
     "canonicalization_binding": {
       "type": "object",
       "additionalProperties": false,
@@ -476,7 +420,7 @@
       ],
       "properties": {
         "profile_id": {
-          "$ref": "#/$defs/identifier"
+          "const": "urn:odeya:canonicalization:odeya-jcs-0.1"
         },
         "version": {
           "$ref": "#/$defs/semantic_version"
@@ -547,7 +491,7 @@
               "const": "0.1.0"
             },
             "schema_id": {
-              "const": "urn:odeya:schema:engine-contract-root:0.5.0"
+              "const": "urn:odeya:schema:engine-contract-root:0.6.0"
             }
           }
         }
@@ -567,7 +511,7 @@
               "const": "0.1.0"
             },
             "schema_id": {
-              "const": "urn:odeya:schema:c0-registry-bundle:0.5.0"
+              "const": "urn:odeya:schema:c0-registry-bundle:0.6.0"
             }
           }
         }
@@ -704,7 +648,7 @@
           "type": "boolean"
         },
         "minimum_tombstone_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/projection_impact_record_artifact_reference"
         }
       }
     },
@@ -734,11 +678,67 @@
           ]
         },
         "non_dependency_evidence_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/projection_impact_record_artifact_reference"
         }
       }
     },
-    "non_recursive_construction": {
+    "projection_impact_record_artifact_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "digest",
+        "media_type"
+      ],
+      "properties": {
+        "artifact_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "exact retained artifact or profile document bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 127
+        }
+      }
+    },
+    "projection_impact_record_versioned_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "version",
+        "digest"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "$ref": "#/$defs/semantic_version"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain_resolution": "target_resolved_via_sibling_reference",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "target_resolved_domain"
+          }
+        }
+      }
+    },
+    "projection_impact_record_non_recursive_construction": {
       "type": "object",
       "additionalProperties": false,
       "required": [

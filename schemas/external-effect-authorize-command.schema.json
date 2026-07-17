@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:external-effect-authorize-command:0.6.0",
+  "$id": "urn:odeya:schema:external-effect-authorize-command:0.7.0",
   "x-odeya-command-payload-id": "urn:odeya:command-payload:external_effect.authorize:1.0.0",
   "title": "Authorize External Effect Command Payload",
   "description": "Exact T1 request inputs. Admission creates the effect intent and kernel-derived dispatch-bound grant-use reservation; the caller cannot supply a reservation, grant-use fact, event identity, or settlement. Governed processing dispatch additionally binds exact typed work-contract, data-use, exposure-intent, provider-configuration, source-frontier, purpose, recipient, provider, region, policy, authority, and resource inputs. JSON Schema does not prove those inputs are current; admission must re-resolve and recheck them at the commit position.",
@@ -23,10 +23,10 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.6.0"
+      "const": "0.7.0"
     },
     "effect_id": {
-      "$ref": "#/$defs/identifier"
+      "$ref": "#/$defs/external_effect_authorize_command_identifier"
     },
     "effect_class": {
       "enum": [
@@ -46,24 +46,24 @@
       "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]*$"
     },
     "effect_payload_ref": {
-      "$ref": "#/$defs/artifact_reference"
+      "$ref": "#/$defs/external_effect_authorize_command_artifact_reference"
     },
     "target_descriptor_ref": {
-      "$ref": "#/$defs/artifact_reference"
+      "$ref": "#/$defs/external_effect_authorize_command_artifact_reference"
     },
     "provider_profile_ref": {
-      "$ref": "#/$defs/versioned_identity"
+      "$ref": "#/$defs/external_effect_authorize_command_versioned_identity"
     },
     "grant_refs": {
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,
       "items": {
-        "$ref": "#/$defs/identifier"
+        "$ref": "#/$defs/external_effect_authorize_command_identifier"
       }
     },
     "resource_reservation_request_ref": {
-      "$ref": "#/$defs/artifact_reference"
+      "$ref": "#/$defs/external_effect_authorize_command_artifact_reference"
     },
     "reservation_not_after": {
       "type": "string",
@@ -147,7 +147,7 @@
       "type": "array",
       "uniqueItems": true,
       "items": {
-        "$ref": "#/$defs/artifact_reference"
+        "$ref": "#/$defs/external_effect_authorize_command_artifact_reference"
       }
     }
   },
@@ -230,44 +230,9 @@
     }
   ],
   "$defs": {
-    "identifier": {
-      "type": "string",
-      "minLength": 1,
-      "maxLength": 256,
-      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]*$"
-    },
     "digest": {
       "type": "string",
       "pattern": "^sha256:[a-f0-9]{64}$"
-    },
-    "artifact_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "artifact_id",
-        "digest",
-        "media_type"
-      ],
-      "properties": {
-        "artifact_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "byte_digest",
-            "subject": "exact retained artifact or profile document bytes",
-            "algorithm": "sha-256",
-            "profile": "not_a_canonical_object_digest",
-            "status": "accepted_disposition_annotation"
-          }
-        },
-        "media_type": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 255
-        }
-      }
     },
     "schema_bound_record_reference": {
       "type": "object",
@@ -281,7 +246,7 @@
       ],
       "properties": {
         "object_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/external_effect_authorize_command_identifier"
         },
         "version": {
           "type": "integer",
@@ -302,7 +267,7 @@
           }
         },
         "artifact_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/external_effect_authorize_command_artifact_reference"
         }
       }
     },
@@ -348,7 +313,7 @@
         {
           "properties": {
             "schema_id": {
-              "const": "urn:odeya:schema:data-exposure-record:0.3.0"
+              "const": "urn:odeya:schema:data-exposure-record:0.4.0"
             }
           },
           "required": [
@@ -365,7 +330,7 @@
         {
           "properties": {
             "schema_id": {
-              "const": "urn:odeya:schema:ledger-checkpoint:0.7.0"
+              "const": "urn:odeya:schema:ledger-checkpoint:0.8.0"
             }
           },
           "required": [
@@ -385,7 +350,7 @@
       ],
       "properties": {
         "artifact_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/external_effect_authorize_command_identifier"
         },
         "digest": {
           "$ref": "#/$defs/digest",
@@ -417,10 +382,10 @@
       ],
       "properties": {
         "source_stream_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/external_effect_authorize_command_identifier"
         },
         "source_ledger_epoch_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/external_effect_authorize_command_identifier"
         },
         "source_position": {
           "type": "integer",
@@ -456,17 +421,17 @@
       ],
       "properties": {
         "purpose_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/external_effect_authorize_command_identifier"
         },
         "purpose_version": {
           "type": "string",
           "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
         },
         "mission_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/external_effect_authorize_command_identifier"
         },
         "stage_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/external_effect_authorize_command_identifier"
         },
         "protocol_digest": {
           "$ref": "#/$defs/digest",
@@ -479,7 +444,7 @@
           }
         },
         "recipient_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/external_effect_authorize_command_identifier"
         },
         "recipient_class": {
           "enum": [
@@ -492,7 +457,7 @@
           ]
         },
         "provider_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/external_effect_authorize_command_identifier"
         },
         "provider_profile_digest": {
           "$ref": "#/$defs/digest",
@@ -515,10 +480,10 @@
           ]
         },
         "geographic_region": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/external_effect_authorize_command_identifier"
         },
         "residency_zone": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/external_effect_authorize_command_identifier"
         },
         "projected_payload_digest": {
           "$ref": "#/$defs/digest",
@@ -542,7 +507,42 @@
         }
       }
     },
-    "versioned_identity": {
+    "external_effect_authorize_command_identifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]*$"
+    },
+    "external_effect_authorize_command_artifact_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "digest",
+        "media_type"
+      ],
+      "properties": {
+        "artifact_id": {
+          "$ref": "#/$defs/external_effect_authorize_command_identifier"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "exact retained artifact or profile document bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        }
+      }
+    },
+    "external_effect_authorize_command_versioned_identity": {
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -552,7 +552,7 @@
       ],
       "properties": {
         "name": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/external_effect_authorize_command_identifier"
         },
         "version": {
           "type": "string",

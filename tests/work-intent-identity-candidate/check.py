@@ -41,9 +41,9 @@ PROFILE_EVIDENCE = (
 CASES = SUITE / "cases.json"
 
 PROFILE_ID = "urn:odeya:canonicalization:odeya-jcs-0.1"
-PROFILE_SCHEMA_ID = "urn:odeya:schema:canonicalization-profile-core:0.3.0"
+PROFILE_SCHEMA_ID = "urn:odeya:schema:canonicalization-profile-core:0.4.0"
 CORE_SCHEMA_ID = "urn:odeya:schema:work-intent-core:0.1.0"
-LEGACY_SCHEMA_ID = "urn:odeya:schema:work-intent:0.6.0"
+LEGACY_SCHEMA_ID = "urn:odeya:schema:work-intent:0.7.0"
 FIXED_TIMESTAMP = re.compile(
     r"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:"
     r"[0-9]{2}\.[0-9]{6}Z$"
@@ -57,29 +57,29 @@ EXPECTED_REISSUES = [
     {
         "path": "schemas/work-intent.schema.json",
         "from_schema_id": "urn:odeya:schema:work-intent:0.1.0",
-        "to_schema_id": "urn:odeya:schema:work-intent:0.15.0"
+        "to_schema_id": "urn:odeya:schema:work-intent:0.17.0"
     },
     {
         "path": "schemas/canonical-work-lease.schema.json",
         "from_schema_id": "urn:odeya:schema:canonical-work-lease:0.1.0",
-        "to_schema_id": "urn:odeya:schema:canonical-work-lease:0.11.0"
+        "to_schema_id": "urn:odeya:schema:canonical-work-lease:0.12.0"
     },
     {
         "path": "schemas/work-contract.schema.json",
         "from_schema_id": "urn:odeya:schema:work-contract:0.2.0",
-        "to_schema_id": "urn:odeya:schema:work-contract:0.14.0"
+        "to_schema_id": "urn:odeya:schema:work-contract:0.15.0"
     }
 ]
 EXPECTED_CONSUMERS = [
     {
         "schema_path": "schemas/canonical-work-lease.schema.json",
-        "current_schema_id": "urn:odeya:schema:canonical-work-lease:0.6.0",
-        "prospective_schema_id": "urn:odeya:schema:canonical-work-lease:0.11.0",
+        "current_schema_id": "urn:odeya:schema:canonical-work-lease:0.7.0",
+        "prospective_schema_id": "urn:odeya:schema:canonical-work-lease:0.12.0",
     },
     {
         "schema_path": "schemas/work-contract.schema.json",
-        "current_schema_id": "urn:odeya:schema:work-contract:0.15.0",
-        "prospective_schema_id": "urn:odeya:schema:work-contract:0.14.0",
+        "current_schema_id": "urn:odeya:schema:work-contract:0.16.0",
+        "prospective_schema_id": "urn:odeya:schema:work-contract:0.15.0",
     },
 ]
 

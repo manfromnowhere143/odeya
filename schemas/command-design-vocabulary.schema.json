@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:command-design-vocabulary:0.4.0",
+  "$id": "urn:odeya:schema:command-design-vocabulary:0.5.0",
   "title": "Odeya CommandDesignVocabulary",
   "description": "A non-executable planning artifact extracted from one exact command-envelope candidate. Every entry is explicitly not contract-admitted and carries no payload, handler, event, authority, grant, compatibility, activation, or execution promise.",
   "type": "object",
@@ -21,7 +21,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.4.0"
+      "const": "0.5.0"
     },
     "vocabulary_id": {
       "$ref": "#/$defs/identifier"
@@ -33,7 +33,7 @@
       "const": "non_executable_planning_vocabulary"
     },
     "source_envelope_candidate_ref": {
-      "$ref": "#/$defs/schema_bytes_reference"
+      "$ref": "#/$defs/command_design_vocabulary_schema_bytes_reference"
     },
     "extraction_contract": {
       "type": "object",
@@ -121,7 +121,7 @@
       }
     },
     "vocabulary_digest_contract": {
-      "$ref": "#/$defs/digest_contract"
+      "$ref": "#/$defs/command_design_vocabulary_digest_contract"
     },
     "vocabulary_digest": {
       "$ref": "#/$defs/digest",
@@ -137,7 +137,7 @@
       "type": "array",
       "uniqueItems": true,
       "items": {
-        "$ref": "#/$defs/attestation"
+        "$ref": "#/$defs/command_design_vocabulary_attestation"
       }
     }
   },
@@ -153,50 +153,6 @@
     "digest": {
       "type": "string",
       "pattern": "^sha256:[a-f0-9]{64}$"
-    },
-    "schema_bytes_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "schema_id",
-        "semantic_version",
-        "byte_digest",
-        "byte_count",
-        "media_type",
-        "encoding",
-        "dialect"
-      ],
-      "properties": {
-        "schema_id": {
-          "const": "urn:odeya:schema:command-envelope:0.4.0"
-        },
-        "semantic_version": {
-          "const": "0.4.0"
-        },
-        "byte_digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "byte_digest",
-            "subject": "retained raw bytes",
-            "algorithm": "sha-256",
-            "profile": "not_a_canonical_object_digest",
-            "status": "accepted_disposition_annotation"
-          }
-        },
-        "byte_count": {
-          "type": "integer",
-          "minimum": 2
-        },
-        "media_type": {
-          "const": "application/schema+json"
-        },
-        "encoding": {
-          "const": "utf-8"
-        },
-        "dialect": {
-          "const": "https://json-schema.org/draft/2020-12/schema"
-        }
-      }
     },
     "design_entry": {
       "type": "object",
@@ -302,7 +258,7 @@
         }
       }
     },
-    "artifact_reference": {
+    "command_design_vocabulary_artifact_reference": {
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -331,7 +287,51 @@
         }
       }
     },
-    "attestation": {
+    "command_design_vocabulary_schema_bytes_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_id",
+        "semantic_version",
+        "byte_digest",
+        "byte_count",
+        "media_type",
+        "encoding",
+        "dialect"
+      ],
+      "properties": {
+        "schema_id": {
+          "const": "urn:odeya:schema:command-envelope:0.4.0"
+        },
+        "semantic_version": {
+          "const": "0.4.0"
+        },
+        "byte_digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "retained raw bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
+        },
+        "byte_count": {
+          "type": "integer",
+          "minimum": 2
+        },
+        "media_type": {
+          "const": "application/schema+json"
+        },
+        "encoding": {
+          "const": "utf-8"
+        },
+        "dialect": {
+          "const": "https://json-schema.org/draft/2020-12/schema"
+        }
+      }
+    },
+    "command_design_vocabulary_attestation": {
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -364,11 +364,11 @@
           "maxLength": 127
         },
         "signature_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/command_design_vocabulary_artifact_reference"
         }
       }
     },
-    "digest_contract": {
+    "command_design_vocabulary_digest_contract": {
       "type": "object",
       "additionalProperties": false,
       "required": [

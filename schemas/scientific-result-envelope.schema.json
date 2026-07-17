@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:scientific-result-envelope:0.8.0",
+  "$id": "urn:odeya:schema:scientific-result-envelope:0.9.0",
   "title": "Odeya ScientificResultEnvelope",
   "description": "An immutable non-authoritative scientific result package binding one exact mission, estimand, protocol, run, and atomic metric-result set. It retains incomplete, invalid, indeterminate, blocked, and inconclusive outcomes; keeps evidence measures and uncertainty semantics distinct; and cannot turn simulation, calibration, or code verification into physical validation.",
   "type": "object",
@@ -37,7 +37,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.8.0"
+      "const": "0.9.0"
     },
     "record_status": {
       "const": "immutable_non_authoritative_result"
@@ -59,7 +59,7 @@
       ]
     },
     "claim_type": {
-      "$ref": "#/$defs/claim_type"
+      "$ref": "#/$defs/scientific_result_envelope_claim_type_subset"
     },
     "identity_chain": {
       "type": "object",
@@ -82,10 +82,10 @@
           "$ref": "#/$defs/mission_spec_reference"
         },
         "estimand_contract_ref": {
-          "$ref": "#/$defs/estimand_contract_reference"
+          "$ref": "#/$defs/scientific_result_envelope_estimand_contract_reference"
         },
         "protocol_snapshot_ref": {
-          "$ref": "#/$defs/protocol_snapshot_reference"
+          "$ref": "#/$defs/scientific_result_envelope_protocol_snapshot_reference"
         },
         "run_manifest_ref": {
           "$ref": "#/$defs/run_manifest_reference"
@@ -110,7 +110,7 @@
           }
         },
         "binding_evidence_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/scientific_result_envelope_artifact_reference"
         },
         "same_mission_required": {
           "const": true
@@ -298,10 +298,10 @@
           ]
         },
         "distribution_ref": {
-          "$ref": "#/$defs/nullable_artifact_reference"
+          "$ref": "#/$defs/scientific_result_envelope_nullable_artifact_reference"
         },
         "set_ref": {
-          "$ref": "#/$defs/nullable_artifact_reference"
+          "$ref": "#/$defs/scientific_result_envelope_nullable_artifact_reference"
         },
         "reason_codes": {
           "$ref": "#/$defs/reason_codes"
@@ -380,7 +380,7 @@
                 "type": "null"
               },
               "distribution_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/scientific_result_envelope_artifact_reference"
               },
               "set_ref": {
                 "type": "null"
@@ -411,7 +411,7 @@
                 "type": "null"
               },
               "set_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/scientific_result_envelope_artifact_reference"
               },
               "reason_codes": {
                 "maxItems": 0
@@ -571,7 +571,7 @@
           ]
         },
         "set_ref": {
-          "$ref": "#/$defs/nullable_artifact_reference"
+          "$ref": "#/$defs/scientific_result_envelope_nullable_artifact_reference"
         },
         "level": {
           "oneOf": [
@@ -616,7 +616,7 @@
         "method_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/method_reference"
+              "$ref": "#/$defs/scientific_result_envelope_method_reference"
             },
             {
               "type": "null"
@@ -624,7 +624,7 @@
           ]
         },
         "null_reference": {
-          "$ref": "#/$defs/nullable_quantity"
+          "$ref": "#/$defs/scientific_result_envelope_nullable_quantity"
         },
         "includes_null": {
           "enum": [
@@ -703,7 +703,7 @@
                 }
               },
               "method_ref": {
-                "$ref": "#/$defs/method_reference"
+                "$ref": "#/$defs/scientific_result_envelope_method_reference"
               },
               "reason_codes": {
                 "maxItems": 0
@@ -964,7 +964,7 @@
                 "type": "null"
               },
               "set_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/scientific_result_envelope_artifact_reference"
               }
             }
           }
@@ -1035,7 +1035,7 @@
         "method_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/method_reference"
+              "$ref": "#/$defs/scientific_result_envelope_method_reference"
             },
             {
               "type": "null"
@@ -1043,7 +1043,7 @@
           ]
         },
         "interpretation_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/scientific_result_envelope_artifact_reference"
         },
         "optional_stopping_compatible": {
           "type": "boolean"
@@ -1107,7 +1107,7 @@
                 }
               },
               "method_ref": {
-                "$ref": "#/$defs/method_reference"
+                "$ref": "#/$defs/scientific_result_envelope_method_reference"
               }
             }
           }
@@ -1141,7 +1141,7 @@
           ]
         },
         "rule_ref": {
-          "$ref": "#/$defs/method_reference"
+          "$ref": "#/$defs/scientific_result_envelope_method_reference"
         },
         "estimand_rule_digest": {
           "$ref": "#/$defs/digest",
@@ -1165,13 +1165,13 @@
           ]
         },
         "scientific_outcome": {
-          "$ref": "#/$defs/scientific_outcome"
+          "$ref": "#/$defs/scientific_result_envelope_scientific_outcome_subset"
         },
         "reason_codes": {
           "$ref": "#/$defs/reason_codes"
         },
         "decision_evidence_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/scientific_result_envelope_artifact_reference"
         }
       }
     },
@@ -1305,7 +1305,7 @@
           ]
         },
         "margin_contract_ref": {
-          "$ref": "#/$defs/nullable_artifact_reference"
+          "$ref": "#/$defs/scientific_result_envelope_nullable_artifact_reference"
         },
         "frozen_before_outcome_access": {
           "type": "boolean"
@@ -1359,7 +1359,7 @@
           "else": {
             "properties": {
               "margin_contract_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/scientific_result_envelope_artifact_reference"
               },
               "frozen_before_outcome_access": {
                 "const": true
@@ -1420,7 +1420,7 @@
           ]
         },
         "plan_ref": {
-          "$ref": "#/$defs/nullable_artifact_reference"
+          "$ref": "#/$defs/scientific_result_envelope_nullable_artifact_reference"
         },
         "error_criterion": {
           "enum": [
@@ -1433,7 +1433,7 @@
           ]
         },
         "assignment_evidence_ref": {
-          "$ref": "#/$defs/nullable_artifact_reference"
+          "$ref": "#/$defs/scientific_result_envelope_nullable_artifact_reference"
         },
         "selected_after_observation": {
           "type": "boolean"
@@ -1494,7 +1494,7 @@
                 "$ref": "#/$defs/identifier"
               },
               "plan_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/scientific_result_envelope_artifact_reference"
               },
               "error_criterion": {
                 "not": {
@@ -1502,7 +1502,7 @@
                 }
               },
               "assignment_evidence_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/scientific_result_envelope_artifact_reference"
               }
             }
           }
@@ -1540,7 +1540,7 @@
           ]
         },
         "plan_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/scientific_result_envelope_artifact_reference"
         },
         "planned_look_count": {
           "oneOf": [
@@ -1565,7 +1565,7 @@
           ]
         },
         "stopping_evidence_ref": {
-          "$ref": "#/$defs/nullable_artifact_reference"
+          "$ref": "#/$defs/scientific_result_envelope_nullable_artifact_reference"
         },
         "unplanned_peeking_detected": {
           "enum": [
@@ -1577,7 +1577,7 @@
         "anytime_valid_method_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/method_reference"
+              "$ref": "#/$defs/scientific_result_envelope_method_reference"
             },
             {
               "type": "null"
@@ -1618,7 +1618,7 @@
           "else": {
             "properties": {
               "anytime_valid_method_ref": {
-                "$ref": "#/$defs/method_reference"
+                "$ref": "#/$defs/scientific_result_envelope_method_reference"
               }
             }
           }
@@ -1651,7 +1651,7 @@
           ]
         },
         "plan_ref": {
-          "$ref": "#/$defs/nullable_artifact_reference"
+          "$ref": "#/$defs/scientific_result_envelope_nullable_artifact_reference"
         },
         "eligible_count": {
           "oneOf": [
@@ -1708,7 +1708,7 @@
           "const": false
         },
         "handling_evidence_ref": {
-          "$ref": "#/$defs/nullable_artifact_reference"
+          "$ref": "#/$defs/scientific_result_envelope_nullable_artifact_reference"
         },
         "sensitivity_result_refs": {
           "$ref": "#/$defs/artifact_array"
@@ -1793,10 +1793,10 @@
           "else": {
             "properties": {
               "plan_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/scientific_result_envelope_artifact_reference"
               },
               "handling_evidence_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/scientific_result_envelope_artifact_reference"
               }
             }
           }
@@ -1843,7 +1843,7 @@
                 ]
               },
               "manifest_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/scientific_result_envelope_artifact_reference"
               },
               "dependency_group_id": {
                 "$ref": "#/$defs/identifier"
@@ -1871,7 +1871,7 @@
           ]
         },
         "overlap_evidence_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/scientific_result_envelope_artifact_reference"
         },
         "contamination_assessment": {
           "enum": [
@@ -1882,7 +1882,7 @@
           ]
         },
         "contamination_evidence_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/scientific_result_envelope_artifact_reference"
         }
       }
     },
@@ -1936,7 +1936,7 @@
             ]
           },
           "evidence_ref": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/scientific_result_envelope_artifact_reference"
           },
           "reason_codes": {
             "$ref": "#/$defs/reason_codes"
@@ -1960,31 +1960,31 @@
       ],
       "properties": {
         "estimator_ref": {
-          "$ref": "#/$defs/method_reference"
+          "$ref": "#/$defs/scientific_result_envelope_method_reference"
         },
         "implementation_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/scientific_result_envelope_artifact_reference"
         },
         "code_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/scientific_result_envelope_artifact_reference"
         },
         "environment_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/scientific_result_envelope_artifact_reference"
         },
         "harness_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/scientific_result_envelope_artifact_reference"
         },
         "configuration_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/scientific_result_envelope_artifact_reference"
         },
         "resource_use_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/scientific_result_envelope_artifact_reference"
         },
         "diagnostic_result_refs": {
-          "$ref": "#/$defs/nonempty_artifact_array"
+          "$ref": "#/$defs/scientific_result_envelope_nonempty_artifact_array"
         },
         "assumption_disposition_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/scientific_result_envelope_artifact_reference"
         }
       }
     },
@@ -2013,13 +2013,13 @@
           "type": "boolean"
         },
         "implementation_ref": {
-          "$ref": "#/$defs/nullable_artifact_reference"
+          "$ref": "#/$defs/scientific_result_envelope_nullable_artifact_reference"
         },
         "result_refs": {
           "$ref": "#/$defs/artifact_array"
         },
         "disagreement_ref": {
-          "$ref": "#/$defs/nullable_artifact_reference"
+          "$ref": "#/$defs/scientific_result_envelope_nullable_artifact_reference"
         },
         "reason_codes": {
           "$ref": "#/$defs/reason_codes"
@@ -2043,7 +2043,7 @@
                 "const": true
               },
               "implementation_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/scientific_result_envelope_artifact_reference"
               },
               "result_refs": {
                 "minItems": 1
@@ -2103,7 +2103,7 @@
           "maxItems": 64,
           "uniqueItems": true,
           "items": {
-            "$ref": "#/$defs/physical_model_reference"
+            "$ref": "#/$defs/scientific_result_envelope_physical_model_reference"
           }
         },
         "physical_validation_claim_permitted": {
@@ -2212,10 +2212,10 @@
           }
         },
         "consequence_rule_ref": {
-          "$ref": "#/$defs/method_reference"
+          "$ref": "#/$defs/scientific_result_envelope_method_reference"
         },
         "evidence_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/scientific_result_envelope_artifact_reference"
         },
         "narrative_is_authority": {
           "const": false
@@ -2258,7 +2258,7 @@
       "$ref": "#/$defs/timestamp"
     },
     "recorded_by": {
-      "$ref": "#/$defs/principal"
+      "$ref": "#/$defs/scientific_result_envelope_principal"
     }
   },
   "allOf": [
@@ -3334,45 +3334,6 @@
       "format": "date-time",
       "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
     },
-    "claim_type": {
-      "enum": [
-        "descriptive",
-        "associational",
-        "predictive",
-        "causal",
-        "equivalence",
-        "noninferiority",
-        "safety",
-        "optimization",
-        "physical_validation"
-      ]
-    },
-    "scientific_outcome": {
-      "enum": [
-        "estimate_reported",
-        "association_supported",
-        "association_not_supported",
-        "predictive_performance_supported",
-        "predictive_performance_not_supported",
-        "causal_effect_supported",
-        "causal_effect_not_supported",
-        "equivalent",
-        "not_equivalent",
-        "noninferior",
-        "not_noninferior",
-        "safe_under_scope",
-        "safety_bound_exceeded",
-        "optimization_supported",
-        "optimization_not_supported",
-        "physically_validated_under_scope",
-        "physical_validation_failed",
-        "inconclusive",
-        "invalid",
-        "incomplete",
-        "indeterminate",
-        "blocked"
-      ]
-    },
     "reason_codes": {
       "type": "array",
       "maxItems": 64,
@@ -3381,98 +3342,12 @@
         "$ref": "#/$defs/identifier"
       }
     },
-    "artifact_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "artifact_id",
-        "digest",
-        "media_type"
-      ],
-      "properties": {
-        "artifact_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "byte_digest",
-            "subject": "exact retained artifact or profile document bytes",
-            "algorithm": "sha-256",
-            "profile": "not_a_canonical_object_digest",
-            "status": "accepted_disposition_annotation"
-          }
-        },
-        "media_type": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 255
-        }
-      }
-    },
-    "nullable_artifact_reference": {
-      "oneOf": [
-        {
-          "$ref": "#/$defs/artifact_reference"
-        },
-        {
-          "type": "null"
-        }
-      ]
-    },
     "artifact_array": {
       "type": "array",
       "maxItems": 256,
       "uniqueItems": true,
       "items": {
-        "$ref": "#/$defs/artifact_reference"
-      }
-    },
-    "nonempty_artifact_array": {
-      "type": "array",
-      "minItems": 1,
-      "maxItems": 256,
-      "uniqueItems": true,
-      "items": {
-        "$ref": "#/$defs/artifact_reference"
-      }
-    },
-    "method_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "method_id",
-        "version",
-        "registry_digest",
-        "method_record_digest"
-      ],
-      "properties": {
-        "method_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "version": {
-          "$ref": "#/$defs/semantic_version"
-        },
-        "registry_digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "canonical_object_digest",
-            "domain": "odeya-method-registry-v1",
-            "algorithm": "sha-256",
-            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
-            "status": "prospective_domain_reserved_not_declared"
-          }
-        },
-        "method_record_digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "canonical_object_digest",
-            "domain": "odeya-method-record-v1",
-            "algorithm": "sha-256",
-            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
-            "status": "prospective_domain_reserved_not_declared"
-          }
-        }
+        "$ref": "#/$defs/scientific_result_envelope_artifact_reference"
       }
     },
     "unit_reference": {
@@ -3508,56 +3383,6 @@
         }
       }
     },
-    "quantity": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "value",
-        "unit_ref"
-      ],
-      "properties": {
-        "value": {
-          "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "decimal",
-            "precision",
-            "semantic_type",
-            "unit"
-          ],
-          "properties": {
-            "decimal": {
-              "type": "string",
-              "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
-            },
-            "semantic_type": {
-              "const": "measured_quantity"
-            },
-            "unit": {
-              "type": "string",
-              "minLength": 1
-            },
-            "precision": {
-              "type": "string",
-              "pattern": "^(?:0|[1-9][0-9]{0,2}|exact_lexical)$"
-            }
-          }
-        },
-        "unit_ref": {
-          "$ref": "#/$defs/unit_reference"
-        }
-      }
-    },
-    "nullable_quantity": {
-      "oneOf": [
-        {
-          "$ref": "#/$defs/quantity"
-        },
-        {
-          "type": "null"
-        }
-      ]
-    },
     "mission_spec_reference": {
       "type": "object",
       "additionalProperties": false,
@@ -3580,7 +3405,7 @@
           "minimum": 1
         },
         "schema_id": {
-          "const": "urn:odeya:schema:research-mission:0.8.0"
+          "const": "urn:odeya:schema:research-mission:0.9.0"
         },
         "digest": {
           "$ref": "#/$defs/digest",
@@ -3590,105 +3415,6 @@
             "algorithm": "sha-256",
             "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
             "status": "target_resolved_domain"
-          }
-        }
-      }
-    },
-    "estimand_contract_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "record_type",
-        "estimand_id",
-        "version",
-        "mission_id",
-        "claim_type",
-        "schema_id",
-        "digest"
-      ],
-      "properties": {
-        "record_type": {
-          "const": "estimand_contract"
-        },
-        "estimand_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "version": {
-          "type": "integer",
-          "minimum": 1
-        },
-        "mission_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "claim_type": {
-          "$ref": "#/$defs/claim_type"
-        },
-        "schema_id": {
-          "const": "urn:odeya:schema:estimand-contract:0.7.0"
-        },
-        "digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "canonical_object_digest",
-            "domain": "odeya-estimand-contract-v1",
-            "algorithm": "sha-256",
-            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
-            "status": "prospective_domain_reserved_not_declared"
-          }
-        }
-      }
-    },
-    "protocol_snapshot_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "record_type",
-        "protocol_snapshot_id",
-        "version",
-        "mission_id",
-        "bound_estimand_id",
-        "bound_estimand_digest",
-        "schema_id",
-        "digest"
-      ],
-      "properties": {
-        "record_type": {
-          "const": "protocol_snapshot"
-        },
-        "protocol_snapshot_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "version": {
-          "type": "integer",
-          "minimum": 1
-        },
-        "mission_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "bound_estimand_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "bound_estimand_digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "canonical_object_digest",
-            "domain": "odeya-estimand-contract-v1",
-            "algorithm": "sha-256",
-            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
-            "status": "prospective_domain_reserved_not_declared"
-          }
-        },
-        "schema_id": {
-          "const": "urn:odeya:schema:protocol-snapshot:0.8.0"
-        },
-        "digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "canonical_object_digest",
-            "domain": "odeya-protocol-snapshot-v1",
-            "algorithm": "sha-256",
-            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
-            "status": "prospective_domain_reserved_not_declared"
           }
         }
       }
@@ -3738,7 +3464,7 @@
           "$ref": "#/$defs/identifier"
         },
         "schema_id": {
-          "const": "urn:odeya:schema:run-manifest:0.8.0"
+          "const": "urn:odeya:schema:run-manifest:0.9.0"
         },
         "digest": {
           "$ref": "#/$defs/digest",
@@ -3835,7 +3561,7 @@
           ]
         },
         "schema_id": {
-          "const": "urn:odeya:schema:metric-result:0.7.0"
+          "const": "urn:odeya:schema:metric-result:0.8.0"
         },
         "digest": {
           "$ref": "#/$defs/digest",
@@ -3875,7 +3601,7 @@
           "$ref": "#/$defs/identifier"
         },
         "schema_id": {
-          "const": "urn:odeya:schema:physical-measurement-result:0.6.0"
+          "const": "urn:odeya:schema:physical-measurement-result:0.7.0"
         },
         "digest": {
           "$ref": "#/$defs/digest",
@@ -3889,7 +3615,186 @@
         }
       }
     },
-    "physical_model_reference": {
+    "scientific_result_envelope_artifact_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "digest",
+        "media_type"
+      ],
+      "properties": {
+        "artifact_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "exact retained artifact or profile document bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        }
+      }
+    },
+    "scientific_result_envelope_method_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "method_id",
+        "version",
+        "registry_digest",
+        "method_record_digest"
+      ],
+      "properties": {
+        "method_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "$ref": "#/$defs/semantic_version"
+        },
+        "registry_digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-method-registry-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
+        },
+        "method_record_digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-method-record-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
+        }
+      }
+    },
+    "scientific_result_envelope_nonempty_artifact_array": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 256,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/scientific_result_envelope_artifact_reference"
+      }
+    },
+    "scientific_result_envelope_principal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "principal_id",
+        "principal_type"
+      ],
+      "properties": {
+        "principal_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "principal_type": {
+          "enum": [
+            "human",
+            "deterministic_service"
+          ]
+        }
+      }
+    },
+    "scientific_result_envelope_quantity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "value",
+        "unit_ref"
+      ],
+      "properties": {
+        "value": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "decimal",
+            "precision",
+            "semantic_type",
+            "unit"
+          ],
+          "properties": {
+            "decimal": {
+              "type": "string",
+              "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+            },
+            "semantic_type": {
+              "const": "measured_quantity"
+            },
+            "unit": {
+              "type": "string",
+              "minLength": 1
+            },
+            "precision": {
+              "type": "string",
+              "pattern": "^(?:0|[1-9][0-9]{0,2}|exact_lexical)$"
+            }
+          }
+        },
+        "unit_ref": {
+          "$ref": "#/$defs/unit_reference"
+        }
+      }
+    },
+    "scientific_result_envelope_estimand_contract_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "record_type",
+        "estimand_id",
+        "version",
+        "mission_id",
+        "claim_type",
+        "schema_id",
+        "digest"
+      ],
+      "properties": {
+        "record_type": {
+          "const": "estimand_contract"
+        },
+        "estimand_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "mission_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "claim_type": {
+          "$ref": "#/$defs/scientific_result_envelope_claim_type_subset"
+        },
+        "schema_id": {
+          "const": "urn:odeya:schema:estimand-contract:0.8.0"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-estimand-contract-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
+        }
+      }
+    },
+    "scientific_result_envelope_physical_model_reference": {
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -3915,7 +3820,7 @@
           "$ref": "#/$defs/identifier"
         },
         "schema_id": {
-          "const": "urn:odeya:schema:physical-model-record:0.6.0"
+          "const": "urn:odeya:schema:physical-model-record:0.7.0"
         },
         "digest": {
           "$ref": "#/$defs/digest",
@@ -3929,24 +3834,119 @@
         }
       }
     },
-    "principal": {
+    "scientific_result_envelope_protocol_snapshot_reference": {
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "principal_id",
-        "principal_type"
+        "record_type",
+        "protocol_snapshot_id",
+        "version",
+        "mission_id",
+        "bound_estimand_id",
+        "bound_estimand_digest",
+        "schema_id",
+        "digest"
       ],
       "properties": {
-        "principal_id": {
+        "record_type": {
+          "const": "protocol_snapshot"
+        },
+        "protocol_snapshot_id": {
           "$ref": "#/$defs/identifier"
         },
-        "principal_type": {
-          "enum": [
-            "human",
-            "deterministic_service"
-          ]
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "mission_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "bound_estimand_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "bound_estimand_digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-estimand-contract-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
+        },
+        "schema_id": {
+          "const": "urn:odeya:schema:protocol-snapshot:0.9.0"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-protocol-snapshot-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
         }
       }
+    },
+    "scientific_result_envelope_nullable_artifact_reference": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/scientific_result_envelope_artifact_reference"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "scientific_result_envelope_nullable_quantity": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/scientific_result_envelope_quantity"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "scientific_result_envelope_claim_type_subset": {
+      "enum": [
+        "descriptive",
+        "associational",
+        "predictive",
+        "causal",
+        "equivalence",
+        "noninferiority",
+        "safety",
+        "optimization",
+        "physical_validation"
+      ]
+    },
+    "scientific_result_envelope_scientific_outcome_subset": {
+      "enum": [
+        "estimate_reported",
+        "association_supported",
+        "association_not_supported",
+        "predictive_performance_supported",
+        "predictive_performance_not_supported",
+        "causal_effect_supported",
+        "causal_effect_not_supported",
+        "equivalent",
+        "not_equivalent",
+        "noninferior",
+        "not_noninferior",
+        "safe_under_scope",
+        "safety_bound_exceeded",
+        "optimization_supported",
+        "optimization_not_supported",
+        "physically_validated_under_scope",
+        "physical_validation_failed",
+        "inconclusive",
+        "invalid",
+        "incomplete",
+        "indeterminate",
+        "blocked"
+      ]
     }
   }
 }

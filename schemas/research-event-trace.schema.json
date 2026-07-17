@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:research-event-trace:0.5.0",
+  "$id": "urn:odeya:schema:research-event-trace:0.6.0",
   "title": "Odeya ResearchEvent Replay Trace",
   "description": "Architecture-time replay vector binding an ordered event sequence to expected scientific, authority, data-governance, and recovery axes plus forbidden inferences. Relational ordering, event identity, and reducer correctness still require independent semantic validators.",
   "type": "object",
@@ -19,10 +19,10 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.5.0"
+      "const": "0.6.0"
     },
     "trace_id": {
-      "$ref": "#/$defs/identifier"
+      "$ref": "#/$defs/research_event_trace_identifier"
     },
     "purpose": {
       "type": "string",
@@ -30,7 +30,7 @@
       "maxLength": 1000
     },
     "stream_id": {
-      "$ref": "#/$defs/identifier"
+      "$ref": "#/$defs/research_event_trace_identifier"
     },
     "stream_type": {
       "enum": [
@@ -47,7 +47,7 @@
     "mission_scope": {
       "oneOf": [
         {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_trace_identifier"
         },
         {
           "type": "null"
@@ -55,7 +55,7 @@
       ]
     },
     "reducer_set": {
-      "$ref": "#/$defs/versioned_identity"
+      "$ref": "#/$defs/research_event_trace_versioned_identity"
     },
     "steps": {
       "type": "array",
@@ -79,7 +79,7 @@
       "minItems": 1,
       "uniqueItems": true,
       "items": {
-        "$ref": "#/$defs/identifier"
+        "$ref": "#/$defs/research_event_trace_identifier"
       }
     }
   },
@@ -103,7 +103,7 @@
       "then": {
         "properties": {
           "mission_scope": {
-            "$ref": "#/$defs/identifier"
+            "$ref": "#/$defs/research_event_trace_identifier"
           }
         }
       }
@@ -1152,43 +1152,9 @@
     }
   ],
   "$defs": {
-    "identifier": {
-      "type": "string",
-      "minLength": 1,
-      "maxLength": 256,
-      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]*$"
-    },
     "digest": {
       "type": "string",
       "pattern": "^sha256:[a-f0-9]{64}$"
-    },
-    "versioned_identity": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "name",
-        "version",
-        "digest"
-      ],
-      "properties": {
-        "name": {
-          "$ref": "#/$defs/identifier"
-        },
-        "version": {
-          "type": "string",
-          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
-        },
-        "digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "canonical_object_digest",
-            "domain_resolution": "target_resolved_via_sibling_reference",
-            "algorithm": "sha-256",
-            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
-            "status": "target_resolved_domain"
-          }
-        }
-      }
     },
     "step": {
       "type": "object",
@@ -1211,7 +1177,7 @@
           "minimum": 0
         },
         "event_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_trace_identifier"
         },
         "event_type": {
           "type": "string",
@@ -1226,10 +1192,10 @@
           "minimum": 0
         },
         "aggregate_type": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_trace_identifier"
         },
         "aggregate_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_trace_identifier"
         },
         "aggregate_version": {
           "type": "integer",
@@ -1258,13 +1224,13 @@
             ],
             "properties": {
               "axis": {
-                "$ref": "#/$defs/identifier"
+                "$ref": "#/$defs/research_event_trace_identifier"
               },
               "from": {
-                "$ref": "#/$defs/identifier"
+                "$ref": "#/$defs/research_event_trace_identifier"
               },
               "to": {
-                "$ref": "#/$defs/identifier"
+                "$ref": "#/$defs/research_event_trace_identifier"
               }
             }
           }
@@ -1291,7 +1257,7 @@
       ],
       "properties": {
         "command_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_trace_identifier"
         },
         "command_type": {
           "type": "string",
@@ -1325,7 +1291,7 @@
           ],
           "properties": {
             "receipt_id": {
-              "$ref": "#/$defs/identifier"
+              "$ref": "#/$defs/research_event_trace_identifier"
             },
             "schema_id": {
               "const": "urn:odeya:schema:command-receipt:0.3.0"
@@ -1352,7 +1318,7 @@
         "rejection_code": {
           "oneOf": [
             {
-              "$ref": "#/$defs/identifier"
+              "$ref": "#/$defs/research_event_trace_identifier"
             },
             {
               "type": "null"
@@ -1390,7 +1356,7 @@
           "then": {
             "properties": {
               "rejection_code": {
-                "$ref": "#/$defs/identifier"
+                "$ref": "#/$defs/research_event_trace_identifier"
               },
               "grant_use_reservation_committed": {
                 "const": false
@@ -1538,7 +1504,7 @@
           "type": "array",
           "uniqueItems": true,
           "items": {
-            "$ref": "#/$defs/identifier"
+            "$ref": "#/$defs/research_event_trace_identifier"
           }
         },
         "rights_assertion_effect": {
@@ -1716,7 +1682,7 @@
         "reservation_id": {
           "oneOf": [
             {
-              "$ref": "#/$defs/identifier"
+              "$ref": "#/$defs/research_event_trace_identifier"
             },
             {
               "type": "null"
@@ -1835,7 +1801,7 @@
           "else": {
             "properties": {
               "reservation_id": {
-                "$ref": "#/$defs/identifier"
+                "$ref": "#/$defs/research_event_trace_identifier"
               },
               "conversion_policy": {
                 "const": "forbidden_componentwise"
@@ -1847,6 +1813,40 @@
           }
         }
       ]
+    },
+    "research_event_trace_identifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]*$"
+    },
+    "research_event_trace_versioned_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "version",
+        "digest"
+      ],
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/research_event_trace_identifier"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain_resolution": "target_resolved_via_sibling_reference",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "target_resolved_domain"
+          }
+        }
+      }
     }
   }
 }

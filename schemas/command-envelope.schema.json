@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:command-envelope:0.10.0",
+  "$id": "urn:odeya:schema:command-envelope:0.11.0",
   "title": "Odeya CommandEnvelope",
   "description": "Language-neutral structural candidate for a fail-closed Odeya command request. This 0.5 resource is deliberately nonconstructible and not admitted while the exact CommandContractRecord and CommandContractRegistry identities remain unresolved; non-null digests in fixtures are comparison probes, not proof that resolution or admission occurred. It binds the canonical CommandContractRegistry subject name, a separate activation-proof shape, and a standalone member-reference shape; mutable aliases such as latest are unrepresentable. The logical payload_type_id is distinct from the exact JSON Schema resource plus canonical and closure digests; the record supplies dialect and source-blob identity. Presented authority hints are untrusted. JSON Schema does not prove activation, membership, identity equality, scope approval, currentness, or admission, and a future schema-resource reissue is required before construction can be admitted.",
   "type": "object",
@@ -37,7 +37,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.10.0"
+      "const": "0.11.0"
     },
     "conformance_scope": {
       "const": "structural_fixture_only"
@@ -52,7 +52,7 @@
       "const": "blocked_unresolved_command_contract_registry"
     },
     "command_id": {
-      "$ref": "#/$defs/identifier"
+      "$ref": "#/$defs/command_envelope_identifier"
     },
     "command_type": {
       "$ref": "#/$defs/command_type"
@@ -93,7 +93,7 @@
       "$ref": "#/$defs/command_registry_snapshot_reference"
     },
     "command_registry_activation_ref": {
-      "$ref": "#/$defs/registry_activation_reference"
+      "$ref": "#/$defs/command_envelope_registry_activation_reference"
     },
     "command_contract_record_ref": {
       "$ref": "#/$defs/command_contract_record_reference"
@@ -107,7 +107,7 @@
       ],
       "properties": {
         "tenant_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/command_envelope_identifier"
         },
         "namespace": {
           "enum": [
@@ -136,7 +136,7 @@
       ],
       "properties": {
         "stream_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/command_envelope_identifier"
         },
         "stream_type": {
           "$ref": "#/$defs/stream_type"
@@ -149,7 +149,7 @@
           "$ref": "#/$defs/aggregate_type"
         },
         "aggregate_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/command_envelope_identifier"
         },
         "expected_aggregate_version": {
           "type": "integer",
@@ -160,7 +160,7 @@
     "mission_scope": {
       "oneOf": [
         {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/command_envelope_identifier"
         },
         {
           "type": "null"
@@ -174,7 +174,7 @@
       "$ref": "#/$defs/presented_authority_hints"
     },
     "correlation_id": {
-      "$ref": "#/$defs/identifier"
+      "$ref": "#/$defs/command_envelope_identifier"
     },
     "causation_refs": {
       "type": "array",
@@ -195,7 +195,7 @@
             ]
           },
           "id": {
-            "$ref": "#/$defs/identifier"
+            "$ref": "#/$defs/command_envelope_identifier"
           }
         }
       }
@@ -204,7 +204,7 @@
       "type": "array",
       "uniqueItems": true,
       "items": {
-        "$ref": "#/$defs/artifact_reference"
+        "$ref": "#/$defs/command_envelope_artifact_reference"
       }
     },
     "payload": {
@@ -238,7 +238,7 @@
     "signature_ref": {
       "oneOf": [
         {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/command_envelope_artifact_reference"
         },
         {
           "type": "null"
@@ -272,7 +272,7 @@
       "else": {
         "properties": {
           "mission_scope": {
-            "$ref": "#/$defs/identifier"
+            "$ref": "#/$defs/command_envelope_identifier"
           }
         }
       }
@@ -3940,44 +3940,9 @@
     }
   ],
   "$defs": {
-    "identifier": {
-      "type": "string",
-      "minLength": 1,
-      "maxLength": 256,
-      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]*$"
-    },
     "digest": {
       "type": "string",
       "pattern": "^sha256:[a-f0-9]{64}$"
-    },
-    "artifact_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "artifact_id",
-        "digest",
-        "media_type"
-      ],
-      "properties": {
-        "artifact_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "byte_digest",
-            "subject": "exact retained artifact or profile document bytes",
-            "algorithm": "sha-256",
-            "profile": "not_a_canonical_object_digest",
-            "status": "accepted_disposition_annotation"
-          }
-        },
-        "media_type": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 255
-        }
-      }
     },
     "command_registry_snapshot_reference": {
       "type": "object",
@@ -3990,14 +3955,14 @@
       ],
       "properties": {
         "registry_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/command_envelope_identifier"
         },
         "version": {
           "type": "string",
           "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
         },
         "schema_id": {
-          "const": "urn:odeya:schema:command-contract-registry:0.6.0"
+          "const": "urn:odeya:schema:command-contract-registry:0.7.0"
         },
         "digest": {
           "$ref": "#/$defs/digest",
@@ -4007,53 +3972,6 @@
             "algorithm": "sha-256",
             "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
             "status": "prospective_domain_reserved_not_declared"
-          }
-        }
-      }
-    },
-    "registry_activation_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "activation_id",
-        "activation_sequence",
-        "schema_id",
-        "activation_digest",
-        "p0_prerequisite_id",
-        "p0_admission_digest"
-      ],
-      "properties": {
-        "activation_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "activation_sequence": {
-          "type": "integer",
-          "minimum": 1
-        },
-        "schema_id": {
-          "const": "urn:odeya:schema:registry-activation:0.6.0"
-        },
-        "activation_digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "canonical_object_digest",
-            "domain": "odeya-registry-activation-v1",
-            "algorithm": "sha-256",
-            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
-            "status": "registered_domain"
-          }
-        },
-        "p0_prerequisite_id": {
-          "const": "P0.constitutional-recovery-admission"
-        },
-        "p0_admission_digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "canonical_object_digest",
-            "domain": "odeya-p0-constitutional-recovery-admission-v1",
-            "algorithm": "sha-256",
-            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
-            "status": "registered_domain"
           }
         }
       }
@@ -4079,14 +3997,14 @@
       ],
       "properties": {
         "record_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/command_envelope_identifier"
         },
         "version": {
           "type": "integer",
           "minimum": 1
         },
         "schema_id": {
-          "const": "urn:odeya:schema:command-contract-record:0.5.0"
+          "const": "urn:odeya:schema:command-contract-record:0.6.0"
         },
         "digest": {
           "$ref": "#/$defs/digest",
@@ -4157,7 +4075,7 @@
           }
         },
         "membership_proof_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/command_envelope_artifact_reference"
         }
       }
     },
@@ -4229,7 +4147,7 @@
       ],
       "properties": {
         "principal_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/command_envelope_identifier"
         },
         "principal_type": {
           "enum": [
@@ -4241,7 +4159,7 @@
           ]
         },
         "execution_identity": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/command_envelope_identifier"
         }
       }
     },
@@ -4277,14 +4195,14 @@
           "type": "array",
           "uniqueItems": true,
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/command_envelope_artifact_reference"
           }
         },
         "presented_external_observation_refs": {
           "type": "array",
           "uniqueItems": true,
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/command_envelope_artifact_reference"
           }
         }
       }
@@ -4298,7 +4216,7 @@
       ],
       "properties": {
         "record_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/command_envelope_identifier"
         },
         "claimed_digest": {
           "oneOf": [
@@ -4329,7 +4247,7 @@
       ],
       "properties": {
         "name": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/command_envelope_identifier"
         },
         "version": {
           "type": "string",
@@ -4529,6 +4447,88 @@
         "restore.close_case",
         "recovery.change_service_scope"
       ]
+    },
+    "command_envelope_identifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]*$"
+    },
+    "command_envelope_artifact_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "digest",
+        "media_type"
+      ],
+      "properties": {
+        "artifact_id": {
+          "$ref": "#/$defs/command_envelope_identifier"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "exact retained artifact or profile document bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        }
+      }
+    },
+    "command_envelope_registry_activation_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "activation_id",
+        "activation_sequence",
+        "schema_id",
+        "activation_digest",
+        "p0_prerequisite_id",
+        "p0_admission_digest"
+      ],
+      "properties": {
+        "activation_id": {
+          "$ref": "#/$defs/command_envelope_identifier"
+        },
+        "activation_sequence": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "schema_id": {
+          "const": "urn:odeya:schema:registry-activation:0.7.0"
+        },
+        "activation_digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-registry-activation-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "registered_domain"
+          }
+        },
+        "p0_prerequisite_id": {
+          "const": "P0.constitutional-recovery-admission"
+        },
+        "p0_admission_digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-p0-constitutional-recovery-admission-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "registered_domain"
+          }
+        }
+      }
     }
   }
 }

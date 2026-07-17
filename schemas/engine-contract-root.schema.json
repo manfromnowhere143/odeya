@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:engine-contract-root:0.5.0",
+  "$id": "urn:odeya:schema:engine-contract-root:0.6.0",
   "title": "Odeya EngineContractRoot",
   "description": "An immutable, acyclic subject binding one compatible set of Odeya semantic registries. Structural validity does not prove component availability, digest equality, graph closure, review independence, checkpoint inclusion, or runtime activation.",
   "type": "object",
@@ -27,7 +27,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.5.0"
+      "const": "0.6.0"
     },
     "root_id": {
       "$ref": "#/$defs/identifier"
@@ -215,6 +215,9 @@
               "properties": {
                 "component_kind": {
                   "const": "canonicalization_profile"
+                },
+                "component_id": {
+                  "const": "urn:odeya:canonicalization:odeya-jcs-0.1"
                 }
               }
             }
@@ -324,19 +327,19 @@
       ],
       "properties": {
         "command_set_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/engine_contract_root_artifact_reference"
         },
         "event_set_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/engine_contract_root_artifact_reference"
         },
         "reducer_set_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/engine_contract_root_artifact_reference"
         },
         "aggregate_state_set_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/engine_contract_root_artifact_reference"
         },
         "design_vocabulary_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/engine_contract_root_artifact_reference"
         },
         "command_count": {
           "type": "integer",
@@ -367,7 +370,7 @@
       }
     },
     "compatibility_profile_ref": {
-      "$ref": "#/$defs/artifact_reference"
+      "$ref": "#/$defs/engine_contract_root_artifact_reference"
     },
     "reader_requirements": {
       "type": "object",
@@ -402,17 +405,17 @@
       }
     },
     "source_manifest_ref": {
-      "$ref": "#/$defs/artifact_reference"
+      "$ref": "#/$defs/engine_contract_root_artifact_reference"
     },
     "generator_identity_ref": {
-      "$ref": "#/$defs/artifact_reference"
+      "$ref": "#/$defs/engine_contract_root_artifact_reference"
     },
     "independent_validation_refs": {
       "type": "array",
       "minItems": 2,
       "uniqueItems": true,
       "items": {
-        "$ref": "#/$defs/artifact_reference"
+        "$ref": "#/$defs/engine_contract_root_artifact_reference"
       }
     },
     "review_evidence_refs": {
@@ -420,7 +423,7 @@
       "minItems": 1,
       "uniqueItems": true,
       "items": {
-        "$ref": "#/$defs/artifact_reference"
+        "$ref": "#/$defs/engine_contract_root_artifact_reference"
       }
     },
     "known_limitations": {
@@ -430,7 +433,7 @@
       }
     },
     "root_digest_contract": {
-      "$ref": "#/$defs/digest_contract"
+      "$ref": "#/$defs/engine_contract_root_digest_contract"
     },
     "root_digest": {
       "$ref": "#/$defs/digest",
@@ -537,35 +540,6 @@
         }
       }
     },
-    "artifact_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "artifact_id",
-        "digest",
-        "media_type"
-      ],
-      "properties": {
-        "artifact_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "byte_digest",
-            "subject": "exact retained artifact or profile document bytes",
-            "algorithm": "sha-256",
-            "profile": "not_a_canonical_object_digest",
-            "status": "accepted_disposition_annotation"
-          }
-        },
-        "media_type": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 127
-        }
-      }
-    },
     "known_limitation": {
       "type": "object",
       "additionalProperties": false,
@@ -650,7 +624,36 @@
         }
       }
     },
-    "digest_contract": {
+    "engine_contract_root_artifact_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "digest",
+        "media_type"
+      ],
+      "properties": {
+        "artifact_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "exact retained artifact or profile document bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 127
+        }
+      }
+    },
+    "engine_contract_root_digest_contract": {
       "type": "object",
       "additionalProperties": false,
       "required": [

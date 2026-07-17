@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:publication-candidate:0.3.0",
+  "$id": "urn:odeya:schema:publication-candidate:0.4.0",
   "title": "Odeya PublicationCandidate",
   "description": "An immutable proposed disclosure projection. It carries neither a publication decision nor an authority grant; its canonical digest is computed externally and is what a later human decision binds.",
   "type": "object",
@@ -30,7 +30,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.3.0"
+      "const": "0.4.0"
     },
     "candidate_id": {
       "$ref": "#/$defs/identifier"
@@ -335,7 +335,7 @@
       "$ref": "#/$defs/timestamp"
     },
     "created_by": {
-      "$ref": "#/$defs/principal"
+      "$ref": "#/$defs/publication_candidate_principal"
     }
   },
   "allOf": [
@@ -485,7 +485,16 @@
         }
       }
     },
-    "principal": {
+    "nonempty_unique_strings": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "publication_candidate_principal": {
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -502,15 +511,6 @@
             "deterministic_service"
           ]
         }
-      }
-    },
-    "nonempty_unique_strings": {
-      "type": "array",
-      "minItems": 1,
-      "uniqueItems": true,
-      "items": {
-        "type": "string",
-        "minLength": 1
       }
     }
   }

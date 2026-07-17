@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:root-authority-manifest:0.3.0",
+  "$id": "urn:odeya:schema:root-authority-manifest:0.4.0",
   "title": "Odeya RootAuthorityManifest",
   "description": "The non-self-issued constitutional bootstrap declaration. Its canonical digest is bound externally after canonicalization; this object declares assignments but contains no operational grant.",
   "type": "object",
@@ -24,7 +24,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.3.0"
+      "const": "0.4.0"
     },
     "manifest_id": {
       "$ref": "#/$defs/identifier"
@@ -337,10 +337,10 @@
           "minimum": 1
         },
         "rotation_rule_ref": {
-          "$ref": "#/$defs/versioned_reference"
+          "$ref": "#/$defs/root_authority_manifest_versioned_reference"
         },
         "recovery_rule_ref": {
-          "$ref": "#/$defs/versioned_reference"
+          "$ref": "#/$defs/root_authority_manifest_versioned_reference"
         },
         "external_witness_required": {
           "type": "boolean"
@@ -359,19 +359,30 @@
       ],
       "properties": {
         "canonicalization_profile": {
-          "$ref": "#/$defs/versioned_reference"
+          "allOf": [
+            {
+              "$ref": "#/$defs/root_authority_manifest_versioned_reference"
+            },
+            {
+              "properties": {
+                "id": {
+                  "const": "urn:odeya:canonicalization:odeya-jcs-0.1"
+                }
+              }
+            }
+          ]
         },
         "schema_registry": {
-          "$ref": "#/$defs/versioned_reference"
+          "$ref": "#/$defs/root_authority_manifest_versioned_reference"
         },
         "policy_bundle": {
-          "$ref": "#/$defs/versioned_reference"
+          "$ref": "#/$defs/root_authority_manifest_versioned_reference"
         },
         "checkpoint_profile": {
-          "$ref": "#/$defs/versioned_reference"
+          "$ref": "#/$defs/root_authority_manifest_versioned_reference"
         },
         "key_profile": {
-          "$ref": "#/$defs/versioned_reference"
+          "$ref": "#/$defs/root_authority_manifest_versioned_reference"
         }
       }
     },
@@ -402,7 +413,7 @@
           ]
         },
         "revocation_route_ref": {
-          "$ref": "#/$defs/versioned_reference"
+          "$ref": "#/$defs/root_authority_manifest_versioned_reference"
         }
       }
     },
@@ -586,34 +597,6 @@
         }
       }
     },
-    "versioned_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "id",
-        "version",
-        "digest"
-      ],
-      "properties": {
-        "id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "version": {
-          "type": "string",
-          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
-        },
-        "digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "canonical_object_digest",
-            "domain_resolution": "target_resolved_via_sibling_reference",
-            "algorithm": "sha-256",
-            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
-            "status": "target_resolved_domain"
-          }
-        }
-      }
-    },
     "artifact_reference": {
       "type": "object",
       "additionalProperties": false,
@@ -677,6 +660,34 @@
       "items": {
         "type": "string",
         "minLength": 1
+      }
+    },
+    "root_authority_manifest_versioned_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "version",
+        "digest"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain_resolution": "target_resolved_via_sibling_reference",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "target_resolved_domain"
+          }
+        }
       }
     }
   }

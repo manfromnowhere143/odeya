@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:research-event:0.15.0",
+  "$id": "urn:odeya:schema:research-event:0.16.0",
   "title": "Odeya ResearchEvent",
   "description": "Architecture-only candidate event envelope for portfolio, pre-mission, mission, authority, incident, learning, data-governance, and recovery streams. Every branch owns exactly one aggregate and one orthogonal fact. The urn:odeya:event-payload logical type is distinct from this JSON Schema resource identity. ResearchEvent 0.7.0 has no frozen per-branch contract extraction/canonicalization profile, so its payload contract digest is necessarily null and every instance is not admitted, not dispatchable, and not replay-authoritative. A future resolved form requires a new ResearchEvent resource identity. Domain-separated digest shapes name exact JSON Pointer subjects; schema validation does not recompute or cryptographically verify them.",
   "type": "object",
@@ -33,10 +33,10 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.15.0"
+      "const": "0.16.0"
     },
     "event_id": {
-      "$ref": "#/$defs/identifier"
+      "$ref": "#/$defs/research_event_identifier"
     },
     "event_type": {
       "enum": [
@@ -208,7 +208,7 @@
     "mission_scope": {
       "oneOf": [
         {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         {
           "type": "null"
@@ -222,7 +222,7 @@
       "$ref": "#/$defs/commit"
     },
     "command_binding": {
-      "$ref": "#/$defs/command_binding"
+      "$ref": "#/$defs/research_event_command_binding"
     },
     "recorded_at": {
       "type": "string",
@@ -233,31 +233,31 @@
       "$ref": "#/$defs/fact_time"
     },
     "actor": {
-      "$ref": "#/$defs/actor"
+      "$ref": "#/$defs/research_event_actor"
     },
     "authority_evidence": {
       "$ref": "#/$defs/authority_evidence"
     },
     "correlation_id": {
-      "$ref": "#/$defs/identifier"
+      "$ref": "#/$defs/research_event_identifier"
     },
     "causation_refs": {
       "type": "array",
       "items": {
-        "$ref": "#/$defs/identifier"
+        "$ref": "#/$defs/research_event_identifier"
       },
       "uniqueItems": true
     },
     "inputs": {
       "type": "array",
       "items": {
-        "$ref": "#/$defs/artifact_reference"
+        "$ref": "#/$defs/research_event_artifact_reference"
       }
     },
     "outputs": {
       "type": "array",
       "items": {
-        "$ref": "#/$defs/artifact_reference"
+        "$ref": "#/$defs/research_event_artifact_reference"
       }
     },
     "system_identity": {
@@ -274,7 +274,7 @@
         "code": {
           "oneOf": [
             {
-              "$ref": "#/$defs/versioned_identity"
+              "$ref": "#/$defs/research_event_versioned_identity"
             },
             {
               "type": "null"
@@ -284,7 +284,7 @@
         "environment": {
           "oneOf": [
             {
-              "$ref": "#/$defs/versioned_identity"
+              "$ref": "#/$defs/research_event_versioned_identity"
             },
             {
               "type": "null"
@@ -294,7 +294,7 @@
         "model": {
           "oneOf": [
             {
-              "$ref": "#/$defs/versioned_identity"
+              "$ref": "#/$defs/research_event_versioned_identity"
             },
             {
               "type": "null"
@@ -304,7 +304,7 @@
         "harness": {
           "oneOf": [
             {
-              "$ref": "#/$defs/versioned_identity"
+              "$ref": "#/$defs/research_event_versioned_identity"
             },
             {
               "type": "null"
@@ -314,7 +314,7 @@
         "tools": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/versioned_identity"
+            "$ref": "#/$defs/research_event_versioned_identity"
           }
         }
       }
@@ -323,7 +323,7 @@
       "type": "object"
     },
     "integrity": {
-      "$ref": "#/$defs/integrity"
+      "$ref": "#/$defs/research_event_integrity"
     }
   },
   "allOf": [
@@ -355,7 +355,7 @@
       "else": {
         "properties": {
           "mission_scope": {
-            "$ref": "#/$defs/identifier"
+            "$ref": "#/$defs/research_event_identifier"
           }
         }
       }
@@ -2401,16 +2401,16 @@
                   "const": "completed"
                 },
                 "actual_input_manifest_ref": {
-                  "$ref": "#/$defs/artifact_reference"
+                  "$ref": "#/$defs/research_event_artifact_reference"
                 },
                 "environment_manifest_ref": {
-                  "$ref": "#/$defs/artifact_reference"
+                  "$ref": "#/$defs/research_event_artifact_reference"
                 },
                 "code_manifest_ref": {
-                  "$ref": "#/$defs/artifact_reference"
+                  "$ref": "#/$defs/research_event_artifact_reference"
                 },
                 "run_manifest_ref": {
-                  "$ref": "#/$defs/artifact_reference"
+                  "$ref": "#/$defs/research_event_artifact_reference"
                 },
                 "input_visibility": {
                   "const": "observed"
@@ -5620,7 +5620,7 @@
                   "minItems": 1
                 },
                 "dispatch_claim_command_id": {
-                  "$ref": "#/$defs/identifier"
+                  "$ref": "#/$defs/research_event_identifier"
                 },
                 "cancellation_reason": {
                   "type": "null"
@@ -6980,7 +6980,7 @@
                   "const": "observation"
                 },
                 "parent_intent_ref": {
-                  "$ref": "#/$defs/canonical_record_reference"
+                  "$ref": "#/$defs/research_event_canonical_record_reference"
                 },
                 "disposition": {
                   "enum": [
@@ -7059,7 +7059,7 @@
                   "const": "settlement"
                 },
                 "parent_intent_ref": {
-                  "$ref": "#/$defs/canonical_record_reference"
+                  "$ref": "#/$defs/research_event_canonical_record_reference"
                 },
                 "disposition": {
                   "enum": [
@@ -7802,7 +7802,7 @@
                   "const": "sealed"
                 },
                 "checkpoint_ref": {
-                  "$ref": "#/$defs/canonical_record_reference"
+                  "$ref": "#/$defs/research_event_canonical_record_reference"
                 },
                 "checkpoint_digest": {
                   "$ref": "#/$defs/digest",
@@ -7898,7 +7898,7 @@
                   "const": "witness_observed"
                 },
                 "checkpoint_ref": {
-                  "$ref": "#/$defs/canonical_record_reference"
+                  "$ref": "#/$defs/research_event_canonical_record_reference"
                 },
                 "checkpoint_digest": {
                   "$ref": "#/$defs/digest",
@@ -7911,10 +7911,10 @@
                   }
                 },
                 "witness_id": {
-                  "$ref": "#/$defs/identifier"
+                  "$ref": "#/$defs/research_event_identifier"
                 },
                 "witness_observation_ref": {
-                  "$ref": "#/$defs/artifact_reference"
+                  "$ref": "#/$defs/research_event_artifact_reference"
                 },
                 "consistency_verification": {
                   "enum": [
@@ -7989,7 +7989,7 @@
                   "const": "consistency_failed"
                 },
                 "checkpoint_ref": {
-                  "$ref": "#/$defs/canonical_record_reference"
+                  "$ref": "#/$defs/research_event_canonical_record_reference"
                 },
                 "checkpoint_digest": {
                   "$ref": "#/$defs/digest",
@@ -8008,7 +8008,7 @@
                   "minItems": 2
                 },
                 "quarantine_event_ref": {
-                  "$ref": "#/$defs/identifier"
+                  "$ref": "#/$defs/research_event_identifier"
                 }
               }
             }
@@ -8454,7 +8454,7 @@
                   "const": "report_recorded"
                 },
                 "restore_report_ref": {
-                  "$ref": "#/$defs/canonical_record_reference"
+                  "$ref": "#/$defs/research_event_canonical_record_reference"
                 },
                 "overall_disposition": {
                   "enum": [
@@ -8738,16 +8738,16 @@
                   "const": "epoch_started"
                 },
                 "new_epoch_id": {
-                  "$ref": "#/$defs/identifier"
+                  "$ref": "#/$defs/research_event_identifier"
                 },
                 "branch_selection_basis": {
                   "const": "constitutional_recovery_decision"
                 },
                 "recovery_decision_ref": {
-                  "$ref": "#/$defs/canonical_record_reference"
+                  "$ref": "#/$defs/research_event_canonical_record_reference"
                 },
                 "identity_non_reuse_rule_ref": {
-                  "$ref": "#/$defs/artifact_reference"
+                  "$ref": "#/$defs/research_event_artifact_reference"
                 }
               }
             }
@@ -8821,10 +8821,10 @@
                   "const": "closed"
                 },
                 "restore_report_ref": {
-                  "$ref": "#/$defs/canonical_record_reference"
+                  "$ref": "#/$defs/research_event_canonical_record_reference"
                 },
                 "recovery_decision_ref": {
-                  "$ref": "#/$defs/canonical_record_reference"
+                  "$ref": "#/$defs/research_event_canonical_record_reference"
                 }
               }
             }
@@ -8916,12 +8916,6 @@
     }
   ],
   "$defs": {
-    "identifier": {
-      "type": "string",
-      "minLength": 1,
-      "maxLength": 256,
-      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]*$"
-    },
     "digest": {
       "type": "string",
       "pattern": "^sha256:[a-f0-9]{64}$"
@@ -8929,99 +8923,6 @@
     "nonnegative_decimal_string": {
       "type": "string",
       "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?$"
-    },
-    "artifact_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "artifact_id",
-        "digest",
-        "media_type"
-      ],
-      "properties": {
-        "artifact_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "byte_digest",
-            "subject": "exact retained artifact or profile document bytes",
-            "algorithm": "sha-256",
-            "profile": "not_a_canonical_object_digest",
-            "status": "accepted_disposition_annotation"
-          }
-        },
-        "media_type": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 255
-        }
-      }
-    },
-    "nullable_artifact_reference": {
-      "oneOf": [
-        {
-          "$ref": "#/$defs/artifact_reference"
-        },
-        {
-          "type": "null"
-        }
-      ]
-    },
-    "versioned_identity": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "name",
-        "version",
-        "digest"
-      ],
-      "properties": {
-        "name": {
-          "$ref": "#/$defs/identifier"
-        },
-        "version": {
-          "type": "string",
-          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
-        },
-        "digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "canonical_object_digest",
-            "domain_resolution": "target_resolved_via_sibling_reference",
-            "algorithm": "sha-256",
-            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
-            "status": "target_resolved_domain"
-          }
-        }
-      }
-    },
-    "actor": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "principal_id",
-        "principal_type",
-        "execution_identity"
-      ],
-      "properties": {
-        "principal_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "principal_type": {
-          "enum": [
-            "human",
-            "service",
-            "model_run",
-            "instrument",
-            "external_system"
-          ]
-        },
-        "execution_identity": {
-          "$ref": "#/$defs/identifier"
-        }
-      }
     },
     "authority_evidence": {
       "type": "object",
@@ -9049,49 +8950,49 @@
         "assignment_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/identifier"
+            "$ref": "#/$defs/research_event_identifier"
           },
           "uniqueItems": true
         },
         "grant_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/identifier"
+            "$ref": "#/$defs/research_event_identifier"
           },
           "uniqueItems": true
         },
         "grant_use_event_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/identifier"
+            "$ref": "#/$defs/research_event_identifier"
           },
           "uniqueItems": true
         },
         "grant_use_reservation_event_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/identifier"
+            "$ref": "#/$defs/research_event_identifier"
           },
           "uniqueItems": true
         },
         "grant_use_reservation_release_event_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/identifier"
+            "$ref": "#/$defs/research_event_identifier"
           },
           "uniqueItems": true
         },
         "policy_decision_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/policy_decision_reference"
+            "$ref": "#/$defs/research_event_policy_decision_reference"
           },
           "uniqueItems": true
         },
         "constitutional_artifact_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/artifact_reference"
+              "$ref": "#/$defs/research_event_artifact_reference"
             },
             {
               "type": "null"
@@ -9101,7 +9002,7 @@
         "derivation_rule_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/versioned_identity"
+              "$ref": "#/$defs/research_event_versioned_identity"
             },
             {
               "type": "null"
@@ -9124,7 +9025,7 @@
           "then": {
             "properties": {
               "constitutional_artifact_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/research_event_artifact_reference"
               }
             }
           }
@@ -9162,7 +9063,7 @@
           "then": {
             "properties": {
               "derivation_rule_ref": {
-                "$ref": "#/$defs/versioned_identity"
+                "$ref": "#/$defs/research_event_versioned_identity"
               }
             }
           }
@@ -9234,7 +9135,7 @@
       ],
       "properties": {
         "stream_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "stream_type": {
           "enum": [
@@ -9310,7 +9211,7 @@
           ]
         },
         "aggregate_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "aggregate_version": {
           "type": "integer",
@@ -9328,7 +9229,7 @@
       ],
       "properties": {
         "commit_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "batch_index": {
           "type": "integer",
@@ -9337,37 +9238,6 @@
         "batch_size": {
           "type": "integer",
           "minimum": 1
-        }
-      }
-    },
-    "command_binding": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "command_id",
-        "canonical_request_digest",
-        "receipt_id",
-        "admission_evidence_bundle_ref"
-      ],
-      "properties": {
-        "command_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "canonical_request_digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "canonical_object_digest",
-            "domain": "odeya-command-request-v2",
-            "algorithm": "sha-256",
-            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
-            "status": "registered_domain"
-          }
-        },
-        "receipt_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "admission_evidence_bundle_ref": {
-          "$ref": "#/$defs/admission_evidence_bundle_reference"
         }
       }
     },
@@ -9395,7 +9265,7 @@
         "source_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/artifact_reference"
+              "$ref": "#/$defs/research_event_artifact_reference"
             },
             {
               "type": "null"
@@ -9451,83 +9321,12 @@
           "then": {
             "properties": {
               "source_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/research_event_artifact_reference"
               }
             }
           }
         }
       ]
-    },
-    "integrity": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "canonicalization",
-        "payload_digest_contract",
-        "payload_digest",
-        "previous_stream_event_digest",
-        "event_digest_contract",
-        "event_digest",
-        "signature_ref"
-      ],
-      "properties": {
-        "canonicalization": {
-          "const": "odeya-jcs-draft-0.1"
-        },
-        "payload_digest_contract": {
-          "$ref": "#/$defs/payload_digest_contract"
-        },
-        "payload_digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "canonical_object_digest",
-            "domain": "odeya-event-payload-v1",
-            "algorithm": "sha-256",
-            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
-            "status": "registered_domain"
-          }
-        },
-        "previous_stream_event_digest": {
-          "oneOf": [
-            {
-              "$ref": "#/$defs/digest"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "x-odeya-digest-scope": {
-            "kind": "canonical_object_digest",
-            "domain": "odeya-research-event-v1",
-            "algorithm": "sha-256",
-            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
-            "status": "registered_domain"
-          }
-        },
-        "event_digest_contract": {
-          "$ref": "#/$defs/event_digest_contract"
-        },
-        "event_digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "canonical_object_digest",
-            "domain": "odeya-research-event-v1",
-            "algorithm": "sha-256",
-            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
-            "status": "registered_domain"
-          }
-        },
-        "signature_ref": {
-          "oneOf": [
-            {
-              "$ref": "#/$defs/artifact_reference"
-            },
-            {
-              "type": "null"
-            }
-          ]
-        }
-      }
     },
     "payload_digest_contract": {
       "type": "object",
@@ -9548,7 +9347,7 @@
           "const": "odeya-event-payload-v1"
         },
         "canonicalization_profile_ref": {
-          "$ref": "#/$defs/versioned_identity"
+          "$ref": "#/$defs/research_event_versioned_identity"
         },
         "payload_contract_binding_source": {
           "const": "event.payload_type_id+event.payload_contract_resolution_status+event.payload_contract_digest"
@@ -9581,7 +9380,7 @@
           "const": "odeya-research-event-v1"
         },
         "canonicalization_profile_ref": {
-          "$ref": "#/$defs/versioned_identity"
+          "$ref": "#/$defs/research_event_versioned_identity"
         },
         "included_json_pointers": {
           "const": [
@@ -9638,15 +9437,15 @@
           "pattern": "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$"
         },
         "subject_ref": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "record_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/research_event_artifact_reference"
         },
         "evidence_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/research_event_artifact_reference"
           },
           "uniqueItems": true
         }
@@ -9668,7 +9467,7 @@
           "pattern": "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$"
         },
         "subject_ref": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "decision": {
           "type": "string",
@@ -9676,12 +9475,12 @@
           "maxLength": 64
         },
         "reason_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/research_event_artifact_reference"
         },
         "evidence_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/research_event_artifact_reference"
           },
           "uniqueItems": true
         }
@@ -9698,7 +9497,7 @@
       ],
       "properties": {
         "event_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "event_type": {
           "enum": [
@@ -9735,7 +9534,7 @@
       ],
       "properties": {
         "event_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "event_type": {
           "enum": [
@@ -9853,12 +9652,12 @@
     "canonical_work_lease_record_reference": {
       "allOf": [
         {
-          "$ref": "#/$defs/schema_bound_record_reference"
+          "$ref": "#/$defs/research_event_schema_bound_record_reference"
         },
         {
           "properties": {
             "schema_id": {
-              "const": "urn:odeya:schema:canonical-work-lease:0.6.0"
+              "const": "urn:odeya:schema:canonical-work-lease:0.7.0"
             }
           },
           "required": [
@@ -9886,7 +9685,7 @@
           "minimum": 0
         },
         "checkpoint_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/research_event_artifact_reference"
         },
         "frontier_digest": {
           "$ref": "#/$defs/digest",
@@ -9966,13 +9765,13 @@
       ],
       "properties": {
         "intent_ref": {
-          "$ref": "#/$defs/schema_bound_record_reference"
+          "$ref": "#/$defs/research_event_schema_bound_record_reference"
         },
         "source_input_manifest_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/research_event_artifact_reference"
         },
         "prospective_input_manifest_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/research_event_artifact_reference"
         },
         "materialization_target_digest": {
           "$ref": "#/$defs/digest",
@@ -10018,19 +9817,19 @@
       ],
       "properties": {
         "capability_ref": {
-          "$ref": "#/$defs/schema_bound_record_reference"
+          "$ref": "#/$defs/research_event_schema_bound_record_reference"
         },
         "sandbox_ref": {
-          "$ref": "#/$defs/schema_bound_record_reference"
+          "$ref": "#/$defs/research_event_schema_bound_record_reference"
         },
         "policy_ref": {
-          "$ref": "#/$defs/schema_bound_record_reference"
+          "$ref": "#/$defs/research_event_schema_bound_record_reference"
         },
         "preflight_observation_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/research_event_artifact_reference"
         },
         "launcher_profile_ref": {
-          "$ref": "#/$defs/versioned_identity"
+          "$ref": "#/$defs/research_event_versioned_identity"
         },
         "network_access": {
           "const": "none"
@@ -10065,7 +9864,7 @@
       ],
       "properties": {
         "reservation_ref": {
-          "$ref": "#/$defs/schema_bound_record_reference"
+          "$ref": "#/$defs/research_event_schema_bound_record_reference"
         },
         "reservation_created_event_ref": {
           "$ref": "#/$defs/resource_reservation_created_event_reference"
@@ -10084,7 +9883,7 @@
           "type": "array",
           "minItems": 1,
           "items": {
-            "$ref": "#/$defs/identifier"
+            "$ref": "#/$defs/research_event_identifier"
           },
           "uniqueItems": true
         },
@@ -10092,7 +9891,7 @@
           "type": "array",
           "minItems": 1,
           "items": {
-            "$ref": "#/$defs/identifier"
+            "$ref": "#/$defs/research_event_identifier"
           },
           "uniqueItems": true
         },
@@ -10124,13 +9923,13 @@
       ],
       "properties": {
         "work_item_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "attempt_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "verification_run_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "materialization": {
           "$ref": "#/$defs/local_materialization_binding"
@@ -10145,7 +9944,7 @@
           "type": "array",
           "minItems": 1,
           "items": {
-            "$ref": "#/$defs/data_use_decision_reference"
+            "$ref": "#/$defs/research_event_data_use_decision_reference"
           },
           "uniqueItems": true
         }
@@ -10179,7 +9978,7 @@
           "const": "work_lease"
         },
         "subject_ref": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "from": {
           "enum": [
@@ -10196,7 +9995,7 @@
           ]
         },
         "lease_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "lease_version": {
           "type": "integer",
@@ -10206,16 +10005,16 @@
           "$ref": "#/$defs/local_execution_binding"
         },
         "worker_principal_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "worker_execution_identity": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "execution_slot_key": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "controlled_time_evidence_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/research_event_artifact_reference"
         },
         "not_before": {
           "type": "string",
@@ -10247,13 +10046,13 @@
           "type": "boolean"
         },
         "reason_code": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "evidence_refs": {
           "type": "array",
           "minItems": 1,
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/research_event_artifact_reference"
           },
           "uniqueItems": true
         }
@@ -10287,7 +10086,7 @@
           "const": "attempt_execution"
         },
         "subject_ref": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "from": {
           "const": "not_started"
@@ -10299,7 +10098,7 @@
           "$ref": "#/$defs/local_execution_binding"
         },
         "work_contract_ref": {
-          "$ref": "#/$defs/work_contract_reference"
+          "$ref": "#/$defs/research_event_work_contract_reference"
         },
         "lease_record_ref": {
           "$ref": "#/$defs/canonical_work_lease_record_reference"
@@ -10314,7 +10113,7 @@
           "$ref": "#/$defs/verification_started_event_reference"
         },
         "atomic_start_commit_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "dispatch_command_type": {
           "const": "attempt.start"
@@ -10332,13 +10131,13 @@
           "const": false
         },
         "reason_code": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "evidence_refs": {
           "type": "array",
           "minItems": 1,
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/research_event_artifact_reference"
           },
           "uniqueItems": true
         }
@@ -10381,7 +10180,7 @@
           "const": "attempt_execution"
         },
         "subject_ref": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "from": {
           "enum": [
@@ -10416,7 +10215,7 @@
           ]
         },
         "work_contract_ref": {
-          "$ref": "#/$defs/work_contract_reference"
+          "$ref": "#/$defs/research_event_work_contract_reference"
         },
         "lease_record_ref": {
           "$ref": "#/$defs/canonical_work_lease_record_reference"
@@ -10434,19 +10233,19 @@
           "const": "attempt.report"
         },
         "actual_input_manifest_ref": {
-          "$ref": "#/$defs/nullable_artifact_reference"
+          "$ref": "#/$defs/research_event_nullable_artifact_reference"
         },
         "environment_manifest_ref": {
-          "$ref": "#/$defs/nullable_artifact_reference"
+          "$ref": "#/$defs/research_event_nullable_artifact_reference"
         },
         "code_manifest_ref": {
-          "$ref": "#/$defs/nullable_artifact_reference"
+          "$ref": "#/$defs/research_event_nullable_artifact_reference"
         },
         "run_manifest_ref": {
-          "$ref": "#/$defs/nullable_artifact_reference"
+          "$ref": "#/$defs/research_event_nullable_artifact_reference"
         },
         "output_manifest_ref": {
-          "$ref": "#/$defs/nullable_artifact_reference"
+          "$ref": "#/$defs/research_event_nullable_artifact_reference"
         },
         "input_visibility": {
           "enum": [
@@ -10494,7 +10293,7 @@
           "type": "array",
           "minItems": 1,
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/research_event_artifact_reference"
           },
           "uniqueItems": true
         },
@@ -10505,13 +10304,13 @@
           "const": false
         },
         "reason_code": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "evidence_refs": {
           "type": "array",
           "minItems": 1,
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/research_event_artifact_reference"
           },
           "uniqueItems": true
         }
@@ -10543,7 +10342,7 @@
           "const": "attempt_execution"
         },
         "subject_ref": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "from": {
           "const": "not_started"
@@ -10570,7 +10369,7 @@
           ]
         },
         "work_contract_ref": {
-          "$ref": "#/$defs/work_contract_reference"
+          "$ref": "#/$defs/research_event_work_contract_reference"
         },
         "lease_record_ref": {
           "$ref": "#/$defs/canonical_work_lease_record_reference"
@@ -10585,7 +10384,7 @@
           "type": "null"
         },
         "cancellation_observation_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/research_event_artifact_reference"
         },
         "bytes_became_visible": {
           "const": false
@@ -10597,13 +10396,13 @@
           "const": true
         },
         "reason_code": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "evidence_refs": {
           "type": "array",
           "minItems": 1,
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/research_event_artifact_reference"
           },
           "uniqueItems": true
         }
@@ -10627,7 +10426,7 @@
           "maxLength": 64
         },
         "subject_ref": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "from": {
           "type": "string",
@@ -10640,12 +10439,12 @@
           "maxLength": 64
         },
         "reason_code": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "evidence_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/research_event_artifact_reference"
           },
           "uniqueItems": true
         }
@@ -10662,7 +10461,7 @@
       ],
       "properties": {
         "event_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "event_type": {
           "enum": [
@@ -10700,7 +10499,7 @@
       ],
       "properties": {
         "event_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "event_type": {
           "enum": [
@@ -10744,7 +10543,7 @@
           "const": "resource_budget"
         },
         "aggregate_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "aggregate_version": {
           "type": "integer",
@@ -10785,12 +10584,12 @@
           ]
         },
         "subject_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "work_contract_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/work_contract_reference"
+              "$ref": "#/$defs/research_event_work_contract_reference"
             },
             {
               "type": "null"
@@ -10800,7 +10599,7 @@
         "external_effect_id": {
           "oneOf": [
             {
-              "$ref": "#/$defs/identifier"
+              "$ref": "#/$defs/research_event_identifier"
             },
             {
               "type": "null"
@@ -10810,7 +10609,7 @@
         "verification_run_id": {
           "oneOf": [
             {
-              "$ref": "#/$defs/identifier"
+              "$ref": "#/$defs/research_event_identifier"
             },
             {
               "type": "null"
@@ -10833,7 +10632,7 @@
           "then": {
             "properties": {
               "work_contract_ref": {
-                "$ref": "#/$defs/work_contract_reference"
+                "$ref": "#/$defs/research_event_work_contract_reference"
               },
               "external_effect_id": {
                 "type": "null"
@@ -10858,7 +10657,7 @@
           "then": {
             "properties": {
               "external_effect_id": {
-                "$ref": "#/$defs/identifier"
+                "$ref": "#/$defs/research_event_identifier"
               },
               "verification_run_id": {
                 "type": "null"
@@ -10883,7 +10682,7 @@
                 "type": "null"
               },
               "verification_run_id": {
-                "$ref": "#/$defs/identifier"
+                "$ref": "#/$defs/research_event_identifier"
               }
             }
           }
@@ -10920,7 +10719,7 @@
               ]
             },
             "pool_id": {
-              "$ref": "#/$defs/identifier"
+              "$ref": "#/$defs/research_event_identifier"
             },
             "unit": {
               "enum": [
@@ -10979,7 +10778,7 @@
               "const": "monetary"
             },
             "pool_id": {
-              "$ref": "#/$defs/identifier"
+              "$ref": "#/$defs/research_event_identifier"
             },
             "currency_code": {
               "type": "string",
@@ -11039,7 +10838,7 @@
               ]
             },
             "pool_id": {
-              "$ref": "#/$defs/identifier"
+              "$ref": "#/$defs/research_event_identifier"
             },
             "unit": {
               "const": "capacity_slot"
@@ -11139,7 +10938,7 @@
       ],
       "properties": {
         "reservation_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "lifecycle_axis": {
           "const": "resource_reservation"
@@ -11167,7 +10966,7 @@
           }
         },
         "cohort_commit_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "cohort_event_refs": {
           "type": "array",
@@ -11184,10 +10983,10 @@
           "$ref": "#/$defs/resource_vector"
         },
         "packing_profile_ref": {
-          "$ref": "#/$defs/versioned_identity"
+          "$ref": "#/$defs/research_event_versioned_identity"
         },
         "reservation_rule_ref": {
-          "$ref": "#/$defs/versioned_identity"
+          "$ref": "#/$defs/research_event_versioned_identity"
         },
         "created_at": {
           "type": "string",
@@ -11225,7 +11024,7 @@
         "evidence_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/research_event_artifact_reference"
           },
           "uniqueItems": true
         }
@@ -11363,7 +11162,7 @@
       ],
       "properties": {
         "reservation_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "created_event_ref": {
           "allOf": [
@@ -11383,7 +11182,7 @@
           ]
         },
         "cohort_commit_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "cohort_event_refs": {
           "type": "array",
@@ -11411,10 +11210,10 @@
           ]
         },
         "claimant_execution_identity": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "bound_operation_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "reserved_ceiling_vector": {
           "$ref": "#/$defs/resource_vector"
@@ -11442,7 +11241,7 @@
         "evidence_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/research_event_artifact_reference"
           },
           "uniqueItems": true
         }
@@ -11554,7 +11353,7 @@
       ],
       "properties": {
         "reservation_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "created_event_ref": {
           "allOf": [
@@ -11606,7 +11405,7 @@
           "const": "full_ceiling_released_preclaim"
         },
         "release_rule_ref": {
-          "$ref": "#/$defs/versioned_identity"
+          "$ref": "#/$defs/research_event_versioned_identity"
         },
         "released_at": {
           "type": "string",
@@ -11616,7 +11415,7 @@
         "evidence_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/research_event_artifact_reference"
           },
           "minItems": 1,
           "uniqueItems": true
@@ -11643,7 +11442,7 @@
       ],
       "properties": {
         "reservation_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "created_event_ref": {
           "allOf": [
@@ -11687,7 +11486,7 @@
           "const": "full_ceiling_released_preclaim"
         },
         "expiration_rule_ref": {
-          "$ref": "#/$defs/versioned_identity"
+          "$ref": "#/$defs/research_event_versioned_identity"
         },
         "expired_at": {
           "type": "string",
@@ -11697,7 +11496,7 @@
         "evidence_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/research_event_artifact_reference"
           },
           "minItems": 1,
           "uniqueItems": true
@@ -11721,7 +11520,7 @@
       ],
       "properties": {
         "reservation_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "claimed_event_ref": {
           "allOf": [
@@ -11767,7 +11566,7 @@
           ]
         },
         "observation_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/research_event_artifact_reference"
         },
         "zero_inference_allowed": {
           "const": false
@@ -11781,7 +11580,7 @@
         "evidence_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/research_event_artifact_reference"
           },
           "minItems": 1,
           "uniqueItems": true
@@ -11844,7 +11643,7 @@
       ],
       "properties": {
         "reservation_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "claimed_event_ref": {
           "allOf": [
@@ -11931,7 +11730,7 @@
           "const": "exact_usage_observations_only"
         },
         "settlement_rule_ref": {
-          "$ref": "#/$defs/versioned_identity"
+          "$ref": "#/$defs/research_event_versioned_identity"
         },
         "settled_at": {
           "type": "string",
@@ -11941,7 +11740,7 @@
         "evidence_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/research_event_artifact_reference"
           },
           "minItems": 1,
           "uniqueItems": true
@@ -11965,10 +11764,10 @@
           "pattern": "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$"
         },
         "subject_ref": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "observation_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/research_event_artifact_reference"
         },
         "applicability": {
           "enum": [
@@ -11989,7 +11788,7 @@
         "evidence_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/research_event_artifact_reference"
           },
           "uniqueItems": true
         }
@@ -12008,7 +11807,7 @@
       ],
       "properties": {
         "protocol_branch_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "exposure": {
           "enum": [
@@ -12021,20 +11820,20 @@
           "minItems": 1,
           "uniqueItems": true,
           "items": {
-            "$ref": "#/$defs/identifier"
+            "$ref": "#/$defs/research_event_identifier"
           }
         },
         "observer_ref": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "observation_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/research_event_artifact_reference"
         },
         "evidence_refs": {
           "type": "array",
           "uniqueItems": true,
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/research_event_artifact_reference"
           }
         }
       }
@@ -12042,12 +11841,12 @@
     "protocol_snapshot_reference": {
       "allOf": [
         {
-          "$ref": "#/$defs/schema_bound_record_reference"
+          "$ref": "#/$defs/research_event_schema_bound_record_reference"
         },
         {
           "properties": {
             "schema_id": {
-              "const": "urn:odeya:schema:protocol-snapshot:0.8.0"
+              "const": "urn:odeya:schema:protocol-snapshot:0.9.0"
             }
           },
           "required": [
@@ -12089,14 +11888,14 @@
           "$ref": "#/$defs/protocol_snapshot_reference"
         },
         "source_draft_evidence_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/research_event_artifact_reference"
         },
         "validation_evidence_refs": {
           "type": "array",
           "minItems": 1,
           "uniqueItems": true,
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/research_event_artifact_reference"
           }
         },
         "exposure_history_digest": {
@@ -12110,13 +11909,13 @@
           }
         },
         "integrity_rule_ref": {
-          "$ref": "#/$defs/versioned_identity"
+          "$ref": "#/$defs/research_event_versioned_identity"
         },
         "grant_commit_binding": {
           "$ref": "#/$defs/protocol_grant_commit_binding"
         },
         "reason_code": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         }
       }
     },
@@ -12133,7 +11932,7 @@
       ],
       "properties": {
         "protocol_branch_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "confirmatory_integrity": {
           "enum": [
@@ -12152,21 +11951,21 @@
           ]
         },
         "consequence_rule_ref": {
-          "$ref": "#/$defs/versioned_identity"
+          "$ref": "#/$defs/research_event_versioned_identity"
         },
         "source_event_refs": {
           "type": "array",
           "minItems": 1,
           "uniqueItems": true,
           "items": {
-            "$ref": "#/$defs/identifier"
+            "$ref": "#/$defs/research_event_identifier"
           }
         },
         "evidence_refs": {
           "type": "array",
           "uniqueItems": true,
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/research_event_artifact_reference"
           }
         }
       }
@@ -12185,7 +11984,7 @@
       ],
       "properties": {
         "blocker_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/research_event_artifact_reference"
         },
         "scope_type": {
           "enum": [
@@ -12201,7 +12000,7 @@
           ]
         },
         "scope_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "class": {
           "enum": [
@@ -12225,12 +12024,12 @@
           ]
         },
         "reason_code": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "resolution_evidence_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/research_event_artifact_reference"
           },
           "uniqueItems": true
         }
@@ -12249,7 +12048,7 @@
       ],
       "properties": {
         "artifact_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/research_event_artifact_reference"
         },
         "from": {
           "type": "string",
@@ -12264,7 +12063,7 @@
         "validation_report_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/artifact_reference"
+              "$ref": "#/$defs/research_event_artifact_reference"
             },
             {
               "type": "null"
@@ -12272,12 +12071,12 @@
           ]
         },
         "reason_code": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "evidence_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/research_event_artifact_reference"
           },
           "uniqueItems": true
         }
@@ -12300,7 +12099,7 @@
           "then": {
             "properties": {
               "validation_report_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/research_event_artifact_reference"
               }
             }
           }
@@ -12321,7 +12120,7 @@
       ],
       "properties": {
         "run_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "validity": {
           "enum": [
@@ -12330,18 +12129,18 @@
           ]
         },
         "protocol_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/research_event_artifact_reference"
         },
         "run_manifest_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/research_event_artifact_reference"
         },
         "determination_rule_ref": {
-          "$ref": "#/$defs/versioned_identity"
+          "$ref": "#/$defs/research_event_versioned_identity"
         },
         "reason_codes": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/identifier"
+            "$ref": "#/$defs/research_event_identifier"
           },
           "minItems": 1,
           "uniqueItems": true
@@ -12349,7 +12148,7 @@
         "evidence_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/research_event_artifact_reference"
           },
           "uniqueItems": true
         }
@@ -12368,10 +12167,10 @@
       ],
       "properties": {
         "measurement_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "run_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "disposition": {
           "enum": [
@@ -12382,7 +12181,7 @@
         "measurement_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/artifact_reference"
+              "$ref": "#/$defs/research_event_artifact_reference"
             },
             {
               "type": "null"
@@ -12392,7 +12191,7 @@
         "reason_codes": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/identifier"
+            "$ref": "#/$defs/research_event_identifier"
           },
           "minItems": 1,
           "uniqueItems": true
@@ -12400,7 +12199,7 @@
         "evidence_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/research_event_artifact_reference"
           },
           "uniqueItems": true
         }
@@ -12420,7 +12219,7 @@
           "then": {
             "properties": {
               "measurement_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/research_event_artifact_reference"
               }
             }
           }
@@ -12460,10 +12259,10 @@
       ],
       "properties": {
         "metric_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "run_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "value_state": {
           "enum": [
@@ -12514,12 +12313,12 @@
           "maxLength": 64
         },
         "method_ref": {
-          "$ref": "#/$defs/versioned_identity"
+          "$ref": "#/$defs/research_event_versioned_identity"
         },
         "evidence_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/research_event_artifact_reference"
           },
           "uniqueItems": true
         }
@@ -12607,7 +12406,7 @@
       ],
       "properties": {
         "falsifier_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "expected_verdict": {
           "const": "reject"
@@ -12626,12 +12425,12 @@
           ]
         },
         "evaluation_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/research_event_artifact_reference"
         },
         "evidence_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/research_event_artifact_reference"
           },
           "uniqueItems": true
         }
@@ -12706,28 +12505,28 @@
       ],
       "properties": {
         "verification_run_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "subject_set_ref": {
-          "$ref": "#/$defs/canonical_record_reference"
+          "$ref": "#/$defs/research_event_canonical_record_reference"
         },
         "verification_plan_ref": {
-          "$ref": "#/$defs/canonical_record_reference"
+          "$ref": "#/$defs/research_event_canonical_record_reference"
         },
         "protocol_snapshot_ref": {
-          "$ref": "#/$defs/canonical_record_reference"
+          "$ref": "#/$defs/research_event_canonical_record_reference"
         },
         "method_profile_ref": {
-          "$ref": "#/$defs/canonical_record_reference"
+          "$ref": "#/$defs/research_event_canonical_record_reference"
         },
         "producer_identity_ref": {
-          "$ref": "#/$defs/canonical_record_reference"
+          "$ref": "#/$defs/research_event_canonical_record_reference"
         },
         "verifier_principal_ref": {
-          "$ref": "#/$defs/canonical_record_reference"
+          "$ref": "#/$defs/research_event_canonical_record_reference"
         },
         "verification_requirement_profile_ref": {
-          "$ref": "#/$defs/canonical_record_reference"
+          "$ref": "#/$defs/research_event_canonical_record_reference"
         },
         "required_verification_class": {
           "enum": [
@@ -12746,29 +12545,29 @@
           ]
         },
         "independence_profile_ref": {
-          "$ref": "#/$defs/canonical_record_reference"
+          "$ref": "#/$defs/research_event_canonical_record_reference"
         },
         "verification_capacity_reservation_ref": {
-          "$ref": "#/$defs/canonical_record_reference"
+          "$ref": "#/$defs/research_event_canonical_record_reference"
         },
         "operational_resource_reservation_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/canonical_record_reference"
+            "$ref": "#/$defs/research_event_canonical_record_reference"
           },
           "uniqueItems": true
         },
         "exposure_plan_ref": {
-          "$ref": "#/$defs/canonical_record_reference"
+          "$ref": "#/$defs/research_event_canonical_record_reference"
         },
         "input_manifest_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/research_event_artifact_reference"
         },
         "environment_manifest_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/research_event_artifact_reference"
         },
         "control_plan_ref": {
-          "$ref": "#/$defs/canonical_record_reference"
+          "$ref": "#/$defs/research_event_canonical_record_reference"
         },
         "sealed_truth_access": {
           "enum": [
@@ -12797,7 +12596,7 @@
       ],
       "properties": {
         "verification_run_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "assignment_event_ref": {
           "allOf": [
@@ -12864,7 +12663,7 @@
           "$ref": "#/$defs/verification_package_reference"
         },
         "dispute_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "status": {
           "enum": [
@@ -12899,13 +12698,13 @@
         "party_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/canonical_record_reference"
+            "$ref": "#/$defs/research_event_canonical_record_reference"
           },
           "minItems": 1,
           "uniqueItems": true
         },
         "dispute_basis_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/research_event_artifact_reference"
         },
         "predecessor_dispute_event_ref": {
           "oneOf": [
@@ -12920,7 +12719,7 @@
         "resolution_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/artifact_reference"
+              "$ref": "#/$defs/research_event_artifact_reference"
             },
             {
               "type": "null"
@@ -12930,7 +12729,7 @@
         "evidence_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/research_event_artifact_reference"
           },
           "uniqueItems": true
         },
@@ -12992,7 +12791,7 @@
                 ]
               },
               "resolution_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/research_event_artifact_reference"
               }
             }
           }
@@ -13014,7 +12813,7 @@
       ],
       "properties": {
         "verification_run_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "assignment_event_ref": {
           "allOf": [
@@ -13046,22 +12845,22 @@
           "maxLength": 64
         },
         "criterion_ref": {
-          "$ref": "#/$defs/canonical_record_reference"
+          "$ref": "#/$defs/research_event_canonical_record_reference"
         },
         "result_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/research_event_artifact_reference"
         },
         "evidence_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/research_event_artifact_reference"
           },
           "uniqueItems": true
         },
         "actual_resource_observation_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/research_event_artifact_reference"
           },
           "uniqueItems": true
         }
@@ -13083,7 +12882,7 @@
       ],
       "properties": {
         "adjudication_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "disposition": {
           "enum": [
@@ -13104,7 +12903,7 @@
         "validity_event_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/identifier"
+            "$ref": "#/$defs/research_event_identifier"
           },
           "minItems": 1,
           "uniqueItems": true
@@ -13112,7 +12911,7 @@
         "measurement_event_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/identifier"
+            "$ref": "#/$defs/research_event_identifier"
           },
           "minItems": 1,
           "uniqueItems": true
@@ -13120,20 +12919,20 @@
         "verification_event_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/identifier"
+            "$ref": "#/$defs/research_event_identifier"
           },
           "uniqueItems": true
         },
         "consequence_rule_ref": {
-          "$ref": "#/$defs/versioned_identity"
+          "$ref": "#/$defs/research_event_versioned_identity"
         },
         "reason_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/research_event_artifact_reference"
         },
         "evidence_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/research_event_artifact_reference"
           },
           "uniqueItems": true
         }
@@ -13200,7 +12999,7 @@
       ],
       "properties": {
         "claim_version_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/research_event_artifact_reference"
         },
         "eligibility": {
           "enum": [
@@ -13209,22 +13008,22 @@
           ]
         },
         "claim_proposal_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/research_event_artifact_reference"
         },
         "adjudication_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/research_event_artifact_reference"
         },
         "verification_run_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/research_event_artifact_reference"
           },
           "uniqueItems": true
         },
         "approved_language_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/artifact_reference"
+              "$ref": "#/$defs/research_event_artifact_reference"
             },
             {
               "type": "null"
@@ -13234,14 +13033,14 @@
         "dependency_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/identifier"
+            "$ref": "#/$defs/research_event_identifier"
           },
           "uniqueItems": true
         },
         "evidence_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/research_event_artifact_reference"
           },
           "uniqueItems": true
         }
@@ -13261,7 +13060,7 @@
           "then": {
             "properties": {
               "approved_language_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/research_event_artifact_reference"
               }
             }
           }
@@ -13280,23 +13079,23 @@
       ],
       "properties": {
         "source_event_ref": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "affected_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/identifier"
+            "$ref": "#/$defs/research_event_identifier"
           },
           "minItems": 1,
           "uniqueItems": true
         },
         "reason_code": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "required_recomputations": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/identifier"
+            "$ref": "#/$defs/research_event_identifier"
           },
           "minItems": 1,
           "uniqueItems": true
@@ -13304,7 +13103,7 @@
         "evidence_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/research_event_artifact_reference"
           },
           "uniqueItems": true
         }
@@ -13323,7 +13122,7 @@
       ],
       "properties": {
         "assignment_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/research_event_artifact_reference"
         },
         "role": {
           "enum": [
@@ -13339,19 +13138,19 @@
           ]
         },
         "subject_ref": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "issuer_assignment_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/identifier"
+            "$ref": "#/$defs/research_event_identifier"
           },
           "uniqueItems": true
         },
         "constitutional_artifact_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/artifact_reference"
+              "$ref": "#/$defs/research_event_artifact_reference"
             },
             {
               "type": "null"
@@ -13361,7 +13160,7 @@
         "evidence_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/research_event_artifact_reference"
           },
           "uniqueItems": true
         }
@@ -13381,7 +13180,7 @@
       ],
       "properties": {
         "grant_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/research_event_artifact_reference"
         },
         "action": {
           "enum": [
@@ -13414,12 +13213,12 @@
           "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
         },
         "reason_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/research_event_artifact_reference"
         },
         "evidence_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/research_event_artifact_reference"
           },
           "uniqueItems": true
         }
@@ -13443,16 +13242,16 @@
           "const": "protocol"
         },
         "grant_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "grant_use_event_ref": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "grant_exhaustion_event_ref": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "integrity_event_ref": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "consumption_point": {
           "const": "domain_commit"
@@ -13487,13 +13286,13 @@
           "const": "data_rights"
         },
         "grant_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "grant_use_event_ref": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "grant_exhaustion_event_ref": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "consumption_point": {
           "const": "domain_commit"
@@ -13532,16 +13331,16 @@
       ],
       "properties": {
         "reservation_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "grant_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "effect_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "authorization_command_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "authorized_request_digest": {
           "$ref": "#/$defs/digest",
@@ -13564,17 +13363,17 @@
           }
         },
         "target_descriptor_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/research_event_artifact_reference"
         },
         "effect_intent_event_ref": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "reserved_use_count": {
           "type": "integer",
           "minimum": 1
         },
         "resource_reservation_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/research_event_artifact_reference"
         },
         "consumption_point": {
           "const": "dispatch_claim"
@@ -13608,7 +13407,7 @@
         "evidence_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/research_event_artifact_reference"
           },
           "uniqueItems": true
         }
@@ -13633,16 +13432,16 @@
       ],
       "properties": {
         "reservation_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "grant_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "effect_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "original_reservation_event_ref": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "from": {
           "const": "active"
@@ -13679,15 +13478,15 @@
           "minimum": 1
         },
         "resource_release_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/research_event_artifact_reference"
         },
         "causal_event_ref": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "evidence_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/research_event_artifact_reference"
           },
           "uniqueItems": true
         }
@@ -13783,13 +13582,13 @@
       ],
       "properties": {
         "grant_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "grant_use_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "authorized_command_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "consumption_point": {
           "enum": [
@@ -13800,7 +13599,7 @@
         "reservation_id": {
           "oneOf": [
             {
-              "$ref": "#/$defs/identifier"
+              "$ref": "#/$defs/research_event_identifier"
             },
             {
               "type": "null"
@@ -13810,7 +13609,7 @@
         "effect_id": {
           "oneOf": [
             {
-              "$ref": "#/$defs/identifier"
+              "$ref": "#/$defs/research_event_identifier"
             },
             {
               "type": "null"
@@ -13820,7 +13619,7 @@
         "reservation_event_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/identifier"
+              "$ref": "#/$defs/research_event_identifier"
             },
             {
               "type": "null"
@@ -13830,7 +13629,7 @@
         "dispatch_claim_event_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/identifier"
+              "$ref": "#/$defs/research_event_identifier"
             },
             {
               "type": "null"
@@ -13844,7 +13643,7 @@
         "resource_reservation_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/artifact_reference"
+              "$ref": "#/$defs/research_event_artifact_reference"
             },
             {
               "type": "null"
@@ -13865,7 +13664,7 @@
         "evidence_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/research_event_artifact_reference"
           },
           "uniqueItems": true
         }
@@ -13913,19 +13712,19 @@
           "then": {
             "properties": {
               "reservation_id": {
-                "$ref": "#/$defs/identifier"
+                "$ref": "#/$defs/research_event_identifier"
               },
               "effect_id": {
-                "$ref": "#/$defs/identifier"
+                "$ref": "#/$defs/research_event_identifier"
               },
               "reservation_event_ref": {
-                "$ref": "#/$defs/identifier"
+                "$ref": "#/$defs/research_event_identifier"
               },
               "dispatch_claim_event_ref": {
-                "$ref": "#/$defs/identifier"
+                "$ref": "#/$defs/research_event_identifier"
               },
               "resource_reservation_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/research_event_artifact_reference"
               }
             }
           }
@@ -13945,29 +13744,29 @@
       ],
       "properties": {
         "candidate_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/research_event_artifact_reference"
         },
         "claim_version_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/research_event_artifact_reference"
           },
           "minItems": 1,
           "uniqueItems": true
         },
         "disclosure_projection_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/research_event_artifact_reference"
         },
         "rights_review_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/research_event_artifact_reference"
         },
         "safety_review_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/research_event_artifact_reference"
         },
         "evidence_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/research_event_artifact_reference"
           },
           "uniqueItems": true
         }
@@ -13985,10 +13784,10 @@
       ],
       "properties": {
         "request_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "candidate_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/research_event_artifact_reference"
         },
         "requested_visibility": {
           "enum": [
@@ -14001,13 +13800,13 @@
         "channel_profiles": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/versioned_identity"
+            "$ref": "#/$defs/research_event_versioned_identity"
           },
           "minItems": 1,
           "uniqueItems": true
         },
         "reason_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/research_event_artifact_reference"
         }
       }
     },
@@ -14023,10 +13822,10 @@
       ],
       "properties": {
         "request_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "candidate_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/research_event_artifact_reference"
         },
         "decision": {
           "enum": [
@@ -14035,12 +13834,12 @@
           ]
         },
         "decision_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/research_event_artifact_reference"
         },
         "evidence_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/research_event_artifact_reference"
           },
           "uniqueItems": true
         }
@@ -14059,7 +13858,7 @@
       ],
       "properties": {
         "manifest_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/research_event_artifact_reference"
         },
         "manifest_digest": {
           "$ref": "#/$defs/digest",
@@ -14072,10 +13871,10 @@
           }
         },
         "publication_decision_event_ref": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "sealed_projection_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/research_event_artifact_reference"
         },
         "visibility": {
           "enum": [
@@ -14088,7 +13887,7 @@
         "evidence_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/research_event_artifact_reference"
           },
           "uniqueItems": true
         }
@@ -14108,13 +13907,13 @@
       ],
       "properties": {
         "manifest_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/research_event_artifact_reference"
         },
         "channel_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "external_effect_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "from": {
           "enum": [
@@ -14135,7 +13934,7 @@
         "channel_observation_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/artifact_reference"
+              "$ref": "#/$defs/research_event_artifact_reference"
             },
             {
               "type": "null"
@@ -14145,7 +13944,7 @@
         "evidence_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/research_event_artifact_reference"
           },
           "uniqueItems": true
         }
@@ -14165,7 +13964,7 @@
           "then": {
             "properties": {
               "channel_observation_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/research_event_artifact_reference"
               }
             }
           }
@@ -14188,7 +13987,7 @@
       ],
       "properties": {
         "effect_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "effect_class": {
           "enum": [
@@ -14231,28 +14030,28 @@
         "grant_use_reservation_event_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/identifier"
+            "$ref": "#/$defs/research_event_identifier"
           },
           "uniqueItems": true
         },
         "grant_use_reservation_release_event_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/identifier"
+            "$ref": "#/$defs/research_event_identifier"
           },
           "uniqueItems": true
         },
         "grant_use_event_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/identifier"
+            "$ref": "#/$defs/research_event_identifier"
           },
           "uniqueItems": true
         },
         "dispatch_claim_command_id": {
           "oneOf": [
             {
-              "$ref": "#/$defs/identifier"
+              "$ref": "#/$defs/research_event_identifier"
             },
             {
               "type": "null"
@@ -14285,7 +14084,7 @@
         "provider_receipt_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/artifact_reference"
+              "$ref": "#/$defs/research_event_artifact_reference"
             },
             {
               "type": "null"
@@ -14295,7 +14094,7 @@
         "observation_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/artifact_reference"
+              "$ref": "#/$defs/research_event_artifact_reference"
             },
             {
               "type": "null"
@@ -14310,21 +14109,21 @@
           ]
         },
         "work_contract_ref": {
-          "$ref": "#/$defs/work_contract_reference"
+          "$ref": "#/$defs/research_event_work_contract_reference"
         },
         "data_use_decision_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/data_use_decision_reference"
+            "$ref": "#/$defs/research_event_data_use_decision_reference"
           },
           "minItems": 1,
           "uniqueItems": true
         },
         "data_exposure_intent_ref": {
-          "$ref": "#/$defs/data_exposure_intent_reference"
+          "$ref": "#/$defs/research_event_data_exposure_intent_reference"
         },
         "provider_configuration_observation_ref": {
-          "$ref": "#/$defs/provider_configuration_observation_reference"
+          "$ref": "#/$defs/research_event_provider_configuration_observation_reference"
         },
         "dispatch_frontier": {
           "$ref": "#/$defs/governed_dispatch_frontier"
@@ -14365,7 +14164,7 @@
         "evidence_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/research_event_artifact_reference"
           },
           "uniqueItems": true
         }
@@ -14407,7 +14206,7 @@
           "then": {
             "properties": {
               "observation_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/research_event_artifact_reference"
               }
             }
           }
@@ -14504,7 +14303,7 @@
       ],
       "properties": {
         "effect_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "from": {
           "enum": [
@@ -14522,12 +14321,12 @@
           ]
         },
         "reconciliation_method_ref": {
-          "$ref": "#/$defs/versioned_identity"
+          "$ref": "#/$defs/research_event_versioned_identity"
         },
         "observation_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/artifact_reference"
+              "$ref": "#/$defs/research_event_artifact_reference"
             },
             {
               "type": "null"
@@ -14544,7 +14343,7 @@
         "evidence_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/research_event_artifact_reference"
           },
           "uniqueItems": true
         }
@@ -14564,7 +14363,7 @@
           "then": {
             "properties": {
               "observation_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/research_event_artifact_reference"
               },
               "settlement": {
                 "enum": [
@@ -14614,7 +14413,7 @@
       ],
       "properties": {
         "incident_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/research_event_artifact_reference"
         },
         "from": {
           "enum": [
@@ -14644,7 +14443,7 @@
         "affected_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/identifier"
+            "$ref": "#/$defs/research_event_identifier"
           },
           "minItems": 1,
           "uniqueItems": true
@@ -14652,7 +14451,7 @@
         "containment_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/artifact_reference"
+              "$ref": "#/$defs/research_event_artifact_reference"
             },
             {
               "type": "null"
@@ -14662,159 +14461,21 @@
         "evidence_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/research_event_artifact_reference"
           },
           "uniqueItems": true
-        }
-      }
-    },
-    "canonical_record_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "object_id",
-        "version",
-        "schema_id",
-        "digest",
-        "artifact_ref"
-      ],
-      "properties": {
-        "object_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "version": {
-          "type": "integer",
-          "minimum": 1
-        },
-        "schema_id": {
-          "type": "string",
-          "pattern": "^urn:odeya:schema:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$"
-        },
-        "digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "canonical_object_digest",
-            "domain_resolution": "target_resolved_via_sibling_reference",
-            "algorithm": "sha-256",
-            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
-            "status": "target_resolved_domain"
-          }
-        },
-        "artifact_ref": {
-          "$ref": "#/$defs/artifact_reference"
-        }
-      }
-    },
-    "schema_bound_record_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "object_id",
-        "version",
-        "schema_id",
-        "digest",
-        "artifact_ref"
-      ],
-      "properties": {
-        "object_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "version": {
-          "type": "integer",
-          "minimum": 1
-        },
-        "schema_id": {
-          "type": "string",
-          "pattern": "^urn:odeya:schema:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$"
-        },
-        "digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "canonical_object_digest",
-            "domain_resolution": "target_resolved_via_sibling_reference",
-            "algorithm": "sha-256",
-            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
-            "status": "target_resolved_domain"
-          }
-        },
-        "artifact_ref": {
-          "$ref": "#/$defs/artifact_reference"
-        }
-      }
-    },
-    "admission_evidence_bundle_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "record_id",
-        "version",
-        "schema_id",
-        "digest"
-      ],
-      "properties": {
-        "record_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "version": {
-          "type": "integer",
-          "minimum": 1
-        },
-        "schema_id": {
-          "const": "urn:odeya:schema:admission-evidence-bundle:0.7.0"
-        },
-        "digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "canonical_object_digest",
-            "domain": "odeya-admission-evidence-bundle-v2",
-            "algorithm": "sha-256",
-            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
-            "status": "registered_domain"
-          }
-        }
-      }
-    },
-    "policy_decision_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "record_id",
-        "version",
-        "schema_id",
-        "digest"
-      ],
-      "properties": {
-        "record_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "version": {
-          "type": "integer",
-          "minimum": 1
-        },
-        "schema_id": {
-          "const": "urn:odeya:schema:policy-decision:0.7.0"
-        },
-        "digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "canonical_object_digest",
-            "domain": "odeya-policy-decision-v2",
-            "algorithm": "sha-256",
-            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
-            "status": "registered_domain"
-          }
         }
       }
     },
     "verification_package_reference": {
       "allOf": [
         {
-          "$ref": "#/$defs/schema_bound_record_reference"
+          "$ref": "#/$defs/research_event_schema_bound_record_reference"
         },
         {
           "properties": {
             "schema_id": {
-              "const": "urn:odeya:schema:verification-run:0.5.0"
+              "const": "urn:odeya:schema:verification-run:0.6.0"
             }
           },
           "required": [
@@ -14834,7 +14495,7 @@
       ],
       "properties": {
         "event_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "event_type": {
           "enum": [
@@ -14859,105 +14520,6 @@
         }
       }
     },
-    "work_contract_reference": {
-      "allOf": [
-        {
-          "$ref": "#/$defs/schema_bound_record_reference"
-        },
-        {
-          "properties": {
-            "schema_id": {
-              "const": "urn:odeya:schema:work-contract:0.15.0"
-            }
-          },
-          "required": [
-            "schema_id"
-          ]
-        }
-      ]
-    },
-    "data_use_decision_reference": {
-      "allOf": [
-        {
-          "$ref": "#/$defs/schema_bound_record_reference"
-        },
-        {
-          "properties": {
-            "schema_id": {
-              "const": "urn:odeya:schema:data-use-decision:0.3.0"
-            }
-          },
-          "required": [
-            "schema_id"
-          ]
-        }
-      ]
-    },
-    "data_exposure_intent_reference": {
-      "allOf": [
-        {
-          "$ref": "#/$defs/schema_bound_record_reference"
-        },
-        {
-          "properties": {
-            "schema_id": {
-              "const": "urn:odeya:schema:data-exposure-record:0.3.0"
-            }
-          },
-          "required": [
-            "schema_id"
-          ]
-        }
-      ]
-    },
-    "ledger_checkpoint_reference": {
-      "allOf": [
-        {
-          "$ref": "#/$defs/schema_bound_record_reference"
-        },
-        {
-          "properties": {
-            "schema_id": {
-              "const": "urn:odeya:schema:ledger-checkpoint:0.7.0"
-            }
-          },
-          "required": [
-            "schema_id"
-          ]
-        }
-      ]
-    },
-    "provider_configuration_observation_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "artifact_id",
-        "digest",
-        "media_type",
-        "observation_kind"
-      ],
-      "properties": {
-        "artifact_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "byte_digest",
-            "subject": "exact retained artifact or profile document bytes",
-            "algorithm": "sha-256",
-            "profile": "not_a_canonical_object_digest",
-            "status": "accepted_disposition_annotation"
-          }
-        },
-        "media_type": {
-          "const": "application/json"
-        },
-        "observation_kind": {
-          "const": "provider_configuration"
-        }
-      }
-    },
     "governed_dispatch_frontier": {
       "type": "object",
       "additionalProperties": false,
@@ -14970,17 +14532,17 @@
       ],
       "properties": {
         "source_stream_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "source_ledger_epoch_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "source_position": {
           "type": "integer",
           "minimum": 0
         },
         "checkpoint_ref": {
-          "$ref": "#/$defs/ledger_checkpoint_reference"
+          "$ref": "#/$defs/research_event_ledger_checkpoint_reference"
         },
         "checkpoint_position": {
           "type": "integer",
@@ -15009,17 +14571,17 @@
       ],
       "properties": {
         "purpose_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "purpose_version": {
           "type": "string",
           "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
         },
         "mission_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "stage_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "protocol_digest": {
           "$ref": "#/$defs/digest",
@@ -15032,7 +14594,7 @@
           }
         },
         "recipient_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "recipient_class": {
           "enum": [
@@ -15045,7 +14607,7 @@
           ]
         },
         "provider_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "provider_profile_digest": {
           "$ref": "#/$defs/digest",
@@ -15068,10 +14630,10 @@
           ]
         },
         "geographic_region": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "residency_zone": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "projected_payload_digest": {
           "$ref": "#/$defs/digest",
@@ -15110,7 +14672,7 @@
       ],
       "properties": {
         "asset_record": {
-          "$ref": "#/$defs/canonical_record_reference"
+          "$ref": "#/$defs/research_event_canonical_record_reference"
         },
         "from": {
           "enum": [
@@ -15142,7 +14704,7 @@
         "cause_event_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/identifier"
+              "$ref": "#/$defs/research_event_identifier"
             },
             {
               "type": "null"
@@ -15152,7 +14714,7 @@
         "data_use_decision_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/canonical_record_reference"
+              "$ref": "#/$defs/research_event_canonical_record_reference"
             },
             {
               "type": "null"
@@ -15162,7 +14724,7 @@
         "retention_schedule_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/canonical_record_reference"
+              "$ref": "#/$defs/research_event_canonical_record_reference"
             },
             {
               "type": "null"
@@ -15172,7 +14734,7 @@
         "deletion_case_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/canonical_record_reference"
+              "$ref": "#/$defs/research_event_canonical_record_reference"
             },
             {
               "type": "null"
@@ -15182,7 +14744,7 @@
         "reason_codes": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/identifier"
+            "$ref": "#/$defs/research_event_identifier"
           },
           "uniqueItems": true,
           "minItems": 1
@@ -15202,10 +14764,10 @@
       ],
       "properties": {
         "rights_assertion_record": {
-          "$ref": "#/$defs/canonical_record_reference"
+          "$ref": "#/$defs/research_event_canonical_record_reference"
         },
         "asset_ref": {
-          "$ref": "#/$defs/canonical_record_reference"
+          "$ref": "#/$defs/research_event_canonical_record_reference"
         },
         "assertion_status": {
           "enum": [
@@ -15221,7 +14783,7 @@
         "evidence_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/research_event_artifact_reference"
           },
           "uniqueItems": true,
           "minItems": 1
@@ -15253,12 +14815,12 @@
       ],
       "properties": {
         "decision_record": {
-          "$ref": "#/$defs/canonical_record_reference"
+          "$ref": "#/$defs/research_event_canonical_record_reference"
         },
         "prior_decision_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/canonical_record_reference"
+              "$ref": "#/$defs/research_event_canonical_record_reference"
             },
             {
               "type": "null"
@@ -15266,7 +14828,7 @@
           ]
         },
         "asset_ref": {
-          "$ref": "#/$defs/canonical_record_reference"
+          "$ref": "#/$defs/research_event_canonical_record_reference"
         },
         "decision": {
           "enum": [
@@ -15296,7 +14858,7 @@
         "rights_assertion_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/canonical_record_reference"
+            "$ref": "#/$defs/research_event_canonical_record_reference"
           },
           "uniqueItems": true,
           "minItems": 1
@@ -15328,7 +14890,7 @@
         "revocation_evidence_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/artifact_reference"
+              "$ref": "#/$defs/research_event_artifact_reference"
             },
             {
               "type": "null"
@@ -15338,7 +14900,7 @@
         "reason_codes": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/identifier"
+            "$ref": "#/$defs/research_event_identifier"
           },
           "uniqueItems": true,
           "minItems": 1
@@ -15401,7 +14963,7 @@
           "then": {
             "properties": {
               "prior_decision_ref": {
-                "$ref": "#/$defs/canonical_record_reference"
+                "$ref": "#/$defs/research_event_canonical_record_reference"
               },
               "scope_digest": {
                 "type": "null",
@@ -15419,7 +14981,7 @@
                 "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
               },
               "revocation_evidence_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/research_event_artifact_reference"
               }
             }
           }
@@ -15445,15 +15007,15 @@
       ],
       "properties": {
         "exposure_record": {
-          "$ref": "#/$defs/canonical_record_reference"
+          "$ref": "#/$defs/research_event_canonical_record_reference"
         },
         "intent_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "parent_intent_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/canonical_record_reference"
+              "$ref": "#/$defs/research_event_canonical_record_reference"
             },
             {
               "type": "null"
@@ -15481,10 +15043,10 @@
           ]
         },
         "asset_ref": {
-          "$ref": "#/$defs/canonical_record_reference"
+          "$ref": "#/$defs/research_event_canonical_record_reference"
         },
         "data_use_decision_ref": {
-          "$ref": "#/$defs/canonical_record_reference"
+          "$ref": "#/$defs/research_event_canonical_record_reference"
         },
         "projection_digest": {
           "$ref": "#/$defs/digest",
@@ -15509,7 +15071,7 @@
         "provider_id": {
           "oneOf": [
             {
-              "$ref": "#/$defs/identifier"
+              "$ref": "#/$defs/research_event_identifier"
             },
             {
               "type": "null"
@@ -15575,7 +15137,7 @@
       ],
       "properties": {
         "transformation_record": {
-          "$ref": "#/$defs/canonical_record_reference"
+          "$ref": "#/$defs/research_event_canonical_record_reference"
         },
         "input_set_digest": {
           "$ref": "#/$defs/digest",
@@ -15690,7 +15252,7 @@
       ],
       "properties": {
         "retention_schedule": {
-          "$ref": "#/$defs/canonical_record_reference"
+          "$ref": "#/$defs/research_event_canonical_record_reference"
         },
         "status": {
           "enum": [
@@ -15735,7 +15297,7 @@
         "reason_codes": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/identifier"
+            "$ref": "#/$defs/research_event_identifier"
           },
           "uniqueItems": true,
           "minItems": 1
@@ -15800,7 +15362,7 @@
       ],
       "properties": {
         "deletion_case": {
-          "$ref": "#/$defs/canonical_record_reference"
+          "$ref": "#/$defs/research_event_canonical_record_reference"
         },
         "from": {
           "enum": [
@@ -15842,14 +15404,14 @@
         "legal_hold_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/canonical_record_reference"
+            "$ref": "#/$defs/research_event_canonical_record_reference"
           },
           "uniqueItems": true
         },
         "evidence_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/research_event_artifact_reference"
           },
           "uniqueItems": true,
           "minItems": 1
@@ -15865,14 +15427,14 @@
         "tombstone_event_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/identifier"
+            "$ref": "#/$defs/research_event_identifier"
           },
           "uniqueItems": true
         },
         "scientific_consequence_event_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/identifier"
+            "$ref": "#/$defs/research_event_identifier"
           },
           "uniqueItems": true
         },
@@ -15957,7 +15519,7 @@
       ],
       "properties": {
         "legal_hold": {
-          "$ref": "#/$defs/canonical_record_reference"
+          "$ref": "#/$defs/research_event_canonical_record_reference"
         },
         "from": {
           "enum": [
@@ -15990,7 +15552,7 @@
         "evidence_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/research_event_artifact_reference"
           },
           "uniqueItems": true,
           "minItems": 1
@@ -15998,7 +15560,7 @@
         "reason_codes": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/identifier"
+            "$ref": "#/$defs/research_event_identifier"
           },
           "uniqueItems": true,
           "minItems": 1
@@ -16036,10 +15598,10 @@
           ]
         },
         "checkpoint_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "ledger_epoch": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "inclusive_global_position": {
           "type": "integer",
@@ -16058,7 +15620,7 @@
         "checkpoint_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/canonical_record_reference"
+              "$ref": "#/$defs/research_event_canonical_record_reference"
             },
             {
               "type": "null"
@@ -16085,7 +15647,7 @@
         "previous_checkpoint_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/canonical_record_reference"
+              "$ref": "#/$defs/research_event_canonical_record_reference"
             },
             {
               "type": "null"
@@ -16103,7 +15665,7 @@
         "signature_verification_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/artifact_reference"
+              "$ref": "#/$defs/research_event_artifact_reference"
             },
             {
               "type": "null"
@@ -16113,7 +15675,7 @@
         "witness_id": {
           "oneOf": [
             {
-              "$ref": "#/$defs/identifier"
+              "$ref": "#/$defs/research_event_identifier"
             },
             {
               "type": "null"
@@ -16123,7 +15685,7 @@
         "witness_observation_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/artifact_reference"
+              "$ref": "#/$defs/research_event_artifact_reference"
             },
             {
               "type": "null"
@@ -16141,14 +15703,14 @@
         "conflicting_view_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/research_event_artifact_reference"
           },
           "uniqueItems": true
         },
         "quarantine_event_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/identifier"
+              "$ref": "#/$defs/research_event_identifier"
             },
             {
               "type": "null"
@@ -16183,7 +15745,7 @@
           "then": {
             "properties": {
               "signature_verification_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/research_event_artifact_reference"
               }
             }
           }
@@ -16227,7 +15789,7 @@
       ],
       "properties": {
         "backup_manifest_ref": {
-          "$ref": "#/$defs/canonical_record_reference"
+          "$ref": "#/$defs/research_event_canonical_record_reference"
         },
         "backup_manifest_digest": {
           "$ref": "#/$defs/digest",
@@ -16240,7 +15802,7 @@
           }
         },
         "backup_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "axis": {
           "enum": [
@@ -16260,7 +15822,7 @@
         "evidence_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/artifact_reference"
+              "$ref": "#/$defs/research_event_artifact_reference"
             },
             {
               "type": "null"
@@ -16313,7 +15875,7 @@
           "else": {
             "properties": {
               "evidence_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/research_event_artifact_reference"
               },
               "observed_at": {
                 "type": "string",
@@ -16373,10 +15935,10 @@
           ]
         },
         "restore_case_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/research_event_identifier"
         },
         "incident_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/research_event_artifact_reference"
         },
         "from": {
           "enum": [
@@ -16394,12 +15956,12 @@
           ]
         },
         "source_selection_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/research_event_artifact_reference"
         },
         "restore_report_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/canonical_record_reference"
+              "$ref": "#/$defs/research_event_canonical_record_reference"
             },
             {
               "type": "null"
@@ -16417,7 +15979,7 @@
         "recovery_decision_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/canonical_record_reference"
+              "$ref": "#/$defs/research_event_canonical_record_reference"
             },
             {
               "type": "null"
@@ -16427,7 +15989,7 @@
         "missing_or_corrupt_set_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/artifact_reference"
+              "$ref": "#/$defs/research_event_artifact_reference"
             },
             {
               "type": "null"
@@ -16498,12 +16060,12 @@
           ]
         },
         "frontier_verification_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/research_event_artifact_reference"
         },
         "recovery_decision_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/canonical_record_reference"
+              "$ref": "#/$defs/research_event_canonical_record_reference"
             },
             {
               "type": "null"
@@ -16513,7 +16075,7 @@
         "restore_report_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/canonical_record_reference"
+              "$ref": "#/$defs/research_event_canonical_record_reference"
             },
             {
               "type": "null"
@@ -16586,7 +16148,7 @@
         "reason_codes": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/identifier"
+            "$ref": "#/$defs/research_event_identifier"
           },
           "uniqueItems": true,
           "minItems": 1
@@ -16636,10 +16198,10 @@
                 "const": "proven_complete"
               },
               "recovery_decision_ref": {
-                "$ref": "#/$defs/canonical_record_reference"
+                "$ref": "#/$defs/research_event_canonical_record_reference"
               },
               "restore_report_ref": {
-                "$ref": "#/$defs/canonical_record_reference"
+                "$ref": "#/$defs/research_event_canonical_record_reference"
               },
               "allowed_scope_digest": {
                 "$ref": "#/$defs/digest",
@@ -16683,10 +16245,10 @@
       ],
       "properties": {
         "recovery_decision": {
-          "$ref": "#/$defs/canonical_record_reference"
+          "$ref": "#/$defs/research_event_canonical_record_reference"
         },
         "restore_report_ref": {
-          "$ref": "#/$defs/canonical_record_reference"
+          "$ref": "#/$defs/research_event_canonical_record_reference"
         },
         "security_frontier_digest": {
           "$ref": "#/$defs/digest",
@@ -16736,12 +16298,12 @@
           ]
         },
         "quorum_evidence_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/research_event_artifact_reference"
         },
         "new_epoch_plan_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/artifact_reference"
+              "$ref": "#/$defs/research_event_artifact_reference"
             },
             {
               "type": "null"
@@ -16772,7 +16334,7 @@
           "then": {
             "properties": {
               "new_epoch_plan_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/research_event_artifact_reference"
               }
             }
           }
@@ -16827,7 +16389,7 @@
         "prior_epoch_ids": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/identifier"
+            "$ref": "#/$defs/research_event_identifier"
           },
           "uniqueItems": true,
           "minItems": 1
@@ -16835,7 +16397,7 @@
         "new_epoch_id": {
           "oneOf": [
             {
-              "$ref": "#/$defs/identifier"
+              "$ref": "#/$defs/research_event_identifier"
             },
             {
               "type": "null"
@@ -16845,13 +16407,13 @@
         "branch_head_refs": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/research_event_artifact_reference"
           },
           "uniqueItems": true,
           "minItems": 2
         },
         "fork_evidence_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/research_event_artifact_reference"
         },
         "branch_selection_basis": {
           "enum": [
@@ -16862,7 +16424,7 @@
         "recovery_decision_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/canonical_record_reference"
+              "$ref": "#/$defs/research_event_canonical_record_reference"
             },
             {
               "type": "null"
@@ -16872,7 +16434,7 @@
         "identity_non_reuse_rule_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/artifact_reference"
+              "$ref": "#/$defs/research_event_artifact_reference"
             },
             {
               "type": "null"
@@ -16880,7 +16442,7 @@
           ]
         },
         "unresolved_receipt_set_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/research_event_artifact_reference"
         },
         "wall_clock_branch_selection": {
           "const": false
@@ -16894,6 +16456,444 @@
           "uniqueItems": true
         }
       }
+    },
+    "research_event_identifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]*$"
+    },
+    "research_event_artifact_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "digest",
+        "media_type"
+      ],
+      "properties": {
+        "artifact_id": {
+          "$ref": "#/$defs/research_event_identifier"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "exact retained artifact or profile document bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        }
+      }
+    },
+    "research_event_command_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "command_id",
+        "canonical_request_digest",
+        "receipt_id",
+        "admission_evidence_bundle_ref"
+      ],
+      "properties": {
+        "command_id": {
+          "$ref": "#/$defs/research_event_identifier"
+        },
+        "canonical_request_digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-command-request-v2",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "registered_domain"
+          }
+        },
+        "receipt_id": {
+          "$ref": "#/$defs/research_event_identifier"
+        },
+        "admission_evidence_bundle_ref": {
+          "$ref": "#/$defs/research_event_admission_evidence_bundle_reference"
+        }
+      }
+    },
+    "research_event_integrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "canonicalization",
+        "payload_digest_contract",
+        "payload_digest",
+        "previous_stream_event_digest",
+        "event_digest_contract",
+        "event_digest",
+        "signature_ref"
+      ],
+      "properties": {
+        "canonicalization": {
+          "const": "odeya-jcs-draft-0.1"
+        },
+        "payload_digest_contract": {
+          "$ref": "#/$defs/payload_digest_contract"
+        },
+        "payload_digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-event-payload-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "registered_domain"
+          }
+        },
+        "previous_stream_event_digest": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/digest"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-research-event-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "registered_domain"
+          }
+        },
+        "event_digest_contract": {
+          "$ref": "#/$defs/event_digest_contract"
+        },
+        "event_digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-research-event-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "registered_domain"
+          }
+        },
+        "signature_ref": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/research_event_artifact_reference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "research_event_work_contract_reference": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/research_event_schema_bound_record_reference"
+        },
+        {
+          "properties": {
+            "schema_id": {
+              "const": "urn:odeya:schema:work-contract:0.16.0"
+            }
+          },
+          "required": [
+            "schema_id"
+          ]
+        }
+      ]
+    },
+    "research_event_canonical_record_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "object_id",
+        "version",
+        "schema_id",
+        "digest",
+        "artifact_ref"
+      ],
+      "properties": {
+        "object_id": {
+          "$ref": "#/$defs/research_event_identifier"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "schema_id": {
+          "type": "string",
+          "pattern": "^urn:odeya:schema:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain_resolution": "target_resolved_via_sibling_reference",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "target_resolved_domain"
+          }
+        },
+        "artifact_ref": {
+          "$ref": "#/$defs/research_event_artifact_reference"
+        }
+      }
+    },
+    "research_event_actor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "principal_id",
+        "principal_type",
+        "execution_identity"
+      ],
+      "properties": {
+        "principal_id": {
+          "$ref": "#/$defs/research_event_identifier"
+        },
+        "principal_type": {
+          "enum": [
+            "human",
+            "service",
+            "model_run",
+            "instrument",
+            "external_system"
+          ]
+        },
+        "execution_identity": {
+          "$ref": "#/$defs/research_event_identifier"
+        }
+      }
+    },
+    "research_event_versioned_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "version",
+        "digest"
+      ],
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/research_event_identifier"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain_resolution": "target_resolved_via_sibling_reference",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "target_resolved_domain"
+          }
+        }
+      }
+    },
+    "research_event_admission_evidence_bundle_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "record_id",
+        "version",
+        "schema_id",
+        "digest"
+      ],
+      "properties": {
+        "record_id": {
+          "$ref": "#/$defs/research_event_identifier"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "schema_id": {
+          "const": "urn:odeya:schema:admission-evidence-bundle:0.8.0"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-admission-evidence-bundle-v2",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "registered_domain"
+          }
+        }
+      }
+    },
+    "research_event_policy_decision_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "record_id",
+        "version",
+        "schema_id",
+        "digest"
+      ],
+      "properties": {
+        "record_id": {
+          "$ref": "#/$defs/research_event_identifier"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "schema_id": {
+          "const": "urn:odeya:schema:policy-decision:0.8.0"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-policy-decision-v2",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "registered_domain"
+          }
+        }
+      }
+    },
+    "research_event_nullable_artifact_reference": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/research_event_artifact_reference"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "research_event_schema_bound_record_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "object_id",
+        "version",
+        "schema_id",
+        "digest",
+        "artifact_ref"
+      ],
+      "properties": {
+        "object_id": {
+          "$ref": "#/$defs/research_event_identifier"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "schema_id": {
+          "type": "string",
+          "pattern": "^urn:odeya:schema:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain_resolution": "target_resolved_via_sibling_reference",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "target_resolved_domain"
+          }
+        },
+        "artifact_ref": {
+          "$ref": "#/$defs/research_event_artifact_reference"
+        }
+      }
+    },
+    "research_event_provider_configuration_observation_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "digest",
+        "media_type",
+        "observation_kind"
+      ],
+      "properties": {
+        "artifact_id": {
+          "$ref": "#/$defs/research_event_identifier"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "exact retained artifact or profile document bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
+        },
+        "media_type": {
+          "const": "application/json"
+        },
+        "observation_kind": {
+          "const": "provider_configuration"
+        }
+      }
+    },
+    "research_event_data_use_decision_reference": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/research_event_schema_bound_record_reference"
+        },
+        {
+          "properties": {
+            "schema_id": {
+              "const": "urn:odeya:schema:data-use-decision:0.3.0"
+            }
+          },
+          "required": [
+            "schema_id"
+          ]
+        }
+      ]
+    },
+    "research_event_data_exposure_intent_reference": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/research_event_schema_bound_record_reference"
+        },
+        {
+          "properties": {
+            "schema_id": {
+              "const": "urn:odeya:schema:data-exposure-record:0.4.0"
+            }
+          },
+          "required": [
+            "schema_id"
+          ]
+        }
+      ]
+    },
+    "research_event_ledger_checkpoint_reference": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/research_event_schema_bound_record_reference"
+        },
+        {
+          "properties": {
+            "schema_id": {
+              "const": "urn:odeya:schema:ledger-checkpoint:0.8.0"
+            }
+          },
+          "required": [
+            "schema_id"
+          ]
+        }
+      ]
     }
   }
 }

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:verification-run:0.5.0",
+  "$id": "urn:odeya:schema:verification-run:0.6.0",
   "title": "Odeya VerificationPackage",
   "description": "An immutable terminal package for one VerificationRun. It binds an exact subject set and frozen assignment, preserves completed, failed, not-started, and completion-unknown paths, and records multidimensional results without granting claim, dispatch, publication, or dispute authority. Lifecycle and dispute state are event-derived; this record never references its successor completion event.",
   "type": "object",
@@ -35,26 +35,26 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.5.0"
+      "const": "0.6.0"
     },
     "record_class": {
       "const": "immutable_terminal_verification_package"
     },
     "verification_package_id": {
-      "$ref": "#/$defs/identifier"
+      "$ref": "#/$defs/verification_run_identifier"
     },
     "verification_run_id": {
-      "$ref": "#/$defs/identifier"
+      "$ref": "#/$defs/verification_run_identifier"
     },
     "version": {
       "type": "integer",
       "const": 1
     },
     "mission_id": {
-      "$ref": "#/$defs/identifier"
+      "$ref": "#/$defs/verification_run_identifier"
     },
     "protocol_branch_id": {
-      "$ref": "#/$defs/identifier"
+      "$ref": "#/$defs/verification_run_identifier"
     },
     "subject_set": {
       "$ref": "#/$defs/subject_set"
@@ -66,7 +66,7 @@
       "$ref": "#/$defs/execution"
     },
     "verifier_identity": {
-      "$ref": "#/$defs/verifier_identity"
+      "$ref": "#/$defs/verification_run_verifier_identity"
     },
     "correlation_axes": {
       "$ref": "#/$defs/correlation_axes"
@@ -88,7 +88,7 @@
       "maxItems": 256,
       "uniqueItems": true,
       "items": {
-        "$ref": "#/$defs/artifact_reference"
+        "$ref": "#/$defs/verification_run_artifact_reference"
       }
     },
     "findings": {
@@ -107,10 +107,10 @@
       "$ref": "#/$defs/eligible_next_actions"
     },
     "assessment_rule_ref": {
-      "$ref": "#/$defs/immutable_reference"
+      "$ref": "#/$defs/verification_run_immutable_reference"
     },
     "assessed_by": {
-      "$ref": "#/$defs/execution_identity"
+      "$ref": "#/$defs/verification_run_execution_identity"
     },
     "recorded_at": {
       "$ref": "#/$defs/timestamp"
@@ -1500,12 +1500,6 @@
     }
   ],
   "$defs": {
-    "identifier": {
-      "type": "string",
-      "minLength": 2,
-      "maxLength": 128,
-      "pattern": "^[a-z0-9][a-z0-9._:-]+$"
-    },
     "digest": {
       "type": "string",
       "pattern": "^sha256:[a-f0-9]{64}$"
@@ -1514,192 +1508,6 @@
       "type": "string",
       "format": "date-time",
       "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
-    },
-    "artifact_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "artifact_id",
-        "digest",
-        "media_type"
-      ],
-      "properties": {
-        "artifact_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "byte_digest",
-            "subject": "exact retained artifact or profile document bytes",
-            "algorithm": "sha-256",
-            "profile": "not_a_canonical_object_digest",
-            "status": "accepted_disposition_annotation"
-          }
-        },
-        "media_type": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 255
-        }
-      }
-    },
-    "immutable_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "record_id",
-        "version",
-        "schema_id",
-        "digest"
-      ],
-      "properties": {
-        "record_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "version": {
-          "type": "integer",
-          "minimum": 1
-        },
-        "schema_id": {
-          "type": "string",
-          "pattern": "^urn:odeya:schema:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$"
-        },
-        "digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "canonical_object_digest",
-            "domain_resolution": "target_resolved_via_sibling_reference",
-            "algorithm": "sha-256",
-            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
-            "status": "target_resolved_domain"
-          }
-        }
-      }
-    },
-    "event_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "event_id",
-        "event_type",
-        "event_version",
-        "digest"
-      ],
-      "properties": {
-        "event_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "event_type": {
-          "type": "string",
-          "pattern": "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$"
-        },
-        "event_version": {
-          "type": "string",
-          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
-        },
-        "digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "canonical_object_digest",
-            "domain": "odeya-research-event-v1",
-            "algorithm": "sha-256",
-            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
-            "status": "registered_domain"
-          }
-        }
-      }
-    },
-    "execution_identity": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "principal_id",
-        "execution_id",
-        "process_id",
-        "host_identity",
-        "code_digest",
-        "environment_digest"
-      ],
-      "properties": {
-        "principal_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "execution_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "process_id": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 255
-        },
-        "host_identity": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 255
-        },
-        "code_digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "byte_digest",
-            "subject": "source or code-bundle bytes",
-            "algorithm": "sha-256",
-            "profile": "not_a_canonical_object_digest",
-            "status": "accepted_disposition_annotation"
-          }
-        },
-        "environment_digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "canonical_object_digest",
-            "domain": "odeya-environment-manifest-v1",
-            "algorithm": "sha-256",
-            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
-            "status": "prospective_domain_reserved_not_declared"
-          }
-        }
-      }
-    },
-    "subject_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "subject_type",
-        "subject_id",
-        "version",
-        "schema_id",
-        "digest"
-      ],
-      "properties": {
-        "subject_type": {
-          "enum": [
-            "artifact",
-            "result",
-            "claim"
-          ]
-        },
-        "subject_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "version": {
-          "type": "integer",
-          "minimum": 1
-        },
-        "schema_id": {
-          "type": "string",
-          "pattern": "^urn:odeya:schema:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$"
-        },
-        "digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "canonical_object_digest",
-            "domain_resolution": "target_resolved_via_sibling_reference",
-            "algorithm": "sha-256",
-            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
-            "status": "target_resolved_domain"
-          }
-        }
-      }
     },
     "subject_set": {
       "type": "object",
@@ -1715,10 +1523,10 @@
       ],
       "properties": {
         "subject_set_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/verification_run_identifier"
         },
         "subject_manifest_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/verification_run_artifact_reference"
         },
         "subject_members_root_digest": {
           "$ref": "#/$defs/digest",
@@ -1731,10 +1539,10 @@
           }
         },
         "canonicalization_profile_ref": {
-          "$ref": "#/$defs/immutable_reference"
+          "$ref": "#/$defs/verification_run_immutable_reference"
         },
         "selection_rule_ref": {
-          "$ref": "#/$defs/immutable_reference"
+          "$ref": "#/$defs/verification_run_immutable_reference"
         },
         "complete_manifest": {
           "const": true
@@ -1745,7 +1553,7 @@
           "maxItems": 256,
           "uniqueItems": true,
           "items": {
-            "$ref": "#/$defs/subject_reference"
+            "$ref": "#/$defs/verification_run_subject_reference"
           }
         }
       }
@@ -1775,7 +1583,7 @@
         "assignment_event_ref": {
           "allOf": [
             {
-              "$ref": "#/$defs/event_reference"
+              "$ref": "#/$defs/verification_run_event_reference"
             },
             {
               "properties": {
@@ -1787,19 +1595,19 @@
           ]
         },
         "verification_plan_ref": {
-          "$ref": "#/$defs/immutable_reference"
+          "$ref": "#/$defs/verification_run_immutable_reference"
         },
         "protocol_snapshot_ref": {
-          "$ref": "#/$defs/immutable_reference"
+          "$ref": "#/$defs/verification_run_immutable_reference"
         },
         "method_profile_ref": {
-          "$ref": "#/$defs/immutable_reference"
+          "$ref": "#/$defs/verification_run_immutable_reference"
         },
         "producer_identity_ref": {
-          "$ref": "#/$defs/immutable_reference"
+          "$ref": "#/$defs/verification_run_immutable_reference"
         },
         "verification_requirement_profile_ref": {
-          "$ref": "#/$defs/immutable_reference"
+          "$ref": "#/$defs/verification_run_immutable_reference"
         },
         "required_verification_class": {
           "enum": [
@@ -1818,30 +1626,30 @@
           ]
         },
         "independence_profile_ref": {
-          "$ref": "#/$defs/immutable_reference"
+          "$ref": "#/$defs/verification_run_immutable_reference"
         },
         "verification_capacity_reservation_ref": {
-          "$ref": "#/$defs/immutable_reference"
+          "$ref": "#/$defs/verification_run_immutable_reference"
         },
         "operational_resource_reservation_refs": {
           "type": "array",
           "maxItems": 32,
           "uniqueItems": true,
           "items": {
-            "$ref": "#/$defs/immutable_reference"
+            "$ref": "#/$defs/verification_run_immutable_reference"
           }
         },
         "exposure_plan_ref": {
-          "$ref": "#/$defs/immutable_reference"
+          "$ref": "#/$defs/verification_run_immutable_reference"
         },
         "input_manifest_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/verification_run_artifact_reference"
         },
         "environment_manifest_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/verification_run_artifact_reference"
         },
         "control_plan_ref": {
-          "$ref": "#/$defs/immutable_reference"
+          "$ref": "#/$defs/verification_run_immutable_reference"
         },
         "assignment_ledger_position": {
           "type": "integer",
@@ -1879,7 +1687,7 @@
         "start_event_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/event_reference"
+              "$ref": "#/$defs/verification_run_event_reference"
             },
             {
               "type": "null"
@@ -1909,7 +1717,7 @@
         "actual_run_manifest_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/artifact_reference"
+              "$ref": "#/$defs/verification_run_artifact_reference"
             },
             {
               "type": "null"
@@ -1919,7 +1727,7 @@
         "actual_input_manifest_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/artifact_reference"
+              "$ref": "#/$defs/verification_run_artifact_reference"
             },
             {
               "type": "null"
@@ -1929,7 +1737,7 @@
         "actual_environment_manifest_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/artifact_reference"
+              "$ref": "#/$defs/verification_run_artifact_reference"
             },
             {
               "type": "null"
@@ -1939,7 +1747,7 @@
         "actual_code_manifest_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/artifact_reference"
+              "$ref": "#/$defs/verification_run_artifact_reference"
             },
             {
               "type": "null"
@@ -1957,7 +1765,7 @@
         "plan_comparison_report_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/artifact_reference"
+              "$ref": "#/$defs/verification_run_artifact_reference"
             },
             {
               "type": "null"
@@ -1969,7 +1777,7 @@
           "maxItems": 64,
           "uniqueItems": true,
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/verification_run_artifact_reference"
           }
         },
         "completion_observation_refs": {
@@ -1977,7 +1785,7 @@
           "maxItems": 64,
           "uniqueItems": true,
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/verification_run_artifact_reference"
           }
         },
         "failure_or_blocker_refs": {
@@ -1985,7 +1793,7 @@
           "maxItems": 64,
           "uniqueItems": true,
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/verification_run_artifact_reference"
           }
         }
       },
@@ -2004,7 +1812,7 @@
           "then": {
             "properties": {
               "start_event_ref": {
-                "$ref": "#/$defs/event_reference"
+                "$ref": "#/$defs/verification_run_event_reference"
               },
               "started_at": {
                 "$ref": "#/$defs/timestamp"
@@ -2013,16 +1821,16 @@
                 "$ref": "#/$defs/timestamp"
               },
               "actual_run_manifest_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/verification_run_artifact_reference"
               },
               "actual_input_manifest_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/verification_run_artifact_reference"
               },
               "actual_environment_manifest_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/verification_run_artifact_reference"
               },
               "actual_code_manifest_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/verification_run_artifact_reference"
               },
               "plan_comparison": {
                 "enum": [
@@ -2032,7 +1840,7 @@
                 ]
               },
               "plan_comparison_report_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/verification_run_artifact_reference"
               },
               "completion_observation_refs": {
                 "minItems": 1
@@ -2054,7 +1862,7 @@
           "then": {
             "properties": {
               "start_event_ref": {
-                "$ref": "#/$defs/event_reference"
+                "$ref": "#/$defs/verification_run_event_reference"
               },
               "started_at": {
                 "$ref": "#/$defs/timestamp"
@@ -2063,16 +1871,16 @@
                 "$ref": "#/$defs/timestamp"
               },
               "actual_run_manifest_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/verification_run_artifact_reference"
               },
               "actual_input_manifest_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/verification_run_artifact_reference"
               },
               "actual_environment_manifest_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/verification_run_artifact_reference"
               },
               "actual_code_manifest_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/verification_run_artifact_reference"
               },
               "plan_comparison": {
                 "enum": [
@@ -2082,7 +1890,7 @@
                 ]
               },
               "plan_comparison_report_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/verification_run_artifact_reference"
               },
               "failure_or_blocker_refs": {
                 "minItems": 1
@@ -2156,7 +1964,7 @@
           "then": {
             "properties": {
               "start_event_ref": {
-                "$ref": "#/$defs/event_reference"
+                "$ref": "#/$defs/verification_run_event_reference"
               },
               "started_at": {
                 "$ref": "#/$defs/timestamp"
@@ -2165,16 +1973,16 @@
                 "type": "null"
               },
               "actual_run_manifest_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/verification_run_artifact_reference"
               },
               "actual_input_manifest_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/verification_run_artifact_reference"
               },
               "actual_environment_manifest_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/verification_run_artifact_reference"
               },
               "actual_code_manifest_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/verification_run_artifact_reference"
               },
               "plan_comparison": {
                 "enum": [
@@ -2184,7 +1992,7 @@
                 ]
               },
               "plan_comparison_report_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/verification_run_artifact_reference"
               },
               "failure_or_blocker_refs": {
                 "minItems": 1
@@ -2235,81 +2043,12 @@
     "nullable_immutable_reference": {
       "oneOf": [
         {
-          "$ref": "#/$defs/immutable_reference"
+          "$ref": "#/$defs/verification_run_immutable_reference"
         },
         {
           "type": "null"
         }
       ]
-    },
-    "verifier_identity": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "principal_ref",
-        "organization_ref",
-        "incentive_declaration_ref",
-        "execution_identity",
-        "provider_configuration_ref",
-        "model_configuration_ref",
-        "training_lineage_declaration_ref",
-        "toolchain_manifest_ref",
-        "source_corpus_manifest_ref",
-        "implementation_manifest_ref",
-        "data_manifest_ref",
-        "context_manifest_ref",
-        "selection_decision_ref",
-        "conflict_declaration_refs"
-      ],
-      "properties": {
-        "principal_ref": {
-          "$ref": "#/$defs/immutable_reference"
-        },
-        "organization_ref": {
-          "$ref": "#/$defs/immutable_reference"
-        },
-        "incentive_declaration_ref": {
-          "$ref": "#/$defs/immutable_reference"
-        },
-        "execution_identity": {
-          "$ref": "#/$defs/execution_identity"
-        },
-        "provider_configuration_ref": {
-          "$ref": "#/$defs/nullable_immutable_reference"
-        },
-        "model_configuration_ref": {
-          "$ref": "#/$defs/nullable_immutable_reference"
-        },
-        "training_lineage_declaration_ref": {
-          "$ref": "#/$defs/nullable_immutable_reference"
-        },
-        "toolchain_manifest_ref": {
-          "$ref": "#/$defs/artifact_reference"
-        },
-        "source_corpus_manifest_ref": {
-          "$ref": "#/$defs/artifact_reference"
-        },
-        "implementation_manifest_ref": {
-          "$ref": "#/$defs/artifact_reference"
-        },
-        "data_manifest_ref": {
-          "$ref": "#/$defs/artifact_reference"
-        },
-        "context_manifest_ref": {
-          "$ref": "#/$defs/artifact_reference"
-        },
-        "selection_decision_ref": {
-          "$ref": "#/$defs/immutable_reference"
-        },
-        "conflict_declaration_refs": {
-          "type": "array",
-          "maxItems": 32,
-          "uniqueItems": true,
-          "items": {
-            "$ref": "#/$defs/artifact_reference"
-          }
-        }
-      }
     },
     "axis_observation": {
       "type": "object",
@@ -2329,7 +2068,7 @@
           "maxItems": 32,
           "uniqueItems": true,
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/verification_run_artifact_reference"
           }
         }
       }
@@ -2638,17 +2377,17 @@
           ]
         },
         "profile_ref": {
-          "$ref": "#/$defs/immutable_reference"
+          "$ref": "#/$defs/verification_run_immutable_reference"
         },
         "satisfaction_rule_ref": {
-          "$ref": "#/$defs/immutable_reference"
+          "$ref": "#/$defs/verification_run_immutable_reference"
         },
         "assessment_evidence_refs": {
           "type": "array",
           "maxItems": 64,
           "uniqueItems": true,
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/verification_run_artifact_reference"
           }
         },
         "limitations": {
@@ -2682,14 +2421,14 @@
           ]
         },
         "exposure_audit_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/verification_run_artifact_reference"
         },
         "observation_refs": {
           "type": "array",
           "maxItems": 64,
           "uniqueItems": true,
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/verification_run_artifact_reference"
           }
         },
         "unknown_or_not_started_reason_codes": {
@@ -2697,7 +2436,7 @@
           "maxItems": 32,
           "uniqueItems": true,
           "items": {
-            "$ref": "#/$defs/identifier"
+            "$ref": "#/$defs/verification_run_identifier"
           }
         }
       },
@@ -2784,10 +2523,10 @@
       ],
       "properties": {
         "control_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/verification_run_identifier"
         },
         "fixture_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/verification_run_artifact_reference"
         },
         "status": {
           "enum": [
@@ -2806,7 +2545,7 @@
         "report_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/artifact_reference"
+              "$ref": "#/$defs/verification_run_artifact_reference"
             },
             {
               "type": "null"
@@ -2818,7 +2557,7 @@
           "maxItems": 64,
           "uniqueItems": true,
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/verification_run_artifact_reference"
           }
         },
         "reason_codes": {
@@ -2826,7 +2565,7 @@
           "maxItems": 32,
           "uniqueItems": true,
           "items": {
-            "$ref": "#/$defs/identifier"
+            "$ref": "#/$defs/verification_run_identifier"
           }
         }
       }
@@ -2865,7 +2604,7 @@
                 "const": "match"
               },
               "report_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/verification_run_artifact_reference"
               },
               "evidence_refs": {
                 "minItems": 1
@@ -2893,7 +2632,7 @@
                 ]
               },
               "report_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/verification_run_artifact_reference"
               },
               "evidence_refs": {
                 "minItems": 1
@@ -2987,7 +2726,7 @@
                 "const": "reject"
               },
               "report_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/verification_run_artifact_reference"
               },
               "evidence_refs": {
                 "minItems": 1
@@ -3012,7 +2751,7 @@
                 "const": "accept"
               },
               "report_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/verification_run_artifact_reference"
               },
               "evidence_refs": {
                 "minItems": 1
@@ -3129,7 +2868,7 @@
           ]
         },
         "criterion_ref": {
-          "$ref": "#/$defs/immutable_reference"
+          "$ref": "#/$defs/verification_run_immutable_reference"
         },
         "scope": {
           "type": "string",
@@ -3141,7 +2880,7 @@
           "maxItems": 128,
           "uniqueItems": true,
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/verification_run_artifact_reference"
           }
         },
         "limitation_codes": {
@@ -3149,7 +2888,7 @@
           "maxItems": 32,
           "uniqueItems": true,
           "items": {
-            "$ref": "#/$defs/identifier"
+            "$ref": "#/$defs/verification_run_identifier"
           }
         },
         "not_run_reason_codes": {
@@ -3157,7 +2896,7 @@
           "maxItems": 32,
           "uniqueItems": true,
           "items": {
-            "$ref": "#/$defs/identifier"
+            "$ref": "#/$defs/verification_run_identifier"
           }
         }
       },
@@ -4930,7 +4669,7 @@
       ],
       "properties": {
         "finding_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/verification_run_identifier"
         },
         "dimension": {
           "enum": [
@@ -4960,7 +4699,7 @@
           "maxItems": 64,
           "uniqueItems": true,
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/verification_run_artifact_reference"
           }
         },
         "disposition": {
@@ -4971,7 +4710,7 @@
           ]
         },
         "rule_ref": {
-          "$ref": "#/$defs/immutable_reference"
+          "$ref": "#/$defs/verification_run_immutable_reference"
         }
       }
     },
@@ -5038,7 +4777,7 @@
           "maxItems": 64,
           "uniqueItems": true,
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/verification_run_artifact_reference"
           }
         },
         "reconciliation_status": {
@@ -5060,7 +4799,7 @@
         "reconciliation_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/immutable_reference"
+              "$ref": "#/$defs/verification_run_immutable_reference"
             },
             {
               "type": "null"
@@ -5128,7 +4867,7 @@
                 "const": "reconciled_released"
               },
               "reconciliation_ref": {
-                "$ref": "#/$defs/immutable_reference"
+                "$ref": "#/$defs/verification_run_immutable_reference"
               }
             }
           }
@@ -5150,7 +4889,7 @@
                 "const": "partially_settled_held"
               },
               "reconciliation_ref": {
-                "$ref": "#/$defs/immutable_reference"
+                "$ref": "#/$defs/verification_run_immutable_reference"
               }
             }
           }
@@ -5172,7 +4911,7 @@
                 "const": "unsettled_held"
               },
               "reconciliation_ref": {
-                "$ref": "#/$defs/immutable_reference"
+                "$ref": "#/$defs/verification_run_immutable_reference"
               }
             }
           }
@@ -5254,11 +4993,11 @@
           "maxItems": 64,
           "uniqueItems": true,
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/verification_run_artifact_reference"
           }
         },
         "summary_rule_ref": {
-          "$ref": "#/$defs/immutable_reference"
+          "$ref": "#/$defs/verification_run_immutable_reference"
         }
       }
     },
@@ -5291,7 +5030,7 @@
           "maxItems": 64,
           "uniqueItems": true,
           "items": {
-            "$ref": "#/$defs/identifier"
+            "$ref": "#/$defs/verification_run_identifier"
           }
         }
       }
@@ -5329,7 +5068,7 @@
           }
         },
         "rule_ref": {
-          "$ref": "#/$defs/immutable_reference"
+          "$ref": "#/$defs/verification_run_immutable_reference"
         },
         "authority_granted": {
           "const": false
@@ -5339,6 +5078,267 @@
         },
         "publication_authorized": {
           "const": false
+        }
+      }
+    },
+    "verification_run_identifier": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 128,
+      "pattern": "^[a-z0-9][a-z0-9._:-]+$"
+    },
+    "verification_run_artifact_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "digest",
+        "media_type"
+      ],
+      "properties": {
+        "artifact_id": {
+          "$ref": "#/$defs/verification_run_identifier"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "exact retained artifact or profile document bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        }
+      }
+    },
+    "verification_run_execution_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "principal_id",
+        "execution_id",
+        "process_id",
+        "host_identity",
+        "code_digest",
+        "environment_digest"
+      ],
+      "properties": {
+        "principal_id": {
+          "$ref": "#/$defs/verification_run_identifier"
+        },
+        "execution_id": {
+          "$ref": "#/$defs/verification_run_identifier"
+        },
+        "process_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "host_identity": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "code_digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "source or code-bundle bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
+        },
+        "environment_digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-environment-manifest-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
+        }
+      }
+    },
+    "verification_run_subject_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "subject_type",
+        "subject_id",
+        "version",
+        "schema_id",
+        "digest"
+      ],
+      "properties": {
+        "subject_type": {
+          "enum": [
+            "artifact",
+            "result",
+            "claim"
+          ]
+        },
+        "subject_id": {
+          "$ref": "#/$defs/verification_run_identifier"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "schema_id": {
+          "type": "string",
+          "pattern": "^urn:odeya:schema:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain_resolution": "target_resolved_via_sibling_reference",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "target_resolved_domain"
+          }
+        }
+      }
+    },
+    "verification_run_immutable_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "record_id",
+        "version",
+        "schema_id",
+        "digest"
+      ],
+      "properties": {
+        "record_id": {
+          "$ref": "#/$defs/verification_run_identifier"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "schema_id": {
+          "type": "string",
+          "pattern": "^urn:odeya:schema:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain_resolution": "target_resolved_via_sibling_reference",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "target_resolved_domain"
+          }
+        }
+      }
+    },
+    "verification_run_event_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event_id",
+        "event_type",
+        "event_version",
+        "digest"
+      ],
+      "properties": {
+        "event_id": {
+          "$ref": "#/$defs/verification_run_identifier"
+        },
+        "event_type": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$"
+        },
+        "event_version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-research-event-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "registered_domain"
+          }
+        }
+      }
+    },
+    "verification_run_verifier_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "principal_ref",
+        "organization_ref",
+        "incentive_declaration_ref",
+        "execution_identity",
+        "provider_configuration_ref",
+        "model_configuration_ref",
+        "training_lineage_declaration_ref",
+        "toolchain_manifest_ref",
+        "source_corpus_manifest_ref",
+        "implementation_manifest_ref",
+        "data_manifest_ref",
+        "context_manifest_ref",
+        "selection_decision_ref",
+        "conflict_declaration_refs"
+      ],
+      "properties": {
+        "principal_ref": {
+          "$ref": "#/$defs/verification_run_immutable_reference"
+        },
+        "organization_ref": {
+          "$ref": "#/$defs/verification_run_immutable_reference"
+        },
+        "incentive_declaration_ref": {
+          "$ref": "#/$defs/verification_run_immutable_reference"
+        },
+        "execution_identity": {
+          "$ref": "#/$defs/verification_run_execution_identity"
+        },
+        "provider_configuration_ref": {
+          "$ref": "#/$defs/nullable_immutable_reference"
+        },
+        "model_configuration_ref": {
+          "$ref": "#/$defs/nullable_immutable_reference"
+        },
+        "training_lineage_declaration_ref": {
+          "$ref": "#/$defs/nullable_immutable_reference"
+        },
+        "toolchain_manifest_ref": {
+          "$ref": "#/$defs/verification_run_artifact_reference"
+        },
+        "source_corpus_manifest_ref": {
+          "$ref": "#/$defs/verification_run_artifact_reference"
+        },
+        "implementation_manifest_ref": {
+          "$ref": "#/$defs/verification_run_artifact_reference"
+        },
+        "data_manifest_ref": {
+          "$ref": "#/$defs/verification_run_artifact_reference"
+        },
+        "context_manifest_ref": {
+          "$ref": "#/$defs/verification_run_artifact_reference"
+        },
+        "selection_decision_ref": {
+          "$ref": "#/$defs/verification_run_immutable_reference"
+        },
+        "conflict_declaration_refs": {
+          "type": "array",
+          "maxItems": 32,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/verification_run_artifact_reference"
+          }
         }
       }
     }

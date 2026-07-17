@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:ledger-checkpoint:0.7.0",
+  "$id": "urn:odeya:schema:ledger-checkpoint:0.8.0",
   "title": "Odeya LedgerCheckpoint",
   "description": "A signed, immutable commitment to one inclusive canonical ledger frontier and the exact C0 semantic registry bundle required to interpret it. It supports integrity, registry-resolution, and consistency evidence; schema validity does not prove digest/signature/membership correctness, scientific validity, or preservation of private payload bytes.",
   "type": "object",
@@ -23,7 +23,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.7.0"
+      "const": "0.8.0"
     },
     "checkpoint_id": {
       "$ref": "#/$defs/identifier"
@@ -102,49 +102,60 @@
       ],
       "properties": {
         "engine_contract_root": {
-          "$ref": "#/$defs/engine_contract_root_reference"
+          "$ref": "#/$defs/ledger_checkpoint_engine_contract_root_reference"
         },
         "aggregate_state_subject_registry": {
           "$ref": "#/$defs/aggregate_state_subject_registry_reference"
         },
         "root_authority_manifest": {
-          "$ref": "#/$defs/versioned_reference"
+          "$ref": "#/$defs/ledger_checkpoint_versioned_reference"
         },
         "trust_root_set": {
-          "$ref": "#/$defs/versioned_reference"
+          "$ref": "#/$defs/ledger_checkpoint_versioned_reference"
         },
         "schema_registry": {
-          "$ref": "#/$defs/versioned_reference"
+          "$ref": "#/$defs/ledger_checkpoint_versioned_reference"
         },
         "c0_registry_bundle": {
-          "$ref": "#/$defs/versioned_reference"
+          "$ref": "#/$defs/ledger_checkpoint_versioned_reference"
         },
         "command_contract_registry": {
-          "$ref": "#/$defs/versioned_reference"
+          "$ref": "#/$defs/ledger_checkpoint_versioned_reference"
         },
         "event_contract_registry": {
-          "$ref": "#/$defs/versioned_reference"
+          "$ref": "#/$defs/ledger_checkpoint_versioned_reference"
         },
         "reducer_registry": {
-          "$ref": "#/$defs/versioned_reference"
+          "$ref": "#/$defs/ledger_checkpoint_versioned_reference"
         },
         "module_dependency_manifest": {
-          "$ref": "#/$defs/versioned_reference"
+          "$ref": "#/$defs/ledger_checkpoint_versioned_reference"
         },
         "resource_unit_profile_registry": {
-          "$ref": "#/$defs/versioned_reference"
+          "$ref": "#/$defs/ledger_checkpoint_versioned_reference"
         },
         "semantic_rule_registry": {
-          "$ref": "#/$defs/versioned_reference"
+          "$ref": "#/$defs/ledger_checkpoint_versioned_reference"
         },
         "policy_registry": {
-          "$ref": "#/$defs/versioned_reference"
+          "$ref": "#/$defs/ledger_checkpoint_versioned_reference"
         },
         "canonicalization_profile": {
-          "$ref": "#/$defs/versioned_reference"
+          "allOf": [
+            {
+              "$ref": "#/$defs/ledger_checkpoint_versioned_reference"
+            },
+            {
+              "properties": {
+                "object_id": {
+                  "const": "urn:odeya:canonicalization:odeya-jcs-0.1"
+                }
+              }
+            }
+          ]
         },
         "method_registry": {
-          "$ref": "#/$defs/versioned_reference"
+          "$ref": "#/$defs/ledger_checkpoint_versioned_reference"
         }
       }
     },
@@ -192,7 +203,7 @@
     "previous_checkpoint": {
       "oneOf": [
         {
-          "$ref": "#/$defs/checkpoint_reference"
+          "$ref": "#/$defs/ledger_checkpoint_checkpoint_reference"
         },
         {
           "type": "null"
@@ -219,7 +230,7 @@
       "type": "array",
       "minItems": 1,
       "items": {
-        "$ref": "#/$defs/signature_record"
+        "$ref": "#/$defs/ledger_checkpoint_signature_record"
       }
     }
   },
@@ -260,62 +271,10 @@
         }
       }
     },
-    "versioned_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "object_id",
-        "version",
-        "digest"
-      ],
-      "properties": {
-        "object_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "version": {
-          "type": "string",
-          "minLength": 1
-        },
-        "schema_id": {
-          "type": "string",
-          "minLength": 1
-        },
-        "digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "canonical_object_digest",
-            "domain_resolution": "target_resolved_via_sibling_reference",
-            "algorithm": "sha-256",
-            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
-            "status": "target_resolved_domain"
-          }
-        }
-      }
-    },
-    "engine_contract_root_reference": {
-      "allOf": [
-        {
-          "$ref": "#/$defs/versioned_reference"
-        },
-        {
-          "required": [
-            "schema_id"
-          ],
-          "properties": {
-            "version": {
-              "const": "0.1.0"
-            },
-            "schema_id": {
-              "const": "urn:odeya:schema:engine-contract-root:0.5.0"
-            }
-          }
-        }
-      ]
-    },
     "aggregate_state_subject_registry_reference": {
       "allOf": [
         {
-          "$ref": "#/$defs/versioned_reference"
+          "$ref": "#/$defs/ledger_checkpoint_versioned_reference"
         },
         {
           "required": [
@@ -326,7 +285,7 @@
               "const": "0.1.0"
             },
             "schema_id": {
-              "const": "urn:odeya:schema:aggregate-state-subject-registry:0.5.0"
+              "const": "urn:odeya:schema:aggregate-state-subject-registry:0.6.0"
             }
           }
         }
@@ -414,7 +373,7 @@
           ],
           "properties": {
             "schema_id": {
-              "const": "urn:odeya:schema:ledger-checkpoint:0.7.0"
+              "const": "urn:odeya:schema:ledger-checkpoint:0.8.0"
             },
             "schema_digest": {
               "$ref": "#/$defs/digest",
@@ -493,7 +452,39 @@
         }
       }
     },
-    "checkpoint_reference": {
+    "ledger_checkpoint_versioned_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "object_id",
+        "version",
+        "digest"
+      ],
+      "properties": {
+        "object_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "schema_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain_resolution": "target_resolved_via_sibling_reference",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "target_resolved_domain"
+          }
+        }
+      }
+    },
+    "ledger_checkpoint_checkpoint_reference": {
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -530,7 +521,7 @@
         }
       }
     },
-    "signature_record": {
+    "ledger_checkpoint_signature_record": {
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -574,6 +565,26 @@
           "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
         }
       }
+    },
+    "ledger_checkpoint_engine_contract_root_reference": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/ledger_checkpoint_versioned_reference"
+        },
+        {
+          "required": [
+            "schema_id"
+          ],
+          "properties": {
+            "version": {
+              "const": "0.1.0"
+            },
+            "schema_id": {
+              "const": "urn:odeya:schema:engine-contract-root:0.6.0"
+            }
+          }
+        }
+      ]
     }
   }
 }

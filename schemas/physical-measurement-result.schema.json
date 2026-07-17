@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:physical-measurement-result:0.6.0",
+  "$id": "urn:odeya:schema:physical-measurement-result:0.7.0",
   "title": "Odeya PhysicalMeasurementResult",
   "description": "An immutable physical measurement result binding the measurand, raw signal, instrument/firmware/configuration, environment, calibration traceability, sampling/filtering/latency/synchronization, uncertainty budget, and quality flags. Calibration evidence is measurement traceability only and cannot be relabeled physical validation.",
   "type": "object",
@@ -31,7 +31,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.6.0"
+      "const": "0.7.0"
     },
     "physical_measurement_result_id": {
       "$ref": "#/$defs/identifier"
@@ -44,7 +44,7 @@
       "$ref": "#/$defs/identifier"
     },
     "measurand_definition_ref": {
-      "$ref": "#/$defs/artifact_reference"
+      "$ref": "#/$defs/physical_measurement_result_artifact_reference"
     },
     "result_status": {
       "enum": [
@@ -130,7 +130,7 @@
       "maxItems": 128,
       "uniqueItems": true,
       "items": {
-        "$ref": "#/$defs/artifact_reference"
+        "$ref": "#/$defs/physical_measurement_result_artifact_reference"
       }
     },
     "recorded_at": {
@@ -319,35 +319,6 @@
       "format": "date-time",
       "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
     },
-    "artifact_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "artifact_id",
-        "digest",
-        "media_type"
-      ],
-      "properties": {
-        "artifact_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "byte_digest",
-            "subject": "exact retained artifact or profile document bytes",
-            "algorithm": "sha-256",
-            "profile": "not_a_canonical_object_digest",
-            "status": "accepted_disposition_annotation"
-          }
-        },
-        "media_type": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 255
-        }
-      }
-    },
     "record_reference": {
       "type": "object",
       "additionalProperties": false,
@@ -389,7 +360,7 @@
         {
           "properties": {
             "schema_id": {
-              "const": "urn:odeya:schema:physical-quantity:0.5.0"
+              "const": "urn:odeya:schema:physical-quantity:0.6.0"
             }
           }
         }
@@ -403,7 +374,7 @@
         {
           "properties": {
             "schema_id": {
-              "const": "urn:odeya:schema:uncertainty-budget:0.6.0"
+              "const": "urn:odeya:schema:uncertainty-budget:0.7.0"
             }
           }
         }
@@ -417,39 +388,11 @@
         {
           "properties": {
             "schema_id": {
-              "const": "urn:odeya:schema:asset-configuration-snapshot:0.5.0"
+              "const": "urn:odeya:schema:asset-configuration-snapshot:0.6.0"
             }
           }
         }
       ]
-    },
-    "method_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "method_id",
-        "version",
-        "registry_digest"
-      ],
-      "properties": {
-        "method_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "version": {
-          "type": "string",
-          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
-        },
-        "registry_digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "canonical_object_digest",
-            "domain": "odeya-method-registry-v1",
-            "algorithm": "sha-256",
-            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
-            "status": "prospective_domain_reserved_not_declared"
-          }
-        }
-      }
     },
     "raw_signal": {
       "type": "object",
@@ -472,7 +415,7 @@
         "artifact_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/artifact_reference"
+              "$ref": "#/$defs/physical_measurement_result_artifact_reference"
             },
             {
               "type": "null"
@@ -531,7 +474,7 @@
           "then": {
             "properties": {
               "artifact_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/physical_measurement_result_artifact_reference"
               },
               "byte_digest": {
                 "$ref": "#/$defs/digest",
@@ -594,22 +537,22 @@
       ],
       "properties": {
         "procedure_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/physical_measurement_result_artifact_reference"
         },
         "sampling_method_ref": {
-          "$ref": "#/$defs/method_reference"
+          "$ref": "#/$defs/physical_measurement_result_method_reference"
         },
         "sample_rate_ref": {
           "$ref": "#/$defs/physical_quantity_reference"
         },
         "filter_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/physical_measurement_result_artifact_reference"
         },
         "latency_ref": {
           "$ref": "#/$defs/physical_quantity_reference"
         },
         "synchronization_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/physical_measurement_result_artifact_reference"
         },
         "clock_ref": {
           "$ref": "#/$defs/record_reference"
@@ -624,7 +567,7 @@
           ]
         },
         "acquisition_interval_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/physical_measurement_result_artifact_reference"
         }
       }
     },
@@ -661,7 +604,7 @@
         "image_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/artifact_reference"
+              "$ref": "#/$defs/physical_measurement_result_artifact_reference"
             },
             {
               "type": "null"
@@ -696,7 +639,7 @@
                 "minLength": 1
               },
               "image_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/physical_measurement_result_artifact_reference"
               },
               "reason_codes": {
                 "maxItems": 0
@@ -777,7 +720,7 @@
           "$ref": "#/$defs/physical_quantity_reference"
         },
         "configuration_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/physical_measurement_result_artifact_reference"
         },
         "reason_codes": {
           "type": "array",
@@ -850,7 +793,7 @@
         "certificate_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/artifact_reference"
+              "$ref": "#/$defs/physical_measurement_result_artifact_reference"
             },
             {
               "type": "null"
@@ -862,13 +805,13 @@
           "maxItems": 64,
           "uniqueItems": true,
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/physical_measurement_result_artifact_reference"
           }
         },
         "root_standard_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/artifact_reference"
+              "$ref": "#/$defs/physical_measurement_result_artifact_reference"
             },
             {
               "type": "null"
@@ -932,13 +875,13 @@
           "then": {
             "properties": {
               "certificate_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/physical_measurement_result_artifact_reference"
               },
               "chain_refs": {
                 "minItems": 1
               },
               "root_standard_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/physical_measurement_result_artifact_reference"
               },
               "effective_at": {
                 "$ref": "#/$defs/utc_timestamp"
@@ -985,7 +928,7 @@
         "evidence_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/artifact_reference"
+              "$ref": "#/$defs/physical_measurement_result_artifact_reference"
             },
             {
               "type": "null"
@@ -1019,7 +962,7 @@
           "then": {
             "properties": {
               "evidence_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/physical_measurement_result_artifact_reference"
               }
             }
           },
@@ -1073,6 +1016,63 @@
         },
         "synchronization": {
           "$ref": "#/$defs/quality_flag"
+        }
+      }
+    },
+    "physical_measurement_result_artifact_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "digest",
+        "media_type"
+      ],
+      "properties": {
+        "artifact_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "exact retained artifact or profile document bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        }
+      }
+    },
+    "physical_measurement_result_method_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "method_id",
+        "version",
+        "registry_digest"
+      ],
+      "properties": {
+        "method_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "registry_digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-method-registry-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
         }
       }
     }

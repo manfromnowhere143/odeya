@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:publication-manifest:0.6.0",
+  "$id": "urn:odeya:schema:publication-manifest:0.7.0",
   "title": "Odeya PublicationManifest",
   "description": "An immutable, sealed disclosure package at an exact ledger position. Release settlement is tracked by events and is not embedded in the manifest.",
   "type": "object",
@@ -29,7 +29,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.6.0"
+      "const": "0.7.0"
     },
     "manifest_id": {
       "$ref": "#/$defs/identifier"
@@ -83,7 +83,7 @@
       "minItems": 1,
       "uniqueItems": true,
       "items": {
-        "$ref": "#/$defs/claim_reference"
+        "$ref": "#/$defs/publication_manifest_claim_reference"
       }
     },
     "evidence_package": {
@@ -218,7 +218,7 @@
     "sealed_by": {
       "allOf": [
         {
-          "$ref": "#/$defs/principal"
+          "$ref": "#/$defs/publication_manifest_principal"
         },
         {
           "properties": {
@@ -300,23 +300,6 @@
         }
       }
     },
-    "claim_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "claim_id",
-        "version"
-      ],
-      "properties": {
-        "claim_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "version": {
-          "type": "integer",
-          "minimum": 1
-        }
-      }
-    },
     "method_reference": {
       "type": "object",
       "additionalProperties": false,
@@ -345,7 +328,7 @@
         }
       }
     },
-    "principal": {
+    "publication_manifest_principal": {
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -362,6 +345,23 @@
             "service",
             "organization"
           ]
+        }
+      }
+    },
+    "publication_manifest_claim_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "claim_id",
+        "version"
+      ],
+      "properties": {
+        "claim_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
         }
       }
     }

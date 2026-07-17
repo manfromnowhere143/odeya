@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:claim-correction:0.3.0",
+  "$id": "urn:odeya:schema:claim-correction:0.4.0",
   "title": "Odeya ClaimCorrection",
   "description": "An immutable correction or retraction decision. It preserves superseded claim versions and names every known dependent action; it never edits a prior claim or proves that external projections were updated.",
   "type": "object",
@@ -27,7 +27,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.3.0"
+      "const": "0.4.0"
     },
     "correction_id": {
       "$ref": "#/$defs/identifier"
@@ -82,7 +82,7 @@
           "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
         },
         "detected_by": {
-          "$ref": "#/$defs/principal"
+          "$ref": "#/$defs/claim_correction_principal"
         }
       }
     },
@@ -243,7 +243,7 @@
       "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
     },
     "decided_by": {
-      "$ref": "#/$defs/human_principal"
+      "$ref": "#/$defs/claim_correction_human_principal"
     }
   },
   "allOf": [
@@ -339,7 +339,7 @@
         }
       }
     },
-    "principal": {
+    "claim_correction_principal": {
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -360,7 +360,7 @@
         }
       }
     },
-    "human_principal": {
+    "claim_correction_human_principal": {
       "type": "object",
       "additionalProperties": false,
       "required": [

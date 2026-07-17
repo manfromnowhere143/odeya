@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:physical-quantity:0.5.0",
+  "$id": "urn:odeya:schema:physical-quantity:0.6.0",
   "title": "Odeya PhysicalQuantity",
   "description": "An immutable typed physical quantity. It closes value representation, registered unit, seven-base SI dimension vector, semantic kind, conversion class, and conditional frame/time/spatial support. Structural validity does not resolve the unit registry, execute conversions, or prove frame transforms or uncertainty propagation.",
   "type": "object",
@@ -19,7 +19,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.5.0"
+      "const": "0.6.0"
     },
     "quantity_id": {
       "$ref": "#/$defs/identifier"
@@ -49,7 +49,7 @@
       }
     },
     "provenance_ref": {
-      "$ref": "#/$defs/artifact_reference"
+      "$ref": "#/$defs/physical_quantity_artifact_reference"
     },
     "quantity_digest": {
       "$ref": "#/$defs/digest",
@@ -75,68 +75,6 @@
       "type": "string",
       "format": "date-time",
       "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
-    },
-    "artifact_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "artifact_id",
-        "digest",
-        "media_type"
-      ],
-      "properties": {
-        "artifact_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "byte_digest",
-            "subject": "exact retained artifact or profile document bytes",
-            "algorithm": "sha-256",
-            "profile": "not_a_canonical_object_digest",
-            "status": "accepted_disposition_annotation"
-          }
-        },
-        "media_type": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 255
-        }
-      }
-    },
-    "immutable_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "record_id",
-        "version",
-        "schema_id",
-        "digest"
-      ],
-      "properties": {
-        "record_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "version": {
-          "type": "integer",
-          "minimum": 1
-        },
-        "schema_id": {
-          "type": "string",
-          "pattern": "^urn:odeya:(schema|registry|profile):[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$"
-        },
-        "digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "canonical_object_digest",
-            "domain_resolution": "target_resolved_via_sibling_reference",
-            "algorithm": "sha-256",
-            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
-            "status": "target_resolved_domain"
-          }
-        }
-      }
     },
     "value_alternative": {
       "oneOf": [
@@ -192,7 +130,7 @@
               "const": "distribution_reference"
             },
             "distribution_ref": {
-              "$ref": "#/$defs/immutable_reference"
+              "$ref": "#/$defs/physical_quantity_immutable_reference"
             }
           }
         }
@@ -271,7 +209,7 @@
           ]
         },
         "semantic_definition_ref": {
-          "$ref": "#/$defs/immutable_reference"
+          "$ref": "#/$defs/physical_quantity_immutable_reference"
         }
       }
     },
@@ -323,7 +261,7 @@
               "const": true
             },
             "conversion_method_ref": {
-              "$ref": "#/$defs/immutable_reference"
+              "$ref": "#/$defs/physical_quantity_immutable_reference"
             }
           }
         },
@@ -396,7 +334,7 @@
               "const": false
             },
             "conversion_method_ref": {
-              "$ref": "#/$defs/immutable_reference"
+              "$ref": "#/$defs/physical_quantity_immutable_reference"
             }
           }
         },
@@ -417,10 +355,10 @@
               "const": false
             },
             "conversion_method_ref": {
-              "$ref": "#/$defs/immutable_reference"
+              "$ref": "#/$defs/physical_quantity_immutable_reference"
             },
             "reference_quantity_ref": {
-              "$ref": "#/$defs/immutable_reference"
+              "$ref": "#/$defs/physical_quantity_immutable_reference"
             }
           }
         }
@@ -442,7 +380,7 @@
           "$ref": "#/$defs/identifier"
         },
         "registry_ref": {
-          "$ref": "#/$defs/immutable_reference"
+          "$ref": "#/$defs/physical_quantity_immutable_reference"
         },
         "symbol": {
           "type": "string",
@@ -474,13 +412,13 @@
       ],
       "properties": {
         "frame_ref": {
-          "$ref": "#/$defs/immutable_reference"
+          "$ref": "#/$defs/physical_quantity_immutable_reference"
         },
         "origin_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/physical_quantity_artifact_reference"
         },
         "axes_convention_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/physical_quantity_artifact_reference"
         },
         "handedness": {
           "enum": [
@@ -512,7 +450,7 @@
         "transform_uncertainty_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/immutable_reference"
+              "$ref": "#/$defs/physical_quantity_immutable_reference"
             },
             {
               "type": "null"
@@ -616,7 +554,7 @@
         "clock_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/immutable_reference"
+              "$ref": "#/$defs/physical_quantity_immutable_reference"
             },
             {
               "type": "null"
@@ -655,7 +593,7 @@
                 "type": "null"
               },
               "clock_ref": {
-                "$ref": "#/$defs/immutable_reference"
+                "$ref": "#/$defs/physical_quantity_immutable_reference"
               },
               "time_scale": {
                 "not": {
@@ -685,7 +623,7 @@
                 "$ref": "#/$defs/utc_timestamp"
               },
               "clock_ref": {
-                "$ref": "#/$defs/immutable_reference"
+                "$ref": "#/$defs/physical_quantity_immutable_reference"
               },
               "time_scale": {
                 "not": {
@@ -747,7 +685,7 @@
         "support_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/artifact_reference"
+              "$ref": "#/$defs/physical_quantity_artifact_reference"
             },
             {
               "type": "null"
@@ -757,7 +695,7 @@
         "resolution_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/artifact_reference"
+              "$ref": "#/$defs/physical_quantity_artifact_reference"
             },
             {
               "type": "null"
@@ -790,7 +728,7 @@
           "else": {
             "properties": {
               "support_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/physical_quantity_artifact_reference"
               }
             }
           }
@@ -814,6 +752,68 @@
         },
         "spatial": {
           "$ref": "#/$defs/spatial_support"
+        }
+      }
+    },
+    "physical_quantity_artifact_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "digest",
+        "media_type"
+      ],
+      "properties": {
+        "artifact_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "exact retained artifact or profile document bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        }
+      }
+    },
+    "physical_quantity_immutable_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "record_id",
+        "version",
+        "schema_id",
+        "digest"
+      ],
+      "properties": {
+        "record_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "schema_id": {
+          "type": "string",
+          "pattern": "^urn:odeya:(schema|registry|profile):[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain_resolution": "target_resolved_via_sibling_reference",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "target_resolved_domain"
+          }
         }
       }
     }

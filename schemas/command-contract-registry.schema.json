@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:command-contract-registry:0.6.0",
+  "$id": "urn:odeya:schema:command-contract-registry:0.7.0",
   "title": "Odeya CommandContractRegistry Structural Candidate",
   "description": "A closed structural-only registry candidate over standalone CommandContractRecord subjects. Neither records nor registry are admitted: canonical identity, retained resource closure, cross-record equality, membership proofs, activation evidence, and independent review remain unresolved. The logical payload type and exact schema resource/dialect/blob/canonical/closure identities have distinct fields. Validation resolves only explicitly preloaded local schema resources with network access disabled. A future resource reissue may introduce admitted registry subjects only after all blockers close.",
   "type": "object",
@@ -31,7 +31,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.6.0"
+      "const": "0.7.0"
     },
     "registry_kind": {
       "const": "command_contract_registry"
@@ -126,7 +126,7 @@
       ],
       "properties": {
         "record_schema_resource_id": {
-          "const": "urn:odeya:schema:command-contract-record:0.5.0"
+          "const": "urn:odeya:schema:command-contract-record:0.6.0"
         },
         "resource_loading": {
           "const": "preloaded_exact_resource_id_only"
@@ -153,7 +153,7 @@
         "$ref": "#/$defs/member_key"
       },
       "additionalProperties": {
-        "$ref": "urn:odeya:schema:command-contract-record:0.5.0"
+        "$ref": "urn:odeya:schema:command-contract-record:0.6.0"
       }
     },
     "member_set_commitment": {
@@ -218,13 +218,13 @@
       }
     },
     "source_manifest_ref": {
-      "$ref": "#/$defs/artifact_reference"
+      "$ref": "#/$defs/command_contract_registry_artifact_reference"
     },
     "generator_identity_ref": {
-      "$ref": "#/$defs/artifact_reference"
+      "$ref": "#/$defs/command_contract_registry_artifact_reference"
     },
     "review_evidence_refs": {
-      "$ref": "#/$defs/nonempty_artifact_array"
+      "$ref": "#/$defs/command_contract_registry_nonempty_artifact_array"
     },
     "known_limitations": {
       "type": "array",
@@ -269,43 +269,6 @@
       "type": "string",
       "pattern": "^sha256:[a-f0-9]{64}$"
     },
-    "artifact_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "artifact_id",
-        "digest",
-        "media_type"
-      ],
-      "properties": {
-        "artifact_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "byte_digest",
-            "subject": "exact retained artifact or profile document bytes",
-            "algorithm": "sha-256",
-            "profile": "not_a_canonical_object_digest",
-            "status": "accepted_disposition_annotation"
-          }
-        },
-        "media_type": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 127
-        }
-      }
-    },
-    "nonempty_artifact_array": {
-      "type": "array",
-      "minItems": 1,
-      "uniqueItems": true,
-      "items": {
-        "$ref": "#/$defs/artifact_reference"
-      }
-    },
     "known_limitation": {
       "type": "object",
       "additionalProperties": false,
@@ -337,6 +300,43 @@
           "minLength": 1,
           "maxLength": 2048
         }
+      }
+    },
+    "command_contract_registry_artifact_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "digest",
+        "media_type"
+      ],
+      "properties": {
+        "artifact_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "exact retained artifact or profile document bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 127
+        }
+      }
+    },
+    "command_contract_registry_nonempty_artifact_array": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/command_contract_registry_artifact_reference"
       }
     }
   }

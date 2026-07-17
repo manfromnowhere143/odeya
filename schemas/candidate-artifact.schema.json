@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:candidate-artifact:0.7.0",
+  "$id": "urn:odeya:schema:candidate-artifact:0.8.0",
   "title": "Odeya CandidateArtifact",
   "description": "An immutable, untrusted worker result package. It retains observable receipts and explicit evidence dispositions but has no claim, publication, memory, method-admission, policy, or canonical-event authority.",
   "type": "object",
@@ -36,7 +36,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.7.0"
+      "const": "0.8.0"
     },
     "record_status": {
       "const": "untrusted_candidate"
@@ -52,7 +52,7 @@
       "$ref": "#/$defs/identifier"
     },
     "work_contract": {
-      "$ref": "#/$defs/work_contract_reference"
+      "$ref": "#/$defs/candidate_artifact_work_contract_reference"
     },
     "state_view": {
       "$ref": "#/$defs/research_state_view_reference"
@@ -829,7 +829,7 @@
           "minimum": 1
         },
         "schema_id": {
-          "const": "urn:odeya:schema:research-state-view:0.7.0"
+          "const": "urn:odeya:schema:research-state-view:0.8.0"
         },
         "digest": {
           "$ref": "#/$defs/digest",
@@ -839,42 +839,6 @@
             "algorithm": "sha-256",
             "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
             "status": "target_resolved_domain"
-          }
-        }
-      }
-    },
-    "work_contract_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "record_type",
-        "id",
-        "version",
-        "schema_id",
-        "digest"
-      ],
-      "properties": {
-        "record_type": {
-          "const": "work_contract"
-        },
-        "id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "version": {
-          "type": "integer",
-          "minimum": 1
-        },
-        "schema_id": {
-          "const": "urn:odeya:schema:work-contract:0.1.0"
-        },
-        "digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "canonical_object_digest",
-            "domain": "odeya-work-contract-v1",
-            "algorithm": "sha-256",
-            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
-            "status": "prospective_domain_reserved_not_declared"
           }
         }
       }
@@ -1240,6 +1204,42 @@
         },
         "disposition_evidence_ref": {
           "$ref": "#/$defs/artifact_reference"
+        }
+      }
+    },
+    "candidate_artifact_work_contract_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "record_type",
+        "id",
+        "version",
+        "schema_id",
+        "digest"
+      ],
+      "properties": {
+        "record_type": {
+          "const": "work_contract"
+        },
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "schema_id": {
+          "const": "urn:odeya:schema:work-contract:0.1.0"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-work-contract-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
         }
       }
     }

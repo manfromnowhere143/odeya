@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:data-exposure-record:0.3.0",
+  "$id": "urn:odeya:schema:data-exposure-record:0.4.0",
   "title": "Odeya DataExposureRecord",
   "description": "A discriminated immutable intent, observation, or settlement fact. Intent is not occurrence, observation is not permission, and ambiguity is retained rather than coerced.",
   "type": "object",
@@ -24,7 +24,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.3.0"
+      "const": "0.4.0"
     },
     "exposure_record_id": {
       "$ref": "#/$defs/identifier"
@@ -230,7 +230,7 @@
       }
     },
     "operation": {
-      "$ref": "#/$defs/operation"
+      "$ref": "#/$defs/data_exposure_record_operation_subset"
     },
     "detail": {
       "type": "object"
@@ -243,7 +243,7 @@
       "$ref": "#/$defs/timestamp"
     },
     "recorded_by": {
-      "$ref": "#/$defs/principal"
+      "$ref": "#/$defs/data_exposure_record_principal"
     }
   },
   "allOf": [
@@ -327,47 +327,6 @@
       "type": "string",
       "format": "date-time",
       "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
-    },
-    "operation": {
-      "enum": [
-        "inspect",
-        "transform",
-        "link",
-        "infer",
-        "execute_on",
-        "model_inference",
-        "train",
-        "fine_tune",
-        "embed",
-        "cache",
-        "log",
-        "human_review",
-        "evaluate",
-        "verify",
-        "export",
-        "publish",
-        "support_access"
-      ]
-    },
-    "principal": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "principal_id",
-        "principal_type"
-      ],
-      "properties": {
-        "principal_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "principal_type": {
-          "enum": [
-            "human",
-            "deterministic_service",
-            "provider_adapter"
-          ]
-        }
-      }
     },
     "settlement_principal": {
       "type": "object",
@@ -876,6 +835,47 @@
             }
           }
         }
+      ]
+    },
+    "data_exposure_record_principal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "principal_id",
+        "principal_type"
+      ],
+      "properties": {
+        "principal_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "principal_type": {
+          "enum": [
+            "human",
+            "deterministic_service",
+            "provider_adapter"
+          ]
+        }
+      }
+    },
+    "data_exposure_record_operation_subset": {
+      "enum": [
+        "inspect",
+        "transform",
+        "link",
+        "infer",
+        "execute_on",
+        "model_inference",
+        "train",
+        "fine_tune",
+        "embed",
+        "cache",
+        "log",
+        "human_review",
+        "evaluate",
+        "verify",
+        "export",
+        "publish",
+        "support_access"
       ]
     }
   }

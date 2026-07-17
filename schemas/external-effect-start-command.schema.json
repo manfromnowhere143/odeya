@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:external-effect-start-command:0.6.0",
+  "$id": "urn:odeya:schema:external-effect-start-command:0.7.0",
   "x-odeya-command-payload-id": "urn:odeya:command-payload:external_effect.start:1.0.0",
   "title": "Start External Effect Command Payload",
   "description": "Dispatch-claim inputs. The canonical transaction rechecks and consumes the exact active reservations with external_effect.started before any provider, network, or physical call. Governed processing repeats the exact typed work-contract, data-use, exposure-intent, provider-configuration, source-frontier, purpose, recipient, provider, region, policy, authority, and resource bindings at this later commit. Cross-record effect-class equality and input currentness require semantic validation; schema shape alone proves neither.",
@@ -22,10 +22,10 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.6.0"
+      "const": "0.7.0"
     },
     "effect_id": {
-      "$ref": "#/$defs/identifier"
+      "$ref": "#/$defs/external_effect_start_command_identifier"
     },
     "effect_class": {
       "enum": [
@@ -42,14 +42,14 @@
       "const": "authorized"
     },
     "authorization_event_ref": {
-      "$ref": "#/$defs/identifier"
+      "$ref": "#/$defs/external_effect_start_command_identifier"
     },
     "grant_use_reservation_refs": {
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,
       "items": {
-        "$ref": "#/$defs/identifier"
+        "$ref": "#/$defs/external_effect_start_command_identifier"
       }
     },
     "reservation_set_digest": {
@@ -93,30 +93,30 @@
       }
     },
     "adapter_ref": {
-      "$ref": "#/$defs/versioned_identity"
+      "$ref": "#/$defs/external_effect_start_command_versioned_identity"
     },
     "work_contract_ref": {
-      "$ref": "#/$defs/work_contract_reference"
+      "$ref": "#/$defs/external_effect_start_command_work_contract_reference"
     },
     "data_use_decision_refs": {
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,
       "items": {
-        "$ref": "#/$defs/data_use_decision_reference"
+        "$ref": "#/$defs/external_effect_start_command_data_use_decision_reference"
       }
     },
     "data_exposure_intent_ref": {
-      "$ref": "#/$defs/data_exposure_intent_reference"
+      "$ref": "#/$defs/external_effect_start_command_data_exposure_intent_reference"
     },
     "provider_configuration_observation_ref": {
-      "$ref": "#/$defs/provider_configuration_observation_reference"
+      "$ref": "#/$defs/external_effect_start_command_provider_configuration_observation_reference"
     },
     "dispatch_frontier": {
-      "$ref": "#/$defs/dispatch_frontier"
+      "$ref": "#/$defs/external_effect_start_command_dispatch_frontier"
     },
     "dispatch_binding": {
-      "$ref": "#/$defs/dispatch_binding"
+      "$ref": "#/$defs/external_effect_start_command_dispatch_binding"
     },
     "current_policy_inputs_digest": {
       "$ref": "#/$defs/digest",
@@ -152,7 +152,7 @@
       "type": "array",
       "uniqueItems": true,
       "items": {
-        "$ref": "#/$defs/artifact_reference"
+        "$ref": "#/$defs/external_effect_start_command_artifact_reference"
       }
     }
   },
@@ -235,17 +235,17 @@
     }
   ],
   "$defs": {
-    "identifier": {
+    "digest": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "external_effect_start_command_identifier": {
       "type": "string",
       "minLength": 1,
       "maxLength": 256,
       "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]*$"
     },
-    "digest": {
-      "type": "string",
-      "pattern": "^sha256:[a-f0-9]{64}$"
-    },
-    "artifact_reference": {
+    "external_effect_start_command_artifact_reference": {
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -255,7 +255,7 @@
       ],
       "properties": {
         "artifact_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/external_effect_start_command_identifier"
         },
         "digest": {
           "$ref": "#/$defs/digest",
@@ -274,7 +274,35 @@
         }
       }
     },
-    "schema_bound_record_reference": {
+    "external_effect_start_command_versioned_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "version",
+        "digest"
+      ],
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/external_effect_start_command_identifier"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain_resolution": "target_resolved_via_sibling_reference",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "target_resolved_domain"
+          }
+        }
+      }
+    },
+    "external_effect_start_command_schema_bound_record_reference": {
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -286,7 +314,7 @@
       ],
       "properties": {
         "object_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/external_effect_start_command_identifier"
         },
         "version": {
           "type": "integer",
@@ -307,79 +335,11 @@
           }
         },
         "artifact_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/external_effect_start_command_artifact_reference"
         }
       }
     },
-    "work_contract_reference": {
-      "allOf": [
-        {
-          "$ref": "#/$defs/schema_bound_record_reference"
-        },
-        {
-          "properties": {
-            "schema_id": {
-              "const": "urn:odeya:schema:work-contract:0.1.0"
-            }
-          },
-          "required": [
-            "schema_id"
-          ]
-        }
-      ]
-    },
-    "data_use_decision_reference": {
-      "allOf": [
-        {
-          "$ref": "#/$defs/schema_bound_record_reference"
-        },
-        {
-          "properties": {
-            "schema_id": {
-              "const": "urn:odeya:schema:data-use-decision:0.3.0"
-            }
-          },
-          "required": [
-            "schema_id"
-          ]
-        }
-      ]
-    },
-    "data_exposure_intent_reference": {
-      "allOf": [
-        {
-          "$ref": "#/$defs/schema_bound_record_reference"
-        },
-        {
-          "properties": {
-            "schema_id": {
-              "const": "urn:odeya:schema:data-exposure-record:0.3.0"
-            }
-          },
-          "required": [
-            "schema_id"
-          ]
-        }
-      ]
-    },
-    "ledger_checkpoint_reference": {
-      "allOf": [
-        {
-          "$ref": "#/$defs/schema_bound_record_reference"
-        },
-        {
-          "properties": {
-            "schema_id": {
-              "const": "urn:odeya:schema:ledger-checkpoint:0.7.0"
-            }
-          },
-          "required": [
-            "schema_id"
-          ]
-        }
-      ]
-    },
-    "provider_configuration_observation_reference": {
+    "external_effect_start_command_provider_configuration_observation_reference": {
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -390,7 +350,7 @@
       ],
       "properties": {
         "artifact_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/external_effect_start_command_identifier"
         },
         "digest": {
           "$ref": "#/$defs/digest",
@@ -410,7 +370,7 @@
         }
       }
     },
-    "dispatch_frontier": {
+    "external_effect_start_command_dispatch_frontier": {
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -422,17 +382,17 @@
       ],
       "properties": {
         "source_stream_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/external_effect_start_command_identifier"
         },
         "source_ledger_epoch_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/external_effect_start_command_identifier"
         },
         "source_position": {
           "type": "integer",
           "minimum": 0
         },
         "checkpoint_ref": {
-          "$ref": "#/$defs/ledger_checkpoint_reference"
+          "$ref": "#/$defs/external_effect_start_command_ledger_checkpoint_reference"
         },
         "checkpoint_position": {
           "type": "integer",
@@ -440,7 +400,7 @@
         }
       }
     },
-    "dispatch_binding": {
+    "external_effect_start_command_dispatch_binding": {
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -461,17 +421,17 @@
       ],
       "properties": {
         "purpose_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/external_effect_start_command_identifier"
         },
         "purpose_version": {
           "type": "string",
           "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
         },
         "mission_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/external_effect_start_command_identifier"
         },
         "stage_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/external_effect_start_command_identifier"
         },
         "protocol_digest": {
           "$ref": "#/$defs/digest",
@@ -484,7 +444,7 @@
           }
         },
         "recipient_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/external_effect_start_command_identifier"
         },
         "recipient_class": {
           "enum": [
@@ -497,7 +457,7 @@
           ]
         },
         "provider_id": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/external_effect_start_command_identifier"
         },
         "provider_profile_digest": {
           "$ref": "#/$defs/digest",
@@ -520,10 +480,10 @@
           ]
         },
         "geographic_region": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/external_effect_start_command_identifier"
         },
         "residency_zone": {
-          "$ref": "#/$defs/identifier"
+          "$ref": "#/$defs/external_effect_start_command_identifier"
         },
         "projected_payload_digest": {
           "$ref": "#/$defs/digest",
@@ -547,33 +507,73 @@
         }
       }
     },
-    "versioned_identity": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "name",
-        "version",
-        "digest"
-      ],
-      "properties": {
-        "name": {
-          "$ref": "#/$defs/identifier"
+    "external_effect_start_command_work_contract_reference": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/external_effect_start_command_schema_bound_record_reference"
         },
-        "version": {
-          "type": "string",
-          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
-        },
-        "digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "canonical_object_digest",
-            "domain_resolution": "target_resolved_via_sibling_reference",
-            "algorithm": "sha-256",
-            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
-            "status": "target_resolved_domain"
-          }
+        {
+          "properties": {
+            "schema_id": {
+              "const": "urn:odeya:schema:work-contract:0.1.0"
+            }
+          },
+          "required": [
+            "schema_id"
+          ]
         }
-      }
+      ]
+    },
+    "external_effect_start_command_data_use_decision_reference": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/external_effect_start_command_schema_bound_record_reference"
+        },
+        {
+          "properties": {
+            "schema_id": {
+              "const": "urn:odeya:schema:data-use-decision:0.3.0"
+            }
+          },
+          "required": [
+            "schema_id"
+          ]
+        }
+      ]
+    },
+    "external_effect_start_command_data_exposure_intent_reference": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/external_effect_start_command_schema_bound_record_reference"
+        },
+        {
+          "properties": {
+            "schema_id": {
+              "const": "urn:odeya:schema:data-exposure-record:0.4.0"
+            }
+          },
+          "required": [
+            "schema_id"
+          ]
+        }
+      ]
+    },
+    "external_effect_start_command_ledger_checkpoint_reference": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/external_effect_start_command_schema_bound_record_reference"
+        },
+        {
+          "properties": {
+            "schema_id": {
+              "const": "urn:odeya:schema:ledger-checkpoint:0.8.0"
+            }
+          },
+          "required": [
+            "schema_id"
+          ]
+        }
+      ]
     }
   }
 }

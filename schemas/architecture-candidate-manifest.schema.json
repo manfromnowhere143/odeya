@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:architecture-candidate-manifest:0.4.0",
+  "$id": "urn:odeya:schema:architecture-candidate-manifest:0.5.0",
   "title": "Odeya ArchitectureCandidateManifest",
   "description": "An immutable byte-exact Gate A review scope. Its canonical digest is bound externally to avoid a self-digest cycle. A structurally valid manifest is neither reviewed nor accepted.",
   "type": "object",
@@ -27,7 +27,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.4.0"
+      "const": "0.5.0"
     },
     "manifest_id": {
       "$ref": "#/$defs/identifier"
@@ -82,7 +82,7 @@
           "const": "clean"
         },
         "worktree_evidence_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/architecture_candidate_manifest_artifact_reference"
         }
       }
     },
@@ -161,19 +161,30 @@
       ],
       "properties": {
         "schema_registry": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/architecture_candidate_manifest_artifact_reference"
         },
         "metaschema_set": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/architecture_candidate_manifest_artifact_reference"
         },
         "canonicalization_profile": {
-          "$ref": "#/$defs/artifact_reference"
+          "allOf": [
+            {
+              "$ref": "#/$defs/architecture_candidate_manifest_artifact_reference"
+            },
+            {
+              "properties": {
+                "artifact_id": {
+                  "const": "urn:odeya:canonicalization:odeya-jcs-0.1"
+                }
+              }
+            }
+          ]
         },
         "semantic_rule_registry": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/architecture_candidate_manifest_artifact_reference"
         },
         "method_registry": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/architecture_candidate_manifest_artifact_reference"
         }
       }
     },
@@ -189,10 +200,10 @@
       ],
       "properties": {
         "canonicalization_vectors": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/architecture_candidate_manifest_artifact_reference"
         },
         "semantic_trace_package": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/architecture_candidate_manifest_artifact_reference"
         },
         "structural_validation": {
           "$ref": "#/$defs/result_disposition"
@@ -221,16 +232,16 @@
         ],
         "properties": {
           "model_ref": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/architecture_candidate_manifest_artifact_reference"
           },
           "configuration_ref": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/architecture_candidate_manifest_artifact_reference"
           },
           "tool_identity": {
             "$ref": "#/$defs/versioned_reference"
           },
           "result_ref": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/architecture_candidate_manifest_artifact_reference"
           },
           "result": {
             "$ref": "#/$defs/result_disposition"
@@ -251,17 +262,17 @@
       ],
       "properties": {
         "slice_contract_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/architecture_candidate_manifest_artifact_reference"
         },
         "source_lock_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/architecture_candidate_manifest_artifact_reference"
         },
         "source_snapshot_refs": {
           "type": "array",
           "minItems": 1,
           "uniqueItems": true,
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/architecture_candidate_manifest_artifact_reference"
           }
         },
         "rights_decision_refs": {
@@ -277,11 +288,11 @@
           "minItems": 1,
           "uniqueItems": true,
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/architecture_candidate_manifest_artifact_reference"
           }
         },
         "proof_fixture_root_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/architecture_candidate_manifest_artifact_reference"
         }
       }
     },
@@ -298,22 +309,22 @@
       ],
       "properties": {
         "known_bad": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/architecture_candidate_manifest_artifact_reference"
         },
         "correction": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/architecture_candidate_manifest_artifact_reference"
         },
         "refusal": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/architecture_candidate_manifest_artifact_reference"
         },
         "null_result": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/architecture_candidate_manifest_artifact_reference"
         },
         "supported_result": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/architecture_candidate_manifest_artifact_reference"
         },
         "recovery": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/architecture_candidate_manifest_artifact_reference"
         }
       }
     },
@@ -322,7 +333,7 @@
       "minItems": 1,
       "uniqueItems": true,
       "items": {
-        "$ref": "#/$defs/artifact_reference"
+        "$ref": "#/$defs/architecture_candidate_manifest_artifact_reference"
       }
     },
     "validator_evidence": {
@@ -337,16 +348,16 @@
       ],
       "properties": {
         "validator_code_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/architecture_candidate_manifest_artifact_reference"
         },
         "environment_manifest_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/architecture_candidate_manifest_artifact_reference"
         },
         "dependency_lock_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/architecture_candidate_manifest_artifact_reference"
         },
         "result_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/architecture_candidate_manifest_artifact_reference"
         },
         "result": {
           "$ref": "#/$defs/result_disposition"
@@ -443,7 +454,7 @@
             ],
             "properties": {
               "probe_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/architecture_candidate_manifest_artifact_reference"
               },
               "semantics_frozen": {
                 "const": true
@@ -458,7 +469,7 @@
           }
         },
         "review_packet_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/architecture_candidate_manifest_artifact_reference"
         }
       }
     },
@@ -473,7 +484,7 @@
       ],
       "properties": {
         "schema_id": {
-          "const": "urn:odeya:schema:architecture-candidate-manifest:0.4.0"
+          "const": "urn:odeya:schema:architecture-candidate-manifest:0.5.0"
         },
         "canonicalization_profile_ref": {
           "$ref": "#/$defs/versioned_reference"
@@ -514,7 +525,7 @@
         "signature_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/artifact_reference"
+              "$ref": "#/$defs/architecture_candidate_manifest_artifact_reference"
             },
             {
               "type": "null"
@@ -540,7 +551,7 @@
                 "$ref": "#/$defs/human_principal"
               },
               "signature_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/architecture_candidate_manifest_artifact_reference"
               }
             }
           },
@@ -561,7 +572,7 @@
       "$ref": "#/$defs/timestamp"
     },
     "created_by": {
-      "$ref": "#/$defs/principal"
+      "$ref": "#/$defs/architecture_candidate_manifest_principal"
     }
   },
   "allOf": [
@@ -651,25 +662,6 @@
         "indeterminate"
       ]
     },
-    "principal": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "principal_id",
-        "principal_type"
-      ],
-      "properties": {
-        "principal_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "principal_type": {
-          "enum": [
-            "human",
-            "deterministic_service"
-          ]
-        }
-      }
-    },
     "human_principal": {
       "type": "object",
       "additionalProperties": false,
@@ -683,34 +675,6 @@
         },
         "principal_type": {
           "const": "human"
-        }
-      }
-    },
-    "artifact_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "artifact_id",
-        "digest",
-        "media_type"
-      ],
-      "properties": {
-        "artifact_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "byte_digest",
-            "subject": "exact retained artifact or profile document bytes",
-            "algorithm": "sha-256",
-            "profile": "not_a_canonical_object_digest",
-            "status": "accepted_disposition_annotation"
-          }
-        },
-        "media_type": {
-          "type": "string",
-          "minLength": 1
         }
       }
     },
@@ -825,7 +789,54 @@
           ]
         },
         "evidence_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/architecture_candidate_manifest_artifact_reference"
+        }
+      }
+    },
+    "architecture_candidate_manifest_principal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "principal_id",
+        "principal_type"
+      ],
+      "properties": {
+        "principal_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "principal_type": {
+          "enum": [
+            "human",
+            "deterministic_service"
+          ]
+        }
+      }
+    },
+    "architecture_candidate_manifest_artifact_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "digest",
+        "media_type"
+      ],
+      "properties": {
+        "artifact_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "exact retained artifact or profile document bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1
         }
       }
     }

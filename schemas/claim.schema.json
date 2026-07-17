@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:claim-version:0.8.0",
+  "$id": "urn:odeya:schema:claim-version:0.9.0",
   "title": "Odeya ClaimVersion",
   "description": "An immutable semantic claim version compiled from a proposal and an adjudication. Operational, verification, replication, transport, and publication state remain separate aggregates and are referenced rather than embedded.",
   "type": "object",
@@ -30,7 +30,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.8.0"
+      "const": "0.9.0"
     },
     "claim_id": {
       "$ref": "#/$defs/identifier"
@@ -118,7 +118,7 @@
     "supersedes": {
       "oneOf": [
         {
-          "$ref": "#/$defs/claim_reference"
+          "$ref": "#/$defs/claim_claim_reference"
         },
         {
           "type": "null"
@@ -145,7 +145,7 @@
       "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
     },
     "created_by": {
-      "$ref": "#/$defs/principal"
+      "$ref": "#/$defs/claim_principal"
     }
   },
   "allOf": [
@@ -179,7 +179,7 @@
             "minimum": 2
           },
           "supersedes": {
-            "$ref": "#/$defs/claim_reference"
+            "$ref": "#/$defs/claim_claim_reference"
           },
           "change_reason": {
             "$ref": "#/$defs/artifact_reference"
@@ -405,26 +405,6 @@
         }
       }
     },
-    "principal": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "principal_id",
-        "principal_type"
-      ],
-      "properties": {
-        "principal_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "principal_type": {
-          "enum": [
-            "human",
-            "service",
-            "organization"
-          ]
-        }
-      }
-    },
     "artifact_reference": {
       "type": "object",
       "additionalProperties": false,
@@ -450,23 +430,6 @@
         "media_type": {
           "type": "string",
           "minLength": 1
-        }
-      }
-    },
-    "claim_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "claim_id",
-        "version"
-      ],
-      "properties": {
-        "claim_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "version": {
-          "type": "integer",
-          "minimum": 1
         }
       }
     },
@@ -567,68 +530,6 @@
             "type": "string",
             "minLength": 1
           }
-        }
-      }
-    },
-    "unit": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "system",
-        "code"
-      ],
-      "properties": {
-        "system": {
-          "enum": [
-            "SI",
-            "UCUM",
-            "dimensionless",
-            "domain_registered"
-          ]
-        },
-        "code": {
-          "type": "string",
-          "minLength": 1
-        }
-      }
-    },
-    "quantity": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "value",
-        "unit"
-      ],
-      "properties": {
-        "value": {
-          "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "decimal",
-            "precision",
-            "semantic_type",
-            "unit"
-          ],
-          "properties": {
-            "decimal": {
-              "type": "string",
-              "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
-            },
-            "semantic_type": {
-              "const": "measured_quantity"
-            },
-            "unit": {
-              "type": "string",
-              "minLength": 1
-            },
-            "precision": {
-              "type": "string",
-              "pattern": "^(?:0|[1-9][0-9]{0,2}|exact_lexical)$"
-            }
-          }
-        },
-        "unit": {
-          "$ref": "#/$defs/unit"
         }
       }
     },
@@ -854,6 +755,105 @@
           }
         }
       ]
+    },
+    "claim_principal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "principal_id",
+        "principal_type"
+      ],
+      "properties": {
+        "principal_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "principal_type": {
+          "enum": [
+            "human",
+            "service",
+            "organization"
+          ]
+        }
+      }
+    },
+    "claim_claim_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "claim_id",
+        "version"
+      ],
+      "properties": {
+        "claim_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "claim_unit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "system",
+        "code"
+      ],
+      "properties": {
+        "system": {
+          "enum": [
+            "SI",
+            "UCUM",
+            "dimensionless",
+            "domain_registered"
+          ]
+        },
+        "code": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "claim_quantity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "value",
+        "unit"
+      ],
+      "properties": {
+        "value": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "decimal",
+            "precision",
+            "semantic_type",
+            "unit"
+          ],
+          "properties": {
+            "decimal": {
+              "type": "string",
+              "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+            },
+            "semantic_type": {
+              "const": "measured_quantity"
+            },
+            "unit": {
+              "type": "string",
+              "minLength": 1
+            },
+            "precision": {
+              "type": "string",
+              "pattern": "^(?:0|[1-9][0-9]{0,2}|exact_lexical)$"
+            }
+          }
+        },
+        "unit": {
+          "$ref": "#/$defs/claim_unit"
+        }
+      }
     }
   }
 }

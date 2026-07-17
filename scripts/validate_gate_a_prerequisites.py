@@ -282,7 +282,7 @@ def main() -> int:
         and profile_candidate.get("profile_evidence_ref")
         == "architecture/canonicalization-profile-candidate-evidence.json"
         and profile_candidate.get("profile_core_schema_id")
-        == "urn:odeya:schema:canonicalization-profile-core:0.3.0"
+        == "urn:odeya:schema:canonicalization-profile-core:0.4.0"
         and profile_candidate.get("parameter_status")
         == "candidate_parameters_frozen_for_review_profile_unissued"
         == canonical_profile_core.get("candidate_status")
@@ -338,7 +338,7 @@ def main() -> int:
         require(
             prq008.get("finding_id") == "PRQ-008"
             and prq008.get("status") == "unresolved_blocking"
-            and "urn:odeya:schema:canonical-work-lease:0.6.0" in prq008.get("closure", "")
+            and "urn:odeya:schema:canonical-work-lease:0.7.0" in prq008.get("closure", "")
             and "present_unissued_candidate" in prq008.get("closure", ""),
             "PRQ-008 must expose the present-but-unadmitted canonical WorkLease resource as unresolved_blocking",
             errors,
@@ -415,11 +415,21 @@ def main() -> int:
             "canonical current audit raw digest must match SCHEMA_AUDIT.json",
             errors,
         )
+        # the tranche start is history and stays blocked; the current state
+        # follows the measured audit disposition. Reaching zero once exposed a
+        # gate that could not observe success (ADR 0038); this pairing can see
+        # both worlds while keeping the profile unissued in each.
+        measured_disposition = canonical_audit.get("gate_a_disposition")
+        consistent_current = {
+            "blocked": "blocked",
+            "candidate_clear": "candidate_clear_unissued_pending_gate_a",
+        }.get(measured_disposition)
         require(
             canonical_start.get("profile_status") == "blocked"
-            and canonical_current.get("profile_status") == "blocked"
-            and canonical_audit.get("gate_a_disposition") == "blocked",
-            "canonical profile must remain blocked in start, current, and audit evidence",
+            and consistent_current is not None
+            and canonical_current.get("profile_status") == consistent_current,
+            "canonical profile status must match the measured audit disposition "
+            "while remaining unissued",
             errors,
         )
         require(

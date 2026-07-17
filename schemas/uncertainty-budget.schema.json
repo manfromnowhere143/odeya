@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:uncertainty-budget:0.6.0",
+  "$id": "urn:odeya:schema:uncertainty-budget:0.7.0",
   "title": "Odeya UncertaintyBudget",
   "description": "An immutable uncertainty budget that keeps Type A/Type B evaluation origin separate from aleatory/epistemic nature, retains covariance/correlation and shared-source provenance, and fails closed on incomplete calibration traceability. Structural validity does not prove matrix arithmetic, source independence, calibration truth, or coverage semantics.",
   "type": "object",
@@ -24,7 +24,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.6.0"
+      "const": "0.7.0"
     },
     "uncertainty_budget_id": {
       "$ref": "#/$defs/identifier"
@@ -43,7 +43,7 @@
       }
     },
     "evaluation_method_ref": {
-      "$ref": "#/$defs/method_reference"
+      "$ref": "#/$defs/uncertainty_budget_method_reference"
     },
     "evaluation_origin": {
       "type": "object",
@@ -74,7 +74,7 @@
       "$ref": "#/$defs/dependence_model"
     },
     "calibration_traceability": {
-      "$ref": "#/$defs/calibration_traceability"
+      "$ref": "#/$defs/uncertainty_budget_calibration_traceability"
     },
     "propagation": {
       "$ref": "#/$defs/propagation"
@@ -103,7 +103,7 @@
       "maxItems": 128,
       "uniqueItems": true,
       "items": {
-        "$ref": "#/$defs/artifact_reference"
+        "$ref": "#/$defs/uncertainty_budget_artifact_reference"
       }
     },
     "budget_digest": {
@@ -230,35 +230,6 @@
       "type": "string",
       "pattern": "^sha256:[a-f0-9]{64}$"
     },
-    "artifact_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "artifact_id",
-        "digest",
-        "media_type"
-      ],
-      "properties": {
-        "artifact_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "byte_digest",
-            "subject": "exact retained artifact or profile document bytes",
-            "algorithm": "sha-256",
-            "profile": "not_a_canonical_object_digest",
-            "status": "accepted_disposition_annotation"
-          }
-        },
-        "media_type": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 255
-        }
-      }
-    },
     "record_reference": {
       "type": "object",
       "additionalProperties": false,
@@ -300,39 +271,11 @@
         {
           "properties": {
             "schema_id": {
-              "const": "urn:odeya:schema:physical-quantity:0.5.0"
+              "const": "urn:odeya:schema:physical-quantity:0.6.0"
             }
           }
         }
       ]
-    },
-    "method_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "method_id",
-        "version",
-        "registry_digest"
-      ],
-      "properties": {
-        "method_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "version": {
-          "type": "string",
-          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
-        },
-        "registry_digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "canonical_object_digest",
-            "domain": "odeya-method-registry-v1",
-            "algorithm": "sha-256",
-            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
-            "status": "prospective_domain_reserved_not_declared"
-          }
-        }
-      }
     },
     "contribution": {
       "type": "object",
@@ -371,14 +314,14 @@
           "$ref": "#/$defs/physical_quantity_reference"
         },
         "source_provenance_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/uncertainty_budget_artifact_reference"
         },
         "calibration_chain_member_refs": {
           "type": "array",
           "maxItems": 64,
           "uniqueItems": true,
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/uncertainty_budget_artifact_reference"
           }
         }
       }
@@ -413,10 +356,10 @@
           ]
         },
         "classification_method_ref": {
-          "$ref": "#/$defs/method_reference"
+          "$ref": "#/$defs/uncertainty_budget_method_reference"
         },
         "classification_evidence_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/uncertainty_budget_artifact_reference"
         }
       }
     },
@@ -443,7 +386,7 @@
           }
         },
         "source_provenance_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/uncertainty_budget_artifact_reference"
         },
         "calibration_provenance_refs": {
           "type": "array",
@@ -451,7 +394,7 @@
           "maxItems": 64,
           "uniqueItems": true,
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/uncertainty_budget_artifact_reference"
           }
         }
       }
@@ -553,7 +496,7 @@
           }
         },
         "matrix_unit_rule_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/uncertainty_budget_artifact_reference"
         },
         "shared_source_groups": {
           "type": "array",
@@ -564,109 +507,9 @@
           }
         },
         "provenance_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/uncertainty_budget_artifact_reference"
         }
       }
-    },
-    "calibration_traceability": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "status",
-        "certificate_refs",
-        "chain_refs",
-        "root_standard_ref",
-        "uncertainty_contribution_ids",
-        "reason_codes"
-      ],
-      "properties": {
-        "status": {
-          "enum": [
-            "complete",
-            "incomplete",
-            "unknown"
-          ]
-        },
-        "certificate_refs": {
-          "type": "array",
-          "maxItems": 64,
-          "uniqueItems": true,
-          "items": {
-            "$ref": "#/$defs/artifact_reference"
-          }
-        },
-        "chain_refs": {
-          "type": "array",
-          "maxItems": 64,
-          "uniqueItems": true,
-          "items": {
-            "$ref": "#/$defs/artifact_reference"
-          }
-        },
-        "root_standard_ref": {
-          "oneOf": [
-            {
-              "$ref": "#/$defs/artifact_reference"
-            },
-            {
-              "type": "null"
-            }
-          ]
-        },
-        "uncertainty_contribution_ids": {
-          "type": "array",
-          "maxItems": 128,
-          "uniqueItems": true,
-          "items": {
-            "$ref": "#/$defs/identifier"
-          }
-        },
-        "reason_codes": {
-          "type": "array",
-          "maxItems": 32,
-          "uniqueItems": true,
-          "items": {
-            "$ref": "#/$defs/identifier"
-          }
-        }
-      },
-      "allOf": [
-        {
-          "if": {
-            "properties": {
-              "status": {
-                "const": "complete"
-              }
-            },
-            "required": [
-              "status"
-            ]
-          },
-          "then": {
-            "properties": {
-              "certificate_refs": {
-                "minItems": 1
-              },
-              "chain_refs": {
-                "minItems": 1
-              },
-              "root_standard_ref": {
-                "$ref": "#/$defs/artifact_reference"
-              },
-              "reason_codes": {
-                "maxItems": 0
-              }
-            }
-          },
-          "else": {
-            "properties": {
-              "reason_codes": {
-                "minItems": 1
-              }
-            }
-          }
-        }
-      ]
     },
     "propagation": {
       "type": "object",
@@ -681,7 +524,7 @@
       ],
       "properties": {
         "method_ref": {
-          "$ref": "#/$defs/method_reference"
+          "$ref": "#/$defs/uncertainty_budget_method_reference"
         },
         "regime": {
           "enum": [
@@ -696,7 +539,7 @@
         "jacobian_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/artifact_reference"
+              "$ref": "#/$defs/uncertainty_budget_artifact_reference"
             },
             {
               "type": "null"
@@ -706,7 +549,7 @@
         "distribution_propagation_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/artifact_reference"
+              "$ref": "#/$defs/uncertainty_budget_artifact_reference"
             },
             {
               "type": "null"
@@ -719,7 +562,7 @@
           "maxItems": 64,
           "uniqueItems": true,
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/uncertainty_budget_artifact_reference"
           }
         }
       },
@@ -741,7 +584,7 @@
                 "const": true
               },
               "jacobian_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/uncertainty_budget_artifact_reference"
               },
               "distribution_propagation_ref": {
                 "type": "null"
@@ -763,7 +606,7 @@
           "then": {
             "properties": {
               "distribution_propagation_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/uncertainty_budget_artifact_reference"
               }
             }
           }
@@ -936,6 +779,163 @@
               "distribution_ref": {
                 "type": "null"
               },
+              "reason_codes": {
+                "minItems": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    "uncertainty_budget_artifact_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "digest",
+        "media_type"
+      ],
+      "properties": {
+        "artifact_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "exact retained artifact or profile document bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        }
+      }
+    },
+    "uncertainty_budget_method_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "method_id",
+        "version",
+        "registry_digest"
+      ],
+      "properties": {
+        "method_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "registry_digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-method-registry-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
+        }
+      }
+    },
+    "uncertainty_budget_calibration_traceability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "certificate_refs",
+        "chain_refs",
+        "root_standard_ref",
+        "uncertainty_contribution_ids",
+        "reason_codes"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "complete",
+            "incomplete",
+            "unknown"
+          ]
+        },
+        "certificate_refs": {
+          "type": "array",
+          "maxItems": 64,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/uncertainty_budget_artifact_reference"
+          }
+        },
+        "chain_refs": {
+          "type": "array",
+          "maxItems": 64,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/uncertainty_budget_artifact_reference"
+          }
+        },
+        "root_standard_ref": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/uncertainty_budget_artifact_reference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "uncertainty_contribution_ids": {
+          "type": "array",
+          "maxItems": 128,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "reason_codes": {
+          "type": "array",
+          "maxItems": 32,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "complete"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "certificate_refs": {
+                "minItems": 1
+              },
+              "chain_refs": {
+                "minItems": 1
+              },
+              "root_standard_ref": {
+                "$ref": "#/$defs/uncertainty_budget_artifact_reference"
+              },
+              "reason_codes": {
+                "maxItems": 0
+              }
+            }
+          },
+          "else": {
+            "properties": {
               "reason_codes": {
                 "minItems": 1
               }

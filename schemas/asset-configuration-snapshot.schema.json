@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:asset-configuration-snapshot:0.5.0",
+  "$id": "urn:odeya:schema:asset-configuration-snapshot:0.6.0",
   "title": "Odeya AssetConfigurationSnapshot",
   "description": "An immutable effective-time snapshot of a physical asset. It binds geometry, material, topology, hardware identities, software/firmware, boundary/initial conditions, maintenance/damage/modification, and sensor/calibration state. Missing or unknown hardware blocks in-force applicability and is never interpreted as zero components or success.",
   "type": "object",
@@ -30,7 +30,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.5.0"
+      "const": "0.6.0"
     },
     "asset_configuration_snapshot_id": {
       "$ref": "#/$defs/identifier"
@@ -46,13 +46,13 @@
       "$ref": "#/$defs/effective_interval"
     },
     "geometry_ref": {
-      "$ref": "#/$defs/artifact_reference"
+      "$ref": "#/$defs/asset_configuration_snapshot_artifact_reference"
     },
     "material_manifest_ref": {
-      "$ref": "#/$defs/artifact_reference"
+      "$ref": "#/$defs/asset_configuration_snapshot_artifact_reference"
     },
     "topology_ref": {
-      "$ref": "#/$defs/artifact_reference"
+      "$ref": "#/$defs/asset_configuration_snapshot_artifact_reference"
     },
     "hardware_identity_coverage": {
       "$ref": "#/$defs/hardware_coverage"
@@ -93,10 +93,10 @@
       "$ref": "#/$defs/state_record"
     },
     "sensor_topology_ref": {
-      "$ref": "#/$defs/artifact_reference"
+      "$ref": "#/$defs/asset_configuration_snapshot_artifact_reference"
     },
     "sensor_calibration_state_ref": {
-      "$ref": "#/$defs/artifact_reference"
+      "$ref": "#/$defs/asset_configuration_snapshot_artifact_reference"
     },
     "applicability_disposition": {
       "enum": [
@@ -252,35 +252,6 @@
       "format": "date-time",
       "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
     },
-    "artifact_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "artifact_id",
-        "digest",
-        "media_type"
-      ],
-      "properties": {
-        "artifact_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "byte_digest",
-            "subject": "exact retained artifact or profile document bytes",
-            "algorithm": "sha-256",
-            "profile": "not_a_canonical_object_digest",
-            "status": "accepted_disposition_annotation"
-          }
-        },
-        "media_type": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 255
-        }
-      }
-    },
     "record_reference": {
       "type": "object",
       "additionalProperties": false,
@@ -322,7 +293,7 @@
         {
           "properties": {
             "schema_id": {
-              "const": "urn:odeya:schema:physical-quantity:0.5.0"
+              "const": "urn:odeya:schema:physical-quantity:0.6.0"
             }
           }
         }
@@ -351,7 +322,7 @@
           ]
         },
         "controlled_time_source_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/asset_configuration_snapshot_artifact_reference"
         }
       }
     },
@@ -388,7 +359,7 @@
         "image_ref": {
           "oneOf": [
             {
-              "$ref": "#/$defs/artifact_reference"
+              "$ref": "#/$defs/asset_configuration_snapshot_artifact_reference"
             },
             {
               "type": "null"
@@ -423,7 +394,7 @@
                 "minLength": 1
               },
               "image_ref": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/asset_configuration_snapshot_artifact_reference"
               },
               "reason_codes": {
                 "maxItems": 0
@@ -497,7 +468,7 @@
           ]
         },
         "hardware_manifest_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/asset_configuration_snapshot_artifact_reference"
         },
         "firmware": {
           "$ref": "#/$defs/firmware_binding"
@@ -599,7 +570,7 @@
           }
         },
         "coverage_evidence_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/asset_configuration_snapshot_artifact_reference"
         },
         "reason_codes": {
           "type": "array",
@@ -692,7 +663,7 @@
           "maxLength": 128
         },
         "artifact_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/asset_configuration_snapshot_artifact_reference"
         },
         "role": {
           "enum": [
@@ -728,7 +699,7 @@
           "maxItems": 64,
           "uniqueItems": true,
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/asset_configuration_snapshot_artifact_reference"
           }
         },
         "reason_codes": {
@@ -771,6 +742,35 @@
           }
         }
       ]
+    },
+    "asset_configuration_snapshot_artifact_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "digest",
+        "media_type"
+      ],
+      "properties": {
+        "artifact_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "exact retained artifact or profile document bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        }
+      }
     }
   }
 }

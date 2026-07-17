@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:run-manifest:0.8.0",
+  "$id": "urn:odeya:schema:run-manifest:0.9.0",
   "title": "Odeya RunManifest",
   "description": "An immutable, authorized compilation of one execution attempt family. It binds inputs, code, environment, tools, budgets, controls, and expected outputs; it is not proof that a run occurred or was valid.",
   "type": "object",
@@ -30,7 +30,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.8.0"
+      "const": "0.9.0"
     },
     "run_manifest_id": {
       "$ref": "#/$defs/identifier"
@@ -257,7 +257,7 @@
           "$ref": "#/$defs/artifact_reference"
         },
         "resource_request": {
-          "$ref": "#/$defs/resource_budget"
+          "$ref": "#/$defs/run_manifest_resource_budget"
         }
       }
     },
@@ -429,7 +429,7 @@
       "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
     },
     "sealed_by": {
-      "$ref": "#/$defs/principal"
+      "$ref": "#/$defs/run_manifest_principal"
     }
   },
   "allOf": [
@@ -614,7 +614,30 @@
         }
       }
     },
-    "resource_budget": {
+    "run_manifest_principal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "principal_id",
+        "principal_type",
+        "authority_grant_ref"
+      ],
+      "properties": {
+        "principal_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "principal_type": {
+          "enum": [
+            "human",
+            "service"
+          ]
+        },
+        "authority_grant_ref": {
+          "$ref": "#/$defs/identifier"
+        }
+      }
+    },
+    "run_manifest_resource_budget": {
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -854,29 +877,6 @@
               "const": "2"
             }
           }
-        }
-      }
-    },
-    "principal": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "principal_id",
-        "principal_type",
-        "authority_grant_ref"
-      ],
-      "properties": {
-        "principal_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "principal_type": {
-          "enum": [
-            "human",
-            "service"
-          ]
-        },
-        "authority_grant_ref": {
-          "$ref": "#/$defs/identifier"
         }
       }
     }

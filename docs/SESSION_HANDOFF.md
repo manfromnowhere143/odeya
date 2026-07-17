@@ -485,8 +485,16 @@ zero; 66 findings remain. D6 executed (ADR 0049): the
 decimal family was dead text orphaned by D3 — 19 definitions deleted with
 live-reference refusal; member_key and semantic_version narrowed to one
 canonical form each with known-bad vectors proven to fire. Divergent names
-55 to 50; 61 findings remain. Remaining: D7 (47 structural names, per-name
-judgment), D8 (3 enum vocabularies), then D9 pins strictly last.**
+55 to 50; 61 findings remain. D7+D8+D9 executed (ADR 0050): 201
+rename-distinct moves to fixed point; three closed central vocabularies
+frozen in the core with a fail-closed subset gate; all 11 profile bindings
+pinned against the final core bytes (site-level refinements after
+shared-def pins poisoned siblings and the gates caught it). THE AUDIT IS AT
+ZERO ACROSS ALL SIX CLASSES — 1,222 findings to none, every reissue
+ledgered, every gate migration recorded. The audit reports
+gate_a_disposition candidate_clear; the profile remains UNISSUED pending
+independent review of the executed wave and the operator's exact-byte
+decision, which no session can grant itself.**
 Residue for the reissue wave is recorded in the candidate's
 decimal_closure_residue).
 

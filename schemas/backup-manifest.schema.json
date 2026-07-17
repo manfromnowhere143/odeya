@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:backup-manifest:0.5.0",
+  "$id": "urn:odeya:schema:backup-manifest:0.6.0",
   "title": "Odeya BackupManifest",
   "description": "An immutable manifest for one backup set and its distinct write, verification, and clean-room recoverability states. It identifies encryption keys and recovery policy but can never contain key material.",
   "type": "object",
@@ -25,7 +25,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.5.0"
+      "const": "0.6.0"
     },
     "backup_manifest_id": {
       "$ref": "#/$defs/identifier"
@@ -280,7 +280,7 @@
           "$ref": "#/$defs/identifier"
         },
         "actor": {
-          "$ref": "#/$defs/principal"
+          "$ref": "#/$defs/backup_manifest_principal"
         },
         "tool_ref": {
           "$ref": "#/$defs/artifact_reference"
@@ -364,7 +364,7 @@
       ],
       "properties": {
         "prior_checkpoint_ref": {
-          "$ref": "#/$defs/checkpoint_reference"
+          "$ref": "#/$defs/backup_manifest_checkpoint_reference"
         },
         "first_expected_post_restore_checkpoint_rule_ref": {
           "$ref": "#/$defs/artifact_reference"
@@ -387,7 +387,7 @@
           "$ref": "#/$defs/identifier"
         },
         "observer": {
-          "$ref": "#/$defs/principal"
+          "$ref": "#/$defs/backup_manifest_principal"
         },
         "observation_time": {
           "type": "string",
@@ -470,26 +470,6 @@
         }
       }
     },
-    "principal": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "principal_id",
-        "principal_type"
-      ],
-      "properties": {
-        "principal_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "principal_type": {
-          "enum": [
-            "human",
-            "service",
-            "organization"
-          ]
-        }
-      }
-    },
     "backup_reference": {
       "type": "object",
       "additionalProperties": false,
@@ -514,38 +494,6 @@
             "algorithm": "sha-256",
             "profile": "not_a_canonical_object_digest",
             "status": "accepted_disposition_annotation"
-          }
-        }
-      }
-    },
-    "checkpoint_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "checkpoint_id",
-        "ledger_epoch",
-        "inclusive_global_position",
-        "digest"
-      ],
-      "properties": {
-        "checkpoint_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "ledger_epoch": {
-          "$ref": "#/$defs/identifier"
-        },
-        "inclusive_global_position": {
-          "type": "integer",
-          "minimum": 0
-        },
-        "digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "canonical_object_digest",
-            "domain": "odeya-ledger-checkpoint-v1",
-            "algorithm": "sha-256",
-            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
-            "status": "registered_domain"
           }
         }
       }
@@ -678,6 +626,58 @@
           "type": "string",
           "format": "date-time",
           "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
+        }
+      }
+    },
+    "backup_manifest_checkpoint_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "checkpoint_id",
+        "ledger_epoch",
+        "inclusive_global_position",
+        "digest"
+      ],
+      "properties": {
+        "checkpoint_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "ledger_epoch": {
+          "$ref": "#/$defs/identifier"
+        },
+        "inclusive_global_position": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-ledger-checkpoint-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "registered_domain"
+          }
+        }
+      }
+    },
+    "backup_manifest_principal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "principal_id",
+        "principal_type"
+      ],
+      "properties": {
+        "principal_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "principal_type": {
+          "enum": [
+            "human",
+            "service",
+            "organization"
+          ]
         }
       }
     }

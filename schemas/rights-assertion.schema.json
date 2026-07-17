@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:rights-assertion:0.2.0",
+  "$id": "urn:odeya:schema:rights-assertion:0.3.0",
   "title": "Odeya RightsAssertion",
   "description": "Evidence of a source-provided rights claim. authority_effect is permanently evidence_only_no_permission; only a separate DataUseDecision can authorize use.",
   "type": "object",
@@ -24,7 +24,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.2.0"
+      "const": "0.3.0"
     },
     "assertion_id": {
       "$ref": "#/$defs/identifier"
@@ -224,7 +224,7 @@
       "$ref": "#/$defs/timestamp"
     },
     "recorded_by": {
-      "$ref": "#/$defs/principal"
+      "$ref": "#/$defs/rights_assertion_principal"
     }
   },
   "allOf": [
@@ -332,25 +332,6 @@
         "support_access"
       ]
     },
-    "principal": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "principal_id",
-        "principal_type"
-      ],
-      "properties": {
-        "principal_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "principal_type": {
-          "enum": [
-            "human",
-            "deterministic_service"
-          ]
-        }
-      }
-    },
     "immutable_reference": {
       "type": "object",
       "additionalProperties": false,
@@ -404,6 +385,25 @@
         "media_type": {
           "type": "string",
           "minLength": 1
+        }
+      }
+    },
+    "rights_assertion_principal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "principal_id",
+        "principal_type"
+      ],
+      "properties": {
+        "principal_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "principal_type": {
+          "enum": [
+            "human",
+            "deterministic_service"
+          ]
         }
       }
     }

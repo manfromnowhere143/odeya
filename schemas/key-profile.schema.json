@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:key-profile:0.4.0",
+  "$id": "urn:odeya:schema:key-profile:0.5.0",
   "title": "Odeya KeyProfile",
   "description": "A deployment-neutral cryptographic key-purpose and recovery profile. It contains identifiers and policy, never key bytes, secrets, recovery shares, or credentials.",
   "type": "object",
@@ -24,7 +24,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.4.0"
+      "const": "0.5.0"
     },
     "key_profile_id": {
       "$ref": "#/$defs/identifier"
@@ -179,7 +179,7 @@
       "type": "array",
       "minItems": 1,
       "items": {
-        "$ref": "#/$defs/human_principal"
+        "$ref": "#/$defs/key_profile_human_principal"
       }
     }
   },
@@ -250,26 +250,6 @@
         "media_type": {
           "type": "string",
           "minLength": 1
-        }
-      }
-    },
-    "human_principal": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "principal_id",
-        "principal_type",
-        "authority_assignment_ref"
-      ],
-      "properties": {
-        "principal_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "principal_type": {
-          "const": "human"
-        },
-        "authority_assignment_ref": {
-          "$ref": "#/$defs/digest"
         }
       }
     },
@@ -389,6 +369,26 @@
         },
         "destruction_policy_ref": {
           "$ref": "#/$defs/artifact_reference"
+        }
+      }
+    },
+    "key_profile_human_principal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "principal_id",
+        "principal_type",
+        "authority_assignment_ref"
+      ],
+      "properties": {
+        "principal_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "principal_type": {
+          "const": "human"
+        },
+        "authority_assignment_ref": {
+          "$ref": "#/$defs/digest"
         }
       }
     }

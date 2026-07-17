@@ -38,42 +38,42 @@ RESOURCE_EXPECTED = [
     {
         "resource_role": "work_intent",
         "predecessor_path": "schemas/work-intent.schema.json",
-        "predecessor_schema_id": "urn:odeya:schema:work-intent:0.6.0",
+        "predecessor_schema_id": "urn:odeya:schema:work-intent:0.7.0",
         "successor_path": "schemas/work-intent-profile-bound-candidate.schema.json",
-        "successor_schema_id": "urn:odeya:schema:work-intent:0.15.0",
+        "successor_schema_id": "urn:odeya:schema:work-intent:0.17.0",
         "candidate_path": "architecture/work-intent-profile-bound-candidate.json",
     },
     {
         "resource_role": "canonical_work_lease",
         "predecessor_path": "schemas/canonical-work-lease.schema.json",
-        "predecessor_schema_id": "urn:odeya:schema:canonical-work-lease:0.6.0",
+        "predecessor_schema_id": "urn:odeya:schema:canonical-work-lease:0.7.0",
         "successor_path": "schemas/canonical-work-lease-profile-bound-candidate.schema.json",
-        "successor_schema_id": "urn:odeya:schema:canonical-work-lease:0.11.0",
+        "successor_schema_id": "urn:odeya:schema:canonical-work-lease:0.12.0",
         "candidate_path": "architecture/canonical-work-lease-profile-bound-candidate.json",
     },
     {
         "resource_role": "work_contract",
         "predecessor_path": "schemas/work-contract.schema.json",
-        "predecessor_schema_id": "urn:odeya:schema:work-contract:0.15.0",
+        "predecessor_schema_id": "urn:odeya:schema:work-contract:0.16.0",
         "successor_path": "schemas/work-contract-profile-bound-candidate.schema.json",
-        "successor_schema_id": "urn:odeya:schema:work-contract:0.14.0",
+        "successor_schema_id": "urn:odeya:schema:work-contract:0.15.0",
         "candidate_path": "architecture/work-contract-profile-bound-candidate.json",
     },
 ]
 EXPECTED_EDGES = [
     {
-        "consumer_schema_id": "urn:odeya:schema:work-intent:0.15.0",
+        "consumer_schema_id": "urn:odeya:schema:work-intent:0.17.0",
         "dependency_schema_id": "urn:odeya:schema:work-intent-core:0.1.0",
         "binding": "exact_external_ref_and_raw_schema_digest",
     },
     {
-        "consumer_schema_id": "urn:odeya:schema:canonical-work-lease:0.11.0",
-        "dependency_schema_id": "urn:odeya:schema:work-intent:0.15.0",
+        "consumer_schema_id": "urn:odeya:schema:canonical-work-lease:0.12.0",
+        "dependency_schema_id": "urn:odeya:schema:work-intent:0.17.0",
         "binding": "exact_successor_schema_and_candidate_raw_bytes",
     },
     {
-        "consumer_schema_id": "urn:odeya:schema:work-contract:0.14.0",
-        "dependency_schema_id": "urn:odeya:schema:work-intent:0.15.0",
+        "consumer_schema_id": "urn:odeya:schema:work-contract:0.15.0",
+        "dependency_schema_id": "urn:odeya:schema:work-intent:0.17.0",
         "binding": "exact_successor_schema_and_candidate_raw_bytes",
     },
 ]
@@ -215,7 +215,7 @@ def profile_ref_is_exact(value: Any) -> bool:
     return value == {
         "profile_id": PROFILE_ID,
         "profile_version": "0.1.0",
-        "profile_core_schema_id": "urn:odeya:schema:canonicalization-profile-core:0.3.0",
+        "profile_core_schema_id": "urn:odeya:schema:canonicalization-profile-core:0.4.0",
         "profile_core_raw_digest": raw_binding(PROFILE_CORE)[0],
     }
 
@@ -411,7 +411,7 @@ def evaluate(
         or lease_binding.get("legacy_version") != lease_ref.get("version")
         or lease_binding.get("legacy_digest") != lease_ref.get("digest")
         or lease_binding.get("successor_work_intent_schema_id")
-        != "urn:odeya:schema:work-intent:0.15.0"
+        != "urn:odeya:schema:work-intent:0.17.0"
         or lease_binding.get("successor_work_intent_schema_raw_digest")
         != raw_binding(WORK_INTENT_SCHEMA)[0]
         or lease_binding.get("successor_candidate_raw_digest")
@@ -444,7 +444,7 @@ def evaluate(
         or contract_binding.get("legacy_canonical_digest")
         != contract_ref.get("canonical_digest")
         or contract_binding.get("successor_work_intent_schema_id")
-        != "urn:odeya:schema:work-intent:0.15.0"
+        != "urn:odeya:schema:work-intent:0.17.0"
         or contract_binding.get("successor_work_intent_schema_raw_digest")
         != raw_binding(WORK_INTENT_SCHEMA)[0]
         or contract_binding.get("successor_candidate_raw_digest")

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:authority-grant:0.6.0",
+  "$id": "urn:odeya:schema:authority-grant:0.7.0",
   "title": "Odeya AuthorityGrant",
   "description": "An immutable, bounded permission with an explicit action boundary, consumption point, and reservation policy. Status is derived from issue, reservation, use, expiry, release, and revocation events; JSON Schema does not prove their race order.",
   "type": "object",
@@ -24,7 +24,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.6.0"
+      "const": "0.7.0"
     },
     "grant_id": {
       "$ref": "#/$defs/identifier"
@@ -504,7 +504,7 @@
           }
         },
         "issued_by": {
-          "$ref": "#/$defs/principal"
+          "$ref": "#/$defs/authority_grant_principal"
         }
       }
     },
@@ -773,26 +773,6 @@
         "minLength": 1
       }
     },
-    "principal": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "principal_id",
-        "principal_type"
-      ],
-      "properties": {
-        "principal_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "principal_type": {
-          "enum": [
-            "human",
-            "service",
-            "organization"
-          ]
-        }
-      }
-    },
     "artifact_reference": {
       "type": "object",
       "additionalProperties": false,
@@ -1034,6 +1014,26 @@
               "const": "2"
             }
           }
+        }
+      }
+    },
+    "authority_grant_principal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "principal_id",
+        "principal_type"
+      ],
+      "properties": {
+        "principal_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "principal_type": {
+          "enum": [
+            "human",
+            "service",
+            "organization"
+          ]
         }
       }
     }

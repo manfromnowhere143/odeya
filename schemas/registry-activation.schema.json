@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:registry-activation:0.6.0",
+  "$id": "urn:odeya:schema:registry-activation:0.7.0",
   "title": "Odeya RegistryActivation",
   "description": "An immutable prospective decision selecting one checkpointed EngineContractRoot for a bounded runtime scope. It embeds the nonrecursive P0 constitutional-recovery admission that must already bind non-self-issued root authority, the exact EngineContractRoot and C0 bundle, witnessed checkpoint evidence, and a current fail-closed recovery/fork/quarantine frontier. The activation is downstream of those subjects and cannot issue its own root authority or change any bound subject's meaning. Structural validity does not prove reference equality, signature truth, currentness, or branch ordering.",
   "type": "object",
@@ -30,7 +30,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.6.0"
+      "const": "0.7.0"
     },
     "activation_id": {
       "$ref": "#/$defs/identifier"
@@ -63,7 +63,7 @@
       "$ref": "#/$defs/subject_reference"
     },
     "root_checkpoint_ref": {
-      "$ref": "#/$defs/checkpoint_reference"
+      "$ref": "#/$defs/registry_activation_checkpoint_reference"
     },
     "activation_ledger_binding": {
       "type": "object",
@@ -163,7 +163,7 @@
           }
         },
         "action_profile_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/registry_activation_artifact_reference"
         }
       },
       "allOf": [
@@ -210,7 +210,7 @@
           "$ref": "#/$defs/subject_reference"
         },
         "admitted_command_set_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/registry_activation_artifact_reference"
         },
         "generated_envelope_ref": {
           "$ref": "#/$defs/schema_bytes_reference"
@@ -243,7 +243,7 @@
       ],
       "properties": {
         "handler_set_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/registry_activation_artifact_reference"
         },
         "member_count": {
           "type": "integer",
@@ -264,7 +264,7 @@
           "minItems": 1,
           "uniqueItems": true,
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/registry_activation_artifact_reference"
           }
         },
         "independence_report_refs": {
@@ -272,16 +272,16 @@
           "minItems": 1,
           "uniqueItems": true,
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/registry_activation_artifact_reference"
           }
         }
       }
     },
     "authority_decision_ref": {
-      "$ref": "#/$defs/artifact_reference"
+      "$ref": "#/$defs/registry_activation_artifact_reference"
     },
     "policy_decision_ref": {
-      "$ref": "#/$defs/artifact_reference"
+      "$ref": "#/$defs/registry_activation_artifact_reference"
     },
     "controlled_time_window": {
       "type": "object",
@@ -310,7 +310,7 @@
           ]
         },
         "controlled_time_evidence_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/registry_activation_artifact_reference"
         }
       }
     },
@@ -329,11 +329,11 @@
       "minItems": 1,
       "uniqueItems": true,
       "items": {
-        "$ref": "#/$defs/artifact_reference"
+        "$ref": "#/$defs/registry_activation_artifact_reference"
       }
     },
     "activation_digest_contract": {
-      "$ref": "#/$defs/digest_contract"
+      "$ref": "#/$defs/registry_activation_digest_contract"
     },
     "activation_digest": {
       "$ref": "#/$defs/digest",
@@ -350,7 +350,7 @@
       "minItems": 1,
       "uniqueItems": true,
       "items": {
-        "$ref": "#/$defs/attestation"
+        "$ref": "#/$defs/registry_activation_attestation"
       }
     }
   },
@@ -495,47 +495,6 @@
         }
       }
     },
-    "checkpoint_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "checkpoint_id",
-        "version",
-        "schema_id",
-        "ledger_epoch",
-        "inclusive_global_position",
-        "digest"
-      ],
-      "properties": {
-        "checkpoint_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "version": {
-          "type": "integer",
-          "minimum": 1
-        },
-        "schema_id": {
-          "const": "urn:odeya:schema:ledger-checkpoint:0.7.0"
-        },
-        "ledger_epoch": {
-          "$ref": "#/$defs/identifier"
-        },
-        "inclusive_global_position": {
-          "type": "integer",
-          "minimum": 0
-        },
-        "digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "canonical_object_digest",
-            "domain": "odeya-ledger-checkpoint-v1",
-            "algorithm": "sha-256",
-            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
-            "status": "registered_domain"
-          }
-        }
-      }
-    },
     "root_authority_manifest_reference": {
       "allOf": [
         {
@@ -544,35 +503,7 @@
         {
           "properties": {
             "schema_id": {
-              "const": "urn:odeya:schema:root-authority-manifest:0.3.0"
-            }
-          }
-        }
-      ]
-    },
-    "engine_contract_root_reference": {
-      "allOf": [
-        {
-          "$ref": "#/$defs/subject_reference"
-        },
-        {
-          "properties": {
-            "schema_id": {
-              "const": "urn:odeya:schema:engine-contract-root:0.5.0"
-            }
-          }
-        }
-      ]
-    },
-    "c0_registry_bundle_reference": {
-      "allOf": [
-        {
-          "$ref": "#/$defs/subject_reference"
-        },
-        {
-          "properties": {
-            "schema_id": {
-              "const": "urn:odeya:schema:c0-registry-bundle:0.5.0"
+              "const": "urn:odeya:schema:root-authority-manifest:0.4.0"
             }
           }
         }
@@ -596,7 +527,7 @@
           "$ref": "#/$defs/identifier"
         },
         "observation_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/registry_activation_artifact_reference"
         },
         "checkpoint_digest": {
           "$ref": "#/$defs/digest",
@@ -682,7 +613,7 @@
               "$ref": "#/$defs/root_authority_manifest_reference"
             },
             "constitutional_assignment_ref": {
-              "$ref": "#/$defs/artifact_reference"
+              "$ref": "#/$defs/registry_activation_artifact_reference"
             },
             "issuer_principal_id": {
               "$ref": "#/$defs/identifier"
@@ -701,15 +632,15 @@
               "const": false
             },
             "authority_chain_verification_ref": {
-              "$ref": "#/$defs/artifact_reference"
+              "$ref": "#/$defs/registry_activation_artifact_reference"
             }
           }
         },
         "engine_contract_root_ref": {
-          "$ref": "#/$defs/engine_contract_root_reference"
+          "$ref": "#/$defs/registry_activation_engine_contract_root_reference"
         },
         "c0_registry_bundle_ref": {
-          "$ref": "#/$defs/c0_registry_bundle_reference"
+          "$ref": "#/$defs/registry_activation_c0_registry_bundle_reference"
         },
         "witnessed_checkpoint_binding": {
           "type": "object",
@@ -726,16 +657,16 @@
           ],
           "properties": {
             "checkpoint_ref": {
-              "$ref": "#/$defs/checkpoint_reference"
+              "$ref": "#/$defs/registry_activation_checkpoint_reference"
             },
             "signature_verification_ref": {
-              "$ref": "#/$defs/artifact_reference"
+              "$ref": "#/$defs/registry_activation_artifact_reference"
             },
             "witness_policy_ref": {
-              "$ref": "#/$defs/artifact_reference"
+              "$ref": "#/$defs/registry_activation_artifact_reference"
             },
             "witness_quorum_ref": {
-              "$ref": "#/$defs/artifact_reference"
+              "$ref": "#/$defs/registry_activation_artifact_reference"
             },
             "witness_observations": {
               "type": "array",
@@ -755,7 +686,7 @@
               "type": "array",
               "maxItems": 0,
               "items": {
-                "$ref": "#/$defs/artifact_reference"
+                "$ref": "#/$defs/registry_activation_artifact_reference"
               }
             }
           }
@@ -788,7 +719,7 @@
           ],
           "properties": {
             "frontier_ref": {
-              "$ref": "#/$defs/artifact_reference"
+              "$ref": "#/$defs/registry_activation_artifact_reference"
             },
             "ledger_epoch": {
               "$ref": "#/$defs/identifier"
@@ -849,7 +780,7 @@
             "recovery_decision_ref": {
               "oneOf": [
                 {
-                  "$ref": "#/$defs/artifact_reference"
+                  "$ref": "#/$defs/registry_activation_artifact_reference"
                 },
                 {
                   "type": "null"
@@ -857,7 +788,7 @@
               ]
             },
             "frontier_verification_ref": {
-              "$ref": "#/$defs/artifact_reference"
+              "$ref": "#/$defs/registry_activation_artifact_reference"
             },
             "publication_enabled": {
               "const": false
@@ -912,7 +843,7 @@
                     "const": "constitutional_recovery_decision"
                   },
                   "recovery_decision_ref": {
-                    "$ref": "#/$defs/artifact_reference"
+                    "$ref": "#/$defs/registry_activation_artifact_reference"
                   }
                 }
               }
@@ -924,7 +855,7 @@
           "minItems": 2,
           "uniqueItems": true,
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/registry_activation_artifact_reference"
           }
         },
         "p0_digest_contract": {
@@ -939,35 +870,6 @@
             "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
             "status": "registered_domain"
           }
-        }
-      }
-    },
-    "artifact_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "artifact_id",
-        "digest",
-        "media_type"
-      ],
-      "properties": {
-        "artifact_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "byte_digest",
-            "subject": "exact retained artifact or profile document bytes",
-            "algorithm": "sha-256",
-            "profile": "not_a_canonical_object_digest",
-            "status": "accepted_disposition_annotation"
-          }
-        },
-        "media_type": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 127
         }
       }
     },
@@ -1059,7 +961,165 @@
         }
       }
     },
-    "digest_contract": {
+    "p0_digest_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "algorithm",
+        "domain_separator",
+        "canonicalization_profile_ref",
+        "parent_schema_ref",
+        "subject_json_pointer",
+        "included_json_pointers",
+        "excluded_json_pointers"
+      ],
+      "properties": {
+        "algorithm": {
+          "const": "sha256"
+        },
+        "domain_separator": {
+          "const": "odeya-p0-constitutional-recovery-admission-v1"
+        },
+        "canonicalization_profile_ref": {
+          "$ref": "#/$defs/profile_reference"
+        },
+        "parent_schema_ref": {
+          "$ref": "#/$defs/schema_reference"
+        },
+        "subject_json_pointer": {
+          "const": "/p0_constitutional_recovery_admission"
+        },
+        "included_json_pointers": {
+          "type": "array",
+          "minItems": 11,
+          "maxItems": 11,
+          "prefixItems": [
+            {
+              "const": "/prerequisite_id"
+            },
+            {
+              "const": "/version"
+            },
+            {
+              "const": "/admission_status"
+            },
+            {
+              "const": "/nonrecursive_boundary"
+            },
+            {
+              "const": "/root_authority_binding"
+            },
+            {
+              "const": "/engine_contract_root_ref"
+            },
+            {
+              "const": "/c0_registry_bundle_ref"
+            },
+            {
+              "const": "/witnessed_checkpoint_binding"
+            },
+            {
+              "const": "/current_recovery_frontier"
+            },
+            {
+              "const": "/admission_evidence_refs"
+            },
+            {
+              "const": "/p0_digest_contract"
+            }
+          ],
+          "items": false
+        },
+        "excluded_json_pointers": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "prefixItems": [
+            {
+              "const": "/p0_digest"
+            }
+          ],
+          "items": false
+        }
+      }
+    },
+    "registry_activation_artifact_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "digest",
+        "media_type"
+      ],
+      "properties": {
+        "artifact_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "exact retained artifact or profile document bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 127
+        }
+      }
+    },
+    "registry_activation_attestation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "attestation_id",
+        "signer_id",
+        "purpose",
+        "algorithm",
+        "key_id",
+        "signed_digest",
+        "signature"
+      ],
+      "properties": {
+        "attestation_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "signer_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "purpose": {
+          "const": "registry_activation"
+        },
+        "algorithm": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "key_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "signed_digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-registry-activation-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "registered_domain"
+          }
+        },
+        "signature": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 8192
+        }
+      }
+    },
+    "registry_activation_digest_contract": {
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -1164,132 +1224,72 @@
         }
       }
     },
-    "p0_digest_contract": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "algorithm",
-        "domain_separator",
-        "canonicalization_profile_ref",
-        "parent_schema_ref",
-        "subject_json_pointer",
-        "included_json_pointers",
-        "excluded_json_pointers"
-      ],
-      "properties": {
-        "algorithm": {
-          "const": "sha256"
+    "registry_activation_engine_contract_root_reference": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/subject_reference"
         },
-        "domain_separator": {
-          "const": "odeya-p0-constitutional-recovery-admission-v1"
-        },
-        "canonicalization_profile_ref": {
-          "$ref": "#/$defs/profile_reference"
-        },
-        "parent_schema_ref": {
-          "$ref": "#/$defs/schema_reference"
-        },
-        "subject_json_pointer": {
-          "const": "/p0_constitutional_recovery_admission"
-        },
-        "included_json_pointers": {
-          "type": "array",
-          "minItems": 11,
-          "maxItems": 11,
-          "prefixItems": [
-            {
-              "const": "/prerequisite_id"
-            },
-            {
-              "const": "/version"
-            },
-            {
-              "const": "/admission_status"
-            },
-            {
-              "const": "/nonrecursive_boundary"
-            },
-            {
-              "const": "/root_authority_binding"
-            },
-            {
-              "const": "/engine_contract_root_ref"
-            },
-            {
-              "const": "/c0_registry_bundle_ref"
-            },
-            {
-              "const": "/witnessed_checkpoint_binding"
-            },
-            {
-              "const": "/current_recovery_frontier"
-            },
-            {
-              "const": "/admission_evidence_refs"
-            },
-            {
-              "const": "/p0_digest_contract"
+        {
+          "properties": {
+            "schema_id": {
+              "const": "urn:odeya:schema:engine-contract-root:0.6.0"
             }
-          ],
-          "items": false
-        },
-        "excluded_json_pointers": {
-          "type": "array",
-          "minItems": 1,
-          "maxItems": 1,
-          "prefixItems": [
-            {
-              "const": "/p0_digest"
-            }
-          ],
-          "items": false
+          }
         }
-      }
+      ]
     },
-    "attestation": {
+    "registry_activation_c0_registry_bundle_reference": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/subject_reference"
+        },
+        {
+          "properties": {
+            "schema_id": {
+              "const": "urn:odeya:schema:c0-registry-bundle:0.6.0"
+            }
+          }
+        }
+      ]
+    },
+    "registry_activation_checkpoint_reference": {
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "attestation_id",
-        "signer_id",
-        "purpose",
-        "algorithm",
-        "key_id",
-        "signed_digest",
-        "signature"
+        "checkpoint_id",
+        "version",
+        "schema_id",
+        "ledger_epoch",
+        "inclusive_global_position",
+        "digest"
       ],
       "properties": {
-        "attestation_id": {
+        "checkpoint_id": {
           "$ref": "#/$defs/identifier"
         },
-        "signer_id": {
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "schema_id": {
+          "const": "urn:odeya:schema:ledger-checkpoint:0.8.0"
+        },
+        "ledger_epoch": {
           "$ref": "#/$defs/identifier"
         },
-        "purpose": {
-          "const": "registry_activation"
+        "inclusive_global_position": {
+          "type": "integer",
+          "minimum": 0
         },
-        "algorithm": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 64
-        },
-        "key_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "signed_digest": {
+        "digest": {
           "$ref": "#/$defs/digest",
           "x-odeya-digest-scope": {
             "kind": "canonical_object_digest",
-            "domain": "odeya-registry-activation-v1",
+            "domain": "odeya-ledger-checkpoint-v1",
             "algorithm": "sha-256",
             "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
             "status": "registered_domain"
           }
-        },
-        "signature": {
-          "type": "string",
-          "minLength": 16,
-          "maxLength": 8192
         }
       }
     }

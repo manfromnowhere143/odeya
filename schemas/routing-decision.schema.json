@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:routing-decision:0.4.0",
+  "$id": "urn:odeya:schema:routing-decision:0.5.0",
   "title": "Odeya RoutingDecision",
   "description": "A retained, non-authoritative routing determination over one exact candidate set, task profile, evidence frontier, policy, resource envelope, and validity window. Selection never authorizes dispatch, spend, data exposure, scientific admission, or verification independence.",
   "type": "object",
@@ -28,7 +28,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.4.0"
+      "const": "0.5.0"
     },
     "record_status": {
       "const": "derived_non_authoritative_determination"
@@ -172,7 +172,7 @@
           "$ref": "#/$defs/immutable_reference"
         },
         "execution_budget": {
-          "$ref": "#/$defs/execution_budget"
+          "$ref": "#/$defs/routing_decision_execution_budget"
         },
         "verification_capacity_ref": {
           "$ref": "#/$defs/immutable_reference"
@@ -209,7 +209,7 @@
           "type": "boolean"
         },
         "search_evidence_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/routing_decision_artifact_reference"
         },
         "omitted_candidate_refs": {
           "type": "array",
@@ -366,10 +366,10 @@
           "$ref": "#/$defs/immutable_reference"
         },
         "pareto_frontier_evidence_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/routing_decision_artifact_reference"
         },
         "sensitivity_evidence_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/routing_decision_artifact_reference"
         },
         "reason_codes": {
           "type": "array",
@@ -678,7 +678,7 @@
       "$ref": "#/$defs/controlled_time"
     },
     "decided_by": {
-      "$ref": "#/$defs/principal"
+      "$ref": "#/$defs/routing_decision_principal"
     }
   },
   "allOf": [
@@ -901,55 +901,6 @@
         }
       }
     },
-    "artifact_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "artifact_id",
-        "digest",
-        "media_type"
-      ],
-      "properties": {
-        "artifact_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "byte_digest",
-            "subject": "exact retained artifact or profile document bytes",
-            "algorithm": "sha-256",
-            "profile": "not_a_canonical_object_digest",
-            "status": "accepted_disposition_annotation"
-          }
-        },
-        "media_type": {
-          "type": "string",
-          "pattern": "^[a-z0-9.+-]+/[a-z0-9.+-]+$"
-        }
-      }
-    },
-    "principal": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "principal_id",
-        "principal_type"
-      ],
-      "properties": {
-        "principal_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "principal_type": {
-          "enum": [
-            "human",
-            "service",
-            "model_worker",
-            "external_system"
-          ]
-        }
-      }
-    },
     "controlled_time": {
       "type": "object",
       "additionalProperties": false,
@@ -1006,54 +957,6 @@
         }
       }
     },
-    "execution_budget": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "model_input_tokens",
-        "model_output_tokens",
-        "tool_calls",
-        "cpu_time",
-        "gpu_time",
-        "peak_memory",
-        "storage",
-        "network_egress",
-        "wall_time",
-        "spend"
-      ],
-      "properties": {
-        "model_input_tokens": {
-          "$ref": "#/$defs/resource_amount"
-        },
-        "model_output_tokens": {
-          "$ref": "#/$defs/resource_amount"
-        },
-        "tool_calls": {
-          "$ref": "#/$defs/resource_amount"
-        },
-        "cpu_time": {
-          "$ref": "#/$defs/resource_amount"
-        },
-        "gpu_time": {
-          "$ref": "#/$defs/resource_amount"
-        },
-        "peak_memory": {
-          "$ref": "#/$defs/resource_amount"
-        },
-        "storage": {
-          "$ref": "#/$defs/resource_amount"
-        },
-        "network_egress": {
-          "$ref": "#/$defs/resource_amount"
-        },
-        "wall_time": {
-          "$ref": "#/$defs/resource_amount"
-        },
-        "spend": {
-          "$ref": "#/$defs/resource_amount"
-        }
-      }
-    },
     "constraint_result": {
       "type": "object",
       "additionalProperties": false,
@@ -1095,7 +998,7 @@
           "minItems": 1,
           "uniqueItems": true,
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/routing_decision_artifact_reference"
           }
         },
         "reason_codes": {
@@ -1251,7 +1154,7 @@
           "type": "array",
           "uniqueItems": true,
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/routing_decision_artifact_reference"
           }
         },
         "reason_codes": {
@@ -1876,6 +1779,103 @@
           }
         }
       ]
+    },
+    "routing_decision_artifact_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "digest",
+        "media_type"
+      ],
+      "properties": {
+        "artifact_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "exact retained artifact or profile document bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
+        },
+        "media_type": {
+          "type": "string",
+          "pattern": "^[a-z0-9.+-]+/[a-z0-9.+-]+$"
+        }
+      }
+    },
+    "routing_decision_principal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "principal_id",
+        "principal_type"
+      ],
+      "properties": {
+        "principal_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "principal_type": {
+          "enum": [
+            "human",
+            "service",
+            "model_worker",
+            "external_system"
+          ]
+        }
+      }
+    },
+    "routing_decision_execution_budget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "model_input_tokens",
+        "model_output_tokens",
+        "tool_calls",
+        "cpu_time",
+        "gpu_time",
+        "peak_memory",
+        "storage",
+        "network_egress",
+        "wall_time",
+        "spend"
+      ],
+      "properties": {
+        "model_input_tokens": {
+          "$ref": "#/$defs/resource_amount"
+        },
+        "model_output_tokens": {
+          "$ref": "#/$defs/resource_amount"
+        },
+        "tool_calls": {
+          "$ref": "#/$defs/resource_amount"
+        },
+        "cpu_time": {
+          "$ref": "#/$defs/resource_amount"
+        },
+        "gpu_time": {
+          "$ref": "#/$defs/resource_amount"
+        },
+        "peak_memory": {
+          "$ref": "#/$defs/resource_amount"
+        },
+        "storage": {
+          "$ref": "#/$defs/resource_amount"
+        },
+        "network_egress": {
+          "$ref": "#/$defs/resource_amount"
+        },
+        "wall_time": {
+          "$ref": "#/$defs/resource_amount"
+        },
+        "spend": {
+          "$ref": "#/$defs/resource_amount"
+        }
+      }
     }
   }
 }

@@ -1,33 +1,34 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:canonicalization-profile-core:0.3.0",
+  "$id": "urn:odeya:schema:canonicalization-profile-core:0.4.0",
   "title": "Odeya Canonicalization Profile Core Candidate",
   "description": "Closed architecture-time parameters for the proposed odeya-jcs-0.1 profile. This core has no self-digest, acceptance, registry membership, Gate A authority, or runtime authority; an external candidate-evidence record binds its exact raw bytes.",
   "type": "object",
   "additionalProperties": false,
   "required": [
-    "schema_version",
     "artifact_class",
-    "profile_id",
-    "profile_version",
-    "candidate_status",
+    "authority_boundary",
     "bootstrap_boundary",
-    "parser_contract",
-    "serialization_contract",
+    "candidate_status",
     "canonical_envelope_contract",
     "canonical_object_digest_contract",
-    "prospective_profile_reference_contract",
-    "timestamp_contract",
-    "scientific_decimal_contract",
     "collection_contract",
     "domain_registry",
-    "version_axes",
-    "authority_boundary",
-    "prospective_domain_registry"
+    "enum_vocabularies",
+    "parser_contract",
+    "profile_id",
+    "profile_version",
+    "prospective_domain_registry",
+    "prospective_profile_reference_contract",
+    "schema_version",
+    "scientific_decimal_contract",
+    "serialization_contract",
+    "timestamp_contract",
+    "version_axes"
   ],
   "properties": {
     "schema_version": {
-      "const": "0.3.0"
+      "const": "0.4.0"
     },
     "artifact_class": {
       "const": "canonicalization_profile_core_candidate"
@@ -326,7 +327,7 @@
             "kind": "canonical_object_digest",
             "subject": "canonicalization_profile_core_candidate",
             "profile": "unissued",
-            "schema": "urn:odeya:schema:canonicalization-profile-core:0.3.0",
+            "schema": "urn:odeya:schema:canonicalization-profile-core:0.4.0",
             "algorithm": "sha-256",
             "status": "not_constructible_until_profile_acceptance"
           }
@@ -375,7 +376,7 @@
           "const": "0.1.0"
         },
         "profile_core_schema_id": {
-          "const": "urn:odeya:schema:canonicalization-profile-core:0.3.0"
+          "const": "urn:odeya:schema:canonicalization-profile-core:0.4.0"
         },
         "profile_core_raw_digest_lexical_form": {
           "const": "sha256_colon_64_lowercase_hex"
@@ -704,6 +705,87 @@
       "maxItems": 96,
       "items": {
         "$ref": "#/$defs/prospective_domain_registration"
+      }
+    },
+    "enum_vocabularies": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "claim_type",
+        "operation",
+        "scientific_outcome"
+      ],
+      "properties": {
+        "claim_type": {
+          "const": [
+            "agent_comparison",
+            "associational",
+            "causal",
+            "descriptive",
+            "equivalence",
+            "evidence_synthesis",
+            "measurement",
+            "noninferiority",
+            "optimization",
+            "physical_validation",
+            "predictive",
+            "safety",
+            "safety_reliability",
+            "value"
+          ]
+        },
+        "operation": {
+          "const": [
+            "acquire",
+            "cache",
+            "embed",
+            "evaluate",
+            "execute_on",
+            "export",
+            "fine_tune",
+            "human_review",
+            "infer",
+            "inspect",
+            "link",
+            "log",
+            "model_inference",
+            "publish",
+            "support_access",
+            "train",
+            "transform",
+            "verify"
+          ]
+        },
+        "scientific_outcome": {
+          "const": [
+            "association_not_supported",
+            "association_supported",
+            "blocked",
+            "causal_effect_not_supported",
+            "causal_effect_supported",
+            "contradicted",
+            "equivalent",
+            "estimate_reported",
+            "falsified",
+            "incomplete",
+            "inconclusive",
+            "indeterminate",
+            "invalid",
+            "noninferior",
+            "not_equivalent",
+            "not_noninferior",
+            "null_result",
+            "optimization_not_supported",
+            "optimization_supported",
+            "physical_validation_failed",
+            "physically_validated_under_scope",
+            "predictive_performance_not_supported",
+            "predictive_performance_supported",
+            "safe_under_scope",
+            "safety_bound_exceeded",
+            "supported_within_scope"
+          ]
+        }
       }
     }
   },

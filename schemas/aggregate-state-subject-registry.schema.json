@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:aggregate-state-subject-registry:0.5.0",
+  "$id": "urn:odeya:schema:aggregate-state-subject-registry:0.6.0",
   "title": "Odeya AggregateStateSubjectRegistry",
   "description": "An immutable map from aggregate type to its exact canonical state subject contract. It fixes retained state-schema bytes, origin-from-absence, version/head/root rules, and one reducer owner without embedding snapshots, activations, checkpoints, current state, or signatures in member identity.",
   "type": "object",
@@ -28,7 +28,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.5.0"
+      "const": "0.6.0"
     },
     "registry_kind": {
       "const": "aggregate_state_subject_registry"
@@ -140,13 +140,13 @@
       "$ref": "#/$defs/historical_read_policy"
     },
     "source_manifest_ref": {
-      "$ref": "#/$defs/artifact_reference"
+      "$ref": "#/$defs/aggregate_state_subject_registry_artifact_reference"
     },
     "generator_identity_ref": {
-      "$ref": "#/$defs/artifact_reference"
+      "$ref": "#/$defs/aggregate_state_subject_registry_artifact_reference"
     },
     "review_evidence_refs": {
-      "$ref": "#/$defs/nonempty_artifact_array"
+      "$ref": "#/$defs/aggregate_state_subject_registry_nonempty_artifact_array"
     },
     "known_limitations": {
       "type": "array",
@@ -249,43 +249,6 @@
         }
       }
     },
-    "artifact_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "artifact_id",
-        "digest",
-        "media_type"
-      ],
-      "properties": {
-        "artifact_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "byte_digest",
-            "subject": "exact retained artifact or profile document bytes",
-            "algorithm": "sha-256",
-            "profile": "not_a_canonical_object_digest",
-            "status": "accepted_disposition_annotation"
-          }
-        },
-        "media_type": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 127
-        }
-      }
-    },
-    "nonempty_artifact_array": {
-      "type": "array",
-      "minItems": 1,
-      "uniqueItems": true,
-      "items": {
-        "$ref": "#/$defs/artifact_reference"
-      }
-    },
     "rule_reference": {
       "type": "object",
       "additionalProperties": false,
@@ -309,63 +272,6 @@
             "algorithm": "sha-256",
             "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
             "status": "prospective_domain_reserved_not_declared"
-          }
-        }
-      }
-    },
-    "schema_bytes_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "schema_member_key",
-        "schema_id",
-        "semantic_version",
-        "byte_digest",
-        "byte_count",
-        "dialect",
-        "root_json_type",
-        "schema_member_digest"
-      ],
-      "properties": {
-        "schema_member_key": {
-          "type": "string",
-          "pattern": "^[a-z0-9][a-z0-9._:-]{1,191}@(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
-        },
-        "schema_id": {
-          "type": "string",
-          "format": "uri"
-        },
-        "semantic_version": {
-          "$ref": "#/$defs/semantic_version"
-        },
-        "byte_digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "byte_digest",
-            "subject": "retained raw bytes",
-            "algorithm": "sha-256",
-            "profile": "not_a_canonical_object_digest",
-            "status": "accepted_disposition_annotation"
-          }
-        },
-        "byte_count": {
-          "type": "integer",
-          "minimum": 2
-        },
-        "dialect": {
-          "const": "https://json-schema.org/draft/2020-12/schema"
-        },
-        "root_json_type": {
-          "const": "object"
-        },
-        "schema_member_digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "canonical_object_digest",
-            "domain": "odeya-schema-registry-member-v1",
-            "algorithm": "sha-256",
-            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
-            "status": "registered_domain"
           }
         }
       }
@@ -643,7 +549,7 @@
           "$ref": "#/$defs/identifier"
         },
         "state_schema_ref": {
-          "$ref": "#/$defs/schema_bytes_reference"
+          "$ref": "#/$defs/aggregate_state_subject_registry_schema_bytes_reference"
         },
         "canonical_reducer_ref": {
           "$ref": "#/$defs/reducer_member_reference"
@@ -669,10 +575,10 @@
           }
         },
         "trace_refs": {
-          "$ref": "#/$defs/nonempty_artifact_array"
+          "$ref": "#/$defs/aggregate_state_subject_registry_nonempty_artifact_array"
         },
         "review_evidence_refs": {
-          "$ref": "#/$defs/nonempty_artifact_array"
+          "$ref": "#/$defs/aggregate_state_subject_registry_nonempty_artifact_array"
         },
         "member_digest_contract": {
           "$ref": "#/$defs/state_member_digest_contract"
@@ -811,7 +717,7 @@
           "maxLength": 127
         },
         "signature_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/aggregate_state_subject_registry_artifact_reference"
         }
       }
     },
@@ -1023,6 +929,100 @@
           ],
           "items": false
         }
+      }
+    },
+    "aggregate_state_subject_registry_artifact_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "digest",
+        "media_type"
+      ],
+      "properties": {
+        "artifact_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "exact retained artifact or profile document bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 127
+        }
+      }
+    },
+    "aggregate_state_subject_registry_schema_bytes_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_member_key",
+        "schema_id",
+        "semantic_version",
+        "byte_digest",
+        "byte_count",
+        "dialect",
+        "root_json_type",
+        "schema_member_digest"
+      ],
+      "properties": {
+        "schema_member_key": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9._:-]{1,191}@(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
+        },
+        "schema_id": {
+          "type": "string",
+          "format": "uri"
+        },
+        "semantic_version": {
+          "$ref": "#/$defs/semantic_version"
+        },
+        "byte_digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "retained raw bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
+        },
+        "byte_count": {
+          "type": "integer",
+          "minimum": 2
+        },
+        "dialect": {
+          "const": "https://json-schema.org/draft/2020-12/schema"
+        },
+        "root_json_type": {
+          "const": "object"
+        },
+        "schema_member_digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-schema-registry-member-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "registered_domain"
+          }
+        }
+      }
+    },
+    "aggregate_state_subject_registry_nonempty_artifact_array": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/aggregate_state_subject_registry_artifact_reference"
       }
     }
   }

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:validation-rule-registry:0.4.0",
+  "$id": "urn:odeya:schema:validation-rule-registry:0.5.0",
   "title": "Odeya ValidationRuleRegistry",
   "description": "An immutable registry version containing closed semantic rule definitions. JSON Schema validates the registry's shape; predicates, implementation agreement, vectors, and supersession behavior require independent semantic evaluation.",
   "type": "object",
@@ -24,7 +24,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.4.0"
+      "const": "0.5.0"
     },
     "registry_id": {
       "$ref": "#/$defs/identifier"
@@ -76,7 +76,7 @@
       ]
     },
     "canonicalization_profile": {
-      "$ref": "#/$defs/identifier"
+      "const": "urn:odeya:canonicalization:odeya-jcs-0.1"
     },
     "rules": {
       "type": "array",
@@ -137,7 +137,7 @@
       "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
     },
     "sealed_by": {
-      "$ref": "#/$defs/human_principal"
+      "$ref": "#/$defs/validation_rule_registry_human_principal"
     }
   },
   "allOf": [
@@ -600,7 +600,7 @@
         "$ref": "#/$defs/artifact_reference"
       }
     },
-    "human_principal": {
+    "validation_rule_registry_human_principal": {
       "type": "object",
       "additionalProperties": false,
       "required": [

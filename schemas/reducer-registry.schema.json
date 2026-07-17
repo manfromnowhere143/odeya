@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:reducer-registry:0.5.0",
+  "$id": "urn:odeya:schema:reducer-registry:0.6.0",
   "title": "Odeya ReducerRegistry",
   "description": "An immutable canonical-reducer map with exactly one reducer slot per aggregate type in a snapshot. Each reducer starts only from explicit absence plus an origin event, accepts a closed event set, returns next state or typed failure for every input, and binds independent implementation requirements. Structural validity does not prove an implementation or replay result.",
   "type": "object",
@@ -28,7 +28,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.5.0"
+      "const": "0.6.0"
     },
     "registry_kind": {
       "const": "reducer_registry"
@@ -133,16 +133,16 @@
       }
     },
     "historical_read_policy": {
-      "$ref": "#/$defs/historical_read_policy"
+      "$ref": "#/$defs/reducer_registry_historical_read_policy"
     },
     "source_manifest_ref": {
-      "$ref": "#/$defs/artifact_reference"
+      "$ref": "#/$defs/reducer_registry_artifact_reference"
     },
     "generator_identity_ref": {
-      "$ref": "#/$defs/artifact_reference"
+      "$ref": "#/$defs/reducer_registry_artifact_reference"
     },
     "review_evidence_refs": {
-      "$ref": "#/$defs/nonempty_artifact_array"
+      "$ref": "#/$defs/reducer_registry_nonempty_artifact_array"
     },
     "known_limitations": {
       "type": "array",
@@ -153,7 +153,7 @@
       }
     },
     "registry_digest_contract": {
-      "$ref": "#/$defs/registry_digest_contract"
+      "$ref": "#/$defs/reducer_registry_registry_digest_contract"
     },
     "registry_digest": {
       "$ref": "#/$defs/digest",
@@ -169,7 +169,7 @@
       "type": "array",
       "uniqueItems": true,
       "items": {
-        "$ref": "#/$defs/attestation"
+        "$ref": "#/$defs/reducer_registry_attestation"
       }
     }
   },
@@ -243,43 +243,6 @@
             "status": "accepted_disposition_annotation"
           }
         }
-      }
-    },
-    "artifact_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "artifact_id",
-        "digest",
-        "media_type"
-      ],
-      "properties": {
-        "artifact_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "byte_digest",
-            "subject": "exact retained artifact or profile document bytes",
-            "algorithm": "sha-256",
-            "profile": "not_a_canonical_object_digest",
-            "status": "accepted_disposition_annotation"
-          }
-        },
-        "media_type": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 127
-        }
-      }
-    },
-    "nonempty_artifact_array": {
-      "type": "array",
-      "minItems": 1,
-      "uniqueItems": true,
-      "items": {
-        "$ref": "#/$defs/artifact_reference"
       }
     },
     "rule_reference": {
@@ -360,47 +323,6 @@
         }
       }
     },
-    "origin_contract": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "pre_origin_input",
-        "aggregate_absent_before_origin",
-        "absence_is_state",
-        "origin_event_refs",
-        "first_materialized_version",
-        "fabricated_v0_state",
-        "non_origin_on_absence"
-      ],
-      "properties": {
-        "pre_origin_input": {
-          "const": "explicit_absence_sentinel"
-        },
-        "aggregate_absent_before_origin": {
-          "const": true
-        },
-        "absence_is_state": {
-          "const": false
-        },
-        "origin_event_refs": {
-          "type": "array",
-          "minItems": 1,
-          "uniqueItems": true,
-          "items": {
-            "$ref": "#/$defs/event_member_reference"
-          }
-        },
-        "first_materialized_version": {
-          "const": 1
-        },
-        "fabricated_v0_state": {
-          "const": "forbidden"
-        },
-        "non_origin_on_absence": {
-          "const": "typed_failure"
-        }
-      }
-    },
     "total_fold_semantics": {
       "type": "object",
       "additionalProperties": false,
@@ -475,7 +397,7 @@
           "pattern": "^/([A-Za-z0-9_.-]|~0|~1)+$"
         },
         "value_schema_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/reducer_registry_artifact_reference"
         },
         "unknown_semantics": {
           "enum": [
@@ -486,42 +408,6 @@
         },
         "cross_axis_inference": {
           "const": "forbidden_without_rule"
-        }
-      }
-    },
-    "trace_contract": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "positive",
-        "negative",
-        "boundary",
-        "metamorphic",
-        "race",
-        "replay",
-        "compatibility"
-      ],
-      "properties": {
-        "positive": {
-          "$ref": "#/$defs/nonempty_artifact_array"
-        },
-        "negative": {
-          "$ref": "#/$defs/nonempty_artifact_array"
-        },
-        "boundary": {
-          "$ref": "#/$defs/nonempty_artifact_array"
-        },
-        "metamorphic": {
-          "$ref": "#/$defs/nonempty_artifact_array"
-        },
-        "race": {
-          "$ref": "#/$defs/nonempty_artifact_array"
-        },
-        "replay": {
-          "$ref": "#/$defs/nonempty_artifact_array"
-        },
-        "compatibility": {
-          "$ref": "#/$defs/nonempty_artifact_array"
         }
       }
     },
@@ -546,7 +432,7 @@
           "minItems": 2,
           "uniqueItems": true,
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/reducer_registry_artifact_reference"
           }
         },
         "language_and_runtime_separation": {
@@ -584,13 +470,13 @@
           ]
         },
         "policy_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/reducer_registry_artifact_reference"
         },
         "registered_upcast_refs": {
           "type": "array",
           "uniqueItems": true,
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/reducer_registry_artifact_reference"
           }
         },
         "implicit_upcast": {
@@ -669,7 +555,7 @@
           "$ref": "#/$defs/state_member_reference"
         },
         "origin_contract": {
-          "$ref": "#/$defs/origin_contract"
+          "$ref": "#/$defs/reducer_registry_origin_contract"
         },
         "accepted_events": {
           "type": "array",
@@ -710,7 +596,7 @@
           "$ref": "#/$defs/upcast_contract"
         },
         "trace_contract": {
-          "$ref": "#/$defs/trace_contract"
+          "$ref": "#/$defs/reducer_registry_trace_contract"
         },
         "implementation_requirements": {
           "$ref": "#/$defs/implementation_requirements"
@@ -743,7 +629,7 @@
           }
         },
         "review_evidence_refs": {
-          "$ref": "#/$defs/nonempty_artifact_array"
+          "$ref": "#/$defs/reducer_registry_nonempty_artifact_array"
         },
         "member_digest_contract": {
           "$ref": "#/$defs/reducer_member_digest_contract"
@@ -788,30 +674,6 @@
         }
       }
     },
-    "historical_read_policy": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "resolution",
-        "historical_reducers_required",
-        "mutable_aliases_allowed",
-        "unsupported_reader"
-      ],
-      "properties": {
-        "resolution": {
-          "const": "exact_reducer_version_and_digest"
-        },
-        "historical_reducers_required": {
-          "const": true
-        },
-        "mutable_aliases_allowed": {
-          "const": false
-        },
-        "unsupported_reader": {
-          "const": "typed_reduction_failure"
-        }
-      }
-    },
     "known_limitation": {
       "type": "object",
       "additionalProperties": false,
@@ -842,43 +704,6 @@
           "type": "string",
           "minLength": 1,
           "maxLength": 2048
-        }
-      }
-    },
-    "attestation": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "attestation_id",
-        "subject_digest",
-        "signer_id",
-        "algorithm",
-        "signature_ref"
-      ],
-      "properties": {
-        "attestation_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "subject_digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "canonical_object_digest",
-            "domain": "odeya-reducer-registry-v1",
-            "algorithm": "sha-256",
-            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
-            "status": "registered_domain"
-          }
-        },
-        "signer_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "algorithm": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 127
-        },
-        "signature_ref": {
-          "$ref": "#/$defs/artifact_reference"
         }
       }
     },
@@ -1002,7 +827,138 @@
         }
       }
     },
-    "registry_digest_contract": {
+    "reducer_registry_artifact_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "digest",
+        "media_type"
+      ],
+      "properties": {
+        "artifact_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "exact retained artifact or profile document bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 127
+        }
+      }
+    },
+    "reducer_registry_origin_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "pre_origin_input",
+        "aggregate_absent_before_origin",
+        "absence_is_state",
+        "origin_event_refs",
+        "first_materialized_version",
+        "fabricated_v0_state",
+        "non_origin_on_absence"
+      ],
+      "properties": {
+        "pre_origin_input": {
+          "const": "explicit_absence_sentinel"
+        },
+        "aggregate_absent_before_origin": {
+          "const": true
+        },
+        "absence_is_state": {
+          "const": false
+        },
+        "origin_event_refs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/event_member_reference"
+          }
+        },
+        "first_materialized_version": {
+          "const": 1
+        },
+        "fabricated_v0_state": {
+          "const": "forbidden"
+        },
+        "non_origin_on_absence": {
+          "const": "typed_failure"
+        }
+      }
+    },
+    "reducer_registry_historical_read_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "resolution",
+        "historical_reducers_required",
+        "mutable_aliases_allowed",
+        "unsupported_reader"
+      ],
+      "properties": {
+        "resolution": {
+          "const": "exact_reducer_version_and_digest"
+        },
+        "historical_reducers_required": {
+          "const": true
+        },
+        "mutable_aliases_allowed": {
+          "const": false
+        },
+        "unsupported_reader": {
+          "const": "typed_reduction_failure"
+        }
+      }
+    },
+    "reducer_registry_attestation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "attestation_id",
+        "subject_digest",
+        "signer_id",
+        "algorithm",
+        "signature_ref"
+      ],
+      "properties": {
+        "attestation_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "subject_digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-reducer-registry-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "registered_domain"
+          }
+        },
+        "signer_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "algorithm": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 127
+        },
+        "signature_ref": {
+          "$ref": "#/$defs/reducer_registry_artifact_reference"
+        }
+      }
+    },
+    "reducer_registry_registry_digest_contract": {
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -1099,6 +1055,50 @@
           ],
           "items": false
         }
+      }
+    },
+    "reducer_registry_trace_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "positive",
+        "negative",
+        "boundary",
+        "metamorphic",
+        "race",
+        "replay",
+        "compatibility"
+      ],
+      "properties": {
+        "positive": {
+          "$ref": "#/$defs/reducer_registry_nonempty_artifact_array"
+        },
+        "negative": {
+          "$ref": "#/$defs/reducer_registry_nonempty_artifact_array"
+        },
+        "boundary": {
+          "$ref": "#/$defs/reducer_registry_nonempty_artifact_array"
+        },
+        "metamorphic": {
+          "$ref": "#/$defs/reducer_registry_nonempty_artifact_array"
+        },
+        "race": {
+          "$ref": "#/$defs/reducer_registry_nonempty_artifact_array"
+        },
+        "replay": {
+          "$ref": "#/$defs/reducer_registry_nonempty_artifact_array"
+        },
+        "compatibility": {
+          "$ref": "#/$defs/reducer_registry_nonempty_artifact_array"
+        }
+      }
+    },
+    "reducer_registry_nonempty_artifact_array": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/reducer_registry_artifact_reference"
       }
     }
   }

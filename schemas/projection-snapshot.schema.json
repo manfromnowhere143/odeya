@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:projection-snapshot:0.8.0",
+  "$id": "urn:odeya:schema:projection-snapshot:0.9.0",
   "title": "Odeya ProjectionSnapshot",
   "description": "A closed, rebuildable, derived and non-authoritative view over exact canonical facts. Validation does not make the snapshot canonical state, evidence, authority, a publication decision, or proof of external visibility. The subject intentionally contains no self or enclosing-package digest.",
   "type": "object",
@@ -35,7 +35,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.8.0"
+      "const": "0.9.0"
     },
     "record_status": {
       "const": "derived_non_authoritative_projection"
@@ -56,7 +56,7 @@
       ]
     },
     "semantic_profile_ref": {
-      "$ref": "#/$defs/versioned_reference"
+      "$ref": "#/$defs/projection_snapshot_versioned_reference"
     },
     "subject": {
       "type": "object",
@@ -178,7 +178,7 @@
           "$ref": "#/$defs/c0_registry_bundle_reference"
         },
         "canonicalization_profile_ref": {
-          "$ref": "#/$defs/versioned_reference"
+          "$ref": "#/$defs/projection_snapshot_versioned_reference"
         },
         "ledger_checkpoint": {
           "oneOf": [
@@ -264,7 +264,7 @@
           ]
         },
         "clock_profile_ref": {
-          "$ref": "#/$defs/versioned_reference"
+          "$ref": "#/$defs/projection_snapshot_versioned_reference"
         }
       }
     },
@@ -461,7 +461,7 @@
           "type": "array",
           "uniqueItems": true,
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/projection_snapshot_artifact_reference"
           }
         }
       }
@@ -522,7 +522,7 @@
               ]
             },
             "cache_namespace_ref": {
-              "$ref": "#/$defs/versioned_reference"
+              "$ref": "#/$defs/projection_snapshot_versioned_reference"
             },
             "pointer_version": {
               "type": "integer",
@@ -612,12 +612,12 @@
           "const": false
         },
         "nonvisual_equivalence_map_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/projection_snapshot_artifact_reference"
         }
       }
     },
     "construction": {
-      "$ref": "#/$defs/non_recursive_construction"
+      "$ref": "#/$defs/projection_snapshot_non_recursive_construction"
     },
     "authority_semantics": {
       "type": "object",
@@ -1295,62 +1295,6 @@
       "format": "date-time",
       "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
     },
-    "artifact_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "artifact_id",
-        "digest",
-        "media_type"
-      ],
-      "properties": {
-        "artifact_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "byte_digest",
-            "subject": "exact retained artifact or profile document bytes",
-            "algorithm": "sha-256",
-            "profile": "not_a_canonical_object_digest",
-            "status": "accepted_disposition_annotation"
-          }
-        },
-        "media_type": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 127
-        }
-      }
-    },
-    "versioned_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "id",
-        "version",
-        "digest"
-      ],
-      "properties": {
-        "id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "version": {
-          "$ref": "#/$defs/semantic_version"
-        },
-        "digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "canonical_object_digest",
-            "domain_resolution": "target_resolved_via_sibling_reference",
-            "algorithm": "sha-256",
-            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
-            "status": "target_resolved_domain"
-          }
-        }
-      }
-    },
     "canonicalization_binding": {
       "type": "object",
       "additionalProperties": false,
@@ -1361,7 +1305,7 @@
       ],
       "properties": {
         "profile_id": {
-          "$ref": "#/$defs/identifier"
+          "const": "urn:odeya:canonicalization:odeya-jcs-0.1"
         },
         "version": {
           "$ref": "#/$defs/semantic_version"
@@ -1471,7 +1415,7 @@
               "const": "0.1.0"
             },
             "schema_id": {
-              "const": "urn:odeya:schema:engine-contract-root:0.5.0"
+              "const": "urn:odeya:schema:engine-contract-root:0.6.0"
             }
           }
         }
@@ -1491,7 +1435,7 @@
               "const": "0.1.0"
             },
             "schema_id": {
-              "const": "urn:odeya:schema:c0-registry-bundle:0.5.0"
+              "const": "urn:odeya:schema:c0-registry-bundle:0.6.0"
             }
           }
         }
@@ -1555,7 +1499,7 @@
                   "const": "0.2.0"
                 },
                 "schema_id": {
-                  "const": "urn:odeya:schema:ledger-checkpoint:0.7.0"
+                  "const": "urn:odeya:schema:ledger-checkpoint:0.8.0"
                 }
               }
             }
@@ -1606,7 +1550,7 @@
               "const": "0.1.0"
             },
             "schema_id": {
-              "const": "urn:odeya:schema:projection-redaction-manifest:0.7.0"
+              "const": "urn:odeya:schema:projection-redaction-manifest:0.8.0"
             }
           }
         }
@@ -1626,7 +1570,7 @@
               "const": "0.1.0"
             },
             "schema_id": {
-              "const": "urn:odeya:schema:reducer-equivalence-result:0.7.0"
+              "const": "urn:odeya:schema:reducer-equivalence-result:0.8.0"
             }
           }
         }
@@ -1646,7 +1590,7 @@
               "const": "0.1.0"
             },
             "schema_id": {
-              "const": "urn:odeya:schema:projection-impact-record:0.7.0"
+              "const": "urn:odeya:schema:projection-impact-record:0.8.0"
             }
           }
         }
@@ -2507,7 +2451,7 @@
           "const": "canonical_exact_decimal_string"
         },
         "decimal_profile_ref": {
-          "$ref": "#/$defs/versioned_reference"
+          "$ref": "#/$defs/projection_snapshot_versioned_reference"
         },
         "quantity_kind_ref": {
           "$ref": "#/$defs/exact_record_reference"
@@ -2658,7 +2602,7 @@
               "const": 0
             },
             "negative_flow_evidence_ref": {
-              "$ref": "#/$defs/artifact_reference"
+              "$ref": "#/$defs/projection_snapshot_artifact_reference"
             }
           }
         }
@@ -2726,7 +2670,7 @@
           ]
         },
         "withdrawal_route_ref": {
-          "$ref": "#/$defs/versioned_reference"
+          "$ref": "#/$defs/projection_snapshot_versioned_reference"
         },
         "scientific_semantics": {
           "type": "object",
@@ -2842,7 +2786,7 @@
                   "const": false
                 },
                 "rule_ref": {
-                  "$ref": "#/$defs/versioned_reference"
+                  "$ref": "#/$defs/projection_snapshot_versioned_reference"
                 }
               }
             },
@@ -2862,7 +2806,7 @@
                   "const": false
                 },
                 "rule_ref": {
-                  "$ref": "#/$defs/versioned_reference"
+                  "$ref": "#/$defs/projection_snapshot_versioned_reference"
                 }
               }
             },
@@ -2882,7 +2826,7 @@
                   "const": false
                 },
                 "rule_ref": {
-                  "$ref": "#/$defs/versioned_reference"
+                  "$ref": "#/$defs/projection_snapshot_versioned_reference"
                 }
               }
             },
@@ -2902,7 +2846,7 @@
                   "const": false
                 },
                 "rule_ref": {
-                  "$ref": "#/$defs/versioned_reference"
+                  "$ref": "#/$defs/projection_snapshot_versioned_reference"
                 }
               }
             },
@@ -2916,7 +2860,7 @@
               ],
               "properties": {
                 "class_ref": {
-                  "$ref": "#/$defs/versioned_reference"
+                  "$ref": "#/$defs/projection_snapshot_versioned_reference"
                 },
                 "comparison_result": {
                   "const": "pass"
@@ -2981,10 +2925,10 @@
               ],
               "properties": {
                 "budget_ref": {
-                  "$ref": "#/$defs/versioned_reference"
+                  "$ref": "#/$defs/projection_snapshot_versioned_reference"
                 },
                 "padding_ref": {
-                  "$ref": "#/$defs/versioned_reference"
+                  "$ref": "#/$defs/projection_snapshot_versioned_reference"
                 },
                 "within_declared_budget": {
                   "const": true
@@ -2998,7 +2942,7 @@
               "const": true
             },
             "evidence_ref": {
-              "$ref": "#/$defs/artifact_reference"
+              "$ref": "#/$defs/projection_snapshot_artifact_reference"
             }
           }
         }
@@ -3223,7 +3167,63 @@
         }
       }
     },
-    "non_recursive_construction": {
+    "projection_snapshot_artifact_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "digest",
+        "media_type"
+      ],
+      "properties": {
+        "artifact_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "exact retained artifact or profile document bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 127
+        }
+      }
+    },
+    "projection_snapshot_versioned_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "version",
+        "digest"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "$ref": "#/$defs/semantic_version"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain_resolution": "target_resolved_via_sibling_reference",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "target_resolved_domain"
+          }
+        }
+      }
+    },
+    "projection_snapshot_non_recursive_construction": {
       "type": "object",
       "additionalProperties": false,
       "required": [

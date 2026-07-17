@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:handoff:0.5.0",
+  "$id": "urn:odeya:schema:handoff:0.6.0",
   "title": "Odeya Handoff",
   "description": "An immutable recovery packet at an exact ledger position. It contains reconstructible facts and next legal actions, not private reasoning. Freshness and reference integrity require semantic validation.",
   "type": "object",
@@ -36,7 +36,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.5.0"
+      "const": "0.6.0"
     },
     "handoff_id": {
       "$ref": "#/$defs/identifier"
@@ -328,7 +328,7 @@
     "recipient": {
       "oneOf": [
         {
-          "$ref": "#/$defs/principal"
+          "$ref": "#/$defs/handoff_principal"
         },
         {
           "type": "null"
@@ -429,7 +429,7 @@
       "then": {
         "properties": {
           "recipient": {
-            "$ref": "#/$defs/principal"
+            "$ref": "#/$defs/handoff_principal"
           },
           "reviewed_by": {
             "$ref": "#/$defs/human_principal"
@@ -538,26 +538,6 @@
         }
       }
     },
-    "principal": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "principal_id",
-        "principal_type"
-      ],
-      "properties": {
-        "principal_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "principal_type": {
-          "enum": [
-            "human",
-            "service",
-            "organization"
-          ]
-        }
-      }
-    },
     "human_principal": {
       "type": "object",
       "additionalProperties": false,
@@ -609,6 +589,26 @@
             "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
             "status": "prospective_domain_reserved_not_declared"
           }
+        }
+      }
+    },
+    "handoff_principal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "principal_id",
+        "principal_type"
+      ],
+      "properties": {
+        "principal_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "principal_type": {
+          "enum": [
+            "human",
+            "service",
+            "organization"
+          ]
         }
       }
     }

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:data-asset-record:0.3.0",
+  "$id": "urn:odeya:schema:data-asset-record:0.4.0",
   "title": "Odeya DataAssetRecord",
   "description": "An immutable identity and governance projection for exact bytes or an exact canonical collection. Possession and classification never imply permission.",
   "type": "object",
@@ -24,7 +24,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.3.0"
+      "const": "0.4.0"
     },
     "asset_id": {
       "$ref": "#/$defs/identifier"
@@ -233,7 +233,7 @@
       ],
       "properties": {
         "initial_holder": {
-          "$ref": "#/$defs/principal"
+          "$ref": "#/$defs/data_asset_record_principal"
         },
         "initial_storage_plane": {
           "$ref": "#/$defs/storage_plane"
@@ -449,7 +449,7 @@
       "$ref": "#/$defs/timestamp"
     },
     "created_by": {
-      "$ref": "#/$defs/principal"
+      "$ref": "#/$defs/data_asset_record_principal"
     }
   },
   "allOf": [
@@ -596,27 +596,6 @@
         "export_or_publication"
       ]
     },
-    "principal": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "principal_id",
-        "principal_type"
-      ],
-      "properties": {
-        "principal_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "principal_type": {
-          "enum": [
-            "human",
-            "organization",
-            "deterministic_service",
-            "instrument"
-          ]
-        }
-      }
-    },
     "immutable_reference": {
       "type": "object",
       "additionalProperties": false,
@@ -698,6 +677,27 @@
         "media_type": {
           "type": "string",
           "minLength": 1
+        }
+      }
+    },
+    "data_asset_record_principal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "principal_id",
+        "principal_type"
+      ],
+      "properties": {
+        "principal_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "principal_type": {
+          "enum": [
+            "human",
+            "organization",
+            "deterministic_service",
+            "instrument"
+          ]
         }
       }
     }

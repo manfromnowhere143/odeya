@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:physical-experiment-contract:0.6.0",
+  "$id": "urn:odeya:schema:physical-experiment-contract:0.7.0",
   "title": "Odeya PhysicalExperimentContract",
   "description": "An immutable recommendation-only physical experiment proposal. It binds hypotheses/rivals, estimand or target quantity, intervention/design, measurement and synchronization, exact asset/model/safety/evidence scope, independent validation partition, and six fail-closed preflights. It cannot self-authorize execution or actuation.",
   "type": "object",
@@ -39,7 +39,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.6.0"
+      "const": "0.7.0"
     },
     "physical_experiment_contract_id": {
       "$ref": "#/$defs/identifier"
@@ -52,7 +52,7 @@
       "$ref": "#/$defs/identifier"
     },
     "hypothesis_ref": {
-      "$ref": "#/$defs/artifact_reference"
+      "$ref": "#/$defs/physical_experiment_contract_artifact_reference"
     },
     "rival_hypothesis_refs": {
       "type": "array",
@@ -60,7 +60,7 @@
       "maxItems": 64,
       "uniqueItems": true,
       "items": {
-        "$ref": "#/$defs/artifact_reference"
+        "$ref": "#/$defs/physical_experiment_contract_artifact_reference"
       }
     },
     "target_quantity_refs": {
@@ -75,7 +75,7 @@
     "causal_estimand_ref": {
       "oneOf": [
         {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/physical_experiment_contract_artifact_reference"
         },
         {
           "type": "null"
@@ -83,7 +83,7 @@
       ]
     },
     "intervention_policy_ref": {
-      "$ref": "#/$defs/artifact_reference"
+      "$ref": "#/$defs/physical_experiment_contract_artifact_reference"
     },
     "design": {
       "$ref": "#/$defs/design"
@@ -101,19 +101,19 @@
       "$ref": "#/$defs/evidence_vector_reference"
     },
     "context_ref": {
-      "$ref": "#/$defs/artifact_reference"
+      "$ref": "#/$defs/physical_experiment_contract_artifact_reference"
     },
     "expected_information_ref": {
-      "$ref": "#/$defs/artifact_reference"
+      "$ref": "#/$defs/physical_experiment_contract_artifact_reference"
     },
     "decision_value_ref": {
-      "$ref": "#/$defs/artifact_reference"
+      "$ref": "#/$defs/physical_experiment_contract_artifact_reference"
     },
     "cost_ref": {
-      "$ref": "#/$defs/artifact_reference"
+      "$ref": "#/$defs/physical_experiment_contract_artifact_reference"
     },
     "harm_assessment_ref": {
-      "$ref": "#/$defs/artifact_reference"
+      "$ref": "#/$defs/physical_experiment_contract_artifact_reference"
     },
     "reversibility": {
       "enum": [
@@ -132,14 +132,14 @@
       "maxItems": 64,
       "uniqueItems": true,
       "items": {
-        "$ref": "#/$defs/artifact_reference"
+        "$ref": "#/$defs/physical_experiment_contract_artifact_reference"
       }
     },
     "stop_rule_ref": {
-      "$ref": "#/$defs/artifact_reference"
+      "$ref": "#/$defs/physical_experiment_contract_artifact_reference"
     },
     "preregistered_analysis_ref": {
-      "$ref": "#/$defs/artifact_reference"
+      "$ref": "#/$defs/physical_experiment_contract_artifact_reference"
     },
     "independent_validation_partition": {
       "$ref": "#/$defs/validation_partition"
@@ -321,35 +321,6 @@
       "type": "string",
       "pattern": "^sha256:[a-f0-9]{64}$"
     },
-    "artifact_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "artifact_id",
-        "digest",
-        "media_type"
-      ],
-      "properties": {
-        "artifact_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "byte_digest",
-            "subject": "exact retained artifact or profile document bytes",
-            "algorithm": "sha-256",
-            "profile": "not_a_canonical_object_digest",
-            "status": "accepted_disposition_annotation"
-          }
-        },
-        "media_type": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 255
-        }
-      }
-    },
     "record_reference": {
       "type": "object",
       "additionalProperties": false,
@@ -391,7 +362,7 @@
         {
           "properties": {
             "schema_id": {
-              "const": "urn:odeya:schema:physical-quantity:0.5.0"
+              "const": "urn:odeya:schema:physical-quantity:0.6.0"
             }
           }
         }
@@ -405,7 +376,7 @@
         {
           "properties": {
             "schema_id": {
-              "const": "urn:odeya:schema:asset-configuration-snapshot:0.5.0"
+              "const": "urn:odeya:schema:asset-configuration-snapshot:0.6.0"
             }
           }
         }
@@ -419,7 +390,7 @@
         {
           "properties": {
             "schema_id": {
-              "const": "urn:odeya:schema:physical-model-record:0.6.0"
+              "const": "urn:odeya:schema:physical-model-record:0.7.0"
             }
           }
         }
@@ -433,7 +404,7 @@
         {
           "properties": {
             "schema_id": {
-              "const": "urn:odeya:schema:physical-evidence-vector:0.6.0"
+              "const": "urn:odeya:schema:physical-evidence-vector:0.7.0"
             }
           }
         }
@@ -447,39 +418,11 @@
         {
           "properties": {
             "schema_id": {
-              "const": "urn:odeya:schema:safety-envelope:0.6.0"
+              "const": "urn:odeya:schema:safety-envelope:0.7.0"
             }
           }
         }
       ]
-    },
-    "method_reference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "method_id",
-        "version",
-        "registry_digest"
-      ],
-      "properties": {
-        "method_id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "version": {
-          "type": "string",
-          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
-        },
-        "registry_digest": {
-          "$ref": "#/$defs/digest",
-          "x-odeya-digest-scope": {
-            "kind": "canonical_object_digest",
-            "domain": "odeya-method-registry-v1",
-            "algorithm": "sha-256",
-            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
-            "status": "prospective_domain_reserved_not_declared"
-          }
-        }
-      }
     },
     "design": {
       "type": "object",
@@ -502,7 +445,7 @@
           ]
         },
         "control_plan_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/physical_experiment_contract_artifact_reference"
         },
         "blinding": {
           "enum": [
@@ -512,16 +455,16 @@
           ]
         },
         "sampling_plan_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/physical_experiment_contract_artifact_reference"
         },
         "feedback_policy_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/physical_experiment_contract_artifact_reference"
         },
         "intervention_fidelity_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/physical_experiment_contract_artifact_reference"
         },
         "manipulation_check_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/physical_experiment_contract_artifact_reference"
         }
       }
     },
@@ -553,14 +496,14 @@
           "maxItems": 64,
           "uniqueItems": true,
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/physical_experiment_contract_artifact_reference"
           }
         },
         "sampling_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/physical_experiment_contract_artifact_reference"
         },
         "synchronization_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/physical_experiment_contract_artifact_reference"
         },
         "bandwidth_requirement_refs": {
           "type": "array",
@@ -586,7 +529,7 @@
           "maxItems": 64,
           "uniqueItems": true,
           "items": {
-            "$ref": "#/$defs/method_reference"
+            "$ref": "#/$defs/physical_experiment_contract_method_reference"
           }
         }
       }
@@ -621,7 +564,7 @@
           ]
         },
         "observation_evidence_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/physical_experiment_contract_artifact_reference"
         },
         "reason_codes": {
           "type": "array",
@@ -682,10 +625,10 @@
           "$ref": "#/$defs/identifier"
         },
         "data_manifest_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/physical_experiment_contract_artifact_reference"
         },
         "selection_rule_ref": {
-          "$ref": "#/$defs/artifact_reference"
+          "$ref": "#/$defs/physical_experiment_contract_artifact_reference"
         },
         "independence_group_id": {
           "$ref": "#/$defs/identifier"
@@ -738,14 +681,14 @@
           ]
         },
         "method_ref": {
-          "$ref": "#/$defs/method_reference"
+          "$ref": "#/$defs/physical_experiment_contract_method_reference"
         },
         "evidence_refs": {
           "type": "array",
           "maxItems": 128,
           "uniqueItems": true,
           "items": {
-            "$ref": "#/$defs/artifact_reference"
+            "$ref": "#/$defs/physical_experiment_contract_artifact_reference"
           }
         },
         "reason_codes": {
@@ -969,6 +912,63 @@
         },
         "separate_authority_service_required": {
           "const": true
+        }
+      }
+    },
+    "physical_experiment_contract_artifact_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "digest",
+        "media_type"
+      ],
+      "properties": {
+        "artifact_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "exact retained artifact or profile document bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        }
+      }
+    },
+    "physical_experiment_contract_method_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "method_id",
+        "version",
+        "registry_digest"
+      ],
+      "properties": {
+        "method_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "registry_digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-method-registry-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
         }
       }
     }
