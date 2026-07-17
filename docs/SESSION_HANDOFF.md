@@ -414,12 +414,14 @@ additive and that PRQ-001 terminates in Daniel's profile decision, which no
 session can self-close. The highest-value remaining autonomous work is
 therefore the profile-independent findings and the evidence-quality audit above,
 plus reducing the profile decision to an exact decidable package rather than
-1,154 raw findings.
+1,150 raw findings (originally stated as 1,154; ADR 0033 corrected the audit's
+decimal detector, which had double-counted four profiled timestamps as
+scientific decimals).
 
 The canonical migration findings are now partitioned for decision. The
 disposition candidate at
 `architecture/canonicalization-migration-disposition-candidate.json` assigns all
-1,154 findings of the six audit classes to exactly nine disposition classes; the
+1,150 findings of the six audit classes to exactly nine disposition classes; the
 fourth architecture-evidence check recomputes that partition from the audit
 bytes on every run and refuses drift, count tampering, duplicate rows,
 pre-filled acceptance, a promoted status, or a comparator declaration that
@@ -427,7 +429,7 @@ disagrees with the implemented rule, with a fourteen-mutation self-test that
 runs on every gated invocation. The
 touched-schema union is exactly 100 of 112, so the blast radius is one
 coordinated reissue wave regardless of which classes are accepted. 369 findings
-are mechanical, 727 are table-driven behind two embedded proposal tables (59
+are mechanical, 723 are table-driven behind two embedded proposal tables (55
 decimal rows; 151 digest field groups, both with null proposal slots awaiting a
 proposing tranche), two are one binary-number judgment, and the remaining true
 judgment sits in the divergent definition vocabularies. Physical coupling is

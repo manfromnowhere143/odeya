@@ -3,7 +3,8 @@
 - Status: Proposed architecture candidate; not operator accepted
 - Date: 2026-07-17
 - Decision owners: canonical identity, architecture review, security, work
-- Gate effect: converts PRQ-001's 1,154 raw migration findings into nine
+- Gate effect: converts PRQ-001's raw migration findings (1,150 after ADR 0033
+  corrected the audit's decimal detector; originally stated as 1,154) into nine
   machine-verified disposition classes with null acceptance slots; resolves no
   finding, reissues no schema, issues no canonical digest, and accepts no
   Gate A row
@@ -11,17 +12,17 @@
 ## Context
 
 PRQ-001 is the root Gate A blocker: the canonical profile cannot be frozen
-while the migration audit shows 1,154 findings across six classes, and every
+while the migration audit shows 1,150 findings across six classes, and every
 canonical digest — hence T1, T2, T3, and Gate A — waits on that freeze. The
 finding terminates in the operator's profile decision, which no session can
 self-close. It has therefore sat unmoved through every tranche, because no one
-can responsibly decide over 1,154 raw findings, and the lane kept producing
+can responsibly decide over a thousand raw findings, and the lane kept producing
 adjacent candidates instead.
 
 The decision surface is the problem, not the decision. Computed from the audit
 bytes: 236 findings are one identical lexical rewrite; 122 are one shared
 definition pin; 668 group into 151 digest field names, 485 of them inside
-shared `$defs`; 59 are one typed-object migration behind a per-field table; 11
+shared `$defs`; 55 are one typed-object migration behind a per-field table; 11
 are mechanically pinnable only last. The genuine judgment is concentrated in
 the divergent-definition vocabularies and any new digest domains.
 
@@ -46,7 +47,7 @@ every finding of the six audit classes to exactly one of nine disposition
 classes (D1 fixture timestamps, D2 datetime pins, D3 decimal typing, D4 binary
 numbers, D5 digest scoping, D6/D7/D8 divergent definitions by comparator class,
 D9 profile bindings), binds the exact audit corpus digests, embeds the two
-proposal tables with null slots (59 decimal rows; 151 digest field groups), and
+proposal tables with null slots (55 decimal rows; 151 digest field groups), and
 carries one null `operator_acceptance` slot per class.
 
 The candidate's stored rows are never trusted, because stored copies drift —
@@ -84,7 +85,7 @@ This decision does not:
   refuses a pre-filled one; the operator's per-class decision is a separate
   explicit change to the candidate, after which the acceptance rule in the
   validator is amended in the same commit — deliberately, never silently;
-- propose the table contents. The 59 decimal rows need semantic type, unit, and
+- propose the table contents. The 55 decimal rows need semantic type, unit, and
   precision per field, and the 151 digest field groups need digest kind and
   subject class per name; both require reading each field's meaning and belong
   to a proposing tranche with its own review, not to a partition commit;
@@ -98,7 +99,7 @@ This decision does not:
 
 ## Consequences
 
-PRQ-001's decision surface drops from 1,154 findings to nine class decisions
+PRQ-001's decision surface drops from 1,150 findings to nine class decisions
 plus two tables, with the partition's fidelity machine-enforced instead of
 asserted. The operator can now decide in one sitting, and an accepted class
 converts directly into a bounded, reviewable reissue tranche.

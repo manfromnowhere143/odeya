@@ -187,6 +187,13 @@ def generic_decimal_uses(schema: dict[str, Any]) -> list[str]:
             looks_decimal = isinstance(pattern, str) and "[0-9]" in pattern and (
                 "\\." in pattern or "[.]" in pattern
             )
+        # A datetime is never a scientific decimal. The frozen microsecond
+        # timestamp pattern contains digits and an escaped dot, so the pattern
+        # heuristic above matched profiled timestamps named value/generated_at
+        # and double-counted four of them as NUMBER-001 findings while they
+        # already sat, conformant, in the datetime inventory.
+        if isinstance(resolved, dict) and resolved.get("format") == "date-time":
+            looks_decimal = False
         if looks_decimal and SCIENTIFIC_FIELD.search(name):
             results.add(pointer(parts))
     return sorted(results)
