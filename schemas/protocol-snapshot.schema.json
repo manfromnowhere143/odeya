@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:protocol-snapshot:0.5.0",
+  "$id": "urn:odeya:schema:protocol-snapshot:0.6.0",
   "title": "Odeya ProtocolSnapshot",
   "description": "An immutable compilation of prospective scientific meaning. Structural conformance does not prove digest correctness, reference existence, temporal order, or scientific admissibility; those are semantic rules.",
   "type": "object",
@@ -25,7 +25,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.5.0"
+      "const": "0.6.0"
     },
     "protocol_snapshot_id": {
       "$ref": "#/$defs/identifier"
@@ -54,7 +54,14 @@
           "minimum": 1
         },
         "digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain_resolution": "target_resolved_via_sibling_reference",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "target_resolved_domain"
+          }
         }
       }
     },
@@ -175,7 +182,7 @@
           "const": true
         },
         "scientific_result_envelope_schema_id": {
-          "const": "urn:odeya:schema:scientific-result-envelope:0.5.0"
+          "const": "urn:odeya:schema:scientific-result-envelope:0.6.0"
         }
       }
     },
@@ -403,10 +410,17 @@
           "$ref": "#/$defs/mathematical_claim_type"
         },
         "schema_id": {
-          "const": "urn:odeya:schema:estimand-contract:0.5.0"
+          "const": "urn:odeya:schema:estimand-contract:0.6.0"
         },
         "digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-estimand-contract-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
         }
       }
     },
@@ -423,7 +437,14 @@
           "$ref": "#/$defs/identifier"
         },
         "digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "exact retained artifact or profile document bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
         },
         "media_type": {
           "type": "string",
@@ -448,7 +469,14 @@
           "minimum": 1
         },
         "digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-protocol-snapshot-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
         }
       }
     },

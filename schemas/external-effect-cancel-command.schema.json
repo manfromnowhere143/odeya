@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:external-effect-cancel-command:0.2.0",
+  "$id": "urn:odeya:schema:external-effect-cancel-command:0.3.0",
   "x-odeya-command-payload-id": "urn:odeya:command-payload:external_effect.cancel:1.0.0",
   "title": "Cancel Authorized External Effect Command Payload",
   "description": "Requests cancellation only while an effect remains authorized and undispatched. Admission closes the intent and releases or invalidates its exact reservations; it cannot cancel an in-flight call or synthesize not-applied settlement. The required effect class must equal the class retained by the authorized effect; that cross-record equality is a semantic check.",
@@ -19,7 +19,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.2.0"
+      "const": "0.3.0"
     },
     "effect_id": {
       "$ref": "#/$defs/identifier"
@@ -105,7 +105,14 @@
           "$ref": "#/$defs/identifier"
         },
         "digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "exact retained artifact or profile document bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
         },
         "media_type": {
           "type": "string",

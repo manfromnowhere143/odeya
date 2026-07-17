@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:work-intent:0.5.0",
+  "$id": "urn:odeya:schema:work-intent:0.6.0",
   "title": "Odeya WorkIntent",
   "description": "A closed immutable prospective statement that bounded work may be useful. It is created before verification.assign and deliberately carries no active lease, grant, reservation, materialization, dispatch, external-effect, or spend authority. Current assignment facts are selected only by the later atomic verification.assign commit; a WorkContract is derived after that commit and still requires a separate dispatch claim.",
   "type": "object",
@@ -33,7 +33,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.5.0"
+      "const": "0.6.0"
     },
     "record_status": {
       "const": "proposed_non_authoritative"
@@ -430,7 +430,14 @@
           "minimum": 1
         },
         "digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain_resolution": "target_resolved_via_sibling_reference",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "target_resolved_domain"
+          }
         }
       }
     },
@@ -451,7 +458,14 @@
           "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
         },
         "digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain_resolution": "target_resolved_via_sibling_reference",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "target_resolved_domain"
+          }
         }
       }
     },

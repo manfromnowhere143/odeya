@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:model-configuration-record:0.3.0",
+  "$id": "urn:odeya:schema:model-configuration-record:0.4.0",
   "title": "Odeya ModelConfigurationRecord",
   "description": "Immutable, non-authoritative evidence about one exact provider/model/harness configuration. It records identity uncertainty, data handling, capability/evaluation evidence, operating curves, correlation axes, limitations, and validity; it is never dispatch authority or proof of verifier independence.",
   "type": "object",
@@ -28,7 +28,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.3.0"
+      "const": "0.4.0"
     },
     "record_status": {
       "const": "immutable_non_authoritative_observation"
@@ -1369,7 +1369,14 @@
           "minimum": 1
         },
         "digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain_resolution": "target_resolved_via_sibling_reference",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "target_resolved_domain"
+          }
         }
       }
     },
@@ -1403,7 +1410,14 @@
           "$ref": "#/$defs/identifier"
         },
         "digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "exact retained artifact or profile document bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
         },
         "media_type": {
           "type": "string",

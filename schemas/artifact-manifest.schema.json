@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:artifact-manifest:0.3.0",
+  "$id": "urn:odeya:schema:artifact-manifest:0.4.0",
   "title": "Odeya ArtifactManifest",
   "description": "An immutable description of exact artifact bytes, origin, lineage, rights, sensitivity, retention, and storage binding. Promotion and later custody are separate observations.",
   "type": "object",
@@ -28,7 +28,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.3.0"
+      "const": "0.4.0"
     },
     "artifact_id": {
       "$ref": "#/$defs/identifier"
@@ -59,7 +59,14 @@
       ],
       "properties": {
         "digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "exact retained bytes of the referenced artifact or document",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
         },
         "size_bytes": {
           "type": "integer",
@@ -527,7 +534,14 @@
           "$ref": "#/$defs/identifier"
         },
         "digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "exact retained artifact or profile document bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
         },
         "media_type": {
           "type": "string",

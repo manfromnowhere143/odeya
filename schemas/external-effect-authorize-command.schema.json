@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:external-effect-authorize-command:0.4.0",
+  "$id": "urn:odeya:schema:external-effect-authorize-command:0.5.0",
   "x-odeya-command-payload-id": "urn:odeya:command-payload:external_effect.authorize:1.0.0",
   "title": "Authorize External Effect Command Payload",
   "description": "Exact T1 request inputs. Admission creates the effect intent and kernel-derived dispatch-bound grant-use reservation; the caller cannot supply a reservation, grant-use fact, event identity, or settlement. Governed processing dispatch additionally binds exact typed work-contract, data-use, exposure-intent, provider-configuration, source-frontier, purpose, recipient, provider, region, policy, authority, and resource inputs. JSON Schema does not prove those inputs are current; admission must re-resolve and recheck them at the commit position.",
@@ -23,7 +23,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.4.0"
+      "const": "0.5.0"
     },
     "effect_id": {
       "$ref": "#/$defs/identifier"
@@ -253,7 +253,14 @@
           "$ref": "#/$defs/identifier"
         },
         "digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "exact retained artifact or profile document bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
         },
         "media_type": {
           "type": "string",
@@ -285,7 +292,14 @@
           "pattern": "^urn:odeya:schema:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$"
         },
         "digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain_resolution": "target_resolved_via_sibling_reference",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "target_resolved_domain"
+          }
         },
         "artifact_ref": {
           "$ref": "#/$defs/artifact_reference"
@@ -317,7 +331,7 @@
         {
           "properties": {
             "schema_id": {
-              "const": "urn:odeya:schema:data-use-decision:0.2.0"
+              "const": "urn:odeya:schema:data-use-decision:0.3.0"
             }
           },
           "required": [
@@ -334,7 +348,7 @@
         {
           "properties": {
             "schema_id": {
-              "const": "urn:odeya:schema:data-exposure-record:0.2.0"
+              "const": "urn:odeya:schema:data-exposure-record:0.3.0"
             }
           },
           "required": [
@@ -351,7 +365,7 @@
         {
           "properties": {
             "schema_id": {
-              "const": "urn:odeya:schema:ledger-checkpoint:0.5.0"
+              "const": "urn:odeya:schema:ledger-checkpoint:0.6.0"
             }
           },
           "required": [
@@ -374,7 +388,14 @@
           "$ref": "#/$defs/identifier"
         },
         "digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "exact retained artifact or profile document bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
         },
         "media_type": {
           "const": "application/json"
@@ -538,7 +559,14 @@
           "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
         },
         "digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain_resolution": "target_resolved_via_sibling_reference",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "target_resolved_domain"
+          }
         }
       }
     }

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:grounded-outcome:0.4.0",
+  "$id": "urn:odeya:schema:grounded-outcome:0.5.0",
   "title": "Odeya GroundedOutcome",
   "description": "An immutable observation used for bounded learning after world contact. It is separate from scientific adjudication and preserves multiple dimensions, missingness, counterevidence, and applicability rather than collapsing them into reward.",
   "type": "object",
@@ -29,7 +29,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.4.0"
+      "const": "0.5.0"
     },
     "grounded_outcome_id": {
       "$ref": "#/$defs/identifier"
@@ -82,7 +82,14 @@
           "minLength": 1
         },
         "digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain_resolution": "target_resolved_via_sibling_reference",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "target_resolved_domain"
+          }
         }
       }
     },
@@ -477,7 +484,14 @@
           "$ref": "#/$defs/identifier"
         },
         "digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "exact retained artifact or profile document bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
         },
         "media_type": {
           "type": "string",

@@ -338,7 +338,7 @@ def main() -> int:
         require(
             prq008.get("finding_id") == "PRQ-008"
             and prq008.get("status") == "unresolved_blocking"
-            and "urn:odeya:schema:canonical-work-lease:0.5.0" in prq008.get("closure", "")
+            and "urn:odeya:schema:canonical-work-lease:0.6.0" in prq008.get("closure", "")
             and "present_unissued_candidate" in prq008.get("closure", ""),
             "PRQ-008 must expose the present-but-unadmitted canonical WorkLease resource as unresolved_blocking",
             errors,

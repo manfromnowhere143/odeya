@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:command-design-vocabulary:0.3.0",
+  "$id": "urn:odeya:schema:command-design-vocabulary:0.4.0",
   "title": "Odeya CommandDesignVocabulary",
   "description": "A non-executable planning artifact extracted from one exact command-envelope candidate. Every entry is explicitly not contract-admitted and carries no payload, handler, event, authority, grant, compatibility, activation, or execution promise.",
   "type": "object",
@@ -21,7 +21,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.3.0"
+      "const": "0.4.0"
     },
     "vocabulary_id": {
       "$ref": "#/$defs/identifier"
@@ -267,7 +267,14 @@
           "$ref": "#/$defs/semantic_version"
         },
         "digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "exact retained artifact or profile document bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
         }
       }
     },
@@ -308,7 +315,14 @@
           "$ref": "#/$defs/identifier"
         },
         "digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "exact retained artifact or profile document bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
         },
         "media_type": {
           "type": "string",

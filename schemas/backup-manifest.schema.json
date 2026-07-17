@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:backup-manifest:0.4.0",
+  "$id": "urn:odeya:schema:backup-manifest:0.5.0",
   "title": "Odeya BackupManifest",
   "description": "An immutable manifest for one backup set and its distinct write, verification, and clean-room recoverability states. It identifies encryption keys and recovery policy but can never contain key material.",
   "type": "object",
@@ -25,7 +25,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.4.0"
+      "const": "0.5.0"
     },
     "backup_manifest_id": {
       "$ref": "#/$defs/identifier"
@@ -416,7 +416,14 @@
       "const": "canonical-object:odeya-jcs-0.1:exclude(manifest_digest,signatures)"
     },
     "manifest_digest": {
-      "$ref": "#/$defs/digest"
+      "$ref": "#/$defs/digest",
+      "x-odeya-digest-scope": {
+        "kind": "canonical_object_digest",
+        "domain": "odeya-backup-manifest-v1",
+        "algorithm": "sha-256",
+        "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+        "status": "prospective_domain_reserved_not_declared"
+      }
     },
     "signatures": {
       "type": "array",
@@ -448,7 +455,14 @@
           "$ref": "#/$defs/identifier"
         },
         "digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "exact retained artifact or profile document bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
         },
         "media_type": {
           "type": "string",
@@ -493,7 +507,14 @@
           "minimum": 1
         },
         "digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "exact retained artifact or profile document bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
         }
       }
     },
@@ -518,7 +539,14 @@
           "minimum": 0
         },
         "digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-ledger-checkpoint-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "registered_domain"
+          }
         }
       }
     },

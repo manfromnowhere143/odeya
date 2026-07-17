@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:validation-result:0.3.0",
+  "$id": "urn:odeya:schema:validation-result:0.4.0",
   "title": "Odeya ValidationResult",
   "description": "An immutable application of an exact semantic rule registry to an exact subject and reference set. It never repairs or mutates the subject. Rule correctness and evidence authenticity remain independently verifiable claims.",
   "type": "object",
@@ -24,7 +24,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.3.0"
+      "const": "0.4.0"
     },
     "validation_result_id": {
       "$ref": "#/$defs/identifier"
@@ -65,7 +65,14 @@
           "format": "uri"
         },
         "digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain_resolution": "target_resolved_via_sibling_reference",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "target_resolved_domain"
+          }
         }
       }
     },
@@ -128,7 +135,14 @@
           "minLength": 1
         },
         "digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-validation-rule-registry-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
         }
       }
     },
@@ -142,7 +156,14 @@
       ],
       "properties": {
         "digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-reference-set-manifest-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
         },
         "ledger_position": {
           "type": "integer",
@@ -458,7 +479,14 @@
           "$ref": "#/$defs/identifier"
         },
         "digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "exact retained artifact or profile document bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
         },
         "media_type": {
           "type": "string",

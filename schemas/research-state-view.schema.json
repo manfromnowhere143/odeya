@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:research-state-view:0.5.0",
+  "$id": "urn:odeya:schema:research-state-view:0.6.0",
   "title": "Odeya ResearchStateView",
   "description": "An immutable, exposure-bounded model input compiled at one exact canonical position. Command candidates bind exact registry member, activation, and membership-proof bytes; graph absence is not fabricated as version zero. The view is data, never authority; every proposed command is re-admitted against current state and grants.",
   "type": "object",
@@ -41,7 +41,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.5.0"
+      "const": "0.6.0"
     },
     "record_status": {
       "const": "derived_non_authoritative"
@@ -848,7 +848,14 @@
           "$ref": "#/$defs/identifier"
         },
         "digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "exact retained artifact or profile document bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
         },
         "media_type": {
           "type": "string",
@@ -873,7 +880,14 @@
           "minimum": 1
         },
         "digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain_resolution": "target_resolved_via_sibling_reference",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "target_resolved_domain"
+          }
         }
       }
     },
@@ -894,7 +908,14 @@
           "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
         },
         "digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain_resolution": "target_resolved_via_sibling_reference",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "target_resolved_domain"
+          }
         }
       }
     },
@@ -983,7 +1004,7 @@
           "minimum": 1
         },
         "schema_id": {
-          "const": "urn:odeya:schema:registry-activation:0.4.0"
+          "const": "urn:odeya:schema:registry-activation:0.5.0"
         },
         "activation_digest": {
           "$ref": "#/$defs/digest",
@@ -1247,7 +1268,14 @@
           "const": "0.1.0"
         },
         "digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "exact retained artifact or profile document bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
         }
       }
     },

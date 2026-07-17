@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:recovery-decision:0.4.0",
+  "$id": "urn:odeya:schema:recovery-decision:0.5.0",
   "title": "Odeya RecoveryDecision",
   "description": "An immutable recovery-quorum decision over one exact restore verification report and security frontier. It grants no effect, publication, spending, or physical authority; those remain separately gated.",
   "type": "object",
@@ -28,7 +28,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.4.0"
+      "const": "0.5.0"
     },
     "recovery_decision_id": {
       "$ref": "#/$defs/identifier"
@@ -57,7 +57,14 @@
           "minimum": 1
         },
         "digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-restore-verification-report-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
         }
       }
     },
@@ -330,7 +337,14 @@
               "minimum": 1
             },
             "digest": {
-              "$ref": "#/$defs/digest"
+              "$ref": "#/$defs/digest",
+              "x-odeya-digest-scope": {
+                "kind": "canonical_object_digest",
+                "domain": "odeya-recovery-decision-v1",
+                "algorithm": "sha-256",
+                "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+                "status": "prospective_domain_reserved_not_declared"
+              }
             }
           }
         },
@@ -548,7 +562,14 @@
           "$ref": "#/$defs/identifier"
         },
         "digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "exact retained artifact or profile document bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
         },
         "media_type": {
           "type": "string",

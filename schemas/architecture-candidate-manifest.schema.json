@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:architecture-candidate-manifest:0.2.0",
+  "$id": "urn:odeya:schema:architecture-candidate-manifest:0.3.0",
   "title": "Odeya ArchitectureCandidateManifest",
   "description": "An immutable byte-exact Gate A review scope. Its canonical digest is bound externally to avoid a self-digest cycle. A structurally valid manifest is neither reviewed nor accepted.",
   "type": "object",
@@ -27,7 +27,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.2.0"
+      "const": "0.3.0"
     },
     "manifest_id": {
       "$ref": "#/$defs/identifier"
@@ -466,7 +466,7 @@
       ],
       "properties": {
         "schema_id": {
-          "const": "urn:odeya:schema:architecture-candidate-manifest:0.2.0"
+          "const": "urn:odeya:schema:architecture-candidate-manifest:0.3.0"
         },
         "canonicalization_profile_ref": {
           "$ref": "#/$defs/versioned_reference"
@@ -692,7 +692,14 @@
           "$ref": "#/$defs/identifier"
         },
         "digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "exact retained artifact or profile document bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
         },
         "media_type": {
           "type": "string",
@@ -717,7 +724,14 @@
           "minimum": 1
         },
         "digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain_resolution": "target_resolved_via_sibling_reference",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "target_resolved_domain"
+          }
         }
       }
     },
@@ -738,7 +752,14 @@
           "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
         },
         "digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain_resolution": "target_resolved_via_sibling_reference",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "target_resolved_domain"
+          }
         }
       }
     },

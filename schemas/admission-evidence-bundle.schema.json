@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:admission-evidence-bundle:0.5.0",
+  "$id": "urn:odeya:schema:admission-evidence-bundle:0.6.0",
   "title": "Odeya AdmissionEvidenceBundle",
   "description": "A closed structural candidate for the exact deterministic evidence used by one post-registry command admission. This 0.2 resource separates logical payload type identity from schema resource, canonical, and closure identity and binds the canonical CommandContractRegistry subject. It is deliberately nonconstructible and not admitted while the referenced CommandContractRecord and CommandContractRegistry identities remain unresolved; accepted/noop values in fixtures exercise shape only and are not admission evidence. The bundle retains references and input/frontier digests, never mutable state snapshots. Structural validity does not prove reference truth, evidence-profile applicability, evidence-record resolution, rule execution, currentness, digest equality, membership, activation, or that any receipt disposition follows from the underlying evidence.",
   "type": "object",
@@ -26,7 +26,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.5.0"
+      "const": "0.6.0"
     },
     "conformance_scope": {
       "const": "structural_fixture_only"
@@ -2154,7 +2154,14 @@
           "$ref": "#/$defs/identifier"
         },
         "digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "exact retained artifact or profile document bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
         },
         "media_type": {
           "type": "string",
@@ -2185,7 +2192,14 @@
           "pattern": "^urn:odeya:schema:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$"
         },
         "digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain_resolution": "target_resolved_via_sibling_reference",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "target_resolved_domain"
+          }
         }
       }
     },
@@ -2206,10 +2220,17 @@
           "const": "0.2.0"
         },
         "schema_id": {
-          "const": "urn:odeya:schema:command-contract-registry:0.4.0"
+          "const": "urn:odeya:schema:command-contract-registry:0.5.0"
         },
         "digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-command-contract-registry-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
         }
       }
     },
@@ -2232,10 +2253,17 @@
           "minimum": 1
         },
         "schema_id": {
-          "const": "urn:odeya:schema:command-contract-record:0.3.0"
+          "const": "urn:odeya:schema:command-contract-record:0.4.0"
         },
         "digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-command-contract-record-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
         },
         "registry_snapshot_digest": {
           "$ref": "#/$defs/digest",
@@ -2269,7 +2297,7 @@
           "minimum": 1
         },
         "schema_id": {
-          "const": "urn:odeya:schema:registry-activation:0.4.0"
+          "const": "urn:odeya:schema:registry-activation:0.5.0"
         },
         "activation_digest": {
           "$ref": "#/$defs/digest",
@@ -2389,7 +2417,7 @@
           "minimum": 1
         },
         "schema_id": {
-          "const": "urn:odeya:schema:ledger-checkpoint:0.5.0"
+          "const": "urn:odeya:schema:ledger-checkpoint:0.6.0"
         },
         "ledger_epoch": {
           "$ref": "#/$defs/identifier"
@@ -2399,7 +2427,14 @@
           "minimum": 0
         },
         "digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-ledger-checkpoint-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "registered_domain"
+          }
         }
       }
     },
@@ -2930,7 +2965,14 @@
           "pattern": "^urn:odeya:schema:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$"
         },
         "digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain_resolution": "target_resolved_via_sibling_reference",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "target_resolved_domain"
+          }
         }
       },
       "allOf": [
@@ -2948,7 +2990,7 @@
           "then": {
             "properties": {
               "schema_id": {
-                "const": "urn:odeya:schema:policy-decision:0.5.0"
+                "const": "urn:odeya:schema:policy-decision:0.6.0"
               }
             }
           }
@@ -2967,7 +3009,7 @@
           "then": {
             "properties": {
               "schema_id": {
-                "const": "urn:odeya:schema:validation-result:0.3.0"
+                "const": "urn:odeya:schema:validation-result:0.4.0"
               }
             }
           }
@@ -3052,7 +3094,14 @@
                   "const": "0.1.0"
                 },
                 "digest": {
-                  "$ref": "#/$defs/digest"
+                  "$ref": "#/$defs/digest",
+                  "x-odeya-digest-scope": {
+                    "kind": "canonical_object_digest",
+                    "domain_resolution": "target_resolved_via_sibling_reference",
+                    "algorithm": "sha-256",
+                    "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+                    "status": "target_resolved_domain"
+                  }
                 }
               }
             },
@@ -3065,7 +3114,7 @@
               ],
               "properties": {
                 "schema_id": {
-                  "const": "urn:odeya:schema:admission-evidence-bundle:0.5.0"
+                  "const": "urn:odeya:schema:admission-evidence-bundle:0.6.0"
                 },
                 "schema_digest": {
                   "$ref": "#/$defs/digest",

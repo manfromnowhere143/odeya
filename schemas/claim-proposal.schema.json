@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:claim-proposal:0.4.0",
+  "$id": "urn:odeya:schema:claim-proposal:0.5.0",
   "title": "Odeya ClaimProposal",
   "description": "An immutable proposed proposition and its prospective interpretation contract. A proposal is not evidence, a verdict, or an eligible claim.",
   "type": "object",
@@ -24,7 +24,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.4.0"
+      "const": "0.5.0"
     },
     "proposal_id": {
       "$ref": "#/$defs/identifier"
@@ -220,7 +220,14 @@
           "$ref": "#/$defs/identifier"
         },
         "digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "exact retained artifact or profile document bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
         },
         "media_type": {
           "type": "string",

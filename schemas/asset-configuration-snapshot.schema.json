@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:asset-configuration-snapshot:0.3.0",
+  "$id": "urn:odeya:schema:asset-configuration-snapshot:0.4.0",
   "title": "Odeya AssetConfigurationSnapshot",
   "description": "An immutable effective-time snapshot of a physical asset. It binds geometry, material, topology, hardware identities, software/firmware, boundary/initial conditions, maintenance/damage/modification, and sensor/calibration state. Missing or unknown hardware blocks in-force applicability and is never interpreted as zero components or success.",
   "type": "object",
@@ -30,7 +30,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.3.0"
+      "const": "0.4.0"
     },
     "asset_configuration_snapshot_id": {
       "$ref": "#/$defs/identifier"
@@ -265,7 +265,14 @@
           "$ref": "#/$defs/identifier"
         },
         "digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "exact retained artifact or profile document bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
         },
         "media_type": {
           "type": "string",
@@ -296,7 +303,14 @@
           "pattern": "^urn:odeya:schema:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$"
         },
         "digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain_resolution": "target_resolved_via_sibling_reference",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "target_resolved_domain"
+          }
         }
       }
     },
@@ -308,7 +322,7 @@
         {
           "properties": {
             "schema_id": {
-              "const": "urn:odeya:schema:physical-quantity:0.3.0"
+              "const": "urn:odeya:schema:physical-quantity:0.4.0"
             }
           }
         }

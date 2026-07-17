@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:authority-grant:0.5.0",
+  "$id": "urn:odeya:schema:authority-grant:0.6.0",
   "title": "Odeya AuthorityGrant",
   "description": "An immutable, bounded permission with an explicit action boundary, consumption point, and reservation policy. Status is derived from issue, reservation, use, expiry, release, and revocation events; JSON Schema does not prove their race order.",
   "type": "object",
@@ -24,7 +24,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.5.0"
+      "const": "0.6.0"
     },
     "grant_id": {
       "$ref": "#/$defs/identifier"
@@ -806,7 +806,14 @@
           "$ref": "#/$defs/identifier"
         },
         "digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "exact retained artifact or profile document bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
         },
         "media_type": {
           "type": "string",

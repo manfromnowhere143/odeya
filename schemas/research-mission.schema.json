@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:research-mission:0.6.0",
+  "$id": "urn:odeya:schema:research-mission:0.7.0",
   "title": "Odeya ResearchMissionSpec",
   "description": "The single canonical, pre-execution contract for an Odeya research mission.",
   "type": "object",
@@ -37,7 +37,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.6.0"
+      "const": "0.7.0"
     },
     "mission_id": {
       "$ref": "#/$defs/identifier"
@@ -376,7 +376,14 @@
             "minLength": 1
           },
           "digest": {
-            "$ref": "#/$defs/digest_or_unresolved"
+            "$ref": "#/$defs/digest_or_unresolved",
+            "x-odeya-digest-scope": {
+              "kind": "byte_digest",
+              "subject": "exact retained bytes of the referenced artifact or document",
+              "algorithm": "sha-256",
+              "profile": "not_a_canonical_object_digest",
+              "status": "accepted_disposition_annotation"
+            }
           },
           "split_policy": {
             "type": "string",
@@ -1227,7 +1234,14 @@
             "items": {
               "properties": {
                 "digest": {
-                  "$ref": "#/$defs/digest"
+                  "$ref": "#/$defs/digest",
+                  "x-odeya-digest-scope": {
+                    "kind": "byte_digest",
+                    "subject": "exact retained bytes of the referenced artifact or document",
+                    "algorithm": "sha-256",
+                    "profile": "not_a_canonical_object_digest",
+                    "status": "accepted_disposition_annotation"
+                  }
                 }
               }
             }

@@ -452,8 +452,13 @@ reissues closed, lifecycle version pin now self-deriving. D5a-2 executed (ADR
 registry/member/attestation domains, target-resolved references,
 in-record-declared separators, untrusted-copy marking; unscoped 398 to 326;
 the version aligner is now trap-safe (guard text only, never payload values).
-Remaining: D5a-3 mixed digest family (284 occ), the frontier/commitment
-construction decision (37 occ), D6-D8 (55 defs), then D9 pins strictly
+D5a-3 executed (ADR 0046): the mixed digest family classified per
+containing reference family — byte for artifact/profile/candidate refs,
+event/checkpoint/typed-record domains where declared or reserved,
+target-resolved for generic reference defs; 281 annotated, 3 deferred by
+design (set commitment + two unreserved manifests). Unscoped now 45 = exactly
+the frontier/commitment construction-decision families. Remaining: that ONE
+construction decision (45 occ), D6-D8 (55 defs), then D9 pins strictly
 last.**
 Residue for the reissue wave is recorded in the candidate's
 decimal_closure_residue).

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:engine-contract-root:0.3.0",
+  "$id": "urn:odeya:schema:engine-contract-root:0.4.0",
   "title": "Odeya EngineContractRoot",
   "description": "An immutable, acyclic subject binding one compatible set of Odeya semantic registries. Structural validity does not prove component availability, digest equality, graph closure, review independence, checkpoint inclusion, or runtime activation.",
   "type": "object",
@@ -27,7 +27,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.3.0"
+      "const": "0.4.0"
     },
     "root_id": {
       "$ref": "#/$defs/identifier"
@@ -426,7 +426,14 @@
       "$ref": "#/$defs/digest_contract"
     },
     "root_digest": {
-      "$ref": "#/$defs/digest"
+      "$ref": "#/$defs/digest",
+      "x-odeya-digest-scope": {
+        "kind": "canonical_object_digest",
+        "domain": "odeya-engine-contract-root-v1",
+        "algorithm": "sha-256",
+        "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+        "status": "registered_domain"
+      }
     }
   },
   "$defs": {
@@ -536,7 +543,14 @@
           "$ref": "#/$defs/identifier"
         },
         "digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "exact retained artifact or profile document bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
         },
         "media_type": {
           "type": "string",
@@ -618,7 +632,14 @@
           "$ref": "#/$defs/semantic_version"
         },
         "digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "exact retained artifact or profile document bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
         }
       }
     },

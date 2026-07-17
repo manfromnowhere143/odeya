@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:physical-measurement-result:0.4.0",
+  "$id": "urn:odeya:schema:physical-measurement-result:0.5.0",
   "title": "Odeya PhysicalMeasurementResult",
   "description": "An immutable physical measurement result binding the measurand, raw signal, instrument/firmware/configuration, environment, calibration traceability, sampling/filtering/latency/synchronization, uncertainty budget, and quality flags. Calibration evidence is measurement traceability only and cannot be relabeled physical validation.",
   "type": "object",
@@ -31,7 +31,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.4.0"
+      "const": "0.5.0"
     },
     "physical_measurement_result_id": {
       "$ref": "#/$defs/identifier"
@@ -336,7 +336,14 @@
           "$ref": "#/$defs/identifier"
         },
         "digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "exact retained artifact or profile document bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
         },
         "media_type": {
           "type": "string",
@@ -367,7 +374,14 @@
           "pattern": "^urn:odeya:schema:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$"
         },
         "digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain_resolution": "target_resolved_via_sibling_reference",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "target_resolved_domain"
+          }
         }
       }
     },
@@ -379,7 +393,7 @@
         {
           "properties": {
             "schema_id": {
-              "const": "urn:odeya:schema:physical-quantity:0.3.0"
+              "const": "urn:odeya:schema:physical-quantity:0.4.0"
             }
           }
         }
@@ -393,7 +407,7 @@
         {
           "properties": {
             "schema_id": {
-              "const": "urn:odeya:schema:uncertainty-budget:0.4.0"
+              "const": "urn:odeya:schema:uncertainty-budget:0.5.0"
             }
           }
         }
@@ -407,7 +421,7 @@
         {
           "properties": {
             "schema_id": {
-              "const": "urn:odeya:schema:asset-configuration-snapshot:0.3.0"
+              "const": "urn:odeya:schema:asset-configuration-snapshot:0.4.0"
             }
           }
         }

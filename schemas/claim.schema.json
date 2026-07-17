@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:claim-version:0.6.0",
+  "$id": "urn:odeya:schema:claim-version:0.7.0",
   "title": "Odeya ClaimVersion",
   "description": "An immutable semantic claim version compiled from a proposal and an adjudication. Operational, verification, replication, transport, and publication state remain separate aggregates and are referenced rather than embedded.",
   "type": "object",
@@ -30,7 +30,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.6.0"
+      "const": "0.7.0"
     },
     "claim_id": {
       "$ref": "#/$defs/identifier"
@@ -442,7 +442,14 @@
           "$ref": "#/$defs/identifier"
         },
         "digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "exact retained artifact or profile document bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
         },
         "media_type": {
           "type": "string",

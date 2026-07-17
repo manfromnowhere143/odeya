@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:c0-registry-bundle:0.3.0",
+  "$id": "urn:odeya:schema:c0-registry-bundle:0.4.0",
   "title": "Odeya C0RegistryBundle",
   "description": "An immutable bootstrap-verifiable bundle binding one EngineContractRoot, its exact component subjects, and the constitutional trust seed. It contains no activation or checkpoint reference, preventing a future-checkpoint digest cycle.",
   "type": "object",
@@ -23,7 +23,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.3.0"
+      "const": "0.4.0"
     },
     "bundle_id": {
       "$ref": "#/$defs/identifier"
@@ -472,7 +472,14 @@
           "$ref": "#/$defs/identifier"
         },
         "digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "exact retained artifact or profile document bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
         },
         "media_type": {
           "type": "string",
@@ -594,7 +601,14 @@
           "$ref": "#/$defs/semantic_version"
         },
         "digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "exact retained artifact or profile document bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
         }
       }
     },

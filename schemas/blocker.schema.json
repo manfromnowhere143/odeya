@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:blocker:0.1.0",
+  "$id": "urn:odeya:schema:blocker:0.2.0",
   "title": "Odeya Blocker",
   "description": "An immutable blocker version, separate from scientific outcome.",
   "type": "object",
@@ -22,7 +22,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.1.0"
+      "const": "0.2.0"
     },
     "blocker_id": {
       "$ref": "#/$defs/identifier"
@@ -35,13 +35,33 @@
       "$ref": "#/$defs/identifier"
     },
     "scope_type": {
-      "enum": ["mission", "protocol", "stage", "work_item", "run", "verification", "claim", "publication"]
+      "enum": [
+        "mission",
+        "protocol",
+        "stage",
+        "work_item",
+        "run",
+        "verification",
+        "claim",
+        "publication"
+      ]
     },
     "scope_id": {
       "$ref": "#/$defs/identifier"
     },
     "class": {
-      "enum": ["contract", "protocol", "rights", "policy", "budget", "infrastructure", "evidence", "security", "verification", "publication"]
+      "enum": [
+        "contract",
+        "protocol",
+        "rights",
+        "policy",
+        "budget",
+        "infrastructure",
+        "evidence",
+        "security",
+        "verification",
+        "publication"
+      ]
     },
     "reason_code": {
       "type": "string",
@@ -61,7 +81,11 @@
       "minLength": 1
     },
     "status": {
-      "enum": ["open", "resolved", "superseded"]
+      "enum": [
+        "open",
+        "resolved",
+        "superseded"
+      ]
     },
     "resolved_by_event": {
       "oneOf": [
@@ -79,10 +103,15 @@
       "if": {
         "properties": {
           "status": {
-            "enum": ["resolved", "superseded"]
+            "enum": [
+              "resolved",
+              "superseded"
+            ]
           }
         },
-        "required": ["status"]
+        "required": [
+          "status"
+        ]
       },
       "then": {
         "properties": {
@@ -112,13 +141,24 @@
     "artifact_reference": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["artifact_id", "digest", "media_type"],
+      "required": [
+        "artifact_id",
+        "digest",
+        "media_type"
+      ],
       "properties": {
         "artifact_id": {
           "$ref": "#/$defs/identifier"
         },
         "digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "exact retained artifact or profile document bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
         },
         "media_type": {
           "type": "string",
