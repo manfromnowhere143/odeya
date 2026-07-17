@@ -10,7 +10,7 @@ import validate as foundation
 
 
 EXPECTED_SCHEMAS = 112
-EXPECTED_CASES = {"valid": 205, "invalid": 455}
+EXPECTED_CASES = {"valid": 205, "invalid": 457}
 
 
 def main() -> int:

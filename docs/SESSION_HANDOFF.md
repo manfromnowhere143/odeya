@@ -481,8 +481,12 @@ the frontier/commitment construction-decision families. The construction decisio
 is DECIDED and executed (ADR 0048): canonical closed objects under the
 frozen profile for every commitment subject, twelve domains reserved, the
 two-subject field split, D5 CLOSED at zero. FIVE OF SIX classes measure
-zero; 66 findings remain. Remaining: D6-D8 (55 defs: 5 converge / 47
-structural / 3 vocabulary), then D9 pins strictly last.**
+zero; 66 findings remain. D6 executed (ADR 0049): the
+decimal family was dead text orphaned by D3 — 19 definitions deleted with
+live-reference refusal; member_key and semantic_version narrowed to one
+canonical form each with known-bad vectors proven to fire. Divergent names
+55 to 50; 61 findings remain. Remaining: D7 (47 structural names, per-name
+judgment), D8 (3 enum vocabularies), then D9 pins strictly last.**
 Residue for the reissue wave is recorded in the candidate's
 decimal_closure_residue).
 

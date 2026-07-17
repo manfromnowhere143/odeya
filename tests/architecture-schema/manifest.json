@@ -370,7 +370,7 @@
         {
           "op": "replace",
           "path": "/payload_type_id",
-          "value": "urn:odeya:schema:research-event:0.14.0"
+          "value": "urn:odeya:schema:research-event:0.15.0"
         }
       ]
     },
@@ -7353,6 +7353,34 @@
           "op": "replace",
           "path": "/proof_obligations/profile_issued",
           "value": true
+        }
+      ]
+    },
+    {
+      "name": "projection-snapshot-rejects-leading-zero-semantic-version",
+      "schema": "schemas/projection-snapshot.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/private-cockpit.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/purpose/purpose_version",
+          "value": "01.0.0"
+        }
+      ]
+    },
+    {
+      "name": "schema-registry-rejects-oversized-member-key",
+      "schema": "schemas/schema-registry.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/schema-registry.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "add",
+          "path": "/members/kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk@1.0.0",
+          "value": {
+            "placeholder": true
+          }
         }
       ]
     }
