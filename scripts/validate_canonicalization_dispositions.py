@@ -262,11 +262,26 @@ def candidate_errors(candidate: dict, audit: dict, derived: dict | None = None) 
     # decided. Every row must carry a complete, well-formed proposal -- a half-
     # proposed table is not decidable -- and rows deferring to the operator must
     # say so explicitly rather than by leaving a slot null.
+    # This is a SHAPE gate. It proves every row carries a complete, well-formed
+    # proposal from the declared vocabulary; it cannot prove a proposal is
+    # semantically right for its field -- review demonstrated that swapping two
+    # rows' contents passes every check here. Content correctness is the
+    # operator's judgment, informed by the retained adversarial review, and no
+    # arithmetic can substitute for it.
     d3_confidences = {"certain", "likely", "needs_operator"}
+    vocabulary = set(
+        (candidate.get("proposal_provenance") or {}).get("d3_semantic_type_vocabulary", [])
+    )
+    require(bool(vocabulary), "proposal provenance declares no semantic-type vocabulary")
     for row in candidate.get("d3_decimal_table", []):
-        if not all(isinstance(row.get(k), str) and row[k] for k in
+        if not all(isinstance(row.get(k), str) and row[k].strip() for k in
                    ("proposed_semantic_type", "proposed_unit", "proposed_precision")):
             errors.append(f"d3 row {row.get('pointer')} lacks a complete proposal")
+        elif row["proposed_semantic_type"] not in vocabulary:
+            errors.append(
+                f"d3 row {row.get('pointer')} proposes {row['proposed_semantic_type']!r}, "
+                "which is outside the declared semantic-type vocabulary"
+            )
         if row.get("confidence") not in d3_confidences:
             errors.append(f"d3 row {row.get('pointer')} has no valid confidence")
     d5_kinds = {"byte_digest", "canonical_object_digest", "mixed_needs_split", "needs_operator"}
@@ -274,13 +289,14 @@ def candidate_errors(candidate: dict, audit: dict, derived: dict | None = None) 
         if row.get("proposed_digest_kind") not in d5_kinds:
             errors.append(f"d5 field {row.get('field_name')} has no valid digest kind")
         subject = row.get("proposed_subject_class_or_domain")
-        if not isinstance(subject, str) or not subject:
-            errors.append(f"d5 field {row.get('field_name')} lacks a subject proposal")
+        if not isinstance(subject, str) or len(subject.strip()) < 4:
+            errors.append(f"d5 field {row.get('field_name')} lacks a substantive subject proposal")
         if row.get("requires_new_domain_registration") not in (True, False, "partial", "unknown"):
             errors.append(f"d5 field {row.get('field_name')} lacks a new-domain disposition")
         if row.get("proposed_digest_kind") in {"mixed_needs_split", "needs_operator"} and not (
-            isinstance(row.get("note"), str) and row["note"]
-        ) and not (isinstance(subject, str) and len(subject) > 20):
+            isinstance(row.get("note"), str) and row["note"].strip()
+        ):
+            # A deferring row must say why; a long subject string is not a reason.
             errors.append(
                 f"d5 field {row.get('field_name')} defers to the operator without saying why"
             )
@@ -327,8 +343,15 @@ def self_test(candidate: dict, audit: dict, derived: dict | None = None) -> int:
         ("duplicate union entry appended", lambda c: c["touched_schema_union"].append(c["touched_schema_union"][0])),
         ("comparator declaration gutted", lambda c: c["defs_comparator"].__setitem__("vocabulary_keys", ["enum"])),
         ("d3 proposal blanked", lambda c: c["d3_decimal_table"][0].__setitem__("proposed_semantic_type", None)),
+        ("d3 proposal whitespace", lambda c: c["d3_decimal_table"][0].__setitem__("proposed_semantic_type", "   ")),
+        ("d3 type outside vocabulary", lambda c: c["d3_decimal_table"][0].__setitem__("proposed_semantic_type", "banana")),
         ("d5 kind invalidated", lambda c: c["d5_field_table"][0].__setitem__("proposed_digest_kind", "sha256")),
         ("d5 new-domain slot blanked", lambda c: c["d5_field_table"][0].__setitem__("requires_new_domain_registration", None)),
+        ("d5 subject degenerate", lambda c: c["d5_field_table"][0].__setitem__("proposed_subject_class_or_domain", "x")),
+        ("deferring note stripped with long subject", lambda c: (
+            next(r for r in c["d5_field_table"] if r["proposed_digest_kind"] == "needs_operator").pop("note", None),
+            next(r for r in c["d5_field_table"] if r["proposed_digest_kind"] == "needs_operator").__setitem__(
+                "proposed_subject_class_or_domain", "y" * 30))),
     ]
     if all(mutate(label, fn) for label, fn in checks):
         print(f"disposition self-test passed: {len(checks)} known-bad mutations refused")

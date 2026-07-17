@@ -10,7 +10,7 @@
       "severity": "high"
     },
     {
-      "count": 57,
+      "count": 86,
       "description": "generic JSON numbers or untyped decimal quantity fields remain in scientific/control contracts",
       "disposition": "blocks_profile_freeze",
       "finding_id": "CANON-SCHEMA-NUMBER-001",
@@ -6505,9 +6505,11 @@
         "/$defs/resource_budget/properties/cpu_seconds",
         "/$defs/resource_budget/properties/human_hours",
         "/$defs/resource_budget/properties/memory_gib_seconds",
+        "/$defs/resource_budget/properties/model_tokens",
         "/$defs/resource_budget/properties/network_bytes",
         "/$defs/resource_budget/properties/storage_bytes",
-        "/$defs/resource_budget/properties/wall_time_seconds"
+        "/$defs/resource_budget/properties/wall_time_seconds",
+        "/properties/limits/properties/spend_limit_usd"
       ],
       "path": "schemas/authority-grant.schema.json",
       "schema_id": "urn:odeya:schema:authority-grant:0.2.0",
@@ -7001,7 +7003,9 @@
       "generic_json_number_paths": [],
       "generic_scientific_decimal_paths": [
         "/$defs/quantity/properties/value",
-        "/$defs/uncertainty_channel/properties/interval/oneOf/0/properties/level"
+        "/$defs/uncertainty_channel/properties/interval/oneOf/0/properties/level",
+        "/$defs/uncertainty_channel/properties/interval/oneOf/0/properties/lower",
+        "/$defs/uncertainty_channel/properties/interval/oneOf/0/properties/upper"
       ],
       "path": "schemas/claim.schema.json",
       "schema_id": "urn:odeya:schema:claim-version:0.3.0",
@@ -8123,9 +8127,13 @@
       ],
       "generic_json_number_paths": [],
       "generic_scientific_decimal_paths": [
+        "/$defs/equivalence_contract/properties/lower_margin",
+        "/$defs/equivalence_contract/properties/upper_margin",
+        "/$defs/noninferiority_contract/properties/margin",
         "/$defs/quantity/properties/value",
         "/$defs/safety_contract/properties/tolerated_upper_bound",
         "/properties/contrast/allOf/0/else/properties/reference_value",
+        "/properties/time/properties/horizon",
         "/properties/uncertainty_plan/allOf/0/then/properties/level"
       ],
       "path": "schemas/estimand-contract.schema.json",
@@ -8250,6 +8258,7 @@
       "generic_json_number_paths": [],
       "generic_scientific_decimal_paths": [
         "/$defs/compute_requirement/properties/value",
+        "/$defs/execution_limit/properties/limit",
         "/$defs/money_quantity/properties/amount",
         "/$defs/registered_quantity/properties/value"
       ],
@@ -9057,7 +9066,11 @@
         "/properties/validity/properties/valid_from"
       ],
       "generic_json_number_paths": [],
-      "generic_scientific_decimal_paths": [],
+      "generic_scientific_decimal_paths": [
+        "/$defs/estimate/properties/lower",
+        "/$defs/estimate/properties/point",
+        "/$defs/estimate/properties/upper"
+      ],
       "path": "schemas/model-configuration-record.schema.json",
       "schema_id": "urn:odeya:schema:model-configuration-record:0.1.0",
       "schema_version": "0.1.0",
@@ -9350,7 +9363,9 @@
       "generic_json_number_paths": [],
       "generic_scientific_decimal_paths": [
         "/$defs/conversion/oneOf/0/properties/scale",
-        "/$defs/conversion/oneOf/1/properties/scale"
+        "/$defs/conversion/oneOf/1/properties/offset",
+        "/$defs/conversion/oneOf/1/properties/scale",
+        "/$defs/value_alternative/oneOf/0/properties/exact_decimal"
       ],
       "path": "schemas/physical-quantity.schema.json",
       "schema_id": "urn:odeya:schema:physical-quantity:0.1.0",
@@ -9406,6 +9421,7 @@
       "generic_json_number_paths": [],
       "generic_scientific_decimal_paths": [
         "/$defs/compute_requirement/properties/value",
+        "/$defs/execution_limit/properties/limit",
         "/$defs/money_quantity/properties/amount",
         "/$defs/objective_evaluation/allOf/0/then/properties/point_value",
         "/$defs/objective_evaluation/allOf/1/then/properties/lower_bound",
@@ -9750,7 +9766,10 @@
         "/properties/dependency_frontier/properties/valid_until"
       ],
       "generic_json_number_paths": [],
-      "generic_scientific_decimal_paths": [],
+      "generic_scientific_decimal_paths": [
+        "/$defs/quantity_display/properties/interval/oneOf/0/properties/lower",
+        "/$defs/quantity_display/properties/interval/oneOf/0/properties/upper"
+      ],
       "path": "schemas/projection-snapshot.schema.json",
       "schema_id": "urn:odeya:schema:projection-snapshot:0.1.0",
       "schema_version": "0.1.0",
@@ -9777,7 +9796,10 @@
       "fixed_microsecond_datetime_paths": [],
       "generic_json_number_paths": [],
       "generic_scientific_decimal_paths": [
-        "/$defs/quantity/properties/value"
+        "/$defs/quantity/properties/value",
+        "/properties/deployment_scope/oneOf/0/properties/traffic_fraction",
+        "/properties/observed_dimensions/items/allOf/0/then/properties/baseline",
+        "/properties/observed_dimensions/items/allOf/0/then/properties/candidate"
       ],
       "path": "schemas/promotion-decision.schema.json",
       "schema_id": "urn:odeya:schema:promotion-decision:0.1.0",
@@ -11048,6 +11070,7 @@
       ],
       "generic_json_number_paths": [],
       "generic_scientific_decimal_paths": [
+        "/$defs/execution_limit/properties/limit",
         "/$defs/money_quantity/properties/amount"
       ],
       "path": "schemas/research-state-view.schema.json",
@@ -11381,6 +11404,7 @@
         "/$defs/resource_budget/properties/external_cost_usd",
         "/$defs/resource_budget/properties/human_hours",
         "/$defs/resource_budget/properties/memory_gib_seconds",
+        "/$defs/resource_budget/properties/model_tokens",
         "/$defs/resource_budget/properties/network_bytes",
         "/$defs/resource_budget/properties/storage_bytes",
         "/$defs/resource_budget/properties/wall_time_seconds"
@@ -11617,9 +11641,16 @@
       "generic_json_number_paths": [],
       "generic_scientific_decimal_paths": [
         "/$defs/quantity/properties/value",
+        "/allOf/12/then/properties/margin_binding/properties/lower_margin",
+        "/allOf/12/then/properties/margin_binding/properties/upper_margin",
+        "/allOf/13/then/properties/margin_binding/properties/noninferiority_margin",
         "/properties/evidence_measure/allOf/0/else/properties/value",
         "/properties/result_value/allOf/0/then/properties/point_estimate",
-        "/properties/uncertainty/allOf/0/then/properties/level"
+        "/properties/uncertainty/allOf/0/then/properties/level",
+        "/properties/uncertainty/allOf/1/then/properties/lower",
+        "/properties/uncertainty/allOf/1/then/properties/upper",
+        "/properties/uncertainty/allOf/2/then/properties/lower",
+        "/properties/uncertainty/allOf/3/then/properties/upper"
       ],
       "path": "schemas/scientific-result-envelope.schema.json",
       "schema_id": "urn:odeya:schema:scientific-result-envelope:0.1.0",
@@ -12507,7 +12538,7 @@
     "divergent_common_definition_name_count": 56,
     "fixed_microsecond_datetime_path_count": 151,
     "generic_json_number_path_count": 2,
-    "generic_scientific_decimal_path_count": 55,
+    "generic_scientific_decimal_path_count": 84,
     "nonconformant_fixture_timestamp_value_count": 236,
     "unpinned_canonical_profile_binding_count": 11,
     "unprofiled_datetime_path_count": 122

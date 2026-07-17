@@ -414,14 +414,15 @@ additive and that PRQ-001 terminates in Daniel's profile decision, which no
 session can self-close. The highest-value remaining autonomous work is
 therefore the profile-independent findings and the evidence-quality audit above,
 plus reducing the profile decision to an exact decidable package rather than
-1,150 raw findings (originally stated as 1,154; ADR 0033 corrected the audit's
-decimal detector, which had double-counted four profiled timestamps as
-scientific decimals).
+1,179 raw findings (originally stated as 1,154; ADR 0033 removed four profiled
+timestamps the decimal detector double-counted, and ADR 0034 rescued
+twenty-nine genuine decimals its name filter had missed -- both directions of
+the same instrument defect, both found only by reading findings in context).
 
 The canonical migration findings are now partitioned for decision. The
 disposition candidate at
 `architecture/canonicalization-migration-disposition-candidate.json` assigns all
-1,150 findings of the six audit classes to exactly nine disposition classes; the
+1,179 findings of the six audit classes to exactly nine disposition classes; the
 fourth architecture-evidence check recomputes that partition from the audit
 bytes on every run and refuses drift, count tampering, duplicate rows,
 pre-filled acceptance, a promoted status, a comparator declaration that
@@ -434,11 +435,12 @@ command-registry pair is the most mechanical gap; the frontier/state-root
 commitment family needs one construction decision before any naming). The
 touched-schema union is exactly 100 of 112, so the blast radius is one
 coordinated reissue wave regardless of which classes are accepted. 369 findings
-are mechanical, 723 are table-driven behind two embedded proposal tables (55
-decimal rows; 151 digest field groups — both now fully proposed by the
-proposing tranche and bound by the validator: every row carries a complete
-proposal or an explicit reason it defers to the operator), two are one
-binary-number judgment, and the remaining true
+are mechanical, 752 are table-driven behind two embedded proposal tables (84
+decimal rows; 151 digest field groups — both fully proposed and bound by the
+validator: every row carries a complete proposal from the declared vocabulary
+or an explicit reason it defers to the operator; the gate is shape-completeness
+only, and content correctness rests on the retained adversarial review plus the
+operator), two are one binary-number judgment, and the remaining true
 judgment sits in the divergent definition vocabularies. Physical coupling is
 disclosed: roughly 312 D2/D3/D5 rows sit inside the divergent definitions
 counted as D6-D8 units, so per-class acceptance changes reissued content

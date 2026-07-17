@@ -34,10 +34,19 @@ FIXED_TIME_VALUE = re.compile(
 RFC3339_LIKE_VALUE = re.compile(
     r"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:\.[0-9]+)?(?:Z|[+-][0-9]{2}:[0-9]{2})$"
 )
+# The name filter is a heuristic and produced verified false negatives: fields
+# with genuinely decimal shapes -- model_tokens beside seven governed siblings
+# in the same resource budget, the affine conversion offset beside its governed
+# scale, noninferiority margins, interval lower/upper beside their governed
+# level, traffic_fraction, horizon, limit -- carried no finding because their
+# names missed the list. Review verified at least twenty such fields. The shape
+# test (a decimal $ref or decimal pattern) is the real discriminator; the name
+# list exists only to skip identifier-like strings, so it must err wide.
 SCIENTIFIC_FIELD = re.compile(
     r"(?:value|estimate|threshold|probability|confidence|cost|budget|duration|"
     r"seconds|hours|bytes|rate|ratio|level|bound|mean|variance|deviation|"
-    r"uncertainty|precision|scale|amount|quantity)",
+    r"uncertainty|precision|scale|amount|quantity|tokens|offset|margin|lower|"
+    r"upper|fraction|horizon|limit|baseline|candidate|point|decimal)",
     re.IGNORECASE,
 )
 
