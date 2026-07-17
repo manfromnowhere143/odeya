@@ -119,9 +119,12 @@ neither is Odeya authority, storage, namespace, runtime, or control plane.
   `ff512c5211f6ace0816e7991913234ce7cb72e25`
 - Validated repository-release predecessor tree:
   `39c88d64a03c9227749d8aa045d57301e1f78997`
-- Canonical remote: none
-- Repository visibility, creation, push, publication, and deployment authority:
-  not granted
+- Canonical remote: `https://github.com/manfromnowhere143/odeya` (public,
+  created 2026-07-17 on the owner's explicit publication instruction,
+  ADR 0047; default branch `main` tracks the rehearsed architecture head)
+- Repository visibility, creation, push, and publication authority: granted
+  2026-07-17 for this architecture repository (ADR 0045, ADR 0047)
+- Runtime, deployment, external-effect, and Gate A authority: not granted
 
 This committed file cannot contain the hash of the commit that contains it
 without recursion. The active branch `HEAD` is therefore the rehearsal subject
