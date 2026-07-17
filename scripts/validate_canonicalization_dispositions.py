@@ -72,10 +72,15 @@ def skeleton(node):
 
 
 def enum_sets(node, acc):
+    # const values participate as one-element vocabularies. Review found
+    # signature_record misfiled as converge when its variants differ only in a
+    # signature_purpose const -- deliberate domain separation, vocabulary policy.
     if isinstance(node, dict):
         for key, value in node.items():
             if key == "enum" and isinstance(value, list):
                 acc.append(tuple(sorted(map(str, value))))
+            elif key == "const":
+                acc.append((str(value),))
             else:
                 enum_sets(value, acc)
     elif isinstance(node, list):
@@ -94,9 +99,12 @@ def recompute(audit: dict) -> dict:
         1 for s in audit["schemas"] for f in s.get("digest_fields", [])
         if f.get("scope_annotation_present") is False
     )
+    # The audit's real field is pins_candidate_profile; an earlier version
+    # tested a nonexistent "pinned" key and was correct only while zero
+    # bindings were pinned. Absence still counts as unpinned: fail closed.
     counts["D9"] = sum(
         1 for s in audit["schemas"] for b in s.get("canonical_profile_bindings", [])
-        if not isinstance(b, dict) or b.get("pinned") is not True
+        if not isinstance(b, dict) or b.get("pins_candidate_profile") is not True
     )
 
     cache: dict[str, dict] = {}
@@ -134,7 +142,7 @@ def recompute(audit: dict) -> dict:
         if (s.get("unprofiled_datetime_paths") or s.get("generic_scientific_decimal_paths")
                 or s.get("generic_json_number_paths")
                 or any(f.get("scope_annotation_present") is False for f in s.get("digest_fields", []))
-                or any(not isinstance(b, dict) or b.get("pinned") is not True
+                or any(not isinstance(b, dict) or b.get("pins_candidate_profile") is not True
                        for b in s.get("canonical_profile_bindings", []))):
             touched.add(s["path"])
     for entry in audit["divergent_common_definitions"]:
@@ -161,7 +169,7 @@ def recompute(audit: dict) -> dict:
     }
 
 
-def candidate_errors(candidate: dict, audit: dict) -> list[str]:
+def candidate_errors(candidate: dict, audit: dict, derived: dict | None = None) -> list[str]:
     errors: list[str] = []
 
     def require(condition: bool, message: str) -> None:
@@ -181,8 +189,35 @@ def candidate_errors(candidate: dict, audit: dict) -> list[str]:
     require(basis.get("audit_version") == audit.get("audit_version"),
             "candidate audit_version disagrees with the audit")
 
-    derived = recompute(audit)
-    declared = {c["class_id"]: c["count"] for c in candidate.get("classes", [])}
+    # The declared comparator must be the implemented one; an unbound
+    # declaration let a gutted rule pass green under review.
+    comparator = candidate.get("defs_comparator", {})
+    require(set(comparator.get("prose_stripped_keys", [])) == PROSE,
+            "declared prose-stripped keys disagree with the implemented comparator")
+    require(set(comparator.get("scalar_constraint_keys_blanked", [])) == SCALARS,
+            "declared scalar constraint keys disagree with the implemented comparator")
+    require(set(comparator.get("set_semantic_keys_sorted", [])) == (SET_KEYS | BRANCH_KEYS),
+            "declared set-semantic keys disagree with the implemented comparator")
+    require(comparator.get("vocabulary_keys") == ["enum", "const"],
+            "declared vocabulary keys disagree with the implemented comparator")
+
+    if derived is None:
+        derived = recompute(audit)
+    class_rows = candidate.get("classes", [])
+    class_ids = [c.get("class_id") for c in class_rows]
+    require(len(class_ids) == len(set(class_ids)),
+            "classes contains duplicate class_id rows; a lying first row would be "
+            "invisible behind last-wins dict construction")
+    defs_names = [a.get("definition_name") for a in candidate.get("defs_assignments", [])]
+    require(len(defs_names) == len(set(defs_names)),
+            "defs_assignments contains duplicate definition names")
+    field_names = [r.get("field_name") for r in candidate.get("d5_field_table", [])]
+    require(len(field_names) == len(set(field_names)),
+            "d5_field_table contains duplicate field names")
+    union_entries = candidate.get("touched_schema_union", [])
+    require(len(union_entries) == len(set(union_entries)),
+            "touched_schema_union contains duplicate entries")
+    declared = {c["class_id"]: c["count"] for c in class_rows}
     require(set(declared) == {"D1", "D2", "D3", "D4", "D5", "D6", "D7", "D8", "D9"},
             "candidate must declare exactly the nine disposition classes")
     for class_id, count in derived["counts"].items():
@@ -233,16 +268,18 @@ def candidate_errors(candidate: dict, audit: dict) -> list[str]:
     return errors
 
 
-def self_test(candidate: dict, audit: dict) -> int:
+def self_test(candidate: dict, audit: dict, derived: dict | None = None) -> int:
     """Every mutation of a correct candidate must be refused."""
-    if candidate_errors(copy.deepcopy(candidate), audit):
+    if derived is None:
+        derived = recompute(audit)
+    if candidate_errors(copy.deepcopy(candidate), audit, derived):
         print("self-test control failed: the retained candidate itself is refused", file=sys.stderr)
         return 1
 
     def mutate(label, fn):
         broken = copy.deepcopy(candidate)
         fn(broken)
-        if not candidate_errors(broken, audit):
+        if not candidate_errors(broken, audit, derived):
             print(f"self-test FAILED: mutation not refused: {label}", file=sys.stderr)
             return False
         return True
@@ -257,6 +294,11 @@ def self_test(candidate: dict, audit: dict) -> int:
         ("corpus digest swapped", lambda c: c["partition_basis"].__setitem__("schema_corpus_sha256", "0" * 64)),
         ("d3 row dropped", lambda c: c["d3_decimal_table"].pop()),
         ("d5 occurrences tampered", lambda c: c["d5_field_table"][0].__setitem__("occurrences", 1)),
+        ("duplicate class row prepended", lambda c: c["classes"].insert(0, dict(c["classes"][4], count=9999))),
+        ("duplicate defs row prepended", lambda c: c["defs_assignments"].insert(0, dict(c["defs_assignments"][0], **{"class": "D6" if c["defs_assignments"][0]["class"] != "D6" else "D7"}))),
+        ("duplicate d5 row prepended", lambda c: c["d5_field_table"].insert(0, dict(c["d5_field_table"][0], occurrences=9999))),
+        ("duplicate union entry appended", lambda c: c["touched_schema_union"].append(c["touched_schema_union"][0])),
+        ("comparator declaration gutted", lambda c: c["defs_comparator"].__setitem__("vocabulary_keys", ["enum"])),
     ]
     if all(mutate(label, fn) for label, fn in checks):
         print(f"disposition self-test passed: {len(checks)} known-bad mutations refused")
@@ -271,17 +313,23 @@ def main() -> int:
         return 1
     candidate = json.loads(CANDIDATE_PATH.read_text(encoding="utf-8"))
 
+    derived = recompute(audit)
     if "--self-test" in sys.argv:
-        return self_test(candidate, audit)
+        return self_test(candidate, audit, derived)
 
-    errors = candidate_errors(candidate, audit)
+    errors = candidate_errors(candidate, audit, derived)
     if errors:
         print("canonicalization disposition validation FAILED")
         for message in errors:
             print(f"- {message}")
         return 1
 
-    counts = recompute(audit)["counts"]
+    # The gate proves itself on every run: an advertised self-test that only
+    # runs when typed by hand is dead code waiting to rot.
+    if self_test(candidate, audit, derived) != 0:
+        return 1
+
+    counts = derived["counts"]
     print(
         "canonicalization disposition partition checked: "
         f"{sum(counts.values())} findings recomputed into 9 classes from audit bytes; "

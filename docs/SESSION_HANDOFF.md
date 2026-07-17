@@ -421,14 +421,19 @@ disposition candidate at
 `architecture/canonicalization-migration-disposition-candidate.json` assigns all
 1,154 findings of the six audit classes to exactly nine disposition classes; the
 fourth architecture-evidence check recomputes that partition from the audit
-bytes on every run and refuses drift, count tampering, pre-filled acceptance, or
-a promoted status, with a nine-mutation self-test proving the gate fires. The
+bytes on every run and refuses drift, count tampering, duplicate rows,
+pre-filled acceptance, a promoted status, or a comparator declaration that
+disagrees with the implemented rule, with a fourteen-mutation self-test that
+runs on every gated invocation. The
 touched-schema union is exactly 100 of 112, so the blast radius is one
-coordinated reissue wave regardless of which classes are accepted. Roughly 369
-findings are mechanical, 729 are table-driven behind two embedded proposal
-tables (59 decimal rows; 151 digest field groups, both with null proposal slots
-awaiting a proposing tranche), and the remaining true judgment sits in the
-divergent definition vocabularies. Every operator_acceptance slot is null: ADR 0032
+coordinated reissue wave regardless of which classes are accepted. 369 findings
+are mechanical, 727 are table-driven behind two embedded proposal tables (59
+decimal rows; 151 digest field groups, both with null proposal slots awaiting a
+proposing tranche), two are one binary-number judgment, and the remaining true
+judgment sits in the divergent definition vocabularies. Physical coupling is
+disclosed: roughly 312 D2/D3/D5 rows sit inside the divergent definitions
+counted as D6-D8 units, so per-class acceptance changes reissued content
+together, which the single wave absorbs. Every operator_acceptance slot is null: ADR 0032
 records the partition; Daniel's per-class decision is a separate explicit
 change. The next exact identity unit dispositions the retained canonical
 migration findings per accepted class into immutable legacy resources versus

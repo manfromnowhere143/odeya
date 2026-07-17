@@ -49,21 +49,32 @@ D9 profile bindings), binds the exact audit corpus digests, embeds the two
 proposal tables with null slots (59 decimal rows; 151 digest field groups), and
 carries one null `operator_acceptance` slot per class.
 
-The candidate stores no partition rows, because stored copies drift — this
-repository retired five coverage denominators for exactly that failure.
+The candidate's stored rows are never trusted, because stored copies drift —
+this repository retired five coverage denominators for exactly that failure.
+(An earlier wording here, "stores no partition rows", did not survive literal
+reading: the candidate stores counts, assignments, tables, and the union; what
+it never does is have them believed without recomputation.)
 `scripts/validate_canonicalization_dispositions.py` recomputes the entire
 partition from the audit bytes on every run: per-class counts, the
 divergent-definition triage under the exact comparator the candidate declares,
 the touched-schema union, and both tables. It refuses any disagreement, any
-pre-filled acceptance, and any promoted status, and its `--self-test` proves
-the gate fires by refusing nine known-bad mutations of a correct candidate.
+pre-filled acceptance, and any promoted status, and its self-test — run on every
+gated invocation, not only by hand — proves the gate fires by refusing fourteen
+known-bad mutations of a correct candidate, including contradictory duplicate
+rows whose lying first copy would hide behind last-wins dictionary construction,
+and a gutted comparator declaration.
 
 The divergent-definition triage is rule-based and its sensitivity is recorded
 rather than hidden: treating constraint-keyword presence as structure gives
-6 converge / 47 structural / 3 enum-policy names; the presence-insensitive
-reading reclassifies three names and is stated in the candidate. An earlier
-analyst triage of 20/32/4 did not reproduce under any precisely-defined
-comparator and was discarded.
+5 converge / 47 structural / 4 enum-policy names. Independent review corrected
+the comparator itself: const values now participate in the vocabulary check,
+because `signature_record`'s variants differ only in a `signature_purpose`
+const — deliberate domain separation — and the enum-only rule filed it as
+converge, whose recommendation would have merged two signature-purpose domains.
+The checker also binds the declared comparator to the implemented one, after
+review showed the declaration was ornamental. An earlier analyst triage of
+20/32/4 did not reproduce under any precisely-defined comparator and was
+discarded.
 
 ## Non-decisions
 
