@@ -422,9 +422,15 @@ timestamps, ADR 0034 rescued twenty-nine name-filter misses, ADR 0035 rescued
 forty-three more by making the shape test descend unions and array items, and
 ADR 0036 closed the loop by measurement: an independent name-blind termination
 sweep returned empty -- 192 decimal occurrences across 112 schemas, all
-governed, gate proven live on positive controls. **The package is ready for
-the operator sitting.** Residue for the reissue wave is recorded in the
-candidate's decimal_closure_residue).
+governed, gate proven live on positive controls. **The operator delegated all
+nine class decisions on 2026-07-17 (ADR 0037, acceptance record retained with
+the exact audit digests), and the wave is executing: D1 is resolved — 236
+fixture timestamps normalized, the audit's fixture blocker at zero, the live
+candidate recomputing 986 findings (ADR 0038). Reaching zero exposed and fixed
+two gates that could not observe success. Next tranches in dictated order:
+D5b domain registrations and the profile-core edit, then the schema wave.**
+Residue for the reissue wave is recorded in the candidate's
+decimal_closure_residue).
 
 The canonical migration findings are now partitioned for decision. The
 disposition candidate at

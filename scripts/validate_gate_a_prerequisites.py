@@ -389,8 +389,13 @@ def main() -> int:
                 f"{inventory_key} must retain the tranche-start count {frozen_start_count}",
                 errors,
             )
+            # A resolved class vanishes from blocking_findings -- the audit
+            # emits a finding only while its count is nonzero. Reading absence
+            # as a mismatch made this a gate that could not observe success:
+            # the accepted D1 disposition drove fixture timestamps to zero and
+            # this check refused the truth. Absence is exactly count zero.
             require(
-                actual_by_id.get(finding_id) == canonical_current.get(inventory_key),
+                actual_by_id.get(finding_id, 0) == canonical_current.get(inventory_key),
                 f"{finding_id} current inventory count must match SCHEMA_AUDIT.json",
                 errors,
             )

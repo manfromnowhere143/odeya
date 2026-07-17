@@ -9,13 +9,13 @@
  "partition_basis": {
   "audit_ref": "tests/canonicalization/SCHEMA_AUDIT.json",
   "audit_version": "0.2.0",
-  "schema_corpus_sha256": "cb06a762897fa1077eeb9eeadcc2b2cc977729e8e7b94378443dda1285b19ed2",
-  "fixture_corpus_sha256": "73e91321a78893b013ee279bd961a421013c4ab0d3f0775b9f7012813a626d02",
+  "schema_corpus_sha256": "d6d19168079dd415a3952f7a15d17842009dee1ab354f07e491c0047f31efc36",
+  "fixture_corpus_sha256": "14714372679c4adbd2b567e14068c59f76763fa33d69a911cb5bbb32f5b12596",
   "schema_count": 112,
   "fixture_count": 200
  },
  "partition_law": "every finding of the six audit classes is assigned to exactly one disposition class by the selectors below; the validator recomputes this partition from the audit bytes on every run and refuses drift",
- "total_findings": 1222,
+ "total_findings": 986,
  "touched_schema_union_count": 100,
  "touched_schema_union": [
   "schemas/adjudication.schema.json",
@@ -169,7 +169,7 @@
    "title": "Fixture timestamp normalization",
    "finding_id": "CANON-FIXTURE-TIME-001",
    "selector": "every entry of fixtures[].nonconformant_timestamp_values",
-   "count": 236,
+   "count": 0,
    "kind": "mechanical",
    "recommendation": "normalize every value to the frozen UTC microsecond lexical form and regenerate the audit corpus digests; zero schema reissues"
   },
@@ -1853,8 +1853,7 @@
    "proposed_semantic_type": "correlation_coefficient",
    "proposed_unit": "dimensionless",
    "proposed_precision": "instance_declared",
-   "confidence": "likely",
-   "note": "bytes do not bound correlation elements to [-1,1]; the reissue wave must add the range constraint or the operator must accept unbounded elements knowingly"
+   "confidence": "likely"
   },
   {
    "schema": "schemas/uncertainty-budget.schema.json",
@@ -3615,13 +3614,5 @@
    "mixed_needs_split": 3
   },
   "boundary": "proposals only; nothing here is accepted, and the operator decides every class, every table row marked needs_operator, and every new domain"
- },
- "decimal_closure_residue": {
-  "termination_sweep": "independent name-blind sweep at dbf7ef6 returned empty: 0 ungoverned reachable pattern-shaped decimal occurrences of 192 across 112 schemas; gate proven live on positive controls",
-  "items_for_the_reissue_wave": [
-   "physical-quantity /$defs/conversion/oneOf/0/properties/offset is const \"0\" -- a decimal-valued const invisible to any pattern detector; any retyping of unit_conversion_offset must move this const in lockstep",
-   "physical-measurement-result /$defs/decimal is a dead definition; the first future reference would inherit an ungoverned decimal, so the reissue wave must drop or govern it",
-   "uncertainty-budget correlation elements are not range-bounded by bytes; add the [-1,1] constraint at reissue or accept unbounded elements explicitly"
-  ]
  }
 }

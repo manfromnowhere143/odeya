@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:canonicalization-profile-candidate-evidence:0.1.0",
+  "$id": "urn:odeya:schema:canonicalization-profile-candidate-evidence:0.2.0",
   "title": "Odeya Canonicalization Profile Candidate Evidence",
   "description": "External nonrecursive binding of exact canonicalization-profile core bytes to bounded conformance and migration evidence. It is architecture evidence only and cannot issue a canonical profile or authorize Gate A, runtime, deployment, or effects.",
   "type": "object",
@@ -17,12 +17,18 @@
     "acceptance_boundary"
   ],
   "properties": {
-    "schema_version": { "const": "0.1.0" },
-    "artifact_class": { "const": "canonicalization_profile_candidate_evidence" },
+    "schema_version": {
+      "const": "0.2.0"
+    },
+    "artifact_class": {
+      "const": "canonicalization_profile_candidate_evidence"
+    },
     "candidate_status": {
       "const": "candidate_parameters_frozen_profile_unissued_gate_a_blocked"
     },
-    "frozen_at": { "$ref": "#/$defs/candidate_evidence_timestamp" },
+    "frozen_at": {
+      "$ref": "#/$defs/candidate_evidence_timestamp"
+    },
     "profile_core_binding": {
       "type": "object",
       "additionalProperties": false,
@@ -40,8 +46,12 @@
         "binding_is_external_to_core"
       ],
       "properties": {
-        "profile_id": { "const": "urn:odeya:canonicalization:odeya-jcs-0.1" },
-        "profile_version": { "const": "0.1.0" },
+        "profile_id": {
+          "const": "urn:odeya:canonicalization:odeya-jcs-0.1"
+        },
+        "profile_version": {
+          "const": "0.1.0"
+        },
         "profile_core_path": {
           "const": "architecture/canonicalization-profile-core-candidate.json"
         },
@@ -67,8 +77,12 @@
           "minimum": 1,
           "maximum": 1048576
         },
-        "core_contains_self_hash": { "const": false },
-        "binding_is_external_to_core": { "const": true }
+        "core_contains_self_hash": {
+          "const": false
+        },
+        "binding_is_external_to_core": {
+          "const": true
+        }
       }
     },
     "conformance_evidence": {
@@ -91,33 +105,63 @@
         "artifacts"
       ],
       "properties": {
-        "suite_id": { "const": "urn:odeya:conformance:canonical-identity:0.1.0" },
-        "profile_id": { "const": "urn:odeya:canonicalization:odeya-jcs-0.1" },
-        "evidence_label": { "const": "gate-a-candidate-2026-07-15" },
-        "case_count": { "const": 64 },
-        "accepted_count": { "const": 19 },
-        "refused_count": { "const": 45 },
-        "unclassified_error_count": { "const": 0 },
-        "metamorphic_relation_count": { "const": 4 },
+        "suite_id": {
+          "const": "urn:odeya:conformance:canonical-identity:0.1.0"
+        },
+        "profile_id": {
+          "const": "urn:odeya:canonicalization:odeya-jcs-0.1"
+        },
+        "evidence_label": {
+          "const": "gate-a-candidate-2026-07-15"
+        },
+        "case_count": {
+          "const": 64
+        },
+        "accepted_count": {
+          "const": 19
+        },
+        "refused_count": {
+          "const": 45
+        },
+        "unclassified_error_count": {
+          "const": 0
+        },
+        "metamorphic_relation_count": {
+          "const": 4
+        },
         "implementation_paths": {
           "type": "array",
           "minItems": 2,
           "maxItems": 2,
           "prefixItems": [
-            { "const": "python_rfc8785_0.1.4" },
-            { "const": "node_canonicalize_3.0.0" }
+            {
+              "const": "python_rfc8785_0.1.4"
+            },
+            {
+              "const": "node_canonicalize_3.0.0"
+            }
           ],
           "items": false
         },
-        "implementation_agreement": { "const": true },
-        "organizational_independence_proven": { "const": false },
-        "independent_host_reproduction_complete": { "const": false },
-        "networkless_replay_contract_documented": { "const": true },
+        "implementation_agreement": {
+          "const": true
+        },
+        "organizational_independence_proven": {
+          "const": false
+        },
+        "independent_host_reproduction_complete": {
+          "const": false
+        },
+        "networkless_replay_contract_documented": {
+          "const": true
+        },
         "artifacts": {
           "type": "array",
           "minItems": 9,
           "maxItems": 9,
-          "items": { "$ref": "#/$defs/candidate_evidence_artifact_binding" }
+          "items": {
+            "$ref": "#/$defs/candidate_evidence_artifact_binding"
+          }
         }
       }
     },
@@ -132,11 +176,21 @@
         "current_consumers_admitted"
       ],
       "properties": {
-        "schema_glob": { "const": "schemas/*.json" },
-        "declared_domain_count": { "const": 21 },
-        "domain_constants_unique": { "const": true },
-        "profile_core_matches_current_schema_constants": { "const": true },
-        "current_consumers_admitted": { "const": false }
+        "schema_glob": {
+          "const": "schemas/*.json"
+        },
+        "declared_domain_count": {
+          "const": 21
+        },
+        "domain_constants_unique": {
+          "const": true
+        },
+        "profile_core_matches_current_schema_constants": {
+          "const": true
+        },
+        "current_consumers_admitted": {
+          "const": false
+        }
       }
     },
     "migration_snapshot": {
@@ -162,23 +216,65 @@
         "profile_final_acceptance_complete"
       ],
       "properties": {
-        "audit_ref": { "const": "tests/canonicalization/SCHEMA_AUDIT.json" },
-        "audit_raw_digest": { "$ref": "#/$defs/candidate_evidence_raw_digest" },
-        "audit_gate_a_disposition": { "const": "blocked" },
-        "schema_count": { "type": "integer", "minimum": 1 },
-        "fixture_count": { "type": "integer", "minimum": 1 },
-        "unprofiled_datetime_paths": { "type": "integer", "minimum": 1 },
-        "number_or_decimal_findings": { "type": "integer", "minimum": 1 },
-        "unscoped_digest_fields": { "type": "integer", "minimum": 1 },
-        "divergent_common_definition_names": { "type": "integer", "minimum": 1 },
-        "unpinned_profile_bindings": { "type": "integer", "minimum": 1 },
-        "nonconformant_fixture_timestamps": { "type": "integer", "minimum": 1 },
-        "candidate_profile_parameters_frozen_for_review": { "const": true },
-        "candidate_digest_framing_frozen_for_review": { "const": true },
-        "candidate_profile_reference_shape_frozen_for_review": { "const": true },
-        "current_consumer_migration_complete": { "const": false },
-        "all_blocking_findings_resolved_or_versioned": { "const": false },
-        "profile_final_acceptance_complete": { "const": false }
+        "audit_ref": {
+          "const": "tests/canonicalization/SCHEMA_AUDIT.json"
+        },
+        "audit_raw_digest": {
+          "$ref": "#/$defs/candidate_evidence_raw_digest"
+        },
+        "audit_gate_a_disposition": {
+          "const": "blocked"
+        },
+        "schema_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "fixture_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "unprofiled_datetime_paths": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "number_or_decimal_findings": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unscoped_digest_fields": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "divergent_common_definition_names": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unpinned_profile_bindings": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "nonconformant_fixture_timestamps": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "candidate_profile_parameters_frozen_for_review": {
+          "const": true
+        },
+        "candidate_digest_framing_frozen_for_review": {
+          "const": true
+        },
+        "candidate_profile_reference_shape_frozen_for_review": {
+          "const": true
+        },
+        "current_consumer_migration_complete": {
+          "const": false
+        },
+        "all_blocking_findings_resolved_or_versioned": {
+          "const": false
+        },
+        "profile_final_acceptance_complete": {
+          "const": false
+        }
       }
     },
     "acceptance_boundary": {
@@ -208,15 +304,33 @@
             "status": "not_constructible"
           }
         },
-        "operator_acceptance_ref": { "type": "null" },
-        "canonical_profile_registry_member_ref": { "type": "null" },
-        "engine_contract_root_ref": { "type": "null" },
-        "canonical_identity_may_be_issued": { "const": false },
-        "gate_a_complete": { "const": false },
-        "runtime_authorized": { "const": false },
-        "deployment_authorized": { "const": false },
-        "external_effects_authorized": { "const": false },
-        "publication_authorized": { "const": false }
+        "operator_acceptance_ref": {
+          "type": "null"
+        },
+        "canonical_profile_registry_member_ref": {
+          "type": "null"
+        },
+        "engine_contract_root_ref": {
+          "type": "null"
+        },
+        "canonical_identity_may_be_issued": {
+          "const": false
+        },
+        "gate_a_complete": {
+          "const": false
+        },
+        "runtime_authorized": {
+          "const": false
+        },
+        "deployment_authorized": {
+          "const": false
+        },
+        "external_effects_authorized": {
+          "const": false
+        },
+        "publication_authorized": {
+          "const": false
+        }
       }
     }
   },
@@ -240,7 +354,12 @@
     "candidate_evidence_artifact_binding": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["path", "role", "raw_digest", "bytes"],
+      "required": [
+        "path",
+        "role",
+        "raw_digest",
+        "bytes"
+      ],
       "properties": {
         "path": {
           "type": "string",
@@ -259,8 +378,14 @@
             "comparison_receipt"
           ]
         },
-        "raw_digest": { "$ref": "#/$defs/candidate_evidence_raw_digest" },
-        "bytes": { "type": "integer", "minimum": 1, "maximum": 1048576 }
+        "raw_digest": {
+          "$ref": "#/$defs/candidate_evidence_raw_digest"
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1048576
+        }
       }
     }
   }
