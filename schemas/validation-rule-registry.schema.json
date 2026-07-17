@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:validation-rule-registry:0.2.0",
+  "$id": "urn:odeya:schema:validation-rule-registry:0.3.0",
   "title": "Odeya ValidationRuleRegistry",
   "description": "An immutable registry version containing closed semantic rule definitions. JSON Schema validates the registry's shape; predicates, implementation agreement, vectors, and supersession behavior require independent semantic evaluation.",
   "type": "object",
@@ -24,7 +24,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.2.0"
+      "const": "0.3.0"
     },
     "registry_id": {
       "$ref": "#/$defs/identifier"
@@ -111,7 +111,14 @@
       ]
     },
     "registry_digest": {
-      "$ref": "#/$defs/digest"
+      "$ref": "#/$defs/digest",
+      "x-odeya-digest-scope": {
+        "kind": "canonical_object_digest",
+        "domain": "odeya-validation-rule-registry-v1",
+        "algorithm": "sha-256",
+        "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+        "status": "prospective_domain_reserved_not_declared"
+      }
     },
     "sealed_at_ledger_position": {
       "type": "integer",

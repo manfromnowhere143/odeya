@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:aggregate-state-subject-registry:0.2.0",
+  "$id": "urn:odeya:schema:aggregate-state-subject-registry:0.3.0",
   "title": "Odeya AggregateStateSubjectRegistry",
   "description": "An immutable map from aggregate type to its exact canonical state subject contract. It fixes retained state-schema bytes, origin-from-absence, version/head/root rules, and one reducer owner without embedding snapshots, activations, checkpoints, current state, or signatures in member identity.",
   "type": "object",
@@ -28,7 +28,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.2.0"
+      "const": "0.3.0"
     },
     "registry_kind": {
       "const": "aggregate_state_subject_registry"
@@ -160,7 +160,14 @@
       "$ref": "#/$defs/registry_digest_contract"
     },
     "registry_digest": {
-      "$ref": "#/$defs/digest"
+      "$ref": "#/$defs/digest",
+      "x-odeya-digest-scope": {
+        "kind": "canonical_object_digest",
+        "domain": "odeya-aggregate-state-subject-registry-v1",
+        "algorithm": "sha-256",
+        "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+        "status": "registered_domain"
+      }
     },
     "external_attestations": {
       "type": "array",
@@ -204,7 +211,14 @@
           "format": "uri"
         },
         "canonical_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain_resolution": "target_resolved_via_sibling_reference",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "target_resolved_domain"
+          }
         }
       }
     },
@@ -650,7 +664,14 @@
           "$ref": "#/$defs/state_member_digest_contract"
         },
         "member_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-aggregate-state-subject-member-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "registered_domain"
+          }
         }
       }
     },
@@ -751,7 +772,14 @@
           "$ref": "#/$defs/identifier"
         },
         "subject_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-aggregate-state-subject-registry-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "registered_domain"
+          }
         },
         "signer_id": {
           "$ref": "#/$defs/identifier"

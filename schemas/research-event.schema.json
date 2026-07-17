@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:research-event:0.11.0",
+  "$id": "urn:odeya:schema:research-event:0.12.0",
   "title": "Odeya ResearchEvent",
   "description": "Architecture-only candidate event envelope for portfolio, pre-mission, mission, authority, incident, learning, data-governance, and recovery streams. Every branch owns exactly one aggregate and one orthogonal fact. The urn:odeya:event-payload logical type is distinct from this JSON Schema resource identity. ResearchEvent 0.7.0 has no frozen per-branch contract extraction/canonicalization profile, so its payload contract digest is necessarily null and every instance is not admitted, not dispatchable, and not replay-authoritative. A future resolved form requires a new ResearchEvent resource identity. Domain-separated digest shapes name exact JSON Pointer subjects; schema validation does not recompute or cryptographically verify them.",
   "type": "object",
@@ -33,7 +33,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.11.0"
+      "const": "0.12.0"
     },
     "event_id": {
       "$ref": "#/$defs/identifier"
@@ -9828,7 +9828,7 @@
         {
           "properties": {
             "schema_id": {
-              "const": "urn:odeya:schema:canonical-work-lease:0.4.0"
+              "const": "urn:odeya:schema:canonical-work-lease:0.5.0"
             }
           },
           "required": [
@@ -11968,7 +11968,7 @@
         {
           "properties": {
             "schema_id": {
-              "const": "urn:odeya:schema:protocol-snapshot:0.4.0"
+              "const": "urn:odeya:schema:protocol-snapshot:0.5.0"
             }
           },
           "required": [
@@ -14660,7 +14660,7 @@
           "minimum": 1
         },
         "schema_id": {
-          "const": "urn:odeya:schema:admission-evidence-bundle:0.4.0"
+          "const": "urn:odeya:schema:admission-evidence-bundle:0.5.0"
         },
         "digest": {
           "$ref": "#/$defs/digest"
@@ -14685,7 +14685,7 @@
           "minimum": 1
         },
         "schema_id": {
-          "const": "urn:odeya:schema:policy-decision:0.4.0"
+          "const": "urn:odeya:schema:policy-decision:0.5.0"
         },
         "digest": {
           "$ref": "#/$defs/digest"
@@ -14746,7 +14746,7 @@
         {
           "properties": {
             "schema_id": {
-              "const": "urn:odeya:schema:work-contract:0.10.0"
+              "const": "urn:odeya:schema:work-contract:0.11.0"
             }
           },
           "required": [
@@ -14797,7 +14797,7 @@
         {
           "properties": {
             "schema_id": {
-              "const": "urn:odeya:schema:ledger-checkpoint:0.4.0"
+              "const": "urn:odeya:schema:ledger-checkpoint:0.5.0"
             }
           },
           "required": [
@@ -15911,7 +15911,14 @@
           "minimum": 0
         },
         "candidate_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-ledger-checkpoint-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "registered_domain"
+          }
         },
         "checkpoint_ref": {
           "oneOf": [

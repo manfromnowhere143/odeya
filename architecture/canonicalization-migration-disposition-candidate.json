@@ -9,13 +9,13 @@
  "partition_basis": {
   "audit_ref": "tests/canonicalization/SCHEMA_AUDIT.json",
   "audit_version": "0.2.0",
-  "schema_corpus_sha256": "3b1cfca3a37d9f5e959ff4d7b77aecf235e68eb34442432c9d7190586e9459e6",
-  "fixture_corpus_sha256": "3e33ee12d1fa0547745edd30ce0da2cd4e43724096c676a2b9f5d8d11fbee295",
+  "schema_corpus_sha256": "84109b08bbbd91084c1eb431d902151ff60fcc2b168abfa4e6b468e857ca59f2",
+  "fixture_corpus_sha256": "147150b2d5f9c7d1db6e4ebb99eabf348e85f3f7c1d71fe7eb66fcc7c3a04ec8",
   "schema_count": 112,
   "fixture_count": 200
  },
  "partition_law": "every finding of the six audit classes is assigned to exactly one disposition class by the selectors below; the validator recomputes this partition from the audit bytes on every run and refuses drift",
- "total_findings": 464,
+ "total_findings": 392,
  "touched_schema_union_count": 100,
  "touched_schema_union": [
   "schemas/adjudication.schema.json",
@@ -205,7 +205,7 @@
    "title": "Digest scope annotation",
    "finding_id": "CANON-SCHEMA-DIGEST-001",
    "selector": "every schemas[].digest_fields[] entry with scope_annotation_present false",
-   "count": 398,
+   "count": 326,
    "kind": "table_driven",
    "recommendation": "annotate each field via shared scoped-digest definitions distinguishing byte digests from canonical object digests; rows proposing a domain beyond the frozen 21 require separate operator judgment and re-freeze the profile core"
   },
@@ -223,7 +223,7 @@
    "title": "Divergent definitions: structural",
    "finding_id": "CANON-SCHEMA-DEFS-001",
    "selector": "divergent_common_definitions entries whose variants differ structurally under the comparator in defs_comparator",
-   "count": 46,
+   "count": 47,
    "kind": "per_name_decision",
    "recommendation": "rename-distinct by default; converge-to-superset only where provably safe, decided per name over the retained variant diffs"
   },
@@ -232,7 +232,7 @@
    "title": "Divergent definitions: enum vocabulary policy",
    "finding_id": "CANON-SCHEMA-DEFS-001",
    "selector": "divergent_common_definitions entries whose variants share one skeleton but differ in enum vocabularies under the comparator in defs_comparator",
-   "count": 4,
+   "count": 3,
    "kind": "operator_judgment",
    "recommendation": "closed central vocabularies with declared per-context subsets"
   },
@@ -264,10 +264,14 @@
    "definition_name": "attestation",
    "class": "D7",
    "occurrence_count": 6,
-   "variant_count": 2,
+   "variant_count": 6,
    "variant_sha256": [
-    "a19d958d284ca4a79c8407fd358dcd64274a268680820738c75982e926e79122",
-    "e1afa15327b495116e0fedef3db67ee5190e19428df4687f0fe8fea727c686ae"
+    "39db8646ac41bb5b5b223aa8e67e2dbcc07e68dbadd096d636b0102bb71da21c",
+    "4786b70fd799a6031d5275543450b5a1f5f2af5b9f41c693163961eec958fb6e",
+    "6f905c7ea86d48498c651b6db9ff657c8a8e771302f408661e8483af264123cb",
+    "9b429b7e26d4b8c44c0b34ba585dbf1354a76ca32b61f385379100966dd7eec1",
+    "9b64fe6c141720a0ffef38c0bc506a43872d2a311d9bd716069d257f91b7669e",
+    "edae8945d8933837c2761f19c7f54221d5e6a6273125220614fef1c34706169c"
    ]
   },
   {
@@ -286,8 +290,8 @@
    "occurrence_count": 5,
    "variant_count": 2,
    "variant_sha256": [
-    "1c7e589b18cc5d8d5457d9cb08889f7d2ffccb456c9fa161e669300e737268d8",
-    "5360d9754229e3a3e4f12210a303724e5ece437125f723a5435fc5299caf495a"
+    "1059863fd53db5ea46260b61f5774d42e001fee9ea8f94fccbfd8bcfd966e755",
+    "36dedfe2190d256ef90ee73e9412070471acaaaf2bbce546ab2cbfc15a4ed2a4"
    ]
   },
   {
@@ -328,7 +332,7 @@
    "variant_sha256": [
     "1f5e9cc4bc4b88ca2b7a76c395f9bb83273ca7514e920242a8a4aba4815ff64f",
     "2767209659259d939ab456bfa5a7a558bd73de419a0c674265b07484ebfa4437",
-    "b16836db872c0bf9c861100be22c4cca97c4e15111d6b1d9ca8dbd77edc740e1"
+    "5873a3628a064b025c06e7413eb5c2160cce15d0a55ced7cc019349e5ce74385"
    ]
   },
   {
@@ -367,8 +371,8 @@
    "occurrence_count": 2,
    "variant_count": 2,
    "variant_sha256": [
-    "2a59d79dcfe5de78ab5d03a3ea0cf58c0f0817fd2028cc116f0405b90fd0a788",
-    "d17e52c98e4912ea03f95889d483a2f9b168dd3de41ef9eed632e60e6da8e166"
+    "22c242aed71563ab7be951d96765ea4261f1f3bf23fa7dd1dcc0ab93570ef5b8",
+    "bf8492cc5001313990fa9811713930a735049c832afd7af1975bbc2bb429bede"
    ]
   },
   {
@@ -411,9 +415,9 @@
    "occurrence_count": 6,
    "variant_count": 3,
    "variant_sha256": [
-    "075e19e6ed8ae26c8041b87f4ab0c81ef8cea3db0d20e4f623351a232a55830d",
-    "2e99890d70b2d6278b507af01af27e360d4d6f310b20be3028eebded260897c9",
-    "792c9027fe233703b4da283c7c1cc19c2ff46c0693b9d2d6409d68a3794c0860"
+    "1d6b45f17735631bfa8c28b02eb0980dd97aa71b5bbe7fe9e2e065a95d70d11b",
+    "7c191d01f7eda7b312908b00811563bca9c066792481cc67bd1fdec99974566c",
+    "d450f220febb310fdc120f0b3d59c3a55abf775b8155a42419740f6e681a7937"
    ]
   },
   {
@@ -422,8 +426,8 @@
    "occurrence_count": 3,
    "variant_count": 2,
    "variant_sha256": [
-    "b4d5760081acfa044f19cad72b31d236adf35dbd5c9e428796081384ad3dffab",
-    "dbfd8fe1d4a3b797253db686555b6f27692f51eadc3eab0509160695461da43f"
+    "b9c1eed31d8ade02d85702c81b129d15fcde74a124c4345b654d83fc1cab3bdb",
+    "e8d5f9990fdff5ec70f02a5e13f12c6ec04e0cd68bb5203459eb640d64736df1"
    ]
   },
   {
@@ -538,8 +542,8 @@
    "occurrence_count": 3,
    "variant_count": 3,
    "variant_sha256": [
-    "31c5f4324b9b35e4249e2ca84a4ed9bac104a50639671db92154ca2747c8b981",
-    "5becde8cd96c7987dbdda999c67a3050bfb4ed2dcc37272ee981d5afecfd5a66",
+    "428fc41c2ec0a92956beb5cc7d308adf9fcc7fc1ebade3125198f80a3701644b",
+    "5f3358fbf56193902354a1921a3299cc585bc688ba5041e2ce00d8ca6effc044",
     "abb2a95979bb63ea1b3cbe9d5101da18759384af949fa8770cf16484417cd5aa"
    ]
   },
@@ -559,9 +563,9 @@
    "occurrence_count": 15,
    "variant_count": 3,
    "variant_sha256": [
-    "4e9a3e1ef8b0d8648734172d47bf2db06065ef5e646e2d560695d82f65096596",
-    "95c953871eff177fe2ad70baa88fa530ec652066f3bb66d065cc3069e448ad2f",
-    "f2dd392c38345cacaf5785c51bf74ab2e67b7c1e9a02b0c5747faf30cf7bed9d"
+    "2b3848fbdbf55a4fbc8d04ae7d1310939286cca89d9c1084541e738e77f71061",
+    "a8c4598e6bae18702f511856a01187e2fd75a1d44d39f1bc992e6e29ca38699f",
+    "ecd00db6092f6e0d2da9126c2c7367c8213e77eac00f2f30acb4e2acedd23433"
    ]
   },
   {
@@ -612,8 +616,8 @@
    "occurrence_count": 4,
    "variant_count": 2,
    "variant_sha256": [
-    "a946558f55ddbb4c9ed08fe73adde2b6f8926a50763470ae2adf02ae4204c4d1",
-    "bcc3696b1ad1e6e15c630be46930ea0f8aaf7348fb7fa9b538845717499e2596"
+    "1467075e5107008b739ef0bbbfb24796163df756bbae428033e8587620488d25",
+    "850e043a47944f5d6a1e52d61ba87c13b711103314cfba433330a97a8e7bcccb"
    ]
   },
   {
@@ -641,8 +645,8 @@
    "occurrence_count": 2,
    "variant_count": 2,
    "variant_sha256": [
-    "cfd368612ba71af5a7f5bb254b5dfec6af77a1419a166190c48c1907ccae47ee",
-    "d71d241e19597e6d7a97ac97115a07d1d7e5677768c1f0090a3a1727630e449c"
+    "1dedaf66f74db3ce93bbe762fb1f23db6c722fd080958dc50ba931f667f92b16",
+    "6d5b8a7d9306c6386ef27f24d45bf3d361de098cd2161b9b7f588854d68fcf6e"
    ]
   },
   {
@@ -673,8 +677,8 @@
    "occurrence_count": 4,
    "variant_count": 2,
    "variant_sha256": [
-    "4de5554e28de586079ede51789aab23568c3b816c384e7006e634e21a40b9510",
-    "c959c105162844ee50f0cfdcf8370407b670cbe190569e80e0e542f5d9b5e50f"
+    "51740110aa63fb7e74659e3c50bbb45927ec15cf95a381dbe2d81bb817f72362",
+    "63ee4d558583c955025e9b8ca2d76c293d51f04e256f65b980b7cb2951a2c6b9"
    ]
   },
   {
@@ -716,7 +720,7 @@
    "variant_count": 2,
    "variant_sha256": [
     "693a1017192852b54dd68c2bc376438e522de92cd9deed4b2a518e31a1212bee",
-    "8e6dd18d100cec307c49800df38ff34d1d86ad888e6692895c2f54b2cedddae7"
+    "fbd7f58447cfb56cd2a0a05607f8aec95c4f693a8918e7b5577bc42df7199e58"
    ]
   },
   {
@@ -725,11 +729,11 @@
    "occurrence_count": 6,
    "variant_count": 5,
    "variant_sha256": [
-    "4e4baffc30fefe7781cefeecd1ab3ddfd6c1dd8abf6b8abe1c2b041479d7837e",
     "5a2346f8b201812ab5aedee1e3233f7f240e76d6b6b118ce1b1306591e9492fd",
     "9a37521ce0b62df089251545f08b58872813a1331657ea6c468b7aacae728f4c",
     "ab68ae40357d942ba059c6ed649292e68bf729000f96283ccd0314464c5e0f69",
-    "ad39e94b923a4b625679ebb63d677fe89179d44496ef605cdd4c2770f03561ae"
+    "ad39e94b923a4b625679ebb63d677fe89179d44496ef605cdd4c2770f03561ae",
+    "b0f3f9324c3a4c9df733ce22ead9d033d93ef81718821d6f080c8ad59015664d"
    ]
   },
   {
@@ -754,12 +758,12 @@
   },
   {
    "definition_name": "signature_record",
-   "class": "D8",
+   "class": "D7",
    "occurrence_count": 2,
    "variant_count": 2,
    "variant_sha256": [
-    "5dd1966d97d104d4548b93e27c7aa18457e228ecf8582a8b6bd848256c43fe6f",
-    "a5f76763be23231cbaa27b4e1c2e333eb9f6135346f683c733312f8ab9d67553"
+    "5a5c5ab2f7c745f080097039ea89a092937913fdbb4f7272f9125723bad32972",
+    "f4fff9dca66a9a7443df9b4406d9c3b65bd8d2c1609b9ea811bad44826d0caa5"
    ]
   },
   {
@@ -768,7 +772,7 @@
    "occurrence_count": 8,
    "variant_count": 2,
    "variant_sha256": [
-    "b62960c395e03b2299d00be12fa2263c26d8269a0239e4e08043d330714c958d",
+    "1251545a7b95eefce4e2fb2749cda54e14feb6ec88e8fec66834318f0415ce18",
     "d41a85729f76e086ba9f58153e84429d429bb1c57bc7abe52a7c10c51d75aa75"
    ]
   },
@@ -832,8 +836,8 @@
    "variant_count": 3,
    "variant_sha256": [
     "04a79e1500c32b57e5e981c5532b6b7619f2a4e93b51ebb080beaa6e835b5900",
-    "1faa03ef418c69f897a79ad654275353226cd379f67530c4fddfaf4db621228d",
-    "a034b00479f6202a3d925903ef77f30782e62f734852eca39519c2fcc1b1e64e"
+    "a034b00479f6202a3d925903ef77f30782e62f734852eca39519c2fcc1b1e64e",
+    "a788e6d5b7f6d26c02136a24fd7ac47d7c71ba7cd6c372e1cf8fb35dac1beb2d"
    ]
   }
  ],
@@ -851,30 +855,6 @@
    "proposed_subject_class_or_domain": "four-way split: artifact/profile refs are byte digests; checkpoint/event/receipt refs use existing domains; ~70 refs target NEW record domains; ~72 generic-reference defs resolve per use site",
    "requires_new_domain_registration": "partial",
    "note": "the only name spanning byte and canonical in one shared def family; split is mandatory at reissue"
-  },
-  {
-   "field_name": "registry_digest",
-   "occurrences": 25,
-   "lexical_constraints": {
-    "sha256_lowercase_hex": 24,
-    "unconstrained_or_union": 1
-   },
-   "schema_count": 23,
-   "proposed_digest_kind": "canonical_object_digest",
-   "proposed_subject_class_or_domain": "existing registry domains where registered; NEW: command-contract-registry, method-registry, validation-rule-registry, unit-registry",
-   "requires_new_domain_registration": "partial"
-  },
-  {
-   "field_name": "canonical_digest",
-   "occurrences": 18,
-   "lexical_constraints": {
-    "sha256_lowercase_hex": 14,
-    "unconstrained_or_union": 4
-   },
-   "schema_count": 15,
-   "proposed_digest_kind": "canonical_object_digest",
-   "proposed_subject_class_or_domain": "target-resolved via sibling schema_id; NEW: work-intent, work-contract, command-contract-record",
-   "requires_new_domain_registration": "partial"
   },
   {
    "field_name": "graph_root_digest",
@@ -902,28 +882,6 @@
    "note": "byte vs canonical split by containing context"
   },
   {
-   "field_name": "subject_digest",
-   "occurrences": 5,
-   "lexical_constraints": {
-    "sha256_lowercase_hex": 5
-   },
-   "schema_count": 5,
-   "proposed_digest_kind": "canonical_object_digest",
-   "proposed_subject_class_or_domain": "existing registry domains",
-   "requires_new_domain_registration": false
-  },
-  {
-   "field_name": "member_digest",
-   "occurrences": 5,
-   "lexical_constraints": {
-    "sha256_lowercase_hex": 5
-   },
-   "schema_count": 5,
-   "proposed_digest_kind": "canonical_object_digest",
-   "proposed_subject_class_or_domain": "existing member domains; one command member is NEW: command-contract-record",
-   "requires_new_domain_registration": "partial"
-  },
-  {
    "field_name": "canonical_payload_digest",
    "occurrences": 5,
    "lexical_constraints": {
@@ -947,17 +905,6 @@
    "note": "needs a commitment profile or wrapper schema"
   },
   {
-   "field_name": "candidate_digest",
-   "occurrences": 4,
-   "lexical_constraints": {
-    "sha256_lowercase_hex": 4
-   },
-   "schema_count": 4,
-   "proposed_digest_kind": "canonical_object_digest",
-   "proposed_subject_class_or_domain": "odeya-ledger-checkpoint-v1 (3); NEW: publication-candidate (2)",
-   "requires_new_domain_registration": "partial"
-  },
-  {
    "field_name": "security_frontier_digest",
    "occurrences": 4,
    "lexical_constraints": {
@@ -970,41 +917,6 @@
    "note": "frontier-family construction (canonical closed object vs commitment profile) must be decided once, before any frontier domain is named"
   },
   {
-   "field_name": "signed_digest",
-   "occurrences": 3,
-   "lexical_constraints": {
-    "sha256_lowercase_hex": 3
-   },
-   "schema_count": 3,
-   "proposed_digest_kind": "canonical_object_digest",
-   "proposed_subject_class_or_domain": "checkpoint and activation domains; NEW: backup-manifest",
-   "requires_new_domain_registration": "partial"
-  },
-  {
-   "field_name": "semantic_vector_a_digest",
-   "occurrences": 3,
-   "lexical_constraints": {
-    "unconstrained_or_union": 2,
-    "sha256_lowercase_hex": 1
-   },
-   "schema_count": 1,
-   "proposed_digest_kind": "canonical_object_digest",
-   "proposed_subject_class_or_domain": "in-record separators declared by reducer-equivalence-result; unregistered",
-   "requires_new_domain_registration": true
-  },
-  {
-   "field_name": "semantic_vector_b_digest",
-   "occurrences": 3,
-   "lexical_constraints": {
-    "unconstrained_or_union": 2,
-    "sha256_lowercase_hex": 1
-   },
-   "schema_count": 1,
-   "proposed_digest_kind": "canonical_object_digest",
-   "proposed_subject_class_or_domain": "in-record separators declared by reducer-equivalence-result; unregistered",
-   "requires_new_domain_registration": true
-  },
-  {
    "field_name": "frontier_digest",
    "occurrences": 3,
    "lexical_constraints": {
@@ -1015,18 +927,6 @@
    "proposed_subject_class_or_domain": "frontier commitment; construction unregistered",
    "requires_new_domain_registration": "unknown",
    "note": "frontier-family construction (canonical closed object vs commitment profile) must be decided once, before any frontier domain is named"
-  },
-  {
-   "field_name": "bundle_digest",
-   "occurrences": 2,
-   "lexical_constraints": {
-    "sha256_lowercase_hex": 2
-   },
-   "schema_count": 2,
-   "proposed_digest_kind": "canonical_object_digest",
-   "proposed_subject_class_or_domain": "odeya-admission-evidence-bundle-v2; odeya-c0-registry-bundle-v1",
-   "requires_new_domain_registration": false,
-   "note": "one name, two existing domains; annotate per occurrence"
   },
   {
    "field_name": "ordered_members_digest",
@@ -1077,17 +977,6 @@
    "note": "frontier-family construction (canonical closed object vs commitment profile) must be decided once, before any frontier domain is named"
   },
   {
-   "field_name": "decision_digest",
-   "occurrences": 2,
-   "lexical_constraints": {
-    "sha256_lowercase_hex": 2
-   },
-   "schema_count": 2,
-   "proposed_digest_kind": "canonical_object_digest",
-   "proposed_subject_class_or_domain": "odeya-policy-decision-v2; NEW: recovery-decision",
-   "requires_new_domain_registration": "partial"
-  },
-  {
    "field_name": "tree_digest",
    "occurrences": 1,
    "lexical_constraints": {
@@ -1122,18 +1011,6 @@
    "proposed_subject_class_or_domain": "digest-list commitment",
    "requires_new_domain_registration": "unknown",
    "note": "digest-list commitments need one commitment profile or wrapper-schema decision before any can be annotated"
-  },
-  {
-   "field_name": "claimed_digest",
-   "occurrences": 1,
-   "lexical_constraints": {
-    "unconstrained_or_union": 1
-   },
-   "schema_count": 1,
-   "proposed_digest_kind": "canonical_object_digest",
-   "proposed_subject_class_or_domain": "target-resolved via record_id; untrusted client copy",
-   "requires_new_domain_registration": "unknown",
-   "note": "verify against the target's own domain"
   },
   {
    "field_name": "evaluation_frontier_digest",
@@ -1218,17 +1095,6 @@
    "proposed_subject_class_or_domain": "weights bytes vs endpoint descriptor",
    "requires_new_domain_registration": "unknown",
    "note": "field name admits two subjects; needs a field split, not just annotation"
-  },
-  {
-   "field_name": "target_digest",
-   "occurrences": 1,
-   "lexical_constraints": {
-    "sha256_lowercase_hex": 1
-   },
-   "schema_count": 1,
-   "proposed_digest_kind": "canonical_object_digest",
-   "proposed_subject_class_or_domain": "target-resolved (target_id/target_version; class varies)",
-   "requires_new_domain_registration": "unknown"
   },
   {
    "field_name": "assignment_commit_digest",

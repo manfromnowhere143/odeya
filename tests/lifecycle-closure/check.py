@@ -37,7 +37,7 @@ EXPECTED_V2_PAYLOAD_TYPE_EVENTS = {
     "verification.completed",
     "verification.disputed",
 }
-CANONICAL_WORK_LEASE_ID = "urn:odeya:schema:canonical-work-lease:0.4.0"
+CANONICAL_WORK_LEASE_ID = "urn:odeya:schema:canonical-work-lease:0.5.0"
 
 
 def load_json(path: Path) -> Any:
@@ -108,7 +108,7 @@ def schema_contract_errors(
     # the exact identity pin: the URN below is repointed by the reissue
     # closure; the version const must equal that URN's version by derivation,
     # so a reissue can never split the two expectations
-    expected_event_id = "urn:odeya:schema:research-event:0.11.0"
+    expected_event_id = "urn:odeya:schema:research-event:0.12.0"
     expected_event_version = expected_event_id.rsplit(":", 1)[1]
     if schema.get("$id") != expected_event_id:
         errors.append(f"lifecycle closure is not carried by exact ResearchEvent {expected_event_version}")
@@ -123,9 +123,9 @@ def schema_contract_errors(
     if not required_envelope_fields <= set(schema.get("required", [])):
         errors.append("ResearchEvent does not require the complete logical-type/unresolved-contract boundary")
     if nested(schema, "properties", "payload_contract_resolution_status", "const") != "unresolved_blocking":
-        errors.append("ResearchEvent 0.7.0 does not fail closed on unresolved branch contracts")
+        errors.append("ResearchEvent 0.12.0 does not fail closed on unresolved branch contracts")
     if nested(schema, "properties", "payload_contract_digest", "type") != "null":
-        errors.append("ResearchEvent 0.7.0 permits a fabricated per-branch contract digest")
+        errors.append("ResearchEvent 0.12.0 permits a fabricated per-branch contract digest")
     if nested(schema, "properties", "event_contract_authority_status", "const") != "not_admitted_not_dispatchable_not_replay_authoritative":
         errors.append("unresolved ResearchEvent candidates can claim event authority")
     expected_binding_source = (
@@ -663,7 +663,7 @@ def protocol_origin_errors(subject: dict[str, Any]) -> list[str]:
         errors.append("protocol origin is not explicitly from aggregate absence")
     if subject.get("first_materialized_version") != 1:
         errors.append("protocol origin does not materialize version 1")
-    if not valid_record_ref(subject.get("frozen_protocol_snapshot_ref"), schema_id="urn:odeya:schema:protocol-snapshot:0.4.0"):
+    if not valid_record_ref(subject.get("frozen_protocol_snapshot_ref"), schema_id="urn:odeya:schema:protocol-snapshot:0.5.0"):
         errors.append("protocol origin lacks an exact frozen ProtocolSnapshot reference")
     if not valid_artifact_ref(subject.get("source_draft_evidence_ref")):
         errors.append("protocol origin lacks exact source-draft evidence")
@@ -820,7 +820,7 @@ def work_lease_record_candidate_errors(subject: dict[str, Any]) -> list[str]:
         errors.append("WorkLease record fixture claims execution authority")
 
     work_intent = record.get("work_intent_ref", {})
-    if work_intent.get("schema_id") != "urn:odeya:schema:work-intent:0.4.0":
+    if work_intent.get("schema_id") != "urn:odeya:schema:work-intent:0.5.0":
         errors.append("WorkLease record fixture binds the wrong WorkIntent resource")
     if work_intent.get("digest") != nested(work_intent, "artifact_ref", "digest"):
         errors.append("WorkLease WorkIntent record and artifact digests differ")

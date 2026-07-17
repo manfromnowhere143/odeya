@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:command-design-vocabulary:0.2.0",
+  "$id": "urn:odeya:schema:command-design-vocabulary:0.3.0",
   "title": "Odeya CommandDesignVocabulary",
   "description": "A non-executable planning artifact extracted from one exact command-envelope candidate. Every entry is explicitly not contract-admitted and carries no payload, handler, event, authority, grant, compatibility, activation, or execution promise.",
   "type": "object",
@@ -21,7 +21,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.2.0"
+      "const": "0.3.0"
     },
     "vocabulary_id": {
       "$ref": "#/$defs/identifier"
@@ -332,7 +332,14 @@
           "$ref": "#/$defs/identifier"
         },
         "subject_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-command-design-vocabulary-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "registered_domain"
+          }
         },
         "signer_id": {
           "$ref": "#/$defs/identifier"

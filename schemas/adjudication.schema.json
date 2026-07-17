@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:adjudication:0.3.0",
+  "$id": "urn:odeya:schema:adjudication:0.4.0",
   "title": "Odeya Adjudication",
   "description": "An immutable application of a frozen consequence rule to retained evidence. Refusal, invalidity, missing measurement, and scientific outcomes remain distinct.",
   "type": "object",
@@ -30,7 +30,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.3.0"
+      "const": "0.4.0"
     },
     "adjudication_id": {
       "$ref": "#/$defs/identifier"
@@ -333,7 +333,14 @@
           "minLength": 1
         },
         "registry_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-method-registry-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
         }
       }
     },

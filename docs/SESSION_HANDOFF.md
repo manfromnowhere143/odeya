@@ -447,10 +447,14 @@ fixture values converted, four suites' semantic checkers unwrap the governed
 object, and the ledger holds 69 reissues + 14 candidates. FOUR OF SIX classes
 now measure zero. D5a-1 executed (ADR 0043): 270 mechanical digest scopes
 annotated against the reservation registry, unscoped count 668 to 398, 85
-reissues closed, lifecycle version pin now self-deriving. Remaining: D5a-2
-contextual rows (72 occ), D5a-3 mixed digest family (284 occ), the
-frontier/commitment construction decision (37 occ), D6-D8 (55 defs), then D9
-pins strictly last.**
+reissues closed, lifecycle version pin now self-deriving. D5a-2 executed (ADR
+0044): all 72 contextual occurrences classified by containing definition —
+registry/member/attestation domains, target-resolved references,
+in-record-declared separators, untrusted-copy marking; unscoped 398 to 326;
+the version aligner is now trap-safe (guard text only, never payload values).
+Remaining: D5a-3 mixed digest family (284 occ), the frontier/commitment
+construction decision (37 occ), D6-D8 (55 defs), then D9 pins strictly
+last.**
 Residue for the reissue wave is recorded in the candidate's
 decimal_closure_residue).
 

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:publication-manifest:0.3.0",
+  "$id": "urn:odeya:schema:publication-manifest:0.4.0",
   "title": "Odeya PublicationManifest",
   "description": "An immutable, sealed disclosure package at an exact ledger position. Release settlement is tracked by events and is not embedded in the manifest.",
   "type": "object",
@@ -29,7 +29,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.3.0"
+      "const": "0.4.0"
     },
     "manifest_id": {
       "$ref": "#/$defs/identifier"
@@ -46,7 +46,14 @@
       "minimum": 0
     },
     "candidate_digest": {
-      "$ref": "#/$defs/digest"
+      "$ref": "#/$defs/digest",
+      "x-odeya-digest-scope": {
+        "kind": "canonical_object_digest",
+        "domain": "odeya-publication-candidate-v1",
+        "algorithm": "sha-256",
+        "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+        "status": "prospective_domain_reserved_not_declared"
+      }
     },
     "publication_decision_ref": {
       "$ref": "#/$defs/artifact_reference"
@@ -313,7 +320,14 @@
           "minLength": 1
         },
         "registry_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-method-registry-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
         }
       }
     },

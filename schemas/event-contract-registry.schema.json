@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:event-contract-registry:0.2.0",
+  "$id": "urn:odeya:schema:event-contract-registry:0.3.0",
   "title": "Odeya EventContractRegistry",
   "description": "An immutable registry of exact event branches. Each member binds one discriminator/version and payload JSON Pointer to retained schema bytes, one canonical aggregate owner, a closed producer-command set, retention/privacy semantics, and one reducer member. Structural validity does not prove legal emission or reduction.",
   "type": "object",
@@ -28,7 +28,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.2.0"
+      "const": "0.3.0"
     },
     "registry_kind": {
       "const": "event_contract_registry"
@@ -152,7 +152,14 @@
       "$ref": "#/$defs/registry_digest_contract"
     },
     "registry_digest": {
-      "$ref": "#/$defs/digest"
+      "$ref": "#/$defs/digest",
+      "x-odeya-digest-scope": {
+        "kind": "canonical_object_digest",
+        "domain": "odeya-event-contract-registry-v1",
+        "algorithm": "sha-256",
+        "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+        "status": "registered_domain"
+      }
     },
     "external_attestations": {
       "type": "array",
@@ -204,7 +211,14 @@
           "format": "uri"
         },
         "canonical_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain_resolution": "target_resolved_via_sibling_reference",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "target_resolved_domain"
+          }
         }
       }
     },
@@ -515,7 +529,14 @@
           "$ref": "#/$defs/event_member_digest_contract"
         },
         "member_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-event-contract-member-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "registered_domain"
+          }
         }
       }
     },
@@ -612,7 +633,14 @@
           "$ref": "#/$defs/identifier"
         },
         "subject_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-event-contract-registry-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "registered_domain"
+          }
         },
         "signer_id": {
           "$ref": "#/$defs/identifier"

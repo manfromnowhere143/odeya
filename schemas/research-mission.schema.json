@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:research-mission:0.5.0",
+  "$id": "urn:odeya:schema:research-mission:0.6.0",
   "title": "Odeya ResearchMissionSpec",
   "description": "The single canonical, pre-execution contract for an Odeya research mission.",
   "type": "object",
@@ -37,7 +37,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.5.0"
+      "const": "0.6.0"
     },
     "mission_id": {
       "$ref": "#/$defs/identifier"
@@ -1364,7 +1364,14 @@
           "minLength": 1
         },
         "registry_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-method-registry-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
         }
       }
     },

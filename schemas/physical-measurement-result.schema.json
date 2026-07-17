@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:physical-measurement-result:0.3.0",
+  "$id": "urn:odeya:schema:physical-measurement-result:0.4.0",
   "title": "Odeya PhysicalMeasurementResult",
   "description": "An immutable physical measurement result binding the measurand, raw signal, instrument/firmware/configuration, environment, calibration traceability, sampling/filtering/latency/synchronization, uncertainty budget, and quality flags. Calibration evidence is measurement traceability only and cannot be relabeled physical validation.",
   "type": "object",
@@ -31,7 +31,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.3.0"
+      "const": "0.4.0"
     },
     "physical_measurement_result_id": {
       "$ref": "#/$defs/identifier"
@@ -393,7 +393,7 @@
         {
           "properties": {
             "schema_id": {
-              "const": "urn:odeya:schema:uncertainty-budget:0.3.0"
+              "const": "urn:odeya:schema:uncertainty-budget:0.4.0"
             }
           }
         }
@@ -430,7 +430,14 @@
           "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
         },
         "registry_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-method-registry-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
         }
       }
     },

@@ -340,10 +340,10 @@ def walk(node: Any):
 def schema_audit() -> list[str]:
     errors: list[str] = []
     expected_ids = {
-        "schemas/projection-snapshot.schema.json": "urn:odeya:schema:projection-snapshot:0.4.0",
-        "schemas/projection-redaction-manifest.schema.json": "urn:odeya:schema:projection-redaction-manifest:0.3.0",
-        "schemas/reducer-equivalence-result.schema.json": "urn:odeya:schema:reducer-equivalence-result:0.3.0",
-        "schemas/projection-impact-record.schema.json": "urn:odeya:schema:projection-impact-record:0.3.0",
+        "schemas/projection-snapshot.schema.json": "urn:odeya:schema:projection-snapshot:0.5.0",
+        "schemas/projection-redaction-manifest.schema.json": "urn:odeya:schema:projection-redaction-manifest:0.4.0",
+        "schemas/reducer-equivalence-result.schema.json": "urn:odeya:schema:reducer-equivalence-result:0.4.0",
+        "schemas/projection-impact-record.schema.json": "urn:odeya:schema:projection-impact-record:0.4.0",
     }
     forbidden_digest_properties = {
         "projection_digest",

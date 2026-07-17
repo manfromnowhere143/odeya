@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:publication-decision:0.2.0",
+  "$id": "urn:odeya:schema:publication-decision:0.3.0",
   "title": "Odeya PublicationDecision",
   "description": "A human publication decision over one exact PublicationCandidate digest. Authorization requires an explicit passing check and human approval for every founding gate; this decision is not a manifest or dispatch grant.",
   "type": "object",
@@ -26,7 +26,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.2.0"
+      "const": "0.3.0"
     },
     "decision_id": {
       "$ref": "#/$defs/identifier"
@@ -56,7 +56,14 @@
           "minimum": 1
         },
         "candidate_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-publication-candidate-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
         },
         "schema_id": {
           "const": "urn:odeya:schema:publication-candidate:0.2.0"

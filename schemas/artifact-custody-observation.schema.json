@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:artifact-custody-observation:0.3.0",
+  "$id": "urn:odeya:schema:artifact-custody-observation:0.4.0",
   "title": "Odeya ArtifactCustodyObservation",
   "description": "An immutable observation in an artifact custody chain. It records an action and evidence without rewriting the ArtifactManifest. Chain order, grant scope, and digest recomputation are semantic checks.",
   "type": "object",
@@ -25,7 +25,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.3.0"
+      "const": "0.4.0"
     },
     "observation_id": {
       "$ref": "#/$defs/identifier"
@@ -340,7 +340,14 @@
           "minLength": 1
         },
         "registry_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-method-registry-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
         }
       }
     },
