@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:recovery-change-service-scope-command:0.3.0",
+  "$id": "urn:odeya:schema:recovery-change-service-scope-command:0.4.0",
   "title": "Odeya recovery.change_service_scope command payload",
   "description": "Architecture-only closed command payload. Structural validity does not establish referenced evidence, authority, time, signature, quorum, or execution truth.",
   "type": "object",
@@ -23,7 +23,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.3.0"
+      "const": "0.4.0"
     },
     "security_frontier_completeness": {
       "const": "proven_complete"
@@ -110,7 +110,14 @@
       "$ref": "#/$defs/canonical_record_reference"
     },
     "security_frontier_digest": {
-      "$ref": "#/$defs/digest"
+      "$ref": "#/$defs/digest",
+      "x-odeya-digest-scope": {
+        "kind": "canonical_object_digest",
+        "domain": "odeya-security-frontier-manifest-v1",
+        "algorithm": "sha-256",
+        "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+        "status": "prospective_domain_reserved_not_declared"
+      }
     }
   },
   "$defs": {

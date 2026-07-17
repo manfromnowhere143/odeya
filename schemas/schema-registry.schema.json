@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:schema-registry:0.4.0",
+  "$id": "urn:odeya:schema:schema-registry:0.5.0",
   "title": "Odeya SchemaRegistry",
   "description": "An immutable, content-addressed registry of exact retained schema bytes. Members contain no registry-snapshot, activation, checkpoint, signature, storage-location, or mutable-alias reference. Structural validity is not registry admission or Gate A acceptance.",
   "type": "object",
@@ -27,7 +27,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.4.0"
+      "const": "0.5.0"
     },
     "registry_kind": {
       "const": "schema_registry"
@@ -332,7 +332,14 @@
           "minimum": 1
         },
         "ordered_member_digests_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-ordered-digest-list-commitment-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
         }
       }
     },

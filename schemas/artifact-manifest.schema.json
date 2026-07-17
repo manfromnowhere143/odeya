@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:artifact-manifest:0.4.0",
+  "$id": "urn:odeya:schema:artifact-manifest:0.5.0",
   "title": "Odeya ArtifactManifest",
   "description": "An immutable description of exact artifact bytes, origin, lineage, rights, sensitivity, retention, and storage binding. Promotion and later custody are separate observations.",
   "type": "object",
@@ -28,7 +28,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.4.0"
+      "const": "0.5.0"
     },
     "artifact_id": {
       "$ref": "#/$defs/identifier"
@@ -428,7 +428,14 @@
       }
     },
     "canonical_payload_digest": {
-      "$ref": "#/$defs/digest"
+      "$ref": "#/$defs/digest",
+      "x-odeya-digest-scope": {
+        "kind": "canonical_object_digest",
+        "domain": "odeya-artifact-manifest-v1",
+        "algorithm": "sha-256",
+        "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+        "status": "prospective_domain_reserved_not_declared"
+      }
     },
     "created_at_ledger_position": {
       "type": "integer",

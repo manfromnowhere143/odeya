@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:command-receipt:0.8.0",
+  "$id": "urn:odeya:schema:command-receipt:0.9.0",
   "title": "Odeya CommandReceipt",
   "description": "Closed structural candidate for immutable post-registry command settlement. This 0.4 resource is deliberately nonconstructible and not admitted while the exact CommandContractRecord and CommandContractRegistry identities remain unresolved; result and digest values in fixtures are comparison probes and do not assert that a receipt exists. A future admitted CommandReceipt may exist only after exact registry activation and standalone member resolution. Logical payload_type_id is distinct from schema resource, canonical, and closure identity; the member reference also separates dialect and source-blob identity. Schema validation does not prove admission, activation, membership, identity equality, currentness, evidence completeness, or external attestations, and a future schema-resource reissue is required before receipt construction can be admitted.",
   "type": "object",
@@ -37,7 +37,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.8.0"
+      "const": "0.9.0"
     },
     "conformance_scope": {
       "const": "structural_fixture_only"
@@ -366,7 +366,7 @@
           "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
         },
         "schema_id": {
-          "const": "urn:odeya:schema:command-contract-registry:0.5.0"
+          "const": "urn:odeya:schema:command-contract-registry:0.6.0"
         },
         "digest": {
           "$ref": "#/$defs/digest",
@@ -400,7 +400,7 @@
           "minimum": 1
         },
         "schema_id": {
-          "const": "urn:odeya:schema:registry-activation:0.5.0"
+          "const": "urn:odeya:schema:registry-activation:0.6.0"
         },
         "activation_digest": {
           "$ref": "#/$defs/digest",
@@ -455,7 +455,7 @@
           "minimum": 1
         },
         "schema_id": {
-          "const": "urn:odeya:schema:command-contract-record:0.4.0"
+          "const": "urn:odeya:schema:command-contract-record:0.5.0"
         },
         "digest": {
           "$ref": "#/$defs/digest",
@@ -549,7 +549,7 @@
           "minimum": 1
         },
         "schema_id": {
-          "const": "urn:odeya:schema:admission-evidence-bundle:0.6.0"
+          "const": "urn:odeya:schema:admission-evidence-bundle:0.7.0"
         },
         "digest": {
           "$ref": "#/$defs/digest",
@@ -581,7 +581,7 @@
           "minimum": 1
         },
         "schema_id": {
-          "const": "urn:odeya:schema:policy-decision:0.6.0"
+          "const": "urn:odeya:schema:policy-decision:0.7.0"
         },
         "digest": {
           "$ref": "#/$defs/digest",
@@ -678,7 +678,14 @@
           "$ref": "#/$defs/versioned_identity"
         },
         "evaluation_frontier_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-evaluation-frontier-manifest-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
         },
         "policy_decision_refs": {
           "type": "array",

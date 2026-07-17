@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:aggregate-state-subject-registry:0.4.0",
+  "$id": "urn:odeya:schema:aggregate-state-subject-registry:0.5.0",
   "title": "Odeya AggregateStateSubjectRegistry",
   "description": "An immutable map from aggregate type to its exact canonical state subject contract. It fixes retained state-schema bytes, origin-from-absence, version/head/root rules, and one reducer owner without embedding snapshots, activations, checkpoints, current state, or signatures in member identity.",
   "type": "object",
@@ -28,7 +28,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.4.0"
+      "const": "0.5.0"
     },
     "registry_kind": {
       "const": "aggregate_state_subject_registry"
@@ -706,7 +706,14 @@
           "minimum": 1
         },
         "ordered_member_digests_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-ordered-digest-list-commitment-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
         }
       }
     },

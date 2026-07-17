@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:module-dependency-manifest:0.1.0",
+  "$id": "urn:odeya:schema:module-dependency-manifest:0.2.0",
   "title": "Odeya ModuleDependencyManifest",
   "description": "The machine-readable logical module graph and single-owner registry used before any language, package, or deployment choice. It describes enforceable architecture intent and authorizes no runtime module creation.",
   "type": "object",
@@ -22,24 +22,46 @@
     "manifest_digest"
   ],
   "properties": {
-    "schema_version": { "const": "0.1.0" },
-    "manifest_id": { "$ref": "#/$defs/identifier" },
-    "version": { "type": "integer", "minimum": 1 },
-    "status": { "enum": ["proposed", "accepted", "retired"] },
-    "scope": { "const": "logical-preimplementation-architecture" },
+    "schema_version": {
+      "const": "0.2.0"
+    },
+    "manifest_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "status": {
+      "enum": [
+        "proposed",
+        "accepted",
+        "retired"
+      ]
+    },
+    "scope": {
+      "const": "logical-preimplementation-architecture"
+    },
     "layers": {
       "type": "array",
       "minItems": 1,
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["layer_id", "may_depend_on_layers"],
+        "required": [
+          "layer_id",
+          "may_depend_on_layers"
+        ],
         "properties": {
-          "layer_id": { "$ref": "#/$defs/identifier" },
+          "layer_id": {
+            "$ref": "#/$defs/identifier"
+          },
           "may_depend_on_layers": {
             "type": "array",
             "uniqueItems": true,
-            "items": { "$ref": "#/$defs/identifier" }
+            "items": {
+              "$ref": "#/$defs/identifier"
+            }
           }
         }
       }
@@ -60,16 +82,35 @@
           "forbidden_capabilities"
         ],
         "properties": {
-          "module_id": { "$ref": "#/$defs/identifier" },
-          "layer_id": { "$ref": "#/$defs/identifier" },
-          "semantic_role": { "type": "string", "minLength": 1 },
+          "module_id": {
+            "$ref": "#/$defs/identifier"
+          },
+          "layer_id": {
+            "$ref": "#/$defs/identifier"
+          },
+          "semantic_role": {
+            "type": "string",
+            "minLength": 1
+          },
           "direct_dependencies": {
             "type": "array",
             "uniqueItems": true,
-            "items": { "$ref": "#/$defs/identifier" }
+            "items": {
+              "$ref": "#/$defs/identifier"
+            }
           },
-          "state_authority": { "enum": ["none", "owns_canonical_aggregates", "coordinates_commands", "derived_projection_only", "offline_assurance_only"] },
-          "external_effect_authority": { "const": false },
+          "state_authority": {
+            "enum": [
+              "none",
+              "owns_canonical_aggregates",
+              "coordinates_commands",
+              "derived_projection_only",
+              "offline_assurance_only"
+            ]
+          },
+          "external_effect_authority": {
+            "const": false
+          },
           "forbidden_capabilities": {
             "type": "array",
             "uniqueItems": true,
@@ -101,10 +142,17 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["aggregate_type", "owner_module"],
+        "required": [
+          "aggregate_type",
+          "owner_module"
+        ],
         "properties": {
-          "aggregate_type": { "$ref": "#/$defs/identifier" },
-          "owner_module": { "$ref": "#/$defs/identifier" }
+          "aggregate_type": {
+            "$ref": "#/$defs/identifier"
+          },
+          "owner_module": {
+            "$ref": "#/$defs/identifier"
+          }
         }
       }
     },
@@ -114,22 +162,55 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["schema_path", "schema_id", "owner_module", "contract_kind"],
+        "required": [
+          "schema_path",
+          "schema_id",
+          "owner_module",
+          "contract_kind"
+        ],
         "properties": {
-          "schema_path": { "type": "string", "pattern": "^schemas/[a-z0-9-]+\\.schema\\.json$" },
-          "schema_id": { "type": "string", "format": "uri" },
-          "owner_module": { "$ref": "#/$defs/identifier" },
-          "contract_kind": { "enum": ["canonical_record", "candidate_record", "derived_record", "deterministic_control_artifact", "command", "receipt", "event", "trace", "registry", "architecture_assurance"] }
+          "schema_path": {
+            "type": "string",
+            "pattern": "^schemas/[a-z0-9-]+\\.schema\\.json$"
+          },
+          "schema_id": {
+            "type": "string",
+            "format": "uri"
+          },
+          "owner_module": {
+            "$ref": "#/$defs/identifier"
+          },
+          "contract_kind": {
+            "enum": [
+              "canonical_record",
+              "candidate_record",
+              "derived_record",
+              "deterministic_control_artifact",
+              "command",
+              "receipt",
+              "event",
+              "trace",
+              "registry",
+              "architecture_assurance"
+            ]
+          }
         }
       }
     },
     "derived_ownership": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["commands", "events"],
+      "required": [
+        "commands",
+        "events"
+      ],
       "properties": {
-        "commands": { "$ref": "#/$defs/derived_registry" },
-        "events": { "$ref": "#/$defs/derived_registry" }
+        "commands": {
+          "$ref": "#/$defs/derived_registry"
+        },
+        "events": {
+          "$ref": "#/$defs/derived_registry"
+        }
       }
     },
     "global_rules": {
@@ -148,39 +229,99 @@
         "worker_cannot_write_canonical_state"
       ],
       "properties": {
-        "acyclic_dependencies": { "const": true },
-        "one_owner_per_aggregate": { "const": true },
-        "one_owner_per_schema": { "const": true },
-        "all_commands_resolve_through_target_aggregate": { "const": true },
-        "all_events_resolve_through_event_aggregate": { "const": true },
-        "pure_domain_has_no_ambient_io": { "const": true },
-        "cross_domain_mutation_only_through_commands": { "const": true },
-        "external_dispatch_only_after_committed_dispatch_claim": { "const": true },
-        "projection_cannot_authorize": { "const": true },
-        "worker_cannot_write_canonical_state": { "const": true }
+        "acyclic_dependencies": {
+          "const": true
+        },
+        "one_owner_per_aggregate": {
+          "const": true
+        },
+        "one_owner_per_schema": {
+          "const": true
+        },
+        "all_commands_resolve_through_target_aggregate": {
+          "const": true
+        },
+        "all_events_resolve_through_event_aggregate": {
+          "const": true
+        },
+        "pure_domain_has_no_ambient_io": {
+          "const": true
+        },
+        "cross_domain_mutation_only_through_commands": {
+          "const": true
+        },
+        "external_dispatch_only_after_committed_dispatch_claim": {
+          "const": true
+        },
+        "projection_cannot_authorize": {
+          "const": true
+        },
+        "worker_cannot_write_canonical_state": {
+          "const": true
+        }
       }
     },
     "known_limitations": {
       "type": "array",
       "minItems": 1,
-      "items": { "type": "string", "minLength": 1 }
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
     },
-    "digest_scope": { "const": "canonical-object:odeya-jcs-0.1:exclude(manifest_digest)" },
-    "manifest_digest": { "$ref": "#/$defs/digest" }
+    "digest_scope": {
+      "const": "canonical-object:odeya-jcs-0.1:exclude(manifest_digest)"
+    },
+    "manifest_digest": {
+      "$ref": "#/$defs/digest",
+      "x-odeya-digest-scope": {
+        "kind": "canonical_object_digest",
+        "domain": "odeya-module-dependency-manifest-v1",
+        "algorithm": "sha-256",
+        "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+        "status": "prospective_domain_reserved_not_declared"
+      }
+    }
   },
   "$defs": {
-    "identifier": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$" },
-    "digest": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$"
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
     "derived_registry": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["source_schema_path", "discriminator_field", "aggregate_field", "resolution", "expected_minimum_count"],
+      "required": [
+        "source_schema_path",
+        "discriminator_field",
+        "aggregate_field",
+        "resolution",
+        "expected_minimum_count"
+      ],
       "properties": {
-        "source_schema_path": { "type": "string", "pattern": "^schemas/[a-z0-9-]+\\.schema\\.json$" },
-        "discriminator_field": { "type": "string", "minLength": 1 },
-        "aggregate_field": { "type": "string", "minLength": 1 },
-        "resolution": { "const": "aggregate_owners" },
-        "expected_minimum_count": { "type": "integer", "minimum": 1 }
+        "source_schema_path": {
+          "type": "string",
+          "pattern": "^schemas/[a-z0-9-]+\\.schema\\.json$"
+        },
+        "discriminator_field": {
+          "type": "string",
+          "minLength": 1
+        },
+        "aggregate_field": {
+          "type": "string",
+          "minLength": 1
+        },
+        "resolution": {
+          "const": "aggregate_owners"
+        },
+        "expected_minimum_count": {
+          "type": "integer",
+          "minimum": 1
+        }
       }
     }
   }

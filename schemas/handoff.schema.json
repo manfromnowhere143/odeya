@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:handoff:0.4.0",
+  "$id": "urn:odeya:schema:handoff:0.5.0",
   "title": "Odeya Handoff",
   "description": "An immutable recovery packet at an exact ledger position. It contains reconstructible facts and next legal actions, not private reasoning. Freshness and reference integrity require semantic validation.",
   "type": "object",
@@ -36,7 +36,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.4.0"
+      "const": "0.5.0"
     },
     "handoff_id": {
       "$ref": "#/$defs/identifier"
@@ -336,7 +336,14 @@
       ]
     },
     "canonical_payload_digest": {
-      "$ref": "#/$defs/digest"
+      "$ref": "#/$defs/digest",
+      "x-odeya-digest-scope": {
+        "kind": "canonical_object_digest",
+        "domain": "odeya-handoff-v1",
+        "algorithm": "sha-256",
+        "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+        "status": "prospective_domain_reserved_not_declared"
+      }
     },
     "prepared_at": {
       "type": "string",

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:architecture-candidate-manifest:0.3.0",
+  "$id": "urn:odeya:schema:architecture-candidate-manifest:0.4.0",
   "title": "Odeya ArchitectureCandidateManifest",
   "description": "An immutable byte-exact Gate A review scope. Its canonical digest is bound externally to avoid a self-digest cycle. A structurally valid manifest is neither reviewed nor accepted.",
   "type": "object",
@@ -27,7 +27,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.3.0"
+      "const": "0.4.0"
     },
     "manifest_id": {
       "$ref": "#/$defs/identifier"
@@ -69,7 +69,14 @@
           "pattern": "^git:(sha1:[a-f0-9]{40}|sha256:[a-f0-9]{64})$"
         },
         "tree_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "external_byte_identity",
+            "subject": "git tree object identity of the retained repository state",
+            "algorithm": "sha-1_git_object_identity",
+            "profile": "not_a_canonical_object_digest",
+            "status": "external_identity_does_not_replace_source_bundle_digest"
+          }
         },
         "worktree_state": {
           "const": "clean"
@@ -466,7 +473,7 @@
       ],
       "properties": {
         "schema_id": {
-          "const": "urn:odeya:schema:architecture-candidate-manifest:0.3.0"
+          "const": "urn:odeya:schema:architecture-candidate-manifest:0.4.0"
         },
         "canonicalization_profile_ref": {
           "$ref": "#/$defs/versioned_reference"

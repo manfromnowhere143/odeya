@@ -15,8 +15,8 @@ from referencing import Registry, Resource
 
 ROOT = Path(__file__).resolve().parents[2]
 MANIFEST = ROOT / "tests/command-identity-contracts/cases.json"
-COMMAND_REGISTRY_ID = "urn:odeya:schema:command-contract-registry:0.5.0"
-COMMAND_RECORD_ID = "urn:odeya:schema:command-contract-record:0.4.0"
+COMMAND_REGISTRY_ID = "urn:odeya:schema:command-contract-registry:0.6.0"
+COMMAND_RECORD_ID = "urn:odeya:schema:command-contract-record:0.5.0"
 EXACT_RESOLUTION_MODE = "preloaded_exact_resource_id"
 
 

@@ -477,9 +477,12 @@ containing reference family — byte for artifact/profile/candidate refs,
 event/checkpoint/typed-record domains where declared or reserved,
 target-resolved for generic reference defs; 281 annotated, 3 deferred by
 design (set commitment + two unreserved manifests). Unscoped now 45 = exactly
-the frontier/commitment construction-decision families. Remaining: that ONE
-construction decision (45 occ), D6-D8 (55 defs), then D9 pins strictly
-last.**
+the frontier/commitment construction-decision families. The construction decision
+is DECIDED and executed (ADR 0048): canonical closed objects under the
+frozen profile for every commitment subject, twelve domains reserved, the
+two-subject field split, D5 CLOSED at zero. FIVE OF SIX classes measure
+zero; 66 findings remain. Remaining: D6-D8 (55 defs: 5 converge / 47
+structural / 3 vocabulary), then D9 pins strictly last.**
 Residue for the reissue wave is recorded in the candidate's
 decimal_closure_residue).
 

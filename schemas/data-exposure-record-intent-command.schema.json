@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:data-exposure-record-intent-command:0.4.0",
+  "$id": "urn:odeya:schema:data-exposure-record-intent-command:0.5.0",
   "title": "Odeya data_exposure.record_intent command payload",
   "description": "Architecture-only closed command payload. Structural validity does not establish referenced evidence, authority, time, signature, quorum, or execution truth.",
   "type": "object",
@@ -23,7 +23,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.4.0"
+      "const": "0.5.0"
     },
     "expected_asset_state": {
       "const": "admitted"
@@ -85,7 +85,14 @@
       }
     },
     "recipient_digest": {
-      "$ref": "#/$defs/digest"
+      "$ref": "#/$defs/digest",
+      "x-odeya-digest-scope": {
+        "kind": "byte_digest",
+        "subject": "privacy-preserving hash over the exact recipient identifier bytes",
+        "algorithm": "sha-256",
+        "profile": "not_a_canonical_object_digest",
+        "status": "accepted_construction_decision"
+      }
     },
     "external_effect_id": {
       "$ref": "#/$defs/identifier"

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:c0-registry-bundle:0.4.0",
+  "$id": "urn:odeya:schema:c0-registry-bundle:0.5.0",
   "title": "Odeya C0RegistryBundle",
   "description": "An immutable bootstrap-verifiable bundle binding one EngineContractRoot, its exact component subjects, and the constitutional trust seed. It contains no activation or checkpoint reference, preventing a future-checkpoint digest cycle.",
   "type": "object",
@@ -23,7 +23,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.4.0"
+      "const": "0.5.0"
     },
     "bundle_id": {
       "$ref": "#/$defs/identifier"
@@ -229,7 +229,14 @@
           "const": 12
         },
         "ordered_members_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-ordered-digest-list-commitment-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
         }
       }
     },

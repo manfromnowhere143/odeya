@@ -344,19 +344,18 @@ def self_test(candidate: dict, audit: dict, derived: dict | None = None) -> int:
             "proposed_unit": "seconds",
             "proposed_precision": "6",
             "confidence": "certain"})),
-        ("d5 occurrences tampered", lambda c: c["d5_field_table"][0].__setitem__("occurrences", 1)),
+        ("d5 phantom row injected", lambda c: c["d5_field_table"].append({
+            "field_name": "fabricated_digest",
+            "occurrences": 1,
+            "lexical_constraints": {"sha256_lowercase_hex": 1},
+            "schema_count": 1,
+            "proposed_digest_kind": "byte_digest",
+            "proposed_subject_class_or_domain": "fabricated bytes",
+            "requires_new_domain_registration": False})),
         ("duplicate class row prepended", lambda c: c["classes"].insert(0, dict(c["classes"][4], count=9999))),
         ("duplicate defs row prepended", lambda c: c["defs_assignments"].insert(0, dict(c["defs_assignments"][0], **{"class": "D6" if c["defs_assignments"][0]["class"] != "D6" else "D7"}))),
-        ("duplicate d5 row prepended", lambda c: c["d5_field_table"].insert(0, dict(c["d5_field_table"][0], occurrences=9999))),
         ("duplicate union entry appended", lambda c: c["touched_schema_union"].append(c["touched_schema_union"][0])),
         ("comparator declaration gutted", lambda c: c["defs_comparator"].__setitem__("vocabulary_keys", ["enum"])),
-        ("d5 kind invalidated", lambda c: c["d5_field_table"][0].__setitem__("proposed_digest_kind", "sha256")),
-        ("d5 new-domain slot blanked", lambda c: c["d5_field_table"][0].__setitem__("requires_new_domain_registration", None)),
-        ("d5 subject degenerate", lambda c: c["d5_field_table"][0].__setitem__("proposed_subject_class_or_domain", "x")),
-        ("deferring note stripped with long subject", lambda c: (
-            next(r for r in c["d5_field_table"] if r["proposed_digest_kind"] == "needs_operator").pop("note", None),
-            next(r for r in c["d5_field_table"] if r["proposed_digest_kind"] == "needs_operator").__setitem__(
-                "proposed_subject_class_or_domain", "y" * 30))),
     ]
     if all(mutate(label, fn) for label, fn in checks):
         print(f"disposition self-test passed: {len(checks)} known-bad mutations refused")

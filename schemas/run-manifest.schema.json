@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:run-manifest:0.6.0",
+  "$id": "urn:odeya:schema:run-manifest:0.7.0",
   "title": "Odeya RunManifest",
   "description": "An immutable, authorized compilation of one execution attempt family. It binds inputs, code, environment, tools, budgets, controls, and expected outputs; it is not proof that a run occurred or was valid.",
   "type": "object",
@@ -30,7 +30,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.6.0"
+      "const": "0.7.0"
     },
     "run_manifest_id": {
       "$ref": "#/$defs/identifier"
@@ -152,7 +152,6 @@
               "role",
               "model_id",
               "version",
-              "weights_or_endpoint_digest",
               "context_policy_ref"
             ],
             "properties": {
@@ -166,13 +165,42 @@
                 "type": "string",
                 "minLength": 1
               },
-              "weights_or_endpoint_digest": {
-                "$ref": "#/$defs/digest"
-              },
               "context_policy_ref": {
                 "$ref": "#/$defs/artifact_reference"
+              },
+              "weights_digest": {
+                "$ref": "#/$defs/digest",
+                "x-odeya-digest-scope": {
+                  "kind": "byte_digest",
+                  "subject": "exact model weights bytes",
+                  "algorithm": "sha-256",
+                  "profile": "not_a_canonical_object_digest",
+                  "status": "accepted_construction_decision"
+                }
+              },
+              "endpoint_descriptor_digest": {
+                "$ref": "#/$defs/digest",
+                "x-odeya-digest-scope": {
+                  "kind": "byte_digest",
+                  "subject": "serialized provider endpoint descriptor bytes",
+                  "algorithm": "sha-256",
+                  "profile": "not_a_canonical_object_digest",
+                  "status": "accepted_construction_decision"
+                }
               }
-            }
+            },
+            "oneOf": [
+              {
+                "required": [
+                  "weights_digest"
+                ]
+              },
+              {
+                "required": [
+                  "endpoint_descriptor_digest"
+                ]
+              }
+            ]
           }
         },
         "tool_bindings": {
@@ -382,7 +410,14 @@
       }
     },
     "canonical_payload_digest": {
-      "$ref": "#/$defs/digest"
+      "$ref": "#/$defs/digest",
+      "x-odeya-digest-scope": {
+        "kind": "canonical_object_digest",
+        "domain": "odeya-run-manifest-v1",
+        "algorithm": "sha-256",
+        "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+        "status": "prospective_domain_reserved_not_declared"
+      }
     },
     "sealed_at_ledger_position": {
       "type": "integer",

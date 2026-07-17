@@ -108,7 +108,7 @@ def schema_contract_errors(
     # the exact identity pin: the URN below is repointed by the reissue
     # closure; the version const must equal that URN's version by derivation,
     # so a reissue can never split the two expectations
-    expected_event_id = "urn:odeya:schema:research-event:0.13.0"
+    expected_event_id = "urn:odeya:schema:research-event:0.14.0"
     expected_event_version = expected_event_id.rsplit(":", 1)[1]
     if schema.get("$id") != expected_event_id:
         errors.append(f"lifecycle closure is not carried by exact ResearchEvent {expected_event_version}")
@@ -663,7 +663,7 @@ def protocol_origin_errors(subject: dict[str, Any]) -> list[str]:
         errors.append("protocol origin is not explicitly from aggregate absence")
     if subject.get("first_materialized_version") != 1:
         errors.append("protocol origin does not materialize version 1")
-    if not valid_record_ref(subject.get("frozen_protocol_snapshot_ref"), schema_id="urn:odeya:schema:protocol-snapshot:0.6.0"):
+    if not valid_record_ref(subject.get("frozen_protocol_snapshot_ref"), schema_id="urn:odeya:schema:protocol-snapshot:0.7.0"):
         errors.append("protocol origin lacks an exact frozen ProtocolSnapshot reference")
     if not valid_artifact_ref(subject.get("source_draft_evidence_ref")):
         errors.append("protocol origin lacks exact source-draft evidence")

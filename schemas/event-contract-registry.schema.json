@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:event-contract-registry:0.4.0",
+  "$id": "urn:odeya:schema:event-contract-registry:0.5.0",
   "title": "Odeya EventContractRegistry",
   "description": "An immutable registry of exact event branches. Each member binds one discriminator/version and payload JSON Pointer to retained schema bytes, one canonical aggregate owner, a closed producer-command set, retention/privacy semantics, and one reducer member. Structural validity does not prove legal emission or reduction.",
   "type": "object",
@@ -28,7 +28,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.4.0"
+      "const": "0.5.0"
     },
     "registry_kind": {
       "const": "event_contract_registry"
@@ -571,7 +571,14 @@
           "minimum": 1
         },
         "ordered_member_digests_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-ordered-digest-list-commitment-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
         }
       }
     },

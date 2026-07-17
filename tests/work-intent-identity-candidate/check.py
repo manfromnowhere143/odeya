@@ -57,29 +57,29 @@ EXPECTED_REISSUES = [
     {
         "path": "schemas/work-intent.schema.json",
         "from_schema_id": "urn:odeya:schema:work-intent:0.1.0",
-        "to_schema_id": "urn:odeya:schema:work-intent:0.13.0"
+        "to_schema_id": "urn:odeya:schema:work-intent:0.14.0"
     },
     {
         "path": "schemas/canonical-work-lease.schema.json",
         "from_schema_id": "urn:odeya:schema:canonical-work-lease:0.1.0",
-        "to_schema_id": "urn:odeya:schema:canonical-work-lease:0.9.0"
+        "to_schema_id": "urn:odeya:schema:canonical-work-lease:0.10.0"
     },
     {
         "path": "schemas/work-contract.schema.json",
         "from_schema_id": "urn:odeya:schema:work-contract:0.2.0",
-        "to_schema_id": "urn:odeya:schema:work-contract:0.12.0"
+        "to_schema_id": "urn:odeya:schema:work-contract:0.13.0"
     }
 ]
 EXPECTED_CONSUMERS = [
     {
         "schema_path": "schemas/canonical-work-lease.schema.json",
         "current_schema_id": "urn:odeya:schema:canonical-work-lease:0.6.0",
-        "prospective_schema_id": "urn:odeya:schema:canonical-work-lease:0.9.0",
+        "prospective_schema_id": "urn:odeya:schema:canonical-work-lease:0.10.0",
     },
     {
         "schema_path": "schemas/work-contract.schema.json",
-        "current_schema_id": "urn:odeya:schema:work-contract:0.13.0",
-        "prospective_schema_id": "urn:odeya:schema:work-contract:0.12.0",
+        "current_schema_id": "urn:odeya:schema:work-contract:0.14.0",
+        "prospective_schema_id": "urn:odeya:schema:work-contract:0.13.0",
     },
 ]
 

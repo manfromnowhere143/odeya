@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:ledger-checkpoint:0.6.0",
+  "$id": "urn:odeya:schema:ledger-checkpoint:0.7.0",
   "title": "Odeya LedgerCheckpoint",
   "description": "A signed, immutable commitment to one inclusive canonical ledger frontier and the exact C0 semantic registry bundle required to interpret it. It supports integrity, registry-resolution, and consistency evidence; schema validity does not prove digest/signature/membership correctness, scientific validity, or preservation of private payload bytes.",
   "type": "object",
@@ -23,7 +23,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.6.0"
+      "const": "0.7.0"
     },
     "checkpoint_id": {
       "$ref": "#/$defs/identifier"
@@ -306,7 +306,7 @@
               "const": "0.1.0"
             },
             "schema_id": {
-              "const": "urn:odeya:schema:engine-contract-root:0.4.0"
+              "const": "urn:odeya:schema:engine-contract-root:0.5.0"
             }
           }
         }
@@ -326,7 +326,7 @@
               "const": "0.1.0"
             },
             "schema_id": {
-              "const": "urn:odeya:schema:aggregate-state-subject-registry:0.4.0"
+              "const": "urn:odeya:schema:aggregate-state-subject-registry:0.5.0"
             }
           }
         }
@@ -414,7 +414,7 @@
           ],
           "properties": {
             "schema_id": {
-              "const": "urn:odeya:schema:ledger-checkpoint:0.6.0"
+              "const": "urn:odeya:schema:ledger-checkpoint:0.7.0"
             },
             "schema_digest": {
               "$ref": "#/$defs/digest",
@@ -468,7 +468,14 @@
           "$ref": "#/$defs/artifact_reference"
         },
         "root_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-ordered-digest-list-commitment-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
         },
         "element_count": {
           "type": "integer",

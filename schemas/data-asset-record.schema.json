@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:data-asset-record:0.2.0",
+  "$id": "urn:odeya:schema:data-asset-record:0.3.0",
   "title": "Odeya DataAssetRecord",
   "description": "An immutable identity and governance projection for exact bytes or an exact canonical collection. Possession and classification never imply permission.",
   "type": "object",
@@ -24,7 +24,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.2.0"
+      "const": "0.3.0"
     },
     "asset_id": {
       "$ref": "#/$defs/identifier"
@@ -107,7 +107,14 @@
               ],
               "properties": {
                 "manifest_digest": {
-                  "$ref": "#/$defs/digest"
+                  "$ref": "#/$defs/digest",
+                  "x-odeya-digest-scope": {
+                    "kind": "canonical_object_digest",
+                    "domain": "odeya-data-asset-collection-manifest-v1",
+                    "algorithm": "sha-256",
+                    "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+                    "status": "prospective_domain_reserved_not_declared"
+                  }
                 },
                 "member_count": {
                   "type": "integer",
