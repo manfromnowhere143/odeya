@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:authority-grant:0.2.0",
+  "$id": "urn:odeya:schema:authority-grant:0.3.0",
   "title": "Odeya AuthorityGrant",
   "description": "An immutable, bounded permission with an explicit action boundary, consumption point, and reservation policy. Status is derived from issue, reservation, use, expiry, release, and revocation events; JSON Schema does not prove their race order.",
   "type": "object",
@@ -24,7 +24,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.2.0"
+      "const": "0.3.0"
     },
     "grant_id": {
       "$ref": "#/$defs/identifier"
@@ -55,13 +55,25 @@
     "subject": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["principal_id", "principal_type", "execution_identity_selector", "authentication_binding_ref"],
+      "required": [
+        "principal_id",
+        "principal_type",
+        "execution_identity_selector",
+        "authentication_binding_ref"
+      ],
       "properties": {
         "principal_id": {
           "$ref": "#/$defs/identifier"
         },
         "principal_type": {
-          "enum": ["human", "service", "organization", "model_run", "tool", "instrument"]
+          "enum": [
+            "human",
+            "service",
+            "organization",
+            "model_run",
+            "tool",
+            "instrument"
+          ]
         },
         "execution_identity_selector": {
           "type": "string",
@@ -126,7 +138,13 @@
           "minLength": 3
         },
         "maximum_risk_tier": {
-          "enum": ["R0", "R1", "R2", "R3", "R4"]
+          "enum": [
+            "R0",
+            "R1",
+            "R2",
+            "R3",
+            "R4"
+          ]
         },
         "data_classes": {
           "type": "array",
@@ -175,11 +193,13 @@
       "properties": {
         "not_before": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
         },
         "expires_at": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
         },
         "max_uses": {
           "type": "integer",
@@ -211,17 +231,30 @@
           }
         },
         "sandbox_tier": {
-          "enum": ["trusted_fixture", "hardened_container", "kernel_isolated", "microvm", "external_controlled_system"]
+          "enum": [
+            "trusted_fixture",
+            "hardened_container",
+            "kernel_isolated",
+            "microvm",
+            "external_controlled_system"
+          ]
         }
       }
     },
     "replay": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["mode", "idempotency_scope"],
+      "required": [
+        "mode",
+        "idempotency_scope"
+      ],
       "properties": {
         "mode": {
-          "enum": ["single_use", "bounded_use", "reusable"]
+          "enum": [
+            "single_use",
+            "bounded_use",
+            "reusable"
+          ]
         },
         "idempotency_scope": {
           "type": "string",
@@ -245,13 +278,22 @@
       ],
       "properties": {
         "action_boundary": {
-          "enum": ["in_ledger", "cross_boundary_effect"]
+          "enum": [
+            "in_ledger",
+            "cross_boundary_effect"
+          ]
         },
         "consumption_point": {
-          "enum": ["domain_commit", "dispatch_claim"]
+          "enum": [
+            "domain_commit",
+            "dispatch_claim"
+          ]
         },
         "reservation_policy": {
-          "enum": ["atomic_reserve_and_consume", "exact_t1_reservation"]
+          "enum": [
+            "atomic_reserve_and_consume",
+            "exact_t1_reservation"
+          ]
         },
         "reservation_identity_fields": {
           "type": "array",
@@ -288,7 +330,10 @@
           }
         },
         "unused_reservation_release": {
-          "enum": ["not_applicable_atomic_commit", "release_on_revoke_expiry_cancellation_before_claim"]
+          "enum": [
+            "not_applicable_atomic_commit",
+            "release_on_revoke_expiry_cancellation_before_claim"
+          ]
         },
         "consumed_reservation_release": {
           "const": "forbidden"
@@ -345,7 +390,11 @@
     "delegation": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["allowed", "maximum_depth", "child_scope_rule"],
+      "required": [
+        "allowed",
+        "maximum_depth",
+        "child_scope_rule"
+      ],
       "properties": {
         "allowed": {
           "type": "boolean"
@@ -355,7 +404,10 @@
           "minimum": 0
         },
         "child_scope_rule": {
-          "enum": ["none", "strict_subset"]
+          "enum": [
+            "none",
+            "strict_subset"
+          ]
         }
       }
     },
@@ -393,7 +445,8 @@
     },
     "issued_at": {
       "type": "string",
-      "format": "date-time"
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
     }
   },
   "allOf": [
@@ -404,7 +457,9 @@
             "const": "publication"
           }
         },
-        "required": ["role"]
+        "required": [
+          "role"
+        ]
       },
       "then": {
         "properties": {
@@ -441,27 +496,52 @@
           },
           "limits": {
             "properties": {
-              "max_uses": { "const": 1 },
-              "max_concurrency": { "const": 1 }
+              "max_uses": {
+                "const": 1
+              },
+              "max_concurrency": {
+                "const": 1
+              }
             }
           },
           "delegation": {
             "properties": {
-              "allowed": { "const": false },
-              "maximum_depth": { "const": 0 },
-              "child_scope_rule": { "const": "none" }
+              "allowed": {
+                "const": false
+              },
+              "maximum_depth": {
+                "const": 0
+              },
+              "child_scope_rule": {
+                "const": "none"
+              }
             }
           },
           "consumption": {
             "properties": {
-              "action_boundary": { "const": "cross_boundary_effect" },
-              "consumption_point": { "const": "dispatch_claim" },
-              "reservation_policy": { "const": "exact_t1_reservation" },
-              "reservation_identity_fields": {
-                "const": ["grant_id", "effect_id", "authorization_request_digest", "publication_manifest_digest"]
+              "action_boundary": {
+                "const": "cross_boundary_effect"
               },
-              "maximum_open_reservations": { "const": 1 },
-              "reservation_ttl_seconds": { "minimum": 1 },
+              "consumption_point": {
+                "const": "dispatch_claim"
+              },
+              "reservation_policy": {
+                "const": "exact_t1_reservation"
+              },
+              "reservation_identity_fields": {
+                "const": [
+                  "grant_id",
+                  "effect_id",
+                  "authorization_request_digest",
+                  "publication_manifest_digest"
+                ]
+              },
+              "maximum_open_reservations": {
+                "const": 1
+              },
+              "reservation_ttl_seconds": {
+                "minimum": 1
+              },
               "pre_consumption_rechecks": {
                 "const": [
                   "active_assignment",
@@ -474,7 +554,9 @@
               "unused_reservation_release": {
                 "const": "release_on_revoke_expiry_cancellation_before_claim"
               },
-              "consumed_reservation_release": { "const": "forbidden" }
+              "consumed_reservation_release": {
+                "const": "forbidden"
+              }
             }
           }
         }
@@ -485,29 +567,55 @@
         "properties": {
           "consumption": {
             "properties": {
-              "action_boundary": { "const": "cross_boundary_effect" }
+              "action_boundary": {
+                "const": "cross_boundary_effect"
+              }
             },
-            "required": ["action_boundary"]
+            "required": [
+              "action_boundary"
+            ]
           }
         },
-        "required": ["consumption"]
+        "required": [
+          "consumption"
+        ]
       },
       "then": {
         "properties": {
           "consumption": {
             "properties": {
-              "consumption_point": { "const": "dispatch_claim" },
-              "reservation_policy": { "const": "exact_t1_reservation" },
+              "consumption_point": {
+                "const": "dispatch_claim"
+              },
+              "reservation_policy": {
+                "const": "exact_t1_reservation"
+              },
               "reservation_identity_fields": {
                 "minItems": 3,
                 "allOf": [
-                  { "contains": { "const": "grant_id" } },
-                  { "contains": { "const": "effect_id" } },
-                  { "contains": { "const": "authorization_request_digest" } }
+                  {
+                    "contains": {
+                      "const": "grant_id"
+                    }
+                  },
+                  {
+                    "contains": {
+                      "const": "effect_id"
+                    }
+                  },
+                  {
+                    "contains": {
+                      "const": "authorization_request_digest"
+                    }
+                  }
                 ]
               },
-              "maximum_open_reservations": { "minimum": 1 },
-              "reservation_ttl_seconds": { "minimum": 1 },
+              "maximum_open_reservations": {
+                "minimum": 1
+              },
+              "reservation_ttl_seconds": {
+                "minimum": 1
+              },
               "pre_consumption_rechecks": {
                 "const": [
                   "active_assignment",
@@ -517,8 +625,12 @@
                   "exact_scope_match"
                 ]
               },
-              "unused_reservation_release": { "const": "release_on_revoke_expiry_cancellation_before_claim" },
-              "consumed_reservation_release": { "const": "forbidden" }
+              "unused_reservation_release": {
+                "const": "release_on_revoke_expiry_cancellation_before_claim"
+              },
+              "consumed_reservation_release": {
+                "const": "forbidden"
+              }
             }
           }
         }
@@ -527,11 +639,25 @@
         "properties": {
           "consumption": {
             "properties": {
-              "consumption_point": { "const": "domain_commit" },
-              "reservation_policy": { "const": "atomic_reserve_and_consume" },
-              "reservation_identity_fields": { "const": ["grant_id", "command_id", "authorization_request_digest"] },
-              "maximum_open_reservations": { "const": 0 },
-              "reservation_ttl_seconds": { "const": 0 },
+              "consumption_point": {
+                "const": "domain_commit"
+              },
+              "reservation_policy": {
+                "const": "atomic_reserve_and_consume"
+              },
+              "reservation_identity_fields": {
+                "const": [
+                  "grant_id",
+                  "command_id",
+                  "authorization_request_digest"
+                ]
+              },
+              "maximum_open_reservations": {
+                "const": 0
+              },
+              "reservation_ttl_seconds": {
+                "const": 0
+              },
               "pre_consumption_rechecks": {
                 "const": [
                   "active_assignment",
@@ -541,8 +667,12 @@
                   "exact_scope_match"
                 ]
               },
-              "unused_reservation_release": { "const": "not_applicable_atomic_commit" },
-              "consumed_reservation_release": { "const": "forbidden" }
+              "unused_reservation_release": {
+                "const": "not_applicable_atomic_commit"
+              },
+              "consumed_reservation_release": {
+                "const": "forbidden"
+              }
             }
           }
         }
@@ -574,20 +704,31 @@
     "principal": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["principal_id", "principal_type"],
+      "required": [
+        "principal_id",
+        "principal_type"
+      ],
       "properties": {
         "principal_id": {
           "$ref": "#/$defs/identifier"
         },
         "principal_type": {
-          "enum": ["human", "service", "organization"]
+          "enum": [
+            "human",
+            "service",
+            "organization"
+          ]
         }
       }
     },
     "artifact_reference": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["artifact_id", "digest", "media_type"],
+      "required": [
+        "artifact_id",
+        "digest",
+        "media_type"
+      ],
       "properties": {
         "artifact_id": {
           "$ref": "#/$defs/identifier"
@@ -604,7 +745,16 @@
     "resource_budget": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["wall_time_seconds", "model_tokens", "cpu_seconds", "memory_gib_seconds", "accelerator_seconds", "storage_bytes", "network_bytes", "human_hours"],
+      "required": [
+        "wall_time_seconds",
+        "model_tokens",
+        "cpu_seconds",
+        "memory_gib_seconds",
+        "accelerator_seconds",
+        "storage_bytes",
+        "network_bytes",
+        "human_hours"
+      ],
       "properties": {
         "wall_time_seconds": {
           "$ref": "#/$defs/nonnegative_decimal"

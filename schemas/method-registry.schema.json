@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:method-registry:0.1.0",
+  "$id": "urn:odeya:schema:method-registry:0.2.0",
   "title": "Odeya MethodRegistry",
   "description": "An immutable versioned registry of scientific, statistical, measurement, numerical, and physical methods. Structural validity does not admit a method: exact guarantees, assumptions, vectors, independent implementations, and accountable review are separate semantic obligations.",
   "type": "object",
@@ -23,63 +23,128 @@
     "registry_digest"
   ],
   "properties": {
-    "schema_version": { "const": "0.1.0" },
-    "registry_id": { "$ref": "#/$defs/identifier" },
-    "version": { "$ref": "#/$defs/semantic_version" },
-    "status": { "enum": ["proposed", "active", "retired"] },
+    "schema_version": {
+      "const": "0.2.0"
+    },
+    "registry_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "version": {
+      "$ref": "#/$defs/semantic_version"
+    },
+    "status": {
+      "enum": [
+        "proposed",
+        "active",
+        "retired"
+      ]
+    },
     "previous_registry": {
       "oneOf": [
-        { "$ref": "#/$defs/registry_reference" },
-        { "type": "null" }
+        {
+          "$ref": "#/$defs/registry_reference"
+        },
+        {
+          "type": "null"
+        }
       ]
     },
     "canonicalization_profile": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["profile_id", "version", "digest"],
+      "required": [
+        "profile_id",
+        "version",
+        "digest"
+      ],
       "properties": {
-        "profile_id": { "$ref": "#/$defs/identifier" },
-        "version": { "$ref": "#/$defs/semantic_version" },
-        "digest": { "$ref": "#/$defs/digest" }
+        "profile_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "$ref": "#/$defs/semantic_version"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        }
       }
     },
     "methods": {
       "type": "array",
       "minItems": 1,
-      "items": { "$ref": "#/$defs/method_record" }
+      "items": {
+        "$ref": "#/$defs/method_record"
+      }
     },
-    "vector_package_refs": { "$ref": "#/$defs/nonempty_artifact_array" },
+    "vector_package_refs": {
+      "$ref": "#/$defs/nonempty_artifact_array"
+    },
     "review_evidence_refs": {
       "type": "array",
       "uniqueItems": true,
-      "items": { "$ref": "#/$defs/artifact_reference" }
+      "items": {
+        "$ref": "#/$defs/artifact_reference"
+      }
     },
-    "effective_at": { "type": "string", "format": "date-time" },
+    "effective_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
+    },
     "expires_at": {
       "oneOf": [
-        { "type": "string", "format": "date-time" },
-        { "type": "null" }
+        {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
+        },
+        {
+          "type": "null"
+        }
       ]
     },
-    "sealed_at_ledger_position": { "type": "integer", "minimum": 0 },
-    "sealed_at": { "type": "string", "format": "date-time" },
-    "sealed_by": { "$ref": "#/$defs/human_principal" },
-    "registry_digest": { "$ref": "#/$defs/digest" }
+    "sealed_at_ledger_position": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "sealed_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
+    },
+    "sealed_by": {
+      "$ref": "#/$defs/human_principal"
+    },
+    "registry_digest": {
+      "$ref": "#/$defs/digest"
+    }
   },
   "allOf": [
     {
       "if": {
-        "properties": { "status": { "const": "active" } },
-        "required": ["status"]
+        "properties": {
+          "status": {
+            "const": "active"
+          }
+        },
+        "required": [
+          "status"
+        ]
       },
       "then": {
         "properties": {
-          "review_evidence_refs": { "minItems": 1 },
+          "review_evidence_refs": {
+            "minItems": 1
+          },
           "methods": {
             "items": {
               "properties": {
                 "admission": {
-                  "properties": { "decision": { "const": "admitted" } }
+                  "properties": {
+                    "decision": {
+                      "const": "admitted"
+                    }
+                  }
                 }
               }
             }
@@ -108,48 +173,96 @@
     "artifact_reference": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["artifact_id", "digest", "media_type"],
+      "required": [
+        "artifact_id",
+        "digest",
+        "media_type"
+      ],
       "properties": {
-        "artifact_id": { "$ref": "#/$defs/identifier" },
-        "digest": { "$ref": "#/$defs/digest" },
-        "media_type": { "type": "string", "minLength": 1 }
+        "artifact_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1
+        }
       }
     },
     "nonempty_artifact_array": {
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,
-      "items": { "$ref": "#/$defs/artifact_reference" }
+      "items": {
+        "$ref": "#/$defs/artifact_reference"
+      }
     },
     "registry_reference": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["registry_id", "version", "digest"],
+      "required": [
+        "registry_id",
+        "version",
+        "digest"
+      ],
       "properties": {
-        "registry_id": { "$ref": "#/$defs/identifier" },
-        "version": { "$ref": "#/$defs/semantic_version" },
-        "digest": { "$ref": "#/$defs/digest" }
+        "registry_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "$ref": "#/$defs/semantic_version"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        }
       }
     },
     "human_principal": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["principal_id", "principal_type", "authority_grant_ref"],
+      "required": [
+        "principal_id",
+        "principal_type",
+        "authority_grant_ref"
+      ],
       "properties": {
-        "principal_id": { "$ref": "#/$defs/identifier" },
-        "principal_type": { "const": "human" },
-        "authority_grant_ref": { "$ref": "#/$defs/identifier" }
+        "principal_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "principal_type": {
+          "const": "human"
+        },
+        "authority_grant_ref": {
+          "$ref": "#/$defs/identifier"
+        }
       }
     },
     "typed_input": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["input_id", "schema_id", "schema_version_range", "required"],
+      "required": [
+        "input_id",
+        "schema_id",
+        "schema_version_range",
+        "required"
+      ],
       "properties": {
-        "input_id": { "$ref": "#/$defs/identifier" },
-        "schema_id": { "type": "string", "format": "uri" },
-        "schema_version_range": { "type": "string", "minLength": 1 },
-        "required": { "type": "boolean" }
+        "input_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "schema_id": {
+          "type": "string",
+          "format": "uri"
+        },
+        "schema_version_range": {
+          "type": "string",
+          "minLength": 1
+        },
+        "required": {
+          "type": "boolean"
+        }
       }
     },
     "implementation_binding": {
@@ -166,36 +279,87 @@
         "license_or_rights_ref"
       ],
       "properties": {
-        "implementation_id": { "$ref": "#/$defs/identifier" },
-        "implementation_version": { "type": "string", "minLength": 1 },
-        "code_ref": { "$ref": "#/$defs/artifact_reference" },
-        "environment_ref": { "$ref": "#/$defs/artifact_reference" },
-        "numeric_runtime": { "type": "string", "minLength": 1 },
-        "role": { "enum": ["reference", "independent_verifier", "production_candidate"] },
-        "maintainer": { "type": "string", "minLength": 1 },
-        "license_or_rights_ref": { "$ref": "#/$defs/artifact_reference" }
+        "implementation_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "implementation_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "code_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        },
+        "environment_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        },
+        "numeric_runtime": {
+          "type": "string",
+          "minLength": 1
+        },
+        "role": {
+          "enum": [
+            "reference",
+            "independent_verifier",
+            "production_candidate"
+          ]
+        },
+        "maintainer": {
+          "type": "string",
+          "minLength": 1
+        },
+        "license_or_rights_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        }
       }
     },
     "vector_partition": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["applicability", "artifact_refs"],
+      "required": [
+        "applicability",
+        "artifact_refs"
+      ],
       "properties": {
-        "applicability": { "enum": ["required", "not_applicable"] },
+        "applicability": {
+          "enum": [
+            "required",
+            "not_applicable"
+          ]
+        },
         "artifact_refs": {
           "type": "array",
           "uniqueItems": true,
-          "items": { "$ref": "#/$defs/artifact_reference" }
+          "items": {
+            "$ref": "#/$defs/artifact_reference"
+          }
         }
       },
       "allOf": [
         {
           "if": {
-            "properties": { "applicability": { "const": "required" } },
-            "required": ["applicability"]
+            "properties": {
+              "applicability": {
+                "const": "required"
+              }
+            },
+            "required": [
+              "applicability"
+            ]
           },
-          "then": { "properties": { "artifact_refs": { "minItems": 1 } } },
-          "else": { "properties": { "artifact_refs": { "maxItems": 0 } } }
+          "then": {
+            "properties": {
+              "artifact_refs": {
+                "minItems": 1
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "artifact_refs": {
+                "maxItems": 0
+              }
+            }
+          }
         }
       ]
     },
@@ -229,9 +393,21 @@
         "expires_at"
       ],
       "properties": {
-        "method_id": { "$ref": "#/$defs/identifier" },
-        "version": { "$ref": "#/$defs/semantic_version" },
-        "status": { "enum": ["proposed", "admitted", "suspended", "retired", "rejected"] },
+        "method_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "$ref": "#/$defs/semantic_version"
+        },
+        "status": {
+          "enum": [
+            "proposed",
+            "admitted",
+            "suspended",
+            "retired",
+            "rejected"
+          ]
+        },
         "method_class": {
           "enum": [
             "descriptive",
@@ -254,24 +430,36 @@
           "type": "array",
           "minItems": 1,
           "uniqueItems": true,
-          "items": { "$ref": "#/$defs/identifier" }
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
         },
         "supported_claim_types": {
           "type": "array",
           "minItems": 1,
           "uniqueItems": true,
-          "items": { "$ref": "#/$defs/identifier" }
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
         },
         "supported_data_types": {
           "type": "array",
           "minItems": 1,
           "uniqueItems": true,
-          "items": { "$ref": "#/$defs/identifier" }
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
         },
         "formal_guarantee": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["guarantee_kind", "statement", "scope", "assumption_dependency", "non_guarantees"],
+          "required": [
+            "guarantee_kind",
+            "statement",
+            "scope",
+            "assumption_dependency",
+            "non_guarantees"
+          ],
           "properties": {
             "guarantee_kind": {
               "enum": [
@@ -287,13 +475,24 @@
                 "no_formal_guarantee"
               ]
             },
-            "statement": { "type": "string", "minLength": 1 },
-            "scope": { "type": "string", "minLength": 1 },
-            "assumption_dependency": { "const": true },
+            "statement": {
+              "type": "string",
+              "minLength": 1
+            },
+            "scope": {
+              "type": "string",
+              "minLength": 1
+            },
+            "assumption_dependency": {
+              "const": true
+            },
             "non_guarantees": {
               "type": "array",
               "minItems": 1,
-              "items": { "type": "string", "minLength": 1 }
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
             }
           }
         },
@@ -303,80 +502,221 @@
           "items": {
             "type": "object",
             "additionalProperties": false,
-            "required": ["assumption_id", "statement", "checkability", "violation_consequence"],
+            "required": [
+              "assumption_id",
+              "statement",
+              "checkability",
+              "violation_consequence"
+            ],
             "properties": {
-              "assumption_id": { "$ref": "#/$defs/identifier" },
-              "statement": { "type": "string", "minLength": 1 },
-              "checkability": { "enum": ["enforced", "diagnostic_only", "externally_reviewed", "not_testable_from_available_data"] },
-              "violation_consequence": { "enum": ["invalid", "indeterminate", "scope_reduction", "warning_only"] }
+              "assumption_id": {
+                "$ref": "#/$defs/identifier"
+              },
+              "statement": {
+                "type": "string",
+                "minLength": 1
+              },
+              "checkability": {
+                "enum": [
+                  "enforced",
+                  "diagnostic_only",
+                  "externally_reviewed",
+                  "not_testable_from_available_data"
+                ]
+              },
+              "violation_consequence": {
+                "enum": [
+                  "invalid",
+                  "indeterminate",
+                  "scope_reduction",
+                  "warning_only"
+                ]
+              }
             }
           }
         },
         "required_inputs": {
           "type": "array",
           "minItems": 1,
-          "items": { "$ref": "#/$defs/typed_input" }
+          "items": {
+            "$ref": "#/$defs/typed_input"
+          }
         },
         "incompatible_operations": {
           "type": "array",
-          "items": { "type": "string", "minLength": 1 }
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
         },
         "diagnostics": {
           "type": "array",
           "minItems": 1,
           "uniqueItems": true,
-          "items": { "$ref": "#/$defs/identifier" }
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
         },
         "sensitivity_analyses": {
           "type": "array",
           "minItems": 1,
           "uniqueItems": true,
-          "items": { "$ref": "#/$defs/identifier" }
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
         },
         "uncertainty_semantics": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["kind", "level", "simultaneity", "stopping_rule", "interpretation"],
+          "required": [
+            "kind",
+            "level",
+            "simultaneity",
+            "stopping_rule",
+            "interpretation"
+          ],
           "properties": {
             "kind": {
-              "enum": ["none", "fixed_sample_interval", "simultaneous_interval", "time_uniform_sequence", "posterior_credible_set", "prediction_set", "tolerance_interval", "measurement_uncertainty", "set_valued_bound"]
+              "enum": [
+                "none",
+                "fixed_sample_interval",
+                "simultaneous_interval",
+                "time_uniform_sequence",
+                "posterior_credible_set",
+                "prediction_set",
+                "tolerance_interval",
+                "measurement_uncertainty",
+                "set_valued_bound"
+              ]
             },
             "level": {
               "oneOf": [
-                { "$ref": "#/$defs/decimal" },
-                { "type": "null" }
+                {
+                  "$ref": "#/$defs/decimal"
+                },
+                {
+                  "type": "null"
+                }
               ]
             },
-            "simultaneity": { "enum": ["not_applicable", "pointwise", "familywise", "time_uniform"] },
-            "stopping_rule": { "enum": ["fixed_in_advance", "admitted_anytime_valid", "not_applicable"] },
-            "interpretation": { "type": "string", "minLength": 1 }
+            "simultaneity": {
+              "enum": [
+                "not_applicable",
+                "pointwise",
+                "familywise",
+                "time_uniform"
+              ]
+            },
+            "stopping_rule": {
+              "enum": [
+                "fixed_in_advance",
+                "admitted_anytime_valid",
+                "not_applicable"
+              ]
+            },
+            "interpretation": {
+              "type": "string",
+              "minLength": 1
+            }
           }
         },
         "adaptation_and_multiplicity": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["adaptation_policy", "multiplicity_policy", "data_reuse_policy", "violation_consequence"],
+          "required": [
+            "adaptation_policy",
+            "multiplicity_policy",
+            "data_reuse_policy",
+            "violation_consequence"
+          ],
           "properties": {
-            "adaptation_policy": { "enum": ["forbidden", "fixed_prespecified", "alpha_spending", "e_value", "selective_inference", "not_applicable"] },
-            "multiplicity_policy": { "enum": ["single_primary", "familywise_control", "false_discovery_control", "hierarchical", "descriptive_only", "not_applicable"] },
-            "data_reuse_policy": { "enum": ["single_use_partition", "prospectively_accounted_reuse", "descriptive_only", "not_applicable"] },
-            "violation_consequence": { "enum": ["invalid", "indeterminate", "descriptive_only"] }
+            "adaptation_policy": {
+              "enum": [
+                "forbidden",
+                "fixed_prespecified",
+                "alpha_spending",
+                "e_value",
+                "selective_inference",
+                "not_applicable"
+              ]
+            },
+            "multiplicity_policy": {
+              "enum": [
+                "single_primary",
+                "familywise_control",
+                "false_discovery_control",
+                "hierarchical",
+                "descriptive_only",
+                "not_applicable"
+              ]
+            },
+            "data_reuse_policy": {
+              "enum": [
+                "single_use_partition",
+                "prospectively_accounted_reuse",
+                "descriptive_only",
+                "not_applicable"
+              ]
+            },
+            "violation_consequence": {
+              "enum": [
+                "invalid",
+                "indeterminate",
+                "descriptive_only"
+              ]
+            }
           }
         },
         "numerical_profile": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["arithmetic", "precision", "rounding", "overflow_policy", "randomness", "tolerance_ref"],
+          "required": [
+            "arithmetic",
+            "precision",
+            "rounding",
+            "overflow_policy",
+            "randomness",
+            "tolerance_ref"
+          ],
           "properties": {
-            "arithmetic": { "enum": ["integer", "exact_decimal", "ieee754_binary64", "registered_arbitrary_precision", "mixed_registered"] },
-            "precision": { "type": "string", "minLength": 1 },
-            "rounding": { "type": "string", "minLength": 1 },
-            "overflow_policy": { "enum": ["fail", "indeterminate"] },
-            "randomness": { "enum": ["none", "fixed_seed_pseudorandom", "retained_random_stream"] },
+            "arithmetic": {
+              "enum": [
+                "integer",
+                "exact_decimal",
+                "ieee754_binary64",
+                "registered_arbitrary_precision",
+                "mixed_registered"
+              ]
+            },
+            "precision": {
+              "type": "string",
+              "minLength": 1
+            },
+            "rounding": {
+              "type": "string",
+              "minLength": 1
+            },
+            "overflow_policy": {
+              "enum": [
+                "fail",
+                "indeterminate"
+              ]
+            },
+            "randomness": {
+              "enum": [
+                "none",
+                "fixed_seed_pseudorandom",
+                "retained_random_stream"
+              ]
+            },
             "tolerance_ref": {
               "oneOf": [
-                { "$ref": "#/$defs/artifact_reference" },
-                { "type": "null" }
+                {
+                  "$ref": "#/$defs/artifact_reference"
+                },
+                {
+                  "type": "null"
+                }
               ]
             }
           }
@@ -385,22 +725,44 @@
           "type": "array",
           "minItems": 1,
           "uniqueItems": true,
-          "items": { "$ref": "#/$defs/identifier" }
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
         },
         "implementations": {
           "type": "array",
           "minItems": 1,
-          "items": { "$ref": "#/$defs/implementation_binding" }
+          "items": {
+            "$ref": "#/$defs/implementation_binding"
+          }
         },
         "verification_contract": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["independent_recomputation_required", "minimum_independent_implementations", "agreement_rule_ref", "disagreement_consequence"],
+          "required": [
+            "independent_recomputation_required",
+            "minimum_independent_implementations",
+            "agreement_rule_ref",
+            "disagreement_consequence"
+          ],
           "properties": {
-            "independent_recomputation_required": { "type": "boolean" },
-            "minimum_independent_implementations": { "type": "integer", "minimum": 1 },
-            "agreement_rule_ref": { "$ref": "#/$defs/artifact_reference" },
-            "disagreement_consequence": { "enum": ["indeterminate", "invalid", "quarantine"] }
+            "independent_recomputation_required": {
+              "type": "boolean"
+            },
+            "minimum_independent_implementations": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "agreement_rule_ref": {
+              "$ref": "#/$defs/artifact_reference"
+            },
+            "disagreement_consequence": {
+              "enum": [
+                "indeterminate",
+                "invalid",
+                "quarantine"
+              ]
+            }
           }
         },
         "conformance_vectors": {
@@ -419,58 +781,116 @@
             "cross_implementation"
           ],
           "properties": {
-            "synthetic_null": { "$ref": "#/$defs/vector_partition" },
-            "known_effect": { "$ref": "#/$defs/vector_partition" },
-            "dependence": { "$ref": "#/$defs/vector_partition" },
-            "leakage": { "$ref": "#/$defs/vector_partition" },
-            "optional_stopping": { "$ref": "#/$defs/vector_partition" },
-            "missingness": { "$ref": "#/$defs/vector_partition" },
-            "broken_artifact": { "$ref": "#/$defs/vector_partition" },
-            "numerical_boundary": { "$ref": "#/$defs/vector_partition" },
-            "metamorphic": { "$ref": "#/$defs/vector_partition" },
-            "cross_implementation": { "$ref": "#/$defs/vector_partition" }
+            "synthetic_null": {
+              "$ref": "#/$defs/vector_partition"
+            },
+            "known_effect": {
+              "$ref": "#/$defs/vector_partition"
+            },
+            "dependence": {
+              "$ref": "#/$defs/vector_partition"
+            },
+            "leakage": {
+              "$ref": "#/$defs/vector_partition"
+            },
+            "optional_stopping": {
+              "$ref": "#/$defs/vector_partition"
+            },
+            "missingness": {
+              "$ref": "#/$defs/vector_partition"
+            },
+            "broken_artifact": {
+              "$ref": "#/$defs/vector_partition"
+            },
+            "numerical_boundary": {
+              "$ref": "#/$defs/vector_partition"
+            },
+            "metamorphic": {
+              "$ref": "#/$defs/vector_partition"
+            },
+            "cross_implementation": {
+              "$ref": "#/$defs/vector_partition"
+            }
           }
         },
         "admission": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["decision", "decision_ref", "reviewer_independence_ref", "limitations"],
+          "required": [
+            "decision",
+            "decision_ref",
+            "reviewer_independence_ref",
+            "limitations"
+          ],
           "properties": {
-            "decision": { "enum": ["not_reviewed", "admitted", "rejected", "suspended", "retired"] },
+            "decision": {
+              "enum": [
+                "not_reviewed",
+                "admitted",
+                "rejected",
+                "suspended",
+                "retired"
+              ]
+            },
             "decision_ref": {
               "oneOf": [
-                { "$ref": "#/$defs/artifact_reference" },
-                { "type": "null" }
+                {
+                  "$ref": "#/$defs/artifact_reference"
+                },
+                {
+                  "type": "null"
+                }
               ]
             },
             "reviewer_independence_ref": {
               "oneOf": [
-                { "$ref": "#/$defs/artifact_reference" },
-                { "type": "null" }
+                {
+                  "$ref": "#/$defs/artifact_reference"
+                },
+                {
+                  "type": "null"
+                }
               ]
             },
             "limitations": {
               "type": "array",
               "minItems": 1,
-              "items": { "type": "string", "minLength": 1 }
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
             }
           },
           "allOf": [
             {
               "if": {
-                "properties": { "decision": { "const": "not_reviewed" } },
-                "required": ["decision"]
+                "properties": {
+                  "decision": {
+                    "const": "not_reviewed"
+                  }
+                },
+                "required": [
+                  "decision"
+                ]
               },
               "then": {
                 "properties": {
-                  "decision_ref": { "type": "null" },
-                  "reviewer_independence_ref": { "type": "null" }
+                  "decision_ref": {
+                    "type": "null"
+                  },
+                  "reviewer_independence_ref": {
+                    "type": "null"
+                  }
                 }
               },
               "else": {
                 "properties": {
-                  "decision_ref": { "$ref": "#/$defs/artifact_reference" },
-                  "reviewer_independence_ref": { "$ref": "#/$defs/artifact_reference" }
+                  "decision_ref": {
+                    "$ref": "#/$defs/artifact_reference"
+                  },
+                  "reviewer_independence_ref": {
+                    "$ref": "#/$defs/artifact_reference"
+                  }
                 }
               }
             }
@@ -482,37 +902,70 @@
           "items": {
             "type": "object",
             "additionalProperties": false,
-            "required": ["method_id", "version"],
+            "required": [
+              "method_id",
+              "version"
+            ],
             "properties": {
-              "method_id": { "$ref": "#/$defs/identifier" },
-              "version": { "$ref": "#/$defs/semantic_version" }
+              "method_id": {
+                "$ref": "#/$defs/identifier"
+              },
+              "version": {
+                "$ref": "#/$defs/semantic_version"
+              }
             }
           }
         },
-        "effective_at": { "type": "string", "format": "date-time" },
+        "effective_at": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
+        },
         "expires_at": {
           "oneOf": [
-            { "type": "string", "format": "date-time" },
-            { "type": "null" }
+            {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
+            },
+            {
+              "type": "null"
+            }
           ]
         }
       },
       "allOf": [
         {
           "if": {
-            "properties": { "status": { "const": "admitted" } },
-            "required": ["status"]
+            "properties": {
+              "status": {
+                "const": "admitted"
+              }
+            },
+            "required": [
+              "status"
+            ]
           },
           "then": {
             "properties": {
               "admission": {
-                "properties": { "decision": { "const": "admitted" } }
+                "properties": {
+                  "decision": {
+                    "const": "admitted"
+                  }
+                }
               },
-              "implementations": { "minItems": 2 },
+              "implementations": {
+                "minItems": 2
+              },
               "verification_contract": {
                 "properties": {
-                  "independent_recomputation_required": { "const": true },
-                  "minimum_independent_implementations": { "minimum": 2 }
+                  "independent_recomputation_required": {
+                    "const": true
+                  },
+                  "minimum_independent_implementations": {
+                    "minimum": 2
+                  }
                 }
               }
             }

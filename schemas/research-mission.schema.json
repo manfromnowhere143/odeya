@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:research-mission:0.2.0",
+  "$id": "urn:odeya:schema:research-mission:0.3.0",
   "title": "Odeya ResearchMissionSpec",
   "description": "The single canonical, pre-execution contract for an Odeya research mission.",
   "type": "object",
@@ -37,7 +37,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.2.0"
+      "const": "0.3.0"
     },
     "mission_id": {
       "$ref": "#/$defs/identifier"
@@ -131,7 +131,12 @@
     "uncertainty_contract": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["channels", "interval_policy", "calibration_policy", "unknown_policy"],
+      "required": [
+        "channels",
+        "interval_policy",
+        "calibration_policy",
+        "unknown_policy"
+      ],
       "properties": {
         "channels": {
           "type": "array",
@@ -176,10 +181,21 @@
       ],
       "properties": {
         "inference_family": {
-          "enum": ["measurement", "descriptive", "frequentist", "bayesian", "hybrid"]
+          "enum": [
+            "measurement",
+            "descriptive",
+            "frequentist",
+            "bayesian",
+            "hybrid"
+          ]
         },
         "monitoring_regime": {
-          "enum": ["fixed_horizon", "group_sequential", "anytime_valid", "adaptive_registered"]
+          "enum": [
+            "fixed_horizon",
+            "group_sequential",
+            "anytime_valid",
+            "adaptive_registered"
+          ]
         },
         "error_criterion": {
           "type": "string",
@@ -200,7 +216,12 @@
     "origin": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["proposal_id", "provenance", "rights_basis", "conflicts"],
+      "required": [
+        "proposal_id",
+        "provenance",
+        "rights_basis",
+        "conflicts"
+      ],
       "properties": {
         "proposal_id": {
           "$ref": "#/$defs/identifier"
@@ -224,7 +245,12 @@
     "scope": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["included", "excluded", "populations", "environments"],
+      "required": [
+        "included",
+        "excluded",
+        "populations",
+        "environments"
+      ],
       "properties": {
         "included": {
           "$ref": "#/$defs/nonempty_strings"
@@ -283,7 +309,13 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["source_id", "role", "locator", "rights", "integrity"],
+        "required": [
+          "source_id",
+          "role",
+          "locator",
+          "rights",
+          "integrity"
+        ],
         "properties": {
           "source_id": {
             "$ref": "#/$defs/identifier"
@@ -373,7 +405,11 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["baseline_id", "description", "resource_budget_ref"],
+        "required": [
+          "baseline_id",
+          "description",
+          "resource_budget_ref"
+        ],
         "properties": {
           "baseline_id": {
             "$ref": "#/$defs/identifier"
@@ -421,16 +457,35 @@
             "minLength": 1
           },
           "comparator": {
-            "enum": ["gt", "gte", "lt", "lte", "between", "equivalent", "noninferior"]
+            "enum": [
+              "gt",
+              "gte",
+              "lt",
+              "lte",
+              "between",
+              "equivalent",
+              "noninferior"
+            ]
           },
           "threshold": {},
           "confidence_rule": {
             "type": "object",
             "additionalProperties": false,
-            "required": ["interval_type", "level", "coverage_scope"],
+            "required": [
+              "interval_type",
+              "level",
+              "coverage_scope"
+            ],
             "properties": {
               "interval_type": {
-                "enum": ["fixed", "simultaneous", "time_uniform", "credible", "measurement_uncertainty", "not_applicable"]
+                "enum": [
+                  "fixed",
+                  "simultaneous",
+                  "time_uniform",
+                  "credible",
+                  "measurement_uncertainty",
+                  "not_applicable"
+                ]
               },
               "level": {
                 "oneOf": [
@@ -451,10 +506,22 @@
           "missing_data_policy": {
             "type": "object",
             "additionalProperties": false,
-            "required": ["mechanism_assumption", "treatment", "sensitivity_analysis"],
+            "required": [
+              "mechanism_assumption",
+              "treatment",
+              "sensitivity_analysis"
+            ],
             "properties": {
               "mechanism_assumption": {
-                "enum": ["none_expected", "mcar", "mar", "mnar", "censoring", "domain_specific", "unknown"]
+                "enum": [
+                  "none_expected",
+                  "mcar",
+                  "mar",
+                  "mnar",
+                  "censoring",
+                  "domain_specific",
+                  "unknown"
+                ]
               },
               "treatment": {
                 "type": "string",
@@ -478,7 +545,9 @@
                   "const": "between"
                 }
               },
-              "required": ["comparator"]
+              "required": [
+                "comparator"
+              ]
             },
             "then": {
               "properties": {
@@ -560,7 +629,11 @@
       ],
       "properties": {
         "mode": {
-          "enum": ["exploratory", "confirmatory", "mixed_with_separate_branches"]
+          "enum": [
+            "exploratory",
+            "confirmatory",
+            "mixed_with_separate_branches"
+          ]
         },
         "analysis_plan": {
           "type": "string",
@@ -572,7 +645,8 @@
         },
         "data_exposure_cutoff": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
         },
         "stop_rules": {
           "$ref": "#/$defs/nonempty_strings"
@@ -666,10 +740,21 @@
     "risk": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["tier", "domains", "prohibited_actions", "approval_requirements"],
+      "required": [
+        "tier",
+        "domains",
+        "prohibited_actions",
+        "approval_requirements"
+      ],
       "properties": {
         "tier": {
-          "enum": ["R0", "R1", "R2", "R3", "R4"]
+          "enum": [
+            "R0",
+            "R1",
+            "R2",
+            "R3",
+            "R4"
+          ]
         },
         "domains": {
           "$ref": "#/$defs/nonempty_strings"
@@ -732,7 +817,11 @@
     "claim_boundary": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["eligible_by_scientific_outcome", "refusal_language_by_reason", "forbidden"],
+      "required": [
+        "eligible_by_scientific_outcome",
+        "refusal_language_by_reason",
+        "forbidden"
+      ],
       "properties": {
         "eligible_by_scientific_outcome": {
           "type": "object",
@@ -809,7 +898,12 @@
       ],
       "properties": {
         "default_visibility": {
-          "enum": ["private", "embargoed", "restricted", "public_candidate"]
+          "enum": [
+            "private",
+            "embargoed",
+            "restricted",
+            "public_candidate"
+          ]
         },
         "allowed_scientific_outcomes": {
           "type": "array",
@@ -853,7 +947,10 @@
     "handoff": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["required_fields", "recovery_test"],
+      "required": [
+        "required_fields",
+        "recovery_test"
+      ],
       "properties": {
         "required_fields": {
           "$ref": "#/$defs/nonempty_strings"
@@ -866,7 +963,8 @@
     },
     "created_at": {
       "type": "string",
-      "format": "date-time"
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
     },
     "created_by": {
       "$ref": "#/$defs/identifier"
@@ -879,13 +977,20 @@
           "risk": {
             "properties": {
               "tier": {
-                "enum": ["R3", "R4"]
+                "enum": [
+                  "R3",
+                  "R4"
+                ]
               }
             },
-            "required": ["tier"]
+            "required": [
+              "tier"
+            ]
           }
         },
-        "required": ["risk"]
+        "required": [
+          "risk"
+        ]
       },
       "then": {
         "properties": {
@@ -932,7 +1037,9 @@
                           "const": "safety"
                         }
                       },
-                      "required": ["authority_role"]
+                      "required": [
+                        "authority_role"
+                      ]
                     }
                   },
                   {
@@ -942,7 +1049,9 @@
                           "const": "resource"
                         }
                       },
-                      "required": ["authority_role"]
+                      "required": [
+                        "authority_role"
+                      ]
                     }
                   },
                   {
@@ -952,7 +1061,9 @@
                           "const": "execution"
                         }
                       },
-                      "required": ["authority_role"]
+                      "required": [
+                        "authority_role"
+                      ]
                     }
                   },
                   {
@@ -962,7 +1073,9 @@
                           "const": "outcome"
                         }
                       },
-                      "required": ["authority_role"]
+                      "required": [
+                        "authority_role"
+                      ]
                     }
                   }
                 ]
@@ -981,10 +1094,14 @@
                 "const": "public_candidate"
               }
             },
-            "required": ["default_visibility"]
+            "required": [
+              "default_visibility"
+            ]
           }
         },
-        "required": ["publication"]
+        "required": [
+          "publication"
+        ]
       },
       "then": {
         "properties": {
@@ -1028,7 +1145,9 @@
                       "const": "publication"
                     }
                   },
-                  "required": ["authority_role"]
+                  "required": [
+                    "authority_role"
+                  ]
                 }
               }
             }
@@ -1053,10 +1172,18 @@
     "unit": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["system", "code"],
+      "required": [
+        "system",
+        "code"
+      ],
       "properties": {
         "system": {
-          "enum": ["SI", "UCUM", "dimensionless", "domain_registered"]
+          "enum": [
+            "SI",
+            "UCUM",
+            "dimensionless",
+            "domain_registered"
+          ]
         },
         "code": {
           "type": "string",
@@ -1067,7 +1194,10 @@
     "quantity": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["value", "unit"],
+      "required": [
+        "value",
+        "unit"
+      ],
       "properties": {
         "value": {
           "$ref": "#/$defs/decimal_string"
@@ -1080,7 +1210,11 @@
     "method_reference": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["method_id", "version", "registry_digest"],
+      "required": [
+        "method_id",
+        "version",
+        "registry_digest"
+      ],
       "properties": {
         "method_id": {
           "$ref": "#/$defs/identifier"
@@ -1139,32 +1273,60 @@
       }
     },
     "independence_requirement": {
-      "enum": ["separate_required", "separate_preferred", "not_required", "not_applicable"]
+      "enum": [
+        "separate_required",
+        "separate_preferred",
+        "not_required",
+        "not_applicable"
+      ]
     },
     "authority_assignment": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["principal_id", "principal_type", "policy_ref", "delegation", "constraints"],
+      "required": [
+        "principal_id",
+        "principal_type",
+        "policy_ref",
+        "delegation",
+        "constraints"
+      ],
       "properties": {
         "principal_id": {
           "$ref": "#/$defs/identifier"
         },
         "principal_type": {
-          "enum": ["human", "service", "organization"]
+          "enum": [
+            "human",
+            "service",
+            "organization"
+          ]
         },
         "policy_ref": {
           "$ref": "#/$defs/digest"
         },
         "delegation": {
-          "enum": ["none", "explicit_scoped_only"]
+          "enum": [
+            "none",
+            "explicit_scoped_only"
+          ]
         },
         "constraints": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["maximum_risk_tier", "allowed_actions", "prohibited_actions"],
+          "required": [
+            "maximum_risk_tier",
+            "allowed_actions",
+            "prohibited_actions"
+          ],
           "properties": {
             "maximum_risk_tier": {
-              "enum": ["R0", "R1", "R2", "R3", "R4"]
+              "enum": [
+                "R0",
+                "R1",
+                "R2",
+                "R3",
+                "R4"
+              ]
             },
             "allowed_actions": {
               "type": "array",
@@ -1240,7 +1402,11 @@
     "artifact_reference": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["artifact_id", "expected_media_type", "expected_digest"],
+      "required": [
+        "artifact_id",
+        "expected_media_type",
+        "expected_digest"
+      ],
       "properties": {
         "artifact_id": {
           "$ref": "#/$defs/identifier"
@@ -1257,7 +1423,11 @@
     "evaluator": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["evaluator_id", "version", "execution_mode"],
+      "required": [
+        "evaluator_id",
+        "version",
+        "execution_mode"
+      ],
       "properties": {
         "evaluator_id": {
           "$ref": "#/$defs/identifier"
@@ -1267,21 +1437,41 @@
           "minLength": 1
         },
         "execution_mode": {
-          "enum": ["deterministic", "statistical", "formal", "sealed_truth", "expert", "model_assisted"]
+          "enum": [
+            "deterministic",
+            "statistical",
+            "formal",
+            "sealed_truth",
+            "expert",
+            "model_assisted"
+          ]
         }
       }
     },
     "approval_requirement": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["action_class", "authority_role", "timeout_behavior"],
+      "required": [
+        "action_class",
+        "authority_role",
+        "timeout_behavior"
+      ],
       "properties": {
         "action_class": {
           "type": "string",
           "minLength": 1
         },
         "authority_role": {
-          "enum": ["protocol", "safety", "data_rights", "resource", "execution", "verification", "outcome", "publication"]
+          "enum": [
+            "protocol",
+            "safety",
+            "data_rights",
+            "resource",
+            "execution",
+            "verification",
+            "outcome",
+            "publication"
+          ]
         },
         "timeout_behavior": {
           "const": "deny"

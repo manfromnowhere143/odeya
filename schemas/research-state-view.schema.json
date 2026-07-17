@@ -1,59 +1,157 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:research-state-view:0.1.0",
+  "$id": "urn:odeya:schema:research-state-view:0.2.0",
   "title": "Odeya ResearchStateView",
   "description": "An immutable, exposure-bounded model input compiled at one exact canonical position. Command candidates bind exact registry member, activation, and membership-proof bytes; graph absence is not fabricated as version zero. The view is data, never authority; every proposed command is re-admitted against current state and grants.",
   "type": "object",
   "additionalProperties": false,
   "required": [
-    "schema_version", "record_status", "view_id", "version", "mission_id", "protocol_ref",
-    "source_frontier", "compiler", "compilation_policy_ref",
-    "role", "objective", "attempt_id", "correlation_group_id",
-    "permitted_claim_surface", "legal_command_frontier", "relevant_evidence_refs",
-    "epistemic_graph_binding", "competing_hypotheses", "contradiction_inventory",
-    "model_incomplete", "required_control_refs", "falsifier_refs",
-    "unresolved_blocker_refs", "remaining_resource_envelope", "exposure_policy",
-    "freshness_frontier", "selected_context", "omission_manifest_ref",
-    "output_contract", "forbidden_actions", "authority_semantics", "compilation_time"
+    "schema_version",
+    "record_status",
+    "view_id",
+    "version",
+    "mission_id",
+    "protocol_ref",
+    "source_frontier",
+    "compiler",
+    "compilation_policy_ref",
+    "role",
+    "objective",
+    "attempt_id",
+    "correlation_group_id",
+    "permitted_claim_surface",
+    "legal_command_frontier",
+    "relevant_evidence_refs",
+    "epistemic_graph_binding",
+    "competing_hypotheses",
+    "contradiction_inventory",
+    "model_incomplete",
+    "required_control_refs",
+    "falsifier_refs",
+    "unresolved_blocker_refs",
+    "remaining_resource_envelope",
+    "exposure_policy",
+    "freshness_frontier",
+    "selected_context",
+    "omission_manifest_ref",
+    "output_contract",
+    "forbidden_actions",
+    "authority_semantics",
+    "compilation_time"
   ],
   "properties": {
-    "schema_version": { "const": "0.1.0" },
-    "record_status": { "const": "derived_non_authoritative" },
-    "view_id": { "$ref": "#/$defs/identifier" },
-    "version": { "type": "integer", "minimum": 1 },
-    "mission_id": { "$ref": "#/$defs/identifier" },
-    "protocol_ref": { "$ref": "#/$defs/immutable_reference" },
+    "schema_version": {
+      "const": "0.2.0"
+    },
+    "record_status": {
+      "const": "derived_non_authoritative"
+    },
+    "view_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "mission_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "protocol_ref": {
+      "$ref": "#/$defs/immutable_reference"
+    },
     "source_frontier": {
-      "type": "object", "additionalProperties": false,
-      "required": ["ledger_position", "checkpoint_ref"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ledger_position",
+        "checkpoint_ref"
+      ],
       "properties": {
-        "ledger_position": { "type": "integer", "minimum": 0 },
-        "checkpoint_ref": { "$ref": "#/$defs/immutable_reference" }
+        "ledger_position": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "checkpoint_ref": {
+          "$ref": "#/$defs/immutable_reference"
+        }
       }
     },
     "compiler": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["implementation_ref", "build_digest", "deterministic_profile_ref"],
+      "required": [
+        "implementation_ref",
+        "build_digest",
+        "deterministic_profile_ref"
+      ],
       "properties": {
-        "implementation_ref": { "$ref": "#/$defs/versioned_reference" },
-        "build_digest": { "$ref": "#/$defs/digest" },
-        "deterministic_profile_ref": { "$ref": "#/$defs/versioned_reference" }
+        "implementation_ref": {
+          "$ref": "#/$defs/versioned_reference"
+        },
+        "build_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "deterministic_profile_ref": {
+          "$ref": "#/$defs/versioned_reference"
+        }
       }
     },
-    "compilation_policy_ref": { "$ref": "#/$defs/immutable_reference" },
-    "role": { "$ref": "#/$defs/identifier" },
-    "objective": { "type": "string", "minLength": 1 },
-    "attempt_id": { "$ref": "#/$defs/identifier" },
-    "correlation_group_id": { "$ref": "#/$defs/identifier" },
+    "compilation_policy_ref": {
+      "$ref": "#/$defs/immutable_reference"
+    },
+    "role": {
+      "$ref": "#/$defs/identifier"
+    },
+    "objective": {
+      "type": "string",
+      "minLength": 1
+    },
+    "attempt_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "correlation_group_id": {
+      "$ref": "#/$defs/identifier"
+    },
     "permitted_claim_surface": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["claim_types", "maximum_evidence_class", "claim_bearing_output_permitted"],
+      "required": [
+        "claim_types",
+        "maximum_evidence_class",
+        "claim_bearing_output_permitted"
+      ],
       "properties": {
-        "claim_types": { "type": "array", "uniqueItems": true, "items": { "enum": ["measurement", "descriptive", "predictive", "causal", "agent_comparison", "safety_reliability", "value", "evidence_synthesis", "associational", "mechanistic", "definitional", "exploratory_unrouted"] } },
-        "maximum_evidence_class": { "enum": ["none", "exploratory", "structurally_validated", "adjudication_eligible"] },
-        "claim_bearing_output_permitted": { "type": "boolean" }
+        "claim_types": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "measurement",
+              "descriptive",
+              "predictive",
+              "causal",
+              "agent_comparison",
+              "safety_reliability",
+              "value",
+              "evidence_synthesis",
+              "associational",
+              "mechanistic",
+              "definitional",
+              "exploratory_unrouted"
+            ]
+          }
+        },
+        "maximum_evidence_class": {
+          "enum": [
+            "none",
+            "exploratory",
+            "structurally_validated",
+            "adjudication_eligible"
+          ]
+        },
+        "claim_bearing_output_permitted": {
+          "type": "boolean"
+        }
       }
     },
     "legal_command_frontier": {
@@ -63,69 +161,213 @@
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "command_type", "command_version", "command_registry_subject_ref",
-          "command_contract_member_ref", "registry_activation_ref", "membership_proof",
-          "payload_schema_ref", "activation_scope_evidence_ref",
-          "admission_recheck_required", "authority_grant_ref"
+          "command_type",
+          "command_version",
+          "command_registry_subject_ref",
+          "command_contract_member_ref",
+          "registry_activation_ref",
+          "membership_proof",
+          "payload_schema_ref",
+          "activation_scope_evidence_ref",
+          "admission_recheck_required",
+          "authority_grant_ref"
         ],
         "properties": {
-          "command_type": { "$ref": "#/$defs/identifier" },
-          "command_version": { "$ref": "#/$defs/semantic_version" },
-          "command_registry_subject_ref": { "$ref": "#/$defs/command_registry_subject_reference" },
-          "command_contract_member_ref": { "$ref": "#/$defs/command_contract_member_reference" },
-          "registry_activation_ref": { "$ref": "#/$defs/registry_activation_reference" },
-          "membership_proof": { "$ref": "#/$defs/command_membership_proof" },
-          "payload_schema_ref": { "$ref": "#/$defs/payload_schema_reference" },
-          "activation_scope_evidence_ref": { "$ref": "#/$defs/artifact_reference" },
-          "admission_recheck_required": { "const": true },
-          "authority_grant_ref": { "oneOf": [{ "$ref": "#/$defs/immutable_reference" }, { "type": "null" }] }
+          "command_type": {
+            "$ref": "#/$defs/identifier"
+          },
+          "command_version": {
+            "$ref": "#/$defs/semantic_version"
+          },
+          "command_registry_subject_ref": {
+            "$ref": "#/$defs/command_registry_subject_reference"
+          },
+          "command_contract_member_ref": {
+            "$ref": "#/$defs/command_contract_member_reference"
+          },
+          "registry_activation_ref": {
+            "$ref": "#/$defs/registry_activation_reference"
+          },
+          "membership_proof": {
+            "$ref": "#/$defs/command_membership_proof"
+          },
+          "payload_schema_ref": {
+            "$ref": "#/$defs/payload_schema_reference"
+          },
+          "activation_scope_evidence_ref": {
+            "$ref": "#/$defs/artifact_reference"
+          },
+          "admission_recheck_required": {
+            "const": true
+          },
+          "authority_grant_ref": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/immutable_reference"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
         }
       }
     },
-    "relevant_evidence_refs": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/artifact_reference" } },
+    "relevant_evidence_refs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/artifact_reference"
+      }
+    },
     "epistemic_graph_binding": {
-      "type": "object", "additionalProperties": false,
+      "type": "object",
+      "additionalProperties": false,
       "required": [
-        "graph_aggregate_id", "protocol_branch_ref", "aggregate_presence",
-        "graph_version", "graph_root_digest", "head_event_ref", "origin_delta_event_ref",
-        "absence_evidence_ref", "genesis_state_fabrication_allowed",
-        "reducer_snapshot_ref", "source_ledger_position", "subgraph_projection_ref",
+        "graph_aggregate_id",
+        "protocol_branch_ref",
+        "aggregate_presence",
+        "graph_version",
+        "graph_root_digest",
+        "head_event_ref",
+        "origin_delta_event_ref",
+        "absence_evidence_ref",
+        "genesis_state_fabrication_allowed",
+        "reducer_snapshot_ref",
+        "source_ledger_position",
+        "subgraph_projection_ref",
         "projection_rule_ref"
       ],
       "properties": {
-        "graph_aggregate_id": { "$ref": "#/$defs/identifier" },
-        "protocol_branch_ref": { "$ref": "#/$defs/immutable_reference" },
-        "aggregate_presence": { "enum": ["absent_genesis", "existing_aggregate"] },
-        "graph_version": { "oneOf": [{ "type": "integer", "minimum": 1 }, { "type": "null" }] },
-        "graph_root_digest": { "oneOf": [{ "$ref": "#/$defs/digest" }, { "type": "null" }] },
-        "head_event_ref": { "oneOf": [{ "$ref": "#/$defs/immutable_reference" }, { "type": "null" }] },
-        "origin_delta_event_ref": { "oneOf": [{ "$ref": "#/$defs/immutable_reference" }, { "type": "null" }] },
-        "absence_evidence_ref": { "oneOf": [{ "$ref": "#/$defs/artifact_reference" }, { "type": "null" }] },
-        "genesis_state_fabrication_allowed": { "const": false },
-        "reducer_snapshot_ref": { "$ref": "#/$defs/immutable_reference" },
-        "source_ledger_position": { "type": "integer", "minimum": 0 },
-        "subgraph_projection_ref": { "$ref": "#/$defs/artifact_reference" },
-        "projection_rule_ref": { "$ref": "#/$defs/versioned_reference" }
+        "graph_aggregate_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "protocol_branch_ref": {
+          "$ref": "#/$defs/immutable_reference"
+        },
+        "aggregate_presence": {
+          "enum": [
+            "absent_genesis",
+            "existing_aggregate"
+          ]
+        },
+        "graph_version": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "graph_root_digest": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/digest"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "head_event_ref": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/immutable_reference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "origin_delta_event_ref": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/immutable_reference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "absence_evidence_ref": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/artifact_reference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "genesis_state_fabrication_allowed": {
+          "const": false
+        },
+        "reducer_snapshot_ref": {
+          "$ref": "#/$defs/immutable_reference"
+        },
+        "source_ledger_position": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "subgraph_projection_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        },
+        "projection_rule_ref": {
+          "$ref": "#/$defs/versioned_reference"
+        }
       },
       "allOf": [
         {
-          "if": { "properties": { "aggregate_presence": { "const": "absent_genesis" } }, "required": ["aggregate_presence"] },
+          "if": {
+            "properties": {
+              "aggregate_presence": {
+                "const": "absent_genesis"
+              }
+            },
+            "required": [
+              "aggregate_presence"
+            ]
+          },
           "then": {
             "properties": {
-              "graph_version": { "type": "null" },
-              "graph_root_digest": { "type": "null" },
-              "head_event_ref": { "type": "null" },
-              "origin_delta_event_ref": { "type": "null" },
-              "absence_evidence_ref": { "$ref": "#/$defs/artifact_reference" }
+              "graph_version": {
+                "type": "null"
+              },
+              "graph_root_digest": {
+                "type": "null"
+              },
+              "head_event_ref": {
+                "type": "null"
+              },
+              "origin_delta_event_ref": {
+                "type": "null"
+              },
+              "absence_evidence_ref": {
+                "$ref": "#/$defs/artifact_reference"
+              }
             }
           },
           "else": {
             "properties": {
-              "graph_version": { "type": "integer", "minimum": 1 },
-              "graph_root_digest": { "$ref": "#/$defs/digest" },
-              "head_event_ref": { "$ref": "#/$defs/immutable_reference" },
-              "origin_delta_event_ref": { "$ref": "#/$defs/immutable_reference" },
-              "absence_evidence_ref": { "type": "null" }
+              "graph_version": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "graph_root_digest": {
+                "$ref": "#/$defs/digest"
+              },
+              "head_event_ref": {
+                "$ref": "#/$defs/immutable_reference"
+              },
+              "origin_delta_event_ref": {
+                "$ref": "#/$defs/immutable_reference"
+              },
+              "absence_evidence_ref": {
+                "type": "null"
+              }
             }
           }
         }
@@ -137,64 +379,244 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["node_ref", "status"],
+        "required": [
+          "node_ref",
+          "status"
+        ],
         "properties": {
-          "node_ref": { "$ref": "#/$defs/immutable_reference" },
-          "status": { "enum": ["live", "blocked", "refuted_under_scope", "unresolved"] }
+          "node_ref": {
+            "$ref": "#/$defs/immutable_reference"
+          },
+          "status": {
+            "enum": [
+              "live",
+              "blocked",
+              "refuted_under_scope",
+              "unresolved"
+            ]
+          }
         }
       }
     },
     "contradiction_inventory": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["search_result", "search_evidence_ref", "included_refs", "omitted_material_refs", "unknown_identity_reason_codes"],
+      "required": [
+        "search_result",
+        "search_evidence_ref",
+        "included_refs",
+        "omitted_material_refs",
+        "unknown_identity_reason_codes"
+      ],
       "properties": {
-        "search_result": { "enum": ["none_found", "material_present", "indeterminate"] },
-        "search_evidence_ref": { "$ref": "#/$defs/artifact_reference" },
-        "included_refs": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/immutable_reference" } },
-        "omitted_material_refs": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/immutable_reference" } },
-        "unknown_identity_reason_codes": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/identifier" } }
+        "search_result": {
+          "enum": [
+            "none_found",
+            "material_present",
+            "indeterminate"
+          ]
+        },
+        "search_evidence_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        },
+        "included_refs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/immutable_reference"
+          }
+        },
+        "omitted_material_refs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/immutable_reference"
+          }
+        },
+        "unknown_identity_reason_codes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        }
       },
       "allOf": [
         {
-          "if": { "properties": { "search_result": { "const": "material_present" } }, "required": ["search_result"] },
-          "then": { "properties": { "included_refs": { "minItems": 1 }, "omitted_material_refs": { "maxItems": 0 }, "unknown_identity_reason_codes": { "maxItems": 0 } } }
+          "if": {
+            "properties": {
+              "search_result": {
+                "const": "material_present"
+              }
+            },
+            "required": [
+              "search_result"
+            ]
+          },
+          "then": {
+            "properties": {
+              "included_refs": {
+                "minItems": 1
+              },
+              "omitted_material_refs": {
+                "maxItems": 0
+              },
+              "unknown_identity_reason_codes": {
+                "maxItems": 0
+              }
+            }
+          }
         },
         {
-          "if": { "properties": { "search_result": { "const": "none_found" } }, "required": ["search_result"] },
-          "then": { "properties": { "included_refs": { "maxItems": 0 }, "omitted_material_refs": { "maxItems": 0 }, "unknown_identity_reason_codes": { "maxItems": 0 } } }
+          "if": {
+            "properties": {
+              "search_result": {
+                "const": "none_found"
+              }
+            },
+            "required": [
+              "search_result"
+            ]
+          },
+          "then": {
+            "properties": {
+              "included_refs": {
+                "maxItems": 0
+              },
+              "omitted_material_refs": {
+                "maxItems": 0
+              },
+              "unknown_identity_reason_codes": {
+                "maxItems": 0
+              }
+            }
+          }
         },
         {
-          "if": { "properties": { "search_result": { "const": "indeterminate" } }, "required": ["search_result"] },
-          "then": { "properties": { "unknown_identity_reason_codes": { "minItems": 1 } } }
+          "if": {
+            "properties": {
+              "search_result": {
+                "const": "indeterminate"
+              }
+            },
+            "required": [
+              "search_result"
+            ]
+          },
+          "then": {
+            "properties": {
+              "unknown_identity_reason_codes": {
+                "minItems": 1
+              }
+            }
+          }
         }
       ]
     },
-    "model_incomplete": { "type": "boolean" },
-    "required_control_refs": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/immutable_reference" } },
-    "falsifier_refs": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/immutable_reference" } },
-    "unresolved_blocker_refs": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/immutable_reference" } },
-    "remaining_resource_envelope": { "$ref": "#/$defs/execution_budget" },
+    "model_incomplete": {
+      "type": "boolean"
+    },
+    "required_control_refs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/immutable_reference"
+      }
+    },
+    "falsifier_refs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/immutable_reference"
+      }
+    },
+    "unresolved_blocker_refs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/immutable_reference"
+      }
+    },
+    "remaining_resource_envelope": {
+      "$ref": "#/$defs/execution_budget"
+    },
     "exposure_policy": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["purpose", "data_classes", "residency", "egress", "exposure_ceiling", "negative_checks"],
+      "required": [
+        "purpose",
+        "data_classes",
+        "residency",
+        "egress",
+        "exposure_ceiling",
+        "negative_checks"
+      ],
       "properties": {
-        "purpose": { "$ref": "#/$defs/identifier" },
-        "data_classes": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "enum": ["public", "internal", "confidential", "restricted_allowed"] } },
-        "residency": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/identifier" } },
-        "egress": { "enum": ["none", "bounded_provider", "approved_region_only"] },
-        "exposure_ceiling": { "enum": ["public", "internal", "confidential", "restricted_allowed"] },
+        "purpose": {
+          "$ref": "#/$defs/identifier"
+        },
+        "data_classes": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "public",
+              "internal",
+              "confidential",
+              "restricted_allowed"
+            ]
+          }
+        },
+        "residency": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "egress": {
+          "enum": [
+            "none",
+            "bounded_provider",
+            "approved_region_only"
+          ]
+        },
+        "exposure_ceiling": {
+          "enum": [
+            "public",
+            "internal",
+            "confidential",
+            "restricted_allowed"
+          ]
+        },
         "negative_checks": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["sealed_truth_absent", "forbidden_data_absent", "sealed_truth_reference_count", "forbidden_reference_count", "evidence_ref"],
+          "required": [
+            "sealed_truth_absent",
+            "forbidden_data_absent",
+            "sealed_truth_reference_count",
+            "forbidden_reference_count",
+            "evidence_ref"
+          ],
           "properties": {
-            "sealed_truth_absent": { "const": true },
-            "forbidden_data_absent": { "const": true },
-            "sealed_truth_reference_count": { "const": 0 },
-            "forbidden_reference_count": { "const": 0 },
-            "evidence_ref": { "$ref": "#/$defs/artifact_reference" }
+            "sealed_truth_absent": {
+              "const": true
+            },
+            "forbidden_data_absent": {
+              "const": true
+            },
+            "sealed_truth_reference_count": {
+              "const": 0
+            },
+            "forbidden_reference_count": {
+              "const": 0
+            },
+            "evidence_ref": {
+              "$ref": "#/$defs/artifact_reference"
+            }
           }
         }
       }
@@ -202,10 +624,25 @@
     "freshness_frontier": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["stale_source_refs", "superseded_source_refs"],
+      "required": [
+        "stale_source_refs",
+        "superseded_source_refs"
+      ],
       "properties": {
-        "stale_source_refs": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/artifact_reference" } },
-        "superseded_source_refs": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/artifact_reference" } }
+        "stale_source_refs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/artifact_reference"
+          }
+        },
+        "superseded_source_refs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/artifact_reference"
+          }
+        }
       }
     },
     "selected_context": {
@@ -215,61 +652,136 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["reference", "content_class", "purpose_binding", "selection_reason"],
+        "required": [
+          "reference",
+          "content_class",
+          "purpose_binding",
+          "selection_reason"
+        ],
         "properties": {
-          "reference": { "$ref": "#/$defs/artifact_reference" },
-          "content_class": { "enum": ["public", "internal", "confidential", "restricted_allowed"] },
-          "purpose_binding": { "$ref": "#/$defs/identifier" },
-          "selection_reason": { "$ref": "#/$defs/identifier" }
+          "reference": {
+            "$ref": "#/$defs/artifact_reference"
+          },
+          "content_class": {
+            "enum": [
+              "public",
+              "internal",
+              "confidential",
+              "restricted_allowed"
+            ]
+          },
+          "purpose_binding": {
+            "$ref": "#/$defs/identifier"
+          },
+          "selection_reason": {
+            "$ref": "#/$defs/identifier"
+          }
         }
       }
     },
-    "omission_manifest_ref": { "$ref": "#/$defs/artifact_reference" },
+    "omission_manifest_ref": {
+      "$ref": "#/$defs/artifact_reference"
+    },
     "output_contract": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["schema_ref", "deliverable_classes", "evidence_dispositions_required", "private_reasoning_prohibited_as_evidence"],
+      "required": [
+        "schema_ref",
+        "deliverable_classes",
+        "evidence_dispositions_required",
+        "private_reasoning_prohibited_as_evidence"
+      ],
       "properties": {
-        "schema_ref": { "$ref": "#/$defs/versioned_reference" },
-        "deliverable_classes": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/identifier" } },
-        "evidence_dispositions_required": { "const": true },
-        "private_reasoning_prohibited_as_evidence": { "const": true }
+        "schema_ref": {
+          "$ref": "#/$defs/versioned_reference"
+        },
+        "deliverable_classes": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "evidence_dispositions_required": {
+          "const": true
+        },
+        "private_reasoning_prohibited_as_evidence": {
+          "const": true
+        }
       }
     },
     "forbidden_actions": {
       "type": "array",
       "minItems": 3,
       "uniqueItems": true,
-      "items": { "$ref": "#/$defs/identifier" },
+      "items": {
+        "$ref": "#/$defs/identifier"
+      },
       "allOf": [
-        { "contains": { "const": "canonical_event_append" } },
-        { "contains": { "const": "authority_self_issue" } },
-        { "contains": { "const": "sealed_truth_access" } }
+        {
+          "contains": {
+            "const": "canonical_event_append"
+          }
+        },
+        {
+          "contains": {
+            "const": "authority_self_issue"
+          }
+        },
+        {
+          "contains": {
+            "const": "sealed_truth_access"
+          }
+        }
       ]
     },
     "authority_semantics": {
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "view_is_authority", "listed_command_is_authorized",
+        "view_is_authority",
+        "listed_command_is_authorized",
         "command_frontier_bound_to_exact_registry_activation",
-        "mutable_registry_status_in_view_allowed", "admission_rechecks_current_state"
+        "mutable_registry_status_in_view_allowed",
+        "admission_rechecks_current_state"
       ],
       "properties": {
-        "view_is_authority": { "const": false },
-        "listed_command_is_authorized": { "const": false },
-        "command_frontier_bound_to_exact_registry_activation": { "const": true },
-        "mutable_registry_status_in_view_allowed": { "const": false },
-        "admission_rechecks_current_state": { "const": true }
+        "view_is_authority": {
+          "const": false
+        },
+        "listed_command_is_authorized": {
+          "const": false
+        },
+        "command_frontier_bound_to_exact_registry_activation": {
+          "const": true
+        },
+        "mutable_registry_status_in_view_allowed": {
+          "const": false
+        },
+        "admission_rechecks_current_state": {
+          "const": true
+        }
       }
     },
     "compilation_time": {
-      "type": "object", "additionalProperties": false,
-      "required": ["value", "basis", "source_ref"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "value",
+        "basis",
+        "source_ref"
+      ],
       "properties": {
-        "value": { "$ref": "#/$defs/timestamp" },
-        "basis": { "const": "controlled_source_time" },
-        "source_ref": { "$ref": "#/$defs/immutable_reference" }
+        "value": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "basis": {
+          "const": "controlled_source_time"
+        },
+        "source_ref": {
+          "$ref": "#/$defs/immutable_reference"
+        }
       }
     }
   },
@@ -278,120 +790,461 @@
       "if": {
         "properties": {
           "epistemic_graph_binding": {
-            "properties": { "aggregate_presence": { "const": "absent_genesis" } },
-            "required": ["aggregate_presence"]
+            "properties": {
+              "aggregate_presence": {
+                "const": "absent_genesis"
+              }
+            },
+            "required": [
+              "aggregate_presence"
+            ]
           }
         }
       },
-      "then": { "properties": { "competing_hypotheses": { "maxItems": 0 } } }
+      "then": {
+        "properties": {
+          "competing_hypotheses": {
+            "maxItems": 0
+          }
+        }
+      }
     }
   ],
   "$defs": {
-    "identifier": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$" },
-    "digest": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
-    "semantic_version": { "type": "string", "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$" },
-    "timestamp": { "type": "string", "format": "date-time", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$" },
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$"
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "semantic_version": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
+    },
     "artifact_reference": {
-      "type": "object", "additionalProperties": false,
-      "required": ["artifact_id", "digest", "media_type"],
-      "properties": { "artifact_id": { "$ref": "#/$defs/identifier" }, "digest": { "$ref": "#/$defs/digest" }, "media_type": { "type": "string", "minLength": 1 } }
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "digest",
+        "media_type"
+      ],
+      "properties": {
+        "artifact_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
     },
     "immutable_reference": {
-      "type": "object", "additionalProperties": false,
-      "required": ["id", "version", "digest"],
-      "properties": { "id": { "$ref": "#/$defs/identifier" }, "version": { "type": "integer", "minimum": 1 }, "digest": { "$ref": "#/$defs/digest" } }
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "version",
+        "digest"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        }
+      }
     },
     "versioned_reference": {
-      "type": "object", "additionalProperties": false,
-      "required": ["id", "version", "digest"],
-      "properties": { "id": { "$ref": "#/$defs/identifier" }, "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" }, "digest": { "$ref": "#/$defs/digest" } }
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "version",
+        "digest"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        }
+      }
     },
     "command_registry_subject_reference": {
-      "type": "object", "additionalProperties": false,
-      "required": ["subject_id", "version", "schema_id", "canonical_digest"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "subject_id",
+        "version",
+        "schema_id",
+        "canonical_digest"
+      ],
       "properties": {
-        "subject_id": { "$ref": "#/$defs/identifier" },
-        "version": { "$ref": "#/$defs/semantic_version" },
-        "schema_id": { "const": "urn:odeya:schema:command-contract-registry:0.1.0" },
-        "canonical_digest": { "$ref": "#/$defs/digest" }
+        "subject_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "$ref": "#/$defs/semantic_version"
+        },
+        "schema_id": {
+          "const": "urn:odeya:schema:command-contract-registry:0.1.0"
+        },
+        "canonical_digest": {
+          "$ref": "#/$defs/digest"
+        }
       }
     },
     "command_contract_member_reference": {
-      "type": "object", "additionalProperties": false,
-      "required": ["member_key", "command_type", "command_version", "member_digest"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "member_key",
+        "command_type",
+        "command_version",
+        "member_digest"
+      ],
       "properties": {
-        "member_key": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}@(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$" },
-        "command_type": { "$ref": "#/$defs/identifier" },
-        "command_version": { "$ref": "#/$defs/semantic_version" },
-        "member_digest": { "$ref": "#/$defs/digest" }
+        "member_key": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}@(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
+        },
+        "command_type": {
+          "$ref": "#/$defs/identifier"
+        },
+        "command_version": {
+          "$ref": "#/$defs/semantic_version"
+        },
+        "member_digest": {
+          "$ref": "#/$defs/digest"
+        }
       }
     },
     "registry_activation_reference": {
-      "type": "object", "additionalProperties": false,
-      "required": ["record_type", "activation_id", "activation_sequence", "schema_id", "activation_digest"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "record_type",
+        "activation_id",
+        "activation_sequence",
+        "schema_id",
+        "activation_digest"
+      ],
       "properties": {
-        "record_type": { "const": "registry_activation" },
-        "activation_id": { "$ref": "#/$defs/identifier" },
-        "activation_sequence": { "type": "integer", "minimum": 1 },
-        "schema_id": { "const": "urn:odeya:schema:registry-activation:0.1.0" },
-        "activation_digest": { "$ref": "#/$defs/digest" }
+        "record_type": {
+          "const": "registry_activation"
+        },
+        "activation_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "activation_sequence": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "schema_id": {
+          "const": "urn:odeya:schema:registry-activation:0.2.0"
+        },
+        "activation_digest": {
+          "$ref": "#/$defs/digest"
+        }
       }
     },
     "command_membership_proof": {
-      "type": "object", "additionalProperties": false,
+      "type": "object",
+      "additionalProperties": false,
       "required": [
-        "proof_ref", "proof_profile_ref", "registry_subject_digest",
-        "command_member_digest", "activation_digest", "proof_result",
+        "proof_ref",
+        "proof_profile_ref",
+        "registry_subject_digest",
+        "command_member_digest",
+        "activation_digest",
+        "proof_result",
         "exact_registry_member_bytes_verified"
       ],
       "properties": {
-        "proof_ref": { "$ref": "#/$defs/artifact_reference" },
-        "proof_profile_ref": { "$ref": "#/$defs/versioned_reference" },
-        "registry_subject_digest": { "$ref": "#/$defs/digest" },
-        "command_member_digest": { "$ref": "#/$defs/digest" },
-        "activation_digest": { "$ref": "#/$defs/digest" },
-        "proof_result": { "const": "pass" },
-        "exact_registry_member_bytes_verified": { "const": true }
+        "proof_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        },
+        "proof_profile_ref": {
+          "$ref": "#/$defs/versioned_reference"
+        },
+        "registry_subject_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "command_member_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "activation_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "proof_result": {
+          "const": "pass"
+        },
+        "exact_registry_member_bytes_verified": {
+          "const": true
+        }
       }
     },
     "payload_schema_reference": {
-      "type": "object", "additionalProperties": false,
-      "required": ["schema_id", "semantic_version", "byte_digest", "byte_count", "dialect"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_id",
+        "semantic_version",
+        "byte_digest",
+        "byte_count",
+        "dialect"
+      ],
       "properties": {
-        "schema_id": { "type": "string", "pattern": "^urn:odeya:command-payload:[a-z0-9._-]+:(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$" },
-        "semantic_version": { "$ref": "#/$defs/semantic_version" },
-        "byte_digest": { "$ref": "#/$defs/digest" },
-        "byte_count": { "type": "integer", "minimum": 2 },
-        "dialect": { "const": "https://json-schema.org/draft/2020-12/schema" }
+        "schema_id": {
+          "type": "string",
+          "pattern": "^urn:odeya:command-payload:[a-z0-9._-]+:(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
+        },
+        "semantic_version": {
+          "$ref": "#/$defs/semantic_version"
+        },
+        "byte_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "byte_count": {
+          "type": "integer",
+          "minimum": 2
+        },
+        "dialect": {
+          "const": "https://json-schema.org/draft/2020-12/schema"
+        }
       }
     },
     "execution_budget": {
-      "type": "object", "additionalProperties": false,
-      "required": ["profile_ref", "limits", "spend", "cross_resource_conversion_allowed"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profile_ref",
+        "limits",
+        "spend",
+        "cross_resource_conversion_allowed"
+      ],
       "properties": {
-        "profile_ref": { "$ref": "#/$defs/execution_budget_profile_reference" },
+        "profile_ref": {
+          "$ref": "#/$defs/execution_budget_profile_reference"
+        },
         "limits": {
-          "type": "array", "minItems": 9, "maxItems": 9, "uniqueItems": true,
-          "items": { "$ref": "#/$defs/execution_limit" },
+          "type": "array",
+          "minItems": 9,
+          "maxItems": 9,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/execution_limit"
+          },
           "allOf": [
-            { "contains": { "properties": { "resource_kind": { "const": "model_input_tokens" } }, "required": ["resource_kind"] } },
-            { "contains": { "properties": { "resource_kind": { "const": "model_output_tokens" } }, "required": ["resource_kind"] } },
-            { "contains": { "properties": { "resource_kind": { "const": "tool_calls" } }, "required": ["resource_kind"] } },
-            { "contains": { "properties": { "resource_kind": { "const": "cpu_time" } }, "required": ["resource_kind"] } },
-            { "contains": { "properties": { "resource_kind": { "const": "gpu_time" } }, "required": ["resource_kind"] } },
-            { "contains": { "properties": { "resource_kind": { "const": "peak_memory_bytes" } }, "required": ["resource_kind"] } },
-            { "contains": { "properties": { "resource_kind": { "const": "storage_bytes" } }, "required": ["resource_kind"] } },
-            { "contains": { "properties": { "resource_kind": { "const": "network_egress_bytes" } }, "required": ["resource_kind"] } },
-            { "contains": { "properties": { "resource_kind": { "const": "wall_time" } }, "required": ["resource_kind"] } }
+            {
+              "contains": {
+                "properties": {
+                  "resource_kind": {
+                    "const": "model_input_tokens"
+                  }
+                },
+                "required": [
+                  "resource_kind"
+                ]
+              }
+            },
+            {
+              "contains": {
+                "properties": {
+                  "resource_kind": {
+                    "const": "model_output_tokens"
+                  }
+                },
+                "required": [
+                  "resource_kind"
+                ]
+              }
+            },
+            {
+              "contains": {
+                "properties": {
+                  "resource_kind": {
+                    "const": "tool_calls"
+                  }
+                },
+                "required": [
+                  "resource_kind"
+                ]
+              }
+            },
+            {
+              "contains": {
+                "properties": {
+                  "resource_kind": {
+                    "const": "cpu_time"
+                  }
+                },
+                "required": [
+                  "resource_kind"
+                ]
+              }
+            },
+            {
+              "contains": {
+                "properties": {
+                  "resource_kind": {
+                    "const": "gpu_time"
+                  }
+                },
+                "required": [
+                  "resource_kind"
+                ]
+              }
+            },
+            {
+              "contains": {
+                "properties": {
+                  "resource_kind": {
+                    "const": "peak_memory_bytes"
+                  }
+                },
+                "required": [
+                  "resource_kind"
+                ]
+              }
+            },
+            {
+              "contains": {
+                "properties": {
+                  "resource_kind": {
+                    "const": "storage_bytes"
+                  }
+                },
+                "required": [
+                  "resource_kind"
+                ]
+              }
+            },
+            {
+              "contains": {
+                "properties": {
+                  "resource_kind": {
+                    "const": "network_egress_bytes"
+                  }
+                },
+                "required": [
+                  "resource_kind"
+                ]
+              }
+            },
+            {
+              "contains": {
+                "properties": {
+                  "resource_kind": {
+                    "const": "wall_time"
+                  }
+                },
+                "required": [
+                  "resource_kind"
+                ]
+              }
+            }
           ]
         },
-        "spend": { "$ref": "#/$defs/money_quantity" },
-        "cross_resource_conversion_allowed": { "const": false }
+        "spend": {
+          "$ref": "#/$defs/money_quantity"
+        },
+        "cross_resource_conversion_allowed": {
+          "const": false
+        }
       }
     },
-    "execution_budget_profile_reference": { "type": "object", "additionalProperties": false, "required": ["id", "version", "digest"], "properties": { "id": { "const": "execution-budget.foundation" }, "version": { "const": "0.1.0" }, "digest": { "$ref": "#/$defs/digest" } } },
-    "execution_limit": { "type": "object", "additionalProperties": false, "required": ["resource_kind", "limit", "unit_ref"], "properties": { "resource_kind": { "enum": ["model_input_tokens", "model_output_tokens", "tool_calls", "cpu_time", "gpu_time", "peak_memory_bytes", "storage_bytes", "network_egress_bytes", "wall_time"] }, "limit": { "$ref": "#/$defs/nonnegative_decimal" }, "unit_ref": { "$ref": "#/$defs/immutable_reference" } } },
-    "money_quantity": { "type": "object", "additionalProperties": false, "required": ["amount", "currency"], "properties": { "amount": { "$ref": "#/$defs/nonnegative_decimal" }, "currency": { "type": "string", "pattern": "^[A-Z]{3}$" } } },
-    "nonnegative_decimal": { "type": "string", "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?$" }
+    "execution_budget_profile_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "version",
+        "digest"
+      ],
+      "properties": {
+        "id": {
+          "const": "execution-budget.foundation"
+        },
+        "version": {
+          "const": "0.1.0"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        }
+      }
+    },
+    "execution_limit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "resource_kind",
+        "limit",
+        "unit_ref"
+      ],
+      "properties": {
+        "resource_kind": {
+          "enum": [
+            "model_input_tokens",
+            "model_output_tokens",
+            "tool_calls",
+            "cpu_time",
+            "gpu_time",
+            "peak_memory_bytes",
+            "storage_bytes",
+            "network_egress_bytes",
+            "wall_time"
+          ]
+        },
+        "limit": {
+          "$ref": "#/$defs/nonnegative_decimal"
+        },
+        "unit_ref": {
+          "$ref": "#/$defs/immutable_reference"
+        }
+      }
+    },
+    "money_quantity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "amount",
+        "currency"
+      ],
+      "properties": {
+        "amount": {
+          "$ref": "#/$defs/nonnegative_decimal"
+        },
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$"
+        }
+      }
+    },
+    "nonnegative_decimal": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?$"
+    }
   }
 }

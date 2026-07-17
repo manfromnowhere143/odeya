@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:protocol-amendment:0.1.0",
+  "$id": "urn:odeya:schema:protocol-amendment:0.2.0",
   "title": "Odeya ProtocolAmendment",
   "description": "An immutable decision about a proposed protocol change. No value represents retroactive mutation. Exposure ordering, patch semantics, and branch ancestry require semantic validation.",
   "type": "object",
@@ -27,97 +27,226 @@
     "decided_by"
   ],
   "properties": {
-    "schema_version": { "const": "0.1.0" },
-    "amendment_id": { "$ref": "#/$defs/identifier" },
-    "version": { "type": "integer", "minimum": 1 },
-    "mission_id": { "$ref": "#/$defs/identifier" },
-    "base_protocol_snapshot": { "$ref": "#/$defs/protocol_reference" },
-    "change_set_ref": { "$ref": "#/$defs/artifact_reference" },
+    "schema_version": {
+      "const": "0.2.0"
+    },
+    "amendment_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "mission_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "base_protocol_snapshot": {
+      "$ref": "#/$defs/protocol_reference"
+    },
+    "change_set_ref": {
+      "$ref": "#/$defs/artifact_reference"
+    },
     "reason_codes": {
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,
-      "items": { "$ref": "#/$defs/identifier" }
+      "items": {
+        "$ref": "#/$defs/identifier"
+      }
     },
     "exposure_assessment": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["level", "relevant_to_change", "exposure_event_refs", "assessment_ref"],
+      "required": [
+        "level",
+        "relevant_to_change",
+        "exposure_event_refs",
+        "assessment_ref"
+      ],
       "properties": {
-        "level": { "enum": ["outcome_blind", "partial_outcome_exposure", "full_outcome_exposure"] },
-        "relevant_to_change": { "type": "boolean" },
+        "level": {
+          "enum": [
+            "outcome_blind",
+            "partial_outcome_exposure",
+            "full_outcome_exposure"
+          ]
+        },
+        "relevant_to_change": {
+          "type": "boolean"
+        },
         "exposure_event_refs": {
           "type": "array",
           "uniqueItems": true,
-          "items": { "$ref": "#/$defs/identifier" }
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
         },
-        "assessment_ref": { "$ref": "#/$defs/artifact_reference" }
+        "assessment_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        }
       }
     },
     "decision": {
-      "enum": ["approved_prospective", "approved_fork", "approved_correction_only", "rejected"]
+      "enum": [
+        "approved_prospective",
+        "approved_fork",
+        "approved_correction_only",
+        "rejected"
+      ]
     },
     "effect_scope": {
-      "enum": ["future_runs_only", "new_branch_only", "records_correction_only", "no_change"]
+      "enum": [
+        "future_runs_only",
+        "new_branch_only",
+        "records_correction_only",
+        "no_change"
+      ]
     },
     "resulting_protocol_snapshot": {
       "oneOf": [
-        { "$ref": "#/$defs/protocol_reference" },
-        { "type": "null" }
+        {
+          "$ref": "#/$defs/protocol_reference"
+        },
+        {
+          "type": "null"
+        }
       ]
     },
     "affected_future_run_ids": {
       "type": "array",
       "uniqueItems": true,
-      "items": { "$ref": "#/$defs/identifier" }
+      "items": {
+        "$ref": "#/$defs/identifier"
+      }
     },
     "required_followup_reviews": {
       "type": "array",
       "uniqueItems": true,
-      "items": { "enum": ["protocol", "statistical", "safety", "data_rights", "resource", "verification", "publication"] }
+      "items": {
+        "enum": [
+          "protocol",
+          "statistical",
+          "safety",
+          "data_rights",
+          "resource",
+          "verification",
+          "publication"
+        ]
+      }
     },
-    "authority_decision_ref": { "$ref": "#/$defs/identifier" },
-    "requested_at": { "type": "string", "format": "date-time" },
-    "requested_by": { "$ref": "#/$defs/principal" },
-    "decided_at_ledger_position": { "type": "integer", "minimum": 0 },
-    "decided_at": { "type": "string", "format": "date-time" },
-    "decided_by": { "$ref": "#/$defs/human_principal" }
+    "authority_decision_ref": {
+      "$ref": "#/$defs/identifier"
+    },
+    "requested_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
+    },
+    "requested_by": {
+      "$ref": "#/$defs/principal"
+    },
+    "decided_at_ledger_position": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "decided_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
+    },
+    "decided_by": {
+      "$ref": "#/$defs/human_principal"
+    }
   },
   "allOf": [
     {
-      "if": { "properties": { "decision": { "const": "approved_prospective" } }, "required": ["decision"] },
+      "if": {
+        "properties": {
+          "decision": {
+            "const": "approved_prospective"
+          }
+        },
+        "required": [
+          "decision"
+        ]
+      },
       "then": {
         "properties": {
-          "effect_scope": { "const": "future_runs_only" },
-          "resulting_protocol_snapshot": { "$ref": "#/$defs/protocol_reference" }
+          "effect_scope": {
+            "const": "future_runs_only"
+          },
+          "resulting_protocol_snapshot": {
+            "$ref": "#/$defs/protocol_reference"
+          }
         }
       }
     },
     {
-      "if": { "properties": { "decision": { "const": "approved_fork" } }, "required": ["decision"] },
+      "if": {
+        "properties": {
+          "decision": {
+            "const": "approved_fork"
+          }
+        },
+        "required": [
+          "decision"
+        ]
+      },
       "then": {
         "properties": {
-          "effect_scope": { "const": "new_branch_only" },
-          "resulting_protocol_snapshot": { "$ref": "#/$defs/protocol_reference" }
+          "effect_scope": {
+            "const": "new_branch_only"
+          },
+          "resulting_protocol_snapshot": {
+            "$ref": "#/$defs/protocol_reference"
+          }
         }
       }
     },
     {
-      "if": { "properties": { "decision": { "const": "approved_correction_only" } }, "required": ["decision"] },
+      "if": {
+        "properties": {
+          "decision": {
+            "const": "approved_correction_only"
+          }
+        },
+        "required": [
+          "decision"
+        ]
+      },
       "then": {
         "properties": {
-          "effect_scope": { "const": "records_correction_only" },
-          "resulting_protocol_snapshot": { "type": "null" }
+          "effect_scope": {
+            "const": "records_correction_only"
+          },
+          "resulting_protocol_snapshot": {
+            "type": "null"
+          }
         }
       }
     },
     {
-      "if": { "properties": { "decision": { "const": "rejected" } }, "required": ["decision"] },
+      "if": {
+        "properties": {
+          "decision": {
+            "const": "rejected"
+          }
+        },
+        "required": [
+          "decision"
+        ]
+      },
       "then": {
         "properties": {
-          "effect_scope": { "const": "no_change" },
-          "resulting_protocol_snapshot": { "type": "null" },
-          "affected_future_run_ids": { "maxItems": 0 }
+          "effect_scope": {
+            "const": "no_change"
+          },
+          "resulting_protocol_snapshot": {
+            "type": "null"
+          },
+          "affected_future_run_ids": {
+            "maxItems": 0
+          }
         }
       }
     }
@@ -134,40 +263,84 @@
     "artifact_reference": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["artifact_id", "digest", "media_type"],
+      "required": [
+        "artifact_id",
+        "digest",
+        "media_type"
+      ],
       "properties": {
-        "artifact_id": { "$ref": "#/$defs/identifier" },
-        "digest": { "$ref": "#/$defs/digest" },
-        "media_type": { "type": "string", "minLength": 1 }
+        "artifact_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1
+        }
       }
     },
     "protocol_reference": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["protocol_snapshot_id", "version", "digest"],
+      "required": [
+        "protocol_snapshot_id",
+        "version",
+        "digest"
+      ],
       "properties": {
-        "protocol_snapshot_id": { "$ref": "#/$defs/identifier" },
-        "version": { "type": "integer", "minimum": 1 },
-        "digest": { "$ref": "#/$defs/digest" }
+        "protocol_snapshot_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        }
       }
     },
     "principal": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["principal_id", "principal_type"],
+      "required": [
+        "principal_id",
+        "principal_type"
+      ],
       "properties": {
-        "principal_id": { "$ref": "#/$defs/identifier" },
-        "principal_type": { "enum": ["human", "service", "organization", "model_run"] }
+        "principal_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "principal_type": {
+          "enum": [
+            "human",
+            "service",
+            "organization",
+            "model_run"
+          ]
+        }
       }
     },
     "human_principal": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["principal_id", "principal_type", "authority_grant_ref"],
+      "required": [
+        "principal_id",
+        "principal_type",
+        "authority_grant_ref"
+      ],
       "properties": {
-        "principal_id": { "$ref": "#/$defs/identifier" },
-        "principal_type": { "const": "human" },
-        "authority_grant_ref": { "$ref": "#/$defs/identifier" }
+        "principal_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "principal_type": {
+          "const": "human"
+        },
+        "authority_grant_ref": {
+          "$ref": "#/$defs/identifier"
+        }
       }
     }
   }

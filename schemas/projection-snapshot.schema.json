@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:projection-snapshot:0.1.0",
+  "$id": "urn:odeya:schema:projection-snapshot:0.2.0",
   "title": "Odeya ProjectionSnapshot",
   "description": "A closed, rebuildable, derived and non-authoritative view over exact canonical facts. Validation does not make the snapshot canonical state, evidence, authority, a publication decision, or proof of external visibility. The subject intentionally contains no self or enclosing-package digest.",
   "type": "object",
@@ -34,10 +34,19 @@
     "authority_semantics"
   ],
   "properties": {
-    "schema_version": { "const": "0.1.0" },
-    "record_status": { "const": "derived_non_authoritative_projection" },
-    "projection_id": { "$ref": "#/$defs/identifier" },
-    "version": { "type": "integer", "minimum": 1 },
+    "schema_version": {
+      "const": "0.2.0"
+    },
+    "record_status": {
+      "const": "derived_non_authoritative_projection"
+    },
+    "projection_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
     "projection_type": {
       "enum": [
         "private_cockpit",
@@ -46,56 +55,110 @@
         "static_architecture_fixture"
       ]
     },
-    "semantic_profile_ref": { "$ref": "#/$defs/versioned_reference" },
+    "semantic_profile_ref": {
+      "$ref": "#/$defs/versioned_reference"
+    },
     "subject": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["subject_kind", "logical_subject_id", "subject_version"],
+      "required": [
+        "subject_kind",
+        "logical_subject_id",
+        "subject_version"
+      ],
       "properties": {
         "subject_kind": {
-          "enum": ["mission", "portfolio", "proposal", "publication_package", "architecture_fixture"]
+          "enum": [
+            "mission",
+            "portfolio",
+            "proposal",
+            "publication_package",
+            "architecture_fixture"
+          ]
         },
-        "logical_subject_id": { "$ref": "#/$defs/identifier" },
-        "subject_version": { "type": "integer", "minimum": 1 }
+        "logical_subject_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "subject_version": {
+          "type": "integer",
+          "minimum": 1
+        }
       }
     },
     "audience": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["audience_class", "audience_scope_ref"],
+      "required": [
+        "audience_class",
+        "audience_scope_ref"
+      ],
       "properties": {
         "audience_class": {
-          "enum": ["authorized_private", "proposal_contributor", "public", "design_reviewer"]
+          "enum": [
+            "authorized_private",
+            "proposal_contributor",
+            "public",
+            "design_reviewer"
+          ]
         },
-        "audience_scope_ref": { "$ref": "#/$defs/exact_record_reference" }
+        "audience_scope_ref": {
+          "$ref": "#/$defs/exact_record_reference"
+        }
       }
     },
     "purpose": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["purpose_id", "purpose_version", "purpose_scope_ref", "cross_purpose_reuse_allowed"],
+      "required": [
+        "purpose_id",
+        "purpose_version",
+        "purpose_scope_ref",
+        "cross_purpose_reuse_allowed"
+      ],
       "properties": {
-        "purpose_id": { "$ref": "#/$defs/identifier" },
-        "purpose_version": { "$ref": "#/$defs/semantic_version" },
-        "purpose_scope_ref": { "$ref": "#/$defs/exact_record_reference" },
-        "cross_purpose_reuse_allowed": { "const": false }
+        "purpose_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "purpose_version": {
+          "$ref": "#/$defs/semantic_version"
+        },
+        "purpose_scope_ref": {
+          "$ref": "#/$defs/exact_record_reference"
+        },
+        "cross_purpose_reuse_allowed": {
+          "const": false
+        }
       }
     },
     "source": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["source_kind", "source_ref", "source_reference_is_truth_assertion"],
+      "required": [
+        "source_kind",
+        "source_ref",
+        "source_reference_is_truth_assertion"
+      ],
       "properties": {
         "source_kind": {
-          "enum": ["live_canonical", "pinned_source_snapshot", "static_architecture_fixture"]
+          "enum": [
+            "live_canonical",
+            "pinned_source_snapshot",
+            "static_architecture_fixture"
+          ]
         },
         "source_ref": {
           "oneOf": [
-            { "$ref": "#/$defs/exact_record_reference" },
-            { "$ref": "#/$defs/local_fixture_reference" }
+            {
+              "$ref": "#/$defs/exact_record_reference"
+            },
+            {
+              "$ref": "#/$defs/local_fixture_reference"
+            }
           ]
         },
-        "source_reference_is_truth_assertion": { "const": false }
+        "source_reference_is_truth_assertion": {
+          "const": false
+        }
       }
     },
     "canonical_bindings": {
@@ -108,13 +171,23 @@
         "ledger_checkpoint"
       ],
       "properties": {
-        "engine_contract_root_ref": { "$ref": "#/$defs/engine_contract_root_reference" },
-        "c0_registry_bundle_ref": { "$ref": "#/$defs/c0_registry_bundle_reference" },
-        "canonicalization_profile_ref": { "$ref": "#/$defs/versioned_reference" },
+        "engine_contract_root_ref": {
+          "$ref": "#/$defs/engine_contract_root_reference"
+        },
+        "c0_registry_bundle_ref": {
+          "$ref": "#/$defs/c0_registry_bundle_reference"
+        },
+        "canonicalization_profile_ref": {
+          "$ref": "#/$defs/versioned_reference"
+        },
         "ledger_checkpoint": {
           "oneOf": [
-            { "$ref": "#/$defs/live_checkpoint_binding" },
-            { "$ref": "#/$defs/static_checkpoint_binding" }
+            {
+              "$ref": "#/$defs/live_checkpoint_binding"
+            },
+            {
+              "$ref": "#/$defs/static_checkpoint_binding"
+            }
           ]
         }
       }
@@ -132,25 +205,60 @@
         "unknown_discriminator_behavior"
       ],
       "properties": {
-        "reducer_ref": { "$ref": "#/$defs/exact_record_reference" },
-        "build_digest": { "$ref": "#/$defs/digest" },
-        "reader_version": { "$ref": "#/$defs/semantic_version" },
-        "compatible_reader_range": { "type": "string", "minLength": 1, "maxLength": 127 },
-        "compatibility": { "enum": ["compatible", "incompatible", "unknown"] },
-        "unknown_major_version_behavior": { "const": "block" },
-        "unknown_discriminator_behavior": { "const": "block" }
+        "reducer_ref": {
+          "$ref": "#/$defs/exact_record_reference"
+        },
+        "build_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "reader_version": {
+          "$ref": "#/$defs/semantic_version"
+        },
+        "compatible_reader_range": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 127
+        },
+        "compatibility": {
+          "enum": [
+            "compatible",
+            "incompatible",
+            "unknown"
+          ]
+        },
+        "unknown_major_version_behavior": {
+          "const": "block"
+        },
+        "unknown_discriminator_behavior": {
+          "const": "block"
+        }
       }
     },
     "controlled_time": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["generated_at", "last_canonical_fact_at", "clock_profile_ref"],
+      "required": [
+        "generated_at",
+        "last_canonical_fact_at",
+        "clock_profile_ref"
+      ],
       "properties": {
-        "generated_at": { "$ref": "#/$defs/timestamp" },
-        "last_canonical_fact_at": {
-          "oneOf": [{ "$ref": "#/$defs/timestamp" }, { "type": "null" }]
+        "generated_at": {
+          "$ref": "#/$defs/timestamp"
         },
-        "clock_profile_ref": { "$ref": "#/$defs/versioned_reference" }
+        "last_canonical_fact_at": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "clock_profile_ref": {
+          "$ref": "#/$defs/versioned_reference"
+        }
       }
     },
     "dependency_frontier": {
@@ -169,34 +277,86 @@
       ],
       "properties": {
         "observation_ref": {
-          "oneOf": [{ "$ref": "#/$defs/exact_record_reference" }, { "type": "null" }]
+          "oneOf": [
+            {
+              "$ref": "#/$defs/exact_record_reference"
+            },
+            {
+              "type": "null"
+            }
+          ]
         },
         "observation_status": {
-          "enum": ["active", "expired", "missing", "unavailable", "not_applicable_static"]
+          "enum": [
+            "active",
+            "expired",
+            "missing",
+            "unavailable",
+            "not_applicable_static"
+          ]
         },
-        "checked_at": { "$ref": "#/$defs/timestamp" },
-        "valid_until": { "$ref": "#/$defs/timestamp" },
+        "checked_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "valid_until": {
+          "$ref": "#/$defs/timestamp"
+        },
         "required_position": {
-          "oneOf": [{ "$ref": "#/$defs/ledger_point" }, { "type": "null" }]
+          "oneOf": [
+            {
+              "$ref": "#/$defs/ledger_point"
+            },
+            {
+              "type": "null"
+            }
+          ]
         },
         "included_position": {
-          "oneOf": [{ "$ref": "#/$defs/ledger_point" }, { "type": "null" }]
+          "oneOf": [
+            {
+              "$ref": "#/$defs/ledger_point"
+            },
+            {
+              "type": "null"
+            }
+          ]
         },
-        "maximum_age_seconds": { "type": "integer", "minimum": 0 },
-        "age_seconds": { "type": "integer", "minimum": 0 },
+        "maximum_age_seconds": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "age_seconds": {
+          "type": "integer",
+          "minimum": 0
+        },
         "dependency_refs": {
           "type": "array",
           "uniqueItems": true,
-          "items": { "$ref": "#/$defs/exact_record_reference" }
+          "items": {
+            "$ref": "#/$defs/exact_record_reference"
+          }
         }
       }
     },
     "freshness": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["state", "reason_codes", "affected_scopes", "reconciliation_or_rebuild_ref"],
+      "required": [
+        "state",
+        "reason_codes",
+        "affected_scopes",
+        "reconciliation_or_rebuild_ref"
+      ],
       "properties": {
-        "state": { "enum": ["current", "stale", "partial", "quarantined", "unavailable"] },
+        "state": {
+          "enum": [
+            "current",
+            "stale",
+            "partial",
+            "quarantined",
+            "unavailable"
+          ]
+        },
         "reason_codes": {
           "type": "array",
           "uniqueItems": true,
@@ -220,10 +380,19 @@
         "affected_scopes": {
           "type": "array",
           "uniqueItems": true,
-          "items": { "$ref": "#/$defs/identifier" }
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
         },
         "reconciliation_or_rebuild_ref": {
-          "oneOf": [{ "$ref": "#/$defs/exact_record_reference" }, { "type": "null" }]
+          "oneOf": [
+            {
+              "$ref": "#/$defs/exact_record_reference"
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       }
     },
@@ -240,34 +409,53 @@
         "unavailable_artifact_refs"
       ],
       "properties": {
-        "state": { "enum": ["complete", "partial", "withheld", "unavailable"] },
-        "coverage_rule_result_ref": { "$ref": "#/$defs/exact_record_reference" },
+        "state": {
+          "enum": [
+            "complete",
+            "partial",
+            "withheld",
+            "unavailable"
+          ]
+        },
+        "coverage_rule_result_ref": {
+          "$ref": "#/$defs/exact_record_reference"
+        },
         "expected_sections": {
           "type": "array",
           "minItems": 1,
           "uniqueItems": true,
-          "items": { "$ref": "#/$defs/identifier" }
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
         },
         "present_sections": {
           "type": "array",
           "minItems": 1,
           "uniqueItems": true,
-          "items": { "$ref": "#/$defs/identifier" }
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
         },
         "omitted_section_ids": {
           "type": "array",
           "uniqueItems": true,
-          "items": { "$ref": "#/$defs/identifier" }
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
         },
         "unsupported_version_refs": {
           "type": "array",
           "uniqueItems": true,
-          "items": { "$ref": "#/$defs/exact_record_reference" }
+          "items": {
+            "$ref": "#/$defs/exact_record_reference"
+          }
         },
         "unavailable_artifact_refs": {
           "type": "array",
           "uniqueItems": true,
-          "items": { "$ref": "#/$defs/artifact_reference" }
+          "items": {
+            "$ref": "#/$defs/artifact_reference"
+          }
         }
       }
     },
@@ -285,13 +473,27 @@
         "cache_and_pointer"
       ],
       "properties": {
-        "correction": { "$ref": "#/$defs/correction_fact" },
-        "rights": { "$ref": "#/$defs/rights_fact" },
-        "deletion": { "$ref": "#/$defs/deletion_fact" },
-        "recovery": { "$ref": "#/$defs/recovery_fact" },
-        "external_effect": { "$ref": "#/$defs/effect_fact" },
-        "release": { "$ref": "#/$defs/release_fact" },
-        "serve_decision": { "$ref": "#/$defs/serve_decision" },
+        "correction": {
+          "$ref": "#/$defs/correction_fact"
+        },
+        "rights": {
+          "$ref": "#/$defs/rights_fact"
+        },
+        "deletion": {
+          "$ref": "#/$defs/deletion_fact"
+        },
+        "recovery": {
+          "$ref": "#/$defs/recovery_fact"
+        },
+        "external_effect": {
+          "$ref": "#/$defs/effect_fact"
+        },
+        "release": {
+          "$ref": "#/$defs/release_fact"
+        },
+        "serve_decision": {
+          "$ref": "#/$defs/serve_decision"
+        },
         "cache_and_pointer": {
           "type": "object",
           "additionalProperties": false,
@@ -303,38 +505,80 @@
           ],
           "properties": {
             "invalidation_frontier_ref": {
-              "oneOf": [{ "$ref": "#/$defs/exact_record_reference" }, { "type": "null" }]
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/exact_record_reference"
+                },
+                {
+                  "type": "null"
+                }
+              ]
             },
-            "cache_namespace_ref": { "$ref": "#/$defs/versioned_reference" },
-            "pointer_version": { "type": "integer", "minimum": 1 },
-            "stale_bytes_may_establish_currentness": { "const": false }
+            "cache_namespace_ref": {
+              "$ref": "#/$defs/versioned_reference"
+            },
+            "pointer_version": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "stale_bytes_may_establish_currentness": {
+              "const": false
+            }
           }
         }
       }
     },
-    "redaction_manifest_ref": { "$ref": "#/$defs/projection_redaction_manifest_reference" },
+    "redaction_manifest_ref": {
+      "$ref": "#/$defs/projection_redaction_manifest_reference"
+    },
     "reducer_equivalence": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["result_ref", "disposition"],
+      "required": [
+        "result_ref",
+        "disposition"
+      ],
       "properties": {
-        "result_ref": { "$ref": "#/$defs/reducer_equivalence_result_reference" },
-        "disposition": { "enum": ["passed", "failed", "indeterminate", "not_run"] }
+        "result_ref": {
+          "$ref": "#/$defs/reducer_equivalence_result_reference"
+        },
+        "disposition": {
+          "enum": [
+            "passed",
+            "failed",
+            "indeterminate",
+            "not_run"
+          ]
+        }
       }
     },
-    "impact_index_ref": { "$ref": "#/$defs/projection_impact_record_reference" },
-    "semantic_axes": { "$ref": "#/$defs/semantic_axes" },
+    "impact_index_ref": {
+      "$ref": "#/$defs/projection_impact_record_reference"
+    },
+    "semantic_axes": {
+      "$ref": "#/$defs/semantic_axes"
+    },
     "quantitative_displays": {
       "type": "array",
       "uniqueItems": true,
-      "items": { "$ref": "#/$defs/quantity_display" }
+      "items": {
+        "$ref": "#/$defs/quantity_display"
+      }
     },
     "surface": {
       "oneOf": [
-        { "$ref": "#/$defs/private_cockpit_surface" },
-        { "$ref": "#/$defs/thesis_intake_surface" },
-        { "$ref": "#/$defs/public_research_surface" },
-        { "$ref": "#/$defs/static_architecture_fixture_surface" }
+        {
+          "$ref": "#/$defs/private_cockpit_surface"
+        },
+        {
+          "$ref": "#/$defs/thesis_intake_surface"
+        },
+        {
+          "$ref": "#/$defs/public_research_surface"
+        },
+        {
+          "$ref": "#/$defs/static_architecture_fixture_surface"
+        }
       ]
     },
     "accessibility_semantics": {
@@ -348,14 +592,26 @@
         "nonvisual_equivalence_map_ref"
       ],
       "properties": {
-        "semantic_distinctions_have_text_or_table_equivalent": { "const": true },
-        "color_only_distinctions": { "const": false },
-        "motion_only_distinctions": { "const": false },
-        "hover_only_distinctions": { "const": false },
-        "nonvisual_equivalence_map_ref": { "$ref": "#/$defs/artifact_reference" }
+        "semantic_distinctions_have_text_or_table_equivalent": {
+          "const": true
+        },
+        "color_only_distinctions": {
+          "const": false
+        },
+        "motion_only_distinctions": {
+          "const": false
+        },
+        "hover_only_distinctions": {
+          "const": false
+        },
+        "nonvisual_equivalence_map_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        }
       }
     },
-    "construction": { "$ref": "#/$defs/non_recursive_construction" },
+    "construction": {
+      "$ref": "#/$defs/non_recursive_construction"
+    },
     "authority_semantics": {
       "type": "object",
       "additionalProperties": false,
@@ -369,128 +625,289 @@
         "commands_require_current_server_readmission"
       ],
       "properties": {
-        "projection_is_canonical_state": { "const": false },
-        "projection_is_scientific_evidence": { "const": false },
-        "projection_is_authority": { "const": false },
-        "projection_is_publication_decision": { "const": false },
-        "projection_proves_external_visibility": { "const": false },
-        "derived_action_is_permission": { "const": false },
-        "commands_require_current_server_readmission": { "const": true }
+        "projection_is_canonical_state": {
+          "const": false
+        },
+        "projection_is_scientific_evidence": {
+          "const": false
+        },
+        "projection_is_authority": {
+          "const": false
+        },
+        "projection_is_publication_decision": {
+          "const": false
+        },
+        "projection_proves_external_visibility": {
+          "const": false
+        },
+        "derived_action_is_permission": {
+          "const": false
+        },
+        "commands_require_current_server_readmission": {
+          "const": true
+        }
       }
     }
   },
   "allOf": [
     {
-      "if": { "properties": { "freshness": { "properties": { "state": { "const": "current" } } } } },
+      "if": {
+        "properties": {
+          "freshness": {
+            "properties": {
+              "state": {
+                "const": "current"
+              }
+            }
+          }
+        }
+      },
       "then": {
         "properties": {
           "freshness": {
             "properties": {
-              "reason_codes": { "maxItems": 0 },
-              "affected_scopes": { "maxItems": 0 },
-              "reconciliation_or_rebuild_ref": { "type": "null" }
+              "reason_codes": {
+                "maxItems": 0
+              },
+              "affected_scopes": {
+                "maxItems": 0
+              },
+              "reconciliation_or_rebuild_ref": {
+                "type": "null"
+              }
             }
           },
-          "completeness": { "properties": { "state": { "const": "complete" } } },
-          "reducer": { "properties": { "compatibility": { "const": "compatible" } } }
+          "completeness": {
+            "properties": {
+              "state": {
+                "const": "complete"
+              }
+            }
+          },
+          "reducer": {
+            "properties": {
+              "compatibility": {
+                "const": "compatible"
+              }
+            }
+          }
         }
       },
       "else": {
         "properties": {
           "freshness": {
             "properties": {
-              "reason_codes": { "minItems": 1 },
-              "affected_scopes": { "minItems": 1 },
-              "reconciliation_or_rebuild_ref": { "$ref": "#/$defs/exact_record_reference" }
+              "reason_codes": {
+                "minItems": 1
+              },
+              "affected_scopes": {
+                "minItems": 1
+              },
+              "reconciliation_or_rebuild_ref": {
+                "$ref": "#/$defs/exact_record_reference"
+              }
             }
           }
         }
       }
     },
     {
-      "if": { "properties": { "projection_type": { "const": "static_architecture_fixture" } } },
+      "if": {
+        "properties": {
+          "projection_type": {
+            "const": "static_architecture_fixture"
+          }
+        }
+      },
       "then": {
         "properties": {
-          "subject": { "properties": { "subject_kind": { "const": "architecture_fixture" } } },
-          "audience": { "properties": { "audience_class": { "const": "design_reviewer" } } },
+          "subject": {
+            "properties": {
+              "subject_kind": {
+                "const": "architecture_fixture"
+              }
+            }
+          },
+          "audience": {
+            "properties": {
+              "audience_class": {
+                "const": "design_reviewer"
+              }
+            }
+          },
           "source": {
             "properties": {
-              "source_kind": { "const": "static_architecture_fixture" },
-              "source_ref": { "$ref": "#/$defs/local_fixture_reference" }
+              "source_kind": {
+                "const": "static_architecture_fixture"
+              },
+              "source_ref": {
+                "$ref": "#/$defs/local_fixture_reference"
+              }
             }
           },
           "canonical_bindings": {
-            "properties": { "ledger_checkpoint": { "$ref": "#/$defs/static_checkpoint_binding" } }
+            "properties": {
+              "ledger_checkpoint": {
+                "$ref": "#/$defs/static_checkpoint_binding"
+              }
+            }
           },
           "dependency_frontier": {
             "properties": {
-              "observation_ref": { "type": "null" },
-              "observation_status": { "const": "not_applicable_static" },
-              "required_position": { "type": "null" },
-              "included_position": { "type": "null" },
-              "dependency_refs": { "maxItems": 0 }
+              "observation_ref": {
+                "type": "null"
+              },
+              "observation_status": {
+                "const": "not_applicable_static"
+              },
+              "required_position": {
+                "type": "null"
+              },
+              "included_position": {
+                "type": "null"
+              },
+              "dependency_refs": {
+                "maxItems": 0
+              }
             }
           },
           "governance_frontier": {
             "properties": {
-              "correction": { "$ref": "#/$defs/static_governance_fact" },
-              "rights": { "$ref": "#/$defs/static_governance_fact" },
-              "deletion": { "$ref": "#/$defs/static_governance_fact" },
-              "recovery": { "$ref": "#/$defs/static_governance_fact" },
-              "external_effect": { "$ref": "#/$defs/static_governance_fact" },
-              "release": { "$ref": "#/$defs/static_governance_fact" },
-              "serve_decision": { "$ref": "#/$defs/static_serve_decision" }
+              "correction": {
+                "$ref": "#/$defs/static_governance_fact"
+              },
+              "rights": {
+                "$ref": "#/$defs/static_governance_fact"
+              },
+              "deletion": {
+                "$ref": "#/$defs/static_governance_fact"
+              },
+              "recovery": {
+                "$ref": "#/$defs/static_governance_fact"
+              },
+              "external_effect": {
+                "$ref": "#/$defs/static_governance_fact"
+              },
+              "release": {
+                "$ref": "#/$defs/static_governance_fact"
+              },
+              "serve_decision": {
+                "$ref": "#/$defs/static_serve_decision"
+              }
             }
           },
           "reducer_equivalence": {
-            "properties": { "disposition": { "const": "not_run" } }
+            "properties": {
+              "disposition": {
+                "const": "not_run"
+              }
+            }
           },
           "semantic_axes": {
             "properties": {
-              "source_fixture": { "const": "static_architecture_fixture" },
-              "integrity_recovery": { "const": "not_applicable_static" },
-              "publication": { "const": "not_requested" }
+              "source_fixture": {
+                "const": "static_architecture_fixture"
+              },
+              "integrity_recovery": {
+                "const": "not_applicable_static"
+              },
+              "publication": {
+                "const": "not_requested"
+              }
             }
           },
-          "surface": { "$ref": "#/$defs/static_architecture_fixture_surface" }
+          "surface": {
+            "$ref": "#/$defs/static_architecture_fixture_surface"
+          }
         }
       },
       "else": {
         "properties": {
           "source": {
             "properties": {
-              "source_kind": { "enum": ["live_canonical", "pinned_source_snapshot"] },
-              "source_ref": { "$ref": "#/$defs/exact_record_reference" }
+              "source_kind": {
+                "enum": [
+                  "live_canonical",
+                  "pinned_source_snapshot"
+                ]
+              },
+              "source_ref": {
+                "$ref": "#/$defs/exact_record_reference"
+              }
             }
           },
           "canonical_bindings": {
-            "properties": { "ledger_checkpoint": { "$ref": "#/$defs/live_checkpoint_binding" } }
+            "properties": {
+              "ledger_checkpoint": {
+                "$ref": "#/$defs/live_checkpoint_binding"
+              }
+            }
           },
           "dependency_frontier": {
             "properties": {
-              "observation_status": { "enum": ["active", "expired", "missing", "unavailable"] },
-              "required_position": { "$ref": "#/$defs/ledger_point" },
-              "included_position": { "$ref": "#/$defs/ledger_point" },
-              "dependency_refs": { "minItems": 1 }
+              "observation_status": {
+                "enum": [
+                  "active",
+                  "expired",
+                  "missing",
+                  "unavailable"
+                ]
+              },
+              "required_position": {
+                "$ref": "#/$defs/ledger_point"
+              },
+              "included_position": {
+                "$ref": "#/$defs/ledger_point"
+              },
+              "dependency_refs": {
+                "minItems": 1
+              }
             }
           },
           "governance_frontier": {
             "properties": {
-              "correction": { "$ref": "#/$defs/live_correction_fact" },
-              "rights": { "$ref": "#/$defs/live_rights_fact" },
-              "deletion": { "$ref": "#/$defs/live_deletion_fact" },
-              "recovery": { "$ref": "#/$defs/live_recovery_fact" },
-              "external_effect": { "$ref": "#/$defs/live_effect_fact" },
-              "release": { "$ref": "#/$defs/live_release_fact" },
-              "serve_decision": { "$ref": "#/$defs/live_serve_decision" }
+              "correction": {
+                "$ref": "#/$defs/live_correction_fact"
+              },
+              "rights": {
+                "$ref": "#/$defs/live_rights_fact"
+              },
+              "deletion": {
+                "$ref": "#/$defs/live_deletion_fact"
+              },
+              "recovery": {
+                "$ref": "#/$defs/live_recovery_fact"
+              },
+              "external_effect": {
+                "$ref": "#/$defs/live_effect_fact"
+              },
+              "release": {
+                "$ref": "#/$defs/live_release_fact"
+              },
+              "serve_decision": {
+                "$ref": "#/$defs/live_serve_decision"
+              }
             }
           },
           "reducer_equivalence": {
-            "properties": { "disposition": { "enum": ["passed", "failed", "indeterminate"] } }
+            "properties": {
+              "disposition": {
+                "enum": [
+                  "passed",
+                  "failed",
+                  "indeterminate"
+                ]
+              }
+            }
           },
           "semantic_axes": {
             "properties": {
-              "source_fixture": { "enum": ["live_canonical", "pinned_source_snapshot"] },
+              "source_fixture": {
+                "enum": [
+                  "live_canonical",
+                  "pinned_source_snapshot"
+                ]
+              },
               "integrity_recovery": {
                 "enum": [
                   "current_verified",
@@ -510,95 +927,242 @@
     {
       "if": {
         "properties": {
-          "freshness": { "properties": { "state": { "const": "current" } } },
-          "projection_type": { "not": { "const": "static_architecture_fixture" } }
+          "freshness": {
+            "properties": {
+              "state": {
+                "const": "current"
+              }
+            }
+          },
+          "projection_type": {
+            "not": {
+              "const": "static_architecture_fixture"
+            }
+          }
         }
       },
       "then": {
         "properties": {
           "canonical_bindings": {
             "properties": {
-              "ledger_checkpoint": { "properties": { "witness_status": { "const": "acknowledged" } } }
+              "ledger_checkpoint": {
+                "properties": {
+                  "witness_status": {
+                    "const": "acknowledged"
+                  }
+                }
+              }
             }
           },
-          "dependency_frontier": { "properties": { "observation_status": { "const": "active" } } },
-          "reducer_equivalence": { "properties": { "disposition": { "const": "passed" } } },
+          "dependency_frontier": {
+            "properties": {
+              "observation_status": {
+                "const": "active"
+              }
+            }
+          },
+          "reducer_equivalence": {
+            "properties": {
+              "disposition": {
+                "const": "passed"
+              }
+            }
+          },
           "governance_frontier": {
             "properties": {
-              "rights": { "properties": { "state": { "const": "active" } } },
-              "deletion": { "properties": { "state": { "enum": ["none", "completed"] } } },
-              "recovery": { "properties": { "state": { "const": "current_verified" } } },
-              "external_effect": {
+              "rights": {
                 "properties": {
                   "state": {
-                    "enum": ["not_applicable", "not_started", "pending", "confirmed_applied", "confirmed_not_applied"]
+                    "const": "active"
                   }
                 }
               },
-              "serve_decision": { "properties": { "status": { "const": "active" } } }
+              "deletion": {
+                "properties": {
+                  "state": {
+                    "enum": [
+                      "none",
+                      "completed"
+                    ]
+                  }
+                }
+              },
+              "recovery": {
+                "properties": {
+                  "state": {
+                    "const": "current_verified"
+                  }
+                }
+              },
+              "external_effect": {
+                "properties": {
+                  "state": {
+                    "enum": [
+                      "not_applicable",
+                      "not_started",
+                      "pending",
+                      "confirmed_applied",
+                      "confirmed_not_applied"
+                    ]
+                  }
+                }
+              },
+              "serve_decision": {
+                "properties": {
+                  "status": {
+                    "const": "active"
+                  }
+                }
+              }
             }
           }
         }
       }
     },
     {
-      "if": { "properties": { "projection_type": { "const": "private_cockpit" } } },
+      "if": {
+        "properties": {
+          "projection_type": {
+            "const": "private_cockpit"
+          }
+        }
+      },
       "then": {
         "properties": {
-          "subject": { "properties": { "subject_kind": { "enum": ["mission", "portfolio"] } } },
-          "audience": { "properties": { "audience_class": { "const": "authorized_private" } } },
-          "surface": { "$ref": "#/$defs/private_cockpit_surface" }
+          "subject": {
+            "properties": {
+              "subject_kind": {
+                "enum": [
+                  "mission",
+                  "portfolio"
+                ]
+              }
+            }
+          },
+          "audience": {
+            "properties": {
+              "audience_class": {
+                "const": "authorized_private"
+              }
+            }
+          },
+          "surface": {
+            "$ref": "#/$defs/private_cockpit_surface"
+          }
         }
       }
     },
     {
-      "if": { "properties": { "projection_type": { "const": "thesis_intake" } } },
+      "if": {
+        "properties": {
+          "projection_type": {
+            "const": "thesis_intake"
+          }
+        }
+      },
       "then": {
         "properties": {
-          "subject": { "properties": { "subject_kind": { "const": "proposal" } } },
-          "audience": { "properties": { "audience_class": { "const": "proposal_contributor" } } },
-          "surface": { "$ref": "#/$defs/thesis_intake_surface" },
+          "subject": {
+            "properties": {
+              "subject_kind": {
+                "const": "proposal"
+              }
+            }
+          },
+          "audience": {
+            "properties": {
+              "audience_class": {
+                "const": "proposal_contributor"
+              }
+            }
+          },
+          "surface": {
+            "$ref": "#/$defs/thesis_intake_surface"
+          },
           "semantic_axes": {
             "properties": {
-              "scientific_validity": { "const": "not_assessed" },
-              "scientific_outcome": { "const": "not_adjudicated" },
-              "claim": { "const": "none" },
-              "publication": { "const": "not_requested" }
+              "scientific_validity": {
+                "const": "not_assessed"
+              },
+              "scientific_outcome": {
+                "const": "not_adjudicated"
+              },
+              "claim": {
+                "const": "none"
+              },
+              "publication": {
+                "const": "not_requested"
+              }
             }
           }
         }
       }
     },
     {
-      "if": { "properties": { "projection_type": { "const": "public_research" } } },
+      "if": {
+        "properties": {
+          "projection_type": {
+            "const": "public_research"
+          }
+        }
+      },
       "then": {
         "properties": {
-          "subject": { "properties": { "subject_kind": { "const": "publication_package" } } },
-          "audience": { "properties": { "audience_class": { "const": "public" } } },
-          "surface": { "$ref": "#/$defs/public_research_surface" },
+          "subject": {
+            "properties": {
+              "subject_kind": {
+                "const": "publication_package"
+              }
+            }
+          },
+          "audience": {
+            "properties": {
+              "audience_class": {
+                "const": "public"
+              }
+            }
+          },
+          "surface": {
+            "$ref": "#/$defs/public_research_surface"
+          },
           "governance_frontier": {
             "properties": {
-              "rights": { "properties": { "state": { "const": "active" } } },
-              "external_effect": { "properties": { "state": { "const": "confirmed_applied" } } },
-              "release": { "properties": { "state": { "enum": ["release_settled", "corrected", "withdrawn"] } } }
+              "rights": {
+                "properties": {
+                  "state": {
+                    "const": "active"
+                  }
+                }
+              },
+              "external_effect": {
+                "properties": {
+                  "state": {
+                    "const": "confirmed_applied"
+                  }
+                }
+              },
+              "release": {
+                "properties": {
+                  "state": {
+                    "enum": [
+                      "release_settled",
+                      "corrected",
+                      "withdrawn"
+                    ]
+                  }
+                }
+              }
             }
           },
           "semantic_axes": {
-            "properties": { "publication": { "enum": ["released", "corrected", "withdrawn"] } }
-          }
-        }
-      }
-    },
-    {
-      "if": {
-        "properties": { "semantic_axes": { "properties": { "scientific_outcome": { "const": "null_result" } } } }
-      },
-      "then": {
-        "properties": {
-          "semantic_axes": {
             "properties": {
-              "scientific_validity": { "const": "valid" },
-              "measurement": { "const": "measured" }
+              "publication": {
+                "enum": [
+                  "released",
+                  "corrected",
+                  "withdrawn"
+                ]
+              }
             }
           }
         }
@@ -606,40 +1170,123 @@
     },
     {
       "if": {
-        "properties": { "semantic_axes": { "properties": { "scientific_validity": { "const": "invalid" } } } }
-      },
-      "then": {
         "properties": {
-          "semantic_axes": { "properties": { "scientific_outcome": { "enum": ["not_adjudicated", "refused"] } } }
+          "semantic_axes": {
+            "properties": {
+              "scientific_outcome": {
+                "const": "null_result"
+              }
+            }
+          }
         }
-      }
-    },
-    {
-      "if": { "properties": { "semantic_axes": { "properties": { "claim": { "const": "eligible" } } } } },
+      },
       "then": {
         "properties": {
           "semantic_axes": {
             "properties": {
-              "required_verification_disposition": { "const": "satisfied" },
-              "verification": { "const": "confirmed" }
+              "scientific_validity": {
+                "const": "valid"
+              },
+              "measurement": {
+                "const": "measured"
+              }
             }
           }
         }
       }
     },
     {
-      "if": { "properties": { "semantic_axes": { "properties": { "publication": { "const": "released" } } } } },
-      "then": { "properties": { "projection_type": { "const": "public_research" } } }
+      "if": {
+        "properties": {
+          "semantic_axes": {
+            "properties": {
+              "scientific_validity": {
+                "const": "invalid"
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "semantic_axes": {
+            "properties": {
+              "scientific_outcome": {
+                "enum": [
+                  "not_adjudicated",
+                  "refused"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "semantic_axes": {
+            "properties": {
+              "claim": {
+                "const": "eligible"
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "semantic_axes": {
+            "properties": {
+              "required_verification_disposition": {
+                "const": "satisfied"
+              },
+              "verification": {
+                "const": "confirmed"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "semantic_axes": {
+            "properties": {
+              "publication": {
+                "const": "released"
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "projection_type": {
+            "const": "public_research"
+          }
+        }
+      }
     }
   ],
   "$defs": {
-    "identifier": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$" },
-    "digest": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$"
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
     "exact_decimal": {
       "type": "string",
       "pattern": "^(?!-0(?:\\.0+)?$)-?(0|[1-9][0-9]*)(\\.[0-9]+)?$"
     },
-    "semantic_version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "semantic_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
     "timestamp": {
       "type": "string",
       "format": "date-time",
@@ -648,31 +1295,63 @@
     "artifact_reference": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["artifact_id", "digest", "media_type"],
+      "required": [
+        "artifact_id",
+        "digest",
+        "media_type"
+      ],
       "properties": {
-        "artifact_id": { "$ref": "#/$defs/identifier" },
-        "digest": { "$ref": "#/$defs/digest" },
-        "media_type": { "type": "string", "minLength": 1, "maxLength": 127 }
+        "artifact_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 127
+        }
       }
     },
     "versioned_reference": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "version", "digest"],
+      "required": [
+        "id",
+        "version",
+        "digest"
+      ],
       "properties": {
-        "id": { "$ref": "#/$defs/identifier" },
-        "version": { "$ref": "#/$defs/semantic_version" },
-        "digest": { "$ref": "#/$defs/digest" }
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "$ref": "#/$defs/semantic_version"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        }
       }
     },
     "canonicalization_binding": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["profile_id", "version", "digest"],
+      "required": [
+        "profile_id",
+        "version",
+        "digest"
+      ],
       "properties": {
-        "profile_id": { "$ref": "#/$defs/identifier" },
-        "version": { "$ref": "#/$defs/semantic_version" },
-        "digest": { "$ref": "#/$defs/digest" }
+        "profile_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "$ref": "#/$defs/semantic_version"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        }
       }
     },
     "exact_record_reference": {
@@ -687,46 +1366,95 @@
         "canonical_digest"
       ],
       "properties": {
-        "record_type": { "$ref": "#/$defs/identifier" },
-        "record_id": { "$ref": "#/$defs/identifier" },
-        "version": { "$ref": "#/$defs/semantic_version" },
-        "schema_id": { "type": "string", "format": "uri" },
-        "canonicalization_profile": { "$ref": "#/$defs/canonicalization_binding" },
-        "canonical_digest": { "$ref": "#/$defs/digest" }
+        "record_type": {
+          "$ref": "#/$defs/identifier"
+        },
+        "record_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "$ref": "#/$defs/semantic_version"
+        },
+        "schema_id": {
+          "type": "string",
+          "format": "uri"
+        },
+        "canonicalization_profile": {
+          "$ref": "#/$defs/canonicalization_binding"
+        },
+        "canonical_digest": {
+          "$ref": "#/$defs/digest"
+        }
       }
     },
     "local_fixture_reference": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["fixture_id", "repository_tree_id", "path", "byte_digest", "media_type"],
+      "required": [
+        "fixture_id",
+        "repository_tree_id",
+        "path",
+        "byte_digest",
+        "media_type"
+      ],
       "properties": {
-        "fixture_id": { "$ref": "#/$defs/identifier" },
-        "repository_tree_id": { "type": "string", "pattern": "^git-tree:[a-f0-9]{40,64}$" },
-        "path": { "type": "string", "pattern": "^[A-Za-z0-9._/-]+$" },
-        "byte_digest": { "$ref": "#/$defs/digest" },
-        "media_type": { "type": "string", "minLength": 1, "maxLength": 127 }
+        "fixture_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "repository_tree_id": {
+          "type": "string",
+          "pattern": "^git-tree:[a-f0-9]{40,64}$"
+        },
+        "path": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._/-]+$"
+        },
+        "byte_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 127
+        }
       }
     },
     "engine_contract_root_reference": {
       "allOf": [
-        { "$ref": "#/$defs/exact_record_reference" },
+        {
+          "$ref": "#/$defs/exact_record_reference"
+        },
         {
           "properties": {
-            "record_type": { "const": "engine_contract_root" },
-            "version": { "const": "0.1.0" },
-            "schema_id": { "const": "urn:odeya:schema:engine-contract-root:0.1.0" }
+            "record_type": {
+              "const": "engine_contract_root"
+            },
+            "version": {
+              "const": "0.1.0"
+            },
+            "schema_id": {
+              "const": "urn:odeya:schema:engine-contract-root:0.1.0"
+            }
           }
         }
       ]
     },
     "c0_registry_bundle_reference": {
       "allOf": [
-        { "$ref": "#/$defs/exact_record_reference" },
+        {
+          "$ref": "#/$defs/exact_record_reference"
+        },
         {
           "properties": {
-            "record_type": { "const": "c0_registry_bundle" },
-            "version": { "const": "0.1.0" },
-            "schema_id": { "const": "urn:odeya:schema:c0-registry-bundle:0.1.0" }
+            "record_type": {
+              "const": "c0_registry_bundle"
+            },
+            "version": {
+              "const": "0.1.0"
+            },
+            "schema_id": {
+              "const": "urn:odeya:schema:c0-registry-bundle:0.1.0"
+            }
           }
         }
       ]
@@ -734,79 +1462,154 @@
     "ledger_point": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["ledger_epoch", "stream_id", "inclusive_global_position", "aggregate_id", "aggregate_version"],
+      "required": [
+        "ledger_epoch",
+        "stream_id",
+        "inclusive_global_position",
+        "aggregate_id",
+        "aggregate_version"
+      ],
       "properties": {
-        "ledger_epoch": { "$ref": "#/$defs/identifier" },
-        "stream_id": { "$ref": "#/$defs/identifier" },
-        "inclusive_global_position": { "type": "integer", "minimum": 0 },
-        "aggregate_id": { "$ref": "#/$defs/identifier" },
-        "aggregate_version": { "type": "integer", "minimum": 0 }
+        "ledger_epoch": {
+          "$ref": "#/$defs/identifier"
+        },
+        "stream_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "inclusive_global_position": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "aggregate_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "aggregate_version": {
+          "type": "integer",
+          "minimum": 0
+        }
       }
     },
     "live_checkpoint_binding": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["applicability", "checkpoint_ref", "ledger_point", "coverage", "witness_status"],
+      "required": [
+        "applicability",
+        "checkpoint_ref",
+        "ledger_point",
+        "coverage",
+        "witness_status"
+      ],
       "properties": {
-        "applicability": { "const": "applicable" },
+        "applicability": {
+          "const": "applicable"
+        },
         "checkpoint_ref": {
           "allOf": [
-            { "$ref": "#/$defs/exact_record_reference" },
+            {
+              "$ref": "#/$defs/exact_record_reference"
+            },
             {
               "properties": {
-                "record_type": { "const": "ledger_checkpoint" },
-                "version": { "const": "0.2.0" },
-                "schema_id": { "const": "urn:odeya:schema:ledger-checkpoint:0.2.0" }
+                "record_type": {
+                  "const": "ledger_checkpoint"
+                },
+                "version": {
+                  "const": "0.2.0"
+                },
+                "schema_id": {
+                  "const": "urn:odeya:schema:ledger-checkpoint:0.3.0"
+                }
               }
             }
           ]
         },
-        "ledger_point": { "$ref": "#/$defs/ledger_point" },
-        "coverage": { "const": "inclusive" },
-        "witness_status": { "enum": ["acknowledged", "unacknowledged", "unknown"] }
+        "ledger_point": {
+          "$ref": "#/$defs/ledger_point"
+        },
+        "coverage": {
+          "const": "inclusive"
+        },
+        "witness_status": {
+          "enum": [
+            "acknowledged",
+            "unacknowledged",
+            "unknown"
+          ]
+        }
       }
     },
     "static_checkpoint_binding": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["applicability", "reason"],
+      "required": [
+        "applicability",
+        "reason"
+      ],
       "properties": {
-        "applicability": { "const": "not_applicable_static" },
-        "reason": { "const": "non_live_fixture_has_no_ledger_checkpoint" }
+        "applicability": {
+          "const": "not_applicable_static"
+        },
+        "reason": {
+          "const": "non_live_fixture_has_no_ledger_checkpoint"
+        }
       }
     },
     "projection_redaction_manifest_reference": {
       "allOf": [
-        { "$ref": "#/$defs/exact_record_reference" },
+        {
+          "$ref": "#/$defs/exact_record_reference"
+        },
         {
           "properties": {
-            "record_type": { "const": "projection_redaction_manifest" },
-            "version": { "const": "0.1.0" },
-            "schema_id": { "const": "urn:odeya:schema:projection-redaction-manifest:0.1.0" }
+            "record_type": {
+              "const": "projection_redaction_manifest"
+            },
+            "version": {
+              "const": "0.1.0"
+            },
+            "schema_id": {
+              "const": "urn:odeya:schema:projection-redaction-manifest:0.2.0"
+            }
           }
         }
       ]
     },
     "reducer_equivalence_result_reference": {
       "allOf": [
-        { "$ref": "#/$defs/exact_record_reference" },
+        {
+          "$ref": "#/$defs/exact_record_reference"
+        },
         {
           "properties": {
-            "record_type": { "const": "reducer_equivalence_result" },
-            "version": { "const": "0.1.0" },
-            "schema_id": { "const": "urn:odeya:schema:reducer-equivalence-result:0.1.0" }
+            "record_type": {
+              "const": "reducer_equivalence_result"
+            },
+            "version": {
+              "const": "0.1.0"
+            },
+            "schema_id": {
+              "const": "urn:odeya:schema:reducer-equivalence-result:0.2.0"
+            }
           }
         }
       ]
     },
     "projection_impact_record_reference": {
       "allOf": [
-        { "$ref": "#/$defs/exact_record_reference" },
+        {
+          "$ref": "#/$defs/exact_record_reference"
+        },
         {
           "properties": {
-            "record_type": { "const": "projection_impact_record" },
-            "version": { "const": "0.1.0" },
-            "schema_id": { "const": "urn:odeya:schema:projection-impact-record:0.1.0" }
+            "record_type": {
+              "const": "projection_impact_record"
+            },
+            "version": {
+              "const": "0.1.0"
+            },
+            "schema_id": {
+              "const": "urn:odeya:schema:projection-impact-record:0.2.0"
+            }
           }
         }
       ]
@@ -814,118 +1617,327 @@
     "static_governance_fact": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["applicability", "reason"],
+      "required": [
+        "applicability",
+        "reason"
+      ],
       "properties": {
-        "applicability": { "const": "not_applicable_static" },
-        "reason": { "const": "non_live_unreleased_nonauthoritative_fixture" }
+        "applicability": {
+          "const": "not_applicable_static"
+        },
+        "reason": {
+          "const": "non_live_unreleased_nonauthoritative_fixture"
+        }
       }
     },
     "live_correction_fact": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["applicability", "state", "observation_ref", "frontier_position", "required_notice_visible"],
+      "required": [
+        "applicability",
+        "state",
+        "observation_ref",
+        "frontier_position",
+        "required_notice_visible"
+      ],
       "properties": {
-        "applicability": { "const": "applicable" },
-        "state": { "enum": ["none", "active", "superseded", "retracted"] },
-        "observation_ref": { "$ref": "#/$defs/exact_record_reference" },
-        "frontier_position": { "$ref": "#/$defs/ledger_point" },
-        "required_notice_visible": { "type": "boolean" }
+        "applicability": {
+          "const": "applicable"
+        },
+        "state": {
+          "enum": [
+            "none",
+            "active",
+            "superseded",
+            "retracted"
+          ]
+        },
+        "observation_ref": {
+          "$ref": "#/$defs/exact_record_reference"
+        },
+        "frontier_position": {
+          "$ref": "#/$defs/ledger_point"
+        },
+        "required_notice_visible": {
+          "type": "boolean"
+        }
       },
       "allOf": [
         {
-          "if": { "properties": { "state": { "enum": ["active", "superseded", "retracted"] } } },
-          "then": { "properties": { "required_notice_visible": { "const": true } } }
+          "if": {
+            "properties": {
+              "state": {
+                "enum": [
+                  "active",
+                  "superseded",
+                  "retracted"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "required_notice_visible": {
+                "const": true
+              }
+            }
+          }
         }
       ]
     },
     "correction_fact": {
-      "oneOf": [{ "$ref": "#/$defs/live_correction_fact" }, { "$ref": "#/$defs/static_governance_fact" }]
+      "oneOf": [
+        {
+          "$ref": "#/$defs/live_correction_fact"
+        },
+        {
+          "$ref": "#/$defs/static_governance_fact"
+        }
+      ]
     },
     "live_rights_fact": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["applicability", "state", "decision_ref", "frontier_position", "effective_at", "expires_at"],
+      "required": [
+        "applicability",
+        "state",
+        "decision_ref",
+        "frontier_position",
+        "effective_at",
+        "expires_at"
+      ],
       "properties": {
-        "applicability": { "const": "applicable" },
-        "state": { "enum": ["active", "denied", "indeterminate", "revoked", "expired", "withheld"] },
-        "decision_ref": { "$ref": "#/$defs/exact_record_reference" },
-        "frontier_position": { "$ref": "#/$defs/ledger_point" },
-        "effective_at": { "$ref": "#/$defs/timestamp" },
-        "expires_at": { "$ref": "#/$defs/timestamp" }
+        "applicability": {
+          "const": "applicable"
+        },
+        "state": {
+          "enum": [
+            "active",
+            "denied",
+            "indeterminate",
+            "revoked",
+            "expired",
+            "withheld"
+          ]
+        },
+        "decision_ref": {
+          "$ref": "#/$defs/exact_record_reference"
+        },
+        "frontier_position": {
+          "$ref": "#/$defs/ledger_point"
+        },
+        "effective_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "expires_at": {
+          "$ref": "#/$defs/timestamp"
+        }
       }
     },
     "rights_fact": {
-      "oneOf": [{ "$ref": "#/$defs/live_rights_fact" }, { "$ref": "#/$defs/static_governance_fact" }]
+      "oneOf": [
+        {
+          "$ref": "#/$defs/live_rights_fact"
+        },
+        {
+          "$ref": "#/$defs/static_governance_fact"
+        }
+      ]
     },
     "live_deletion_fact": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["applicability", "state", "decision_ref", "frontier_position", "prior_bytes_disposition"],
+      "required": [
+        "applicability",
+        "state",
+        "decision_ref",
+        "frontier_position",
+        "prior_bytes_disposition"
+      ],
       "properties": {
-        "applicability": { "const": "applicable" },
-        "state": { "enum": ["none", "pending", "tombstone_only", "completed"] },
-        "decision_ref": { "$ref": "#/$defs/exact_record_reference" },
-        "frontier_position": { "$ref": "#/$defs/ledger_point" },
+        "applicability": {
+          "const": "applicable"
+        },
+        "state": {
+          "enum": [
+            "none",
+            "pending",
+            "tombstone_only",
+            "completed"
+          ]
+        },
+        "decision_ref": {
+          "$ref": "#/$defs/exact_record_reference"
+        },
+        "frontier_position": {
+          "$ref": "#/$defs/ledger_point"
+        },
         "prior_bytes_disposition": {
-          "enum": ["retained_under_current_policy", "destroyed_minimum_tombstone_only", "destruction_pending"]
+          "enum": [
+            "retained_under_current_policy",
+            "destroyed_minimum_tombstone_only",
+            "destruction_pending"
+          ]
         }
       },
       "allOf": [
         {
-          "if": { "properties": { "state": { "const": "tombstone_only" } } },
-          "then": { "properties": { "prior_bytes_disposition": { "const": "destroyed_minimum_tombstone_only" } } }
+          "if": {
+            "properties": {
+              "state": {
+                "const": "tombstone_only"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "prior_bytes_disposition": {
+                "const": "destroyed_minimum_tombstone_only"
+              }
+            }
+          }
         }
       ]
     },
     "deletion_fact": {
-      "oneOf": [{ "$ref": "#/$defs/live_deletion_fact" }, { "$ref": "#/$defs/static_governance_fact" }]
+      "oneOf": [
+        {
+          "$ref": "#/$defs/live_deletion_fact"
+        },
+        {
+          "$ref": "#/$defs/static_governance_fact"
+        }
+      ]
     },
     "live_recovery_fact": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["applicability", "state", "observation_ref", "frontier_position", "restore_verification_ref"],
+      "required": [
+        "applicability",
+        "state",
+        "observation_ref",
+        "frontier_position",
+        "restore_verification_ref"
+      ],
       "properties": {
-        "applicability": { "const": "applicable" },
-        "state": { "enum": ["current_verified", "restore_unverified", "fork_suspected", "quarantined"] },
-        "observation_ref": { "$ref": "#/$defs/exact_record_reference" },
-        "frontier_position": { "$ref": "#/$defs/ledger_point" },
+        "applicability": {
+          "const": "applicable"
+        },
+        "state": {
+          "enum": [
+            "current_verified",
+            "restore_unverified",
+            "fork_suspected",
+            "quarantined"
+          ]
+        },
+        "observation_ref": {
+          "$ref": "#/$defs/exact_record_reference"
+        },
+        "frontier_position": {
+          "$ref": "#/$defs/ledger_point"
+        },
         "restore_verification_ref": {
-          "oneOf": [{ "$ref": "#/$defs/exact_record_reference" }, { "type": "null" }]
+          "oneOf": [
+            {
+              "$ref": "#/$defs/exact_record_reference"
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       }
     },
     "recovery_fact": {
-      "oneOf": [{ "$ref": "#/$defs/live_recovery_fact" }, { "$ref": "#/$defs/static_governance_fact" }]
+      "oneOf": [
+        {
+          "$ref": "#/$defs/live_recovery_fact"
+        },
+        {
+          "$ref": "#/$defs/static_governance_fact"
+        }
+      ]
     },
     "live_effect_fact": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["applicability", "state", "observation_ref", "frontier_position"],
+      "required": [
+        "applicability",
+        "state",
+        "observation_ref",
+        "frontier_position"
+      ],
       "properties": {
-        "applicability": { "const": "applicable" },
-        "state": {
-          "enum": ["not_applicable", "not_started", "pending", "confirmed_applied", "confirmed_not_applied", "completion_unknown"]
+        "applicability": {
+          "const": "applicable"
         },
-        "observation_ref": { "$ref": "#/$defs/exact_record_reference" },
-        "frontier_position": { "$ref": "#/$defs/ledger_point" }
+        "state": {
+          "enum": [
+            "not_applicable",
+            "not_started",
+            "pending",
+            "confirmed_applied",
+            "confirmed_not_applied",
+            "completion_unknown"
+          ]
+        },
+        "observation_ref": {
+          "$ref": "#/$defs/exact_record_reference"
+        },
+        "frontier_position": {
+          "$ref": "#/$defs/ledger_point"
+        }
       }
     },
     "effect_fact": {
-      "oneOf": [{ "$ref": "#/$defs/live_effect_fact" }, { "$ref": "#/$defs/static_governance_fact" }]
+      "oneOf": [
+        {
+          "$ref": "#/$defs/live_effect_fact"
+        },
+        {
+          "$ref": "#/$defs/static_governance_fact"
+        }
+      ]
     },
     "live_release_fact": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["applicability", "state", "settlement_event_ref", "frontier_position"],
+      "required": [
+        "applicability",
+        "state",
+        "settlement_event_ref",
+        "frontier_position"
+      ],
       "properties": {
-        "applicability": { "const": "applicable" },
-        "state": { "enum": ["not_released", "release_settled", "corrected", "withdrawn"] },
-        "settlement_event_ref": { "$ref": "#/$defs/exact_record_reference" },
-        "frontier_position": { "$ref": "#/$defs/ledger_point" }
+        "applicability": {
+          "const": "applicable"
+        },
+        "state": {
+          "enum": [
+            "not_released",
+            "release_settled",
+            "corrected",
+            "withdrawn"
+          ]
+        },
+        "settlement_event_ref": {
+          "$ref": "#/$defs/exact_record_reference"
+        },
+        "frontier_position": {
+          "$ref": "#/$defs/ledger_point"
+        }
       }
     },
     "release_fact": {
-      "oneOf": [{ "$ref": "#/$defs/live_release_fact" }, { "$ref": "#/$defs/static_governance_fact" }]
+      "oneOf": [
+        {
+          "$ref": "#/$defs/live_release_fact"
+        },
+        {
+          "$ref": "#/$defs/static_governance_fact"
+        }
+      ]
     },
     "live_serve_decision": {
       "type": "object",
@@ -941,27 +1953,63 @@
         "requires_recheck_on_serve"
       ],
       "properties": {
-        "applicability": { "const": "applicable" },
-        "status": { "enum": ["active", "denied", "indeterminate", "revoked", "expired"] },
-        "decision_ref": { "$ref": "#/$defs/exact_record_reference" },
-        "audience_scope_ref": { "$ref": "#/$defs/exact_record_reference" },
-        "purpose_scope_ref": { "$ref": "#/$defs/exact_record_reference" },
-        "checked_at": { "$ref": "#/$defs/timestamp" },
-        "valid_until": { "$ref": "#/$defs/timestamp" },
-        "requires_recheck_on_serve": { "const": true }
+        "applicability": {
+          "const": "applicable"
+        },
+        "status": {
+          "enum": [
+            "active",
+            "denied",
+            "indeterminate",
+            "revoked",
+            "expired"
+          ]
+        },
+        "decision_ref": {
+          "$ref": "#/$defs/exact_record_reference"
+        },
+        "audience_scope_ref": {
+          "$ref": "#/$defs/exact_record_reference"
+        },
+        "purpose_scope_ref": {
+          "$ref": "#/$defs/exact_record_reference"
+        },
+        "checked_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "valid_until": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "requires_recheck_on_serve": {
+          "const": true
+        }
       }
     },
     "static_serve_decision": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["applicability", "reason"],
+      "required": [
+        "applicability",
+        "reason"
+      ],
       "properties": {
-        "applicability": { "const": "not_applicable_static" },
-        "reason": { "const": "fixture_not_served_as_live_or_public_state" }
+        "applicability": {
+          "const": "not_applicable_static"
+        },
+        "reason": {
+          "const": "fixture_not_served_as_live_or_public_state"
+        }
       }
     },
     "serve_decision": {
-      "oneOf": [{ "$ref": "#/$defs/live_serve_decision" }, { "$ref": "#/$defs/static_serve_decision" }]
+      "oneOf": [
+        {
+          "$ref": "#/$defs/live_serve_decision"
+        },
+        {
+          "$ref": "#/$defs/static_serve_decision"
+        }
+      ]
     },
     "semantic_axes": {
       "type": "object",
@@ -985,17 +2033,66 @@
         "integrity_recovery"
       ],
       "properties": {
-        "source_fixture": { "enum": ["live_canonical", "pinned_source_snapshot", "static_architecture_fixture"] },
+        "source_fixture": {
+          "enum": [
+            "live_canonical",
+            "pinned_source_snapshot",
+            "static_architecture_fixture"
+          ]
+        },
         "operational": {
-          "enum": ["not_started", "running", "interrupted", "blocked", "infrastructure_failure", "closed", "unknown"]
+          "enum": [
+            "not_started",
+            "running",
+            "interrupted",
+            "blocked",
+            "infrastructure_failure",
+            "closed",
+            "unknown"
+          ]
         },
-        "protocol": { "enum": ["not_frozen", "frozen", "amended_prospectively", "forked", "invalid", "unknown"] },
-        "scientific_validity": { "enum": ["not_assessed", "valid", "invalid", "indeterminate"] },
-        "measurement": { "enum": ["measured", "missing", "unmeasured", "unavailable", "withheld", "not_applicable"] },
+        "protocol": {
+          "enum": [
+            "not_frozen",
+            "frozen",
+            "amended_prospectively",
+            "forked",
+            "invalid",
+            "unknown"
+          ]
+        },
+        "scientific_validity": {
+          "enum": [
+            "not_assessed",
+            "valid",
+            "invalid",
+            "indeterminate"
+          ]
+        },
+        "measurement": {
+          "enum": [
+            "measured",
+            "missing",
+            "unmeasured",
+            "unavailable",
+            "withheld",
+            "not_applicable"
+          ]
+        },
         "value_origin": {
-          "enum": ["observed", "estimated", "inferred", "source_reported", "derived_projection", "unknown", "not_applicable"]
+          "enum": [
+            "observed",
+            "estimated",
+            "inferred",
+            "source_reported",
+            "derived_projection",
+            "unknown",
+            "not_applicable"
+          ]
         },
-        "source_label_is_odeya_adjudication": { "const": false },
+        "source_label_is_odeya_adjudication": {
+          "const": false
+        },
         "scientific_outcome": {
           "enum": [
             "not_adjudicated",
@@ -1008,16 +2105,55 @@
           ]
         },
         "verification": {
-          "enum": ["not_requested", "pending", "confirmed", "rejected", "inconclusive", "invalid", "blocked", "disputed"]
+          "enum": [
+            "not_requested",
+            "pending",
+            "confirmed",
+            "rejected",
+            "inconclusive",
+            "invalid",
+            "blocked",
+            "disputed"
+          ]
         },
-        "required_verification_disposition": { "enum": ["not_required", "unresolved", "satisfied"] },
+        "required_verification_disposition": {
+          "enum": [
+            "not_required",
+            "unresolved",
+            "satisfied"
+          ]
+        },
         "replication": {
-          "enum": ["not_attempted", "in_progress", "independently_replicated", "failed", "inconclusive", "invalid"]
+          "enum": [
+            "not_attempted",
+            "in_progress",
+            "independently_replicated",
+            "failed",
+            "inconclusive",
+            "invalid"
+          ]
         },
         "transport": {
-          "enum": ["not_attempted", "in_progress", "transported", "not_transported", "inconclusive", "invalid"]
+          "enum": [
+            "not_attempted",
+            "in_progress",
+            "transported",
+            "not_transported",
+            "inconclusive",
+            "invalid"
+          ]
         },
-        "claim": { "enum": ["none", "proposed", "ineligible", "eligible", "superseded", "corrected", "retracted"] },
+        "claim": {
+          "enum": [
+            "none",
+            "proposed",
+            "ineligible",
+            "eligible",
+            "superseded",
+            "corrected",
+            "retracted"
+          ]
+        },
         "publication": {
           "enum": [
             "not_requested",
@@ -1033,7 +2169,15 @@
           ]
         },
         "rights_disclosure": {
-          "enum": ["not_assessed", "permitted_for_projection", "denied", "indeterminate", "revoked", "expired", "withheld"]
+          "enum": [
+            "not_assessed",
+            "permitted_for_projection",
+            "denied",
+            "indeterminate",
+            "revoked",
+            "expired",
+            "withheld"
+          ]
         },
         "integrity_recovery": {
           "enum": [
@@ -1066,57 +2210,173 @@
         "nonvisual_equivalent"
       ],
       "properties": {
-        "quantity_id": { "$ref": "#/$defs/identifier" },
-        "quantity_binding": { "$ref": "#/$defs/quantity_binding" },
-        "measurement_state": { "enum": ["measured", "missing", "unmeasured", "unavailable", "withheld", "not_applicable"] },
-        "numeric_value": { "oneOf": [{ "$ref": "#/$defs/exact_decimal" }, { "type": "null" }] },
+        "quantity_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "quantity_binding": {
+          "$ref": "#/$defs/quantity_binding"
+        },
+        "measurement_state": {
+          "enum": [
+            "measured",
+            "missing",
+            "unmeasured",
+            "unavailable",
+            "withheld",
+            "not_applicable"
+          ]
+        },
+        "numeric_value": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/exact_decimal"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
         "interval": {
           "oneOf": [
             {
               "type": "object",
               "additionalProperties": false,
-              "required": ["lower", "upper", "contains_zero"],
+              "required": [
+                "lower",
+                "upper",
+                "contains_zero"
+              ],
               "properties": {
-                "lower": { "$ref": "#/$defs/exact_decimal" },
-                "upper": { "$ref": "#/$defs/exact_decimal" },
-                "contains_zero": { "type": "boolean" }
+                "lower": {
+                  "$ref": "#/$defs/exact_decimal"
+                },
+                "upper": {
+                  "$ref": "#/$defs/exact_decimal"
+                },
+                "contains_zero": {
+                  "type": "boolean"
+                }
               }
             },
-            { "type": "null" }
+            {
+              "type": "null"
+            }
           ]
         },
         "rendered_semantic": {
-          "enum": ["measured_value", "range_includes_zero", "missing", "not_measured", "unavailable", "withheld", "not_applicable"]
+          "enum": [
+            "measured_value",
+            "range_includes_zero",
+            "missing",
+            "not_measured",
+            "unavailable",
+            "withheld",
+            "not_applicable"
+          ]
         },
         "origin": {
-          "enum": ["observed", "estimated", "inferred", "source_reported", "derived_projection", "unknown", "not_applicable"]
+          "enum": [
+            "observed",
+            "estimated",
+            "inferred",
+            "source_reported",
+            "derived_projection",
+            "unknown",
+            "not_applicable"
+          ]
         },
-        "source_field_ref": { "$ref": "#/$defs/exact_record_reference" },
-        "unknown_or_missing_rendered_as_zero": { "const": false },
-        "interval_crossing_zero_rendered_as_null_or_support": { "const": false },
-        "nonvisual_equivalent": { "type": "string", "minLength": 1, "maxLength": 512 }
+        "source_field_ref": {
+          "$ref": "#/$defs/exact_record_reference"
+        },
+        "unknown_or_missing_rendered_as_zero": {
+          "const": false
+        },
+        "interval_crossing_zero_rendered_as_null_or_support": {
+          "const": false
+        },
+        "nonvisual_equivalent": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        }
       },
       "allOf": [
         {
-          "if": { "properties": { "measurement_state": { "const": "measured" } } },
+          "if": {
+            "properties": {
+              "measurement_state": {
+                "const": "measured"
+              }
+            }
+          },
           "then": {
-            "properties": { "rendered_semantic": { "enum": ["measured_value", "range_includes_zero"] } }
+            "properties": {
+              "rendered_semantic": {
+                "enum": [
+                  "measured_value",
+                  "range_includes_zero"
+                ]
+              }
+            }
           },
           "else": {
-            "properties": { "numeric_value": { "type": "null" }, "interval": { "type": "null" } }
+            "properties": {
+              "numeric_value": {
+                "type": "null"
+              },
+              "interval": {
+                "type": "null"
+              }
+            }
           }
         },
         {
-          "if": { "properties": { "measurement_state": { "const": "missing" } } },
-          "then": { "properties": { "rendered_semantic": { "const": "missing" } } }
+          "if": {
+            "properties": {
+              "measurement_state": {
+                "const": "missing"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "rendered_semantic": {
+                "const": "missing"
+              }
+            }
+          }
         },
         {
-          "if": { "properties": { "measurement_state": { "const": "unmeasured" } } },
-          "then": { "properties": { "rendered_semantic": { "const": "not_measured" } } }
+          "if": {
+            "properties": {
+              "measurement_state": {
+                "const": "unmeasured"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "rendered_semantic": {
+                "const": "not_measured"
+              }
+            }
+          }
         },
         {
-          "if": { "properties": { "measurement_state": { "const": "withheld" } } },
-          "then": { "properties": { "rendered_semantic": { "const": "withheld" } } }
+          "if": {
+            "properties": {
+              "measurement_state": {
+                "const": "withheld"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "rendered_semantic": {
+                "const": "withheld"
+              }
+            }
+          }
         }
       ]
     },
@@ -1133,11 +2393,21 @@
         "semantic_definition_ref"
       ],
       "properties": {
-        "numeric_representation": { "const": "canonical_exact_decimal_string" },
-        "decimal_profile_ref": { "$ref": "#/$defs/versioned_reference" },
-        "quantity_kind_ref": { "$ref": "#/$defs/exact_record_reference" },
-        "scale_ref": { "$ref": "#/$defs/exact_record_reference" },
-        "unit_ref": { "$ref": "#/$defs/exact_record_reference" },
+        "numeric_representation": {
+          "const": "canonical_exact_decimal_string"
+        },
+        "decimal_profile_ref": {
+          "$ref": "#/$defs/versioned_reference"
+        },
+        "quantity_kind_ref": {
+          "$ref": "#/$defs/exact_record_reference"
+        },
+        "scale_ref": {
+          "$ref": "#/$defs/exact_record_reference"
+        },
+        "unit_ref": {
+          "$ref": "#/$defs/exact_record_reference"
+        },
         "semantic_kind": {
           "enum": [
             "ordinary_physical",
@@ -1152,7 +2422,9 @@
             "registered_special"
           ]
         },
-        "semantic_definition_ref": { "$ref": "#/$defs/exact_record_reference" }
+        "semantic_definition_ref": {
+          "$ref": "#/$defs/exact_record_reference"
+        }
       }
     },
     "private_cockpit_surface": {
@@ -1169,21 +2441,39 @@
         "exposure_boundary"
       ],
       "properties": {
-        "surface_type": { "const": "private_cockpit" },
-        "mission_or_portfolio_ref": { "$ref": "#/$defs/exact_record_reference" },
-        "viewer_role": { "enum": ["operator", "researcher", "reviewer", "recovery_operator", "producer"] },
-        "access_decision_ref": { "$ref": "#/$defs/exact_record_reference" },
+        "surface_type": {
+          "const": "private_cockpit"
+        },
+        "mission_or_portfolio_ref": {
+          "$ref": "#/$defs/exact_record_reference"
+        },
+        "viewer_role": {
+          "enum": [
+            "operator",
+            "researcher",
+            "reviewer",
+            "recovery_operator",
+            "producer"
+          ]
+        },
+        "access_decision_ref": {
+          "$ref": "#/$defs/exact_record_reference"
+        },
         "data_use_decision_refs": {
           "type": "array",
           "minItems": 1,
           "uniqueItems": true,
-          "items": { "$ref": "#/$defs/exact_record_reference" }
+          "items": {
+            "$ref": "#/$defs/exact_record_reference"
+          }
         },
         "displayed_canonical_field_refs": {
           "type": "array",
           "minItems": 1,
           "uniqueItems": true,
-          "items": { "$ref": "#/$defs/exact_record_reference" }
+          "items": {
+            "$ref": "#/$defs/exact_record_reference"
+          }
         },
         "next_legal_actions": {
           "type": "array",
@@ -1191,13 +2481,29 @@
           "items": {
             "type": "object",
             "additionalProperties": false,
-            "required": ["action_id", "source_position", "derived_only", "is_authority", "server_readmission_required"],
+            "required": [
+              "action_id",
+              "source_position",
+              "derived_only",
+              "is_authority",
+              "server_readmission_required"
+            ],
             "properties": {
-              "action_id": { "$ref": "#/$defs/identifier" },
-              "source_position": { "$ref": "#/$defs/ledger_point" },
-              "derived_only": { "const": true },
-              "is_authority": { "const": false },
-              "server_readmission_required": { "const": true }
+              "action_id": {
+                "$ref": "#/$defs/identifier"
+              },
+              "source_position": {
+                "$ref": "#/$defs/ledger_point"
+              },
+              "derived_only": {
+                "const": true
+              },
+              "is_authority": {
+                "const": false
+              },
+              "server_readmission_required": {
+                "const": true
+              }
             }
           }
         },
@@ -1215,14 +2521,35 @@
             "negative_flow_evidence_ref"
           ],
           "properties": {
-            "maximum_data_class": { "enum": ["public", "internal", "confidential", "restricted_allowed"] },
-            "sealed_truth_to_producer_absent": { "const": true },
-            "private_reasoning_absent": { "const": true },
-            "unrestricted_raw_prompts_absent": { "const": true },
-            "reusable_credentials_absent": { "const": true },
-            "secrets_absent": { "const": true },
-            "forbidden_reference_count": { "const": 0 },
-            "negative_flow_evidence_ref": { "$ref": "#/$defs/artifact_reference" }
+            "maximum_data_class": {
+              "enum": [
+                "public",
+                "internal",
+                "confidential",
+                "restricted_allowed"
+              ]
+            },
+            "sealed_truth_to_producer_absent": {
+              "const": true
+            },
+            "private_reasoning_absent": {
+              "const": true
+            },
+            "unrestricted_raw_prompts_absent": {
+              "const": true
+            },
+            "reusable_credentials_absent": {
+              "const": true
+            },
+            "secrets_absent": {
+              "const": true
+            },
+            "forbidden_reference_count": {
+              "const": 0
+            },
+            "negative_flow_evidence_ref": {
+              "$ref": "#/$defs/artifact_reference"
+            }
           }
         }
       }
@@ -1243,14 +2570,54 @@
         "noninterference"
       ],
       "properties": {
-        "surface_type": { "const": "thesis_intake" },
-        "proposal_ref": { "$ref": "#/$defs/exact_record_reference" },
-        "contributor_scope_ref": { "$ref": "#/$defs/exact_record_reference" },
-        "custody_state": { "enum": ["received", "custodied", "withdrawal_requested", "withdrawn", "unavailable"] },
-        "declared_rights_state": { "enum": ["declared", "review_required", "denied", "revoked", "expired"] },
-        "quarantine_state": { "enum": ["quarantined", "reviewed_for_intake", "released_to_admission_review", "blocked"] },
-        "review_state": { "enum": ["not_submitted", "queued", "under_review", "admitted_to_mission", "declined", "withdrawn"] },
-        "withdrawal_route_ref": { "$ref": "#/$defs/versioned_reference" },
+        "surface_type": {
+          "const": "thesis_intake"
+        },
+        "proposal_ref": {
+          "$ref": "#/$defs/exact_record_reference"
+        },
+        "contributor_scope_ref": {
+          "$ref": "#/$defs/exact_record_reference"
+        },
+        "custody_state": {
+          "enum": [
+            "received",
+            "custodied",
+            "withdrawal_requested",
+            "withdrawn",
+            "unavailable"
+          ]
+        },
+        "declared_rights_state": {
+          "enum": [
+            "declared",
+            "review_required",
+            "denied",
+            "revoked",
+            "expired"
+          ]
+        },
+        "quarantine_state": {
+          "enum": [
+            "quarantined",
+            "reviewed_for_intake",
+            "released_to_admission_review",
+            "blocked"
+          ]
+        },
+        "review_state": {
+          "enum": [
+            "not_submitted",
+            "queued",
+            "under_review",
+            "admitted_to_mission",
+            "declined",
+            "withdrawn"
+          ]
+        },
+        "withdrawal_route_ref": {
+          "$ref": "#/$defs/versioned_reference"
+        },
         "scientific_semantics": {
           "type": "object",
           "additionalProperties": false,
@@ -1261,10 +2628,18 @@
             "knowledge_absorption_status"
           ],
           "properties": {
-            "proposal_is_scientific_evidence": { "const": false },
-            "admission_is_scientific_acceptance": { "const": false },
-            "accepted_into_research_rendered_as_supported": { "const": false },
-            "knowledge_absorption_status": { "const": "not_established" }
+            "proposal_is_scientific_evidence": {
+              "const": false
+            },
+            "admission_is_scientific_acceptance": {
+              "const": false
+            },
+            "accepted_into_research_rendered_as_supported": {
+              "const": false
+            },
+            "knowledge_absorption_status": {
+              "const": "not_established"
+            }
           }
         },
         "noninterference": {
@@ -1284,87 +2659,196 @@
             "evidence_ref"
           ],
           "properties": {
-            "leakage_class": { "const": "proposal_bounded_cross_proposal_noninterference" },
+            "leakage_class": {
+              "const": "proposal_bounded_cross_proposal_noninterference"
+            },
             "namespace": {
               "type": "object",
               "additionalProperties": false,
-              "required": ["mission_id", "proposal_id", "role_id", "purpose_id", "cache_partition_digest"],
+              "required": [
+                "mission_id",
+                "proposal_id",
+                "role_id",
+                "purpose_id",
+                "cache_partition_digest"
+              ],
               "properties": {
-                "mission_id": { "$ref": "#/$defs/identifier" },
-                "proposal_id": { "$ref": "#/$defs/identifier" },
-                "role_id": { "$ref": "#/$defs/identifier" },
-                "purpose_id": { "$ref": "#/$defs/identifier" },
-                "cache_partition_digest": { "$ref": "#/$defs/digest" }
+                "mission_id": {
+                  "$ref": "#/$defs/identifier"
+                },
+                "proposal_id": {
+                  "$ref": "#/$defs/identifier"
+                },
+                "role_id": {
+                  "$ref": "#/$defs/identifier"
+                },
+                "purpose_id": {
+                  "$ref": "#/$defs/identifier"
+                },
+                "cache_partition_digest": {
+                  "$ref": "#/$defs/digest"
+                }
               }
             },
             "identifier_policy": {
               "type": "object",
               "additionalProperties": false,
-              "required": ["proposal_scoped_only", "cross_proposal_identifiers_exposed"],
+              "required": [
+                "proposal_scoped_only",
+                "cross_proposal_identifiers_exposed"
+              ],
               "properties": {
-                "proposal_scoped_only": { "const": true },
-                "cross_proposal_identifiers_exposed": { "const": false }
+                "proposal_scoped_only": {
+                  "const": true
+                },
+                "cross_proposal_identifiers_exposed": {
+                  "const": false
+                }
               }
             },
             "count_policy": {
               "type": "object",
               "additionalProperties": false,
-              "required": ["mode", "cross_proposal_exact_counts_exposed", "rule_ref"],
+              "required": [
+                "mode",
+                "cross_proposal_exact_counts_exposed",
+                "rule_ref"
+              ],
               "properties": {
-                "mode": { "enum": ["suppressed", "coarsened"] },
-                "cross_proposal_exact_counts_exposed": { "const": false },
-                "rule_ref": { "$ref": "#/$defs/versioned_reference" }
+                "mode": {
+                  "enum": [
+                    "suppressed",
+                    "coarsened"
+                  ]
+                },
+                "cross_proposal_exact_counts_exposed": {
+                  "const": false
+                },
+                "rule_ref": {
+                  "$ref": "#/$defs/versioned_reference"
+                }
               }
             },
             "error_policy": {
               "type": "object",
               "additionalProperties": false,
-              "required": ["normalized", "cross_proposal_presence_distinguishable", "rule_ref"],
+              "required": [
+                "normalized",
+                "cross_proposal_presence_distinguishable",
+                "rule_ref"
+              ],
               "properties": {
-                "normalized": { "const": true },
-                "cross_proposal_presence_distinguishable": { "const": false },
-                "rule_ref": { "$ref": "#/$defs/versioned_reference" }
+                "normalized": {
+                  "const": true
+                },
+                "cross_proposal_presence_distinguishable": {
+                  "const": false
+                },
+                "rule_ref": {
+                  "$ref": "#/$defs/versioned_reference"
+                }
               }
             },
             "retrieval_policy": {
               "type": "object",
               "additionalProperties": false,
-              "required": ["proposal_scoped_only", "cross_proposal_suggestions_allowed", "rule_ref"],
+              "required": [
+                "proposal_scoped_only",
+                "cross_proposal_suggestions_allowed",
+                "rule_ref"
+              ],
               "properties": {
-                "proposal_scoped_only": { "const": true },
-                "cross_proposal_suggestions_allowed": { "const": false },
-                "rule_ref": { "$ref": "#/$defs/versioned_reference" }
+                "proposal_scoped_only": {
+                  "const": true
+                },
+                "cross_proposal_suggestions_allowed": {
+                  "const": false
+                },
+                "rule_ref": {
+                  "$ref": "#/$defs/versioned_reference"
+                }
               }
             },
             "cache_policy": {
               "type": "object",
               "additionalProperties": false,
-              "required": ["exact_namespace_required", "cross_namespace_reuse_allowed", "rule_ref"],
+              "required": [
+                "exact_namespace_required",
+                "cross_namespace_reuse_allowed",
+                "rule_ref"
+              ],
               "properties": {
-                "exact_namespace_required": { "const": true },
-                "cross_namespace_reuse_allowed": { "const": false },
-                "rule_ref": { "$ref": "#/$defs/versioned_reference" }
+                "exact_namespace_required": {
+                  "const": true
+                },
+                "cross_namespace_reuse_allowed": {
+                  "const": false
+                },
+                "rule_ref": {
+                  "$ref": "#/$defs/versioned_reference"
+                }
               }
             },
             "observable_equivalence": {
               "type": "object",
               "additionalProperties": false,
-              "required": ["class_ref", "comparison_result", "covered_channels"],
+              "required": [
+                "class_ref",
+                "comparison_result",
+                "covered_channels"
+              ],
               "properties": {
-                "class_ref": { "$ref": "#/$defs/versioned_reference" },
-                "comparison_result": { "const": "pass" },
+                "class_ref": {
+                  "$ref": "#/$defs/versioned_reference"
+                },
+                "comparison_result": {
+                  "const": "pass"
+                },
                 "covered_channels": {
                   "type": "array",
                   "minItems": 5,
                   "uniqueItems": true,
-                  "items": { "enum": ["identifiers", "counts", "errors", "retrieval", "cache", "timing"] },
+                  "items": {
+                    "enum": [
+                      "identifiers",
+                      "counts",
+                      "errors",
+                      "retrieval",
+                      "cache",
+                      "timing"
+                    ]
+                  },
                   "allOf": [
-                    { "contains": { "const": "identifiers" } },
-                    { "contains": { "const": "counts" } },
-                    { "contains": { "const": "errors" } },
-                    { "contains": { "const": "retrieval" } },
-                    { "contains": { "const": "cache" } },
-                    { "contains": { "const": "timing" } }
+                    {
+                      "contains": {
+                        "const": "identifiers"
+                      }
+                    },
+                    {
+                      "contains": {
+                        "const": "counts"
+                      }
+                    },
+                    {
+                      "contains": {
+                        "const": "errors"
+                      }
+                    },
+                    {
+                      "contains": {
+                        "const": "retrieval"
+                      }
+                    },
+                    {
+                      "contains": {
+                        "const": "cache"
+                      }
+                    },
+                    {
+                      "contains": {
+                        "const": "timing"
+                      }
+                    }
                   ]
                 }
               }
@@ -1372,22 +2856,43 @@
             "timing_policy": {
               "type": "object",
               "additionalProperties": false,
-              "required": ["budget_ref", "padding_ref", "within_declared_budget", "cross_proposal_presence_distinguishable"],
+              "required": [
+                "budget_ref",
+                "padding_ref",
+                "within_declared_budget",
+                "cross_proposal_presence_distinguishable"
+              ],
               "properties": {
-                "budget_ref": { "$ref": "#/$defs/versioned_reference" },
-                "padding_ref": { "$ref": "#/$defs/versioned_reference" },
-                "within_declared_budget": { "const": true },
-                "cross_proposal_presence_distinguishable": { "const": false }
+                "budget_ref": {
+                  "$ref": "#/$defs/versioned_reference"
+                },
+                "padding_ref": {
+                  "$ref": "#/$defs/versioned_reference"
+                },
+                "within_declared_budget": {
+                  "const": true
+                },
+                "cross_proposal_presence_distinguishable": {
+                  "const": false
+                }
               }
             },
-            "cross_proposal_policy_applied": { "const": true },
-            "evidence_ref": { "$ref": "#/$defs/artifact_reference" }
+            "cross_proposal_policy_applied": {
+              "const": true
+            },
+            "evidence_ref": {
+              "$ref": "#/$defs/artifact_reference"
+            }
           }
         }
       }
     },
     "typed_public_reference": {
-      "allOf": [{ "$ref": "#/$defs/exact_record_reference" }]
+      "allOf": [
+        {
+          "$ref": "#/$defs/exact_record_reference"
+        }
+      ]
     },
     "public_research_surface": {
       "type": "object",
@@ -1400,7 +2905,9 @@
         "current_notice"
       ],
       "properties": {
-        "surface_type": { "const": "public_research" },
+        "surface_type": {
+          "const": "public_research"
+        },
         "release_chain": {
           "type": "object",
           "additionalProperties": false,
@@ -1427,26 +2934,66 @@
             "data_use_decision_disclosure_specific"
           ],
           "properties": {
-            "publication_candidate_ref": { "$ref": "#/$defs/exact_record_reference" },
-            "human_publication_decision_ref": { "$ref": "#/$defs/exact_record_reference" },
-            "final_manifest_ref": { "$ref": "#/$defs/exact_record_reference" },
-            "later_single_use_grant_ref": { "$ref": "#/$defs/exact_record_reference" },
-            "dispatch_claim_ref": { "$ref": "#/$defs/exact_record_reference" },
-            "effect_observation_ref": { "$ref": "#/$defs/exact_record_reference" },
-            "exact_visible_observation_ref": { "$ref": "#/$defs/exact_record_reference" },
-            "release_settlement_event_ref": { "$ref": "#/$defs/exact_record_reference" },
-            "data_use_decision_ref": { "$ref": "#/$defs/exact_record_reference" },
-            "human_decision": { "const": "authorized" },
-            "grant_issued_after_manifest": { "const": true },
-            "grant_single_use": { "const": true },
-            "effect_state": { "const": "confirmed_applied" },
-            "visibility_state": { "const": "exact_visible" },
-            "visibility_independent": { "const": true },
-            "settlement_event_type": { "const": "publication.release_settled" },
-            "settlement_from": { "const": "releasing" },
-            "settlement_to": { "const": "released" },
-            "data_use_decision_state": { "const": "active" },
-            "data_use_decision_disclosure_specific": { "const": true }
+            "publication_candidate_ref": {
+              "$ref": "#/$defs/exact_record_reference"
+            },
+            "human_publication_decision_ref": {
+              "$ref": "#/$defs/exact_record_reference"
+            },
+            "final_manifest_ref": {
+              "$ref": "#/$defs/exact_record_reference"
+            },
+            "later_single_use_grant_ref": {
+              "$ref": "#/$defs/exact_record_reference"
+            },
+            "dispatch_claim_ref": {
+              "$ref": "#/$defs/exact_record_reference"
+            },
+            "effect_observation_ref": {
+              "$ref": "#/$defs/exact_record_reference"
+            },
+            "exact_visible_observation_ref": {
+              "$ref": "#/$defs/exact_record_reference"
+            },
+            "release_settlement_event_ref": {
+              "$ref": "#/$defs/exact_record_reference"
+            },
+            "data_use_decision_ref": {
+              "$ref": "#/$defs/exact_record_reference"
+            },
+            "human_decision": {
+              "const": "authorized"
+            },
+            "grant_issued_after_manifest": {
+              "const": true
+            },
+            "grant_single_use": {
+              "const": true
+            },
+            "effect_state": {
+              "const": "confirmed_applied"
+            },
+            "visibility_state": {
+              "const": "exact_visible"
+            },
+            "visibility_independent": {
+              "const": true
+            },
+            "settlement_event_type": {
+              "const": "publication.release_settled"
+            },
+            "settlement_from": {
+              "const": "releasing"
+            },
+            "settlement_to": {
+              "const": "released"
+            },
+            "data_use_decision_state": {
+              "const": "active"
+            },
+            "data_use_decision_disclosure_specific": {
+              "const": true
+            }
           }
         },
         "released_content": {
@@ -1459,32 +3006,54 @@
             "private_claim_reconstruction_allowed"
           ],
           "properties": {
-            "content_source": { "const": "canonical_release_settled_package" },
-            "exact_manifest_bytes_only": { "const": true },
-            "arbitrary_private_query_allowed": { "const": false },
-            "private_claim_reconstruction_allowed": { "const": false }
+            "content_source": {
+              "const": "canonical_release_settled_package"
+            },
+            "exact_manifest_bytes_only": {
+              "const": true
+            },
+            "arbitrary_private_query_allowed": {
+              "const": false
+            },
+            "private_claim_reconstruction_allowed": {
+              "const": false
+            }
           }
         },
         "attachment_rights": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["included_attachment_refs", "all_included_attachments_current_and_permitted"],
+          "required": [
+            "included_attachment_refs",
+            "all_included_attachments_current_and_permitted"
+          ],
           "properties": {
             "included_attachment_refs": {
               "type": "array",
               "uniqueItems": true,
-              "items": { "$ref": "#/$defs/exact_record_reference" }
+              "items": {
+                "$ref": "#/$defs/exact_record_reference"
+              }
             },
-            "all_included_attachments_current_and_permitted": { "const": true }
+            "all_included_attachments_current_and_permitted": {
+              "const": true
+            }
           }
         },
         "current_notice": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["correction_withdrawal_or_rights_notice_visible", "notice_source_ref"],
+          "required": [
+            "correction_withdrawal_or_rights_notice_visible",
+            "notice_source_ref"
+          ],
           "properties": {
-            "correction_withdrawal_or_rights_notice_visible": { "const": true },
-            "notice_source_ref": { "$ref": "#/$defs/exact_record_reference" }
+            "correction_withdrawal_or_rights_notice_visible": {
+              "const": true
+            },
+            "notice_source_ref": {
+              "$ref": "#/$defs/exact_record_reference"
+            }
           }
         }
       }
@@ -1504,15 +3073,37 @@
         "disclaimer"
       ],
       "properties": {
-        "surface_type": { "const": "static_architecture_fixture" },
-        "fixture_ref": { "$ref": "#/$defs/local_fixture_reference" },
-        "static": { "const": true },
-        "live": { "const": false },
-        "released": { "const": false },
-        "authoritative": { "const": false },
-        "synthetic": { "enum": [true, false, "unknown"] },
-        "live_field_semantics": { "const": "not_applicable_never_fabricated" },
-        "disclaimer": { "const": "Static, non-live, unreleased, non-authoritative architecture fixture." }
+        "surface_type": {
+          "const": "static_architecture_fixture"
+        },
+        "fixture_ref": {
+          "$ref": "#/$defs/local_fixture_reference"
+        },
+        "static": {
+          "const": true
+        },
+        "live": {
+          "const": false
+        },
+        "released": {
+          "const": false
+        },
+        "authoritative": {
+          "const": false
+        },
+        "synthetic": {
+          "enum": [
+            true,
+            false,
+            "unknown"
+          ]
+        },
+        "live_field_semantics": {
+          "const": "not_applicable_never_fabricated"
+        },
+        "disclaimer": {
+          "const": "Static, non-live, unreleased, non-authoritative architecture fixture."
+        }
       }
     },
     "non_recursive_construction": {
@@ -1525,10 +3116,18 @@
         "mutual_content_digest_cycle_allowed"
       ],
       "properties": {
-        "canonical_digest_issued_externally_after_validation": { "const": true },
-        "self_digest_included": { "const": false },
-        "enclosing_package_digest_included": { "const": false },
-        "mutual_content_digest_cycle_allowed": { "const": false }
+        "canonical_digest_issued_externally_after_validation": {
+          "const": true
+        },
+        "self_digest_included": {
+          "const": false
+        },
+        "enclosing_package_digest_included": {
+          "const": false
+        },
+        "mutual_content_digest_cycle_allowed": {
+          "const": false
+        }
       }
     }
   }

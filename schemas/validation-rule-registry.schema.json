@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:validation-rule-registry:0.1.0",
+  "$id": "urn:odeya:schema:validation-rule-registry:0.2.0",
   "title": "Odeya ValidationRuleRegistry",
   "description": "An immutable registry version containing closed semantic rule definitions. JSON Schema validates the registry's shape; predicates, implementation agreement, vectors, and supersession behavior require independent semantic evaluation.",
   "type": "object",
@@ -23,68 +23,158 @@
     "sealed_by"
   ],
   "properties": {
-    "schema_version": { "const": "0.1.0" },
-    "registry_id": { "$ref": "#/$defs/identifier" },
-    "version": { "type": "string", "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$" },
-    "status": { "enum": ["proposed", "active", "retired"] },
+    "schema_version": {
+      "const": "0.2.0"
+    },
+    "registry_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
+    },
+    "status": {
+      "enum": [
+        "proposed",
+        "active",
+        "retired"
+      ]
+    },
     "previous_registry": {
       "oneOf": [
         {
           "type": "object",
           "additionalProperties": false,
-          "required": ["registry_id", "version", "digest"],
+          "required": [
+            "registry_id",
+            "version",
+            "digest"
+          ],
           "properties": {
-            "registry_id": { "$ref": "#/$defs/identifier" },
-            "version": { "type": "string", "minLength": 1 },
-            "digest": { "$ref": "#/$defs/digest" }
+            "registry_id": {
+              "$ref": "#/$defs/identifier"
+            },
+            "version": {
+              "type": "string",
+              "minLength": 1
+            },
+            "digest": {
+              "$ref": "#/$defs/digest"
+            }
           }
         },
-        { "type": "null" }
+        {
+          "type": "null"
+        }
       ]
     },
-    "canonicalization_profile": { "$ref": "#/$defs/identifier" },
+    "canonicalization_profile": {
+      "$ref": "#/$defs/identifier"
+    },
     "rules": {
       "type": "array",
       "minItems": 1,
-      "items": { "$ref": "#/$defs/validation_rule" }
+      "items": {
+        "$ref": "#/$defs/validation_rule"
+      }
     },
     "vector_manifest_refs": {
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,
-      "items": { "$ref": "#/$defs/artifact_reference" }
+      "items": {
+        "$ref": "#/$defs/artifact_reference"
+      }
     },
     "review_evidence_refs": {
       "type": "array",
       "uniqueItems": true,
-      "items": { "$ref": "#/$defs/artifact_reference" }
+      "items": {
+        "$ref": "#/$defs/artifact_reference"
+      }
     },
-    "effective_at": { "type": "string", "format": "date-time" },
+    "effective_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
+    },
     "expires_at": {
-      "oneOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }]
+      "oneOf": [
+        {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
+        },
+        {
+          "type": "null"
+        }
+      ]
     },
-    "registry_digest": { "$ref": "#/$defs/digest" },
-    "sealed_at_ledger_position": { "type": "integer", "minimum": 0 },
-    "sealed_at": { "type": "string", "format": "date-time" },
-    "sealed_by": { "$ref": "#/$defs/human_principal" }
+    "registry_digest": {
+      "$ref": "#/$defs/digest"
+    },
+    "sealed_at_ledger_position": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "sealed_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
+    },
+    "sealed_by": {
+      "$ref": "#/$defs/human_principal"
+    }
   },
   "allOf": [
     {
-      "if": { "properties": { "status": { "const": "active" } }, "required": ["status"] },
-      "then": { "properties": { "review_evidence_refs": { "minItems": 1 } } }
+      "if": {
+        "properties": {
+          "status": {
+            "const": "active"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "properties": {
+          "review_evidence_refs": {
+            "minItems": 1
+          }
+        }
+      }
     }
   ],
   "$defs": {
-    "identifier": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$" },
-    "digest": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$"
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
     "artifact_reference": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["artifact_id", "digest", "media_type"],
+      "required": [
+        "artifact_id",
+        "digest",
+        "media_type"
+      ],
       "properties": {
-        "artifact_id": { "$ref": "#/$defs/identifier" },
-        "digest": { "$ref": "#/$defs/digest" },
-        "media_type": { "type": "string", "minLength": 1 }
+        "artifact_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1
+        }
       }
     },
     "validation_rule": {
@@ -116,15 +206,37 @@
         "expires_at"
       ],
       "properties": {
-        "rule_id": { "$ref": "#/$defs/identifier" },
-        "version": { "type": "string", "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$" },
-        "layer": { "enum": ["V0", "V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9"] },
-        "owning_module": { "$ref": "#/$defs/identifier" },
+        "rule_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
+        },
+        "layer": {
+          "enum": [
+            "V0",
+            "V1",
+            "V2",
+            "V3",
+            "V4",
+            "V5",
+            "V6",
+            "V7",
+            "V8",
+            "V9"
+          ]
+        },
+        "owning_module": {
+          "$ref": "#/$defs/identifier"
+        },
         "subjects": {
           "type": "array",
           "minItems": 1,
           "uniqueItems": true,
-          "items": { "$ref": "#/$defs/identifier" }
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
         },
         "supported_schema_ranges": {
           "type": "array",
@@ -132,22 +244,51 @@
           "items": {
             "type": "object",
             "additionalProperties": false,
-            "required": ["schema_id", "version_range"],
+            "required": [
+              "schema_id",
+              "version_range"
+            ],
             "properties": {
-              "schema_id": { "type": "string", "format": "uri" },
-              "version_range": { "type": "string", "minLength": 1 }
+              "schema_id": {
+                "type": "string",
+                "format": "uri"
+              },
+              "version_range": {
+                "type": "string",
+                "minLength": 1
+              }
             }
           }
         },
         "predicate": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["kind", "specification", "reference_algorithm_ref"],
+          "required": [
+            "kind",
+            "specification",
+            "reference_algorithm_ref"
+          ],
           "properties": {
-            "kind": { "enum": ["formal_expression", "deterministic_algorithm", "reviewed_procedure"] },
-            "specification": { "type": "string", "minLength": 1 },
+            "kind": {
+              "enum": [
+                "formal_expression",
+                "deterministic_algorithm",
+                "reviewed_procedure"
+              ]
+            },
+            "specification": {
+              "type": "string",
+              "minLength": 1
+            },
             "reference_algorithm_ref": {
-              "oneOf": [{ "$ref": "#/$defs/artifact_reference" }, { "type": "null" }]
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/artifact_reference"
+                },
+                {
+                  "type": "null"
+                }
+              ]
             }
           }
         },
@@ -155,83 +296,210 @@
           "type": "array",
           "minItems": 1,
           "uniqueItems": true,
-          "items": { "enum": ["subject", "reference_graph", "controlled_time", "unit_registry", "policy_bundle", "authority_ledger", "budget_ledger", "rule_registry", "randomness", "numerical_profile"] }
+          "items": {
+            "enum": [
+              "subject",
+              "reference_graph",
+              "controlled_time",
+              "unit_registry",
+              "policy_bundle",
+              "authority_ledger",
+              "budget_ledger",
+              "rule_registry",
+              "randomness",
+              "numerical_profile"
+            ]
+          }
         },
         "outcomes": {
           "type": "array",
           "minItems": 3,
           "maxItems": 3,
           "uniqueItems": true,
-          "items": { "enum": ["pass", "fail", "indeterminate"] },
+          "items": {
+            "enum": [
+              "pass",
+              "fail",
+              "indeterminate"
+            ]
+          },
           "allOf": [
-            { "contains": { "const": "pass" } },
-            { "contains": { "const": "fail" } },
-            { "contains": { "const": "indeterminate" } }
+            {
+              "contains": {
+                "const": "pass"
+              }
+            },
+            {
+              "contains": {
+                "const": "fail"
+              }
+            },
+            {
+              "contains": {
+                "const": "indeterminate"
+              }
+            }
           ]
         },
         "reason_codes": {
           "type": "array",
           "minItems": 1,
           "uniqueItems": true,
-          "items": { "$ref": "#/$defs/identifier" }
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
         },
-        "severity": { "enum": ["info", "warning", "blocking", "critical"] },
+        "severity": {
+          "enum": [
+            "info",
+            "warning",
+            "blocking",
+            "critical"
+          ]
+        },
         "consequences": {
           "type": "array",
           "minItems": 1,
           "items": {
             "type": "object",
             "additionalProperties": false,
-            "required": ["context", "on_fail", "on_indeterminate"],
+            "required": [
+              "context",
+              "on_fail",
+              "on_indeterminate"
+            ],
             "properties": {
-              "context": { "$ref": "#/$defs/identifier" },
-              "on_fail": { "enum": ["record", "warn", "block", "invalidate", "quarantine"] },
-              "on_indeterminate": { "enum": ["record", "warn", "block", "quarantine"] }
+              "context": {
+                "$ref": "#/$defs/identifier"
+              },
+              "on_fail": {
+                "enum": [
+                  "record",
+                  "warn",
+                  "block",
+                  "invalidate",
+                  "quarantine"
+                ]
+              },
+              "on_indeterminate": {
+                "enum": [
+                  "record",
+                  "warn",
+                  "block",
+                  "quarantine"
+                ]
+              }
             }
           }
         },
-        "assumptions": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "assumptions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
         "numerical_profile": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["arithmetic", "tolerance_ref", "overflow_policy"],
+          "required": [
+            "arithmetic",
+            "tolerance_ref",
+            "overflow_policy"
+          ],
           "properties": {
-            "arithmetic": { "enum": ["exact_decimal", "integer", "registered_floating_point", "not_applicable"] },
-            "tolerance_ref": {
-              "oneOf": [{ "$ref": "#/$defs/artifact_reference" }, { "type": "null" }]
+            "arithmetic": {
+              "enum": [
+                "exact_decimal",
+                "integer",
+                "registered_floating_point",
+                "not_applicable"
+              ]
             },
-            "overflow_policy": { "enum": ["fail", "indeterminate", "not_applicable"] }
+            "tolerance_ref": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/artifact_reference"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "overflow_policy": {
+              "enum": [
+                "fail",
+                "indeterminate",
+                "not_applicable"
+              ]
+            }
           }
         },
         "complexity_bounds": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["max_input_bytes", "max_reference_nodes", "timeout_milliseconds"],
+          "required": [
+            "max_input_bytes",
+            "max_reference_nodes",
+            "timeout_milliseconds"
+          ],
           "properties": {
-            "max_input_bytes": { "type": "integer", "minimum": 1 },
-            "max_reference_nodes": { "type": "integer", "minimum": 0 },
-            "timeout_milliseconds": { "type": "integer", "minimum": 1 }
+            "max_input_bytes": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "max_reference_nodes": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "timeout_milliseconds": {
+              "type": "integer",
+              "minimum": 1
+            }
           }
         },
         "vector_refs": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["positive", "boundary", "negative", "metamorphic", "race", "compatibility"],
+          "required": [
+            "positive",
+            "boundary",
+            "negative",
+            "metamorphic",
+            "race",
+            "compatibility"
+          ],
           "properties": {
-            "positive": { "$ref": "#/$defs/artifact_reference_array" },
-            "boundary": { "$ref": "#/$defs/artifact_reference_array" },
-            "negative": { "$ref": "#/$defs/artifact_reference_array" },
-            "metamorphic": { "$ref": "#/$defs/artifact_reference_array" },
-            "race": { "$ref": "#/$defs/artifact_reference_array" },
-            "compatibility": { "$ref": "#/$defs/artifact_reference_array" }
+            "positive": {
+              "$ref": "#/$defs/artifact_reference_array"
+            },
+            "boundary": {
+              "$ref": "#/$defs/artifact_reference_array"
+            },
+            "negative": {
+              "$ref": "#/$defs/artifact_reference_array"
+            },
+            "metamorphic": {
+              "$ref": "#/$defs/artifact_reference_array"
+            },
+            "race": {
+              "$ref": "#/$defs/artifact_reference_array"
+            },
+            "compatibility": {
+              "$ref": "#/$defs/artifact_reference_array"
+            }
           }
         },
-        "independent_implementation_required": { "type": "boolean" },
+        "independent_implementation_required": {
+          "type": "boolean"
+        },
         "implementation_refs": {
           "type": "array",
           "minItems": 1,
           "uniqueItems": true,
-          "items": { "$ref": "#/$defs/artifact_reference" }
+          "items": {
+            "$ref": "#/$defs/artifact_reference"
+          }
         },
         "supersedes": {
           "type": "array",
@@ -239,40 +507,96 @@
           "items": {
             "type": "object",
             "additionalProperties": false,
-            "required": ["rule_id", "version"],
+            "required": [
+              "rule_id",
+              "version"
+            ],
             "properties": {
-              "rule_id": { "$ref": "#/$defs/identifier" },
-              "version": { "type": "string", "minLength": 1 }
+              "rule_id": {
+                "$ref": "#/$defs/identifier"
+              },
+              "version": {
+                "type": "string",
+                "minLength": 1
+              }
             }
           }
         },
-        "backward_reading_policy": { "enum": ["exact_version_only", "compatible_reader", "explicit_upcast_only"] },
-        "owner": { "$ref": "#/$defs/identifier" },
-        "effective_at": { "type": "string", "format": "date-time" },
+        "backward_reading_policy": {
+          "enum": [
+            "exact_version_only",
+            "compatible_reader",
+            "explicit_upcast_only"
+          ]
+        },
+        "owner": {
+          "$ref": "#/$defs/identifier"
+        },
+        "effective_at": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
+        },
         "expires_at": {
-          "oneOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }]
+          "oneOf": [
+            {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       },
       "allOf": [
         {
-          "if": { "properties": { "independent_implementation_required": { "const": true } }, "required": ["independent_implementation_required"] },
-          "then": { "properties": { "implementation_refs": { "minItems": 2 } } }
+          "if": {
+            "properties": {
+              "independent_implementation_required": {
+                "const": true
+              }
+            },
+            "required": [
+              "independent_implementation_required"
+            ]
+          },
+          "then": {
+            "properties": {
+              "implementation_refs": {
+                "minItems": 2
+              }
+            }
+          }
         }
       ]
     },
     "artifact_reference_array": {
       "type": "array",
       "uniqueItems": true,
-      "items": { "$ref": "#/$defs/artifact_reference" }
+      "items": {
+        "$ref": "#/$defs/artifact_reference"
+      }
     },
     "human_principal": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["principal_id", "principal_type", "authority_grant_ref"],
+      "required": [
+        "principal_id",
+        "principal_type",
+        "authority_grant_ref"
+      ],
       "properties": {
-        "principal_id": { "$ref": "#/$defs/identifier" },
-        "principal_type": { "const": "human" },
-        "authority_grant_ref": { "$ref": "#/$defs/identifier" }
+        "principal_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "principal_type": {
+          "const": "human"
+        },
+        "authority_grant_ref": {
+          "$ref": "#/$defs/identifier"
+        }
       }
     }
   }

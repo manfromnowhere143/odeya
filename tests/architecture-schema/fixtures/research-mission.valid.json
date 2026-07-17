@@ -1,5 +1,5 @@
 {
-  "schema_version": "0.2.0",
+  "schema_version": "0.3.0",
   "mission_id": "mission.001",
   "version": 1,
   "title": "Architecture schema conformance fixture",
@@ -19,7 +19,9 @@
     "intercurrent_event_strategy": "mark infrastructure failures separately"
   },
   "uncertainty_contract": {
-    "channels": ["infrastructure_operational"],
+    "channels": [
+      "infrastructure_operational"
+    ],
     "interval_policy": "No statistical interval is claimed by structural validation.",
     "calibration_policy": "Known-valid and known-invalid cases are both required.",
     "unknown_policy": "explicit_never_zero"
@@ -47,17 +49,30 @@
     "conflicts": []
   },
   "scope": {
-    "included": ["JSON Schema 2020-12 structural conformance"],
-    "excluded": ["runtime correctness", "scientific validity"],
-    "populations": ["Odeya architecture contract fixtures"],
-    "environments": ["offline pinned validator"]
+    "included": [
+      "JSON Schema 2020-12 structural conformance"
+    ],
+    "excluded": [
+      "runtime correctness",
+      "scientific validity"
+    ],
+    "populations": [
+      "Odeya architecture contract fixtures"
+    ],
+    "environments": [
+      "offline pinned validator"
+    ]
   },
   "hypotheses": [
     {
       "hypothesis_id": "hypothesis.001",
       "statement": "The pinned schema contract rejects each registered adversarial mutation.",
-      "expected_observations": ["Every invalid case produces at least one validation error"],
-      "alternative_explanations": ["The fixture mutation or harness is defective"],
+      "expected_observations": [
+        "Every invalid case produces at least one validation error"
+      ],
+      "alternative_explanations": [
+        "The fixture mutation or harness is defective"
+      ],
       "falsification_consequence": "Keep the architecture gate closed and revise the contract or test."
     }
   ],
@@ -171,7 +186,10 @@
     "analysis_plan": "Load each immutable fixture, apply only its declared mutation, and compare the structural verdict with the registered expectation.",
     "multiplicity_policy": "All registered cases must pass; there is no selective reporting.",
     "data_exposure_cutoff": "2026-07-15T09:00:00.000000Z",
-    "stop_rules": ["Stop on malformed manifest", "Stop on dependency version drift"],
+    "stop_rules": [
+      "Stop on malformed manifest",
+      "Stop on dependency version drift"
+    ],
     "amendment_policy": "prospective_version_or_fork_only",
     "correction_policy": "Correct fixtures and record the failed validation before rerunning."
   },
@@ -187,7 +205,9 @@
       "operator": "separate_preferred",
       "institution": "not_required"
     },
-    "replay_commands": ["python3 scripts/validate.py"],
+    "replay_commands": [
+      "python3 scripts/validate.py"
+    ],
     "required_artifacts": [
       {
         "artifact_id": "schema-case-manifest.001",
@@ -195,7 +215,11 @@
         "expected_digest": "unresolved"
       }
     ],
-    "adversarial_checks": ["unknown field", "invalid conditional state", "malformed date-time"],
+    "adversarial_checks": [
+      "unknown field",
+      "invalid conditional state",
+      "malformed date-time"
+    ],
     "replication_rule": "A clean environment using the exact pinned dependency must reproduce every case verdict."
   },
   "resource_budget": {
@@ -211,8 +235,12 @@
   },
   "risk": {
     "tier": "R0",
-    "domains": ["architecture_validation"],
-    "prohibited_actions": ["external_side_effects"],
+    "domains": [
+      "architecture_validation"
+    ],
+    "prohibited_actions": [
+      "external_side_effects"
+    ],
     "approval_requirements": []
   },
   "authorities": {
@@ -223,7 +251,9 @@
       "delegation": "none",
       "constraints": {
         "maximum_risk_tier": "R0",
-        "allowed_actions": ["proposal.submit"],
+        "allowed_actions": [
+          "proposal.submit"
+        ],
         "prohibited_actions": []
       }
     },
@@ -234,7 +264,9 @@
       "delegation": "none",
       "constraints": {
         "maximum_risk_tier": "R0",
-        "allowed_actions": ["protocol.freeze"],
+        "allowed_actions": [
+          "protocol.freeze"
+        ],
         "prohibited_actions": []
       }
     },
@@ -245,7 +277,9 @@
       "delegation": "none",
       "constraints": {
         "maximum_risk_tier": "R0",
-        "allowed_actions": ["safety.review"],
+        "allowed_actions": [
+          "safety.review"
+        ],
         "prohibited_actions": []
       }
     },
@@ -269,7 +303,9 @@
       "delegation": "none",
       "constraints": {
         "maximum_risk_tier": "R0",
-        "allowed_actions": ["resource.approve"],
+        "allowed_actions": [
+          "resource.approve"
+        ],
         "prohibited_actions": []
       }
     },
@@ -280,7 +316,9 @@
       "delegation": "none",
       "constraints": {
         "maximum_risk_tier": "R0",
-        "allowed_actions": ["stage.authorize"],
+        "allowed_actions": [
+          "stage.authorize"
+        ],
         "prohibited_actions": []
       }
     },
@@ -291,7 +329,9 @@
       "delegation": "none",
       "constraints": {
         "maximum_risk_tier": "R0",
-        "allowed_actions": ["verification.adjudicate"],
+        "allowed_actions": [
+          "verification.adjudicate"
+        ],
         "prohibited_actions": []
       }
     },
@@ -302,7 +342,9 @@
       "delegation": "none",
       "constraints": {
         "maximum_risk_tier": "R0",
-        "allowed_actions": ["outcome.adjudicate"],
+        "allowed_actions": [
+          "outcome.adjudicate"
+        ],
         "prohibited_actions": []
       }
     },
@@ -313,39 +355,78 @@
       "delegation": "none",
       "constraints": {
         "maximum_risk_tier": "R0",
-        "allowed_actions": ["publication.decide"],
+        "allowed_actions": [
+          "publication.decide"
+        ],
         "prohibited_actions": []
       }
     }
   },
   "claim_boundary": {
     "eligible_by_scientific_outcome": {
-      "supported_within_scope": ["The registered structural cases conform to the pinned schema contract."],
-      "contradicted": ["At least one registered case contradicts the structural contract."],
-      "falsified": ["The registered structural claim was falsified within scope."],
-      "null_result": ["The structural comparison produced no directional result."],
-      "inconclusive": ["The structural verdict is inconclusive."]
+      "supported_within_scope": [
+        "The registered structural cases conform to the pinned schema contract."
+      ],
+      "contradicted": [
+        "At least one registered case contradicts the structural contract."
+      ],
+      "falsified": [
+        "The registered structural claim was falsified within scope."
+      ],
+      "null_result": [
+        "The structural comparison produced no directional result."
+      ],
+      "inconclusive": [
+        "The structural verdict is inconclusive."
+      ]
     },
     "refusal_language_by_reason": {
-      "invalid": ["The validation run is invalid."],
-      "blocked": ["The validation run is blocked."],
-      "rights_blocked": ["The validation run is rights-blocked."],
-      "infrastructure_failure": ["The validator infrastructure failed before adjudication."],
-      "verification_disagreement": ["Independent verification did not reach agreement."]
+      "invalid": [
+        "The validation run is invalid."
+      ],
+      "blocked": [
+        "The validation run is blocked."
+      ],
+      "rights_blocked": [
+        "The validation run is rights-blocked."
+      ],
+      "infrastructure_failure": [
+        "The validator infrastructure failed before adjudication."
+      ],
+      "verification_disagreement": [
+        "Independent verification did not reach agreement."
+      ]
     },
-    "forbidden": ["Architecture accepted", "Runtime verified", "Scientifically valid"]
+    "forbidden": [
+      "Architecture accepted",
+      "Runtime verified",
+      "Scientifically valid"
+    ]
   },
   "publication": {
     "default_visibility": "private",
-    "allowed_scientific_outcomes": ["supported_within_scope", "contradicted", "inconclusive"],
-    "allowed_nonclaim_reports": ["invalid_run_report", "blocker_report", "verification_disagreement_report"],
+    "allowed_scientific_outcomes": [
+      "supported_within_scope",
+      "contradicted",
+      "inconclusive"
+    ],
+    "allowed_nonclaim_reports": [
+      "invalid_run_report",
+      "blocker_report",
+      "verification_disagreement_report"
+    ],
     "rights_review": "Required before any fixture disclosure.",
     "safety_review": "Required before any fixture disclosure.",
     "authorship_policy": "Preserve human and machine contribution provenance.",
     "correction_endpoint": "private://architecture-corrections"
   },
   "handoff": {
-    "required_fields": ["schema versions", "dependency version", "case manifest", "validation output"],
+    "required_fields": [
+      "schema versions",
+      "dependency version",
+      "case manifest",
+      "validation output"
+    ],
     "recovery_test": "A new session can run the pinned validator and reproduce every registered verdict."
   },
   "created_at": "2026-07-15T10:00:00.000000Z",

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:run-manifest:0.1.0",
+  "$id": "urn:odeya:schema:run-manifest:0.2.0",
   "title": "Odeya RunManifest",
   "description": "An immutable, authorized compilation of one execution attempt family. It binds inputs, code, environment, tools, budgets, controls, and expected outputs; it is not proof that a run occurred or was valid.",
   "type": "object",
@@ -29,23 +29,50 @@
     "sealed_by"
   ],
   "properties": {
-    "schema_version": { "const": "0.1.0" },
-    "run_manifest_id": { "$ref": "#/$defs/identifier" },
-    "version": { "type": "integer", "minimum": 1 },
-    "mission_id": { "$ref": "#/$defs/identifier" },
-    "protocol_snapshot": { "$ref": "#/$defs/protocol_reference" },
-    "stage_id": { "$ref": "#/$defs/identifier" },
-    "run_class": { "enum": ["producer", "verification", "replication"] },
+    "schema_version": {
+      "const": "0.2.0"
+    },
+    "run_manifest_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "mission_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "protocol_snapshot": {
+      "$ref": "#/$defs/protocol_reference"
+    },
+    "stage_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "run_class": {
+      "enum": [
+        "producer",
+        "verification",
+        "replication"
+      ]
+    },
     "source_run_manifest": {
       "oneOf": [
-        { "$ref": "#/$defs/manifest_reference" },
-        { "type": "null" }
+        {
+          "$ref": "#/$defs/manifest_reference"
+        },
+        {
+          "type": "null"
+        }
       ]
     },
     "independence_profile_ref": {
       "oneOf": [
-        { "$ref": "#/$defs/artifact_reference" },
-        { "type": "null" }
+        {
+          "$ref": "#/$defs/artifact_reference"
+        },
+        {
+          "type": "null"
+        }
       ]
     },
     "inputs": {
@@ -54,11 +81,34 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["role", "artifact", "exposure_class"],
+        "required": [
+          "role",
+          "artifact",
+          "exposure_class"
+        ],
         "properties": {
-          "role": { "enum": ["source", "dataset", "split", "configuration", "sealed_truth", "fixture", "prior_output"] },
-          "artifact": { "$ref": "#/$defs/artifact_reference" },
-          "exposure_class": { "enum": ["model_visible", "worker_visible", "verifier_only", "sealed"] }
+          "role": {
+            "enum": [
+              "source",
+              "dataset",
+              "split",
+              "configuration",
+              "sealed_truth",
+              "fixture",
+              "prior_output"
+            ]
+          },
+          "artifact": {
+            "$ref": "#/$defs/artifact_reference"
+          },
+          "exposure_class": {
+            "enum": [
+              "model_visible",
+              "worker_visible",
+              "verifier_only",
+              "sealed"
+            ]
+          }
         }
       }
     },
@@ -79,23 +129,49 @@
         "resource_request"
       ],
       "properties": {
-        "entrypoint": { "type": "string", "minLength": 1 },
-        "code_ref": { "$ref": "#/$defs/artifact_reference" },
-        "environment_ref": { "$ref": "#/$defs/artifact_reference" },
-        "harness_ref": { "$ref": "#/$defs/artifact_reference" },
+        "entrypoint": {
+          "type": "string",
+          "minLength": 1
+        },
+        "code_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        },
+        "environment_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        },
+        "harness_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        },
         "model_bindings": {
           "type": "array",
           "uniqueItems": true,
           "items": {
             "type": "object",
             "additionalProperties": false,
-            "required": ["role", "model_id", "version", "weights_or_endpoint_digest", "context_policy_ref"],
+            "required": [
+              "role",
+              "model_id",
+              "version",
+              "weights_or_endpoint_digest",
+              "context_policy_ref"
+            ],
             "properties": {
-              "role": { "$ref": "#/$defs/identifier" },
-              "model_id": { "$ref": "#/$defs/identifier" },
-              "version": { "type": "string", "minLength": 1 },
-              "weights_or_endpoint_digest": { "$ref": "#/$defs/digest" },
-              "context_policy_ref": { "$ref": "#/$defs/artifact_reference" }
+              "role": {
+                "$ref": "#/$defs/identifier"
+              },
+              "model_id": {
+                "$ref": "#/$defs/identifier"
+              },
+              "version": {
+                "type": "string",
+                "minLength": 1
+              },
+              "weights_or_endpoint_digest": {
+                "$ref": "#/$defs/digest"
+              },
+              "context_policy_ref": {
+                "$ref": "#/$defs/artifact_reference"
+              }
             }
           }
         },
@@ -105,30 +181,58 @@
           "items": {
             "type": "object",
             "additionalProperties": false,
-            "required": ["tool_id", "version", "interface_digest"],
+            "required": [
+              "tool_id",
+              "version",
+              "interface_digest"
+            ],
             "properties": {
-              "tool_id": { "$ref": "#/$defs/identifier" },
-              "version": { "type": "string", "minLength": 1 },
-              "interface_digest": { "$ref": "#/$defs/digest" }
+              "tool_id": {
+                "$ref": "#/$defs/identifier"
+              },
+              "version": {
+                "type": "string",
+                "minLength": 1
+              },
+              "interface_digest": {
+                "$ref": "#/$defs/digest"
+              }
             }
           }
         },
-        "randomness_policy": { "enum": ["deterministic_seeded", "recorded_external_nondeterminism", "not_applicable"] },
+        "randomness_policy": {
+          "enum": [
+            "deterministic_seeded",
+            "recorded_external_nondeterminism",
+            "not_applicable"
+          ]
+        },
         "seed_set": {
           "type": "array",
           "uniqueItems": true,
-          "items": { "type": "integer", "minimum": 0 }
+          "items": {
+            "type": "integer",
+            "minimum": 0
+          }
         },
-        "sandbox_profile_ref": { "$ref": "#/$defs/artifact_reference" },
-        "network_profile_ref": { "$ref": "#/$defs/artifact_reference" },
-        "resource_request": { "$ref": "#/$defs/resource_budget" }
+        "sandbox_profile_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        },
+        "network_profile_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        },
+        "resource_request": {
+          "$ref": "#/$defs/resource_budget"
+        }
       }
     },
     "evaluator_bindings": {
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,
-      "items": { "$ref": "#/$defs/method_reference" }
+      "items": {
+        "$ref": "#/$defs/method_reference"
+      }
     },
     "expected_outputs": {
       "type": "array",
@@ -136,18 +240,46 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["output_id", "role", "media_type", "schema_id", "required"],
+        "required": [
+          "output_id",
+          "role",
+          "media_type",
+          "schema_id",
+          "required"
+        ],
         "properties": {
-          "output_id": { "$ref": "#/$defs/identifier" },
-          "role": { "enum": ["raw_observation", "derived_data", "metric_result", "falsifier_result", "log", "checkpoint", "report"] },
-          "media_type": { "type": "string", "minLength": 1 },
-          "schema_id": {
-            "oneOf": [
-              { "type": "string", "format": "uri" },
-              { "type": "null" }
+          "output_id": {
+            "$ref": "#/$defs/identifier"
+          },
+          "role": {
+            "enum": [
+              "raw_observation",
+              "derived_data",
+              "metric_result",
+              "falsifier_result",
+              "log",
+              "checkpoint",
+              "report"
             ]
           },
-          "required": { "type": "boolean" }
+          "media_type": {
+            "type": "string",
+            "minLength": 1
+          },
+          "schema_id": {
+            "oneOf": [
+              {
+                "type": "string",
+                "format": "uri"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "required": {
+            "type": "boolean"
+          }
         }
       }
     },
@@ -157,12 +289,25 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["control_id", "fixture", "evaluator_id", "expected_verdict"],
+        "required": [
+          "control_id",
+          "fixture",
+          "evaluator_id",
+          "expected_verdict"
+        ],
         "properties": {
-          "control_id": { "$ref": "#/$defs/identifier" },
-          "fixture": { "$ref": "#/$defs/artifact_reference" },
-          "evaluator_id": { "$ref": "#/$defs/identifier" },
-          "expected_verdict": { "const": "reject" }
+          "control_id": {
+            "$ref": "#/$defs/identifier"
+          },
+          "fixture": {
+            "$ref": "#/$defs/artifact_reference"
+          },
+          "evaluator_id": {
+            "$ref": "#/$defs/identifier"
+          },
+          "expected_verdict": {
+            "const": "reject"
+          }
         }
       }
     },
@@ -172,11 +317,21 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["validation_result_id", "digest", "disposition"],
+        "required": [
+          "validation_result_id",
+          "digest",
+          "disposition"
+        ],
         "properties": {
-          "validation_result_id": { "$ref": "#/$defs/identifier" },
-          "digest": { "$ref": "#/$defs/digest" },
-          "disposition": { "const": "pass" }
+          "validation_result_id": {
+            "$ref": "#/$defs/identifier"
+          },
+          "digest": {
+            "$ref": "#/$defs/digest"
+          },
+          "disposition": {
+            "const": "pass"
+          }
         }
       }
     },
@@ -184,36 +339,80 @@
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,
-      "items": { "$ref": "#/$defs/identifier" }
+      "items": {
+        "$ref": "#/$defs/identifier"
+      }
     },
     "recovery": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["checkpoint_policy_ref", "idempotency_scope", "resume_strategy"],
+      "required": [
+        "checkpoint_policy_ref",
+        "idempotency_scope",
+        "resume_strategy"
+      ],
       "properties": {
-        "checkpoint_policy_ref": { "$ref": "#/$defs/artifact_reference" },
-        "idempotency_scope": { "$ref": "#/$defs/identifier" },
-        "resume_strategy": { "enum": ["resume_from_verified_checkpoint", "restart_attempt", "no_resume"] }
+        "checkpoint_policy_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        },
+        "idempotency_scope": {
+          "$ref": "#/$defs/identifier"
+        },
+        "resume_strategy": {
+          "enum": [
+            "resume_from_verified_checkpoint",
+            "restart_attempt",
+            "no_resume"
+          ]
+        }
       }
     },
-    "canonical_payload_digest": { "$ref": "#/$defs/digest" },
-    "sealed_at_ledger_position": { "type": "integer", "minimum": 0 },
-    "sealed_at": { "type": "string", "format": "date-time" },
-    "sealed_by": { "$ref": "#/$defs/principal" }
+    "canonical_payload_digest": {
+      "$ref": "#/$defs/digest"
+    },
+    "sealed_at_ledger_position": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "sealed_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
+    },
+    "sealed_by": {
+      "$ref": "#/$defs/principal"
+    }
   },
   "allOf": [
     {
-      "if": { "properties": { "run_class": { "const": "producer" } }, "required": ["run_class"] },
+      "if": {
+        "properties": {
+          "run_class": {
+            "const": "producer"
+          }
+        },
+        "required": [
+          "run_class"
+        ]
+      },
       "then": {
         "properties": {
-          "source_run_manifest": { "type": "null" },
-          "independence_profile_ref": { "type": "null" }
+          "source_run_manifest": {
+            "type": "null"
+          },
+          "independence_profile_ref": {
+            "type": "null"
+          }
         }
       },
       "else": {
         "properties": {
-          "source_run_manifest": { "$ref": "#/$defs/manifest_reference" },
-          "independence_profile_ref": { "$ref": "#/$defs/artifact_reference" }
+          "source_run_manifest": {
+            "$ref": "#/$defs/manifest_reference"
+          },
+          "independence_profile_ref": {
+            "$ref": "#/$defs/artifact_reference"
+          }
         }
       }
     },
@@ -221,86 +420,192 @@
       "if": {
         "properties": {
           "execution": {
-            "properties": { "randomness_policy": { "const": "deterministic_seeded" } },
-            "required": ["randomness_policy"]
+            "properties": {
+              "randomness_policy": {
+                "const": "deterministic_seeded"
+              }
+            },
+            "required": [
+              "randomness_policy"
+            ]
           }
         }
       },
       "then": {
         "properties": {
-          "execution": { "properties": { "seed_set": { "minItems": 1 } } }
+          "execution": {
+            "properties": {
+              "seed_set": {
+                "minItems": 1
+              }
+            }
+          }
         }
       }
     }
   ],
   "$defs": {
-    "identifier": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$" },
-    "digest": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
-    "decimal": { "type": "string", "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?$" },
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$"
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "decimal": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?$"
+    },
     "artifact_reference": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["artifact_id", "digest", "media_type"],
+      "required": [
+        "artifact_id",
+        "digest",
+        "media_type"
+      ],
       "properties": {
-        "artifact_id": { "$ref": "#/$defs/identifier" },
-        "digest": { "$ref": "#/$defs/digest" },
-        "media_type": { "type": "string", "minLength": 1 }
+        "artifact_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1
+        }
       }
     },
     "protocol_reference": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["protocol_snapshot_id", "version", "digest"],
+      "required": [
+        "protocol_snapshot_id",
+        "version",
+        "digest"
+      ],
       "properties": {
-        "protocol_snapshot_id": { "$ref": "#/$defs/identifier" },
-        "version": { "type": "integer", "minimum": 1 },
-        "digest": { "$ref": "#/$defs/digest" }
+        "protocol_snapshot_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        }
       }
     },
     "manifest_reference": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["run_manifest_id", "version", "digest"],
+      "required": [
+        "run_manifest_id",
+        "version",
+        "digest"
+      ],
       "properties": {
-        "run_manifest_id": { "$ref": "#/$defs/identifier" },
-        "version": { "type": "integer", "minimum": 1 },
-        "digest": { "$ref": "#/$defs/digest" }
+        "run_manifest_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        }
       }
     },
     "method_reference": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["method_id", "version", "registry_digest"],
+      "required": [
+        "method_id",
+        "version",
+        "registry_digest"
+      ],
       "properties": {
-        "method_id": { "$ref": "#/$defs/identifier" },
-        "version": { "type": "string", "minLength": 1 },
-        "registry_digest": { "$ref": "#/$defs/digest" }
+        "method_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "registry_digest": {
+          "$ref": "#/$defs/digest"
+        }
       }
     },
     "resource_budget": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["wall_time_seconds", "model_tokens", "cpu_seconds", "memory_gib_seconds", "accelerator_seconds", "storage_bytes", "network_bytes", "external_cost_usd", "human_hours"],
+      "required": [
+        "wall_time_seconds",
+        "model_tokens",
+        "cpu_seconds",
+        "memory_gib_seconds",
+        "accelerator_seconds",
+        "storage_bytes",
+        "network_bytes",
+        "external_cost_usd",
+        "human_hours"
+      ],
       "properties": {
-        "wall_time_seconds": { "$ref": "#/$defs/decimal" },
-        "model_tokens": { "$ref": "#/$defs/decimal" },
-        "cpu_seconds": { "$ref": "#/$defs/decimal" },
-        "memory_gib_seconds": { "$ref": "#/$defs/decimal" },
-        "accelerator_seconds": { "$ref": "#/$defs/decimal" },
-        "storage_bytes": { "$ref": "#/$defs/decimal" },
-        "network_bytes": { "$ref": "#/$defs/decimal" },
-        "external_cost_usd": { "$ref": "#/$defs/decimal" },
-        "human_hours": { "$ref": "#/$defs/decimal" }
+        "wall_time_seconds": {
+          "$ref": "#/$defs/decimal"
+        },
+        "model_tokens": {
+          "$ref": "#/$defs/decimal"
+        },
+        "cpu_seconds": {
+          "$ref": "#/$defs/decimal"
+        },
+        "memory_gib_seconds": {
+          "$ref": "#/$defs/decimal"
+        },
+        "accelerator_seconds": {
+          "$ref": "#/$defs/decimal"
+        },
+        "storage_bytes": {
+          "$ref": "#/$defs/decimal"
+        },
+        "network_bytes": {
+          "$ref": "#/$defs/decimal"
+        },
+        "external_cost_usd": {
+          "$ref": "#/$defs/decimal"
+        },
+        "human_hours": {
+          "$ref": "#/$defs/decimal"
+        }
       }
     },
     "principal": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["principal_id", "principal_type", "authority_grant_ref"],
+      "required": [
+        "principal_id",
+        "principal_type",
+        "authority_grant_ref"
+      ],
       "properties": {
-        "principal_id": { "$ref": "#/$defs/identifier" },
-        "principal_type": { "enum": ["human", "service"] },
-        "authority_grant_ref": { "$ref": "#/$defs/identifier" }
+        "principal_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "principal_type": {
+          "enum": [
+            "human",
+            "service"
+          ]
+        },
+        "authority_grant_ref": {
+          "$ref": "#/$defs/identifier"
+        }
       }
     }
   }

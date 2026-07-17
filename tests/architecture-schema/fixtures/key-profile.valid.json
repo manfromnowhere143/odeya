@@ -1,5 +1,5 @@
 {
-  "schema_version": "0.1.0",
+  "schema_version": "0.2.0",
   "key_profile_id": "key-profile.founding-logical",
   "version": 1,
   "status": "proposed",
@@ -13,146 +13,602 @@
     {
       "key_class": "constitutional_root_signing",
       "purpose_context": "odeya-constitutional-root-v1",
-      "allowed_operations": ["sign-root-manifest", "sign-root-rotation"],
-      "forbidden_operations": ["sign-ledger-checkpoint", "issue-authority-grant", "decrypt-data", "authenticate-provider"],
-      "algorithm_profile_ref": { "artifact_id": "profile.signature.root", "digest": "sha256:2222222222222222222222222222222222222222222222222222222222222222", "media_type": "application/vnd.odeya.signature-profile+json" },
-      "protection_profile_ref": { "artifact_id": "profile.protection.root", "digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333", "media_type": "application/vnd.odeya.key-protection-profile+json" },
+      "allowed_operations": [
+        "sign-root-manifest",
+        "sign-root-rotation"
+      ],
+      "forbidden_operations": [
+        "sign-ledger-checkpoint",
+        "issue-authority-grant",
+        "decrypt-data",
+        "authenticate-provider"
+      ],
+      "algorithm_profile_ref": {
+        "artifact_id": "profile.signature.root",
+        "digest": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+        "media_type": "application/vnd.odeya.signature-profile+json"
+      },
+      "protection_profile_ref": {
+        "artifact_id": "profile.protection.root",
+        "digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+        "media_type": "application/vnd.odeya.key-protection-profile+json"
+      },
       "exportability": "wrapped_export_under_quorum",
-      "activation_quorum": { "threshold": 2, "eligible_principal_count": 3, "distinct_principals": true, "forbidden_role_overlap": ["ordinary-application-administrator"] },
-      "recovery_quorum": { "threshold": 2, "eligible_principal_count": 3, "distinct_principals": true, "forbidden_role_overlap": ["ordinary-application-administrator", "backup-administrator"] },
-      "overlap_policy_ref": { "artifact_id": "policy.key-overlap.root", "digest": "sha256:4444444444444444444444444444444444444444444444444444444444444444", "media_type": "application/vnd.odeya.key-policy+json" },
-      "rotation_policy_ref": { "artifact_id": "policy.key-rotation.root", "digest": "sha256:5555555555555555555555555555555555555555555555555555555555555555", "media_type": "application/vnd.odeya.key-policy+json" },
-      "revocation_policy_ref": { "artifact_id": "policy.key-revocation.root", "digest": "sha256:6666666666666666666666666666666666666666666666666666666666666666", "media_type": "application/vnd.odeya.key-policy+json" },
-      "compromise_policy_ref": { "artifact_id": "policy.key-compromise.root", "digest": "sha256:7777777777777777777777777777777777777777777777777777777777777777", "media_type": "application/vnd.odeya.key-policy+json" },
-      "loss_policy_ref": { "artifact_id": "policy.key-loss.root", "digest": "sha256:8888888888888888888888888888888888888888888888888888888888888888", "media_type": "application/vnd.odeya.key-policy+json" },
-      "escrow_or_recovery_profile_ref": { "artifact_id": "profile.key-recovery.root", "digest": "sha256:9999999999999999999999999999999999999999999999999999999999999999", "media_type": "application/vnd.odeya.key-recovery-profile+json" },
-      "destruction_policy_ref": { "artifact_id": "policy.key-destruction.root", "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "media_type": "application/vnd.odeya.key-policy+json" }
+      "activation_quorum": {
+        "threshold": 2,
+        "eligible_principal_count": 3,
+        "distinct_principals": true,
+        "forbidden_role_overlap": [
+          "ordinary-application-administrator"
+        ]
+      },
+      "recovery_quorum": {
+        "threshold": 2,
+        "eligible_principal_count": 3,
+        "distinct_principals": true,
+        "forbidden_role_overlap": [
+          "ordinary-application-administrator",
+          "backup-administrator"
+        ]
+      },
+      "overlap_policy_ref": {
+        "artifact_id": "policy.key-overlap.root",
+        "digest": "sha256:4444444444444444444444444444444444444444444444444444444444444444",
+        "media_type": "application/vnd.odeya.key-policy+json"
+      },
+      "rotation_policy_ref": {
+        "artifact_id": "policy.key-rotation.root",
+        "digest": "sha256:5555555555555555555555555555555555555555555555555555555555555555",
+        "media_type": "application/vnd.odeya.key-policy+json"
+      },
+      "revocation_policy_ref": {
+        "artifact_id": "policy.key-revocation.root",
+        "digest": "sha256:6666666666666666666666666666666666666666666666666666666666666666",
+        "media_type": "application/vnd.odeya.key-policy+json"
+      },
+      "compromise_policy_ref": {
+        "artifact_id": "policy.key-compromise.root",
+        "digest": "sha256:7777777777777777777777777777777777777777777777777777777777777777",
+        "media_type": "application/vnd.odeya.key-policy+json"
+      },
+      "loss_policy_ref": {
+        "artifact_id": "policy.key-loss.root",
+        "digest": "sha256:8888888888888888888888888888888888888888888888888888888888888888",
+        "media_type": "application/vnd.odeya.key-policy+json"
+      },
+      "escrow_or_recovery_profile_ref": {
+        "artifact_id": "profile.key-recovery.root",
+        "digest": "sha256:9999999999999999999999999999999999999999999999999999999999999999",
+        "media_type": "application/vnd.odeya.key-recovery-profile+json"
+      },
+      "destruction_policy_ref": {
+        "artifact_id": "policy.key-destruction.root",
+        "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "media_type": "application/vnd.odeya.key-policy+json"
+      }
     },
     {
       "key_class": "ledger_checkpoint_signing",
       "purpose_context": "odeya-ledger-checkpoint-v1",
-      "allowed_operations": ["sign-ledger-checkpoint"],
-      "forbidden_operations": ["sign-root-manifest", "issue-authority-grant", "sign-publication", "decrypt-data"],
-      "algorithm_profile_ref": { "artifact_id": "profile.signature.checkpoint", "digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "media_type": "application/vnd.odeya.signature-profile+json" },
-      "protection_profile_ref": { "artifact_id": "profile.protection.checkpoint", "digest": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "media_type": "application/vnd.odeya.key-protection-profile+json" },
+      "allowed_operations": [
+        "sign-ledger-checkpoint"
+      ],
+      "forbidden_operations": [
+        "sign-root-manifest",
+        "issue-authority-grant",
+        "sign-publication",
+        "decrypt-data"
+      ],
+      "algorithm_profile_ref": {
+        "artifact_id": "profile.signature.checkpoint",
+        "digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "media_type": "application/vnd.odeya.signature-profile+json"
+      },
+      "protection_profile_ref": {
+        "artifact_id": "profile.protection.checkpoint",
+        "digest": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "media_type": "application/vnd.odeya.key-protection-profile+json"
+      },
       "exportability": "non_exportable",
-      "activation_quorum": { "threshold": 1, "eligible_principal_count": 2, "distinct_principals": true, "forbidden_role_overlap": ["root-recovery-principal"] },
-      "recovery_quorum": { "threshold": 2, "eligible_principal_count": 3, "distinct_principals": true, "forbidden_role_overlap": ["ordinary-application-administrator"] },
-      "overlap_policy_ref": { "artifact_id": "policy.key-overlap.checkpoint", "digest": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", "media_type": "application/vnd.odeya.key-policy+json" },
-      "rotation_policy_ref": { "artifact_id": "policy.key-rotation.checkpoint", "digest": "sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", "media_type": "application/vnd.odeya.key-policy+json" },
-      "revocation_policy_ref": { "artifact_id": "policy.key-revocation.checkpoint", "digest": "sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "media_type": "application/vnd.odeya.key-policy+json" },
-      "compromise_policy_ref": { "artifact_id": "policy.key-compromise.checkpoint", "digest": "sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef", "media_type": "application/vnd.odeya.key-policy+json" },
-      "loss_policy_ref": { "artifact_id": "policy.key-loss.checkpoint", "digest": "sha256:123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0", "media_type": "application/vnd.odeya.key-policy+json" },
-      "escrow_or_recovery_profile_ref": { "artifact_id": "profile.key-recovery.checkpoint", "digest": "sha256:23456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef01", "media_type": "application/vnd.odeya.key-recovery-profile+json" },
-      "destruction_policy_ref": { "artifact_id": "policy.key-destruction.checkpoint", "digest": "sha256:3456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef012", "media_type": "application/vnd.odeya.key-policy+json" }
+      "activation_quorum": {
+        "threshold": 1,
+        "eligible_principal_count": 2,
+        "distinct_principals": true,
+        "forbidden_role_overlap": [
+          "root-recovery-principal"
+        ]
+      },
+      "recovery_quorum": {
+        "threshold": 2,
+        "eligible_principal_count": 3,
+        "distinct_principals": true,
+        "forbidden_role_overlap": [
+          "ordinary-application-administrator"
+        ]
+      },
+      "overlap_policy_ref": {
+        "artifact_id": "policy.key-overlap.checkpoint",
+        "digest": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "media_type": "application/vnd.odeya.key-policy+json"
+      },
+      "rotation_policy_ref": {
+        "artifact_id": "policy.key-rotation.checkpoint",
+        "digest": "sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "media_type": "application/vnd.odeya.key-policy+json"
+      },
+      "revocation_policy_ref": {
+        "artifact_id": "policy.key-revocation.checkpoint",
+        "digest": "sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "media_type": "application/vnd.odeya.key-policy+json"
+      },
+      "compromise_policy_ref": {
+        "artifact_id": "policy.key-compromise.checkpoint",
+        "digest": "sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+        "media_type": "application/vnd.odeya.key-policy+json"
+      },
+      "loss_policy_ref": {
+        "artifact_id": "policy.key-loss.checkpoint",
+        "digest": "sha256:123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0",
+        "media_type": "application/vnd.odeya.key-policy+json"
+      },
+      "escrow_or_recovery_profile_ref": {
+        "artifact_id": "profile.key-recovery.checkpoint",
+        "digest": "sha256:23456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef01",
+        "media_type": "application/vnd.odeya.key-recovery-profile+json"
+      },
+      "destruction_policy_ref": {
+        "artifact_id": "policy.key-destruction.checkpoint",
+        "digest": "sha256:3456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef012",
+        "media_type": "application/vnd.odeya.key-policy+json"
+      }
     },
     {
       "key_class": "witness_signing",
       "purpose_context": "odeya-checkpoint-witness-v1",
-      "allowed_operations": ["sign-witness-observation", "sign-consistency-proof-result"],
-      "forbidden_operations": ["sign-ledger-checkpoint", "sign-root-manifest", "issue-authority-grant"],
-      "algorithm_profile_ref": { "artifact_id": "profile.signature.witness", "digest": "sha256:456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123", "media_type": "application/vnd.odeya.signature-profile+json" },
-      "protection_profile_ref": { "artifact_id": "profile.protection.witness", "digest": "sha256:56789abcdef0123456789abcdef0123456789abcdef0123456789abcdef01234", "media_type": "application/vnd.odeya.key-protection-profile+json" },
+      "allowed_operations": [
+        "sign-witness-observation",
+        "sign-consistency-proof-result"
+      ],
+      "forbidden_operations": [
+        "sign-ledger-checkpoint",
+        "sign-root-manifest",
+        "issue-authority-grant"
+      ],
+      "algorithm_profile_ref": {
+        "artifact_id": "profile.signature.witness",
+        "digest": "sha256:456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123",
+        "media_type": "application/vnd.odeya.signature-profile+json"
+      },
+      "protection_profile_ref": {
+        "artifact_id": "profile.protection.witness",
+        "digest": "sha256:56789abcdef0123456789abcdef0123456789abcdef0123456789abcdef01234",
+        "media_type": "application/vnd.odeya.key-protection-profile+json"
+      },
       "exportability": "non_exportable",
-      "activation_quorum": { "threshold": 1, "eligible_principal_count": 2, "distinct_principals": true, "forbidden_role_overlap": ["checkpoint-signer"] },
-      "recovery_quorum": { "threshold": 2, "eligible_principal_count": 3, "distinct_principals": true, "forbidden_role_overlap": ["checkpoint-signer", "ordinary-application-administrator"] },
-      "overlap_policy_ref": { "artifact_id": "policy.key-overlap.witness", "digest": "sha256:6789abcdef0123456789abcdef0123456789abcdef0123456789abcdef012345", "media_type": "application/vnd.odeya.key-policy+json" },
-      "rotation_policy_ref": { "artifact_id": "policy.key-rotation.witness", "digest": "sha256:789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456", "media_type": "application/vnd.odeya.key-policy+json" },
-      "revocation_policy_ref": { "artifact_id": "policy.key-revocation.witness", "digest": "sha256:89abcdef0123456789abcdef0123456789abcdef0123456789abcdef01234567", "media_type": "application/vnd.odeya.key-policy+json" },
-      "compromise_policy_ref": { "artifact_id": "policy.key-compromise.witness", "digest": "sha256:9abcdef0123456789abcdef0123456789abcdef0123456789abcdef012345678", "media_type": "application/vnd.odeya.key-policy+json" },
-      "loss_policy_ref": { "artifact_id": "policy.key-loss.witness", "digest": "sha256:abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789", "media_type": "application/vnd.odeya.key-policy+json" },
-      "escrow_or_recovery_profile_ref": { "artifact_id": "profile.key-recovery.witness", "digest": "sha256:bcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789a", "media_type": "application/vnd.odeya.key-recovery-profile+json" },
-      "destruction_policy_ref": { "artifact_id": "policy.key-destruction.witness", "digest": "sha256:cdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789ab", "media_type": "application/vnd.odeya.key-policy+json" }
+      "activation_quorum": {
+        "threshold": 1,
+        "eligible_principal_count": 2,
+        "distinct_principals": true,
+        "forbidden_role_overlap": [
+          "checkpoint-signer"
+        ]
+      },
+      "recovery_quorum": {
+        "threshold": 2,
+        "eligible_principal_count": 3,
+        "distinct_principals": true,
+        "forbidden_role_overlap": [
+          "checkpoint-signer",
+          "ordinary-application-administrator"
+        ]
+      },
+      "overlap_policy_ref": {
+        "artifact_id": "policy.key-overlap.witness",
+        "digest": "sha256:6789abcdef0123456789abcdef0123456789abcdef0123456789abcdef012345",
+        "media_type": "application/vnd.odeya.key-policy+json"
+      },
+      "rotation_policy_ref": {
+        "artifact_id": "policy.key-rotation.witness",
+        "digest": "sha256:789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456",
+        "media_type": "application/vnd.odeya.key-policy+json"
+      },
+      "revocation_policy_ref": {
+        "artifact_id": "policy.key-revocation.witness",
+        "digest": "sha256:89abcdef0123456789abcdef0123456789abcdef0123456789abcdef01234567",
+        "media_type": "application/vnd.odeya.key-policy+json"
+      },
+      "compromise_policy_ref": {
+        "artifact_id": "policy.key-compromise.witness",
+        "digest": "sha256:9abcdef0123456789abcdef0123456789abcdef0123456789abcdef012345678",
+        "media_type": "application/vnd.odeya.key-policy+json"
+      },
+      "loss_policy_ref": {
+        "artifact_id": "policy.key-loss.witness",
+        "digest": "sha256:abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789",
+        "media_type": "application/vnd.odeya.key-policy+json"
+      },
+      "escrow_or_recovery_profile_ref": {
+        "artifact_id": "profile.key-recovery.witness",
+        "digest": "sha256:bcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789a",
+        "media_type": "application/vnd.odeya.key-recovery-profile+json"
+      },
+      "destruction_policy_ref": {
+        "artifact_id": "policy.key-destruction.witness",
+        "digest": "sha256:cdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789ab",
+        "media_type": "application/vnd.odeya.key-policy+json"
+      }
     },
     {
       "key_class": "publication_signing",
       "purpose_context": "odeya-publication-v1",
-      "allowed_operations": ["sign-publication-manifest", "sign-publication-grant"],
-      "forbidden_operations": ["sign-root-manifest", "sign-ledger-checkpoint", "decrypt-data"],
-      "algorithm_profile_ref": { "artifact_id": "profile.signature.publication", "digest": "sha256:def0123456789abcdef0123456789abcdef0123456789abcdef0123456789abc", "media_type": "application/vnd.odeya.signature-profile+json" },
-      "protection_profile_ref": { "artifact_id": "profile.protection.publication", "digest": "sha256:ef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcd", "media_type": "application/vnd.odeya.key-protection-profile+json" },
+      "allowed_operations": [
+        "sign-publication-manifest",
+        "sign-publication-grant"
+      ],
+      "forbidden_operations": [
+        "sign-root-manifest",
+        "sign-ledger-checkpoint",
+        "decrypt-data"
+      ],
+      "algorithm_profile_ref": {
+        "artifact_id": "profile.signature.publication",
+        "digest": "sha256:def0123456789abcdef0123456789abcdef0123456789abcdef0123456789abc",
+        "media_type": "application/vnd.odeya.signature-profile+json"
+      },
+      "protection_profile_ref": {
+        "artifact_id": "profile.protection.publication",
+        "digest": "sha256:ef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcd",
+        "media_type": "application/vnd.odeya.key-protection-profile+json"
+      },
       "exportability": "non_exportable",
-      "activation_quorum": { "threshold": 1, "eligible_principal_count": 2, "distinct_principals": true, "forbidden_role_overlap": ["publication-producer"] },
-      "recovery_quorum": { "threshold": 2, "eligible_principal_count": 3, "distinct_principals": true, "forbidden_role_overlap": ["ordinary-application-administrator"] },
-      "overlap_policy_ref": { "artifact_id": "policy.key-overlap.publication", "digest": "sha256:f0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcde", "media_type": "application/vnd.odeya.key-policy+json" },
-      "rotation_policy_ref": { "artifact_id": "policy.key-rotation.publication", "digest": "sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef", "media_type": "application/vnd.odeya.key-policy+json" },
-      "revocation_policy_ref": { "artifact_id": "policy.key-revocation.publication", "digest": "sha256:123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0", "media_type": "application/vnd.odeya.key-policy+json" },
-      "compromise_policy_ref": { "artifact_id": "policy.key-compromise.publication", "digest": "sha256:23456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef01", "media_type": "application/vnd.odeya.key-policy+json" },
-      "loss_policy_ref": { "artifact_id": "policy.key-loss.publication", "digest": "sha256:3456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef012", "media_type": "application/vnd.odeya.key-policy+json" },
-      "escrow_or_recovery_profile_ref": { "artifact_id": "profile.key-recovery.publication", "digest": "sha256:456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123", "media_type": "application/vnd.odeya.key-recovery-profile+json" },
-      "destruction_policy_ref": { "artifact_id": "policy.key-destruction.publication", "digest": "sha256:56789abcdef0123456789abcdef0123456789abcdef0123456789abcdef01234", "media_type": "application/vnd.odeya.key-policy+json" }
+      "activation_quorum": {
+        "threshold": 1,
+        "eligible_principal_count": 2,
+        "distinct_principals": true,
+        "forbidden_role_overlap": [
+          "publication-producer"
+        ]
+      },
+      "recovery_quorum": {
+        "threshold": 2,
+        "eligible_principal_count": 3,
+        "distinct_principals": true,
+        "forbidden_role_overlap": [
+          "ordinary-application-administrator"
+        ]
+      },
+      "overlap_policy_ref": {
+        "artifact_id": "policy.key-overlap.publication",
+        "digest": "sha256:f0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcde",
+        "media_type": "application/vnd.odeya.key-policy+json"
+      },
+      "rotation_policy_ref": {
+        "artifact_id": "policy.key-rotation.publication",
+        "digest": "sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+        "media_type": "application/vnd.odeya.key-policy+json"
+      },
+      "revocation_policy_ref": {
+        "artifact_id": "policy.key-revocation.publication",
+        "digest": "sha256:123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0",
+        "media_type": "application/vnd.odeya.key-policy+json"
+      },
+      "compromise_policy_ref": {
+        "artifact_id": "policy.key-compromise.publication",
+        "digest": "sha256:23456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef01",
+        "media_type": "application/vnd.odeya.key-policy+json"
+      },
+      "loss_policy_ref": {
+        "artifact_id": "policy.key-loss.publication",
+        "digest": "sha256:3456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef012",
+        "media_type": "application/vnd.odeya.key-policy+json"
+      },
+      "escrow_or_recovery_profile_ref": {
+        "artifact_id": "profile.key-recovery.publication",
+        "digest": "sha256:456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123",
+        "media_type": "application/vnd.odeya.key-recovery-profile+json"
+      },
+      "destruction_policy_ref": {
+        "artifact_id": "policy.key-destruction.publication",
+        "digest": "sha256:56789abcdef0123456789abcdef0123456789abcdef0123456789abcdef01234",
+        "media_type": "application/vnd.odeya.key-policy+json"
+      }
     },
     {
       "key_class": "service_workload_identity",
       "purpose_context": "odeya-workload-identity-v1",
-      "allowed_operations": ["authenticate-bounded-workload"],
-      "forbidden_operations": ["sign-root-manifest", "sign-ledger-checkpoint", "sign-publication-manifest"],
-      "algorithm_profile_ref": { "artifact_id": "profile.signature.workload", "digest": "sha256:6789abcdef0123456789abcdef0123456789abcdef0123456789abcdef012345", "media_type": "application/vnd.odeya.signature-profile+json" },
-      "protection_profile_ref": { "artifact_id": "profile.protection.workload", "digest": "sha256:789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456", "media_type": "application/vnd.odeya.key-protection-profile+json" },
+      "allowed_operations": [
+        "authenticate-bounded-workload"
+      ],
+      "forbidden_operations": [
+        "sign-root-manifest",
+        "sign-ledger-checkpoint",
+        "sign-publication-manifest"
+      ],
+      "algorithm_profile_ref": {
+        "artifact_id": "profile.signature.workload",
+        "digest": "sha256:6789abcdef0123456789abcdef0123456789abcdef0123456789abcdef012345",
+        "media_type": "application/vnd.odeya.signature-profile+json"
+      },
+      "protection_profile_ref": {
+        "artifact_id": "profile.protection.workload",
+        "digest": "sha256:789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456",
+        "media_type": "application/vnd.odeya.key-protection-profile+json"
+      },
       "exportability": "non_exportable",
-      "activation_quorum": { "threshold": 1, "eligible_principal_count": 1, "distinct_principals": true, "forbidden_role_overlap": [] },
-      "recovery_quorum": { "threshold": 1, "eligible_principal_count": 2, "distinct_principals": true, "forbidden_role_overlap": ["workload-runtime"] },
-      "overlap_policy_ref": { "artifact_id": "policy.key-overlap.workload", "digest": "sha256:89abcdef0123456789abcdef0123456789abcdef0123456789abcdef01234567", "media_type": "application/vnd.odeya.key-policy+json" },
-      "rotation_policy_ref": { "artifact_id": "policy.key-rotation.workload", "digest": "sha256:9abcdef0123456789abcdef0123456789abcdef0123456789abcdef012345678", "media_type": "application/vnd.odeya.key-policy+json" },
-      "revocation_policy_ref": { "artifact_id": "policy.key-revocation.workload", "digest": "sha256:abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789", "media_type": "application/vnd.odeya.key-policy+json" },
-      "compromise_policy_ref": { "artifact_id": "policy.key-compromise.workload", "digest": "sha256:bcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789a", "media_type": "application/vnd.odeya.key-policy+json" },
-      "loss_policy_ref": { "artifact_id": "policy.key-loss.workload", "digest": "sha256:cdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789ab", "media_type": "application/vnd.odeya.key-policy+json" },
-      "escrow_or_recovery_profile_ref": { "artifact_id": "profile.key-recovery.workload", "digest": "sha256:def0123456789abcdef0123456789abcdef0123456789abcdef0123456789abc", "media_type": "application/vnd.odeya.key-recovery-profile+json" },
-      "destruction_policy_ref": { "artifact_id": "policy.key-destruction.workload", "digest": "sha256:ef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcd", "media_type": "application/vnd.odeya.key-policy+json" }
+      "activation_quorum": {
+        "threshold": 1,
+        "eligible_principal_count": 1,
+        "distinct_principals": true,
+        "forbidden_role_overlap": []
+      },
+      "recovery_quorum": {
+        "threshold": 1,
+        "eligible_principal_count": 2,
+        "distinct_principals": true,
+        "forbidden_role_overlap": [
+          "workload-runtime"
+        ]
+      },
+      "overlap_policy_ref": {
+        "artifact_id": "policy.key-overlap.workload",
+        "digest": "sha256:89abcdef0123456789abcdef0123456789abcdef0123456789abcdef01234567",
+        "media_type": "application/vnd.odeya.key-policy+json"
+      },
+      "rotation_policy_ref": {
+        "artifact_id": "policy.key-rotation.workload",
+        "digest": "sha256:9abcdef0123456789abcdef0123456789abcdef0123456789abcdef012345678",
+        "media_type": "application/vnd.odeya.key-policy+json"
+      },
+      "revocation_policy_ref": {
+        "artifact_id": "policy.key-revocation.workload",
+        "digest": "sha256:abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789",
+        "media_type": "application/vnd.odeya.key-policy+json"
+      },
+      "compromise_policy_ref": {
+        "artifact_id": "policy.key-compromise.workload",
+        "digest": "sha256:bcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789a",
+        "media_type": "application/vnd.odeya.key-policy+json"
+      },
+      "loss_policy_ref": {
+        "artifact_id": "policy.key-loss.workload",
+        "digest": "sha256:cdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789ab",
+        "media_type": "application/vnd.odeya.key-policy+json"
+      },
+      "escrow_or_recovery_profile_ref": {
+        "artifact_id": "profile.key-recovery.workload",
+        "digest": "sha256:def0123456789abcdef0123456789abcdef0123456789abcdef0123456789abc",
+        "media_type": "application/vnd.odeya.key-recovery-profile+json"
+      },
+      "destruction_policy_ref": {
+        "artifact_id": "policy.key-destruction.workload",
+        "digest": "sha256:ef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcd",
+        "media_type": "application/vnd.odeya.key-policy+json"
+      }
     },
     {
       "key_class": "data_encryption",
       "purpose_context": "odeya-data-encryption-v1",
-      "allowed_operations": ["encrypt-authorized-data-scope", "decrypt-authorized-data-scope"],
-      "forbidden_operations": ["sign-root-manifest", "sign-publication-manifest", "authenticate-provider"],
-      "algorithm_profile_ref": { "artifact_id": "profile.encryption.data", "digest": "sha256:f0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcde", "media_type": "application/vnd.odeya.encryption-profile+json" },
-      "protection_profile_ref": { "artifact_id": "profile.protection.data", "digest": "sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef", "media_type": "application/vnd.odeya.key-protection-profile+json" },
+      "allowed_operations": [
+        "encrypt-authorized-data-scope",
+        "decrypt-authorized-data-scope"
+      ],
+      "forbidden_operations": [
+        "sign-root-manifest",
+        "sign-publication-manifest",
+        "authenticate-provider"
+      ],
+      "algorithm_profile_ref": {
+        "artifact_id": "profile.encryption.data",
+        "digest": "sha256:f0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcde",
+        "media_type": "application/vnd.odeya.encryption-profile+json"
+      },
+      "protection_profile_ref": {
+        "artifact_id": "profile.protection.data",
+        "digest": "sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+        "media_type": "application/vnd.odeya.key-protection-profile+json"
+      },
       "exportability": "wrapped_export_under_quorum",
-      "activation_quorum": { "threshold": 1, "eligible_principal_count": 2, "distinct_principals": true, "forbidden_role_overlap": ["untrusted-worker"] },
-      "recovery_quorum": { "threshold": 2, "eligible_principal_count": 3, "distinct_principals": true, "forbidden_role_overlap": ["ordinary-application-administrator"] },
-      "overlap_policy_ref": { "artifact_id": "policy.key-overlap.data", "digest": "sha256:123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0", "media_type": "application/vnd.odeya.key-policy+json" },
-      "rotation_policy_ref": { "artifact_id": "policy.key-rotation.data", "digest": "sha256:23456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef01", "media_type": "application/vnd.odeya.key-policy+json" },
-      "revocation_policy_ref": { "artifact_id": "policy.key-revocation.data", "digest": "sha256:3456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef012", "media_type": "application/vnd.odeya.key-policy+json" },
-      "compromise_policy_ref": { "artifact_id": "policy.key-compromise.data", "digest": "sha256:456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123", "media_type": "application/vnd.odeya.key-policy+json" },
-      "loss_policy_ref": { "artifact_id": "policy.key-loss.data", "digest": "sha256:56789abcdef0123456789abcdef0123456789abcdef0123456789abcdef01234", "media_type": "application/vnd.odeya.key-policy+json" },
-      "escrow_or_recovery_profile_ref": { "artifact_id": "profile.key-recovery.data", "digest": "sha256:6789abcdef0123456789abcdef0123456789abcdef0123456789abcdef012345", "media_type": "application/vnd.odeya.key-recovery-profile+json" },
-      "destruction_policy_ref": { "artifact_id": "policy.key-destruction.data", "digest": "sha256:789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456", "media_type": "application/vnd.odeya.key-policy+json" }
+      "activation_quorum": {
+        "threshold": 1,
+        "eligible_principal_count": 2,
+        "distinct_principals": true,
+        "forbidden_role_overlap": [
+          "untrusted-worker"
+        ]
+      },
+      "recovery_quorum": {
+        "threshold": 2,
+        "eligible_principal_count": 3,
+        "distinct_principals": true,
+        "forbidden_role_overlap": [
+          "ordinary-application-administrator"
+        ]
+      },
+      "overlap_policy_ref": {
+        "artifact_id": "policy.key-overlap.data",
+        "digest": "sha256:123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0",
+        "media_type": "application/vnd.odeya.key-policy+json"
+      },
+      "rotation_policy_ref": {
+        "artifact_id": "policy.key-rotation.data",
+        "digest": "sha256:23456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef01",
+        "media_type": "application/vnd.odeya.key-policy+json"
+      },
+      "revocation_policy_ref": {
+        "artifact_id": "policy.key-revocation.data",
+        "digest": "sha256:3456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef012",
+        "media_type": "application/vnd.odeya.key-policy+json"
+      },
+      "compromise_policy_ref": {
+        "artifact_id": "policy.key-compromise.data",
+        "digest": "sha256:456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123",
+        "media_type": "application/vnd.odeya.key-policy+json"
+      },
+      "loss_policy_ref": {
+        "artifact_id": "policy.key-loss.data",
+        "digest": "sha256:56789abcdef0123456789abcdef0123456789abcdef0123456789abcdef01234",
+        "media_type": "application/vnd.odeya.key-policy+json"
+      },
+      "escrow_or_recovery_profile_ref": {
+        "artifact_id": "profile.key-recovery.data",
+        "digest": "sha256:6789abcdef0123456789abcdef0123456789abcdef0123456789abcdef012345",
+        "media_type": "application/vnd.odeya.key-recovery-profile+json"
+      },
+      "destruction_policy_ref": {
+        "artifact_id": "policy.key-destruction.data",
+        "digest": "sha256:789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456",
+        "media_type": "application/vnd.odeya.key-policy+json"
+      }
     },
     {
       "key_class": "backup_encryption",
       "purpose_context": "odeya-backup-encryption-v1",
-      "allowed_operations": ["encrypt-backup-component", "decrypt-backup-in-isolated-recovery"],
-      "forbidden_operations": ["decrypt-live-data", "sign-backup-manifest", "authenticate-provider"],
-      "algorithm_profile_ref": { "artifact_id": "profile.encryption.backup", "digest": "sha256:89abcdef0123456789abcdef0123456789abcdef0123456789abcdef01234567", "media_type": "application/vnd.odeya.encryption-profile+json" },
-      "protection_profile_ref": { "artifact_id": "profile.protection.backup", "digest": "sha256:9abcdef0123456789abcdef0123456789abcdef0123456789abcdef012345678", "media_type": "application/vnd.odeya.key-protection-profile+json" },
+      "allowed_operations": [
+        "encrypt-backup-component",
+        "decrypt-backup-in-isolated-recovery"
+      ],
+      "forbidden_operations": [
+        "decrypt-live-data",
+        "sign-backup-manifest",
+        "authenticate-provider"
+      ],
+      "algorithm_profile_ref": {
+        "artifact_id": "profile.encryption.backup",
+        "digest": "sha256:89abcdef0123456789abcdef0123456789abcdef0123456789abcdef01234567",
+        "media_type": "application/vnd.odeya.encryption-profile+json"
+      },
+      "protection_profile_ref": {
+        "artifact_id": "profile.protection.backup",
+        "digest": "sha256:9abcdef0123456789abcdef0123456789abcdef0123456789abcdef012345678",
+        "media_type": "application/vnd.odeya.key-protection-profile+json"
+      },
       "exportability": "wrapped_export_under_quorum",
-      "activation_quorum": { "threshold": 1, "eligible_principal_count": 2, "distinct_principals": true, "forbidden_role_overlap": ["ordinary-application-administrator"] },
-      "recovery_quorum": { "threshold": 2, "eligible_principal_count": 3, "distinct_principals": true, "forbidden_role_overlap": ["backup-administrator", "ordinary-application-administrator"] },
-      "overlap_policy_ref": { "artifact_id": "policy.key-overlap.backup", "digest": "sha256:abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789", "media_type": "application/vnd.odeya.key-policy+json" },
-      "rotation_policy_ref": { "artifact_id": "policy.key-rotation.backup", "digest": "sha256:bcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789a", "media_type": "application/vnd.odeya.key-policy+json" },
-      "revocation_policy_ref": { "artifact_id": "policy.key-revocation.backup", "digest": "sha256:cdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789ab", "media_type": "application/vnd.odeya.key-policy+json" },
-      "compromise_policy_ref": { "artifact_id": "policy.key-compromise.backup", "digest": "sha256:def0123456789abcdef0123456789abcdef0123456789abcdef0123456789abc", "media_type": "application/vnd.odeya.key-policy+json" },
-      "loss_policy_ref": { "artifact_id": "policy.key-loss.backup", "digest": "sha256:ef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcd", "media_type": "application/vnd.odeya.key-policy+json" },
-      "escrow_or_recovery_profile_ref": { "artifact_id": "profile.key-recovery.backup", "digest": "sha256:f0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcde", "media_type": "application/vnd.odeya.key-recovery-profile+json" },
-      "destruction_policy_ref": { "artifact_id": "policy.key-destruction.backup", "digest": "sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef", "media_type": "application/vnd.odeya.key-policy+json" }
+      "activation_quorum": {
+        "threshold": 1,
+        "eligible_principal_count": 2,
+        "distinct_principals": true,
+        "forbidden_role_overlap": [
+          "ordinary-application-administrator"
+        ]
+      },
+      "recovery_quorum": {
+        "threshold": 2,
+        "eligible_principal_count": 3,
+        "distinct_principals": true,
+        "forbidden_role_overlap": [
+          "backup-administrator",
+          "ordinary-application-administrator"
+        ]
+      },
+      "overlap_policy_ref": {
+        "artifact_id": "policy.key-overlap.backup",
+        "digest": "sha256:abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789",
+        "media_type": "application/vnd.odeya.key-policy+json"
+      },
+      "rotation_policy_ref": {
+        "artifact_id": "policy.key-rotation.backup",
+        "digest": "sha256:bcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789a",
+        "media_type": "application/vnd.odeya.key-policy+json"
+      },
+      "revocation_policy_ref": {
+        "artifact_id": "policy.key-revocation.backup",
+        "digest": "sha256:cdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789ab",
+        "media_type": "application/vnd.odeya.key-policy+json"
+      },
+      "compromise_policy_ref": {
+        "artifact_id": "policy.key-compromise.backup",
+        "digest": "sha256:def0123456789abcdef0123456789abcdef0123456789abcdef0123456789abc",
+        "media_type": "application/vnd.odeya.key-policy+json"
+      },
+      "loss_policy_ref": {
+        "artifact_id": "policy.key-loss.backup",
+        "digest": "sha256:ef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcd",
+        "media_type": "application/vnd.odeya.key-policy+json"
+      },
+      "escrow_or_recovery_profile_ref": {
+        "artifact_id": "profile.key-recovery.backup",
+        "digest": "sha256:f0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcde",
+        "media_type": "application/vnd.odeya.key-recovery-profile+json"
+      },
+      "destruction_policy_ref": {
+        "artifact_id": "policy.key-destruction.backup",
+        "digest": "sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+        "media_type": "application/vnd.odeya.key-policy+json"
+      }
     },
     {
       "key_class": "provider_operational_credential",
       "purpose_context": "odeya-provider-operation-v1",
-      "allowed_operations": ["authenticate-exact-allowlisted-provider-action"],
-      "forbidden_operations": ["sign-canonical-record", "decrypt-backup", "sign-publication-manifest"],
-      "algorithm_profile_ref": { "artifact_id": "profile.credential.provider", "digest": "sha256:123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0", "media_type": "application/vnd.odeya.credential-profile+json" },
-      "protection_profile_ref": { "artifact_id": "profile.protection.provider", "digest": "sha256:23456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef01", "media_type": "application/vnd.odeya.key-protection-profile+json" },
+      "allowed_operations": [
+        "authenticate-exact-allowlisted-provider-action"
+      ],
+      "forbidden_operations": [
+        "sign-canonical-record",
+        "decrypt-backup",
+        "sign-publication-manifest"
+      ],
+      "algorithm_profile_ref": {
+        "artifact_id": "profile.credential.provider",
+        "digest": "sha256:123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0",
+        "media_type": "application/vnd.odeya.credential-profile+json"
+      },
+      "protection_profile_ref": {
+        "artifact_id": "profile.protection.provider",
+        "digest": "sha256:23456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef01",
+        "media_type": "application/vnd.odeya.key-protection-profile+json"
+      },
       "exportability": "exportable_under_policy",
-      "activation_quorum": { "threshold": 1, "eligible_principal_count": 2, "distinct_principals": true, "forbidden_role_overlap": ["untrusted-worker"] },
-      "recovery_quorum": { "threshold": 1, "eligible_principal_count": 2, "distinct_principals": true, "forbidden_role_overlap": ["untrusted-worker"] },
-      "overlap_policy_ref": { "artifact_id": "policy.key-overlap.provider", "digest": "sha256:3456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef012", "media_type": "application/vnd.odeya.key-policy+json" },
-      "rotation_policy_ref": { "artifact_id": "policy.key-rotation.provider", "digest": "sha256:456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123", "media_type": "application/vnd.odeya.key-policy+json" },
-      "revocation_policy_ref": { "artifact_id": "policy.key-revocation.provider", "digest": "sha256:56789abcdef0123456789abcdef0123456789abcdef0123456789abcdef01234", "media_type": "application/vnd.odeya.key-policy+json" },
-      "compromise_policy_ref": { "artifact_id": "policy.key-compromise.provider", "digest": "sha256:6789abcdef0123456789abcdef0123456789abcdef0123456789abcdef012345", "media_type": "application/vnd.odeya.key-policy+json" },
-      "loss_policy_ref": { "artifact_id": "policy.key-loss.provider", "digest": "sha256:789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456", "media_type": "application/vnd.odeya.key-policy+json" },
-      "escrow_or_recovery_profile_ref": { "artifact_id": "profile.key-recovery.provider", "digest": "sha256:89abcdef0123456789abcdef0123456789abcdef0123456789abcdef01234567", "media_type": "application/vnd.odeya.key-recovery-profile+json" },
-      "destruction_policy_ref": { "artifact_id": "policy.key-destruction.provider", "digest": "sha256:9abcdef0123456789abcdef0123456789abcdef0123456789abcdef012345678", "media_type": "application/vnd.odeya.key-policy+json" }
+      "activation_quorum": {
+        "threshold": 1,
+        "eligible_principal_count": 2,
+        "distinct_principals": true,
+        "forbidden_role_overlap": [
+          "untrusted-worker"
+        ]
+      },
+      "recovery_quorum": {
+        "threshold": 1,
+        "eligible_principal_count": 2,
+        "distinct_principals": true,
+        "forbidden_role_overlap": [
+          "untrusted-worker"
+        ]
+      },
+      "overlap_policy_ref": {
+        "artifact_id": "policy.key-overlap.provider",
+        "digest": "sha256:3456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef012",
+        "media_type": "application/vnd.odeya.key-policy+json"
+      },
+      "rotation_policy_ref": {
+        "artifact_id": "policy.key-rotation.provider",
+        "digest": "sha256:456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123",
+        "media_type": "application/vnd.odeya.key-policy+json"
+      },
+      "revocation_policy_ref": {
+        "artifact_id": "policy.key-revocation.provider",
+        "digest": "sha256:56789abcdef0123456789abcdef0123456789abcdef0123456789abcdef01234",
+        "media_type": "application/vnd.odeya.key-policy+json"
+      },
+      "compromise_policy_ref": {
+        "artifact_id": "policy.key-compromise.provider",
+        "digest": "sha256:6789abcdef0123456789abcdef0123456789abcdef0123456789abcdef012345",
+        "media_type": "application/vnd.odeya.key-policy+json"
+      },
+      "loss_policy_ref": {
+        "artifact_id": "policy.key-loss.provider",
+        "digest": "sha256:789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456",
+        "media_type": "application/vnd.odeya.key-policy+json"
+      },
+      "escrow_or_recovery_profile_ref": {
+        "artifact_id": "profile.key-recovery.provider",
+        "digest": "sha256:89abcdef0123456789abcdef0123456789abcdef0123456789abcdef01234567",
+        "media_type": "application/vnd.odeya.key-recovery-profile+json"
+      },
+      "destruction_policy_ref": {
+        "artifact_id": "policy.key-destruction.provider",
+        "digest": "sha256:9abcdef0123456789abcdef0123456789abcdef0123456789abcdef012345678",
+        "media_type": "application/vnd.odeya.key-policy+json"
+      }
     }
   ],
   "separation_constraints": [
@@ -182,10 +638,22 @@
     }
   ],
   "algorithm_agility": {
-    "approved_algorithm_registry_ref": { "artifact_id": "registry.algorithms.1", "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "media_type": "application/vnd.odeya.algorithm-registry+json" },
-    "deprecation_policy_ref": { "artifact_id": "policy.algorithm-deprecation.1", "digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "media_type": "application/vnd.odeya.crypto-policy+json" },
+    "approved_algorithm_registry_ref": {
+      "artifact_id": "registry.algorithms.1",
+      "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "media_type": "application/vnd.odeya.algorithm-registry+json"
+    },
+    "deprecation_policy_ref": {
+      "artifact_id": "policy.algorithm-deprecation.1",
+      "digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "media_type": "application/vnd.odeya.crypto-policy+json"
+    },
     "migration_requires_resigning_old_subjects": false,
-    "historical_verification_policy_ref": { "artifact_id": "policy.historical-signature-verification.1", "digest": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "media_type": "application/vnd.odeya.crypto-policy+json" }
+    "historical_verification_policy_ref": {
+      "artifact_id": "policy.historical-signature-verification.1",
+      "digest": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "media_type": "application/vnd.odeya.crypto-policy+json"
+    }
   },
   "review_evidence_refs": [],
   "key_material_embedded": false,

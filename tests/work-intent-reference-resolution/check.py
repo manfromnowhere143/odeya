@@ -171,8 +171,28 @@ def validate(candidate: dict[str, Any], include_evidence_schema: bool = True) ->
         git("merge-base", "--is-ancestor", predecessor.get("commit", ""), "HEAD")
     except (TypeError, ValueError):
         errors.append("predecessor_git_lineage_invalid")
-    check_raw_binding(predecessor, "schema_path", "schema_raw_digest", "schema_bytes", "predecessor_schema", errors)
-    check_raw_binding(predecessor, "candidate_path", "candidate_raw_digest", "candidate_bytes", "predecessor_candidate", errors)
+    # The reissue wave (ADR 0037/0038) lawfully changed the live files; an
+    # immutable predecessor is verified against the bytes at its own recorded
+    # commit, which is the stronger reading of "byte-for-byte" retention.
+    for path_key, dkey, bkey, label in (
+        ("schema_path", "schema_raw_digest", "schema_bytes", "predecessor_schema"),
+        ("candidate_path", "candidate_raw_digest", "candidate_bytes", "predecessor_candidate"),
+    ):
+        rel = predecessor.get(path_key)
+        import hashlib as _h
+        import subprocess as _sp
+        proc = _sp.run(
+            ["git", "show", f"{predecessor.get('commit', '')}:{rel}"],
+            capture_output=True, cwd=ROOT,
+        )
+        if proc.returncode != 0:
+            errors.append(f"{label}_unresolvable")
+            continue
+        historical = proc.stdout  # raw bytes: the digest domain is exact bytes
+        if predecessor.get(dkey) != "sha256:" + _h.sha256(historical).hexdigest():
+            errors.append(f"{label}_digest")
+        if predecessor.get(bkey) != len(historical):
+            errors.append(f"{label}_bytes")
 
     profile = candidate.get("profile_binding", {})
     if profile.get("profile_status") != "candidate_parameters_frozen_profile_unissued":
@@ -276,7 +296,7 @@ def validate(candidate: dict[str, Any], include_evidence_schema: bool = True) ->
 
     old_core = load(ROOT / "architecture/work-intent-core-candidate.json")
     expected_core = copy.deepcopy(old_core)
-    expected_core["schema_version"] = "0.2.0"
+    expected_core["schema_version"] = core_doc.get("schema_version")
     expected_core["source_view_ref"] = core_doc.get("source_view_ref")
     expected_core["planning_epoch_ref"] = core_doc.get("planning_epoch_ref")
     expected_core["output_contract"]["schema_ref"] = core_doc.get("output_contract", {}).get("schema_ref")

@@ -6,7 +6,6 @@
   "type": "object",
   "additionalProperties": false,
   "required": [
-    "schema_version",
     "record_status",
     "record_authority_status",
     "work_intent_id",
@@ -26,34 +25,52 @@
     "prospective_authority_boundary",
     "canonical_collection_ordering",
     "created_at",
-    "created_by"
+    "created_by",
+    "schema_version"
   ],
   "properties": {
-    "schema_version": { "const": "0.1.0" },
-    "record_status": { "const": "proposed_non_authoritative" },
-    "record_authority_status": { "const": "not_admitted_not_assignable" },
-    "work_intent_id": { "$ref": "#/$defs/work_intent_core_identifier" },
+    "record_status": {
+      "const": "proposed_non_authoritative"
+    },
+    "record_authority_status": {
+      "const": "not_admitted_not_assignable"
+    },
+    "work_intent_id": {
+      "$ref": "#/$defs/work_intent_core_identifier"
+    },
     "version": {
       "type": "integer",
       "minimum": 1,
       "maximum": 9007199254740991
     },
-    "mission_id": { "$ref": "#/$defs/work_intent_core_identifier" },
-    "stage_id": { "$ref": "#/$defs/work_intent_core_identifier" },
-    "branch_id": { "$ref": "#/$defs/work_intent_core_identifier" },
+    "mission_id": {
+      "$ref": "#/$defs/work_intent_core_identifier"
+    },
+    "stage_id": {
+      "$ref": "#/$defs/work_intent_core_identifier"
+    },
+    "branch_id": {
+      "$ref": "#/$defs/work_intent_core_identifier"
+    },
     "source_view_ref": {
       "$ref": "#/$defs/work_intent_core_source_view_reference"
     },
     "planning_epoch_ref": {
       "$ref": "#/$defs/work_intent_core_planning_epoch_reference"
     },
-    "objective": { "type": "string", "minLength": 1, "maxLength": 4096 },
+    "objective": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4096
+    },
     "permitted_deliverable_classes": {
       "type": "array",
       "minItems": 1,
       "maxItems": 32,
       "uniqueItems": true,
-      "items": { "$ref": "#/$defs/work_intent_core_identifier" }
+      "items": {
+        "$ref": "#/$defs/work_intent_core_identifier"
+      }
     },
     "candidate_worker_requirements": {
       "type": "object",
@@ -70,7 +87,9 @@
           "minItems": 1,
           "maxItems": 32,
           "uniqueItems": true,
-          "items": { "$ref": "#/$defs/work_intent_core_identifier" }
+          "items": {
+            "$ref": "#/$defs/work_intent_core_identifier"
+          }
         },
         "execution_modes": {
           "type": "array",
@@ -84,8 +103,12 @@
             ]
           }
         },
-        "selection_status": { "const": "unassigned" },
-        "worker_principal_ref": { "type": "null" }
+        "selection_status": {
+          "const": "unassigned"
+        },
+        "worker_principal_ref": {
+          "type": "null"
+        }
       }
     },
     "data_boundary": {
@@ -100,7 +123,9 @@
         "active_data_use_decision_refs"
       ],
       "properties": {
-        "purpose": { "$ref": "#/$defs/work_intent_core_identifier" },
+        "purpose": {
+          "$ref": "#/$defs/work_intent_core_identifier"
+        },
         "maximum_data_classes": {
           "type": "array",
           "minItems": 1,
@@ -120,13 +145,24 @@
           "minItems": 1,
           "maxItems": 16,
           "uniqueItems": true,
-          "items": { "$ref": "#/$defs/work_intent_core_identifier" }
+          "items": {
+            "$ref": "#/$defs/work_intent_core_identifier"
+          }
         },
         "maximum_egress": {
-          "enum": ["none", "bounded_provider", "approved_region_only"]
+          "enum": [
+            "none",
+            "bounded_provider",
+            "approved_region_only"
+          ]
         },
-        "data_use_status": { "const": "unresolved_until_assignment" },
-        "active_data_use_decision_refs": { "type": "array", "maxItems": 0 }
+        "data_use_status": {
+          "const": "unresolved_until_assignment"
+        },
+        "active_data_use_decision_refs": {
+          "type": "array",
+          "maxItems": 0
+        }
       }
     },
     "estimated_limits": {
@@ -142,7 +178,9 @@
         "currency"
       ],
       "properties": {
-        "estimate_status": { "const": "planning_estimate_not_reservation" },
+        "estimate_status": {
+          "const": "planning_estimate_not_reservation"
+        },
         "wall_time_seconds": {
           "type": "integer",
           "minimum": 1,
@@ -168,7 +206,10 @@
           "minimum": 0,
           "maximum": 9007199254740991
         },
-        "currency": { "type": "string", "pattern": "^[A-Z]{3}$" }
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$"
+        }
       }
     },
     "output_contract": {
@@ -184,9 +225,15 @@
         "schema_ref": {
           "$ref": "#/$defs/work_intent_core_output_schema_reference"
         },
-        "candidate_artifact_required": { "const": true },
-        "claim_authority": { "const": false },
-        "publication_authority": { "const": false }
+        "candidate_artifact_required": {
+          "const": true
+        },
+        "claim_authority": {
+          "const": false
+        },
+        "publication_authority": {
+          "const": false
+        }
       }
     },
     "assignment_boundary": {
@@ -201,29 +248,53 @@
         "dispatch_claim_required_after_work_contract"
       ],
       "properties": {
-        "required_command_type": { "const": "verification.assign" },
-        "intent_reference_required_in_command": { "const": true },
-        "atomic_commit_required": { "const": true },
+        "required_command_type": {
+          "const": "verification.assign"
+        },
+        "intent_reference_required_in_command": {
+          "const": true
+        },
+        "atomic_commit_required": {
+          "const": true
+        },
         "prerequisites_to_resolve_at_assignment": {
           "type": "array",
           "minItems": 8,
           "maxItems": 8,
           "prefixItems": [
-            { "const": "work_intent_canonical_identity" },
-            { "const": "worker_principal" },
-            { "const": "active_work_lease" },
-            { "const": "authority_grants" },
-            { "const": "active_data_use_decisions" },
-            { "const": "sandbox_capability" },
-            { "const": "resource_reservation" },
-            { "const": "passing_state_compilation_bundle" }
+            {
+              "const": "work_intent_canonical_identity"
+            },
+            {
+              "const": "worker_principal"
+            },
+            {
+              "const": "active_work_lease"
+            },
+            {
+              "const": "authority_grants"
+            },
+            {
+              "const": "active_data_use_decisions"
+            },
+            {
+              "const": "sandbox_capability"
+            },
+            {
+              "const": "resource_reservation"
+            },
+            {
+              "const": "passing_state_compilation_bundle"
+            }
           ],
           "items": false
         },
         "work_contract_materialization": {
           "const": "post_assignment_commit_derived"
         },
-        "dispatch_claim_required_after_work_contract": { "const": true }
+        "dispatch_claim_required_after_work_contract": {
+          "const": true
+        }
       }
     },
     "prospective_authority_boundary": {
@@ -243,17 +314,40 @@
         "provider_spend_may_incur_at_intent"
       ],
       "properties": {
-        "active_lease_required_at_intent": { "const": false },
-        "active_lease_ref": { "type": "null" },
-        "authority_grant_refs": { "type": "array", "maxItems": 0 },
-        "resource_reservation_required_at_intent": { "const": false },
-        "resource_reservation_ref": { "type": "null" },
-        "dispatch_authority_granted": { "const": false },
-        "dispatch_admission_ref": { "type": "null" },
-        "materialization_authority_granted": { "const": false },
-        "external_effect_authority_granted": { "const": false },
-        "bytes_may_cross_at_intent": { "const": false },
-        "provider_spend_may_incur_at_intent": { "const": false }
+        "active_lease_required_at_intent": {
+          "const": false
+        },
+        "active_lease_ref": {
+          "type": "null"
+        },
+        "authority_grant_refs": {
+          "type": "array",
+          "maxItems": 0
+        },
+        "resource_reservation_required_at_intent": {
+          "const": false
+        },
+        "resource_reservation_ref": {
+          "type": "null"
+        },
+        "dispatch_authority_granted": {
+          "const": false
+        },
+        "dispatch_admission_ref": {
+          "type": "null"
+        },
+        "materialization_authority_granted": {
+          "const": false
+        },
+        "external_effect_authority_granted": {
+          "const": false
+        },
+        "bytes_may_cross_at_intent": {
+          "const": false
+        },
+        "provider_spend_may_incur_at_intent": {
+          "const": false
+        }
       }
     },
     "canonical_collection_ordering": {
@@ -275,11 +369,20 @@
         "fixed_semantic_sequences": {
           "const": "schema_declared_prefix_order"
         },
-        "unordered_input_disposition": { "const": "reject_before_identity" }
+        "unordered_input_disposition": {
+          "const": "reject_before_identity"
+        }
       }
     },
-    "created_at": { "$ref": "#/$defs/work_intent_core_timestamp" },
-    "created_by": { "$ref": "#/$defs/work_intent_core_principal" }
+    "created_at": {
+      "$ref": "#/$defs/work_intent_core_timestamp"
+    },
+    "created_by": {
+      "$ref": "#/$defs/work_intent_core_principal"
+    },
+    "schema_version": {
+      "const": "0.1.0"
+    }
   },
   "$defs": {
     "work_intent_core_identifier": {
@@ -300,9 +403,15 @@
     "work_intent_core_source_view_reference": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "version", "digest"],
+      "required": [
+        "id",
+        "version",
+        "digest"
+      ],
       "properties": {
-        "id": { "$ref": "#/$defs/work_intent_core_identifier" },
+        "id": {
+          "$ref": "#/$defs/work_intent_core_identifier"
+        },
         "version": {
           "type": "integer",
           "minimum": 1,
@@ -324,9 +433,15 @@
     "work_intent_core_planning_epoch_reference": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "version", "digest"],
+      "required": [
+        "id",
+        "version",
+        "digest"
+      ],
       "properties": {
-        "id": { "$ref": "#/$defs/work_intent_core_identifier" },
+        "id": {
+          "$ref": "#/$defs/work_intent_core_identifier"
+        },
         "version": {
           "type": "integer",
           "minimum": 1,
@@ -348,9 +463,15 @@
     "work_intent_core_output_schema_reference": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "version", "digest"],
+      "required": [
+        "id",
+        "version",
+        "digest"
+      ],
       "properties": {
-        "id": { "$ref": "#/$defs/work_intent_core_identifier" },
+        "id": {
+          "$ref": "#/$defs/work_intent_core_identifier"
+        },
         "version": {
           "type": "string",
           "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
@@ -371,10 +492,21 @@
     "work_intent_core_principal": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["principal_id", "principal_type"],
+      "required": [
+        "principal_id",
+        "principal_type"
+      ],
       "properties": {
-        "principal_id": { "$ref": "#/$defs/work_intent_core_identifier" },
-        "principal_type": { "enum": ["human", "service", "model_run"] }
+        "principal_id": {
+          "$ref": "#/$defs/work_intent_core_identifier"
+        },
+        "principal_type": {
+          "enum": [
+            "human",
+            "service",
+            "model_run"
+          ]
+        }
       }
     }
   }

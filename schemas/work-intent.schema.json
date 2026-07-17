@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:work-intent:0.1.0",
+  "$id": "urn:odeya:schema:work-intent:0.4.0",
   "title": "Odeya WorkIntent",
   "description": "A closed immutable prospective statement that bounded work may be useful. It is created before verification.assign and deliberately carries no active lease, grant, reservation, materialization, dispatch, external-effect, or spend authority. Current assignment facts are selected only by the later atomic verification.assign commit; a WorkContract is derived after that commit and still requires a separate dispatch claim.",
   "type": "object",
@@ -32,26 +32,59 @@
     "created_by"
   ],
   "properties": {
-    "schema_version": { "const": "0.1.0" },
-    "record_status": { "const": "proposed_non_authoritative" },
-    "identity_resolution_status": { "const": "unresolved_blocking" },
-    "canonicalization_profile_ref": { "type": "null" },
-    "canonical_digest": { "type": "null" },
-    "record_authority_status": { "const": "not_admitted_not_assignable" },
-    "work_intent_id": { "$ref": "#/$defs/identifier" },
-    "version": { "type": "integer", "minimum": 1 },
-    "mission_id": { "$ref": "#/$defs/identifier" },
-    "stage_id": { "$ref": "#/$defs/identifier" },
-    "branch_id": { "$ref": "#/$defs/identifier" },
-    "source_view_ref": { "$ref": "#/$defs/immutable_reference" },
-    "planning_epoch_ref": { "$ref": "#/$defs/immutable_reference" },
-    "objective": { "type": "string", "minLength": 1, "maxLength": 4096 },
+    "schema_version": {
+      "const": "0.4.0"
+    },
+    "record_status": {
+      "const": "proposed_non_authoritative"
+    },
+    "identity_resolution_status": {
+      "const": "unresolved_blocking"
+    },
+    "canonicalization_profile_ref": {
+      "type": "null"
+    },
+    "canonical_digest": {
+      "type": "null"
+    },
+    "record_authority_status": {
+      "const": "not_admitted_not_assignable"
+    },
+    "work_intent_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "mission_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "stage_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "branch_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "source_view_ref": {
+      "$ref": "#/$defs/immutable_reference"
+    },
+    "planning_epoch_ref": {
+      "$ref": "#/$defs/immutable_reference"
+    },
+    "objective": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4096
+    },
     "permitted_deliverable_classes": {
       "type": "array",
       "minItems": 1,
       "maxItems": 32,
       "uniqueItems": true,
-      "items": { "$ref": "#/$defs/identifier" }
+      "items": {
+        "$ref": "#/$defs/identifier"
+      }
     },
     "candidate_worker_requirements": {
       "type": "object",
@@ -68,17 +101,28 @@
           "minItems": 1,
           "maxItems": 32,
           "uniqueItems": true,
-          "items": { "$ref": "#/$defs/identifier" }
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
         },
         "execution_modes": {
           "type": "array",
           "minItems": 1,
           "maxItems": 2,
           "uniqueItems": true,
-          "items": { "enum": ["local_isolated_worker", "governed_external_processing"] }
+          "items": {
+            "enum": [
+              "local_isolated_worker",
+              "governed_external_processing"
+            ]
+          }
         },
-        "selection_status": { "const": "unassigned" },
-        "worker_principal_ref": { "type": "null" }
+        "selection_status": {
+          "const": "unassigned"
+        },
+        "worker_principal_ref": {
+          "type": "null"
+        }
       }
     },
     "data_boundary": {
@@ -93,24 +137,46 @@
         "active_data_use_decision_refs"
       ],
       "properties": {
-        "purpose": { "$ref": "#/$defs/identifier" },
+        "purpose": {
+          "$ref": "#/$defs/identifier"
+        },
         "maximum_data_classes": {
           "type": "array",
           "minItems": 1,
           "maxItems": 4,
           "uniqueItems": true,
-          "items": { "enum": ["public", "internal", "confidential", "restricted_allowed"] }
+          "items": {
+            "enum": [
+              "public",
+              "internal",
+              "confidential",
+              "restricted_allowed"
+            ]
+          }
         },
         "allowed_residencies": {
           "type": "array",
           "minItems": 1,
           "maxItems": 16,
           "uniqueItems": true,
-          "items": { "$ref": "#/$defs/identifier" }
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
         },
-        "maximum_egress": { "enum": ["none", "bounded_provider", "approved_region_only"] },
-        "data_use_status": { "const": "unresolved_until_assignment" },
-        "active_data_use_decision_refs": { "type": "array", "maxItems": 0 }
+        "maximum_egress": {
+          "enum": [
+            "none",
+            "bounded_provider",
+            "approved_region_only"
+          ]
+        },
+        "data_use_status": {
+          "const": "unresolved_until_assignment"
+        },
+        "active_data_use_decision_refs": {
+          "type": "array",
+          "maxItems": 0
+        }
       }
     },
     "estimated_limits": {
@@ -126,13 +192,33 @@
         "currency"
       ],
       "properties": {
-        "estimate_status": { "const": "planning_estimate_not_reservation" },
-        "wall_time_seconds": { "type": "integer", "minimum": 1 },
-        "model_input_tokens": { "type": "integer", "minimum": 0 },
-        "model_output_tokens": { "type": "integer", "minimum": 0 },
-        "network_egress_bytes": { "type": "integer", "minimum": 0 },
-        "spend_minor_units": { "type": "integer", "minimum": 0 },
-        "currency": { "type": "string", "pattern": "^[A-Z]{3}$" }
+        "estimate_status": {
+          "const": "planning_estimate_not_reservation"
+        },
+        "wall_time_seconds": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "model_input_tokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "model_output_tokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "network_egress_bytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "spend_minor_units": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$"
+        }
       }
     },
     "output_contract": {
@@ -145,10 +231,18 @@
         "publication_authority"
       ],
       "properties": {
-        "schema_ref": { "$ref": "#/$defs/versioned_reference" },
-        "candidate_artifact_required": { "const": true },
-        "claim_authority": { "const": false },
-        "publication_authority": { "const": false }
+        "schema_ref": {
+          "$ref": "#/$defs/versioned_reference"
+        },
+        "candidate_artifact_required": {
+          "const": true
+        },
+        "claim_authority": {
+          "const": false
+        },
+        "publication_authority": {
+          "const": false
+        }
       }
     },
     "assignment_boundary": {
@@ -163,27 +257,53 @@
         "dispatch_claim_required_after_work_contract"
       ],
       "properties": {
-        "required_command_type": { "const": "verification.assign" },
-        "intent_reference_required_in_command": { "const": true },
-        "atomic_commit_required": { "const": true },
+        "required_command_type": {
+          "const": "verification.assign"
+        },
+        "intent_reference_required_in_command": {
+          "const": true
+        },
+        "atomic_commit_required": {
+          "const": true
+        },
         "prerequisites_to_resolve_at_assignment": {
           "type": "array",
           "minItems": 8,
           "maxItems": 8,
           "prefixItems": [
-            { "const": "work_intent_canonical_identity" },
-            { "const": "worker_principal" },
-            { "const": "active_work_lease" },
-            { "const": "authority_grants" },
-            { "const": "active_data_use_decisions" },
-            { "const": "sandbox_capability" },
-            { "const": "resource_reservation" },
-            { "const": "passing_state_compilation_bundle" }
+            {
+              "const": "work_intent_canonical_identity"
+            },
+            {
+              "const": "worker_principal"
+            },
+            {
+              "const": "active_work_lease"
+            },
+            {
+              "const": "authority_grants"
+            },
+            {
+              "const": "active_data_use_decisions"
+            },
+            {
+              "const": "sandbox_capability"
+            },
+            {
+              "const": "resource_reservation"
+            },
+            {
+              "const": "passing_state_compilation_bundle"
+            }
           ],
           "items": false
         },
-        "work_contract_materialization": { "const": "post_assignment_commit_derived" },
-        "dispatch_claim_required_after_work_contract": { "const": true }
+        "work_contract_materialization": {
+          "const": "post_assignment_commit_derived"
+        },
+        "dispatch_claim_required_after_work_contract": {
+          "const": true
+        }
       }
     },
     "prospective_authority_boundary": {
@@ -203,17 +323,40 @@
         "provider_spend_may_incur_at_intent"
       ],
       "properties": {
-        "active_lease_required_at_intent": { "const": false },
-        "active_lease_ref": { "type": "null" },
-        "authority_grant_refs": { "type": "array", "maxItems": 0 },
-        "resource_reservation_required_at_intent": { "const": false },
-        "resource_reservation_ref": { "type": "null" },
-        "dispatch_authority_granted": { "const": false },
-        "dispatch_admission_ref": { "type": "null" },
-        "materialization_authority_granted": { "const": false },
-        "external_effect_authority_granted": { "const": false },
-        "bytes_may_cross_at_intent": { "const": false },
-        "provider_spend_may_incur_at_intent": { "const": false }
+        "active_lease_required_at_intent": {
+          "const": false
+        },
+        "active_lease_ref": {
+          "type": "null"
+        },
+        "authority_grant_refs": {
+          "type": "array",
+          "maxItems": 0
+        },
+        "resource_reservation_required_at_intent": {
+          "const": false
+        },
+        "resource_reservation_ref": {
+          "type": "null"
+        },
+        "dispatch_authority_granted": {
+          "const": false
+        },
+        "dispatch_admission_ref": {
+          "type": "null"
+        },
+        "materialization_authority_granted": {
+          "const": false
+        },
+        "external_effect_authority_granted": {
+          "const": false
+        },
+        "bytes_may_cross_at_intent": {
+          "const": false
+        },
+        "provider_spend_may_incur_at_intent": {
+          "const": false
+        }
       }
     },
     "canonical_collection_ordering": {
@@ -226,14 +369,26 @@
         "unordered_input_disposition"
       ],
       "properties": {
-        "set_like_string_arrays": { "const": "unicode_codepoint_ascending" },
-        "reference_arrays": { "const": "id_then_version_then_digest_ascending" },
-        "fixed_semantic_sequences": { "const": "schema_declared_prefix_order" },
-        "unordered_input_disposition": { "const": "reject_before_identity" }
+        "set_like_string_arrays": {
+          "const": "unicode_codepoint_ascending"
+        },
+        "reference_arrays": {
+          "const": "id_then_version_then_digest_ascending"
+        },
+        "fixed_semantic_sequences": {
+          "const": "schema_declared_prefix_order"
+        },
+        "unordered_input_disposition": {
+          "const": "reject_before_identity"
+        }
       }
     },
-    "created_at": { "$ref": "#/$defs/timestamp" },
-    "created_by": { "$ref": "#/$defs/principal" }
+    "created_at": {
+      "$ref": "#/$defs/timestamp"
+    },
+    "created_by": {
+      "$ref": "#/$defs/principal"
+    }
   },
   "$defs": {
     "identifier": {
@@ -248,35 +403,69 @@
     },
     "timestamp": {
       "type": "string",
-      "format": "date-time"
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
     },
     "immutable_reference": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "version", "digest"],
+      "required": [
+        "id",
+        "version",
+        "digest"
+      ],
       "properties": {
-        "id": { "$ref": "#/$defs/identifier" },
-        "version": { "type": "integer", "minimum": 1 },
-        "digest": { "$ref": "#/$defs/digest" }
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        }
       }
     },
     "versioned_reference": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "version", "digest"],
+      "required": [
+        "id",
+        "version",
+        "digest"
+      ],
       "properties": {
-        "id": { "$ref": "#/$defs/identifier" },
-        "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
-        "digest": { "$ref": "#/$defs/digest" }
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        }
       }
     },
     "principal": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["principal_id", "principal_type"],
+      "required": [
+        "principal_id",
+        "principal_type"
+      ],
       "properties": {
-        "principal_id": { "$ref": "#/$defs/identifier" },
-        "principal_type": { "enum": ["human", "service", "model_run"] }
+        "principal_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "principal_type": {
+          "enum": [
+            "human",
+            "service",
+            "model_run"
+          ]
+        }
       }
     }
   }

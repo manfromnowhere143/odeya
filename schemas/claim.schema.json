@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:claim-version:0.3.0",
+  "$id": "urn:odeya:schema:claim-version:0.4.0",
   "title": "Odeya ClaimVersion",
   "description": "An immutable semantic claim version compiled from a proposal and an adjudication. Operational, verification, replication, transport, and publication state remain separate aggregates and are referenced rather than embedded.",
   "type": "object",
@@ -30,7 +30,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.3.0"
+      "const": "0.4.0"
     },
     "claim_id": {
       "$ref": "#/$defs/identifier"
@@ -43,15 +43,23 @@
       "$ref": "#/$defs/identifier"
     },
     "version_kind": {
-      "enum": ["initial", "correction", "retraction_notice"]
+      "enum": [
+        "initial",
+        "correction",
+        "retraction_notice"
+      ]
     },
     "proposal_id": {
       "$ref": "#/$defs/identifier"
     },
     "adjudication_id": {
       "oneOf": [
-        { "$ref": "#/$defs/identifier" },
-        { "type": "null" }
+        {
+          "$ref": "#/$defs/identifier"
+        },
+        {
+          "type": "null"
+        }
       ]
     },
     "protocol_digest": {
@@ -69,8 +77,12 @@
     },
     "scientific_outcome": {
       "oneOf": [
-        { "$ref": "#/$defs/scientific_outcome" },
-        { "type": "null" }
+        {
+          "$ref": "#/$defs/scientific_outcome"
+        },
+        {
+          "type": "null"
+        }
       ]
     },
     "eligibility": {
@@ -98,14 +110,22 @@
     },
     "supersedes": {
       "oneOf": [
-        { "$ref": "#/$defs/claim_reference" },
-        { "type": "null" }
+        {
+          "$ref": "#/$defs/claim_reference"
+        },
+        {
+          "type": "null"
+        }
       ]
     },
     "change_reason": {
       "oneOf": [
-        { "$ref": "#/$defs/artifact_reference" },
-        { "type": "null" }
+        {
+          "$ref": "#/$defs/artifact_reference"
+        },
+        {
+          "type": "null"
+        }
       ]
     },
     "compiled_at_ledger_position": {
@@ -114,7 +134,8 @@
     },
     "created_at": {
       "type": "string",
-      "format": "date-time"
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
     },
     "created_by": {
       "$ref": "#/$defs/principal"
@@ -124,48 +145,80 @@
     {
       "if": {
         "properties": {
-          "version_kind": { "const": "initial" }
+          "version_kind": {
+            "const": "initial"
+          }
         },
-        "required": ["version_kind"]
+        "required": [
+          "version_kind"
+        ]
       },
       "then": {
         "properties": {
-          "version": { "const": 1 },
-          "supersedes": { "type": "null" },
-          "change_reason": { "type": "null" }
+          "version": {
+            "const": 1
+          },
+          "supersedes": {
+            "type": "null"
+          },
+          "change_reason": {
+            "type": "null"
+          }
         }
       },
       "else": {
         "properties": {
-          "version": { "minimum": 2 },
-          "supersedes": { "$ref": "#/$defs/claim_reference" },
-          "change_reason": { "$ref": "#/$defs/artifact_reference" }
+          "version": {
+            "minimum": 2
+          },
+          "supersedes": {
+            "$ref": "#/$defs/claim_reference"
+          },
+          "change_reason": {
+            "$ref": "#/$defs/artifact_reference"
+          }
         }
       }
     },
     {
       "if": {
         "properties": {
-          "version_kind": { "const": "retraction_notice" }
+          "version_kind": {
+            "const": "retraction_notice"
+          }
         },
-        "required": ["version_kind"]
+        "required": [
+          "version_kind"
+        ]
       },
       "then": {
         "properties": {
-          "adjudication_id": { "type": "null" },
-          "scientific_outcome": { "type": "null" },
+          "adjudication_id": {
+            "type": "null"
+          },
+          "scientific_outcome": {
+            "type": "null"
+          },
           "eligibility": {
             "properties": {
-              "status": { "const": "ineligible" },
-              "eligible_language": { "maxItems": 0 }
+              "status": {
+                "const": "ineligible"
+              },
+              "eligible_language": {
+                "maxItems": 0
+              }
             }
           }
         }
       },
       "else": {
         "properties": {
-          "adjudication_id": { "$ref": "#/$defs/identifier" },
-          "scientific_outcome": { "$ref": "#/$defs/scientific_outcome" }
+          "adjudication_id": {
+            "$ref": "#/$defs/identifier"
+          },
+          "scientific_outcome": {
+            "$ref": "#/$defs/scientific_outcome"
+          }
         }
       }
     },
@@ -174,49 +227,43 @@
         "properties": {
           "eligibility": {
             "properties": {
-              "status": { "const": "eligible" }
+              "status": {
+                "const": "eligible"
+              }
             },
-            "required": ["status"]
+            "required": [
+              "status"
+            ]
           }
         },
-        "required": ["eligibility"]
-      },
-      "then": {
-        "properties": {
-          "evidence_edges": { "minItems": 1 },
-          "verification_run_ids": { "minItems": 1 },
-          "eligibility": {
-            "properties": {
-              "eligible_language": { "minItems": 1 }
-            }
-          }
-        }
-      },
-      "else": {
-        "properties": {
-          "eligibility": {
-            "properties": {
-              "eligible_language": { "maxItems": 0 }
-            }
-          }
-        }
-      }
-    },
-    {
-      "if": {
-        "properties": {
-          "scientific_outcome": { "const": "supported_within_scope" }
-        },
-        "required": ["scientific_outcome"]
+        "required": [
+          "eligibility"
+        ]
       },
       "then": {
         "properties": {
           "evidence_edges": {
-            "contains": {
-              "properties": {
-                "relation": { "const": "supports" }
-              },
-              "required": ["relation"]
+            "minItems": 1
+          },
+          "verification_run_ids": {
+            "minItems": 1
+          },
+          "eligibility": {
+            "properties": {
+              "eligible_language": {
+                "minItems": 1
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "eligibility": {
+            "properties": {
+              "eligible_language": {
+                "maxItems": 0
+              }
             }
           }
         }
@@ -226,19 +273,59 @@
       "if": {
         "properties": {
           "scientific_outcome": {
-            "enum": ["contradicted", "falsified"]
+            "const": "supported_within_scope"
           }
         },
-        "required": ["scientific_outcome"]
+        "required": [
+          "scientific_outcome"
+        ]
       },
       "then": {
         "properties": {
           "evidence_edges": {
             "contains": {
               "properties": {
-                "relation": { "enum": ["contradicts", "falsifies"] }
+                "relation": {
+                  "const": "supports"
+                }
               },
-              "required": ["relation"]
+              "required": [
+                "relation"
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "scientific_outcome": {
+            "enum": [
+              "contradicted",
+              "falsified"
+            ]
+          }
+        },
+        "required": [
+          "scientific_outcome"
+        ]
+      },
+      "then": {
+        "properties": {
+          "evidence_edges": {
+            "contains": {
+              "properties": {
+                "relation": {
+                  "enum": [
+                    "contradicts",
+                    "falsifies"
+                  ]
+                }
+              },
+              "required": [
+                "relation"
+              ]
             }
           }
         }
@@ -282,52 +369,106 @@
     "claim_scope": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["population", "environment", "time", "intervention", "exclusions"],
+      "required": [
+        "population",
+        "environment",
+        "time",
+        "intervention",
+        "exclusions"
+      ],
       "properties": {
-        "population": { "type": "string", "minLength": 1 },
-        "environment": { "type": "string", "minLength": 1 },
-        "time": { "type": "string", "minLength": 1 },
-        "intervention": { "type": "string", "minLength": 1 },
+        "population": {
+          "type": "string",
+          "minLength": 1
+        },
+        "environment": {
+          "type": "string",
+          "minLength": 1
+        },
+        "time": {
+          "type": "string",
+          "minLength": 1
+        },
+        "intervention": {
+          "type": "string",
+          "minLength": 1
+        },
         "exclusions": {
           "type": "array",
-          "items": { "type": "string", "minLength": 1 }
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
         }
       }
     },
     "principal": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["principal_id", "principal_type"],
+      "required": [
+        "principal_id",
+        "principal_type"
+      ],
       "properties": {
-        "principal_id": { "$ref": "#/$defs/identifier" },
+        "principal_id": {
+          "$ref": "#/$defs/identifier"
+        },
         "principal_type": {
-          "enum": ["human", "service", "organization"]
+          "enum": [
+            "human",
+            "service",
+            "organization"
+          ]
         }
       }
     },
     "artifact_reference": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["artifact_id", "digest", "media_type"],
+      "required": [
+        "artifact_id",
+        "digest",
+        "media_type"
+      ],
       "properties": {
-        "artifact_id": { "$ref": "#/$defs/identifier" },
-        "digest": { "$ref": "#/$defs/digest" },
-        "media_type": { "type": "string", "minLength": 1 }
+        "artifact_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1
+        }
       }
     },
     "claim_reference": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["claim_id", "version"],
+      "required": [
+        "claim_id",
+        "version"
+      ],
       "properties": {
-        "claim_id": { "$ref": "#/$defs/identifier" },
-        "version": { "type": "integer", "minimum": 1 }
+        "claim_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        }
       }
     },
     "evidence_edge": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["relation", "artifact", "activity_id", "scope_note"],
+      "required": [
+        "relation",
+        "artifact",
+        "activity_id",
+        "scope_note"
+      ],
       "properties": {
         "relation": {
           "enum": [
@@ -344,9 +485,16 @@
             "withheld_by"
           ]
         },
-        "artifact": { "$ref": "#/$defs/artifact_reference" },
-        "activity_id": { "$ref": "#/$defs/identifier" },
-        "scope_note": { "type": "string", "minLength": 1 }
+        "artifact": {
+          "$ref": "#/$defs/artifact_reference"
+        },
+        "activity_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "scope_note": {
+          "type": "string",
+          "minLength": 1
+        }
       }
     },
     "eligibility": {
@@ -362,51 +510,98 @@
         "forbidden_language"
       ],
       "properties": {
-        "status": { "enum": ["eligible", "ineligible"] },
-        "rule_id": { "$ref": "#/$defs/identifier" },
-        "rule_version": { "type": "string", "minLength": 1 },
-        "rule_registry_digest": { "$ref": "#/$defs/digest" },
+        "status": {
+          "enum": [
+            "eligible",
+            "ineligible"
+          ]
+        },
+        "rule_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "rule_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "rule_registry_digest": {
+          "$ref": "#/$defs/digest"
+        },
         "reason_codes": {
           "type": "array",
           "minItems": 1,
           "uniqueItems": true,
-          "items": { "$ref": "#/$defs/identifier" }
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
         },
         "eligible_language": {
           "type": "array",
           "uniqueItems": true,
-          "items": { "type": "string", "minLength": 1 }
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
         },
         "forbidden_language": {
           "type": "array",
           "minItems": 1,
           "uniqueItems": true,
-          "items": { "type": "string", "minLength": 1 }
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
         }
       }
     },
     "unit": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["system", "code"],
+      "required": [
+        "system",
+        "code"
+      ],
       "properties": {
-        "system": { "enum": ["SI", "UCUM", "dimensionless", "domain_registered"] },
-        "code": { "type": "string", "minLength": 1 }
+        "system": {
+          "enum": [
+            "SI",
+            "UCUM",
+            "dimensionless",
+            "domain_registered"
+          ]
+        },
+        "code": {
+          "type": "string",
+          "minLength": 1
+        }
       }
     },
     "quantity": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["value", "unit"],
+      "required": [
+        "value",
+        "unit"
+      ],
       "properties": {
-        "value": { "$ref": "#/$defs/decimal_string" },
-        "unit": { "$ref": "#/$defs/unit" }
+        "value": {
+          "$ref": "#/$defs/decimal_string"
+        },
+        "unit": {
+          "$ref": "#/$defs/unit"
+        }
       }
     },
     "uncertainty_channel": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["channel", "representation", "estimate", "interval", "missingness", "assumptions"],
+      "required": [
+        "channel",
+        "representation",
+        "estimate",
+        "interval",
+        "missingness",
+        "assumptions"
+      ],
       "properties": {
         "channel": {
           "enum": [
@@ -421,13 +616,26 @@
           ]
         },
         "representation": {
-          "enum": ["interval", "distribution", "set", "qualitative_bounded", "not_applicable", "unknown"]
+          "enum": [
+            "interval",
+            "distribution",
+            "set",
+            "qualitative_bounded",
+            "not_applicable",
+            "unknown"
+          ]
         },
         "estimate": {
           "oneOf": [
-            { "$ref": "#/$defs/quantity" },
-            { "$ref": "#/$defs/artifact_reference" },
-            { "type": "null" }
+            {
+              "$ref": "#/$defs/quantity"
+            },
+            {
+              "$ref": "#/$defs/artifact_reference"
+            },
+            {
+              "type": "null"
+            }
           ]
         },
         "interval": {
@@ -435,25 +643,54 @@
             {
               "type": "object",
               "additionalProperties": false,
-              "required": ["lower", "upper", "level", "interval_type"],
+              "required": [
+                "lower",
+                "upper",
+                "level",
+                "interval_type"
+              ],
               "properties": {
-                "lower": { "$ref": "#/$defs/quantity" },
-                "upper": { "$ref": "#/$defs/quantity" },
-                "level": { "$ref": "#/$defs/decimal_string" },
+                "lower": {
+                  "$ref": "#/$defs/quantity"
+                },
+                "upper": {
+                  "$ref": "#/$defs/quantity"
+                },
+                "level": {
+                  "$ref": "#/$defs/decimal_string"
+                },
                 "interval_type": {
-                  "enum": ["fixed", "simultaneous", "time_uniform", "credible", "measurement_uncertainty"]
+                  "enum": [
+                    "fixed",
+                    "simultaneous",
+                    "time_uniform",
+                    "credible",
+                    "measurement_uncertainty"
+                  ]
                 }
               }
             },
-            { "type": "null" }
+            {
+              "type": "null"
+            }
           ]
         },
         "missingness": {
-          "enum": ["measured", "partially_measured", "unmeasured", "unavailable", "withheld", "not_applicable"]
+          "enum": [
+            "measured",
+            "partially_measured",
+            "unmeasured",
+            "unavailable",
+            "withheld",
+            "not_applicable"
+          ]
         },
         "assumptions": {
           "type": "array",
-          "items": { "type": "string", "minLength": 1 }
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
         }
       },
       "allOf": [
@@ -461,15 +698,26 @@
           "if": {
             "properties": {
               "missingness": {
-                "enum": ["unmeasured", "unavailable", "withheld", "not_applicable"]
+                "enum": [
+                  "unmeasured",
+                  "unavailable",
+                  "withheld",
+                  "not_applicable"
+                ]
               }
             },
-            "required": ["missingness"]
+            "required": [
+              "missingness"
+            ]
           },
           "then": {
             "properties": {
-              "estimate": { "type": "null" },
-              "interval": { "type": "null" }
+              "estimate": {
+                "type": "null"
+              },
+              "interval": {
+                "type": "null"
+              }
             }
           }
         }

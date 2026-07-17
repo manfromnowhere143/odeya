@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:work-contract:0.2.0",
+  "$id": "urn:odeya:schema:work-contract:0.4.0",
   "title": "Odeya WorkContract Blocked Candidate",
   "description": "A fail-closed candidate for the future post-assignment WorkContract boundary. No WorkContract is presently constructible: WorkIntent 0.1 has unresolved canonical identity and is not assignable, and ResearchEvent 0.7 does not bind the WorkIntent or the complete atomic assignment cohort. This subject declares the required WorkIntent -> verification.assign commit -> derived WorkContract order while all current worker, compilation, lease, grant, data-use, sandbox, reservation, materialization, dispatch, and spend facts remain absent. A future resource reissue is required after identity, cohort, ordering, replay, and review evidence exists.",
   "type": "object",
@@ -26,16 +26,37 @@
     "created_by"
   ],
   "properties": {
-    "schema_version": { "const": "0.2.0" },
-    "record_status": { "const": "blocked_contract_candidate" },
-    "identity_resolution_status": { "const": "unresolved_blocking" },
-    "canonicalization_profile_ref": { "type": "null" },
-    "canonical_digest": { "type": "null" },
-    "construction_status": { "const": "blocked_pending_resolved_work_intent_and_assignment_cohort" },
-    "dispatchability_status": { "const": "non_dispatchable_non_authoritative" },
-    "work_contract_candidate_id": { "$ref": "#/$defs/identifier" },
-    "version": { "type": "integer", "minimum": 1 },
-    "work_intent_ref": { "$ref": "#/$defs/unresolved_work_intent_reference" },
+    "schema_version": {
+      "const": "0.4.0"
+    },
+    "record_status": {
+      "const": "blocked_contract_candidate"
+    },
+    "identity_resolution_status": {
+      "const": "unresolved_blocking"
+    },
+    "canonicalization_profile_ref": {
+      "type": "null"
+    },
+    "canonical_digest": {
+      "type": "null"
+    },
+    "construction_status": {
+      "const": "blocked_pending_resolved_work_intent_and_assignment_cohort"
+    },
+    "dispatchability_status": {
+      "const": "non_dispatchable_non_authoritative"
+    },
+    "work_contract_candidate_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "work_intent_ref": {
+      "$ref": "#/$defs/unresolved_work_intent_reference"
+    },
     "post_assignment_derivation_contract": {
       "type": "object",
       "additionalProperties": false,
@@ -51,24 +72,50 @@
         "work_intent_conferred_authority"
       ],
       "properties": {
-        "required_command_type": { "const": "verification.assign" },
+        "required_command_type": {
+          "const": "verification.assign"
+        },
         "required_event_contract": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["event_type", "event_version", "schema_resource_id"],
+          "required": [
+            "event_type",
+            "event_version",
+            "schema_resource_id"
+          ],
           "properties": {
-            "event_type": { "const": "verification.assigned" },
-            "event_version": { "const": "1.0.0" },
-            "schema_resource_id": { "const": "urn:odeya:schema:research-event:0.7.0" }
+            "event_type": {
+              "const": "verification.assigned"
+            },
+            "event_version": {
+              "const": "1.0.0"
+            },
+            "schema_resource_id": {
+              "const": "urn:odeya:schema:research-event:0.8.0"
+            }
           }
         },
-        "assignment_commit_status": { "const": "not_committed_candidate" },
-        "assignment_command_ref": { "type": "null" },
-        "assignment_event_ref": { "type": "null" },
-        "assignment_commit_digest": { "type": "null" },
-        "work_intent_identity_equality_status": { "const": "unresolved_blocking" },
-        "materialization_phase": { "const": "post_assignment_commit_required_not_satisfied" },
-        "work_intent_conferred_authority": { "const": false }
+        "assignment_commit_status": {
+          "const": "not_committed_candidate"
+        },
+        "assignment_command_ref": {
+          "type": "null"
+        },
+        "assignment_event_ref": {
+          "type": "null"
+        },
+        "assignment_commit_digest": {
+          "type": "null"
+        },
+        "work_intent_identity_equality_status": {
+          "const": "unresolved_blocking"
+        },
+        "materialization_phase": {
+          "const": "post_assignment_commit_required_not_satisfied"
+        },
+        "work_intent_conferred_authority": {
+          "const": false
+        }
       }
     },
     "future_binding_requirements": {
@@ -90,24 +137,54 @@
           "minItems": 8,
           "maxItems": 8,
           "prefixItems": [
-            { "const": "work_intent_canonical_identity" },
-            { "const": "worker_principal" },
-            { "const": "active_work_lease" },
-            { "const": "authority_grants" },
-            { "const": "active_data_use_decisions" },
-            { "const": "sandbox_capability" },
-            { "const": "resource_reservation" },
-            { "const": "passing_state_compilation_bundle" }
+            {
+              "const": "work_intent_canonical_identity"
+            },
+            {
+              "const": "worker_principal"
+            },
+            {
+              "const": "active_work_lease"
+            },
+            {
+              "const": "authority_grants"
+            },
+            {
+              "const": "active_data_use_decisions"
+            },
+            {
+              "const": "sandbox_capability"
+            },
+            {
+              "const": "resource_reservation"
+            },
+            {
+              "const": "passing_state_compilation_bundle"
+            }
           ],
           "items": false
         },
-        "research_event_resource_reissue_required": { "const": true },
-        "resolved_work_intent_identity_required": { "const": true },
-        "cross_record_equality_validator_required": { "const": true },
-        "collection_ordering_profile_required": { "const": true },
-        "race_and_replay_evidence_required": { "const": true },
-        "post_assignment_derivation_required": { "const": true },
-        "separate_dispatch_claim_required": { "const": true }
+        "research_event_resource_reissue_required": {
+          "const": true
+        },
+        "resolved_work_intent_identity_required": {
+          "const": true
+        },
+        "cross_record_equality_validator_required": {
+          "const": true
+        },
+        "collection_ordering_profile_required": {
+          "const": true
+        },
+        "race_and_replay_evidence_required": {
+          "const": true
+        },
+        "post_assignment_derivation_required": {
+          "const": true
+        },
+        "separate_dispatch_claim_required": {
+          "const": true
+        }
       }
     },
     "current_assignment_facts": {
@@ -124,14 +201,32 @@
         "assignment_authority_evidence_ref"
       ],
       "properties": {
-        "worker_principal": { "type": "null" },
-        "state_compilation_bundle_ref": { "type": "null" },
-        "active_lease_ref": { "type": "null" },
-        "authority_grant_refs": { "type": "array", "maxItems": 0 },
-        "active_data_use_decision_refs": { "type": "array", "maxItems": 0 },
-        "sandbox_capability_ref": { "type": "null" },
-        "resource_reservation_ref": { "type": "null" },
-        "assignment_authority_evidence_ref": { "type": "null" }
+        "worker_principal": {
+          "type": "null"
+        },
+        "state_compilation_bundle_ref": {
+          "type": "null"
+        },
+        "active_lease_ref": {
+          "type": "null"
+        },
+        "authority_grant_refs": {
+          "type": "array",
+          "maxItems": 0
+        },
+        "active_data_use_decision_refs": {
+          "type": "array",
+          "maxItems": 0
+        },
+        "sandbox_capability_ref": {
+          "type": "null"
+        },
+        "resource_reservation_ref": {
+          "type": "null"
+        },
+        "assignment_authority_evidence_ref": {
+          "type": "null"
+        }
       }
     },
     "authority_boundary": {
@@ -150,16 +245,36 @@
         "provider_spend_may_incur"
       ],
       "properties": {
-        "work_intent_is_authority": { "const": false },
-        "candidate_is_assignment": { "const": false },
-        "candidate_is_work_contract": { "const": false },
-        "lease_authority_active": { "const": false },
-        "reservation_active": { "const": false },
-        "materialization_authority_granted": { "const": false },
-        "dispatch_authority_granted": { "const": false },
-        "external_effect_authority_granted": { "const": false },
-        "bytes_may_cross": { "const": false },
-        "provider_spend_may_incur": { "const": false }
+        "work_intent_is_authority": {
+          "const": false
+        },
+        "candidate_is_assignment": {
+          "const": false
+        },
+        "candidate_is_work_contract": {
+          "const": false
+        },
+        "lease_authority_active": {
+          "const": false
+        },
+        "reservation_active": {
+          "const": false
+        },
+        "materialization_authority_granted": {
+          "const": false
+        },
+        "dispatch_authority_granted": {
+          "const": false
+        },
+        "external_effect_authority_granted": {
+          "const": false
+        },
+        "bytes_may_cross": {
+          "const": false
+        },
+        "provider_spend_may_incur": {
+          "const": false
+        }
       }
     },
     "canonical_collection_ordering": {
@@ -172,10 +287,18 @@
         "unordered_input_disposition"
       ],
       "properties": {
-        "profile_status": { "const": "candidate_not_accepted" },
-        "set_like_arrays": { "const": "canonical_key_ascending_required_by_future_profile" },
-        "semantic_sequences": { "const": "schema_declared_prefix_order" },
-        "unordered_input_disposition": { "const": "block_identity_and_construction" }
+        "profile_status": {
+          "const": "candidate_not_accepted"
+        },
+        "set_like_arrays": {
+          "const": "canonical_key_ascending_required_by_future_profile"
+        },
+        "semantic_sequences": {
+          "const": "schema_declared_prefix_order"
+        },
+        "unordered_input_disposition": {
+          "const": "block_identity_and_construction"
+        }
       }
     },
     "known_blockers": {
@@ -183,15 +306,27 @@
       "minItems": 4,
       "maxItems": 4,
       "prefixItems": [
-        { "const": "work_intent_canonical_identity_unresolved" },
-        { "const": "verification_assignment_intent_and_atomic_cohort_absent" },
-        { "const": "canonical_collection_ordering_profile_not_accepted" },
-        { "const": "assignment_race_replay_and_independent_review_absent" }
+        {
+          "const": "work_intent_canonical_identity_unresolved"
+        },
+        {
+          "const": "verification_assignment_intent_and_atomic_cohort_absent"
+        },
+        {
+          "const": "canonical_collection_ordering_profile_not_accepted"
+        },
+        {
+          "const": "assignment_race_replay_and_independent_review_absent"
+        }
       ],
       "items": false
     },
-    "created_at": { "$ref": "#/$defs/timestamp" },
-    "created_by": { "$ref": "#/$defs/principal" }
+    "created_at": {
+      "$ref": "#/$defs/timestamp"
+    },
+    "created_by": {
+      "$ref": "#/$defs/principal"
+    }
   },
   "$defs": {
     "identifier": {
@@ -202,15 +337,26 @@
     },
     "timestamp": {
       "type": "string",
-      "format": "date-time"
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
     },
     "principal": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["principal_id", "principal_type"],
+      "required": [
+        "principal_id",
+        "principal_type"
+      ],
       "properties": {
-        "principal_id": { "$ref": "#/$defs/identifier" },
-        "principal_type": { "enum": ["human", "deterministic_service"] }
+        "principal_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "principal_type": {
+          "enum": [
+            "human",
+            "deterministic_service"
+          ]
+        }
       }
     },
     "unresolved_work_intent_reference": {
@@ -226,13 +372,28 @@
         "canonical_digest"
       ],
       "properties": {
-        "record_type": { "const": "work_intent" },
-        "id": { "$ref": "#/$defs/identifier" },
-        "version": { "type": "integer", "minimum": 1 },
-        "schema_resource_id": { "const": "urn:odeya:schema:work-intent:0.1.0" },
-        "identity_resolution_status": { "const": "unresolved_blocking" },
-        "record_authority_status": { "const": "not_admitted_not_assignable" },
-        "canonical_digest": { "type": "null" }
+        "record_type": {
+          "const": "work_intent"
+        },
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "schema_resource_id": {
+          "const": "urn:odeya:schema:work-intent:0.4.0"
+        },
+        "identity_resolution_status": {
+          "const": "unresolved_blocking"
+        },
+        "record_authority_status": {
+          "const": "not_admitted_not_assignable"
+        },
+        "canonical_digest": {
+          "type": "null"
+        }
       }
     }
   }

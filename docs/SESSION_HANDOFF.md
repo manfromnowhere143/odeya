@@ -430,7 +430,12 @@ candidate recomputing 986 findings (ADR 0038). Reaching zero exposed and fixed
 two gates that could not observe success. D5b executed: all 49 accepted
 domain names reserved in the profile core's new prospective_domain_registry,
 core schema reissued 0.2.0, succession propagated through every consumer to a
-fixed point (ADR 0039). Next: the D2-D8 schema reissue wave, then D9 pins.**
+fixed point (ADR 0039). D2a executed: 102 of 122 datetime paths
+pinned across 45 reissued schemas; the transitive-consumer closure lawfully
+reissued 59 resources in total (ResearchEvent moved to 0.8.0; the work-identity
+family's checks migrated to post-wave semantics: predecessors verify against
+their ledgered commits, never live files). Remaining D2: ResearchEvent's own 20
+paths (tranche D2b). Next: D2b, then D3-D8, then D9 pins.**
 Residue for the reissue wave is recorded in the candidate's
 decimal_closure_residue).
 

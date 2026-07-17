@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:claim-proposal:0.1.0",
+  "$id": "urn:odeya:schema:claim-proposal:0.2.0",
   "title": "Odeya ClaimProposal",
   "description": "An immutable proposed proposition and its prospective interpretation contract. A proposal is not evidence, a verdict, or an eligible claim.",
   "type": "object",
@@ -23,57 +23,114 @@
     "created_by"
   ],
   "properties": {
-    "schema_version": { "const": "0.1.0" },
-    "proposal_id": { "$ref": "#/$defs/identifier" },
-    "mission_id": { "$ref": "#/$defs/identifier" },
-    "protocol_branch_id": { "$ref": "#/$defs/identifier" },
+    "schema_version": {
+      "const": "0.2.0"
+    },
+    "proposal_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "mission_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "protocol_branch_id": {
+      "$ref": "#/$defs/identifier"
+    },
     "protocol_digest": {
       "oneOf": [
-        { "$ref": "#/$defs/digest" },
-        { "type": "null" }
+        {
+          "$ref": "#/$defs/digest"
+        },
+        {
+          "type": "null"
+        }
       ]
     },
-    "mode": { "enum": ["exploratory", "confirmatory"] },
-    "claim_type": { "$ref": "#/$defs/claim_type" },
-    "proposition": { "type": "string", "minLength": 1 },
-    "scope": { "$ref": "#/$defs/claim_scope" },
-    "estimand_ref": { "$ref": "#/$defs/artifact_reference" },
-    "consequence_rule_ref": { "$ref": "#/$defs/method_reference" },
+    "mode": {
+      "enum": [
+        "exploratory",
+        "confirmatory"
+      ]
+    },
+    "claim_type": {
+      "$ref": "#/$defs/claim_type"
+    },
+    "proposition": {
+      "type": "string",
+      "minLength": 1
+    },
+    "scope": {
+      "$ref": "#/$defs/claim_scope"
+    },
+    "estimand_ref": {
+      "$ref": "#/$defs/artifact_reference"
+    },
+    "consequence_rule_ref": {
+      "$ref": "#/$defs/method_reference"
+    },
     "falsifier_ids": {
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,
-      "items": { "$ref": "#/$defs/identifier" }
+      "items": {
+        "$ref": "#/$defs/identifier"
+      }
     },
     "exposure_at_creation": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["level", "exposure_event_refs"],
+      "required": [
+        "level",
+        "exposure_event_refs"
+      ],
       "properties": {
         "level": {
-          "enum": ["outcome_blind", "partial_outcome_exposure", "full_outcome_exposure"]
+          "enum": [
+            "outcome_blind",
+            "partial_outcome_exposure",
+            "full_outcome_exposure"
+          ]
         },
         "exposure_event_refs": {
           "type": "array",
           "uniqueItems": true,
-          "items": { "$ref": "#/$defs/identifier" }
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
         }
       }
     },
-    "created_at": { "type": "string", "format": "date-time" },
-    "created_by": { "$ref": "#/$defs/principal" }
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
+    },
+    "created_by": {
+      "$ref": "#/$defs/principal"
+    }
   },
   "allOf": [
     {
       "if": {
-        "properties": { "mode": { "const": "confirmatory" } },
-        "required": ["mode"]
+        "properties": {
+          "mode": {
+            "const": "confirmatory"
+          }
+        },
+        "required": [
+          "mode"
+        ]
       },
       "then": {
         "properties": {
-          "protocol_digest": { "$ref": "#/$defs/digest" },
+          "protocol_digest": {
+            "$ref": "#/$defs/digest"
+          },
           "exposure_at_creation": {
-            "properties": { "level": { "const": "outcome_blind" } }
+            "properties": {
+              "level": {
+                "const": "outcome_blind"
+              }
+            }
           }
         }
       }
@@ -103,46 +160,99 @@
     "claim_scope": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["population", "environment", "time", "intervention", "exclusions"],
+      "required": [
+        "population",
+        "environment",
+        "time",
+        "intervention",
+        "exclusions"
+      ],
       "properties": {
-        "population": { "type": "string", "minLength": 1 },
-        "environment": { "type": "string", "minLength": 1 },
-        "time": { "type": "string", "minLength": 1 },
-        "intervention": { "type": "string", "minLength": 1 },
+        "population": {
+          "type": "string",
+          "minLength": 1
+        },
+        "environment": {
+          "type": "string",
+          "minLength": 1
+        },
+        "time": {
+          "type": "string",
+          "minLength": 1
+        },
+        "intervention": {
+          "type": "string",
+          "minLength": 1
+        },
         "exclusions": {
           "type": "array",
-          "items": { "type": "string", "minLength": 1 }
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
         }
       }
     },
     "artifact_reference": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["artifact_id", "digest", "media_type"],
+      "required": [
+        "artifact_id",
+        "digest",
+        "media_type"
+      ],
       "properties": {
-        "artifact_id": { "$ref": "#/$defs/identifier" },
-        "digest": { "$ref": "#/$defs/digest" },
-        "media_type": { "type": "string", "minLength": 1 }
+        "artifact_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1
+        }
       }
     },
     "method_reference": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["method_id", "version", "registry_digest"],
+      "required": [
+        "method_id",
+        "version",
+        "registry_digest"
+      ],
       "properties": {
-        "method_id": { "$ref": "#/$defs/identifier" },
-        "version": { "type": "string", "minLength": 1 },
-        "registry_digest": { "$ref": "#/$defs/digest" }
+        "method_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "registry_digest": {
+          "$ref": "#/$defs/digest"
+        }
       }
     },
     "principal": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["principal_id", "principal_type"],
+      "required": [
+        "principal_id",
+        "principal_type"
+      ],
       "properties": {
-        "principal_id": { "$ref": "#/$defs/identifier" },
+        "principal_id": {
+          "$ref": "#/$defs/identifier"
+        },
         "principal_type": {
-          "enum": ["human", "service", "organization", "model_run"]
+          "enum": [
+            "human",
+            "service",
+            "organization",
+            "model_run"
+          ]
         }
       }
     }

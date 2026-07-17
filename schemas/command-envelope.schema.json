@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:command-envelope:0.5.0",
+  "$id": "urn:odeya:schema:command-envelope:0.6.0",
   "title": "Odeya CommandEnvelope",
   "description": "Language-neutral structural candidate for a fail-closed Odeya command request. This 0.5 resource is deliberately nonconstructible and not admitted while the exact CommandContractRecord and CommandContractRegistry identities remain unresolved; non-null digests in fixtures are comparison probes, not proof that resolution or admission occurred. It binds the canonical CommandContractRegistry subject name, a separate activation-proof shape, and a standalone member-reference shape; mutable aliases such as latest are unrepresentable. The logical payload_type_id is distinct from the exact JSON Schema resource plus canonical and closure digests; the record supplies dialect and source-blob identity. Presented authority hints are untrusted. JSON Schema does not prove activation, membership, identity equality, scope approval, currentness, or admission, and a future schema-resource reissue is required before construction can be admitted.",
   "type": "object",
@@ -37,7 +37,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.5.0"
+      "const": "0.6.0"
     },
     "conformance_scope": {
       "const": "structural_fixture_only"
@@ -206,7 +206,8 @@
       "oneOf": [
         {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
         },
         {
           "type": "null"
@@ -3995,7 +3996,7 @@
           "minimum": 1
         },
         "schema_id": {
-          "const": "urn:odeya:schema:registry-activation:0.1.0"
+          "const": "urn:odeya:schema:registry-activation:0.2.0"
         },
         "activation_digest": {
           "$ref": "#/$defs/digest"
