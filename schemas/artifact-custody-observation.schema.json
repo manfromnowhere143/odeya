@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:artifact-custody-observation:0.2.0",
+  "$id": "urn:odeya:schema:artifact-custody-observation:0.3.0",
   "title": "Odeya ArtifactCustodyObservation",
   "description": "An immutable observation in an artifact custody chain. It records an action and evidence without rewriting the ArtifactManifest. Chain order, grant scope, and digest recomputation are semantic checks.",
   "type": "object",
@@ -25,7 +25,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.2.0"
+      "const": "0.3.0"
     },
     "observation_id": {
       "$ref": "#/$defs/identifier"
@@ -84,7 +84,14 @@
       ],
       "properties": {
         "expected_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "artifact bytes (verification copy)",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
         },
         "observed_digest": {
           "oneOf": [
@@ -94,7 +101,14 @@
             {
               "type": "null"
             }
-          ]
+          ],
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "observed artifact bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
         },
         "verdict": {
           "enum": [
@@ -211,7 +225,14 @@
           "integrity_check": {
             "properties": {
               "observed_digest": {
-                "$ref": "#/$defs/digest"
+                "$ref": "#/$defs/digest",
+                "x-odeya-digest-scope": {
+                  "kind": "byte_digest",
+                  "subject": "observed artifact bytes",
+                  "algorithm": "sha-256",
+                  "profile": "not_a_canonical_object_digest",
+                  "status": "accepted_disposition_annotation"
+                }
               },
               "verdict": {
                 "const": "pass"
@@ -340,10 +361,24 @@
           "$ref": "#/$defs/identifier"
         },
         "code_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "source or code-bundle bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
         },
         "environment_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-environment-manifest-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
         }
       }
     }

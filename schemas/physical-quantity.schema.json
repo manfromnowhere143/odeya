@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:physical-quantity:0.2.0",
+  "$id": "urn:odeya:schema:physical-quantity:0.3.0",
   "title": "Odeya PhysicalQuantity",
   "description": "An immutable typed physical quantity. It closes value representation, registered unit, seven-base SI dimension vector, semantic kind, conversion class, and conditional frame/time/spatial support. Structural validity does not resolve the unit registry, execute conversions, or prove frame transforms or uncertainty propagation.",
   "type": "object",
@@ -19,7 +19,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.2.0"
+      "const": "0.3.0"
     },
     "quantity_id": {
       "$ref": "#/$defs/identifier"
@@ -52,7 +52,14 @@
       "$ref": "#/$defs/artifact_reference"
     },
     "quantity_digest": {
-      "$ref": "#/$defs/digest"
+      "$ref": "#/$defs/digest",
+      "x-odeya-digest-scope": {
+        "kind": "canonical_object_digest",
+        "domain": "odeya-physical-quantity-v1",
+        "algorithm": "sha-256",
+        "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+        "status": "prospective_domain_reserved_not_declared"
+      }
     }
   },
   "$defs": {

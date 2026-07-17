@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:verification-run:0.3.0",
+  "$id": "urn:odeya:schema:verification-run:0.4.0",
   "title": "Odeya VerificationPackage",
   "description": "An immutable terminal package for one VerificationRun. It binds an exact subject set and frozen assignment, preserves completed, failed, not-started, and completion-unknown paths, and records multidimensional results without granting claim, dispatch, publication, or dispute authority. Lifecycle and dispute state are event-derived; this record never references its successor completion event.",
   "type": "object",
@@ -35,7 +35,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.3.0"
+      "const": "0.4.0"
     },
     "record_class": {
       "const": "immutable_terminal_verification_package"
@@ -1618,10 +1618,24 @@
           "maxLength": 255
         },
         "code_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "source or code-bundle bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
         },
         "environment_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-environment-manifest-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
         }
       }
     },
@@ -1679,7 +1693,14 @@
           "$ref": "#/$defs/artifact_reference"
         },
         "subject_members_root_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-reference-set-manifest-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
         },
         "canonicalization_profile_ref": {
           "$ref": "#/$defs/immutable_reference"

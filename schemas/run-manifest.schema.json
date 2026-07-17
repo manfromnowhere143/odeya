@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:run-manifest:0.3.0",
+  "$id": "urn:odeya:schema:run-manifest:0.4.0",
   "title": "Odeya RunManifest",
   "description": "An immutable, authorized compilation of one execution attempt family. It binds inputs, code, environment, tools, budgets, controls, and expected outputs; it is not proof that a run occurred or was valid.",
   "type": "object",
@@ -30,7 +30,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.3.0"
+      "const": "0.4.0"
     },
     "run_manifest_id": {
       "$ref": "#/$defs/identifier"
@@ -195,7 +195,14 @@
                 "minLength": 1
               },
               "interface_digest": {
-                "$ref": "#/$defs/digest"
+                "$ref": "#/$defs/digest",
+                "x-odeya-digest-scope": {
+                  "kind": "canonical_object_digest",
+                  "domain": "odeya-tool-interface-descriptor-v1",
+                  "algorithm": "sha-256",
+                  "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+                  "status": "prospective_domain_reserved_not_declared"
+                }
               }
             }
           }

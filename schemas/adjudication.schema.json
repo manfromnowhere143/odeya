@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:adjudication:0.2.0",
+  "$id": "urn:odeya:schema:adjudication:0.3.0",
   "title": "Odeya Adjudication",
   "description": "An immutable application of a frozen consequence rule to retained evidence. Refusal, invalidity, missing measurement, and scientific outcomes remain distinct.",
   "type": "object",
@@ -30,7 +30,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.2.0"
+      "const": "0.3.0"
     },
     "adjudication_id": {
       "$ref": "#/$defs/identifier"
@@ -42,7 +42,14 @@
       "$ref": "#/$defs/identifier"
     },
     "protocol_digest": {
-      "$ref": "#/$defs/digest"
+      "$ref": "#/$defs/digest",
+      "x-odeya-digest-scope": {
+        "kind": "canonical_object_digest",
+        "domain": "odeya-protocol-snapshot-v1",
+        "algorithm": "sha-256",
+        "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+        "status": "prospective_domain_reserved_not_declared"
+      }
     },
     "status": {
       "enum": [
@@ -118,7 +125,14 @@
       "$ref": "#/$defs/method_reference"
     },
     "input_set_digest": {
-      "$ref": "#/$defs/digest"
+      "$ref": "#/$defs/digest",
+      "x-odeya-digest-scope": {
+        "kind": "canonical_object_digest",
+        "domain": "odeya-reference-set-manifest-v1",
+        "algorithm": "sha-256",
+        "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+        "status": "prospective_domain_reserved_not_declared"
+      }
     },
     "reason_codes": {
       "type": "array",
@@ -377,10 +391,24 @@
           "$ref": "#/$defs/identifier"
         },
         "code_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "source or code-bundle bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
         },
         "environment_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-environment-manifest-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
         }
       }
     }

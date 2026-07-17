@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:authority-grant:0.4.0",
+  "$id": "urn:odeya:schema:authority-grant:0.5.0",
   "title": "Odeya AuthorityGrant",
   "description": "An immutable, bounded permission with an explicit action boundary, consumption point, and reservation policy. Status is derived from issue, reservation, use, expiry, release, and revocation events; JSON Schema does not prove their race order.",
   "type": "object",
@@ -24,7 +24,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.4.0"
+      "const": "0.5.0"
     },
     "grant_id": {
       "$ref": "#/$defs/identifier"
@@ -118,10 +118,24 @@
           "$ref": "#/$defs/nonempty_unique_strings"
         },
         "protocol_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-protocol-snapshot-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
         },
         "run_manifest_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-run-manifest-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
         },
         "stage_id": {
           "oneOf": [
@@ -162,7 +176,14 @@
             {
               "type": "null"
             }
-          ]
+          ],
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-publication-manifest-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
         },
         "external_effect_id": {
           "oneOf": [
@@ -382,7 +403,14 @@
           }
         },
         "authorization_request_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-command-request-v2",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "registered_domain"
+          }
         },
         "quorum": {
           "type": "integer",
@@ -449,10 +477,24 @@
           "$ref": "#/$defs/identifier"
         },
         "policy_bundle_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-policy-bundle-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
         },
         "policy_input_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-policy-input-binding-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
         },
         "approval_refs": {
           "type": "array",
@@ -492,7 +534,14 @@
             ],
             "properties": {
               "publication_manifest_digest": {
-                "$ref": "#/$defs/digest"
+                "$ref": "#/$defs/digest",
+                "x-odeya-digest-scope": {
+                  "kind": "canonical_object_digest",
+                  "domain": "odeya-publication-manifest-v1",
+                  "algorithm": "sha-256",
+                  "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+                  "status": "prospective_domain_reserved_not_declared"
+                }
               },
               "external_effect_id": {
                 "$ref": "#/$defs/identifier"

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:command-contract-record:0.1.0",
+  "$id": "urn:odeya:schema:command-contract-record:0.2.0",
   "title": "Odeya CommandContractRecord",
   "description": "One immutable prospective command contract. The logical payload_type_id is distinct from the exact JSON Schema resource, dialect, retained source blob, canonical form, and transitive closure identities. The record contains no parent registry digest, membership proof, activation proof, or generated envelope binding; those are external, acyclic bindings. Structural-fixture scope is non-admitted and confers no runtime authority.",
   "type": "object",
@@ -36,7 +36,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.1.0"
+      "const": "0.2.0"
     },
     "record_kind": {
       "const": "command_contract_record"
@@ -137,7 +137,14 @@
       "type": "null"
     },
     "record_digest": {
-      "type": "null"
+      "type": "null",
+      "x-odeya-digest-scope": {
+        "kind": "canonical_object_digest",
+        "domain": "odeya-command-contract-record-v1",
+        "algorithm": "sha-256",
+        "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+        "status": "prospective_domain_reserved_not_declared"
+      }
     }
   },
   "$defs": {
@@ -236,7 +243,14 @@
               "const": "sha256"
             },
             "blob_digest": {
-              "type": "null"
+              "type": "null",
+              "x-odeya-digest-scope": {
+                "kind": "byte_digest",
+                "subject": "exact blob bytes",
+                "algorithm": "sha-256",
+                "profile": "not_a_canonical_object_digest",
+                "status": "accepted_disposition_annotation"
+              }
             },
             "byte_count": {
               "type": "null"
@@ -303,7 +317,14 @@
               "type": "null"
             },
             "closure_digest": {
-              "type": "null"
+              "type": "null",
+              "x-odeya-digest-scope": {
+                "kind": "canonical_object_digest",
+                "domain": "odeya-payload-schema-closure-v1",
+                "algorithm": "sha-256",
+                "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+                "status": "prospective_domain_reserved_not_declared"
+              }
             },
             "resolution_mode": {
               "const": "preloaded_exact_resource_id"
@@ -340,7 +361,14 @@
           "$ref": "#/$defs/semantic_version"
         },
         "rule_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-rule-record-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
         }
       }
     },
@@ -402,7 +430,14 @@
           "$ref": "#/$defs/semantic_version"
         },
         "event_member_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-event-contract-member-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "registered_domain"
+          }
         },
         "cohort_position": {
           "type": "integer",

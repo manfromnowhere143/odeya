@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:handoff:0.2.0",
+  "$id": "urn:odeya:schema:handoff:0.3.0",
   "title": "Odeya Handoff",
   "description": "An immutable recovery packet at an exact ledger position. It contains reconstructible facts and next legal actions, not private reasoning. Freshness and reference integrity require semantic validation.",
   "type": "object",
@@ -36,7 +36,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.2.0"
+      "const": "0.3.0"
     },
     "handoff_id": {
       "$ref": "#/$defs/identifier"
@@ -70,7 +70,14 @@
           "minimum": 0
         },
         "event_checkpoint_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-ledger-checkpoint-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "registered_domain"
+          }
         },
         "captured_at": {
           "type": "string",
@@ -232,7 +239,14 @@
             "minimum": 0
           },
           "head_digest": {
-            "$ref": "#/$defs/digest"
+            "$ref": "#/$defs/digest",
+            "x-odeya-digest-scope": {
+              "kind": "canonical_object_digest",
+              "domain": "odeya-research-event-v1",
+              "algorithm": "sha-256",
+              "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+              "status": "registered_domain"
+            }
           }
         }
       }
@@ -549,10 +563,24 @@
           "$ref": "#/$defs/identifier"
         },
         "code_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "source or code-bundle bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
         },
         "environment_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-environment-manifest-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
         }
       }
     }

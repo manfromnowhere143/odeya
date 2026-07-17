@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:recovery-decision:0.2.0",
+  "$id": "urn:odeya:schema:recovery-decision:0.3.0",
   "title": "Odeya RecoveryDecision",
   "description": "An immutable recovery-quorum decision over one exact restore verification report and security frontier. It grants no effect, publication, spending, or physical authority; those remain separately gated.",
   "type": "object",
@@ -28,7 +28,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.2.0"
+      "const": "0.3.0"
     },
     "recovery_decision_id": {
       "$ref": "#/$defs/identifier"
@@ -80,7 +80,14 @@
           "minimum": 0
         },
         "checkpoint_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-ledger-checkpoint-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "registered_domain"
+          }
         },
         "current_security_frontier_position": {
           "type": "integer",

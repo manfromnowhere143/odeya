@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:physical-evidence-vector:0.2.0",
+  "$id": "urn:odeya:schema:physical-evidence-vector:0.3.0",
   "title": "Odeya PhysicalEvidenceVector",
   "description": "An immutable VVUQ evidence record with exactly ten non-collapsible credibility components and explicit P0-P12 gate dispositions. Physical validation can pass only from independent physical-world measurements; calibration, code verification, numerical convergence, and simulation cannot substitute.",
   "type": "object",
@@ -24,7 +24,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.2.0"
+      "const": "0.3.0"
     },
     "physical_evidence_vector_id": {
       "$ref": "#/$defs/identifier"
@@ -135,7 +135,14 @@
       }
     },
     "evidence_vector_digest": {
-      "$ref": "#/$defs/digest"
+      "$ref": "#/$defs/digest",
+      "x-odeya-digest-scope": {
+        "kind": "canonical_object_digest",
+        "domain": "odeya-physical-evidence-vector-v1",
+        "algorithm": "sha-256",
+        "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+        "status": "prospective_domain_reserved_not_declared"
+      }
     }
   },
   "allOf": [
@@ -406,7 +413,7 @@
         {
           "properties": {
             "schema_id": {
-              "const": "urn:odeya:schema:physical-model-record:0.2.0"
+              "const": "urn:odeya:schema:physical-model-record:0.3.0"
             }
           }
         }
@@ -420,7 +427,7 @@
         {
           "properties": {
             "schema_id": {
-              "const": "urn:odeya:schema:asset-configuration-snapshot:0.2.0"
+              "const": "urn:odeya:schema:asset-configuration-snapshot:0.3.0"
             }
           }
         }
@@ -434,7 +441,7 @@
         {
           "properties": {
             "schema_id": {
-              "const": "urn:odeya:schema:physical-measurement-result:0.2.0"
+              "const": "urn:odeya:schema:physical-measurement-result:0.3.0"
             }
           }
         }

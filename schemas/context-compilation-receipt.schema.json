@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:context-compilation-receipt:0.3.0",
+  "$id": "urn:odeya:schema:context-compilation-receipt:0.4.0",
   "title": "Odeya ContextCompilationReceipt",
   "description": "A reproducible, fail-closed account of how one ResearchStateView was compiled. Structural validity does not prove noninterference or that referenced bytes and coverage claims are true.",
   "type": "object",
@@ -39,7 +39,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.3.0"
+      "const": "0.4.0"
     },
     "record_status": {
       "const": "derived_non_authoritative"
@@ -129,7 +129,14 @@
           "$ref": "#/$defs/versioned_reference"
         },
         "build_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "build-output bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
         },
         "environment_ref": {
           "$ref": "#/$defs/artifact_reference"
@@ -237,10 +244,24 @@
       ],
       "properties": {
         "dependency_set_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-reference-set-manifest-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
         },
         "input_set_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-reference-set-manifest-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
         },
         "input_refs": {
           "type": "array",
@@ -271,7 +292,14 @@
           "$ref": "#/$defs/versioned_reference"
         },
         "entry_set_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-reference-set-manifest-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
         }
       }
     },
@@ -605,7 +633,14 @@
       }
     },
     "retrieval_candidate_set_digest": {
-      "$ref": "#/$defs/digest"
+      "$ref": "#/$defs/digest",
+      "x-odeya-digest-scope": {
+        "kind": "canonical_object_digest",
+        "domain": "odeya-reference-set-manifest-v1",
+        "algorithm": "sha-256",
+        "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+        "status": "prospective_domain_reserved_not_declared"
+      }
     },
     "derived_summaries": {
       "type": "array",
@@ -627,7 +662,14 @@
             "$ref": "#/$defs/artifact_reference"
           },
           "source_set_digest": {
-            "$ref": "#/$defs/digest"
+            "$ref": "#/$defs/digest",
+            "x-odeya-digest-scope": {
+              "kind": "canonical_object_digest",
+              "domain": "odeya-reference-set-manifest-v1",
+              "algorithm": "sha-256",
+              "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+              "status": "prospective_domain_reserved_not_declared"
+            }
           },
           "summarizer_ref": {
             "$ref": "#/$defs/versioned_reference"
@@ -944,7 +986,14 @@
           "$ref": "#/$defs/versioned_reference"
         },
         "selected_reference_set_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-reference-set-manifest-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
         },
         "replay_result": {
           "enum": [
@@ -1351,7 +1400,7 @@
           "minimum": 1
         },
         "schema_id": {
-          "const": "urn:odeya:schema:research-state-view:0.3.0"
+          "const": "urn:odeya:schema:research-state-view:0.4.0"
         },
         "digest": {
           "$ref": "#/$defs/digest"

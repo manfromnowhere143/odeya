@@ -1,191 +1,859 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:data-exposure-record:0.1.0",
+  "$id": "urn:odeya:schema:data-exposure-record:0.2.0",
   "title": "Odeya DataExposureRecord",
   "description": "A discriminated immutable intent, observation, or settlement fact. Intent is not occurrence, observation is not permission, and ambiguity is retained rather than coerced.",
   "type": "object",
   "additionalProperties": false,
   "required": [
-    "schema_version", "exposure_record_id", "version", "mission_id",
-    "record_kind", "intent_id", "parent_intent_ref", "asset_projection",
-    "recipient", "purpose", "operation", "detail", "recorded_at_ledger_position",
-    "recorded_at", "recorded_by"
+    "schema_version",
+    "exposure_record_id",
+    "version",
+    "mission_id",
+    "record_kind",
+    "intent_id",
+    "parent_intent_ref",
+    "asset_projection",
+    "recipient",
+    "purpose",
+    "operation",
+    "detail",
+    "recorded_at_ledger_position",
+    "recorded_at",
+    "recorded_by"
   ],
   "properties": {
-    "schema_version": { "const": "0.1.0" },
-    "exposure_record_id": { "$ref": "#/$defs/identifier" },
-    "version": { "type": "integer", "minimum": 1 },
-    "mission_id": { "$ref": "#/$defs/identifier" },
-    "record_kind": { "enum": ["intent", "observation", "settlement"] },
-    "intent_id": { "$ref": "#/$defs/identifier" },
-    "parent_intent_ref": { "oneOf": [{ "$ref": "#/$defs/immutable_reference" }, { "type": "null" }] },
+    "schema_version": {
+      "const": "0.2.0"
+    },
+    "exposure_record_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "mission_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "record_kind": {
+      "enum": [
+        "intent",
+        "observation",
+        "settlement"
+      ]
+    },
+    "intent_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "parent_intent_ref": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/immutable_reference"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
     "asset_projection": {
-      "type": "object", "additionalProperties": false,
-      "required": ["source_asset", "projection_manifest", "projected_payload_digest", "data_class"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_asset",
+        "projection_manifest",
+        "projected_payload_digest",
+        "data_class"
+      ],
       "properties": {
-        "source_asset": { "$ref": "#/$defs/immutable_reference" },
-        "projection_manifest": { "$ref": "#/$defs/artifact_reference" },
-        "projected_payload_digest": { "$ref": "#/$defs/digest" },
-        "data_class": { "enum": ["D0", "D1", "D2", "D3", "D4"] }
+        "source_asset": {
+          "$ref": "#/$defs/immutable_reference"
+        },
+        "projection_manifest": {
+          "$ref": "#/$defs/artifact_reference"
+        },
+        "projected_payload_digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "projected payload bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
+        },
+        "data_class": {
+          "enum": [
+            "D0",
+            "D1",
+            "D2",
+            "D3",
+            "D4"
+          ]
+        }
       }
     },
     "recipient": {
-      "type": "object", "additionalProperties": false,
-      "required": ["principal_id", "principal_class", "provider_id", "model_identity", "geographic_region", "destination"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "principal_id",
+        "principal_class",
+        "provider_id",
+        "model_identity",
+        "geographic_region",
+        "destination"
+      ],
       "properties": {
-        "principal_id": { "$ref": "#/$defs/identifier" },
-        "principal_class": { "enum": ["human", "organization", "deterministic_service", "model_service", "provider", "instrument"] },
-        "provider_id": { "oneOf": [{ "$ref": "#/$defs/identifier" }, { "type": "null" }] },
-        "model_identity": { "oneOf": [{ "$ref": "#/$defs/digest" }, { "type": "null" }] },
-        "geographic_region": { "$ref": "#/$defs/identifier" },
-        "destination": { "type": "string", "minLength": 1 }
+        "principal_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "principal_class": {
+          "enum": [
+            "human",
+            "organization",
+            "deterministic_service",
+            "model_service",
+            "provider",
+            "instrument"
+          ]
+        },
+        "provider_id": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/identifier"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "model_identity": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/digest"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "geographic_region": {
+          "$ref": "#/$defs/identifier"
+        },
+        "destination": {
+          "type": "string",
+          "minLength": 1
+        }
       },
       "allOf": [
         {
-          "if": { "properties": { "principal_class": { "const": "model_service" } }, "required": ["principal_class"] },
-          "then": { "properties": { "provider_id": { "$ref": "#/$defs/identifier" }, "model_identity": { "$ref": "#/$defs/digest" } } }
+          "if": {
+            "properties": {
+              "principal_class": {
+                "const": "model_service"
+              }
+            },
+            "required": [
+              "principal_class"
+            ]
+          },
+          "then": {
+            "properties": {
+              "provider_id": {
+                "$ref": "#/$defs/identifier"
+              },
+              "model_identity": {
+                "$ref": "#/$defs/digest"
+              }
+            }
+          }
         },
         {
-          "if": { "properties": { "principal_class": { "const": "provider" } }, "required": ["principal_class"] },
-          "then": { "properties": { "provider_id": { "$ref": "#/$defs/identifier" } } }
+          "if": {
+            "properties": {
+              "principal_class": {
+                "const": "provider"
+              }
+            },
+            "required": [
+              "principal_class"
+            ]
+          },
+          "then": {
+            "properties": {
+              "provider_id": {
+                "$ref": "#/$defs/identifier"
+              }
+            }
+          }
         }
       ]
     },
     "purpose": {
-      "type": "object", "additionalProperties": false,
-      "required": ["purpose_id", "purpose_version", "protocol_digest", "stage_id"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "purpose_id",
+        "purpose_version",
+        "protocol_digest",
+        "stage_id"
+      ],
       "properties": {
-        "purpose_id": { "$ref": "#/$defs/identifier" },
-        "purpose_version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
-        "protocol_digest": { "$ref": "#/$defs/digest" },
-        "stage_id": { "oneOf": [{ "$ref": "#/$defs/identifier" }, { "type": "null" }] }
+        "purpose_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "purpose_version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "protocol_digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-protocol-snapshot-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
+        },
+        "stage_id": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/identifier"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
       }
     },
-    "operation": { "$ref": "#/$defs/operation" },
-    "detail": { "type": "object" },
-    "recorded_at_ledger_position": { "type": "integer", "minimum": 0 },
-    "recorded_at": { "$ref": "#/$defs/timestamp" },
-    "recorded_by": { "$ref": "#/$defs/principal" }
+    "operation": {
+      "$ref": "#/$defs/operation"
+    },
+    "detail": {
+      "type": "object"
+    },
+    "recorded_at_ledger_position": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "recorded_at": {
+      "$ref": "#/$defs/timestamp"
+    },
+    "recorded_by": {
+      "$ref": "#/$defs/principal"
+    }
   },
   "allOf": [
     {
-      "if": { "properties": { "record_kind": { "const": "intent" } }, "required": ["record_kind"] },
-      "then": { "properties": { "parent_intent_ref": { "type": "null" }, "detail": { "$ref": "#/$defs/intent_detail" } } }
+      "if": {
+        "properties": {
+          "record_kind": {
+            "const": "intent"
+          }
+        },
+        "required": [
+          "record_kind"
+        ]
+      },
+      "then": {
+        "properties": {
+          "parent_intent_ref": {
+            "type": "null"
+          },
+          "detail": {
+            "$ref": "#/$defs/intent_detail"
+          }
+        }
+      }
     },
     {
-      "if": { "properties": { "record_kind": { "const": "observation" } }, "required": ["record_kind"] },
-      "then": { "properties": { "parent_intent_ref": { "$ref": "#/$defs/immutable_reference" }, "detail": { "$ref": "#/$defs/observation_detail" } } }
+      "if": {
+        "properties": {
+          "record_kind": {
+            "const": "observation"
+          }
+        },
+        "required": [
+          "record_kind"
+        ]
+      },
+      "then": {
+        "properties": {
+          "parent_intent_ref": {
+            "$ref": "#/$defs/immutable_reference"
+          },
+          "detail": {
+            "$ref": "#/$defs/observation_detail"
+          }
+        }
+      }
     },
     {
-      "if": { "properties": { "record_kind": { "const": "settlement" } }, "required": ["record_kind"] },
-      "then": { "properties": { "parent_intent_ref": { "$ref": "#/$defs/immutable_reference" }, "detail": { "$ref": "#/$defs/settlement_detail" } } }
+      "if": {
+        "properties": {
+          "record_kind": {
+            "const": "settlement"
+          }
+        },
+        "required": [
+          "record_kind"
+        ]
+      },
+      "then": {
+        "properties": {
+          "parent_intent_ref": {
+            "$ref": "#/$defs/immutable_reference"
+          },
+          "detail": {
+            "$ref": "#/$defs/settlement_detail"
+          }
+        }
+      }
     }
   ],
   "$defs": {
-    "identifier": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$" },
-    "digest": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
-    "timestamp": { "type": "string", "format": "date-time", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$" },
-    "operation": { "enum": ["inspect", "transform", "link", "infer", "execute_on", "model_inference", "train", "fine_tune", "embed", "cache", "log", "human_review", "evaluate", "verify", "export", "publish", "support_access"] },
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$"
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
+    },
+    "operation": {
+      "enum": [
+        "inspect",
+        "transform",
+        "link",
+        "infer",
+        "execute_on",
+        "model_inference",
+        "train",
+        "fine_tune",
+        "embed",
+        "cache",
+        "log",
+        "human_review",
+        "evaluate",
+        "verify",
+        "export",
+        "publish",
+        "support_access"
+      ]
+    },
     "principal": {
-      "type": "object", "additionalProperties": false,
-      "required": ["principal_id", "principal_type"],
-      "properties": { "principal_id": { "$ref": "#/$defs/identifier" }, "principal_type": { "enum": ["human", "deterministic_service", "provider_adapter"] } }
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "principal_id",
+        "principal_type"
+      ],
+      "properties": {
+        "principal_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "principal_type": {
+          "enum": [
+            "human",
+            "deterministic_service",
+            "provider_adapter"
+          ]
+        }
+      }
     },
     "settlement_principal": {
-      "type": "object", "additionalProperties": false,
-      "required": ["principal_id", "principal_type"],
-      "properties": { "principal_id": { "$ref": "#/$defs/identifier" }, "principal_type": { "enum": ["human", "deterministic_service"] } }
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "principal_id",
+        "principal_type"
+      ],
+      "properties": {
+        "principal_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "principal_type": {
+          "enum": [
+            "human",
+            "deterministic_service"
+          ]
+        }
+      }
     },
     "immutable_reference": {
-      "type": "object", "additionalProperties": false,
-      "required": ["id", "version", "digest"],
-      "properties": { "id": { "$ref": "#/$defs/identifier" }, "version": { "type": "integer", "minimum": 1 }, "digest": { "$ref": "#/$defs/digest" } }
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "version",
+        "digest"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        }
+      }
     },
     "versioned_reference": {
-      "type": "object", "additionalProperties": false,
-      "required": ["id", "version", "digest"],
-      "properties": { "id": { "$ref": "#/$defs/identifier" }, "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" }, "digest": { "$ref": "#/$defs/digest" } }
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "version",
+        "digest"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        }
+      }
     },
     "artifact_reference": {
-      "type": "object", "additionalProperties": false,
-      "required": ["artifact_id", "digest", "media_type"],
-      "properties": { "artifact_id": { "$ref": "#/$defs/identifier" }, "digest": { "$ref": "#/$defs/digest" }, "media_type": { "type": "string", "minLength": 1 } }
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "digest",
+        "media_type"
+      ],
+      "properties": {
+        "artifact_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
     },
     "recipient_configuration": {
-      "type": "object", "additionalProperties": false,
-      "required": ["service_retention", "provider_training", "human_access", "support_access", "caching", "logging", "onward_transfer"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "service_retention",
+        "provider_training",
+        "human_access",
+        "support_access",
+        "caching",
+        "logging",
+        "onward_transfer"
+      ],
       "properties": {
-        "service_retention": { "enum": ["allowed_bounded", "forbidden"] },
-        "provider_training": { "enum": ["allowed", "forbidden"] },
-        "human_access": { "enum": ["allowed_bounded", "forbidden"] },
-        "support_access": { "enum": ["allowed_bounded", "forbidden"] },
-        "caching": { "enum": ["allowed_bounded", "forbidden"] },
-        "logging": { "enum": ["allowed_bounded", "forbidden"] },
-        "onward_transfer": { "enum": ["allowed_bounded", "forbidden"] }
+        "service_retention": {
+          "enum": [
+            "allowed_bounded",
+            "forbidden"
+          ]
+        },
+        "provider_training": {
+          "enum": [
+            "allowed",
+            "forbidden"
+          ]
+        },
+        "human_access": {
+          "enum": [
+            "allowed_bounded",
+            "forbidden"
+          ]
+        },
+        "support_access": {
+          "enum": [
+            "allowed_bounded",
+            "forbidden"
+          ]
+        },
+        "caching": {
+          "enum": [
+            "allowed_bounded",
+            "forbidden"
+          ]
+        },
+        "logging": {
+          "enum": [
+            "allowed_bounded",
+            "forbidden"
+          ]
+        },
+        "onward_transfer": {
+          "enum": [
+            "allowed_bounded",
+            "forbidden"
+          ]
+        }
       }
     },
     "intent_detail": {
-      "type": "object", "additionalProperties": false,
-      "required": ["disposition", "data_use_decision_ref", "authority_grant_ref", "intent_payload_digest", "adapter_profile_ref", "recipient_configuration", "not_before", "expires_at", "reason_codes"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "disposition",
+        "data_use_decision_ref",
+        "authority_grant_ref",
+        "intent_payload_digest",
+        "adapter_profile_ref",
+        "recipient_configuration",
+        "not_before",
+        "expires_at",
+        "reason_codes"
+      ],
       "properties": {
-        "disposition": { "enum": ["authorized", "denied", "indeterminate"] },
-        "data_use_decision_ref": { "$ref": "#/$defs/immutable_reference" },
-        "authority_grant_ref": { "oneOf": [{ "$ref": "#/$defs/immutable_reference" }, { "type": "null" }] },
-        "intent_payload_digest": { "$ref": "#/$defs/digest" },
-        "adapter_profile_ref": { "$ref": "#/$defs/versioned_reference" },
-        "recipient_configuration": { "oneOf": [{ "$ref": "#/$defs/recipient_configuration" }, { "type": "null" }] },
-        "not_before": { "oneOf": [{ "$ref": "#/$defs/timestamp" }, { "type": "null" }] },
-        "expires_at": { "oneOf": [{ "$ref": "#/$defs/timestamp" }, { "type": "null" }] },
-        "reason_codes": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/identifier" } }
+        "disposition": {
+          "enum": [
+            "authorized",
+            "denied",
+            "indeterminate"
+          ]
+        },
+        "data_use_decision_ref": {
+          "$ref": "#/$defs/immutable_reference"
+        },
+        "authority_grant_ref": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/immutable_reference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "intent_payload_digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "intended-exposure payload bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
+        },
+        "adapter_profile_ref": {
+          "$ref": "#/$defs/versioned_reference"
+        },
+        "recipient_configuration": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/recipient_configuration"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "not_before": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expires_at": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "reason_codes": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        }
       },
       "allOf": [
         {
-          "if": { "properties": { "disposition": { "const": "authorized" } }, "required": ["disposition"] },
-          "then": { "properties": { "authority_grant_ref": { "$ref": "#/$defs/immutable_reference" }, "recipient_configuration": { "$ref": "#/$defs/recipient_configuration" }, "not_before": { "$ref": "#/$defs/timestamp" }, "expires_at": { "$ref": "#/$defs/timestamp" } } },
-          "else": { "properties": { "authority_grant_ref": { "type": "null" }, "recipient_configuration": { "type": "null" }, "not_before": { "type": "null" }, "expires_at": { "type": "null" } } }
+          "if": {
+            "properties": {
+              "disposition": {
+                "const": "authorized"
+              }
+            },
+            "required": [
+              "disposition"
+            ]
+          },
+          "then": {
+            "properties": {
+              "authority_grant_ref": {
+                "$ref": "#/$defs/immutable_reference"
+              },
+              "recipient_configuration": {
+                "$ref": "#/$defs/recipient_configuration"
+              },
+              "not_before": {
+                "$ref": "#/$defs/timestamp"
+              },
+              "expires_at": {
+                "$ref": "#/$defs/timestamp"
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "authority_grant_ref": {
+                "type": "null"
+              },
+              "recipient_configuration": {
+                "type": "null"
+              },
+              "not_before": {
+                "type": "null"
+              },
+              "expires_at": {
+                "type": "null"
+              }
+            }
+          }
         }
       ]
     },
     "observation_detail": {
-      "type": "object", "additionalProperties": false,
-      "required": ["outcome", "observed_payload_digest", "provider_receipt_ref", "configuration_observation", "observed_configuration_ref", "adapter_execution_ref", "observed_at", "limitations"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "outcome",
+        "observed_payload_digest",
+        "provider_receipt_ref",
+        "configuration_observation",
+        "observed_configuration_ref",
+        "adapter_execution_ref",
+        "observed_at",
+        "limitations"
+      ],
       "properties": {
-        "outcome": { "enum": ["confirmed_disclosed", "confirmed_not_disclosed", "completion_unknown", "partial_or_mismatched"] },
-        "observed_payload_digest": { "oneOf": [{ "$ref": "#/$defs/digest" }, { "type": "null" }] },
-        "provider_receipt_ref": { "oneOf": [{ "$ref": "#/$defs/artifact_reference" }, { "type": "null" }] },
-        "configuration_observation": { "enum": ["confirmed_match", "mismatch", "unknown"] },
-        "observed_configuration_ref": { "oneOf": [{ "$ref": "#/$defs/artifact_reference" }, { "type": "null" }] },
-        "adapter_execution_ref": { "$ref": "#/$defs/immutable_reference" },
-        "observed_at": { "$ref": "#/$defs/timestamp" },
-        "limitations": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+        "outcome": {
+          "enum": [
+            "confirmed_disclosed",
+            "confirmed_not_disclosed",
+            "completion_unknown",
+            "partial_or_mismatched"
+          ]
+        },
+        "observed_payload_digest": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/digest"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "payload bytes the provider observed",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
+        },
+        "provider_receipt_ref": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/artifact_reference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "configuration_observation": {
+          "enum": [
+            "confirmed_match",
+            "mismatch",
+            "unknown"
+          ]
+        },
+        "observed_configuration_ref": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/artifact_reference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "adapter_execution_ref": {
+          "$ref": "#/$defs/immutable_reference"
+        },
+        "observed_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
       },
       "allOf": [
         {
-          "if": { "properties": { "outcome": { "const": "confirmed_disclosed" } }, "required": ["outcome"] },
-          "then": { "properties": { "observed_payload_digest": { "$ref": "#/$defs/digest" }, "provider_receipt_ref": { "$ref": "#/$defs/artifact_reference" }, "configuration_observation": { "const": "confirmed_match" }, "observed_configuration_ref": { "$ref": "#/$defs/artifact_reference" } } }
+          "if": {
+            "properties": {
+              "outcome": {
+                "const": "confirmed_disclosed"
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          },
+          "then": {
+            "properties": {
+              "observed_payload_digest": {
+                "$ref": "#/$defs/digest",
+                "x-odeya-digest-scope": {
+                  "kind": "byte_digest",
+                  "subject": "payload bytes the provider observed",
+                  "algorithm": "sha-256",
+                  "profile": "not_a_canonical_object_digest",
+                  "status": "accepted_disposition_annotation"
+                }
+              },
+              "provider_receipt_ref": {
+                "$ref": "#/$defs/artifact_reference"
+              },
+              "configuration_observation": {
+                "const": "confirmed_match"
+              },
+              "observed_configuration_ref": {
+                "$ref": "#/$defs/artifact_reference"
+              }
+            }
+          }
         },
         {
-          "if": { "properties": { "outcome": { "enum": ["completion_unknown", "partial_or_mismatched"] } }, "required": ["outcome"] },
-          "then": { "properties": { "limitations": { "minItems": 1 } } }
+          "if": {
+            "properties": {
+              "outcome": {
+                "enum": [
+                  "completion_unknown",
+                  "partial_or_mismatched"
+                ]
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          },
+          "then": {
+            "properties": {
+              "limitations": {
+                "minItems": 1
+              }
+            }
+          }
         }
       ]
     },
     "settlement_detail": {
-      "type": "object", "additionalProperties": false,
-      "required": ["disposition", "observation_refs", "oracle_ref", "settlement_evidence_refs", "settled_at", "settled_by", "limitations"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "disposition",
+        "observation_refs",
+        "oracle_ref",
+        "settlement_evidence_refs",
+        "settled_at",
+        "settled_by",
+        "limitations"
+      ],
       "properties": {
-        "disposition": { "enum": ["confirmed_exposed", "confirmed_not_exposed", "completion_unknown"] },
-        "observation_refs": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/immutable_reference" } },
-        "oracle_ref": { "$ref": "#/$defs/versioned_reference" },
-        "settlement_evidence_refs": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/artifact_reference" } },
-        "settled_at": { "$ref": "#/$defs/timestamp" },
-        "settled_by": { "$ref": "#/$defs/settlement_principal" },
-        "limitations": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+        "disposition": {
+          "enum": [
+            "confirmed_exposed",
+            "confirmed_not_exposed",
+            "completion_unknown"
+          ]
+        },
+        "observation_refs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/immutable_reference"
+          }
+        },
+        "oracle_ref": {
+          "$ref": "#/$defs/versioned_reference"
+        },
+        "settlement_evidence_refs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/artifact_reference"
+          }
+        },
+        "settled_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "settled_by": {
+          "$ref": "#/$defs/settlement_principal"
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
       },
       "allOf": [
         {
-          "if": { "properties": { "disposition": { "const": "completion_unknown" } }, "required": ["disposition"] },
-          "then": { "properties": { "limitations": { "minItems": 1 } } }
+          "if": {
+            "properties": {
+              "disposition": {
+                "const": "completion_unknown"
+              }
+            },
+            "required": [
+              "disposition"
+            ]
+          },
+          "then": {
+            "properties": {
+              "limitations": {
+                "minItems": 1
+              }
+            }
+          }
         }
       ]
     }

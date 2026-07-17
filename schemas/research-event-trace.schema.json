@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:research-event-trace:0.3.0",
+  "$id": "urn:odeya:schema:research-event-trace:0.4.0",
   "title": "Odeya ResearchEvent Replay Trace",
   "description": "Architecture-time replay vector binding an ordered event sequence to expected scientific, authority, data-governance, and recovery axes plus forbidden inferences. Relational ordering, event identity, and reducer correctness still require independent semantic validators.",
   "type": "object",
@@ -19,7 +19,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.3.0"
+      "const": "0.4.0"
     },
     "trace_id": {
       "$ref": "#/$defs/identifier"
@@ -1229,7 +1229,14 @@
           "minimum": 0
         },
         "event_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-research-event-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "registered_domain"
+          }
         },
         "expected_axis_changes": {
           "type": "array",
@@ -1288,7 +1295,14 @@
           "pattern": "^urn:odeya:command-payload:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$"
         },
         "canonical_request_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-command-request-v2",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "registered_domain"
+          }
         },
         "source_stream_position": {
           "type": "integer",

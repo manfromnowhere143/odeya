@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:event-contract-registry:0.1.0",
+  "$id": "urn:odeya:schema:event-contract-registry:0.2.0",
   "title": "Odeya EventContractRegistry",
   "description": "An immutable registry of exact event branches. Each member binds one discriminator/version and payload JSON Pointer to retained schema bytes, one canonical aggregate owner, a closed producer-command set, retention/privacy semantics, and one reducer member. Structural validity does not prove legal emission or reduction.",
   "type": "object",
@@ -27,155 +27,393 @@
     "external_attestations"
   ],
   "properties": {
-    "schema_version": { "const": "0.1.0" },
-    "registry_kind": { "const": "event_contract_registry" },
-    "registry_id": { "$ref": "#/$defs/identifier" },
-    "version": { "$ref": "#/$defs/semantic_version" },
-    "conformance_scope": { "enum": ["registry_subject", "structural_fixture_only"] },
-    "supersedes_registry_subject_ref": {
-      "oneOf": [{ "$ref": "#/$defs/subject_reference" }, { "type": "null" }]
+    "schema_version": {
+      "const": "0.2.0"
     },
-    "canonicalization_profile_ref": { "$ref": "#/$defs/profile_reference" },
+    "registry_kind": {
+      "const": "event_contract_registry"
+    },
+    "registry_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "version": {
+      "$ref": "#/$defs/semantic_version"
+    },
+    "conformance_scope": {
+      "enum": [
+        "registry_subject",
+        "structural_fixture_only"
+      ]
+    },
+    "supersedes_registry_subject_ref": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/subject_reference"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "canonicalization_profile_ref": {
+      "$ref": "#/$defs/profile_reference"
+    },
     "ordering_contract": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["member_key_expression", "ordering", "duplicate_member_keys"],
+      "required": [
+        "member_key_expression",
+        "ordering",
+        "duplicate_member_keys"
+      ],
       "properties": {
-        "member_key_expression": { "const": "event_type@event_version" },
-        "ordering": { "const": "canonical_utf8_ascending" },
-        "duplicate_member_keys": { "const": "reject" }
+        "member_key_expression": {
+          "const": "event_type@event_version"
+        },
+        "ordering": {
+          "const": "canonical_utf8_ascending"
+        },
+        "duplicate_member_keys": {
+          "const": "reject"
+        }
       }
     },
     "members": {
       "type": "object",
       "minProperties": 1,
       "maxProperties": 1024,
-      "propertyNames": { "$ref": "#/$defs/member_key" },
-      "additionalProperties": { "$ref": "#/$defs/event_contract" }
+      "propertyNames": {
+        "$ref": "#/$defs/member_key"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/event_contract"
+      }
     },
-    "member_set_commitment": { "$ref": "#/$defs/member_set_commitment" },
+    "member_set_commitment": {
+      "$ref": "#/$defs/member_set_commitment"
+    },
     "graph_closure_contract": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["producer_commands_must_resolve", "reducer_must_resolve", "aggregate_owner_must_match_reducer", "producer_command_reference", "content_digest_dependency_order", "content_digest_cycles", "unresolved_or_ambiguous_edge"],
+      "required": [
+        "producer_commands_must_resolve",
+        "reducer_must_resolve",
+        "aggregate_owner_must_match_reducer",
+        "producer_command_reference",
+        "content_digest_dependency_order",
+        "content_digest_cycles",
+        "unresolved_or_ambiguous_edge"
+      ],
       "properties": {
-        "producer_commands_must_resolve": { "const": true },
-        "reducer_must_resolve": { "const": true },
-        "aggregate_owner_must_match_reducer": { "const": true },
-        "producer_command_reference": { "const": "same_root_exact_member_logical_back_reference" },
-        "content_digest_dependency_order": { "const": "schema_to_state_to_reducer_to_event_to_command" },
-        "content_digest_cycles": { "const": "forbidden" },
-        "unresolved_or_ambiguous_edge": { "const": "block_root_construction" }
+        "producer_commands_must_resolve": {
+          "const": true
+        },
+        "reducer_must_resolve": {
+          "const": true
+        },
+        "aggregate_owner_must_match_reducer": {
+          "const": true
+        },
+        "producer_command_reference": {
+          "const": "same_root_exact_member_logical_back_reference"
+        },
+        "content_digest_dependency_order": {
+          "const": "schema_to_state_to_reducer_to_event_to_command"
+        },
+        "content_digest_cycles": {
+          "const": "forbidden"
+        },
+        "unresolved_or_ambiguous_edge": {
+          "const": "block_root_construction"
+        }
       }
     },
-    "historical_read_policy": { "$ref": "#/$defs/historical_read_policy" },
-    "source_manifest_ref": { "$ref": "#/$defs/artifact_reference" },
-    "generator_identity_ref": { "$ref": "#/$defs/artifact_reference" },
-    "review_evidence_refs": { "$ref": "#/$defs/nonempty_artifact_array" },
+    "historical_read_policy": {
+      "$ref": "#/$defs/historical_read_policy"
+    },
+    "source_manifest_ref": {
+      "$ref": "#/$defs/artifact_reference"
+    },
+    "generator_identity_ref": {
+      "$ref": "#/$defs/artifact_reference"
+    },
+    "review_evidence_refs": {
+      "$ref": "#/$defs/nonempty_artifact_array"
+    },
     "known_limitations": {
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,
-      "items": { "$ref": "#/$defs/known_limitation" }
+      "items": {
+        "$ref": "#/$defs/known_limitation"
+      }
     },
-    "registry_digest_contract": { "$ref": "#/$defs/registry_digest_contract" },
-    "registry_digest": { "$ref": "#/$defs/digest" },
+    "registry_digest_contract": {
+      "$ref": "#/$defs/registry_digest_contract"
+    },
+    "registry_digest": {
+      "$ref": "#/$defs/digest"
+    },
     "external_attestations": {
       "type": "array",
       "uniqueItems": true,
-      "items": { "$ref": "#/$defs/attestation" }
+      "items": {
+        "$ref": "#/$defs/attestation"
+      }
     }
   },
   "$defs": {
-    "identifier": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$" },
-    "semantic_version": { "type": "string", "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$" },
-    "member_key": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}@(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$" },
-    "json_pointer": { "type": "string", "pattern": "^/(\\$defs|properties)(/([^~/]|~0|~1)+)+$" },
-    "digest": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$"
+    },
+    "semantic_version": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
+    },
+    "member_key": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}@(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
+    },
+    "json_pointer": {
+      "type": "string",
+      "pattern": "^/(\\$defs|properties)(/([^~/]|~0|~1)+)+$"
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
     "subject_reference": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["subject_id", "version", "schema_id", "canonical_digest"],
+      "required": [
+        "subject_id",
+        "version",
+        "schema_id",
+        "canonical_digest"
+      ],
       "properties": {
-        "subject_id": { "$ref": "#/$defs/identifier" },
-        "version": { "$ref": "#/$defs/semantic_version" },
-        "schema_id": { "type": "string", "format": "uri" },
-        "canonical_digest": { "$ref": "#/$defs/digest" }
+        "subject_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "$ref": "#/$defs/semantic_version"
+        },
+        "schema_id": {
+          "type": "string",
+          "format": "uri"
+        },
+        "canonical_digest": {
+          "$ref": "#/$defs/digest"
+        }
       }
     },
     "profile_reference": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["profile_id", "version", "digest"],
+      "required": [
+        "profile_id",
+        "version",
+        "digest"
+      ],
       "properties": {
-        "profile_id": { "$ref": "#/$defs/identifier" },
-        "version": { "$ref": "#/$defs/semantic_version" },
-        "digest": { "$ref": "#/$defs/digest" }
+        "profile_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "$ref": "#/$defs/semantic_version"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        }
       }
     },
     "artifact_reference": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["artifact_id", "digest", "media_type"],
+      "required": [
+        "artifact_id",
+        "digest",
+        "media_type"
+      ],
       "properties": {
-        "artifact_id": { "$ref": "#/$defs/identifier" },
-        "digest": { "$ref": "#/$defs/digest" },
-        "media_type": { "type": "string", "minLength": 1, "maxLength": 127 }
+        "artifact_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 127
+        }
       }
     },
     "nonempty_artifact_array": {
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,
-      "items": { "$ref": "#/$defs/artifact_reference" }
+      "items": {
+        "$ref": "#/$defs/artifact_reference"
+      }
     },
     "schema_bytes_reference": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["schema_member_key", "schema_id", "semantic_version", "byte_digest", "byte_count", "dialect", "root_json_type", "schema_member_digest"],
+      "required": [
+        "schema_member_key",
+        "schema_id",
+        "semantic_version",
+        "byte_digest",
+        "byte_count",
+        "dialect",
+        "root_json_type",
+        "schema_member_digest"
+      ],
       "properties": {
-        "schema_member_key": { "$ref": "#/$defs/member_key" },
-        "schema_id": { "type": "string", "format": "uri" },
-        "semantic_version": { "$ref": "#/$defs/semantic_version" },
-        "byte_digest": { "$ref": "#/$defs/digest" },
-        "byte_count": { "type": "integer", "minimum": 2 },
-        "dialect": { "const": "https://json-schema.org/draft/2020-12/schema" },
-        "root_json_type": { "const": "object" },
-        "schema_member_digest": { "$ref": "#/$defs/digest" }
+        "schema_member_key": {
+          "$ref": "#/$defs/member_key"
+        },
+        "schema_id": {
+          "type": "string",
+          "format": "uri"
+        },
+        "semantic_version": {
+          "$ref": "#/$defs/semantic_version"
+        },
+        "byte_digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "retained raw bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
+        },
+        "byte_count": {
+          "type": "integer",
+          "minimum": 2
+        },
+        "dialect": {
+          "const": "https://json-schema.org/draft/2020-12/schema"
+        },
+        "root_json_type": {
+          "const": "object"
+        },
+        "schema_member_digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-schema-registry-member-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "registered_domain"
+          }
+        }
       }
     },
     "command_member_reference": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["command_type", "command_version", "resolution"],
+      "required": [
+        "command_type",
+        "command_version",
+        "resolution"
+      ],
       "properties": {
-        "command_type": { "$ref": "#/$defs/identifier" },
-        "command_version": { "$ref": "#/$defs/semantic_version" },
-        "resolution": { "const": "same_root_exact_member" }
+        "command_type": {
+          "$ref": "#/$defs/identifier"
+        },
+        "command_version": {
+          "$ref": "#/$defs/semantic_version"
+        },
+        "resolution": {
+          "const": "same_root_exact_member"
+        }
       }
     },
     "reducer_member_reference": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["aggregate_type", "reducer_id", "reducer_version", "reducer_member_digest"],
+      "required": [
+        "aggregate_type",
+        "reducer_id",
+        "reducer_version",
+        "reducer_member_digest"
+      ],
       "properties": {
-        "aggregate_type": { "$ref": "#/$defs/identifier" },
-        "reducer_id": { "$ref": "#/$defs/identifier" },
-        "reducer_version": { "$ref": "#/$defs/semantic_version" },
-        "reducer_member_digest": { "$ref": "#/$defs/digest" }
+        "aggregate_type": {
+          "$ref": "#/$defs/identifier"
+        },
+        "reducer_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "reducer_version": {
+          "$ref": "#/$defs/semantic_version"
+        },
+        "reducer_member_digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-reducer-registry-member-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "registered_domain"
+          }
+        }
       }
     },
     "retention_privacy_contract": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["retention_class", "minimum_retention", "legal_hold_overrides_destruction", "privacy_class", "payload_logging", "projection_redaction_required"],
+      "required": [
+        "retention_class",
+        "minimum_retention",
+        "legal_hold_overrides_destruction",
+        "privacy_class",
+        "payload_logging",
+        "projection_redaction_required"
+      ],
       "properties": {
-        "retention_class": { "enum": ["constitutional_permanent", "scientific_record", "operational_audit", "privacy_bounded"] },
-        "minimum_retention": { "enum": ["permanent", "mission_plus_policy", "policy_bounded"] },
-        "legal_hold_overrides_destruction": { "const": true },
-        "privacy_class": { "enum": ["public", "internal", "restricted", "sensitive", "highly_sensitive"] },
-        "payload_logging": { "enum": ["full_canonical_only", "redacted_canonical", "metadata_only"] },
-        "projection_redaction_required": { "type": "boolean" }
+        "retention_class": {
+          "enum": [
+            "constitutional_permanent",
+            "scientific_record",
+            "operational_audit",
+            "privacy_bounded"
+          ]
+        },
+        "minimum_retention": {
+          "enum": [
+            "permanent",
+            "mission_plus_policy",
+            "policy_bounded"
+          ]
+        },
+        "legal_hold_overrides_destruction": {
+          "const": true
+        },
+        "privacy_class": {
+          "enum": [
+            "public",
+            "internal",
+            "restricted",
+            "sensitive",
+            "highly_sensitive"
+          ]
+        },
+        "payload_logging": {
+          "enum": [
+            "full_canonical_only",
+            "redacted_canonical",
+            "metadata_only"
+          ]
+        },
+        "projection_redaction_required": {
+          "type": "boolean"
+        }
       }
     },
     "event_contract": {
@@ -196,123 +434,285 @@
         "member_digest"
       ],
       "properties": {
-        "member_key": { "$ref": "#/$defs/member_key" },
-        "event_type": { "$ref": "#/$defs/identifier" },
-        "event_version": { "$ref": "#/$defs/semantic_version" },
+        "member_key": {
+          "$ref": "#/$defs/member_key"
+        },
+        "event_type": {
+          "$ref": "#/$defs/identifier"
+        },
+        "event_version": {
+          "$ref": "#/$defs/semantic_version"
+        },
         "payload_contract": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["event_envelope_schema_ref", "payload_json_pointer", "payload_required", "nullable", "exact_branch_required"],
+          "required": [
+            "event_envelope_schema_ref",
+            "payload_json_pointer",
+            "payload_required",
+            "nullable",
+            "exact_branch_required"
+          ],
           "properties": {
-            "event_envelope_schema_ref": { "$ref": "#/$defs/schema_bytes_reference" },
-            "payload_json_pointer": { "$ref": "#/$defs/json_pointer" },
-            "payload_required": { "const": true },
-            "nullable": { "const": false },
-            "exact_branch_required": { "const": true }
+            "event_envelope_schema_ref": {
+              "$ref": "#/$defs/schema_bytes_reference"
+            },
+            "payload_json_pointer": {
+              "$ref": "#/$defs/json_pointer"
+            },
+            "payload_required": {
+              "const": true
+            },
+            "nullable": {
+              "const": false
+            },
+            "exact_branch_required": {
+              "const": true
+            }
           }
         },
         "aggregate_owner": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["owning_module", "aggregate_type", "ownership_cardinality"],
+          "required": [
+            "owning_module",
+            "aggregate_type",
+            "ownership_cardinality"
+          ],
           "properties": {
-            "owning_module": { "$ref": "#/$defs/identifier" },
-            "aggregate_type": { "$ref": "#/$defs/identifier" },
-            "ownership_cardinality": { "const": "exactly_one" }
+            "owning_module": {
+              "$ref": "#/$defs/identifier"
+            },
+            "aggregate_type": {
+              "$ref": "#/$defs/identifier"
+            },
+            "ownership_cardinality": {
+              "const": "exactly_one"
+            }
           }
         },
         "producer_commands": {
           "type": "array",
           "minItems": 1,
           "uniqueItems": true,
-          "items": { "$ref": "#/$defs/command_member_reference" }
+          "items": {
+            "$ref": "#/$defs/command_member_reference"
+          }
         },
-        "retention_and_privacy": { "$ref": "#/$defs/retention_privacy_contract" },
-        "canonical_reducer_ref": { "$ref": "#/$defs/reducer_member_reference" },
-        "trace_refs": { "$ref": "#/$defs/nonempty_artifact_array" },
-        "review_evidence_refs": { "$ref": "#/$defs/nonempty_artifact_array" },
-        "member_digest_contract": { "$ref": "#/$defs/event_member_digest_contract" },
-        "member_digest": { "$ref": "#/$defs/digest" }
+        "retention_and_privacy": {
+          "$ref": "#/$defs/retention_privacy_contract"
+        },
+        "canonical_reducer_ref": {
+          "$ref": "#/$defs/reducer_member_reference"
+        },
+        "trace_refs": {
+          "$ref": "#/$defs/nonempty_artifact_array"
+        },
+        "review_evidence_refs": {
+          "$ref": "#/$defs/nonempty_artifact_array"
+        },
+        "member_digest_contract": {
+          "$ref": "#/$defs/event_member_digest_contract"
+        },
+        "member_digest": {
+          "$ref": "#/$defs/digest"
+        }
       }
     },
     "member_set_commitment": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["algorithm", "member_count", "ordered_member_digests_digest"],
+      "required": [
+        "algorithm",
+        "member_count",
+        "ordered_member_digests_digest"
+      ],
       "properties": {
-        "algorithm": { "const": "odeya-canonical-map-commitment-v1" },
-        "member_count": { "type": "integer", "minimum": 1 },
-        "ordered_member_digests_digest": { "$ref": "#/$defs/digest" }
+        "algorithm": {
+          "const": "odeya-canonical-map-commitment-v1"
+        },
+        "member_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "ordered_member_digests_digest": {
+          "$ref": "#/$defs/digest"
+        }
       }
     },
     "historical_read_policy": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["resolution", "retained_schema_bytes_required", "mutable_aliases_allowed", "unknown_event_or_version"],
+      "required": [
+        "resolution",
+        "retained_schema_bytes_required",
+        "mutable_aliases_allowed",
+        "unknown_event_or_version"
+      ],
       "properties": {
-        "resolution": { "const": "exact_member_version_and_payload_branch" },
-        "retained_schema_bytes_required": { "const": true },
-        "mutable_aliases_allowed": { "const": false },
-        "unknown_event_or_version": { "const": "block" }
+        "resolution": {
+          "const": "exact_member_version_and_payload_branch"
+        },
+        "retained_schema_bytes_required": {
+          "const": true
+        },
+        "mutable_aliases_allowed": {
+          "const": false
+        },
+        "unknown_event_or_version": {
+          "const": "block"
+        }
       }
     },
     "known_limitation": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["limitation_id", "severity", "statement", "consequence"],
+      "required": [
+        "limitation_id",
+        "severity",
+        "statement",
+        "consequence"
+      ],
       "properties": {
-        "limitation_id": { "$ref": "#/$defs/identifier" },
-        "severity": { "enum": ["low", "moderate", "high", "critical"] },
-        "statement": { "type": "string", "minLength": 1, "maxLength": 2048 },
-        "consequence": { "type": "string", "minLength": 1, "maxLength": 2048 }
+        "limitation_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "severity": {
+          "enum": [
+            "low",
+            "moderate",
+            "high",
+            "critical"
+          ]
+        },
+        "statement": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2048
+        },
+        "consequence": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2048
+        }
       }
     },
     "attestation": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["attestation_id", "subject_digest", "signer_id", "algorithm", "signature_ref"],
+      "required": [
+        "attestation_id",
+        "subject_digest",
+        "signer_id",
+        "algorithm",
+        "signature_ref"
+      ],
       "properties": {
-        "attestation_id": { "$ref": "#/$defs/identifier" },
-        "subject_digest": { "$ref": "#/$defs/digest" },
-        "signer_id": { "$ref": "#/$defs/identifier" },
-        "algorithm": { "type": "string", "minLength": 1, "maxLength": 127 },
-        "signature_ref": { "$ref": "#/$defs/artifact_reference" }
+        "attestation_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "subject_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "signer_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "algorithm": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 127
+        },
+        "signature_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        }
       }
     },
     "schema_reference": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["schema_id", "schema_digest"],
+      "required": [
+        "schema_id",
+        "schema_digest"
+      ],
       "properties": {
-        "schema_id": { "type": "string", "format": "uri" },
-        "schema_digest": { "$ref": "#/$defs/digest" }
+        "schema_id": {
+          "type": "string",
+          "format": "uri"
+        },
+        "schema_digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "retained schema resource bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
+        }
       }
     },
     "event_member_digest_contract": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["algorithm", "domain_separator", "canonicalization_profile_ref", "subject_schema_ref", "included_json_pointers", "excluded_json_pointers"],
+      "required": [
+        "algorithm",
+        "domain_separator",
+        "canonicalization_profile_ref",
+        "subject_schema_ref",
+        "included_json_pointers",
+        "excluded_json_pointers"
+      ],
       "properties": {
-        "algorithm": { "const": "sha256" },
-        "domain_separator": { "const": "odeya-event-contract-member-v1" },
-        "canonicalization_profile_ref": { "$ref": "#/$defs/profile_reference" },
-        "subject_schema_ref": { "$ref": "#/$defs/schema_reference" },
+        "algorithm": {
+          "const": "sha256"
+        },
+        "domain_separator": {
+          "const": "odeya-event-contract-member-v1"
+        },
+        "canonicalization_profile_ref": {
+          "$ref": "#/$defs/profile_reference"
+        },
+        "subject_schema_ref": {
+          "$ref": "#/$defs/schema_reference"
+        },
         "included_json_pointers": {
           "type": "array",
           "minItems": 11,
           "maxItems": 11,
           "prefixItems": [
-            { "const": "/member_key" },
-            { "const": "/event_type" },
-            { "const": "/event_version" },
-            { "const": "/payload_contract" },
-            { "const": "/aggregate_owner" },
-            { "const": "/producer_commands" },
-            { "const": "/retention_and_privacy" },
-            { "const": "/canonical_reducer_ref" },
-            { "const": "/trace_refs" },
-            { "const": "/review_evidence_refs" },
-            { "const": "/member_digest_contract" }
+            {
+              "const": "/member_key"
+            },
+            {
+              "const": "/event_type"
+            },
+            {
+              "const": "/event_version"
+            },
+            {
+              "const": "/payload_contract"
+            },
+            {
+              "const": "/aggregate_owner"
+            },
+            {
+              "const": "/producer_commands"
+            },
+            {
+              "const": "/retention_and_privacy"
+            },
+            {
+              "const": "/canonical_reducer_ref"
+            },
+            {
+              "const": "/trace_refs"
+            },
+            {
+              "const": "/review_evidence_refs"
+            },
+            {
+              "const": "/member_digest_contract"
+            }
           ],
           "items": false
         },
@@ -320,7 +720,11 @@
           "type": "array",
           "minItems": 1,
           "maxItems": 1,
-          "prefixItems": [{ "const": "/member_digest" }],
+          "prefixItems": [
+            {
+              "const": "/member_digest"
+            }
+          ],
           "items": false
         }
       }
@@ -328,34 +732,83 @@
     "registry_digest_contract": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["algorithm", "domain_separator", "canonicalization_profile_ref", "subject_schema_ref", "included_json_pointers", "excluded_json_pointers"],
+      "required": [
+        "algorithm",
+        "domain_separator",
+        "canonicalization_profile_ref",
+        "subject_schema_ref",
+        "included_json_pointers",
+        "excluded_json_pointers"
+      ],
       "properties": {
-        "algorithm": { "const": "sha256" },
-        "domain_separator": { "const": "odeya-event-contract-registry-v1" },
-        "canonicalization_profile_ref": { "$ref": "#/$defs/profile_reference" },
-        "subject_schema_ref": { "$ref": "#/$defs/schema_reference" },
+        "algorithm": {
+          "const": "sha256"
+        },
+        "domain_separator": {
+          "const": "odeya-event-contract-registry-v1"
+        },
+        "canonicalization_profile_ref": {
+          "$ref": "#/$defs/profile_reference"
+        },
+        "subject_schema_ref": {
+          "$ref": "#/$defs/schema_reference"
+        },
         "included_json_pointers": {
           "type": "array",
           "minItems": 17,
           "maxItems": 17,
           "prefixItems": [
-            { "const": "/schema_version" },
-            { "const": "/registry_kind" },
-            { "const": "/registry_id" },
-            { "const": "/version" },
-            { "const": "/conformance_scope" },
-            { "const": "/supersedes_registry_subject_ref" },
-            { "const": "/canonicalization_profile_ref" },
-            { "const": "/ordering_contract" },
-            { "const": "/members" },
-            { "const": "/member_set_commitment" },
-            { "const": "/graph_closure_contract" },
-            { "const": "/historical_read_policy" },
-            { "const": "/source_manifest_ref" },
-            { "const": "/generator_identity_ref" },
-            { "const": "/review_evidence_refs" },
-            { "const": "/known_limitations" },
-            { "const": "/registry_digest_contract" }
+            {
+              "const": "/schema_version"
+            },
+            {
+              "const": "/registry_kind"
+            },
+            {
+              "const": "/registry_id"
+            },
+            {
+              "const": "/version"
+            },
+            {
+              "const": "/conformance_scope"
+            },
+            {
+              "const": "/supersedes_registry_subject_ref"
+            },
+            {
+              "const": "/canonicalization_profile_ref"
+            },
+            {
+              "const": "/ordering_contract"
+            },
+            {
+              "const": "/members"
+            },
+            {
+              "const": "/member_set_commitment"
+            },
+            {
+              "const": "/graph_closure_contract"
+            },
+            {
+              "const": "/historical_read_policy"
+            },
+            {
+              "const": "/source_manifest_ref"
+            },
+            {
+              "const": "/generator_identity_ref"
+            },
+            {
+              "const": "/review_evidence_refs"
+            },
+            {
+              "const": "/known_limitations"
+            },
+            {
+              "const": "/registry_digest_contract"
+            }
           ],
           "items": false
         },
@@ -364,8 +817,12 @@
           "minItems": 2,
           "maxItems": 2,
           "prefixItems": [
-            { "const": "/registry_digest" },
-            { "const": "/external_attestations" }
+            {
+              "const": "/registry_digest"
+            },
+            {
+              "const": "/external_attestations"
+            }
           ],
           "items": false
         }

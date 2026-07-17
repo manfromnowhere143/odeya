@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:registry-activation:0.2.0",
+  "$id": "urn:odeya:schema:registry-activation:0.3.0",
   "title": "Odeya RegistryActivation",
   "description": "An immutable prospective decision selecting one checkpointed EngineContractRoot for a bounded runtime scope. It embeds the nonrecursive P0 constitutional-recovery admission that must already bind non-self-issued root authority, the exact EngineContractRoot and C0 bundle, witnessed checkpoint evidence, and a current fail-closed recovery/fork/quarantine frontier. The activation is downstream of those subjects and cannot issue its own root authority or change any bound subject's meaning. Structural validity does not prove reference equality, signature truth, currentness, or branch ordering.",
   "type": "object",
@@ -30,7 +30,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.2.0"
+      "const": "0.3.0"
     },
     "activation_id": {
       "$ref": "#/$defs/identifier"
@@ -220,7 +220,14 @@
           "minimum": 1
         },
         "set_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-reference-set-manifest-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
         }
       }
     },
@@ -243,7 +250,14 @@
           "minimum": 1
         },
         "set_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-reference-set-manifest-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
         },
         "conformance_report_refs": {
           "type": "array",
@@ -322,7 +336,14 @@
       "$ref": "#/$defs/digest_contract"
     },
     "activation_digest": {
-      "$ref": "#/$defs/digest"
+      "$ref": "#/$defs/digest",
+      "x-odeya-digest-scope": {
+        "kind": "canonical_object_digest",
+        "domain": "odeya-registry-activation-v1",
+        "algorithm": "sha-256",
+        "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+        "status": "registered_domain"
+      }
     },
     "attestations": {
       "type": "array",
@@ -456,7 +477,14 @@
           "minimum": 1
         },
         "activation_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-registry-activation-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "registered_domain"
+          }
         }
       }
     },
@@ -480,7 +508,7 @@
           "minimum": 1
         },
         "schema_id": {
-          "const": "urn:odeya:schema:ledger-checkpoint:0.3.0"
+          "const": "urn:odeya:schema:ledger-checkpoint:0.4.0"
         },
         "ledger_epoch": {
           "$ref": "#/$defs/identifier"
@@ -502,7 +530,7 @@
         {
           "properties": {
             "schema_id": {
-              "const": "urn:odeya:schema:root-authority-manifest:0.1.0"
+              "const": "urn:odeya:schema:root-authority-manifest:0.2.0"
             }
           }
         }
@@ -516,7 +544,7 @@
         {
           "properties": {
             "schema_id": {
-              "const": "urn:odeya:schema:engine-contract-root:0.1.0"
+              "const": "urn:odeya:schema:engine-contract-root:0.2.0"
             }
           }
         }
@@ -530,7 +558,7 @@
         {
           "properties": {
             "schema_id": {
-              "const": "urn:odeya:schema:c0-registry-bundle:0.1.0"
+              "const": "urn:odeya:schema:c0-registry-bundle:0.2.0"
             }
           }
         }
@@ -557,7 +585,14 @@
           "$ref": "#/$defs/artifact_reference"
         },
         "checkpoint_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-ledger-checkpoint-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "registered_domain"
+          }
         },
         "consistency_verification": {
           "const": "pass"
@@ -875,7 +910,14 @@
           "$ref": "#/$defs/p0_digest_contract"
         },
         "p0_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-p0-constitutional-recovery-admission-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "registered_domain"
+          }
         }
       }
     },
@@ -920,7 +962,14 @@
           "$ref": "#/$defs/semantic_version"
         },
         "byte_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "retained raw bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
         },
         "byte_count": {
           "type": "integer",
@@ -964,7 +1013,14 @@
           "format": "uri"
         },
         "schema_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "retained schema resource bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
         }
       }
     },

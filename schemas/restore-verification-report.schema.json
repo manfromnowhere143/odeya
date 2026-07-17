@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:restore-verification-report:0.2.0",
+  "$id": "urn:odeya:schema:restore-verification-report:0.3.0",
   "title": "Odeya RestoreVerificationReport",
   "description": "An immutable semantic verification report for one isolated restore case. A report may recommend only a bounded service state; it does not itself reopen service or authorize external effects.",
   "type": "object",
@@ -29,7 +29,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.2.0"
+      "const": "0.3.0"
     },
     "restore_verification_report_id": {
       "$ref": "#/$defs/identifier"
@@ -127,10 +127,24 @@
           "minimum": 0
         },
         "checkpoint_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-ledger-checkpoint-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "registered_domain"
+          }
         },
         "aggregate_head_set_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-reference-set-manifest-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
         },
         "projection_position": {
           "oneOf": [
@@ -430,7 +444,14 @@
             "$ref": "#/$defs/artifact_reference"
           },
           "reviewed_report_digest": {
-            "$ref": "#/$defs/digest"
+            "$ref": "#/$defs/digest",
+            "x-odeya-digest-scope": {
+              "kind": "canonical_object_digest",
+              "domain": "odeya-restore-verification-report-v1",
+              "algorithm": "sha-256",
+              "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+              "status": "prospective_domain_reserved_not_declared"
+            }
           }
         }
       }
@@ -444,7 +465,14 @@
       "const": "canonical-object:odeya-jcs-0.1:exclude(report_digest,sealed_by)"
     },
     "report_digest": {
-      "$ref": "#/$defs/digest"
+      "$ref": "#/$defs/digest",
+      "x-odeya-digest-scope": {
+        "kind": "canonical_object_digest",
+        "domain": "odeya-restore-verification-report-v1",
+        "algorithm": "sha-256",
+        "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+        "status": "prospective_domain_reserved_not_declared"
+      }
     },
     "sealed_by": {
       "$ref": "#/$defs/human_principal"

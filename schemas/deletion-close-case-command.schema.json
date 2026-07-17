@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:deletion-close-case-command:0.2.0",
+  "$id": "urn:odeya:schema:deletion-close-case-command:0.3.0",
   "title": "Odeya deletion.close_case command payload",
   "description": "Architecture-only closed command payload. Structural validity does not establish referenced evidence, authority, time, signature, quorum, or execution truth.",
   "type": "object",
@@ -21,7 +21,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.2.0"
+      "const": "0.3.0"
     },
     "expected_status": {
       "enum": [
@@ -89,7 +89,14 @@
       "$ref": "#/$defs/canonical_record_reference"
     },
     "asset_scope_digest": {
-      "$ref": "#/$defs/digest"
+      "$ref": "#/$defs/digest",
+      "x-odeya-digest-scope": {
+        "kind": "canonical_object_digest",
+        "domain": "odeya-scope-manifest-v1",
+        "algorithm": "sha-256",
+        "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+        "status": "prospective_domain_reserved_not_declared"
+      }
     },
     "closure_verification_ref": {
       "$ref": "#/$defs/artifact_reference"

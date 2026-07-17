@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:key-profile:0.2.0",
+  "$id": "urn:odeya:schema:key-profile:0.3.0",
   "title": "Odeya KeyProfile",
   "description": "A deployment-neutral cryptographic key-purpose and recovery profile. It contains identifiers and policy, never key bytes, secrets, recovery shares, or credentials.",
   "type": "object",
@@ -24,7 +24,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.2.0"
+      "const": "0.3.0"
     },
     "key_profile_id": {
       "$ref": "#/$defs/identifier"
@@ -166,7 +166,14 @@
       ]
     },
     "profile_digest": {
-      "$ref": "#/$defs/digest"
+      "$ref": "#/$defs/digest",
+      "x-odeya-digest-scope": {
+        "kind": "canonical_object_digest",
+        "domain": "odeya-key-profile-v1",
+        "algorithm": "sha-256",
+        "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+        "status": "prospective_domain_reserved_not_declared"
+      }
     },
     "approved_by": {
       "type": "array",

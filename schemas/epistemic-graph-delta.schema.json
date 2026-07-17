@@ -1,103 +1,288 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:epistemic-graph-delta:0.1.0",
+  "$id": "urn:odeya:schema:epistemic-graph-delta:0.2.0",
   "title": "Odeya EpistemicGraphDelta",
   "description": "An immutable proposal to add node versions or superseding edge versions against either proven aggregate absence or an exact existing head. Admission controls are typed rule-derived outputs; correction supersession preserves non-resurrection and dependency fanout. Existing graph history cannot be deleted or mutated, and the proposal cannot append canonical events.",
   "type": "object",
   "additionalProperties": false,
   "required": [
-    "schema_version", "record_status", "delta_id", "version", "mission_id",
-    "graph_aggregate_id", "protocol_branch_ref", "expected_predecessor",
-    "expected_predecessor_nodes", "node_version_additions", "edge_changes",
-    "material_evidence", "reason_codes", "proposed_by_candidate_artifact_ref",
-    "admission_controls", "correction_obligations", "proposal_boundary",
-    "created_at", "created_by"
+    "schema_version",
+    "record_status",
+    "delta_id",
+    "version",
+    "mission_id",
+    "graph_aggregate_id",
+    "protocol_branch_ref",
+    "expected_predecessor",
+    "expected_predecessor_nodes",
+    "node_version_additions",
+    "edge_changes",
+    "material_evidence",
+    "reason_codes",
+    "proposed_by_candidate_artifact_ref",
+    "admission_controls",
+    "correction_obligations",
+    "proposal_boundary",
+    "created_at",
+    "created_by"
   ],
   "properties": {
-    "schema_version": { "const": "0.1.0" },
-    "record_status": { "const": "proposed_non_authoritative" },
-    "delta_id": { "$ref": "#/$defs/identifier" },
-    "version": { "type": "integer", "minimum": 1 },
-    "mission_id": { "$ref": "#/$defs/identifier" },
-    "graph_aggregate_id": { "$ref": "#/$defs/identifier" },
-    "protocol_branch_ref": { "$ref": "#/$defs/immutable_reference" },
+    "schema_version": {
+      "const": "0.2.0"
+    },
+    "record_status": {
+      "const": "proposed_non_authoritative"
+    },
+    "delta_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "mission_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "graph_aggregate_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "protocol_branch_ref": {
+      "$ref": "#/$defs/immutable_reference"
+    },
     "expected_predecessor": {
-      "type": "object", "additionalProperties": false,
+      "type": "object",
+      "additionalProperties": false,
       "required": [
-        "kind", "graph_version", "graph_root_digest", "head_event_ref",
-        "origin_delta_event_ref", "absence_evidence_ref",
-        "genesis_state_fabrication_allowed", "reducer_snapshot_ref",
+        "kind",
+        "graph_version",
+        "graph_root_digest",
+        "head_event_ref",
+        "origin_delta_event_ref",
+        "absence_evidence_ref",
+        "genesis_state_fabrication_allowed",
+        "reducer_snapshot_ref",
         "source_ledger_position"
       ],
       "properties": {
-        "kind": { "enum": ["absent_genesis", "existing_head"] },
-        "graph_version": { "oneOf": [{ "type": "integer", "minimum": 1 }, { "type": "null" }] },
-        "graph_root_digest": { "oneOf": [{ "$ref": "#/$defs/digest" }, { "type": "null" }] },
-        "head_event_ref": { "oneOf": [{ "$ref": "#/$defs/immutable_reference" }, { "type": "null" }] },
-        "origin_delta_event_ref": { "oneOf": [{ "$ref": "#/$defs/immutable_reference" }, { "type": "null" }] },
-        "absence_evidence_ref": { "oneOf": [{ "$ref": "#/$defs/artifact_reference" }, { "type": "null" }] },
-        "genesis_state_fabrication_allowed": { "const": false },
-        "reducer_snapshot_ref": { "$ref": "#/$defs/immutable_reference" },
-        "source_ledger_position": { "type": "integer", "minimum": 0 }
+        "kind": {
+          "enum": [
+            "absent_genesis",
+            "existing_head"
+          ]
+        },
+        "graph_version": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "graph_root_digest": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/digest"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "head_event_ref": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/immutable_reference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "origin_delta_event_ref": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/immutable_reference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "absence_evidence_ref": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/artifact_reference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "genesis_state_fabrication_allowed": {
+          "const": false
+        },
+        "reducer_snapshot_ref": {
+          "$ref": "#/$defs/immutable_reference"
+        },
+        "source_ledger_position": {
+          "type": "integer",
+          "minimum": 0
+        }
       },
       "allOf": [
         {
-          "if": { "properties": { "kind": { "const": "absent_genesis" } }, "required": ["kind"] },
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "absent_genesis"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
           "then": {
             "properties": {
-              "graph_version": { "type": "null" },
-              "graph_root_digest": { "type": "null" },
-              "head_event_ref": { "type": "null" },
-              "origin_delta_event_ref": { "type": "null" },
-              "absence_evidence_ref": { "$ref": "#/$defs/artifact_reference" }
+              "graph_version": {
+                "type": "null"
+              },
+              "graph_root_digest": {
+                "type": "null"
+              },
+              "head_event_ref": {
+                "type": "null"
+              },
+              "origin_delta_event_ref": {
+                "type": "null"
+              },
+              "absence_evidence_ref": {
+                "$ref": "#/$defs/artifact_reference"
+              }
             }
           },
           "else": {
             "properties": {
-              "graph_version": { "type": "integer", "minimum": 1 },
-              "graph_root_digest": { "$ref": "#/$defs/digest" },
-              "head_event_ref": { "$ref": "#/$defs/immutable_reference" },
-              "origin_delta_event_ref": { "$ref": "#/$defs/immutable_reference" },
-              "absence_evidence_ref": { "type": "null" }
+              "graph_version": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "graph_root_digest": {
+                "$ref": "#/$defs/digest"
+              },
+              "head_event_ref": {
+                "$ref": "#/$defs/immutable_reference"
+              },
+              "origin_delta_event_ref": {
+                "$ref": "#/$defs/immutable_reference"
+              },
+              "absence_evidence_ref": {
+                "type": "null"
+              }
             }
           }
         }
       ]
     },
     "expected_predecessor_nodes": {
-      "type": "array", "uniqueItems": true,
-      "items": { "$ref": "#/$defs/immutable_reference" }
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/immutable_reference"
+      }
     },
     "node_version_additions": {
-      "type": "array", "uniqueItems": true,
+      "type": "array",
+      "uniqueItems": true,
       "items": {
-        "type": "object", "additionalProperties": false,
-        "required": ["operation", "node_version_ref", "proposed_lineage"],
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "operation",
+          "node_version_ref",
+          "proposed_lineage"
+        ],
         "properties": {
-          "operation": { "const": "add_immutable_version" },
-          "node_version_ref": { "$ref": "#/$defs/immutable_reference" },
+          "operation": {
+            "const": "add_immutable_version"
+          },
+          "node_version_ref": {
+            "$ref": "#/$defs/immutable_reference"
+          },
           "proposed_lineage": {
-            "type": "object", "additionalProperties": false,
-            "required": ["kind", "predecessor_node_ref", "lineage_reason", "canonical_supersession_effect"],
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "kind",
+              "predecessor_node_ref",
+              "lineage_reason",
+              "canonical_supersession_effect"
+            ],
             "properties": {
-              "kind": { "enum": ["independent_new_node", "successor_candidate"] },
-              "predecessor_node_ref": { "oneOf": [{ "$ref": "#/$defs/immutable_reference" }, { "type": "null" }] },
-              "lineage_reason": { "oneOf": [{ "type": "string", "minLength": 1 }, { "type": "null" }] },
-              "canonical_supersession_effect": { "const": "none_until_supersession_edge_admitted" }
+              "kind": {
+                "enum": [
+                  "independent_new_node",
+                  "successor_candidate"
+                ]
+              },
+              "predecessor_node_ref": {
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/immutable_reference"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "lineage_reason": {
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "canonical_supersession_effect": {
+                "const": "none_until_supersession_edge_admitted"
+              }
             },
             "allOf": [
               {
-                "if": { "properties": { "kind": { "const": "independent_new_node" } }, "required": ["kind"] },
+                "if": {
+                  "properties": {
+                    "kind": {
+                      "const": "independent_new_node"
+                    }
+                  },
+                  "required": [
+                    "kind"
+                  ]
+                },
                 "then": {
                   "properties": {
-                    "predecessor_node_ref": { "type": "null" },
-                    "lineage_reason": { "type": "null" }
+                    "predecessor_node_ref": {
+                      "type": "null"
+                    },
+                    "lineage_reason": {
+                      "type": "null"
+                    }
                   }
                 },
                 "else": {
                   "properties": {
-                    "predecessor_node_ref": { "$ref": "#/$defs/immutable_reference" },
-                    "lineage_reason": { "type": "string", "minLength": 1 }
+                    "predecessor_node_ref": {
+                      "$ref": "#/$defs/immutable_reference"
+                    },
+                    "lineage_reason": {
+                      "type": "string",
+                      "minLength": 1
+                    }
                   }
                 }
               }
@@ -107,55 +292,187 @@
       }
     },
     "edge_changes": {
-      "type": "array", "uniqueItems": true,
+      "type": "array",
+      "uniqueItems": true,
       "items": {
-        "type": "object", "additionalProperties": false,
-        "required": ["operation", "edge_id", "edge_version", "edge_class", "relation", "from_endpoint", "to_endpoint", "expected_previous_edge_ref", "reason_code", "compatibility_rule_ref"],
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "operation",
+          "edge_id",
+          "edge_version",
+          "edge_class",
+          "relation",
+          "from_endpoint",
+          "to_endpoint",
+          "expected_previous_edge_ref",
+          "reason_code",
+          "compatibility_rule_ref"
+        ],
         "properties": {
-          "operation": { "enum": ["add_immutable_edge", "supersede_with_new_edge_version"] },
-          "edge_id": { "$ref": "#/$defs/identifier" },
-          "edge_version": { "type": "integer", "minimum": 1 },
-          "edge_class": { "enum": ["epistemic_relation", "evidence_relation", "supersession_relation"] },
-          "relation": { "enum": ["supports_under_scope", "contradicts", "rival_of", "compatible_with", "depends_on", "predicts", "falsified_by", "supersedes"] },
-          "from_endpoint": { "$ref": "#/$defs/graph_endpoint" },
-          "to_endpoint": { "$ref": "#/$defs/graph_endpoint" },
-          "expected_previous_edge_ref": { "oneOf": [{ "$ref": "#/$defs/immutable_reference" }, { "type": "null" }] },
-          "reason_code": { "$ref": "#/$defs/identifier" },
-          "compatibility_rule_ref": { "$ref": "#/$defs/immutable_reference" }
+          "operation": {
+            "enum": [
+              "add_immutable_edge",
+              "supersede_with_new_edge_version"
+            ]
+          },
+          "edge_id": {
+            "$ref": "#/$defs/identifier"
+          },
+          "edge_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "edge_class": {
+            "enum": [
+              "epistemic_relation",
+              "evidence_relation",
+              "supersession_relation"
+            ]
+          },
+          "relation": {
+            "enum": [
+              "supports_under_scope",
+              "contradicts",
+              "rival_of",
+              "compatible_with",
+              "depends_on",
+              "predicts",
+              "falsified_by",
+              "supersedes"
+            ]
+          },
+          "from_endpoint": {
+            "$ref": "#/$defs/graph_endpoint"
+          },
+          "to_endpoint": {
+            "$ref": "#/$defs/graph_endpoint"
+          },
+          "expected_previous_edge_ref": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/immutable_reference"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "reason_code": {
+            "$ref": "#/$defs/identifier"
+          },
+          "compatibility_rule_ref": {
+            "$ref": "#/$defs/immutable_reference"
+          }
         },
         "allOf": [
           {
-            "if": { "properties": { "operation": { "const": "add_immutable_edge" } }, "required": ["operation"] },
-            "then": { "properties": { "expected_previous_edge_ref": { "type": "null" } } },
-            "else": { "properties": { "expected_previous_edge_ref": { "$ref": "#/$defs/immutable_reference" } } }
-          },
-          {
-            "if": { "properties": { "edge_class": { "const": "epistemic_relation" } }, "required": ["edge_class"] },
+            "if": {
+              "properties": {
+                "operation": {
+                  "const": "add_immutable_edge"
+                }
+              },
+              "required": [
+                "operation"
+              ]
+            },
             "then": {
               "properties": {
-                "relation": { "enum": ["rival_of", "compatible_with", "depends_on", "predicts"] },
-                "from_endpoint": { "$ref": "#/$defs/epistemic_node_endpoint" },
-                "to_endpoint": { "$ref": "#/$defs/epistemic_node_endpoint" }
+                "expected_previous_edge_ref": {
+                  "type": "null"
+                }
+              }
+            },
+            "else": {
+              "properties": {
+                "expected_previous_edge_ref": {
+                  "$ref": "#/$defs/immutable_reference"
+                }
               }
             }
           },
           {
-            "if": { "properties": { "edge_class": { "const": "evidence_relation" } }, "required": ["edge_class"] },
+            "if": {
+              "properties": {
+                "edge_class": {
+                  "const": "epistemic_relation"
+                }
+              },
+              "required": [
+                "edge_class"
+              ]
+            },
             "then": {
               "properties": {
-                "relation": { "enum": ["supports_under_scope", "contradicts", "falsified_by"] },
-                "from_endpoint": { "$ref": "#/$defs/governed_object_endpoint" },
-                "to_endpoint": { "$ref": "#/$defs/epistemic_node_endpoint" }
+                "relation": {
+                  "enum": [
+                    "rival_of",
+                    "compatible_with",
+                    "depends_on",
+                    "predicts"
+                  ]
+                },
+                "from_endpoint": {
+                  "$ref": "#/$defs/epistemic_node_endpoint"
+                },
+                "to_endpoint": {
+                  "$ref": "#/$defs/epistemic_node_endpoint"
+                }
               }
             }
           },
           {
-            "if": { "properties": { "edge_class": { "const": "supersession_relation" } }, "required": ["edge_class"] },
+            "if": {
+              "properties": {
+                "edge_class": {
+                  "const": "evidence_relation"
+                }
+              },
+              "required": [
+                "edge_class"
+              ]
+            },
             "then": {
               "properties": {
-                "relation": { "const": "supersedes" },
-                "from_endpoint": { "$ref": "#/$defs/epistemic_node_endpoint" },
-                "to_endpoint": { "$ref": "#/$defs/epistemic_node_endpoint" }
+                "relation": {
+                  "enum": [
+                    "supports_under_scope",
+                    "contradicts",
+                    "falsified_by"
+                  ]
+                },
+                "from_endpoint": {
+                  "$ref": "#/$defs/governed_object_endpoint"
+                },
+                "to_endpoint": {
+                  "$ref": "#/$defs/epistemic_node_endpoint"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "edge_class": {
+                  "const": "supersession_relation"
+                }
+              },
+              "required": [
+                "edge_class"
+              ]
+            },
+            "then": {
+              "properties": {
+                "relation": {
+                  "const": "supersedes"
+                },
+                "from_endpoint": {
+                  "$ref": "#/$defs/epistemic_node_endpoint"
+                },
+                "to_endpoint": {
+                  "$ref": "#/$defs/epistemic_node_endpoint"
+                }
               }
             }
           }
@@ -163,49 +480,175 @@
       }
     },
     "material_evidence": {
-      "type": "array", "uniqueItems": true,
-      "items": { "$ref": "#/$defs/evidence_disposition" }
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/evidence_disposition"
+      }
     },
-    "reason_codes": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/identifier" } },
-    "proposed_by_candidate_artifact_ref": { "$ref": "#/$defs/immutable_reference" },
+    "reason_codes": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/identifier"
+      }
+    },
+    "proposed_by_candidate_artifact_ref": {
+      "$ref": "#/$defs/immutable_reference"
+    },
     "admission_controls": {
-      "type": "object", "additionalProperties": false,
+      "type": "object",
+      "additionalProperties": false,
       "required": [
-        "admission_class", "admission_profile_ref", "admission_rule_ref",
-        "rule_input_digest", "verification_requirement", "adjudication_requirement",
-        "derivation_evidence_ref", "requirements_rule_derived", "caller_selected"
+        "admission_class",
+        "admission_profile_ref",
+        "admission_rule_ref",
+        "rule_input_digest",
+        "verification_requirement",
+        "adjudication_requirement",
+        "derivation_evidence_ref",
+        "requirements_rule_derived",
+        "caller_selected"
       ],
       "properties": {
-        "admission_class": { "enum": ["exploratory_structure", "evidence_relation", "claim_bearing", "correction_supersession"] },
-        "admission_profile_ref": { "$ref": "#/$defs/admission_profile_reference" },
-        "admission_rule_ref": { "$ref": "#/$defs/admission_rule_reference" },
-        "rule_input_digest": { "$ref": "#/$defs/digest" },
-        "verification_requirement": { "enum": ["required", "not_required"] },
-        "adjudication_requirement": { "enum": ["required", "not_required"] },
-        "derivation_evidence_ref": { "$ref": "#/$defs/artifact_reference" },
-        "requirements_rule_derived": { "const": true },
-        "caller_selected": { "const": false }
+        "admission_class": {
+          "enum": [
+            "exploratory_structure",
+            "evidence_relation",
+            "claim_bearing",
+            "correction_supersession"
+          ]
+        },
+        "admission_profile_ref": {
+          "$ref": "#/$defs/admission_profile_reference"
+        },
+        "admission_rule_ref": {
+          "$ref": "#/$defs/admission_rule_reference"
+        },
+        "rule_input_digest": {
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-rule-input-snapshot-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
+        },
+        "verification_requirement": {
+          "enum": [
+            "required",
+            "not_required"
+          ]
+        },
+        "adjudication_requirement": {
+          "enum": [
+            "required",
+            "not_required"
+          ]
+        },
+        "derivation_evidence_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        },
+        "requirements_rule_derived": {
+          "const": true
+        },
+        "caller_selected": {
+          "const": false
+        }
       },
       "allOf": [
         {
-          "if": { "properties": { "admission_class": { "const": "exploratory_structure" } }, "required": ["admission_class"] },
-          "then": { "properties": { "admission_profile_ref": { "properties": { "profile_type": { "const": "exploratory_structure" } } } } }
-        },
-        {
-          "if": { "properties": { "admission_class": { "const": "evidence_relation" } }, "required": ["admission_class"] },
-          "then": { "properties": { "admission_profile_ref": { "properties": { "profile_type": { "const": "evidence_relation" } } } } }
-        },
-        {
-          "if": { "properties": { "admission_class": { "const": "claim_bearing" } }, "required": ["admission_class"] },
-          "then": { "properties": { "admission_profile_ref": { "properties": { "profile_type": { "const": "claim_bearing" } } } } }
-        },
-        {
-          "if": { "properties": { "admission_class": { "const": "correction_supersession" } }, "required": ["admission_class"] },
+          "if": {
+            "properties": {
+              "admission_class": {
+                "const": "exploratory_structure"
+              }
+            },
+            "required": [
+              "admission_class"
+            ]
+          },
           "then": {
             "properties": {
               "admission_profile_ref": {
                 "properties": {
-                  "profile_type": { "enum": ["correction_verification_only", "correction_verification_and_adjudication"] }
+                  "profile_type": {
+                    "const": "exploratory_structure"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "admission_class": {
+                "const": "evidence_relation"
+              }
+            },
+            "required": [
+              "admission_class"
+            ]
+          },
+          "then": {
+            "properties": {
+              "admission_profile_ref": {
+                "properties": {
+                  "profile_type": {
+                    "const": "evidence_relation"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "admission_class": {
+                "const": "claim_bearing"
+              }
+            },
+            "required": [
+              "admission_class"
+            ]
+          },
+          "then": {
+            "properties": {
+              "admission_profile_ref": {
+                "properties": {
+                  "profile_type": {
+                    "const": "claim_bearing"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "admission_class": {
+                "const": "correction_supersession"
+              }
+            },
+            "required": [
+              "admission_class"
+            ]
+          },
+          "then": {
+            "properties": {
+              "admission_profile_ref": {
+                "properties": {
+                  "profile_type": {
+                    "enum": [
+                      "correction_verification_only",
+                      "correction_verification_and_adjudication"
+                    ]
+                  }
                 }
               }
             }
@@ -215,86 +658,286 @@
           "if": {
             "properties": {
               "admission_profile_ref": {
-                "properties": { "profile_type": { "const": "exploratory_structure" } },
-                "required": ["profile_type"]
+                "properties": {
+                  "profile_type": {
+                    "const": "exploratory_structure"
+                  }
+                },
+                "required": [
+                  "profile_type"
+                ]
               }
             }
           },
-          "then": { "properties": { "verification_requirement": { "const": "not_required" }, "adjudication_requirement": { "const": "not_required" } } }
+          "then": {
+            "properties": {
+              "verification_requirement": {
+                "const": "not_required"
+              },
+              "adjudication_requirement": {
+                "const": "not_required"
+              }
+            }
+          }
         },
         {
           "if": {
             "properties": {
               "admission_profile_ref": {
-                "properties": { "profile_type": { "enum": ["evidence_relation", "correction_verification_only"] } },
-                "required": ["profile_type"]
+                "properties": {
+                  "profile_type": {
+                    "enum": [
+                      "evidence_relation",
+                      "correction_verification_only"
+                    ]
+                  }
+                },
+                "required": [
+                  "profile_type"
+                ]
               }
             }
           },
-          "then": { "properties": { "verification_requirement": { "const": "required" }, "adjudication_requirement": { "const": "not_required" } } }
+          "then": {
+            "properties": {
+              "verification_requirement": {
+                "const": "required"
+              },
+              "adjudication_requirement": {
+                "const": "not_required"
+              }
+            }
+          }
         },
         {
           "if": {
             "properties": {
               "admission_profile_ref": {
-                "properties": { "profile_type": { "enum": ["claim_bearing", "correction_verification_and_adjudication"] } },
-                "required": ["profile_type"]
+                "properties": {
+                  "profile_type": {
+                    "enum": [
+                      "claim_bearing",
+                      "correction_verification_and_adjudication"
+                    ]
+                  }
+                },
+                "required": [
+                  "profile_type"
+                ]
               }
             }
           },
-          "then": { "properties": { "verification_requirement": { "const": "required" }, "adjudication_requirement": { "const": "required" } } }
+          "then": {
+            "properties": {
+              "verification_requirement": {
+                "const": "required"
+              },
+              "adjudication_requirement": {
+                "const": "required"
+              }
+            }
+          }
         }
       ]
     },
     "correction_obligations": {
-      "type": "object", "additionalProperties": false,
+      "type": "object",
+      "additionalProperties": false,
       "required": [
-        "applicability", "predecessor_node_ref", "successor_candidate_node_ref",
-        "prior_version_resurrection_forbidden", "dependency_fanout_required",
-        "non_resurrection_rule_ref", "fanout_rule_ref",
+        "applicability",
+        "predecessor_node_ref",
+        "successor_candidate_node_ref",
+        "prior_version_resurrection_forbidden",
+        "dependency_fanout_required",
+        "non_resurrection_rule_ref",
+        "fanout_rule_ref",
         "affected_dependency_manifest_ref"
       ],
       "properties": {
-        "applicability": { "enum": ["required", "not_applicable"] },
-        "predecessor_node_ref": { "oneOf": [{ "$ref": "#/$defs/immutable_reference" }, { "type": "null" }] },
-        "successor_candidate_node_ref": { "oneOf": [{ "$ref": "#/$defs/immutable_reference" }, { "type": "null" }] },
-        "prior_version_resurrection_forbidden": { "type": "boolean" },
-        "dependency_fanout_required": { "type": "boolean" },
-        "non_resurrection_rule_ref": { "oneOf": [{ "$ref": "#/$defs/admission_rule_reference" }, { "type": "null" }] },
-        "fanout_rule_ref": { "oneOf": [{ "$ref": "#/$defs/admission_rule_reference" }, { "type": "null" }] },
-        "affected_dependency_manifest_ref": { "oneOf": [{ "$ref": "#/$defs/artifact_reference" }, { "type": "null" }] }
+        "applicability": {
+          "enum": [
+            "required",
+            "not_applicable"
+          ]
+        },
+        "predecessor_node_ref": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/immutable_reference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "successor_candidate_node_ref": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/immutable_reference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "prior_version_resurrection_forbidden": {
+          "type": "boolean"
+        },
+        "dependency_fanout_required": {
+          "type": "boolean"
+        },
+        "non_resurrection_rule_ref": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/admission_rule_reference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "fanout_rule_ref": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/admission_rule_reference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "affected_dependency_manifest_ref": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/artifact_reference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
       }
     },
     "proposal_boundary": {
-      "type": "object", "additionalProperties": false,
-      "required": ["proposal_only", "canonical_event_append_authorized", "history_deletion_authorized", "existing_version_mutation_authorized"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "proposal_only",
+        "canonical_event_append_authorized",
+        "history_deletion_authorized",
+        "existing_version_mutation_authorized"
+      ],
       "properties": {
-        "proposal_only": { "const": true },
-        "canonical_event_append_authorized": { "const": false },
-        "history_deletion_authorized": { "const": false },
-        "existing_version_mutation_authorized": { "const": false }
+        "proposal_only": {
+          "const": true
+        },
+        "canonical_event_append_authorized": {
+          "const": false
+        },
+        "history_deletion_authorized": {
+          "const": false
+        },
+        "existing_version_mutation_authorized": {
+          "const": false
+        }
       }
     },
-    "created_at": { "$ref": "#/$defs/timestamp" },
-    "created_by": { "$ref": "#/$defs/principal" }
+    "created_at": {
+      "$ref": "#/$defs/timestamp"
+    },
+    "created_by": {
+      "$ref": "#/$defs/principal"
+    }
   },
   "allOf": [
     {
       "anyOf": [
-        { "properties": { "node_version_additions": { "minItems": 1 } } },
-        { "properties": { "edge_changes": { "minItems": 1 } } }
+        {
+          "properties": {
+            "node_version_additions": {
+              "minItems": 1
+            }
+          }
+        },
+        {
+          "properties": {
+            "edge_changes": {
+              "minItems": 1
+            }
+          }
+        }
       ]
     },
     {
-      "if": { "properties": { "expected_predecessor": { "properties": { "kind": { "const": "absent_genesis" } }, "required": ["kind"] } } },
-      "then": { "properties": { "expected_predecessor_nodes": { "maxItems": 0 } } }
+      "if": {
+        "properties": {
+          "expected_predecessor": {
+            "properties": {
+              "kind": {
+                "const": "absent_genesis"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "expected_predecessor_nodes": {
+            "maxItems": 0
+          }
+        }
+      }
     },
     {
-      "if": { "properties": { "admission_controls": { "properties": { "admission_class": { "const": "evidence_relation" } }, "required": ["admission_class"] } } },
-      "then": { "properties": { "edge_changes": { "contains": { "properties": { "edge_class": { "const": "evidence_relation" } }, "required": ["edge_class"] } } } }
+      "if": {
+        "properties": {
+          "admission_controls": {
+            "properties": {
+              "admission_class": {
+                "const": "evidence_relation"
+              }
+            },
+            "required": [
+              "admission_class"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "edge_changes": {
+            "contains": {
+              "properties": {
+                "edge_class": {
+                  "const": "evidence_relation"
+                }
+              },
+              "required": [
+                "edge_class"
+              ]
+            }
+          }
+        }
+      }
     },
     {
-      "if": { "properties": { "admission_controls": { "properties": { "admission_class": { "const": "correction_supersession" } }, "required": ["admission_class"] } } },
+      "if": {
+        "properties": {
+          "admission_controls": {
+            "properties": {
+              "admission_class": {
+                "const": "correction_supersession"
+              }
+            },
+            "required": [
+              "admission_class"
+            ]
+          }
+        }
+      },
       "then": {
         "properties": {
           "node_version_additions": {
@@ -302,32 +945,63 @@
             "contains": {
               "properties": {
                 "proposed_lineage": {
-                  "properties": { "kind": { "const": "successor_candidate" } },
-                  "required": ["kind"]
+                  "properties": {
+                    "kind": {
+                      "const": "successor_candidate"
+                    }
+                  },
+                  "required": [
+                    "kind"
+                  ]
                 }
               },
-              "required": ["proposed_lineage"]
+              "required": [
+                "proposed_lineage"
+              ]
             }
           },
           "edge_changes": {
             "contains": {
               "properties": {
-                "edge_class": { "const": "supersession_relation" },
-                "relation": { "const": "supersedes" }
+                "edge_class": {
+                  "const": "supersession_relation"
+                },
+                "relation": {
+                  "const": "supersedes"
+                }
               },
-              "required": ["edge_class", "relation"]
+              "required": [
+                "edge_class",
+                "relation"
+              ]
             }
           },
           "correction_obligations": {
             "properties": {
-              "applicability": { "const": "required" },
-              "predecessor_node_ref": { "$ref": "#/$defs/immutable_reference" },
-              "successor_candidate_node_ref": { "$ref": "#/$defs/immutable_reference" },
-              "prior_version_resurrection_forbidden": { "const": true },
-              "dependency_fanout_required": { "const": true },
-              "non_resurrection_rule_ref": { "$ref": "#/$defs/admission_rule_reference" },
-              "fanout_rule_ref": { "$ref": "#/$defs/admission_rule_reference" },
-              "affected_dependency_manifest_ref": { "$ref": "#/$defs/artifact_reference" }
+              "applicability": {
+                "const": "required"
+              },
+              "predecessor_node_ref": {
+                "$ref": "#/$defs/immutable_reference"
+              },
+              "successor_candidate_node_ref": {
+                "$ref": "#/$defs/immutable_reference"
+              },
+              "prior_version_resurrection_forbidden": {
+                "const": true
+              },
+              "dependency_fanout_required": {
+                "const": true
+              },
+              "non_resurrection_rule_ref": {
+                "$ref": "#/$defs/admission_rule_reference"
+              },
+              "fanout_rule_ref": {
+                "$ref": "#/$defs/admission_rule_reference"
+              },
+              "affected_dependency_manifest_ref": {
+                "$ref": "#/$defs/artifact_reference"
+              }
             }
           }
         }
@@ -336,14 +1010,30 @@
         "properties": {
           "correction_obligations": {
             "properties": {
-              "applicability": { "const": "not_applicable" },
-              "predecessor_node_ref": { "type": "null" },
-              "successor_candidate_node_ref": { "type": "null" },
-              "prior_version_resurrection_forbidden": { "const": false },
-              "dependency_fanout_required": { "const": false },
-              "non_resurrection_rule_ref": { "type": "null" },
-              "fanout_rule_ref": { "type": "null" },
-              "affected_dependency_manifest_ref": { "type": "null" }
+              "applicability": {
+                "const": "not_applicable"
+              },
+              "predecessor_node_ref": {
+                "type": "null"
+              },
+              "successor_candidate_node_ref": {
+                "type": "null"
+              },
+              "prior_version_resurrection_forbidden": {
+                "const": false
+              },
+              "dependency_fanout_required": {
+                "const": false
+              },
+              "non_resurrection_rule_ref": {
+                "type": "null"
+              },
+              "fanout_rule_ref": {
+                "type": "null"
+              },
+              "affected_dependency_manifest_ref": {
+                "type": "null"
+              }
             }
           }
         }
@@ -351,83 +1041,244 @@
     }
   ],
   "$defs": {
-    "identifier": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$" },
-    "digest": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
-    "semantic_version": { "type": "string", "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$" },
-    "timestamp": { "type": "string", "format": "date-time", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$" },
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$"
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "semantic_version": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
+    },
     "artifact_reference": {
-      "type": "object", "additionalProperties": false,
-      "required": ["artifact_id", "digest", "media_type"],
-      "properties": { "artifact_id": { "$ref": "#/$defs/identifier" }, "digest": { "$ref": "#/$defs/digest" }, "media_type": { "type": "string", "minLength": 1 } }
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "digest",
+        "media_type"
+      ],
+      "properties": {
+        "artifact_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
     },
     "immutable_reference": {
-      "type": "object", "additionalProperties": false,
-      "required": ["id", "version", "digest"],
-      "properties": { "id": { "$ref": "#/$defs/identifier" }, "version": { "type": "integer", "minimum": 1 }, "digest": { "$ref": "#/$defs/digest" } }
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "version",
+        "digest"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        }
+      }
     },
     "admission_profile_reference": {
-      "type": "object", "additionalProperties": false,
-      "required": ["profile_id", "profile_type", "version", "schema_id", "digest"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profile_id",
+        "profile_type",
+        "version",
+        "schema_id",
+        "digest"
+      ],
       "properties": {
-        "profile_id": { "$ref": "#/$defs/identifier" },
+        "profile_id": {
+          "$ref": "#/$defs/identifier"
+        },
         "profile_type": {
           "enum": [
-            "exploratory_structure", "evidence_relation", "claim_bearing",
-            "correction_verification_only", "correction_verification_and_adjudication"
+            "exploratory_structure",
+            "evidence_relation",
+            "claim_bearing",
+            "correction_verification_only",
+            "correction_verification_and_adjudication"
           ]
         },
-        "version": { "$ref": "#/$defs/semantic_version" },
-        "schema_id": { "type": "string", "format": "uri" },
-        "digest": { "$ref": "#/$defs/digest" }
+        "version": {
+          "$ref": "#/$defs/semantic_version"
+        },
+        "schema_id": {
+          "type": "string",
+          "format": "uri"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        }
       }
     },
     "admission_rule_reference": {
-      "type": "object", "additionalProperties": false,
-      "required": ["rule_id", "version", "schema_id", "digest"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "rule_id",
+        "version",
+        "schema_id",
+        "digest"
+      ],
       "properties": {
-        "rule_id": { "$ref": "#/$defs/identifier" },
-        "version": { "$ref": "#/$defs/semantic_version" },
-        "schema_id": { "type": "string", "format": "uri" },
-        "digest": { "$ref": "#/$defs/digest" }
+        "rule_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "$ref": "#/$defs/semantic_version"
+        },
+        "schema_id": {
+          "type": "string",
+          "format": "uri"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        }
       }
     },
     "epistemic_node_endpoint": {
-      "type": "object", "additionalProperties": false,
-      "required": ["endpoint_type", "node_ref"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "endpoint_type",
+        "node_ref"
+      ],
       "properties": {
-        "endpoint_type": { "const": "epistemic_node" },
-        "node_ref": { "$ref": "#/$defs/immutable_reference" }
+        "endpoint_type": {
+          "const": "epistemic_node"
+        },
+        "node_ref": {
+          "$ref": "#/$defs/immutable_reference"
+        }
       }
     },
     "governed_object_endpoint": {
-      "type": "object", "additionalProperties": false,
-      "required": ["endpoint_type", "object_class", "object_ref"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "endpoint_type",
+        "object_class",
+        "object_ref"
+      ],
       "properties": {
-        "endpoint_type": { "const": "governed_object" },
-        "object_class": { "enum": ["source", "dataset", "method", "metric_result", "falsifier_result", "physical_observation", "verification_result", "adjudication"] },
-        "object_ref": { "$ref": "#/$defs/immutable_reference" }
+        "endpoint_type": {
+          "const": "governed_object"
+        },
+        "object_class": {
+          "enum": [
+            "source",
+            "dataset",
+            "method",
+            "metric_result",
+            "falsifier_result",
+            "physical_observation",
+            "verification_result",
+            "adjudication"
+          ]
+        },
+        "object_ref": {
+          "$ref": "#/$defs/immutable_reference"
+        }
       }
     },
     "graph_endpoint": {
       "oneOf": [
-        { "$ref": "#/$defs/epistemic_node_endpoint" },
-        { "$ref": "#/$defs/governed_object_endpoint" }
+        {
+          "$ref": "#/$defs/epistemic_node_endpoint"
+        },
+        {
+          "$ref": "#/$defs/governed_object_endpoint"
+        }
       ]
     },
     "principal": {
-      "type": "object", "additionalProperties": false,
-      "required": ["principal_id", "principal_type"],
-      "properties": { "principal_id": { "$ref": "#/$defs/identifier" }, "principal_type": { "enum": ["human", "deterministic_service", "model_run"] } }
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "principal_id",
+        "principal_type"
+      ],
+      "properties": {
+        "principal_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "principal_type": {
+          "enum": [
+            "human",
+            "deterministic_service",
+            "model_run"
+          ]
+        }
+      }
     },
     "evidence_disposition": {
-      "type": "object", "additionalProperties": false,
-      "required": ["evidence_ref", "evidence_kind", "disposition", "rule_ref", "disposition_evidence_ref"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evidence_ref",
+        "evidence_kind",
+        "disposition",
+        "rule_ref",
+        "disposition_evidence_ref"
+      ],
       "properties": {
-        "evidence_ref": { "$ref": "#/$defs/artifact_reference" },
-        "evidence_kind": { "enum": ["source", "dataset", "method", "metric_result", "falsifier_result", "physical_observation", "verification_result", "adjudication"] },
-        "disposition": { "enum": ["incorporated", "contradicts", "supports_under_scope", "invalid_source", "inadmissible_method", "duplicate_dependency", "not_applicable", "unresolved"] },
-        "rule_ref": { "$ref": "#/$defs/immutable_reference" },
-        "disposition_evidence_ref": { "$ref": "#/$defs/artifact_reference" }
+        "evidence_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        },
+        "evidence_kind": {
+          "enum": [
+            "source",
+            "dataset",
+            "method",
+            "metric_result",
+            "falsifier_result",
+            "physical_observation",
+            "verification_result",
+            "adjudication"
+          ]
+        },
+        "disposition": {
+          "enum": [
+            "incorporated",
+            "contradicts",
+            "supports_under_scope",
+            "invalid_source",
+            "inadmissible_method",
+            "duplicate_dependency",
+            "not_applicable",
+            "unresolved"
+          ]
+        },
+        "rule_ref": {
+          "$ref": "#/$defs/immutable_reference"
+        },
+        "disposition_evidence_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        }
       }
     }
   }

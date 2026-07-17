@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:backup-manifest:0.2.0",
+  "$id": "urn:odeya:schema:backup-manifest:0.3.0",
   "title": "Odeya BackupManifest",
   "description": "An immutable manifest for one backup set and its distinct write, verification, and clean-room recoverability states. It identifies encryption keys and recovery policy but can never contain key material.",
   "type": "object",
@@ -25,7 +25,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.2.0"
+      "const": "0.3.0"
     },
     "backup_manifest_id": {
       "$ref": "#/$defs/identifier"
@@ -395,7 +395,14 @@
           "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
         },
         "manifest_digest_observed": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-backup-manifest-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
         },
         "immutability_control_ref": {
           "$ref": "#/$defs/artifact_reference"

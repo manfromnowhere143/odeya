@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:model-configuration-record:0.2.0",
+  "$id": "urn:odeya:schema:model-configuration-record:0.3.0",
   "title": "Odeya ModelConfigurationRecord",
   "description": "Immutable, non-authoritative evidence about one exact provider/model/harness configuration. It records identity uncertainty, data handling, capability/evaluation evidence, operating curves, correlation axes, limitations, and validity; it is never dispatch authority or proof of verifier independence.",
   "type": "object",
@@ -28,7 +28,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.2.0"
+      "const": "0.3.0"
     },
     "record_status": {
       "const": "immutable_non_authoritative_observation"
@@ -341,7 +341,14 @@
           "$ref": "#/$defs/versioned_reference"
         },
         "harness_build_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "harness build bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
         },
         "prompt_template_ref": {
           "$ref": "#/$defs/artifact_reference"

@@ -445,7 +445,11 @@ shape with a fail-closed self-test, all 127 decimal leaves and both
 binary-number domains migrated with union alternatives preserved, ~200
 fixture values converted, four suites' semantic checkers unwrap the governed
 object, and the ledger holds 69 reissues + 14 candidates. FOUR OF SIX classes
-now measure zero. Next: D5a (668 digest scopes), D6-D8 (55 defs), then D9
+now measure zero. D5a-1 executed (ADR 0043): 270 mechanical digest scopes
+annotated against the reservation registry, unscoped count 668 to 398, 85
+reissues closed, lifecycle version pin now self-deriving. Remaining: D5a-2
+contextual rows (72 occ), D5a-3 mixed digest family (284 occ), the
+frontier/commitment construction decision (37 occ), D6-D8 (55 defs), then D9
 pins strictly last.**
 Residue for the reissue wave is recorded in the candidate's
 decimal_closure_residue).

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:estimand-contract:0.3.0",
+  "$id": "urn:odeya:schema:estimand-contract:0.4.0",
   "title": "Odeya EstimandContract",
   "description": "An immutable prospective mathematical contract for one closed claim type. It fixes exact population, unit, exposure, comparator, outcome, time, intercurrent-event, summary, contrast, scale, uncertainty, multiplicity, missingness, sequential, method, and decision semantics before affected outcome access. It is not a result, claim, or authority grant.",
   "type": "object",
@@ -39,7 +39,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.3.0"
+      "const": "0.4.0"
     },
     "record_status": {
       "const": "prospective_immutable_contract"
@@ -1832,7 +1832,7 @@
           "minimum": 1
         },
         "schema_id": {
-          "const": "urn:odeya:schema:research-mission:0.4.0"
+          "const": "urn:odeya:schema:research-mission:0.5.0"
         },
         "digest": {
           "$ref": "#/$defs/digest"
@@ -1859,7 +1859,14 @@
           "$ref": "#/$defs/digest"
         },
         "method_record_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-method-record-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
         }
       }
     },

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:scientific-result-envelope:0.3.0",
+  "$id": "urn:odeya:schema:scientific-result-envelope:0.4.0",
   "title": "Odeya ScientificResultEnvelope",
   "description": "An immutable non-authoritative scientific result package binding one exact mission, estimand, protocol, run, and atomic metric-result set. It retains incomplete, invalid, indeterminate, blocked, and inconclusive outcomes; keeps evidence measures and uncertainty semantics distinct; and cannot turn simulation, calibration, or code verification into physical validation.",
   "type": "object",
@@ -37,7 +37,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.3.0"
+      "const": "0.4.0"
     },
     "record_status": {
       "const": "immutable_non_authoritative_result"
@@ -100,7 +100,14 @@
           }
         },
         "metric_set_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-reference-set-manifest-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
         },
         "binding_evidence_ref": {
           "$ref": "#/$defs/artifact_reference"
@@ -1137,7 +1144,14 @@
           "$ref": "#/$defs/method_reference"
         },
         "estimand_rule_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-rule-record-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
         },
         "evaluation": {
           "enum": [
@@ -3440,7 +3454,14 @@
           "$ref": "#/$defs/digest"
         },
         "method_record_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-method-record-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
         }
       }
     },
@@ -3542,7 +3563,7 @@
           "minimum": 1
         },
         "schema_id": {
-          "const": "urn:odeya:schema:research-mission:0.4.0"
+          "const": "urn:odeya:schema:research-mission:0.5.0"
         },
         "digest": {
           "$ref": "#/$defs/digest"
@@ -3579,7 +3600,7 @@
           "$ref": "#/$defs/claim_type"
         },
         "schema_id": {
-          "const": "urn:odeya:schema:estimand-contract:0.3.0"
+          "const": "urn:odeya:schema:estimand-contract:0.4.0"
         },
         "digest": {
           "$ref": "#/$defs/digest"
@@ -3617,10 +3638,17 @@
           "$ref": "#/$defs/identifier"
         },
         "bound_estimand_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-estimand-contract-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
         },
         "schema_id": {
-          "const": "urn:odeya:schema:protocol-snapshot:0.3.0"
+          "const": "urn:odeya:schema:protocol-snapshot:0.4.0"
         },
         "digest": {
           "$ref": "#/$defs/digest"
@@ -3659,13 +3687,20 @@
           "$ref": "#/$defs/identifier"
         },
         "protocol_snapshot_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-protocol-snapshot-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
         },
         "attempt_id": {
           "$ref": "#/$defs/identifier"
         },
         "schema_id": {
-          "const": "urn:odeya:schema:run-manifest:0.3.0"
+          "const": "urn:odeya:schema:run-manifest:0.4.0"
         },
         "digest": {
           "$ref": "#/$defs/digest"
@@ -3708,19 +3743,40 @@
           "$ref": "#/$defs/identifier"
         },
         "protocol_snapshot_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-protocol-snapshot-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
         },
         "run_manifest_id": {
           "$ref": "#/$defs/identifier"
         },
         "run_manifest_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-run-manifest-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
         },
         "estimand_id": {
           "$ref": "#/$defs/identifier"
         },
         "estimand_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-estimand-contract-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
         },
         "result_role": {
           "enum": [
@@ -3734,7 +3790,7 @@
           ]
         },
         "schema_id": {
-          "const": "urn:odeya:schema:metric-result:0.3.0"
+          "const": "urn:odeya:schema:metric-result:0.4.0"
         },
         "digest": {
           "$ref": "#/$defs/digest"
@@ -3767,7 +3823,7 @@
           "$ref": "#/$defs/identifier"
         },
         "schema_id": {
-          "const": "urn:odeya:schema:physical-measurement-result:0.2.0"
+          "const": "urn:odeya:schema:physical-measurement-result:0.3.0"
         },
         "digest": {
           "$ref": "#/$defs/digest"
@@ -3800,7 +3856,7 @@
           "$ref": "#/$defs/identifier"
         },
         "schema_id": {
-          "const": "urn:odeya:schema:physical-model-record:0.2.0"
+          "const": "urn:odeya:schema:physical-model-record:0.3.0"
         },
         "digest": {
           "$ref": "#/$defs/digest"

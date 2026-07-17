@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:claim-version:0.5.0",
+  "$id": "urn:odeya:schema:claim-version:0.6.0",
   "title": "Odeya ClaimVersion",
   "description": "An immutable semantic claim version compiled from a proposal and an adjudication. Operational, verification, replication, transport, and publication state remain separate aggregates and are referenced rather than embedded.",
   "type": "object",
@@ -30,7 +30,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.5.0"
+      "const": "0.6.0"
     },
     "claim_id": {
       "$ref": "#/$defs/identifier"
@@ -63,7 +63,14 @@
       ]
     },
     "protocol_digest": {
-      "$ref": "#/$defs/digest"
+      "$ref": "#/$defs/digest",
+      "x-odeya-digest-scope": {
+        "kind": "canonical_object_digest",
+        "domain": "odeya-protocol-snapshot-v1",
+        "algorithm": "sha-256",
+        "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+        "status": "prospective_domain_reserved_not_declared"
+      }
     },
     "claim_type": {
       "$ref": "#/$defs/claim_type"
@@ -524,7 +531,14 @@
           "minLength": 1
         },
         "rule_registry_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-validation-rule-registry-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
         },
         "reason_codes": {
           "type": "array",

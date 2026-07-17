@@ -1221,7 +1221,7 @@ CASES = [
     Case("safety-rejects-unknown-hardware-as-supported", "safety", structural="invalid", mutate=set_path("asset_hardware_coverage_observation", "unknown")),
     Case("safety-rejects-direct-actuation", "safety", structural="invalid", mutate=set_path("actuator_boundary.direct_actuation_permitted", True)),
     Case("safety-rejects-self-granted-actuator-authority", "safety", structural="invalid", mutate=set_path("actuator_boundary.actuator_authority_granted", True)),
-    Case("safety-rejects-inline-execution-authority", "safety", structural="invalid", mutate=set_path("actuator_boundary.execution_authority_ref", record("authority.inline", "urn:odeya:schema:authority-grant:0.4.0", "5"))),
+    Case("safety-rejects-inline-execution-authority", "safety", structural="invalid", mutate=set_path("actuator_boundary.execution_authority_ref", record("authority.inline", "urn:odeya:schema:authority-grant:0.5.0", "5"))),
     Case("safety-rejects-hard-guarantee-from-chance-constraint", "safety", structural="invalid", mutate=set_path("safe_set.hard_guarantee_claimed", True)),
     Case("safety-detects-reversed-validity", "safety", semantic="invalid", mutate=set_path("validity.expires_at", "2026-07-15T00:00:00.000000Z")),
     Case("safety-rejects-offset-validity-time", "safety", structural="invalid", mutate=set_path("validity.valid_from", "2026-07-16T03:00:00.000000+03:00")),
@@ -1235,7 +1235,7 @@ CASES = [
     Case("experiment-rejects-simulation-validation-partition", "experiment", structural="invalid", mutate=set_path("independent_validation_partition.data_origin", "simulation")),
     Case("experiment-rejects-direct-actuation", "experiment", structural="invalid", mutate=set_path("authority_boundary.direct_actuation_permitted", True)),
     Case("experiment-rejects-self-issued-authority", "experiment", structural="invalid", mutate=set_path("authority_boundary.authority_self_issued", True)),
-    Case("experiment-rejects-inline-execution-authority", "experiment", structural="invalid", mutate=set_path("authority_boundary.execution_authority_ref", record("authority.inline", "urn:odeya:schema:authority-grant:0.4.0", "5"))),
+    Case("experiment-rejects-inline-execution-authority", "experiment", structural="invalid", mutate=set_path("authority_boundary.execution_authority_ref", record("authority.inline", "urn:odeya:schema:authority-grant:0.5.0", "5"))),
     Case("experiment-rejects-required-causal-check-marked-na", "experiment", structural="invalid", mutate=set_path("preflight.causal_identification.disposition", "not_applicable")),
 ]
 

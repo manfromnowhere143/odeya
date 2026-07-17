@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:command-contract-registry:0.2.0",
+  "$id": "urn:odeya:schema:command-contract-registry:0.3.0",
   "title": "Odeya CommandContractRegistry Structural Candidate",
   "description": "A closed structural-only registry candidate over standalone CommandContractRecord subjects. Neither records nor registry are admitted: canonical identity, retained resource closure, cross-record equality, membership proofs, activation evidence, and independent review remain unresolved. The logical payload type and exact schema resource/dialect/blob/canonical/closure identities have distinct fields. Validation resolves only explicitly preloaded local schema resources with network access disabled. A future resource reissue may introduce admitted registry subjects only after all blockers close.",
   "type": "object",
@@ -30,15 +30,33 @@
     "external_attestations"
   ],
   "properties": {
-    "schema_version": { "const": "0.2.0" },
-    "registry_kind": { "const": "command_contract_registry" },
-    "conformance_scope": { "const": "structural_fixture_only" },
-    "identity_resolution_status": { "const": "unresolved_blocking" },
-    "admission_status": { "const": "not_admitted" },
-    "registry_id": { "$ref": "#/$defs/identifier" },
-    "version": { "$ref": "#/$defs/semantic_version" },
-    "supersedes_registry_subject_ref": { "type": "null" },
-    "canonicalization_profile_ref": { "type": "null" },
+    "schema_version": {
+      "const": "0.3.0"
+    },
+    "registry_kind": {
+      "const": "command_contract_registry"
+    },
+    "conformance_scope": {
+      "const": "structural_fixture_only"
+    },
+    "identity_resolution_status": {
+      "const": "unresolved_blocking"
+    },
+    "admission_status": {
+      "const": "not_admitted"
+    },
+    "registry_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "version": {
+      "$ref": "#/$defs/semantic_version"
+    },
+    "supersedes_registry_subject_ref": {
+      "type": "null"
+    },
+    "canonicalization_profile_ref": {
+      "type": "null"
+    },
     "admission_contract": {
       "type": "object",
       "additionalProperties": false,
@@ -52,23 +70,47 @@
         "handler_deployment_proved"
       ],
       "properties": {
-        "members_are_contract_admitted": { "const": false },
-        "reserved_design_vocabulary_membership": { "const": "forbidden" },
-        "nullable_payload_contracts": { "const": "forbidden" },
-        "content_digest_dependency_order": { "const": "schema_to_state_to_reducer_to_event_to_command" },
-        "content_digest_cycles": { "const": "forbidden" },
-        "runtime_activation_proved": { "const": false },
-        "handler_deployment_proved": { "const": false }
+        "members_are_contract_admitted": {
+          "const": false
+        },
+        "reserved_design_vocabulary_membership": {
+          "const": "forbidden"
+        },
+        "nullable_payload_contracts": {
+          "const": "forbidden"
+        },
+        "content_digest_dependency_order": {
+          "const": "schema_to_state_to_reducer_to_event_to_command"
+        },
+        "content_digest_cycles": {
+          "const": "forbidden"
+        },
+        "runtime_activation_proved": {
+          "const": false
+        },
+        "handler_deployment_proved": {
+          "const": false
+        }
       }
     },
     "ordering_contract": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["member_key_expression", "ordering", "duplicate_member_keys"],
+      "required": [
+        "member_key_expression",
+        "ordering",
+        "duplicate_member_keys"
+      ],
       "properties": {
-        "member_key_expression": { "const": "command_type@command_version" },
-        "ordering": { "const": "canonical_utf8_ascending" },
-        "duplicate_member_keys": { "const": "reject" }
+        "member_key_expression": {
+          "const": "command_type@command_version"
+        },
+        "ordering": {
+          "const": "canonical_utf8_ascending"
+        },
+        "duplicate_member_keys": {
+          "const": "reject"
+        }
       }
     },
     "schema_resolution_contract": {
@@ -83,29 +125,57 @@
         "reference_cycles"
       ],
       "properties": {
-        "record_schema_resource_id": { "const": "urn:odeya:schema:command-contract-record:0.1.0" },
-        "resource_loading": { "const": "preloaded_exact_resource_id_only" },
-        "network_access": { "const": "disabled" },
-        "unresolved_resource_disposition": { "const": "reject_before_decider" },
-        "payload_closure_digest_required": { "const": true },
-        "reference_cycles": { "const": "forbidden" }
+        "record_schema_resource_id": {
+          "const": "urn:odeya:schema:command-contract-record:0.2.0"
+        },
+        "resource_loading": {
+          "const": "preloaded_exact_resource_id_only"
+        },
+        "network_access": {
+          "const": "disabled"
+        },
+        "unresolved_resource_disposition": {
+          "const": "reject_before_decider"
+        },
+        "payload_closure_digest_required": {
+          "const": true
+        },
+        "reference_cycles": {
+          "const": "forbidden"
+        }
       }
     },
     "members": {
       "type": "object",
       "minProperties": 1,
       "maxProperties": 512,
-      "propertyNames": { "$ref": "#/$defs/member_key" },
-      "additionalProperties": { "$ref": "urn:odeya:schema:command-contract-record:0.1.0" }
+      "propertyNames": {
+        "$ref": "#/$defs/member_key"
+      },
+      "additionalProperties": {
+        "$ref": "urn:odeya:schema:command-contract-record:0.2.0"
+      }
     },
     "member_set_commitment": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["status", "member_count", "ordered_record_digests_digest"],
+      "required": [
+        "status",
+        "member_count",
+        "ordered_record_digests_digest"
+      ],
       "properties": {
-        "status": { "const": "unresolved_blocking" },
-        "member_count": { "type": "integer", "minimum": 1, "maximum": 512 },
-        "ordered_record_digests_digest": { "type": "null" }
+        "status": {
+          "const": "unresolved_blocking"
+        },
+        "member_count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 512
+        },
+        "ordered_record_digests_digest": {
+          "type": "null"
+        }
       }
     },
     "historical_read_policy": {
@@ -120,26 +190,53 @@
         "retired_exact_retry"
       ],
       "properties": {
-        "resolution": { "const": "exact_member_version_and_digest" },
-        "current_resolution_status": { "const": "unavailable_until_identity_resolution" },
-        "retained_contracts_required": { "const": true },
-        "mutable_aliases_allowed": { "const": false },
-        "unresolved_member": { "const": "block_before_envelope" },
-        "retired_exact_retry": { "const": "resolve_historical_contract_after_admission" }
+        "resolution": {
+          "const": "exact_member_version_and_digest"
+        },
+        "current_resolution_status": {
+          "const": "unavailable_until_identity_resolution"
+        },
+        "retained_contracts_required": {
+          "const": true
+        },
+        "mutable_aliases_allowed": {
+          "const": false
+        },
+        "unresolved_member": {
+          "const": "block_before_envelope"
+        },
+        "retired_exact_retry": {
+          "const": "resolve_historical_contract_after_admission"
+        }
       }
     },
-    "source_manifest_ref": { "$ref": "#/$defs/artifact_reference" },
-    "generator_identity_ref": { "$ref": "#/$defs/artifact_reference" },
-    "review_evidence_refs": { "$ref": "#/$defs/nonempty_artifact_array" },
+    "source_manifest_ref": {
+      "$ref": "#/$defs/artifact_reference"
+    },
+    "generator_identity_ref": {
+      "$ref": "#/$defs/artifact_reference"
+    },
+    "review_evidence_refs": {
+      "$ref": "#/$defs/nonempty_artifact_array"
+    },
     "known_limitations": {
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,
-      "items": { "$ref": "#/$defs/known_limitation" }
+      "items": {
+        "$ref": "#/$defs/known_limitation"
+      }
     },
-    "registry_digest_contract": { "type": "null" },
-    "registry_digest": { "type": "null" },
-    "external_attestations": { "type": "array", "maxItems": 0 }
+    "registry_digest_contract": {
+      "type": "null"
+    },
+    "registry_digest": {
+      "type": "null"
+    },
+    "external_attestations": {
+      "type": "array",
+      "maxItems": 0
+    }
   },
   "$defs": {
     "identifier": {
@@ -161,28 +258,64 @@
     "artifact_reference": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["artifact_id", "digest", "media_type"],
+      "required": [
+        "artifact_id",
+        "digest",
+        "media_type"
+      ],
       "properties": {
-        "artifact_id": { "$ref": "#/$defs/identifier" },
-        "digest": { "$ref": "#/$defs/digest" },
-        "media_type": { "type": "string", "minLength": 1, "maxLength": 127 }
+        "artifact_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 127
+        }
       }
     },
     "nonempty_artifact_array": {
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,
-      "items": { "$ref": "#/$defs/artifact_reference" }
+      "items": {
+        "$ref": "#/$defs/artifact_reference"
+      }
     },
     "known_limitation": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["limitation_id", "severity", "statement", "consequence"],
+      "required": [
+        "limitation_id",
+        "severity",
+        "statement",
+        "consequence"
+      ],
       "properties": {
-        "limitation_id": { "$ref": "#/$defs/identifier" },
-        "severity": { "enum": ["low", "moderate", "high", "critical"] },
-        "statement": { "type": "string", "minLength": 1, "maxLength": 2048 },
-        "consequence": { "type": "string", "minLength": 1, "maxLength": 2048 }
+        "limitation_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "severity": {
+          "enum": [
+            "low",
+            "moderate",
+            "high",
+            "critical"
+          ]
+        },
+        "statement": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2048
+        },
+        "consequence": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2048
+        }
       }
     }
   }

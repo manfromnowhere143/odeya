@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:command-envelope:0.6.0",
+  "$id": "urn:odeya:schema:command-envelope:0.7.0",
   "title": "Odeya CommandEnvelope",
   "description": "Language-neutral structural candidate for a fail-closed Odeya command request. This 0.5 resource is deliberately nonconstructible and not admitted while the exact CommandContractRecord and CommandContractRegistry identities remain unresolved; non-null digests in fixtures are comparison probes, not proof that resolution or admission occurred. It binds the canonical CommandContractRegistry subject name, a separate activation-proof shape, and a standalone member-reference shape; mutable aliases such as latest are unrepresentable. The logical payload_type_id is distinct from the exact JSON Schema resource plus canonical and closure digests; the record supplies dialect and source-blob identity. Presented authority hints are untrusted. JSON Schema does not prove activation, membership, identity equality, scope approval, currentness, or admission, and a future schema-resource reissue is required before construction can be admitted.",
   "type": "object",
@@ -37,7 +37,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.6.0"
+      "const": "0.7.0"
     },
     "conformance_scope": {
       "const": "structural_fixture_only"
@@ -70,10 +70,24 @@
       "pattern": "^urn:odeya:schema:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$"
     },
     "payload_schema_canonical_digest": {
-      "$ref": "#/$defs/digest"
+      "$ref": "#/$defs/digest",
+      "x-odeya-digest-scope": {
+        "kind": "canonical_object_digest",
+        "domain": "odeya-payload-schema-canonical-v1",
+        "algorithm": "sha-256",
+        "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+        "status": "prospective_domain_reserved_not_declared"
+      }
     },
     "payload_schema_closure_digest": {
-      "$ref": "#/$defs/digest"
+      "$ref": "#/$defs/digest",
+      "x-odeya-digest-scope": {
+        "kind": "canonical_object_digest",
+        "domain": "odeya-payload-schema-closure-v1",
+        "algorithm": "sha-256",
+        "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+        "status": "prospective_domain_reserved_not_declared"
+      }
     },
     "command_registry_snapshot_ref": {
       "$ref": "#/$defs/command_registry_snapshot_reference"
@@ -200,7 +214,14 @@
       "$ref": "#/$defs/request_digest_contract"
     },
     "canonical_request_digest": {
-      "$ref": "#/$defs/digest"
+      "$ref": "#/$defs/digest",
+      "x-odeya-digest-scope": {
+        "kind": "canonical_object_digest",
+        "domain": "odeya-command-request-v2",
+        "algorithm": "sha-256",
+        "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+        "status": "registered_domain"
+      }
     },
     "client_observed_at": {
       "oneOf": [
@@ -3969,7 +3990,7 @@
           "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
         },
         "schema_id": {
-          "const": "urn:odeya:schema:command-contract-registry:0.2.0"
+          "const": "urn:odeya:schema:command-contract-registry:0.3.0"
         },
         "digest": {
           "$ref": "#/$defs/digest"
@@ -3996,16 +4017,30 @@
           "minimum": 1
         },
         "schema_id": {
-          "const": "urn:odeya:schema:registry-activation:0.2.0"
+          "const": "urn:odeya:schema:registry-activation:0.3.0"
         },
         "activation_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-registry-activation-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "registered_domain"
+          }
         },
         "p0_prerequisite_id": {
           "const": "P0.constitutional-recovery-admission"
         },
         "p0_admission_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-p0-constitutional-recovery-admission-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "registered_domain"
+          }
         }
       }
     },
@@ -4037,13 +4072,20 @@
           "minimum": 1
         },
         "schema_id": {
-          "const": "urn:odeya:schema:command-contract-record:0.1.0"
+          "const": "urn:odeya:schema:command-contract-record:0.2.0"
         },
         "digest": {
           "$ref": "#/$defs/digest"
         },
         "registry_snapshot_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-command-contract-registry-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
         },
         "command_type": {
           "$ref": "#/$defs/command_type"
@@ -4064,13 +4106,34 @@
           "const": "https://json-schema.org/draft/2020-12/schema"
         },
         "payload_schema_blob_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "byte_digest",
+            "subject": "schema blob bytes",
+            "algorithm": "sha-256",
+            "profile": "not_a_canonical_object_digest",
+            "status": "accepted_disposition_annotation"
+          }
         },
         "payload_schema_canonical_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-payload-schema-canonical-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
         },
         "payload_schema_closure_digest": {
-          "$ref": "#/$defs/digest"
+          "$ref": "#/$defs/digest",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "domain": "odeya-payload-schema-closure-v1",
+            "algorithm": "sha-256",
+            "profile": "urn:odeya:canonicalization:odeya-jcs-0.1",
+            "status": "prospective_domain_reserved_not_declared"
+          }
         },
         "membership_proof_ref": {
           "$ref": "#/$defs/artifact_reference"
