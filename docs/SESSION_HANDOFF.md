@@ -418,11 +418,13 @@ session can self-close. The highest-value remaining autonomous work is
 therefore the profile-independent findings and the evidence-quality audit above,
 plus reducing the profile decision to an exact decidable package rather than
 1,222 raw findings (originally 1,154; ADR 0033 removed four double-counted
-timestamps, ADR 0034 rescued twenty-nine name-filter misses, and ADR 0035
-rescued forty-three more by making the shape test descend unions and array
-items -- three corrections of one instrument, each found by reading bytes,
-including two scientific schemas that had zero findings while holding
-covariance matrices and nine resource observations).
+timestamps, ADR 0034 rescued twenty-nine name-filter misses, ADR 0035 rescued
+forty-three more by making the shape test descend unions and array items, and
+ADR 0036 closed the loop by measurement: an independent name-blind termination
+sweep returned empty -- 192 decimal occurrences across 112 schemas, all
+governed, gate proven live on positive controls. **The package is ready for
+the operator sitting.** Residue for the reissue wave is recorded in the
+candidate's decimal_closure_residue).
 
 The canonical migration findings are now partitioned for decision. The
 disposition candidate at

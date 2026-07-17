@@ -893,7 +893,7 @@
    "proposed_semantic_type": "byte_count",
    "proposed_unit": "bytes",
    "proposed_precision": "0_exact",
-   "confidence": "certain"
+   "confidence": "likely"
   },
   {
    "schema": "schemas/authority-grant.schema.json",
@@ -901,7 +901,7 @@
    "proposed_semantic_type": "byte_count",
    "proposed_unit": "bytes",
    "proposed_precision": "0_exact",
-   "confidence": "certain"
+   "confidence": "likely"
   },
   {
    "schema": "schemas/authority-grant.schema.json",
@@ -1173,7 +1173,7 @@
    "proposed_semantic_type": "byte_count",
    "proposed_unit": "bytes",
    "proposed_precision": "0_exact",
-   "confidence": "certain"
+   "confidence": "likely"
   },
   {
    "schema": "schemas/grounded-outcome.schema.json",
@@ -1181,7 +1181,7 @@
    "proposed_semantic_type": "byte_count",
    "proposed_unit": "bytes",
    "proposed_precision": "0_exact",
-   "confidence": "certain"
+   "confidence": "likely"
   },
   {
    "schema": "schemas/grounded-outcome.schema.json",
@@ -1628,7 +1628,7 @@
    "pointer": "/$defs/resource_budget/properties/external_cost_usd",
    "proposed_semantic_type": "monetary_amount_usd",
    "proposed_unit": "USD",
-   "proposed_precision": "operator_choice_2_or_6",
+   "proposed_precision": "operator_choice_currency_exponent_or_6",
    "confidence": "likely"
   },
   {
@@ -1661,7 +1661,7 @@
    "proposed_semantic_type": "byte_count",
    "proposed_unit": "bytes",
    "proposed_precision": "0_exact",
-   "confidence": "certain"
+   "confidence": "likely"
   },
   {
    "schema": "schemas/run-manifest.schema.json",
@@ -1669,7 +1669,7 @@
    "proposed_semantic_type": "byte_count",
    "proposed_unit": "bytes",
    "proposed_precision": "0_exact",
-   "confidence": "certain"
+   "confidence": "likely"
   },
   {
    "schema": "schemas/run-manifest.schema.json",
@@ -1853,7 +1853,8 @@
    "proposed_semantic_type": "correlation_coefficient",
    "proposed_unit": "dimensionless",
    "proposed_precision": "instance_declared",
-   "confidence": "likely"
+   "confidence": "likely",
+   "note": "bytes do not bound correlation elements to [-1,1]; the reissue wave must add the range constraint or the operator must accept unbounded elements knowingly"
   },
   {
    "schema": "schemas/uncertainty-budget.schema.json",
@@ -3614,5 +3615,13 @@
    "mixed_needs_split": 3
   },
   "boundary": "proposals only; nothing here is accepted, and the operator decides every class, every table row marked needs_operator, and every new domain"
+ },
+ "decimal_closure_residue": {
+  "termination_sweep": "independent name-blind sweep at dbf7ef6 returned empty: 0 ungoverned reachable pattern-shaped decimal occurrences of 192 across 112 schemas; gate proven live on positive controls",
+  "items_for_the_reissue_wave": [
+   "physical-quantity /$defs/conversion/oneOf/0/properties/offset is const \"0\" -- a decimal-valued const invisible to any pattern detector; any retyping of unit_conversion_offset must move this const in lockstep",
+   "physical-measurement-result /$defs/decimal is a dead definition; the first future reference would inherit an ungoverned decimal, so the reissue wave must drop or govern it",
+   "uncertainty-budget correlation elements are not range-bounded by bytes; add the [-1,1] constraint at reissue or accept unbounded elements explicitly"
+  ]
  }
 }
