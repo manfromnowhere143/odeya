@@ -43,6 +43,20 @@
     "data_use_grant_not_single_use",
     "data_use_batch_size_not_three",
     "data_use_missing_exhaustion",
+    "data_fixture_resolved_payload_status",
+    "data_fixture_fabricated_contract_digest",
+    "data_fixture_claims_authority",
+    "data_fixture_assigned_role_mode",
+    "data_fixture_no_assignment_evidence",
+    "data_fixture_two_grants",
+    "data_fixture_grant_mismatch",
+    "data_fixture_use_event_mismatch",
+    "data_fixture_commit_position",
+    "data_fixture_missing_exhaustion",
+    "data_fixture_mutation_not_replace",
+    "data_fixture_mutation_path_unresolvable",
+    "data_fixture_mutation_path_absent",
+    "data_fixture_mutation_list_index_not_integer",
     "work_lease_stale_as_canonical",
     "work_lease_completed_as_canonical",
     "work_lease_reopen_terminal",
@@ -1877,6 +1891,264 @@
       },
       "adversarial_tag": "data_use_batch_size_not_three",
       "expected_refusal_contains": "data-use decision is not index 1 of exactly three events"
+    },
+    {
+      "name": "data-fixture-safe-retained-bytes",
+      "kind": "safe_reference",
+      "model": "data_fixture_mutation",
+      "expect": "accept",
+      "subject": {}
+    },
+    {
+      "name": "data-fixture-bad-resolved-payload-status",
+      "kind": "adversarial",
+      "model": "data_fixture_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "op": "replace",
+          "path": [
+            "payload_contract_resolution_status"
+          ],
+          "value": "resolved"
+        }
+      },
+      "adversarial_tag": "data_fixture_resolved_payload_status",
+      "expected_refusal_contains": "does not retain unresolved payload-contract status"
+    },
+    {
+      "name": "data-fixture-bad-fabricated-contract-digest",
+      "kind": "adversarial",
+      "model": "data_fixture_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "op": "replace",
+          "path": [
+            "payload_contract_digest"
+          ],
+          "value": "sha256:2222222222222222222222222222222222222222222222222222222222222222"
+        }
+      },
+      "adversarial_tag": "data_fixture_fabricated_contract_digest",
+      "expected_refusal_contains": "fabricates a per-branch payload-contract digest"
+    },
+    {
+      "name": "data-fixture-bad-claims-authority",
+      "kind": "adversarial",
+      "model": "data_fixture_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "op": "replace",
+          "path": [
+            "event_contract_authority_status"
+          ],
+          "value": "admitted_dispatchable"
+        }
+      },
+      "adversarial_tag": "data_fixture_claims_authority",
+      "expected_refusal_contains": "claims authority despite unresolved branch contract"
+    },
+    {
+      "name": "data-fixture-bad-assigned-role-mode",
+      "kind": "adversarial",
+      "model": "data_fixture_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "op": "replace",
+          "path": [
+            "authority_evidence",
+            "mode"
+          ],
+          "value": "assigned_roles"
+        }
+      },
+      "adversarial_tag": "data_fixture_assigned_role_mode",
+      "expected_refusal_contains": "authority mode is not bounded_grants"
+    },
+    {
+      "name": "data-fixture-bad-no-assignment-evidence",
+      "kind": "adversarial",
+      "model": "data_fixture_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "op": "replace",
+          "path": [
+            "authority_evidence",
+            "assignment_refs"
+          ],
+          "value": []
+        }
+      },
+      "adversarial_tag": "data_fixture_no_assignment_evidence",
+      "expected_refusal_contains": "has no assignment evidence"
+    },
+    {
+      "name": "data-fixture-bad-two-grants",
+      "kind": "adversarial",
+      "model": "data_fixture_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "op": "replace",
+          "path": [
+            "authority_evidence",
+            "grant_refs"
+          ],
+          "value": [
+            "grant.a",
+            "grant.b"
+          ]
+        }
+      },
+      "adversarial_tag": "data_fixture_two_grants",
+      "expected_refusal_contains": "does not bind exactly one grant and use event"
+    },
+    {
+      "name": "data-fixture-bad-grant-mismatch",
+      "kind": "adversarial",
+      "model": "data_fixture_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "op": "replace",
+          "path": [
+            "payload",
+            "grant_commit_binding",
+            "grant_id"
+          ],
+          "value": "grant.other"
+        }
+      },
+      "adversarial_tag": "data_fixture_grant_mismatch",
+      "expected_refusal_contains": "authority grant and payload grant differ"
+    },
+    {
+      "name": "data-fixture-bad-use-event-mismatch",
+      "kind": "adversarial",
+      "model": "data_fixture_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "op": "replace",
+          "path": [
+            "payload",
+            "grant_commit_binding",
+            "grant_use_event_ref"
+          ],
+          "value": "event.other"
+        }
+      },
+      "adversarial_tag": "data_fixture_use_event_mismatch",
+      "expected_refusal_contains": "authority and payload grant-use events differ"
+    },
+    {
+      "name": "data-fixture-bad-commit-position",
+      "kind": "adversarial",
+      "model": "data_fixture_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "op": "replace",
+          "path": [
+            "commit",
+            "batch_size"
+          ],
+          "value": 4
+        }
+      },
+      "adversarial_tag": "data_fixture_commit_position",
+      "expected_refusal_contains": "does not retain the exact three-event commit position"
+    },
+    {
+      "name": "data-fixture-bad-missing-exhaustion",
+      "kind": "adversarial",
+      "model": "data_fixture_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "op": "replace",
+          "path": [
+            "payload",
+            "grant_commit_binding",
+            "grant_exhaustion_event_ref"
+          ],
+          "value": null
+        }
+      },
+      "adversarial_tag": "data_fixture_missing_exhaustion",
+      "expected_refusal_contains": "lacks same-cohort final-use exhaustion"
+    },
+    {
+      "name": "data-fixture-bad-mutation-not-replace",
+      "kind": "adversarial",
+      "model": "data_fixture_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "op": "delete",
+          "path": [
+            "commit"
+          ]
+        }
+      },
+      "adversarial_tag": "data_fixture_mutation_not_replace",
+      "expected_refusal_contains": "mutation is not one bounded replace operation"
+    },
+    {
+      "name": "data-fixture-bad-mutation-path-unresolvable",
+      "kind": "adversarial",
+      "model": "data_fixture_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "op": "replace",
+          "path": [
+            "nope",
+            "deeper"
+          ],
+          "value": 1
+        }
+      },
+      "adversarial_tag": "data_fixture_mutation_path_unresolvable",
+      "expected_refusal_contains": "mutation path does not resolve"
+    },
+    {
+      "name": "data-fixture-bad-mutation-path-absent",
+      "kind": "adversarial",
+      "model": "data_fixture_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "op": "replace",
+          "path": [],
+          "value": 1
+        }
+      },
+      "adversarial_tag": "data_fixture_mutation_path_absent",
+      "expected_refusal_contains": "mutation path is absent"
+    },
+    {
+      "name": "data-fixture-bad-mutation-list-index-not-integer",
+      "kind": "adversarial",
+      "model": "data_fixture_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "op": "replace",
+          "path": [
+            "authority_evidence",
+            "assignment_refs",
+            "first"
+          ],
+          "value": "x"
+        }
+      },
+      "adversarial_tag": "data_fixture_mutation_list_index_not_integer",
+      "expected_refusal_contains": "list mutation index is not an integer"
     },
     {
       "name": "work-lease-safe-release",

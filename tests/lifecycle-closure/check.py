@@ -936,6 +936,36 @@ def identity_map_mutation_errors(subject: dict[str, Any]) -> list[str]:
     return schema_contract_errors(schema, inventory, identity)
 
 
+def data_fixture_mutation_errors(subject: dict[str, Any]) -> list[str]:
+    """Prove the data-use fixture guards with one bounded replace.
+
+    data_fixture_errors validates a fixture loaded from disk, so no case could
+    reach its ten guards and the coverage record carried them as 0 of 10,
+    unprovable by construction -- the third model with the closed-vocabulary
+    defect ADR 0028 named. The same bounded replace used by the other two
+    models closes it; load_json re-reads per call, so nothing leaks.
+    """
+    fixture = deepcopy(load_json(DATA_USE_FIXTURE_PATH))
+    mutation = subject.get("mutation")
+    if mutation is not None:
+        if not isinstance(mutation, dict) or mutation.get("op") != "replace":
+            return ["data-use fixture mutation is not one bounded replace operation"]
+        path = mutation.get("path")
+        if not isinstance(path, list) or not path:
+            return ["data-use fixture mutation path is absent"]
+        current: Any = fixture
+        try:
+            for segment in path[:-1]:
+                current = current[segment]
+            final = path[-1]
+            if isinstance(current, list) and not isinstance(final, int):
+                return ["data-use fixture list mutation index is not an integer"]
+            current[final] = mutation.get("value")
+        except (KeyError, IndexError, TypeError):
+            return ["data-use fixture mutation path does not resolve"]
+    return data_fixture_errors(fixture)
+
+
 MODEL_CHECKERS: dict[str, Callable[[dict[str, Any]], list[str]]] = {
     "authority_grant_trace": authority_grant_trace_errors,
     "protocol_origin": protocol_origin_errors,
@@ -943,6 +973,7 @@ MODEL_CHECKERS: dict[str, Callable[[dict[str, Any]], list[str]]] = {
     "work_lease_trace": work_lease_trace_errors,
     "work_lease_record_candidate": work_lease_record_candidate_errors,
     "identity_map_mutation": identity_map_mutation_errors,
+    "data_fixture_mutation": data_fixture_mutation_errors,
 }
 
 

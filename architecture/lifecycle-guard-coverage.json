@@ -6,7 +6,7 @@
   "status": "candidate_measurement_not_admitted",
   "method": "each errors.append branch of a declared lifecycle model is disabled one at a time in an isolated copy; a guard is proved only when the suite fails without it",
   "subject": "tests/lifecycle-closure/check.py",
-  "subject_sha256": "sha256:0ae2a73dc7e35afe047fc1c345c74633a9a8497ce77acdef9a2551cf24b4d7a6",
+  "subject_sha256": "sha256:eb4c1d17c1462239012525cebe6321dd1099a91d410f3a044784f03733d7a8fb",
   "models": [
     {
       "function": "branch_map",
@@ -355,57 +355,57 @@
     {
       "function": "data_fixture_errors",
       "branch_count": 10,
-      "proved_count": 0,
+      "proved_count": 10,
       "branches": [
         {
           "guard": "data-use fixture does not retain unresolved payload-contract status",
-          "proved": false,
-          "proved_by": null
+          "proved": true,
+          "proved_by": "data-fixture-bad-resolved-payload-status"
         },
         {
           "guard": "data-use fixture fabricates a per-branch payload-contract digest",
-          "proved": false,
-          "proved_by": null
+          "proved": true,
+          "proved_by": "data-fixture-bad-fabricated-contract-digest"
         },
         {
           "guard": "data-use fixture claims authority despite unresolved branch contract",
-          "proved": false,
-          "proved_by": null
+          "proved": true,
+          "proved_by": "data-fixture-bad-claims-authority"
         },
         {
           "guard": "data-use fixture authority mode is not bounded_grants",
-          "proved": false,
-          "proved_by": null
+          "proved": true,
+          "proved_by": "data-fixture-bad-assigned-role-mode"
         },
         {
           "guard": "data-use fixture has no assignment evidence",
-          "proved": false,
-          "proved_by": null
+          "proved": true,
+          "proved_by": "data-fixture-bad-no-assignment-evidence"
         },
         {
           "guard": "data-use fixture does not bind exactly one grant and use event",
-          "proved": false,
-          "proved_by": null
+          "proved": true,
+          "proved_by": "data-fixture-bad-two-grants"
         },
         {
           "guard": "data-use fixture authority grant and payload grant differ",
-          "proved": false,
-          "proved_by": null
+          "proved": true,
+          "proved_by": "data-fixture-bad-grant-mismatch"
         },
         {
           "guard": "data-use fixture authority and payload grant-use events differ",
-          "proved": false,
-          "proved_by": null
+          "proved": true,
+          "proved_by": "data-fixture-bad-use-event-mismatch"
         },
         {
           "guard": "data-use fixture does not retain the exact three-event commit position",
-          "proved": false,
-          "proved_by": null
+          "proved": true,
+          "proved_by": "data-fixture-bad-commit-position"
         },
         {
           "guard": "data-use fixture lacks same-cohort final-use exhaustion",
-          "proved": false,
-          "proved_by": null
+          "proved": true,
+          "proved_by": "data-fixture-bad-missing-exhaustion"
         }
       ]
     },
@@ -850,13 +850,40 @@
           "proved_by": "identity-map-bad-mutation-path-unresolvable"
         }
       ]
+    },
+    {
+      "function": "data_fixture_mutation_errors",
+      "branch_count": 4,
+      "proved_count": 4,
+      "branches": [
+        {
+          "guard": "data-use fixture mutation is not one bounded replace operation",
+          "proved": true,
+          "proved_by": "data-fixture-bad-mutation-not-replace"
+        },
+        {
+          "guard": "data-use fixture mutation path is absent",
+          "proved": true,
+          "proved_by": "data-fixture-bad-mutation-path-absent"
+        },
+        {
+          "guard": "data-use fixture list mutation index is not an integer",
+          "proved": true,
+          "proved_by": "data-fixture-bad-mutation-list-index-not-integer"
+        },
+        {
+          "guard": "data-use fixture mutation path does not resolve",
+          "proved": true,
+          "proved_by": "data-fixture-bad-mutation-path-unresolvable"
+        }
+      ]
     }
   ],
   "not_auditable": [],
   "summary": {
-    "branch_count": 156,
-    "proved": 97,
-    "unproved": 59
+    "branch_count": 160,
+    "proved": 111,
+    "unproved": 49
   },
   "boundary": "architecture evidence about retained bytes only; not a runtime, an admitted member, an independently reproduced verdict, or Gate A acceptance"
 }

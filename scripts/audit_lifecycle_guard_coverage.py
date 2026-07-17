@@ -95,6 +95,7 @@ AUDITED_MODELS = (
     "work_lease_trace_errors",
     "work_lease_record_candidate_errors",
     "identity_map_mutation_errors",
+    "data_fixture_mutation_errors",
 )
 
 # Every refusal-bearing function in the checker is audited. Two prior versions
