@@ -41,7 +41,7 @@ PROFILE_EVIDENCE = (
 CASES = SUITE / "cases.json"
 
 PROFILE_ID = "urn:odeya:canonicalization:odeya-jcs-0.1"
-PROFILE_SCHEMA_ID = "urn:odeya:schema:canonicalization-profile-core:0.1.0"
+PROFILE_SCHEMA_ID = "urn:odeya:schema:canonicalization-profile-core:0.2.0"
 CORE_SCHEMA_ID = "urn:odeya:schema:work-intent-core:0.1.0"
 LEGACY_SCHEMA_ID = "urn:odeya:schema:work-intent:0.1.0"
 FIXED_TIMESTAMP = re.compile(

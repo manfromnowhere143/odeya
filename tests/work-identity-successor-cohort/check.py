@@ -210,7 +210,7 @@ def profile_ref_is_exact(value: Any) -> bool:
     return value == {
         "profile_id": PROFILE_ID,
         "profile_version": "0.1.0",
-        "profile_core_schema_id": "urn:odeya:schema:canonicalization-profile-core:0.1.0",
+        "profile_core_schema_id": "urn:odeya:schema:canonicalization-profile-core:0.2.0",
         "profile_core_raw_digest": raw_binding(PROFILE_CORE)[0],
     }
 

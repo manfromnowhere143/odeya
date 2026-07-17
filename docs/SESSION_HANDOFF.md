@@ -427,8 +427,10 @@ nine class decisions on 2026-07-17 (ADR 0037, acceptance record retained with
 the exact audit digests), and the wave is executing: D1 is resolved — 236
 fixture timestamps normalized, the audit's fixture blocker at zero, the live
 candidate recomputing 986 findings (ADR 0038). Reaching zero exposed and fixed
-two gates that could not observe success. Next tranches in dictated order:
-D5b domain registrations and the profile-core edit, then the schema wave.**
+two gates that could not observe success. D5b executed: all 49 accepted
+domain names reserved in the profile core's new prospective_domain_registry,
+core schema reissued 0.2.0, succession propagated through every consumer to a
+fixed point (ADR 0039). Next: the D2-D8 schema reissue wave, then D9 pins.**
 Residue for the reissue wave is recorded in the candidate's
 decimal_closure_residue).
 

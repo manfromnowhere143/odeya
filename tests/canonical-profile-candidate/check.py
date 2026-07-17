@@ -33,7 +33,7 @@ CANONICAL_SUITE = ROOT / "tests/canonicalization"
 CANONICAL_AUDIT = CANONICAL_SUITE / "SCHEMA_AUDIT.json"
 GATE_INVENTORY = ROOT / "architecture/gate-a-prerequisite-closure.json"
 PROFILE_ID = "urn:odeya:canonicalization:odeya-jcs-0.1"
-CORE_SCHEMA_ID = "urn:odeya:schema:canonicalization-profile-core:0.1.0"
+CORE_SCHEMA_ID = "urn:odeya:schema:canonicalization-profile-core:0.2.0"
 
 EXPECTED_ARTIFACTS = {
     "docs/CANONICALIZATION_PROFILE.md": "profile_specification",
@@ -328,6 +328,28 @@ def evaluate(
         or len(domain_names) != len(set(domain_names))
     ):
         errors.add("declared_domain_registry_mismatch")
+
+    # Prospective reservations: names accepted under the disposition record,
+    # awaiting their declaring constants in the reissue wave. Reserved names
+    # must be sorted, unique, disjoint from every declared constant, and carry
+    # exactly the reservation status and source.
+    prospective = core.get("prospective_domain_registry", [])
+    prospective_names = [
+        item.get("domain_separator") for item in prospective if isinstance(item, dict)
+    ]
+    if (
+        prospective_names != sorted(prospective_names)
+        or len(prospective_names) != len(set(prospective_names))
+        or any(name in represented_domains for name in prospective_names)
+        or any(
+            not isinstance(item, dict)
+            or item.get("registration_status") != "prospective_name_reserved_no_declaring_constant"
+            or item.get("reservation_source")
+            != "architecture/canonicalization-disposition-acceptance.json"
+            for item in prospective
+        )
+    ):
+        errors.add("prospective_domain_registry_invalid")
 
     authority = core.get("authority_boundary", {})
     if not isinstance(authority, dict) or any(value is not False for value in authority.values()):
