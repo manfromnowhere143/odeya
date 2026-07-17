@@ -15,7 +15,7 @@
   "fixture_count": 200
  },
  "partition_law": "every finding of the six audit classes is assigned to exactly one disposition class by the selectors below; the validator recomputes this partition from the audit bytes on every run and refuses drift",
- "total_findings": 1179,
+ "total_findings": 1222,
  "touched_schema_union_count": 100,
  "touched_schema_union": [
   "schemas/adjudication.schema.json",
@@ -187,7 +187,7 @@
    "title": "Scientific-decimal typed-object migration",
    "finding_id": "CANON-SCHEMA-NUMBER-001",
    "selector": "every entry of schemas[].generic_scientific_decimal_paths",
-   "count": 84,
+   "count": 127,
    "kind": "table_driven",
    "recommendation": "migrate each field to the frozen typed scientific-decimal object; the semantic type, unit, and precision per row require operator approval of the embedded table"
   },
@@ -885,7 +885,7 @@
    "proposed_semantic_type": "resource_amount",
    "proposed_unit": "tokens",
    "proposed_precision": "0_exact",
-   "confidence": "certain"
+   "confidence": "likely"
   },
   {
    "schema": "schemas/authority-grant.schema.json",
@@ -929,7 +929,23 @@
   },
   {
    "schema": "schemas/candidate-artifact.schema.json",
+   "pointer": "/$defs/resource_observation/properties/value",
+   "proposed_semantic_type": "resource_amount",
+   "proposed_unit": "instance_declared_unit_ref",
+   "proposed_precision": "kind_dependent",
+   "confidence": "likely"
+  },
+  {
+   "schema": "schemas/candidate-artifact.schema.json",
    "pointer": "/$defs/spend_observation/allOf/0/then/properties/amount",
+   "proposed_semantic_type": "monetary_amount",
+   "proposed_unit": "iso4217_major_unit",
+   "proposed_precision": "operator_choice_currency_exponent_or_6",
+   "confidence": "likely"
+  },
+  {
+   "schema": "schemas/candidate-artifact.schema.json",
+   "pointer": "/$defs/spend_observation/properties/amount",
    "proposed_semantic_type": "monetary_amount",
    "proposed_unit": "iso4217_major_unit",
    "proposed_precision": "operator_choice_currency_exponent_or_6",
@@ -938,6 +954,14 @@
   {
    "schema": "schemas/claim.schema.json",
    "pointer": "/$defs/quantity/properties/value",
+   "proposed_semantic_type": "measured_quantity",
+   "proposed_unit": "instance_declared_unit_object",
+   "proposed_precision": "instance_declared",
+   "confidence": "likely"
+  },
+  {
+   "schema": "schemas/claim.schema.json",
+   "pointer": "/$defs/uncertainty_channel/properties/estimate",
    "proposed_semantic_type": "measured_quantity",
    "proposed_unit": "instance_declared_unit_object",
    "proposed_precision": "instance_declared",
@@ -1017,6 +1041,22 @@
   },
   {
    "schema": "schemas/estimand-contract.schema.json",
+   "pointer": "/properties/contrast/properties/reference_value",
+   "proposed_semantic_type": "registered_quantity",
+   "proposed_unit": "instance_declared_unit_ref",
+   "proposed_precision": "instance_declared",
+   "confidence": "likely"
+  },
+  {
+   "schema": "schemas/estimand-contract.schema.json",
+   "pointer": "/properties/decision_rule/properties/null_or_reference_value",
+   "proposed_semantic_type": "registered_quantity",
+   "proposed_unit": "instance_declared_unit_ref",
+   "proposed_precision": "instance_declared",
+   "confidence": "likely"
+  },
+  {
+   "schema": "schemas/estimand-contract.schema.json",
    "pointer": "/properties/time/properties/horizon",
    "proposed_semantic_type": "registered_quantity",
    "proposed_unit": "instance_declared_unit_ref",
@@ -1026,6 +1066,14 @@
   {
    "schema": "schemas/estimand-contract.schema.json",
    "pointer": "/properties/uncertainty_plan/allOf/0/then/properties/level",
+   "proposed_semantic_type": "interval_confidence_level",
+   "proposed_unit": "dimensionless",
+   "proposed_precision": "6",
+   "confidence": "certain"
+  },
+  {
+   "schema": "schemas/estimand-contract.schema.json",
+   "pointer": "/properties/uncertainty_plan/properties/level",
    "proposed_semantic_type": "interval_confidence_level",
    "proposed_unit": "dimensionless",
    "proposed_precision": "6",
@@ -1073,10 +1121,98 @@
   },
   {
    "schema": "schemas/grounded-outcome.schema.json",
+   "pointer": "/$defs/resource_observation/properties/accelerator_seconds",
+   "proposed_semantic_type": "duration_seconds",
+   "proposed_unit": "seconds",
+   "proposed_precision": "6",
+   "confidence": "certain"
+  },
+  {
+   "schema": "schemas/grounded-outcome.schema.json",
+   "pointer": "/$defs/resource_observation/properties/cpu_seconds",
+   "proposed_semantic_type": "duration_seconds",
+   "proposed_unit": "seconds",
+   "proposed_precision": "6",
+   "confidence": "certain"
+  },
+  {
+   "schema": "schemas/grounded-outcome.schema.json",
+   "pointer": "/$defs/resource_observation/properties/external_cost_usd",
+   "proposed_semantic_type": "monetary_amount_usd",
+   "proposed_unit": "USD",
+   "proposed_precision": "operator_choice_currency_exponent_or_6",
+   "confidence": "likely"
+  },
+  {
+   "schema": "schemas/grounded-outcome.schema.json",
+   "pointer": "/$defs/resource_observation/properties/human_hours",
+   "proposed_semantic_type": "human_effort_hours",
+   "proposed_unit": "hours",
+   "proposed_precision": "2",
+   "confidence": "certain"
+  },
+  {
+   "schema": "schemas/grounded-outcome.schema.json",
+   "pointer": "/$defs/resource_observation/properties/memory_gib_seconds",
+   "proposed_semantic_type": "memory_gib_seconds",
+   "proposed_unit": "GiB*s",
+   "proposed_precision": "6",
+   "confidence": "likely"
+  },
+  {
+   "schema": "schemas/grounded-outcome.schema.json",
+   "pointer": "/$defs/resource_observation/properties/model_tokens",
+   "proposed_semantic_type": "resource_amount",
+   "proposed_unit": "tokens",
+   "proposed_precision": "0_exact",
+   "confidence": "likely"
+  },
+  {
+   "schema": "schemas/grounded-outcome.schema.json",
+   "pointer": "/$defs/resource_observation/properties/network_bytes",
+   "proposed_semantic_type": "byte_count",
+   "proposed_unit": "bytes",
+   "proposed_precision": "0_exact",
+   "confidence": "certain"
+  },
+  {
+   "schema": "schemas/grounded-outcome.schema.json",
+   "pointer": "/$defs/resource_observation/properties/storage_bytes",
+   "proposed_semantic_type": "byte_count",
+   "proposed_unit": "bytes",
+   "proposed_precision": "0_exact",
+   "confidence": "certain"
+  },
+  {
+   "schema": "schemas/grounded-outcome.schema.json",
+   "pointer": "/$defs/resource_observation/properties/wall_time_seconds",
+   "proposed_semantic_type": "duration_seconds",
+   "proposed_unit": "seconds",
+   "proposed_precision": "6",
+   "confidence": "certain"
+  },
+  {
+   "schema": "schemas/grounded-outcome.schema.json",
    "pointer": "/properties/dimensions/items/allOf/0/then/properties/value",
    "proposed_semantic_type": "measured_quantity",
    "proposed_unit": "instance_declared_unit_object",
    "proposed_precision": "instance_declared",
+   "confidence": "likely"
+  },
+  {
+   "schema": "schemas/grounded-outcome.schema.json",
+   "pointer": "/properties/dimensions/items/properties/value",
+   "proposed_semantic_type": "measured_quantity",
+   "proposed_unit": "instance_declared_unit_object",
+   "proposed_precision": "instance_declared",
+   "confidence": "likely"
+  },
+  {
+   "schema": "schemas/method-registry.schema.json",
+   "pointer": "/$defs/method_record/properties/uncertainty_semantics/properties/level",
+   "proposed_semantic_type": "interval_confidence_level",
+   "proposed_unit": "dimensionless",
+   "proposed_precision": "6",
    "confidence": "likely"
   },
   {
@@ -1089,7 +1225,39 @@
   },
   {
    "schema": "schemas/metric-result.schema.json",
+   "pointer": "/$defs/uncertainty_object/properties/level",
+   "proposed_semantic_type": "interval_confidence_level",
+   "proposed_unit": "dimensionless",
+   "proposed_precision": "6",
+   "confidence": "likely"
+  },
+  {
+   "schema": "schemas/metric-result.schema.json",
+   "pointer": "/$defs/uncertainty_object/properties/lower",
+   "proposed_semantic_type": "measured_quantity",
+   "proposed_unit": "instance_declared_unit_object",
+   "proposed_precision": "instance_declared",
+   "confidence": "likely"
+  },
+  {
+   "schema": "schemas/metric-result.schema.json",
+   "pointer": "/$defs/uncertainty_object/properties/upper",
+   "proposed_semantic_type": "measured_quantity",
+   "proposed_unit": "instance_declared_unit_object",
+   "proposed_precision": "instance_declared",
+   "confidence": "likely"
+  },
+  {
+   "schema": "schemas/metric-result.schema.json",
    "pointer": "/properties/measurement/allOf/0/then/properties/estimate",
+   "proposed_semantic_type": "measured_quantity",
+   "proposed_unit": "instance_declared_unit_object",
+   "proposed_precision": "instance_declared",
+   "confidence": "likely"
+  },
+  {
+   "schema": "schemas/metric-result.schema.json",
+   "pointer": "/properties/measurement/properties/estimate",
    "proposed_semantic_type": "measured_quantity",
    "proposed_unit": "instance_declared_unit_object",
    "proposed_precision": "instance_declared",
@@ -1201,6 +1369,30 @@
   },
   {
    "schema": "schemas/planning-epoch.schema.json",
+   "pointer": "/$defs/objective_evaluation/properties/lower_bound",
+   "proposed_semantic_type": "measured_quantity",
+   "proposed_unit": "instance_declared_unit_ref",
+   "proposed_precision": "instance_declared",
+   "confidence": "likely"
+  },
+  {
+   "schema": "schemas/planning-epoch.schema.json",
+   "pointer": "/$defs/objective_evaluation/properties/point_value",
+   "proposed_semantic_type": "measured_quantity",
+   "proposed_unit": "instance_declared_unit_ref",
+   "proposed_precision": "instance_declared",
+   "confidence": "likely"
+  },
+  {
+   "schema": "schemas/planning-epoch.schema.json",
+   "pointer": "/$defs/objective_evaluation/properties/upper_bound",
+   "proposed_semantic_type": "measured_quantity",
+   "proposed_unit": "instance_declared_unit_ref",
+   "proposed_precision": "instance_declared",
+   "confidence": "likely"
+  },
+  {
+   "schema": "schemas/planning-epoch.schema.json",
    "pointer": "/$defs/registered_quantity/properties/value",
    "proposed_semantic_type": "registered_quantity",
    "proposed_unit": "instance_declared_unit_ref",
@@ -1227,7 +1419,7 @@
    "schema": "schemas/projection-snapshot.schema.json",
    "pointer": "/$defs/quantity_display/properties/interval/oneOf/0/properties/lower",
    "proposed_semantic_type": "measured_quantity",
-   "proposed_unit": "instance_declared_unit_object",
+   "proposed_unit": "instance_declared_unit_ref",
    "proposed_precision": "instance_declared",
    "confidence": "likely"
   },
@@ -1235,7 +1427,15 @@
    "schema": "schemas/projection-snapshot.schema.json",
    "pointer": "/$defs/quantity_display/properties/interval/oneOf/0/properties/upper",
    "proposed_semantic_type": "measured_quantity",
-   "proposed_unit": "instance_declared_unit_object",
+   "proposed_unit": "instance_declared_unit_ref",
+   "proposed_precision": "instance_declared",
+   "confidence": "likely"
+  },
+  {
+   "schema": "schemas/projection-snapshot.schema.json",
+   "pointer": "/$defs/quantity_display/properties/numeric_value",
+   "proposed_semantic_type": "measured_quantity",
+   "proposed_unit": "instance_declared_unit_ref",
    "proposed_precision": "instance_declared",
    "confidence": "likely"
   },
@@ -1272,8 +1472,32 @@
    "confidence": "likely"
   },
   {
+   "schema": "schemas/promotion-decision.schema.json",
+   "pointer": "/properties/observed_dimensions/items/properties/baseline",
+   "proposed_semantic_type": "measured_quantity",
+   "proposed_unit": "instance_declared_unit_object",
+   "proposed_precision": "instance_declared",
+   "confidence": "likely"
+  },
+  {
+   "schema": "schemas/promotion-decision.schema.json",
+   "pointer": "/properties/observed_dimensions/items/properties/candidate",
+   "proposed_semantic_type": "measured_quantity",
+   "proposed_unit": "instance_declared_unit_object",
+   "proposed_precision": "instance_declared",
+   "confidence": "likely"
+  },
+  {
    "schema": "schemas/research-event.schema.json",
    "pointer": "/$defs/metric_observation_payload/allOf/0/then/properties/value",
+   "proposed_semantic_type": "measured_quantity",
+   "proposed_unit": "instance_declared_free_string_unit_must_register",
+   "proposed_precision": "instance_declared",
+   "confidence": "likely"
+  },
+  {
+   "schema": "schemas/research-event.schema.json",
+   "pointer": "/$defs/metric_observation_payload/properties/value",
    "proposed_semantic_type": "measured_quantity",
    "proposed_unit": "instance_declared_free_string_unit_must_register",
    "proposed_precision": "instance_declared",
@@ -1320,6 +1544,14 @@
    "confidence": "likely"
   },
   {
+   "schema": "schemas/research-mission.schema.json",
+   "pointer": "/properties/metrics/items/properties/confidence_rule/properties/level",
+   "proposed_semantic_type": "interval_confidence_level",
+   "proposed_unit": "dimensionless",
+   "proposed_precision": "6",
+   "confidence": "likely"
+  },
+  {
    "schema": "schemas/research-state-view.schema.json",
    "pointer": "/$defs/execution_limit/properties/limit",
    "proposed_semantic_type": "resource_amount",
@@ -1346,6 +1578,22 @@
   {
    "schema": "schemas/routing-decision.schema.json",
    "pointer": "/$defs/dimension_observation/allOf/0/then/properties/upper_bound",
+   "proposed_semantic_type": "measured_quantity",
+   "proposed_unit": "instance_declared_unit_ref",
+   "proposed_precision": "instance_declared",
+   "confidence": "likely"
+  },
+  {
+   "schema": "schemas/routing-decision.schema.json",
+   "pointer": "/$defs/dimension_observation/properties/lower_bound",
+   "proposed_semantic_type": "measured_quantity",
+   "proposed_unit": "instance_declared_unit_ref",
+   "proposed_precision": "instance_declared",
+   "confidence": "likely"
+  },
+  {
+   "schema": "schemas/routing-decision.schema.json",
+   "pointer": "/$defs/dimension_observation/properties/upper_bound",
    "proposed_semantic_type": "measured_quantity",
    "proposed_unit": "instance_declared_unit_ref",
    "proposed_precision": "instance_declared",
@@ -1405,7 +1653,7 @@
    "proposed_semantic_type": "resource_amount",
    "proposed_unit": "tokens",
    "proposed_precision": "0_exact",
-   "confidence": "certain"
+   "confidence": "likely"
   },
   {
    "schema": "schemas/run-manifest.schema.json",
@@ -1473,7 +1721,47 @@
   },
   {
    "schema": "schemas/scientific-result-envelope.schema.json",
+   "pointer": "/properties/evidence_measure/properties/value",
+   "proposed_semantic_type": "statistical_evidence_measure",
+   "proposed_unit": "type_dependent_operator_choice",
+   "proposed_precision": "instance_declared",
+   "confidence": "needs_operator"
+  },
+  {
+   "schema": "schemas/scientific-result-envelope.schema.json",
+   "pointer": "/properties/margin_binding/properties/lower_margin",
+   "proposed_semantic_type": "registered_quantity",
+   "proposed_unit": "instance_declared_unit_ref",
+   "proposed_precision": "instance_declared",
+   "confidence": "likely"
+  },
+  {
+   "schema": "schemas/scientific-result-envelope.schema.json",
+   "pointer": "/properties/margin_binding/properties/noninferiority_margin",
+   "proposed_semantic_type": "registered_quantity",
+   "proposed_unit": "instance_declared_unit_ref",
+   "proposed_precision": "instance_declared",
+   "confidence": "likely"
+  },
+  {
+   "schema": "schemas/scientific-result-envelope.schema.json",
+   "pointer": "/properties/margin_binding/properties/upper_margin",
+   "proposed_semantic_type": "registered_quantity",
+   "proposed_unit": "instance_declared_unit_ref",
+   "proposed_precision": "instance_declared",
+   "confidence": "likely"
+  },
+  {
+   "schema": "schemas/scientific-result-envelope.schema.json",
    "pointer": "/properties/result_value/allOf/0/then/properties/point_estimate",
+   "proposed_semantic_type": "measured_quantity",
+   "proposed_unit": "instance_declared_unit_ref",
+   "proposed_precision": "instance_declared",
+   "confidence": "likely"
+  },
+  {
+   "schema": "schemas/scientific-result-envelope.schema.json",
+   "pointer": "/properties/result_value/properties/point_estimate",
    "proposed_semantic_type": "measured_quantity",
    "proposed_unit": "instance_declared_unit_ref",
    "proposed_precision": "instance_declared",
@@ -1518,6 +1806,62 @@
    "proposed_unit": "instance_declared_unit_ref",
    "proposed_precision": "instance_declared",
    "confidence": "likely"
+  },
+  {
+   "schema": "schemas/scientific-result-envelope.schema.json",
+   "pointer": "/properties/uncertainty/properties/level",
+   "proposed_semantic_type": "interval_confidence_level",
+   "proposed_unit": "dimensionless",
+   "proposed_precision": "6",
+   "confidence": "certain"
+  },
+  {
+   "schema": "schemas/scientific-result-envelope.schema.json",
+   "pointer": "/properties/uncertainty/properties/lower",
+   "proposed_semantic_type": "measured_quantity",
+   "proposed_unit": "instance_declared_unit_ref",
+   "proposed_precision": "instance_declared",
+   "confidence": "likely"
+  },
+  {
+   "schema": "schemas/scientific-result-envelope.schema.json",
+   "pointer": "/properties/uncertainty/properties/upper",
+   "proposed_semantic_type": "measured_quantity",
+   "proposed_unit": "instance_declared_unit_ref",
+   "proposed_precision": "instance_declared",
+   "confidence": "likely"
+  },
+  {
+   "schema": "schemas/uncertainty-budget.schema.json",
+   "pointer": "/$defs/combined_result/properties/coverage_factor",
+   "proposed_semantic_type": "coverage_factor",
+   "proposed_unit": "dimensionless",
+   "proposed_precision": "instance_declared",
+   "confidence": "likely"
+  },
+  {
+   "schema": "schemas/uncertainty-budget.schema.json",
+   "pointer": "/$defs/combined_result/properties/coverage_probability",
+   "proposed_semantic_type": "interval_confidence_level",
+   "proposed_unit": "dimensionless",
+   "proposed_precision": "6",
+   "confidence": "likely"
+  },
+  {
+   "schema": "schemas/uncertainty-budget.schema.json",
+   "pointer": "/$defs/dependence_model/properties/correlation_matrix",
+   "proposed_semantic_type": "correlation_coefficient",
+   "proposed_unit": "dimensionless",
+   "proposed_precision": "instance_declared",
+   "confidence": "likely"
+  },
+  {
+   "schema": "schemas/uncertainty-budget.schema.json",
+   "pointer": "/$defs/dependence_model/properties/covariance_matrix",
+   "proposed_semantic_type": "covariance_element",
+   "proposed_unit": "operator_choice_pairwise_unit_product",
+   "proposed_precision": "instance_declared",
+   "confidence": "needs_operator"
   }
  ],
  "d5_field_table": [
@@ -3246,6 +3590,9 @@
   "method": "every D3 pointer and D5 field name was read in its schema context by a proposing pass; nothing was inferred from the field name alone. The same pass exposed the audit's decimal-detector defect corrected by ADR 0033.",
   "d3_semantic_type_vocabulary": [
    "byte_count",
+   "correlation_coefficient",
+   "covariance_element",
+   "coverage_factor",
    "duration_seconds",
    "human_effort_hours",
    "interval_confidence_level",

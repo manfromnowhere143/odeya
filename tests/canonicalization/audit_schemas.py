@@ -46,7 +46,8 @@ SCIENTIFIC_FIELD = re.compile(
     r"(?:value|estimate|threshold|probability|confidence|cost|budget|duration|"
     r"seconds|hours|bytes|rate|ratio|level|bound|mean|variance|deviation|"
     r"uncertainty|precision|scale|amount|quantity|tokens|offset|margin|lower|"
-    r"upper|fraction|horizon|limit|baseline|candidate|point|decimal)",
+    r"upper|fraction|horizon|limit|baseline|candidate|point|decimal|factor|"
+    r"correlation|matrix)",
     re.IGNORECASE,
 )
 
@@ -181,29 +182,60 @@ def number_nodes(schema: dict[str, Any]) -> list[str]:
     return sorted(set(results))
 
 
+DECIMAL_REF_NAMES = {
+    "decimal",
+    "decimal_string",
+    "quantity",
+    "exact_decimal",
+    "nonnegative_decimal",
+    "fraction",
+}
+
+
+def decimal_shape(schema: dict[str, Any], node: Any, depth: int = 0) -> bool:
+    """Shape-first decimal detection, descending unions and array items.
+
+    Two structural blind spots survived two corrections of this detector: a
+    nullable decimal inside oneOf/anyOf was invisible, and an array of decimals
+    -- a covariance matrix -- was invisible, because only the property node
+    itself was tested. Review enumerated seventeen ungoverned decimal leaves
+    across six schemas, two of them scientific schemas with zero findings. The
+    shape test now recurses; a datetime branch is excluded at every level. A
+    datetime is never a scientific decimal (ADR 0033); the frozen microsecond
+    timestamp pattern contains digits and an escaped dot, so the pattern
+    heuristic must test that exclusion wherever it tests the pattern.
+    """
+    if depth > 4 or not isinstance(node, dict):
+        return False
+    reference = node.get("$ref", "")
+    if isinstance(reference, str) and reference.rsplit("/", 1)[-1] in DECIMAL_REF_NAMES:
+        return True
+    resolved = resolve_local(schema, node)
+    if not isinstance(resolved, dict):
+        return False
+    if resolved.get("format") == "date-time":
+        return False
+    pattern = resolved.get("pattern")
+    if isinstance(pattern, str) and "[0-9]" in pattern and (
+        "\\." in pattern or "[.]" in pattern
+    ):
+        return True
+    for key in ("oneOf", "anyOf"):
+        branches = resolved.get(key)
+        if isinstance(branches, list):
+            for branch in branches:
+                if decimal_shape(schema, branch, depth + 1):
+                    return True
+    items = resolved.get("items")
+    if isinstance(items, dict) and decimal_shape(schema, items, depth + 1):
+        return True
+    return False
+
+
 def generic_decimal_uses(schema: dict[str, Any]) -> list[str]:
     results: set[str] = set()
     for parts, name, node in property_nodes(schema):
-        resolved = resolve_local(schema, node)
-        reference = node.get("$ref", "")
-        looks_decimal = isinstance(reference, str) and reference.rsplit("/", 1)[-1] in {
-            "decimal",
-            "decimal_string",
-            "quantity",
-        }
-        if not looks_decimal and isinstance(resolved, dict):
-            pattern = resolved.get("pattern")
-            looks_decimal = isinstance(pattern, str) and "[0-9]" in pattern and (
-                "\\." in pattern or "[.]" in pattern
-            )
-        # A datetime is never a scientific decimal. The frozen microsecond
-        # timestamp pattern contains digits and an escaped dot, so the pattern
-        # heuristic above matched profiled timestamps named value/generated_at
-        # and double-counted four of them as NUMBER-001 findings while they
-        # already sat, conformant, in the datetime inventory.
-        if isinstance(resolved, dict) and resolved.get("format") == "date-time":
-            looks_decimal = False
-        if looks_decimal and SCIENTIFIC_FIELD.search(name):
+        if decimal_shape(schema, node) and SCIENTIFIC_FIELD.search(name):
             results.add(pointer(parts))
     return sorted(results)
 

@@ -10,7 +10,7 @@
       "severity": "high"
     },
     {
-      "count": 86,
+      "count": 129,
       "description": "generic JSON numbers or untyped decimal quantity fields remain in scientific/control contracts",
       "disposition": "blocks_profile_freeze",
       "finding_id": "CANON-SCHEMA-NUMBER-001",
@@ -6710,7 +6710,9 @@
       "generic_json_number_paths": [],
       "generic_scientific_decimal_paths": [
         "/$defs/resource_observation/allOf/0/then/properties/value",
-        "/$defs/spend_observation/allOf/0/then/properties/amount"
+        "/$defs/resource_observation/properties/value",
+        "/$defs/spend_observation/allOf/0/then/properties/amount",
+        "/$defs/spend_observation/properties/amount"
       ],
       "path": "schemas/candidate-artifact.schema.json",
       "schema_id": "urn:odeya:schema:candidate-artifact:0.1.0",
@@ -7003,6 +7005,7 @@
       "generic_json_number_paths": [],
       "generic_scientific_decimal_paths": [
         "/$defs/quantity/properties/value",
+        "/$defs/uncertainty_channel/properties/estimate",
         "/$defs/uncertainty_channel/properties/interval/oneOf/0/properties/level",
         "/$defs/uncertainty_channel/properties/interval/oneOf/0/properties/lower",
         "/$defs/uncertainty_channel/properties/interval/oneOf/0/properties/upper"
@@ -8133,8 +8136,11 @@
         "/$defs/quantity/properties/value",
         "/$defs/safety_contract/properties/tolerated_upper_bound",
         "/properties/contrast/allOf/0/else/properties/reference_value",
+        "/properties/contrast/properties/reference_value",
+        "/properties/decision_rule/properties/null_or_reference_value",
         "/properties/time/properties/horizon",
-        "/properties/uncertainty_plan/allOf/0/then/properties/level"
+        "/properties/uncertainty_plan/allOf/0/then/properties/level",
+        "/properties/uncertainty_plan/properties/level"
       ],
       "path": "schemas/estimand-contract.schema.json",
       "schema_id": "urn:odeya:schema:estimand-contract:0.1.0",
@@ -8572,7 +8578,17 @@
       "generic_json_number_paths": [],
       "generic_scientific_decimal_paths": [
         "/$defs/quantity/properties/value",
-        "/properties/dimensions/items/allOf/0/then/properties/value"
+        "/$defs/resource_observation/properties/accelerator_seconds",
+        "/$defs/resource_observation/properties/cpu_seconds",
+        "/$defs/resource_observation/properties/external_cost_usd",
+        "/$defs/resource_observation/properties/human_hours",
+        "/$defs/resource_observation/properties/memory_gib_seconds",
+        "/$defs/resource_observation/properties/model_tokens",
+        "/$defs/resource_observation/properties/network_bytes",
+        "/$defs/resource_observation/properties/storage_bytes",
+        "/$defs/resource_observation/properties/wall_time_seconds",
+        "/properties/dimensions/items/allOf/0/then/properties/value",
+        "/properties/dimensions/items/properties/value"
       ],
       "path": "schemas/grounded-outcome.schema.json",
       "schema_id": "urn:odeya:schema:grounded-outcome:0.1.0",
@@ -8961,7 +8977,9 @@
       ],
       "fixed_microsecond_datetime_paths": [],
       "generic_json_number_paths": [],
-      "generic_scientific_decimal_paths": [],
+      "generic_scientific_decimal_paths": [
+        "/$defs/method_record/properties/uncertainty_semantics/properties/level"
+      ],
       "path": "schemas/method-registry.schema.json",
       "schema_id": "urn:odeya:schema:method-registry:0.1.0",
       "schema_version": "0.1.0",
@@ -9025,7 +9043,11 @@
       "generic_json_number_paths": [],
       "generic_scientific_decimal_paths": [
         "/$defs/quantity/properties/value",
-        "/properties/measurement/allOf/0/then/properties/estimate"
+        "/$defs/uncertainty_object/properties/level",
+        "/$defs/uncertainty_object/properties/lower",
+        "/$defs/uncertainty_object/properties/upper",
+        "/properties/measurement/allOf/0/then/properties/estimate",
+        "/properties/measurement/properties/estimate"
       ],
       "path": "schemas/metric-result.schema.json",
       "schema_id": "urn:odeya:schema:metric-result:0.1.0",
@@ -9426,6 +9448,9 @@
         "/$defs/objective_evaluation/allOf/0/then/properties/point_value",
         "/$defs/objective_evaluation/allOf/1/then/properties/lower_bound",
         "/$defs/objective_evaluation/allOf/1/then/properties/upper_bound",
+        "/$defs/objective_evaluation/properties/lower_bound",
+        "/$defs/objective_evaluation/properties/point_value",
+        "/$defs/objective_evaluation/properties/upper_bound",
         "/$defs/registered_quantity/properties/value",
         "/properties/pareto_dimensions/items/properties/uncertainty_lower",
         "/properties/pareto_dimensions/items/properties/uncertainty_upper"
@@ -9768,7 +9793,8 @@
       "generic_json_number_paths": [],
       "generic_scientific_decimal_paths": [
         "/$defs/quantity_display/properties/interval/oneOf/0/properties/lower",
-        "/$defs/quantity_display/properties/interval/oneOf/0/properties/upper"
+        "/$defs/quantity_display/properties/interval/oneOf/0/properties/upper",
+        "/$defs/quantity_display/properties/numeric_value"
       ],
       "path": "schemas/projection-snapshot.schema.json",
       "schema_id": "urn:odeya:schema:projection-snapshot:0.1.0",
@@ -9799,7 +9825,9 @@
         "/$defs/quantity/properties/value",
         "/properties/deployment_scope/oneOf/0/properties/traffic_fraction",
         "/properties/observed_dimensions/items/allOf/0/then/properties/baseline",
-        "/properties/observed_dimensions/items/allOf/0/then/properties/candidate"
+        "/properties/observed_dimensions/items/allOf/0/then/properties/candidate",
+        "/properties/observed_dimensions/items/properties/baseline",
+        "/properties/observed_dimensions/items/properties/candidate"
       ],
       "path": "schemas/promotion-decision.schema.json",
       "schema_id": "urn:odeya:schema:promotion-decision:0.1.0",
@@ -10885,6 +10913,7 @@
       "generic_json_number_paths": [],
       "generic_scientific_decimal_paths": [
         "/$defs/metric_observation_payload/allOf/0/then/properties/value",
+        "/$defs/metric_observation_payload/properties/value",
         "/$defs/resource_dimension_amount/oneOf/0/properties/value",
         "/$defs/resource_dimension_amount/oneOf/1/properties/value",
         "/$defs/resource_dimension_amount/oneOf/2/properties/value"
@@ -10958,7 +10987,8 @@
       ],
       "generic_scientific_decimal_paths": [
         "/$defs/quantity/properties/value",
-        "/properties/metrics/items/allOf/0/else/properties/threshold"
+        "/properties/metrics/items/allOf/0/else/properties/threshold",
+        "/properties/metrics/items/properties/confidence_rule/properties/level"
       ],
       "path": "schemas/research-mission.schema.json",
       "schema_id": "urn:odeya:schema:research-mission:0.2.0",
@@ -11335,6 +11365,8 @@
       "generic_scientific_decimal_paths": [
         "/$defs/dimension_observation/allOf/0/then/properties/lower_bound",
         "/$defs/dimension_observation/allOf/0/then/properties/upper_bound",
+        "/$defs/dimension_observation/properties/lower_bound",
+        "/$defs/dimension_observation/properties/upper_bound",
         "/$defs/resource_amount/properties/value"
       ],
       "path": "schemas/routing-decision.schema.json",
@@ -11645,12 +11677,20 @@
         "/allOf/12/then/properties/margin_binding/properties/upper_margin",
         "/allOf/13/then/properties/margin_binding/properties/noninferiority_margin",
         "/properties/evidence_measure/allOf/0/else/properties/value",
+        "/properties/evidence_measure/properties/value",
+        "/properties/margin_binding/properties/lower_margin",
+        "/properties/margin_binding/properties/noninferiority_margin",
+        "/properties/margin_binding/properties/upper_margin",
         "/properties/result_value/allOf/0/then/properties/point_estimate",
+        "/properties/result_value/properties/point_estimate",
         "/properties/uncertainty/allOf/0/then/properties/level",
         "/properties/uncertainty/allOf/1/then/properties/lower",
         "/properties/uncertainty/allOf/1/then/properties/upper",
         "/properties/uncertainty/allOf/2/then/properties/lower",
-        "/properties/uncertainty/allOf/3/then/properties/upper"
+        "/properties/uncertainty/allOf/3/then/properties/upper",
+        "/properties/uncertainty/properties/level",
+        "/properties/uncertainty/properties/lower",
+        "/properties/uncertainty/properties/upper"
       ],
       "path": "schemas/scientific-result-envelope.schema.json",
       "schema_id": "urn:odeya:schema:scientific-result-envelope:0.1.0",
@@ -11771,7 +11811,12 @@
       ],
       "fixed_microsecond_datetime_paths": [],
       "generic_json_number_paths": [],
-      "generic_scientific_decimal_paths": [],
+      "generic_scientific_decimal_paths": [
+        "/$defs/combined_result/properties/coverage_factor",
+        "/$defs/combined_result/properties/coverage_probability",
+        "/$defs/dependence_model/properties/correlation_matrix",
+        "/$defs/dependence_model/properties/covariance_matrix"
+      ],
       "path": "schemas/uncertainty-budget.schema.json",
       "schema_id": "urn:odeya:schema:uncertainty-budget:0.1.0",
       "schema_version": "0.1.0",
@@ -12538,7 +12583,7 @@
     "divergent_common_definition_name_count": 56,
     "fixed_microsecond_datetime_path_count": 151,
     "generic_json_number_path_count": 2,
-    "generic_scientific_decimal_path_count": 84,
+    "generic_scientific_decimal_path_count": 127,
     "nonconformant_fixture_timestamp_value_count": 236,
     "unpinned_canonical_profile_binding_count": 11,
     "unprofiled_datetime_path_count": 122
