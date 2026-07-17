@@ -1,261 +1,1235 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:physical-evidence-vector:0.1.0",
+  "$id": "urn:odeya:schema:physical-evidence-vector:0.2.0",
   "title": "Odeya PhysicalEvidenceVector",
   "description": "An immutable VVUQ evidence record with exactly ten non-collapsible credibility components and explicit P0-P12 gate dispositions. Physical validation can pass only from independent physical-world measurements; calibration, code verification, numerical convergence, and simulation cannot substitute.",
   "type": "object",
   "additionalProperties": false,
   "required": [
-    "schema_version", "physical_evidence_vector_id", "version", "mission_id", "physical_model_ref",
-    "asset_configuration_snapshot_refs", "measurement_result_refs", "credibility_vector", "vvuq_gates",
-    "credibility_disposition", "permitted_claim_language", "forbidden_claim_language", "reason_codes",
-    "independent_review_refs", "evidence_vector_digest"
+    "schema_version",
+    "physical_evidence_vector_id",
+    "version",
+    "mission_id",
+    "physical_model_ref",
+    "asset_configuration_snapshot_refs",
+    "measurement_result_refs",
+    "credibility_vector",
+    "vvuq_gates",
+    "credibility_disposition",
+    "permitted_claim_language",
+    "forbidden_claim_language",
+    "reason_codes",
+    "independent_review_refs",
+    "evidence_vector_digest"
   ],
   "properties": {
-    "schema_version": { "const": "0.1.0" },
-    "physical_evidence_vector_id": { "$ref": "#/$defs/identifier" },
-    "version": { "type": "integer", "minimum": 1 },
-    "mission_id": { "$ref": "#/$defs/identifier" },
-    "physical_model_ref": { "$ref": "#/$defs/physical_model_reference" },
+    "schema_version": {
+      "const": "0.2.0"
+    },
+    "physical_evidence_vector_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "mission_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "physical_model_ref": {
+      "$ref": "#/$defs/physical_model_reference"
+    },
     "asset_configuration_snapshot_refs": {
-      "type": "array", "minItems": 1, "maxItems": 32, "uniqueItems": true,
-      "items": { "$ref": "#/$defs/asset_snapshot_reference" }
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 32,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/asset_snapshot_reference"
+      }
     },
     "measurement_result_refs": {
-      "type": "array", "minItems": 1, "maxItems": 256, "uniqueItems": true,
-      "items": { "$ref": "#/$defs/measurement_reference" }
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 256,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/measurement_reference"
+      }
     },
-    "credibility_vector": { "$ref": "#/$defs/credibility_vector" },
-    "vvuq_gates": { "$ref": "#/$defs/vvuq_gates" },
-    "credibility_disposition": { "enum": ["eligible_under_scope", "blocked", "indeterminate"] },
+    "credibility_vector": {
+      "$ref": "#/$defs/credibility_vector"
+    },
+    "vvuq_gates": {
+      "$ref": "#/$defs/vvuq_gates"
+    },
+    "credibility_disposition": {
+      "enum": [
+        "eligible_under_scope",
+        "blocked",
+        "indeterminate"
+      ]
+    },
     "permitted_claim_language": {
-      "type": "array", "maxItems": 16, "uniqueItems": true,
+      "type": "array",
+      "maxItems": 16,
+      "uniqueItems": true,
       "items": {
         "enum": [
-          "computationally_verified", "calibrated_on_named_evidence", "physically_validated_under_scope",
-          "causally_supported_under_assumptions", "recommendation_inside_safety_envelope"
+          "computationally_verified",
+          "calibrated_on_named_evidence",
+          "physically_validated_under_scope",
+          "causally_supported_under_assumptions",
+          "recommendation_inside_safety_envelope"
         ]
       }
     },
     "forbidden_claim_language": {
-      "type": "array", "minItems": 4, "maxItems": 16, "uniqueItems": true,
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 16,
+      "uniqueItems": true,
       "items": {
         "enum": [
-          "universally_validated", "universally_safe", "simulation_proves_world", "calibration_is_validation",
-          "recommendation_is_actuator_authority", "zero_observed_failures_is_zero_risk"
+          "universally_validated",
+          "universally_safe",
+          "simulation_proves_world",
+          "calibration_is_validation",
+          "recommendation_is_actuator_authority",
+          "zero_observed_failures_is_zero_risk"
         ]
       },
       "allOf": [
-        { "contains": { "const": "simulation_proves_world" } },
-        { "contains": { "const": "calibration_is_validation" } },
-        { "contains": { "const": "recommendation_is_actuator_authority" } }
+        {
+          "contains": {
+            "const": "simulation_proves_world"
+          }
+        },
+        {
+          "contains": {
+            "const": "calibration_is_validation"
+          }
+        },
+        {
+          "contains": {
+            "const": "recommendation_is_actuator_authority"
+          }
+        }
       ]
     },
-    "reason_codes": { "type": "array", "maxItems": 64, "uniqueItems": true, "items": { "$ref": "#/$defs/identifier" } },
-    "independent_review_refs": {
-      "type": "array", "minItems": 1, "maxItems": 64, "uniqueItems": true,
-      "items": { "$ref": "#/$defs/artifact_reference" }
-    },
-    "evidence_vector_digest": { "$ref": "#/$defs/digest" }
-  },
-  "allOf": [{
-    "if": { "properties": { "credibility_disposition": { "const": "eligible_under_scope" } }, "required": ["credibility_disposition"] },
-    "then": {
-      "properties": {
-        "credibility_vector": {
-          "properties": {
-            "code_verification": { "properties": { "disposition": { "const": "pass" } } },
-            "solution_verification": { "properties": { "disposition": { "const": "pass" } } },
-            "measurement_traceability": { "properties": { "disposition": { "const": "pass" } } },
-            "identifiability": { "properties": { "disposition": { "const": "pass" } } },
-            "calibration": { "properties": { "disposition": { "const": "pass" } } },
-            "physical_validation": { "properties": { "disposition": { "const": "pass" } } },
-            "uncertainty_quantification": { "properties": { "disposition": { "const": "pass" } } },
-            "applicability": { "properties": { "disposition": { "const": "pass" } } },
-            "causal_support": { "properties": { "disposition": { "enum": ["pass", "not_applicable"] } } },
-            "safety_case": { "properties": { "disposition": { "const": "pass" } } }
-          }
-        },
-        "vvuq_gates": {
-          "properties": {
-            "p0_decision_context": { "properties": { "disposition": { "const": "pass" } } },
-            "p1_measurement": { "properties": { "disposition": { "const": "pass" } } },
-            "p2_conceptual_adequacy": { "properties": { "disposition": { "const": "pass" } } },
-            "p3_observability_identifiability": { "properties": { "disposition": { "const": "pass" } } },
-            "p4_code_verification": { "properties": { "disposition": { "const": "pass" } } },
-            "p5_solution_verification": { "properties": { "disposition": { "const": "pass" } } },
-            "p6_calibration": { "properties": { "disposition": { "const": "pass" } } },
-            "p7_physical_validation": { "properties": { "disposition": { "const": "pass" } } },
-            "p8_uncertainty_sensitivity": { "properties": { "disposition": { "const": "pass" } } },
-            "p9_applicability": { "properties": { "disposition": { "const": "pass" } } },
-            "p10_causal": { "properties": { "disposition": { "enum": ["pass", "not_applicable"] } } },
-            "p11_safety_authority": { "properties": { "disposition": { "const": "pass" } } },
-            "p12_release": { "properties": { "disposition": { "const": "pass" } } }
-          }
-        },
-        "reason_codes": { "maxItems": 0 }
+    "reason_codes": {
+      "type": "array",
+      "maxItems": 64,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/identifier"
       }
     },
-    "else": { "properties": { "reason_codes": { "minItems": 1 } } }
-  }],
+    "independent_review_refs": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 64,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/artifact_reference"
+      }
+    },
+    "evidence_vector_digest": {
+      "$ref": "#/$defs/digest"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "credibility_disposition": {
+            "const": "eligible_under_scope"
+          }
+        },
+        "required": [
+          "credibility_disposition"
+        ]
+      },
+      "then": {
+        "properties": {
+          "credibility_vector": {
+            "properties": {
+              "code_verification": {
+                "properties": {
+                  "disposition": {
+                    "const": "pass"
+                  }
+                }
+              },
+              "solution_verification": {
+                "properties": {
+                  "disposition": {
+                    "const": "pass"
+                  }
+                }
+              },
+              "measurement_traceability": {
+                "properties": {
+                  "disposition": {
+                    "const": "pass"
+                  }
+                }
+              },
+              "identifiability": {
+                "properties": {
+                  "disposition": {
+                    "const": "pass"
+                  }
+                }
+              },
+              "calibration": {
+                "properties": {
+                  "disposition": {
+                    "const": "pass"
+                  }
+                }
+              },
+              "physical_validation": {
+                "properties": {
+                  "disposition": {
+                    "const": "pass"
+                  }
+                }
+              },
+              "uncertainty_quantification": {
+                "properties": {
+                  "disposition": {
+                    "const": "pass"
+                  }
+                }
+              },
+              "applicability": {
+                "properties": {
+                  "disposition": {
+                    "const": "pass"
+                  }
+                }
+              },
+              "causal_support": {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                }
+              },
+              "safety_case": {
+                "properties": {
+                  "disposition": {
+                    "const": "pass"
+                  }
+                }
+              }
+            }
+          },
+          "vvuq_gates": {
+            "properties": {
+              "p0_decision_context": {
+                "properties": {
+                  "disposition": {
+                    "const": "pass"
+                  }
+                }
+              },
+              "p1_measurement": {
+                "properties": {
+                  "disposition": {
+                    "const": "pass"
+                  }
+                }
+              },
+              "p2_conceptual_adequacy": {
+                "properties": {
+                  "disposition": {
+                    "const": "pass"
+                  }
+                }
+              },
+              "p3_observability_identifiability": {
+                "properties": {
+                  "disposition": {
+                    "const": "pass"
+                  }
+                }
+              },
+              "p4_code_verification": {
+                "properties": {
+                  "disposition": {
+                    "const": "pass"
+                  }
+                }
+              },
+              "p5_solution_verification": {
+                "properties": {
+                  "disposition": {
+                    "const": "pass"
+                  }
+                }
+              },
+              "p6_calibration": {
+                "properties": {
+                  "disposition": {
+                    "const": "pass"
+                  }
+                }
+              },
+              "p7_physical_validation": {
+                "properties": {
+                  "disposition": {
+                    "const": "pass"
+                  }
+                }
+              },
+              "p8_uncertainty_sensitivity": {
+                "properties": {
+                  "disposition": {
+                    "const": "pass"
+                  }
+                }
+              },
+              "p9_applicability": {
+                "properties": {
+                  "disposition": {
+                    "const": "pass"
+                  }
+                }
+              },
+              "p10_causal": {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                }
+              },
+              "p11_safety_authority": {
+                "properties": {
+                  "disposition": {
+                    "const": "pass"
+                  }
+                }
+              },
+              "p12_release": {
+                "properties": {
+                  "disposition": {
+                    "const": "pass"
+                  }
+                }
+              }
+            }
+          },
+          "reason_codes": {
+            "maxItems": 0
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "reason_codes": {
+            "minItems": 1
+          }
+        }
+      }
+    }
+  ],
   "$defs": {
-    "identifier": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$" },
-    "digest": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$"
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
     "artifact_reference": {
-      "type": "object", "additionalProperties": false,
-      "required": ["artifact_id", "digest", "media_type"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "digest",
+        "media_type"
+      ],
       "properties": {
-        "artifact_id": { "$ref": "#/$defs/identifier" }, "digest": { "$ref": "#/$defs/digest" },
-        "media_type": { "type": "string", "minLength": 1, "maxLength": 255 }
+        "artifact_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        }
       }
     },
     "record_reference": {
-      "type": "object", "additionalProperties": false,
-      "required": ["record_id", "version", "schema_id", "digest"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "record_id",
+        "version",
+        "schema_id",
+        "digest"
+      ],
       "properties": {
-        "record_id": { "$ref": "#/$defs/identifier" }, "version": { "type": "integer", "minimum": 1 },
-        "schema_id": { "type": "string", "pattern": "^urn:odeya:schema:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$" },
-        "digest": { "$ref": "#/$defs/digest" }
+        "record_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "schema_id": {
+          "type": "string",
+          "pattern": "^urn:odeya:schema:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        }
       }
     },
     "physical_model_reference": {
-      "allOf": [{ "$ref": "#/$defs/record_reference" }, { "properties": { "schema_id": { "const": "urn:odeya:schema:physical-model-record:0.1.0" } } }]
+      "allOf": [
+        {
+          "$ref": "#/$defs/record_reference"
+        },
+        {
+          "properties": {
+            "schema_id": {
+              "const": "urn:odeya:schema:physical-model-record:0.2.0"
+            }
+          }
+        }
+      ]
     },
     "asset_snapshot_reference": {
-      "allOf": [{ "$ref": "#/$defs/record_reference" }, { "properties": { "schema_id": { "const": "urn:odeya:schema:asset-configuration-snapshot:0.1.0" } } }]
+      "allOf": [
+        {
+          "$ref": "#/$defs/record_reference"
+        },
+        {
+          "properties": {
+            "schema_id": {
+              "const": "urn:odeya:schema:asset-configuration-snapshot:0.2.0"
+            }
+          }
+        }
+      ]
     },
     "measurement_reference": {
-      "allOf": [{ "$ref": "#/$defs/record_reference" }, { "properties": { "schema_id": { "const": "urn:odeya:schema:physical-measurement-result:0.1.0" } } }]
+      "allOf": [
+        {
+          "$ref": "#/$defs/record_reference"
+        },
+        {
+          "properties": {
+            "schema_id": {
+              "const": "urn:odeya:schema:physical-measurement-result:0.2.0"
+            }
+          }
+        }
+      ]
     },
     "method_reference": {
-      "type": "object", "additionalProperties": false,
-      "required": ["method_id", "version", "registry_digest"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "method_id",
+        "version",
+        "registry_digest"
+      ],
       "properties": {
-        "method_id": { "$ref": "#/$defs/identifier" }, "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
-        "registry_digest": { "$ref": "#/$defs/digest" }
+        "method_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "registry_digest": {
+          "$ref": "#/$defs/digest"
+        }
       }
     },
     "verifier_identity": {
-      "type": "object", "additionalProperties": false,
-      "required": ["principal_ref", "organization_ref", "execution_identity_ref", "independence_evidence_ref"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "principal_ref",
+        "organization_ref",
+        "execution_identity_ref",
+        "independence_evidence_ref"
+      ],
       "properties": {
-        "principal_ref": { "$ref": "#/$defs/record_reference" }, "organization_ref": { "$ref": "#/$defs/record_reference" },
-        "execution_identity_ref": { "$ref": "#/$defs/record_reference" }, "independence_evidence_ref": { "$ref": "#/$defs/artifact_reference" }
+        "principal_ref": {
+          "$ref": "#/$defs/record_reference"
+        },
+        "organization_ref": {
+          "$ref": "#/$defs/record_reference"
+        },
+        "execution_identity_ref": {
+          "$ref": "#/$defs/record_reference"
+        },
+        "independence_evidence_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        }
       }
     },
     "component_base": {
-      "type": "object", "additionalProperties": false,
-      "required": ["component_id", "disposition", "scope_ref", "method_ref", "evidence_refs", "assumption_refs", "verifier", "evidence_origin", "reason_codes"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "component_id",
+        "disposition",
+        "scope_ref",
+        "method_ref",
+        "evidence_refs",
+        "assumption_refs",
+        "verifier",
+        "evidence_origin",
+        "reason_codes"
+      ],
       "properties": {
         "component_id": {
           "enum": [
-            "code_verification", "solution_verification", "measurement_traceability", "identifiability", "calibration",
-            "physical_validation", "uncertainty_quantification", "applicability", "causal_support", "safety_case"
+            "code_verification",
+            "solution_verification",
+            "measurement_traceability",
+            "identifiability",
+            "calibration",
+            "physical_validation",
+            "uncertainty_quantification",
+            "applicability",
+            "causal_support",
+            "safety_case"
           ]
         },
-        "disposition": { "enum": ["pass", "fail", "indeterminate", "not_applicable"] },
-        "scope_ref": { "$ref": "#/$defs/artifact_reference" }, "method_ref": { "$ref": "#/$defs/method_reference" },
-        "evidence_refs": { "type": "array", "maxItems": 128, "uniqueItems": true, "items": { "$ref": "#/$defs/artifact_reference" } },
-        "assumption_refs": { "type": "array", "maxItems": 128, "uniqueItems": true, "items": { "$ref": "#/$defs/artifact_reference" } },
-        "verifier": { "$ref": "#/$defs/verifier_identity" },
+        "disposition": {
+          "enum": [
+            "pass",
+            "fail",
+            "indeterminate",
+            "not_applicable"
+          ]
+        },
+        "scope_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        },
+        "method_ref": {
+          "$ref": "#/$defs/method_reference"
+        },
+        "evidence_refs": {
+          "type": "array",
+          "maxItems": 128,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/artifact_reference"
+          }
+        },
+        "assumption_refs": {
+          "type": "array",
+          "maxItems": 128,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/artifact_reference"
+          }
+        },
+        "verifier": {
+          "$ref": "#/$defs/verifier_identity"
+        },
         "evidence_origin": {
           "enum": [
-            "code_or_analytic", "numerical_convergence", "measurement_traceability", "identifiability_analysis",
-            "calibration_partition", "independent_physical_world_measurement", "uncertainty_analysis",
-            "applicability_analysis", "causal_experiment", "safety_analysis", "not_applicable"
+            "code_or_analytic",
+            "numerical_convergence",
+            "measurement_traceability",
+            "identifiability_analysis",
+            "calibration_partition",
+            "independent_physical_world_measurement",
+            "uncertainty_analysis",
+            "applicability_analysis",
+            "causal_experiment",
+            "safety_analysis",
+            "not_applicable"
           ]
         },
-        "reason_codes": { "type": "array", "maxItems": 32, "uniqueItems": true, "items": { "$ref": "#/$defs/identifier" } }
-      },
-      "allOf": [{
-        "if": { "properties": { "disposition": { "const": "pass" } }, "required": ["disposition"] },
-        "then": { "properties": { "evidence_refs": { "minItems": 1 }, "assumption_refs": { "minItems": 1 }, "reason_codes": { "maxItems": 0 } } },
-        "else": {
-          "if": { "properties": { "disposition": { "enum": ["fail", "indeterminate"] } }, "required": ["disposition"] },
-          "then": { "properties": { "reason_codes": { "minItems": 1 } } }
+        "reason_codes": {
+          "type": "array",
+          "maxItems": 32,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
         }
-      }]
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "disposition": {
+                "const": "pass"
+              }
+            },
+            "required": [
+              "disposition"
+            ]
+          },
+          "then": {
+            "properties": {
+              "evidence_refs": {
+                "minItems": 1
+              },
+              "assumption_refs": {
+                "minItems": 1
+              },
+              "reason_codes": {
+                "maxItems": 0
+              }
+            }
+          },
+          "else": {
+            "if": {
+              "properties": {
+                "disposition": {
+                  "enum": [
+                    "fail",
+                    "indeterminate"
+                  ]
+                }
+              },
+              "required": [
+                "disposition"
+              ]
+            },
+            "then": {
+              "properties": {
+                "reason_codes": {
+                  "minItems": 1
+                }
+              }
+            }
+          }
+        }
+      ]
     },
     "ordinary_component": {
       "allOf": [
-        { "$ref": "#/$defs/component_base" },
-        { "properties": { "physical_measurement_refs": false, "calibration_or_simulation_substitution_permitted": false } }
+        {
+          "$ref": "#/$defs/component_base"
+        },
+        {
+          "properties": {
+            "physical_measurement_refs": false,
+            "calibration_or_simulation_substitution_permitted": false
+          }
+        }
       ]
     },
     "physical_validation_component": {
-      "type": "object", "additionalProperties": false,
-      "required": ["component_id", "disposition", "scope_ref", "method_ref", "evidence_refs", "assumption_refs", "verifier", "evidence_origin", "physical_measurement_refs", "calibration_or_simulation_substitution_permitted", "reason_codes"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "component_id",
+        "disposition",
+        "scope_ref",
+        "method_ref",
+        "evidence_refs",
+        "assumption_refs",
+        "verifier",
+        "evidence_origin",
+        "physical_measurement_refs",
+        "calibration_or_simulation_substitution_permitted",
+        "reason_codes"
+      ],
       "properties": {
-        "component_id": { "const": "physical_validation" }, "disposition": { "enum": ["pass", "fail", "indeterminate", "not_applicable"] },
-        "scope_ref": { "$ref": "#/$defs/artifact_reference" }, "method_ref": { "$ref": "#/$defs/method_reference" },
-        "evidence_refs": { "type": "array", "maxItems": 128, "uniqueItems": true, "items": { "$ref": "#/$defs/artifact_reference" } },
-        "assumption_refs": { "type": "array", "maxItems": 128, "uniqueItems": true, "items": { "$ref": "#/$defs/artifact_reference" } },
-        "verifier": { "$ref": "#/$defs/verifier_identity" },
-        "evidence_origin": { "const": "independent_physical_world_measurement" },
-        "physical_measurement_refs": { "type": "array", "maxItems": 256, "uniqueItems": true, "items": { "$ref": "#/$defs/measurement_reference" } },
-        "calibration_or_simulation_substitution_permitted": { "const": false },
-        "reason_codes": { "type": "array", "maxItems": 32, "uniqueItems": true, "items": { "$ref": "#/$defs/identifier" } }
-      },
-      "allOf": [{
-        "if": { "properties": { "disposition": { "const": "pass" } }, "required": ["disposition"] },
-        "then": { "properties": { "evidence_refs": { "minItems": 1 }, "assumption_refs": { "minItems": 1 }, "physical_measurement_refs": { "minItems": 1 }, "reason_codes": { "maxItems": 0 } } },
-        "else": {
-          "if": { "properties": { "disposition": { "enum": ["fail", "indeterminate"] } }, "required": ["disposition"] },
-          "then": { "properties": { "reason_codes": { "minItems": 1 } } }
+        "component_id": {
+          "const": "physical_validation"
+        },
+        "disposition": {
+          "enum": [
+            "pass",
+            "fail",
+            "indeterminate",
+            "not_applicable"
+          ]
+        },
+        "scope_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        },
+        "method_ref": {
+          "$ref": "#/$defs/method_reference"
+        },
+        "evidence_refs": {
+          "type": "array",
+          "maxItems": 128,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/artifact_reference"
+          }
+        },
+        "assumption_refs": {
+          "type": "array",
+          "maxItems": 128,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/artifact_reference"
+          }
+        },
+        "verifier": {
+          "$ref": "#/$defs/verifier_identity"
+        },
+        "evidence_origin": {
+          "const": "independent_physical_world_measurement"
+        },
+        "physical_measurement_refs": {
+          "type": "array",
+          "maxItems": 256,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/measurement_reference"
+          }
+        },
+        "calibration_or_simulation_substitution_permitted": {
+          "const": false
+        },
+        "reason_codes": {
+          "type": "array",
+          "maxItems": 32,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
         }
-      }]
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "disposition": {
+                "const": "pass"
+              }
+            },
+            "required": [
+              "disposition"
+            ]
+          },
+          "then": {
+            "properties": {
+              "evidence_refs": {
+                "minItems": 1
+              },
+              "assumption_refs": {
+                "minItems": 1
+              },
+              "physical_measurement_refs": {
+                "minItems": 1
+              },
+              "reason_codes": {
+                "maxItems": 0
+              }
+            }
+          },
+          "else": {
+            "if": {
+              "properties": {
+                "disposition": {
+                  "enum": [
+                    "fail",
+                    "indeterminate"
+                  ]
+                }
+              },
+              "required": [
+                "disposition"
+              ]
+            },
+            "then": {
+              "properties": {
+                "reason_codes": {
+                  "minItems": 1
+                }
+              }
+            }
+          }
+        }
+      ]
     },
     "credibility_vector": {
-      "type": "object", "additionalProperties": false,
-      "required": ["code_verification", "solution_verification", "measurement_traceability", "identifiability", "calibration", "physical_validation", "uncertainty_quantification", "applicability", "causal_support", "safety_case"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "code_verification",
+        "solution_verification",
+        "measurement_traceability",
+        "identifiability",
+        "calibration",
+        "physical_validation",
+        "uncertainty_quantification",
+        "applicability",
+        "causal_support",
+        "safety_case"
+      ],
       "properties": {
-        "code_verification": { "allOf": [{ "$ref": "#/$defs/component_base" }, { "properties": { "component_id": { "const": "code_verification" }, "evidence_origin": { "const": "code_or_analytic" } } }] },
-        "solution_verification": { "allOf": [{ "$ref": "#/$defs/component_base" }, { "properties": { "component_id": { "const": "solution_verification" }, "evidence_origin": { "const": "numerical_convergence" } } }] },
-        "measurement_traceability": { "allOf": [{ "$ref": "#/$defs/component_base" }, { "properties": { "component_id": { "const": "measurement_traceability" }, "evidence_origin": { "const": "measurement_traceability" } } }] },
-        "identifiability": { "allOf": [{ "$ref": "#/$defs/component_base" }, { "properties": { "component_id": { "const": "identifiability" }, "evidence_origin": { "const": "identifiability_analysis" } } }] },
-        "calibration": { "allOf": [{ "$ref": "#/$defs/component_base" }, { "properties": { "component_id": { "const": "calibration" }, "evidence_origin": { "const": "calibration_partition" } } }] },
-        "physical_validation": { "$ref": "#/$defs/physical_validation_component" },
-        "uncertainty_quantification": { "allOf": [{ "$ref": "#/$defs/component_base" }, { "properties": { "component_id": { "const": "uncertainty_quantification" }, "evidence_origin": { "const": "uncertainty_analysis" } } }] },
-        "applicability": { "allOf": [{ "$ref": "#/$defs/component_base" }, { "properties": { "component_id": { "const": "applicability" }, "evidence_origin": { "const": "applicability_analysis" } } }] },
-        "causal_support": { "allOf": [{ "$ref": "#/$defs/component_base" }, { "properties": { "component_id": { "const": "causal_support" }, "evidence_origin": { "enum": ["causal_experiment", "not_applicable"] } } }] },
-        "safety_case": { "allOf": [{ "$ref": "#/$defs/component_base" }, { "properties": { "component_id": { "const": "safety_case" }, "evidence_origin": { "const": "safety_analysis" } } }] }
+        "code_verification": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/component_base"
+            },
+            {
+              "properties": {
+                "component_id": {
+                  "const": "code_verification"
+                },
+                "evidence_origin": {
+                  "const": "code_or_analytic"
+                }
+              }
+            }
+          ]
+        },
+        "solution_verification": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/component_base"
+            },
+            {
+              "properties": {
+                "component_id": {
+                  "const": "solution_verification"
+                },
+                "evidence_origin": {
+                  "const": "numerical_convergence"
+                }
+              }
+            }
+          ]
+        },
+        "measurement_traceability": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/component_base"
+            },
+            {
+              "properties": {
+                "component_id": {
+                  "const": "measurement_traceability"
+                },
+                "evidence_origin": {
+                  "const": "measurement_traceability"
+                }
+              }
+            }
+          ]
+        },
+        "identifiability": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/component_base"
+            },
+            {
+              "properties": {
+                "component_id": {
+                  "const": "identifiability"
+                },
+                "evidence_origin": {
+                  "const": "identifiability_analysis"
+                }
+              }
+            }
+          ]
+        },
+        "calibration": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/component_base"
+            },
+            {
+              "properties": {
+                "component_id": {
+                  "const": "calibration"
+                },
+                "evidence_origin": {
+                  "const": "calibration_partition"
+                }
+              }
+            }
+          ]
+        },
+        "physical_validation": {
+          "$ref": "#/$defs/physical_validation_component"
+        },
+        "uncertainty_quantification": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/component_base"
+            },
+            {
+              "properties": {
+                "component_id": {
+                  "const": "uncertainty_quantification"
+                },
+                "evidence_origin": {
+                  "const": "uncertainty_analysis"
+                }
+              }
+            }
+          ]
+        },
+        "applicability": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/component_base"
+            },
+            {
+              "properties": {
+                "component_id": {
+                  "const": "applicability"
+                },
+                "evidence_origin": {
+                  "const": "applicability_analysis"
+                }
+              }
+            }
+          ]
+        },
+        "causal_support": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/component_base"
+            },
+            {
+              "properties": {
+                "component_id": {
+                  "const": "causal_support"
+                },
+                "evidence_origin": {
+                  "enum": [
+                    "causal_experiment",
+                    "not_applicable"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "safety_case": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/component_base"
+            },
+            {
+              "properties": {
+                "component_id": {
+                  "const": "safety_case"
+                },
+                "evidence_origin": {
+                  "const": "safety_analysis"
+                }
+              }
+            }
+          ]
+        }
       }
     },
     "gate_result": {
-      "type": "object", "additionalProperties": false,
-      "required": ["gate_id", "disposition", "evidence_refs", "reason_codes", "verifier_ref"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "gate_id",
+        "disposition",
+        "evidence_refs",
+        "reason_codes",
+        "verifier_ref"
+      ],
       "properties": {
-        "gate_id": { "pattern": "^p([0-9]|1[0-2])$" }, "disposition": { "enum": ["pass", "fail", "indeterminate", "not_applicable"] },
-        "evidence_refs": { "type": "array", "maxItems": 128, "uniqueItems": true, "items": { "$ref": "#/$defs/artifact_reference" } },
-        "reason_codes": { "type": "array", "maxItems": 32, "uniqueItems": true, "items": { "$ref": "#/$defs/identifier" } },
-        "verifier_ref": { "$ref": "#/$defs/record_reference" }
-      },
-      "allOf": [{
-        "if": { "properties": { "disposition": { "const": "pass" } }, "required": ["disposition"] },
-        "then": { "properties": { "evidence_refs": { "minItems": 1 }, "reason_codes": { "maxItems": 0 } } },
-        "else": {
-          "if": { "properties": { "disposition": { "enum": ["fail", "indeterminate"] } }, "required": ["disposition"] },
-          "then": { "properties": { "reason_codes": { "minItems": 1 } } }
+        "gate_id": {
+          "pattern": "^p([0-9]|1[0-2])$"
+        },
+        "disposition": {
+          "enum": [
+            "pass",
+            "fail",
+            "indeterminate",
+            "not_applicable"
+          ]
+        },
+        "evidence_refs": {
+          "type": "array",
+          "maxItems": 128,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/artifact_reference"
+          }
+        },
+        "reason_codes": {
+          "type": "array",
+          "maxItems": 32,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "verifier_ref": {
+          "$ref": "#/$defs/record_reference"
         }
-      }]
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "disposition": {
+                "const": "pass"
+              }
+            },
+            "required": [
+              "disposition"
+            ]
+          },
+          "then": {
+            "properties": {
+              "evidence_refs": {
+                "minItems": 1
+              },
+              "reason_codes": {
+                "maxItems": 0
+              }
+            }
+          },
+          "else": {
+            "if": {
+              "properties": {
+                "disposition": {
+                  "enum": [
+                    "fail",
+                    "indeterminate"
+                  ]
+                }
+              },
+              "required": [
+                "disposition"
+              ]
+            },
+            "then": {
+              "properties": {
+                "reason_codes": {
+                  "minItems": 1
+                }
+              }
+            }
+          }
+        }
+      ]
     },
     "vvuq_gates": {
-      "type": "object", "additionalProperties": false,
-      "required": ["p0_decision_context", "p1_measurement", "p2_conceptual_adequacy", "p3_observability_identifiability", "p4_code_verification", "p5_solution_verification", "p6_calibration", "p7_physical_validation", "p8_uncertainty_sensitivity", "p9_applicability", "p10_causal", "p11_safety_authority", "p12_release"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "p0_decision_context",
+        "p1_measurement",
+        "p2_conceptual_adequacy",
+        "p3_observability_identifiability",
+        "p4_code_verification",
+        "p5_solution_verification",
+        "p6_calibration",
+        "p7_physical_validation",
+        "p8_uncertainty_sensitivity",
+        "p9_applicability",
+        "p10_causal",
+        "p11_safety_authority",
+        "p12_release"
+      ],
       "properties": {
-        "p0_decision_context": { "allOf": [{ "$ref": "#/$defs/gate_result" }, { "properties": { "gate_id": { "const": "p0" } } }] },
-        "p1_measurement": { "allOf": [{ "$ref": "#/$defs/gate_result" }, { "properties": { "gate_id": { "const": "p1" } } }] },
-        "p2_conceptual_adequacy": { "allOf": [{ "$ref": "#/$defs/gate_result" }, { "properties": { "gate_id": { "const": "p2" } } }] },
-        "p3_observability_identifiability": { "allOf": [{ "$ref": "#/$defs/gate_result" }, { "properties": { "gate_id": { "const": "p3" } } }] },
-        "p4_code_verification": { "allOf": [{ "$ref": "#/$defs/gate_result" }, { "properties": { "gate_id": { "const": "p4" } } }] },
-        "p5_solution_verification": { "allOf": [{ "$ref": "#/$defs/gate_result" }, { "properties": { "gate_id": { "const": "p5" } } }] },
-        "p6_calibration": { "allOf": [{ "$ref": "#/$defs/gate_result" }, { "properties": { "gate_id": { "const": "p6" } } }] },
-        "p7_physical_validation": { "allOf": [{ "$ref": "#/$defs/gate_result" }, { "properties": { "gate_id": { "const": "p7" } } }] },
-        "p8_uncertainty_sensitivity": { "allOf": [{ "$ref": "#/$defs/gate_result" }, { "properties": { "gate_id": { "const": "p8" } } }] },
-        "p9_applicability": { "allOf": [{ "$ref": "#/$defs/gate_result" }, { "properties": { "gate_id": { "const": "p9" } } }] },
-        "p10_causal": { "allOf": [{ "$ref": "#/$defs/gate_result" }, { "properties": { "gate_id": { "const": "p10" } } }] },
-        "p11_safety_authority": { "allOf": [{ "$ref": "#/$defs/gate_result" }, { "properties": { "gate_id": { "const": "p11" } } }] },
-        "p12_release": { "allOf": [{ "$ref": "#/$defs/gate_result" }, { "properties": { "gate_id": { "const": "p12" } } }] }
+        "p0_decision_context": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/gate_result"
+            },
+            {
+              "properties": {
+                "gate_id": {
+                  "const": "p0"
+                }
+              }
+            }
+          ]
+        },
+        "p1_measurement": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/gate_result"
+            },
+            {
+              "properties": {
+                "gate_id": {
+                  "const": "p1"
+                }
+              }
+            }
+          ]
+        },
+        "p2_conceptual_adequacy": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/gate_result"
+            },
+            {
+              "properties": {
+                "gate_id": {
+                  "const": "p2"
+                }
+              }
+            }
+          ]
+        },
+        "p3_observability_identifiability": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/gate_result"
+            },
+            {
+              "properties": {
+                "gate_id": {
+                  "const": "p3"
+                }
+              }
+            }
+          ]
+        },
+        "p4_code_verification": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/gate_result"
+            },
+            {
+              "properties": {
+                "gate_id": {
+                  "const": "p4"
+                }
+              }
+            }
+          ]
+        },
+        "p5_solution_verification": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/gate_result"
+            },
+            {
+              "properties": {
+                "gate_id": {
+                  "const": "p5"
+                }
+              }
+            }
+          ]
+        },
+        "p6_calibration": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/gate_result"
+            },
+            {
+              "properties": {
+                "gate_id": {
+                  "const": "p6"
+                }
+              }
+            }
+          ]
+        },
+        "p7_physical_validation": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/gate_result"
+            },
+            {
+              "properties": {
+                "gate_id": {
+                  "const": "p7"
+                }
+              }
+            }
+          ]
+        },
+        "p8_uncertainty_sensitivity": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/gate_result"
+            },
+            {
+              "properties": {
+                "gate_id": {
+                  "const": "p8"
+                }
+              }
+            }
+          ]
+        },
+        "p9_applicability": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/gate_result"
+            },
+            {
+              "properties": {
+                "gate_id": {
+                  "const": "p9"
+                }
+              }
+            }
+          ]
+        },
+        "p10_causal": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/gate_result"
+            },
+            {
+              "properties": {
+                "gate_id": {
+                  "const": "p10"
+                }
+              }
+            }
+          ]
+        },
+        "p11_safety_authority": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/gate_result"
+            },
+            {
+              "properties": {
+                "gate_id": {
+                  "const": "p11"
+                }
+              }
+            }
+          ]
+        },
+        "p12_release": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/gate_result"
+            },
+            {
+              "properties": {
+                "gate_id": {
+                  "const": "p12"
+                }
+              }
+            }
+          ]
+        }
       }
     }
   }

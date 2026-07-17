@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:canonicalization-profile-core:0.2.0",
+  "$id": "urn:odeya:schema:canonicalization-profile-core:0.3.0",
   "title": "Odeya Canonicalization Profile Core Candidate",
   "description": "Closed architecture-time parameters for the proposed odeya-jcs-0.1 profile. This core has no self-digest, acceptance, registry membership, Gate A authority, or runtime authority; an external candidate-evidence record binds its exact raw bytes.",
   "type": "object",
@@ -27,7 +27,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.2.0"
+      "const": "0.3.0"
     },
     "artifact_class": {
       "const": "canonicalization_profile_core_candidate"
@@ -326,7 +326,7 @@
             "kind": "canonical_object_digest",
             "subject": "canonicalization_profile_core_candidate",
             "profile": "unissued",
-            "schema": "urn:odeya:schema:canonicalization-profile-core:0.2.0",
+            "schema": "urn:odeya:schema:canonicalization-profile-core:0.3.0",
             "algorithm": "sha-256",
             "status": "not_constructible_until_profile_acceptance"
           }
@@ -375,7 +375,7 @@
           "const": "0.1.0"
         },
         "profile_core_schema_id": {
-          "const": "urn:odeya:schema:canonicalization-profile-core:0.2.0"
+          "const": "urn:odeya:schema:canonicalization-profile-core:0.3.0"
         },
         "profile_core_raw_digest_lexical_form": {
           "const": "sha256_colon_64_lowercase_hex"
@@ -447,15 +447,16 @@
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "lexical_pattern",
         "binary_json_number_for_scientific_value",
         "leading_plus",
         "leading_zero",
-        "uppercase_exponent",
-        "positive_exponent_sign",
         "lexical_negative_zero",
+        "lexical_pattern",
+        "positive_exponent_sign",
         "trailing_zero_semantics",
-        "unit_conversion"
+        "typed_object_contract",
+        "unit_conversion",
+        "uppercase_exponent"
       ],
       "properties": {
         "lexical_pattern": {
@@ -484,6 +485,104 @@
         },
         "unit_conversion": {
           "const": "semantic_transformation_not_canonicalization"
+        },
+        "typed_object_contract": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "additional_properties",
+            "elements_shape",
+            "member_names",
+            "precision_forms",
+            "required_members",
+            "semantic_type_registry",
+            "unit_declaration_forms",
+            "value_lexical_pattern",
+            "value_member_rule"
+          ],
+          "properties": {
+            "member_names": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "matrix_value",
+                "precision",
+                "scalar_value",
+                "semantic_type",
+                "unit"
+              ],
+              "properties": {
+                "scalar_value": {
+                  "const": "decimal"
+                },
+                "matrix_value": {
+                  "const": "elements"
+                },
+                "semantic_type": {
+                  "const": "semantic_type"
+                },
+                "unit": {
+                  "const": "unit"
+                },
+                "precision": {
+                  "const": "precision"
+                }
+              }
+            },
+            "required_members": {
+              "const": [
+                "precision",
+                "semantic_type",
+                "unit"
+              ]
+            },
+            "value_member_rule": {
+              "const": "exactly_one_of_decimal_or_elements"
+            },
+            "additional_properties": {
+              "const": "reject"
+            },
+            "elements_shape": {
+              "const": "array_of_arrays_of_lexical_decimals"
+            },
+            "unit_declaration_forms": {
+              "const": [
+                "instance_declared_string",
+                "registered_constant"
+              ]
+            },
+            "precision_forms": {
+              "const": [
+                "decimal_places_constant",
+                "exact_lexical",
+                "instance_declared"
+              ]
+            },
+            "semantic_type_registry": {
+              "const": [
+                "byte_count",
+                "correlation_coefficient",
+                "covariance_element",
+                "coverage_factor",
+                "duration_seconds",
+                "human_effort_hours",
+                "interval_confidence_level",
+                "measured_quantity",
+                "memory_gib_seconds",
+                "monetary_amount",
+                "monetary_amount_usd",
+                "proportion",
+                "registered_quantity",
+                "resource_amount",
+                "statistical_evidence_measure",
+                "unit_conversion_factor",
+                "unit_conversion_offset"
+              ]
+            },
+            "value_lexical_pattern": {
+              "const": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+            }
+          }
         }
       }
     },

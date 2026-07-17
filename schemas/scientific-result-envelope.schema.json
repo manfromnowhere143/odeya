@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:scientific-result-envelope:0.2.0",
+  "$id": "urn:odeya:schema:scientific-result-envelope:0.3.0",
   "title": "Odeya ScientificResultEnvelope",
   "description": "An immutable non-authoritative scientific result package binding one exact mission, estimand, protocol, run, and atomic metric-result set. It retains incomplete, invalid, indeterminate, blocked, and inconclusive outcomes; keeps evidence measures and uncertainty semantics distinct; and cannot turn simulation, calibration, or code verification into physical validation.",
   "type": "object",
@@ -37,7 +37,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.2.0"
+      "const": "0.3.0"
     },
     "record_status": {
       "const": "immutable_non_authoritative_result"
@@ -257,7 +257,38 @@
           ]
         },
         "point_estimate": {
-          "$ref": "#/$defs/nullable_quantity"
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "decimal",
+                "precision",
+                "semantic_type",
+                "unit"
+              ],
+              "properties": {
+                "decimal": {
+                  "type": "string",
+                  "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+                },
+                "semantic_type": {
+                  "const": "measured_quantity"
+                },
+                "unit": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "precision": {
+                  "type": "string",
+                  "pattern": "^(?:0|[1-9][0-9]{0,2}|exact_lexical)$"
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
         },
         "distribution_ref": {
           "$ref": "#/$defs/nullable_artifact_reference"
@@ -287,7 +318,31 @@
           "then": {
             "properties": {
               "point_estimate": {
-                "$ref": "#/$defs/quantity"
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "decimal",
+                  "precision",
+                  "semantic_type",
+                  "unit"
+                ],
+                "properties": {
+                  "decimal": {
+                    "type": "string",
+                    "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+                  },
+                  "semantic_type": {
+                    "const": "measured_quantity"
+                  },
+                  "unit": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "precision": {
+                    "type": "string",
+                    "pattern": "^(?:0|[1-9][0-9]{0,2}|exact_lexical)$"
+                  }
+                }
               },
               "distribution_ref": {
                 "type": "null"
@@ -441,10 +496,72 @@
           ]
         },
         "lower": {
-          "$ref": "#/$defs/nullable_quantity"
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "decimal",
+                "precision",
+                "semantic_type",
+                "unit"
+              ],
+              "properties": {
+                "decimal": {
+                  "type": "string",
+                  "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+                },
+                "semantic_type": {
+                  "const": "measured_quantity"
+                },
+                "unit": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "precision": {
+                  "type": "string",
+                  "pattern": "^(?:0|[1-9][0-9]{0,2}|exact_lexical)$"
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
         },
         "upper": {
-          "$ref": "#/$defs/nullable_quantity"
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "decimal",
+                "precision",
+                "semantic_type",
+                "unit"
+              ],
+              "properties": {
+                "decimal": {
+                  "type": "string",
+                  "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+                },
+                "semantic_type": {
+                  "const": "measured_quantity"
+                },
+                "unit": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "precision": {
+                  "type": "string",
+                  "pattern": "^(?:0|[1-9][0-9]{0,2}|exact_lexical)$"
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
         },
         "set_ref": {
           "$ref": "#/$defs/nullable_artifact_reference"
@@ -452,7 +569,29 @@
         "level": {
           "oneOf": [
             {
-              "$ref": "#/$defs/probability_decimal"
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "decimal",
+                "precision",
+                "semantic_type",
+                "unit"
+              ],
+              "properties": {
+                "decimal": {
+                  "type": "string",
+                  "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+                },
+                "semantic_type": {
+                  "const": "interval_confidence_level"
+                },
+                "unit": {
+                  "const": "dimensionless"
+                },
+                "precision": {
+                  "const": "6"
+                }
+              }
             },
             {
               "type": "null"
@@ -527,7 +666,29 @@
                 }
               },
               "level": {
-                "$ref": "#/$defs/probability_decimal"
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "decimal",
+                  "precision",
+                  "semantic_type",
+                  "unit"
+                ],
+                "properties": {
+                  "decimal": {
+                    "type": "string",
+                    "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+                  },
+                  "semantic_type": {
+                    "const": "interval_confidence_level"
+                  },
+                  "unit": {
+                    "const": "dimensionless"
+                  },
+                  "precision": {
+                    "const": "6"
+                  }
+                }
               },
               "simultaneous_scope": {
                 "not": {
@@ -607,10 +768,58 @@
           "then": {
             "properties": {
               "lower": {
-                "$ref": "#/$defs/quantity"
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "decimal",
+                  "precision",
+                  "semantic_type",
+                  "unit"
+                ],
+                "properties": {
+                  "decimal": {
+                    "type": "string",
+                    "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+                  },
+                  "semantic_type": {
+                    "const": "measured_quantity"
+                  },
+                  "unit": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "precision": {
+                    "type": "string",
+                    "pattern": "^(?:0|[1-9][0-9]{0,2}|exact_lexical)$"
+                  }
+                }
               },
               "upper": {
-                "$ref": "#/$defs/quantity"
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "decimal",
+                  "precision",
+                  "semantic_type",
+                  "unit"
+                ],
+                "properties": {
+                  "decimal": {
+                    "type": "string",
+                    "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+                  },
+                  "semantic_type": {
+                    "const": "measured_quantity"
+                  },
+                  "unit": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "precision": {
+                    "type": "string",
+                    "pattern": "^(?:0|[1-9][0-9]{0,2}|exact_lexical)$"
+                  }
+                }
               },
               "set_ref": {
                 "type": "null"
@@ -636,7 +845,31 @@
           "then": {
             "properties": {
               "lower": {
-                "$ref": "#/$defs/quantity"
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "decimal",
+                  "precision",
+                  "semantic_type",
+                  "unit"
+                ],
+                "properties": {
+                  "decimal": {
+                    "type": "string",
+                    "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+                  },
+                  "semantic_type": {
+                    "const": "measured_quantity"
+                  },
+                  "unit": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "precision": {
+                    "type": "string",
+                    "pattern": "^(?:0|[1-9][0-9]{0,2}|exact_lexical)$"
+                  }
+                }
               },
               "upper": {
                 "type": "null"
@@ -668,7 +901,31 @@
                 "type": "null"
               },
               "upper": {
-                "$ref": "#/$defs/quantity"
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "decimal",
+                  "precision",
+                  "semantic_type",
+                  "unit"
+                ],
+                "properties": {
+                  "decimal": {
+                    "type": "string",
+                    "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+                  },
+                  "semantic_type": {
+                    "const": "measured_quantity"
+                  },
+                  "unit": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "precision": {
+                    "type": "string",
+                    "pattern": "^(?:0|[1-9][0-9]{0,2}|exact_lexical)$"
+                  }
+                }
               },
               "set_ref": {
                 "type": "null"
@@ -737,7 +994,31 @@
         "value": {
           "oneOf": [
             {
-              "$ref": "#/$defs/decimal"
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "decimal",
+                "precision",
+                "semantic_type",
+                "unit"
+              ],
+              "properties": {
+                "decimal": {
+                  "type": "string",
+                  "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+                },
+                "semantic_type": {
+                  "const": "statistical_evidence_measure"
+                },
+                "unit": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "precision": {
+                  "type": "string",
+                  "pattern": "^(?:0|[1-9][0-9]{0,2}|exact_lexical)$"
+                }
+              }
             },
             {
               "type": "null"
@@ -792,7 +1073,31 @@
           "else": {
             "properties": {
               "value": {
-                "$ref": "#/$defs/decimal"
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "decimal",
+                  "precision",
+                  "semantic_type",
+                  "unit"
+                ],
+                "properties": {
+                  "decimal": {
+                    "type": "string",
+                    "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+                  },
+                  "semantic_type": {
+                    "const": "statistical_evidence_measure"
+                  },
+                  "unit": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "precision": {
+                    "type": "string",
+                    "pattern": "^(?:0|[1-9][0-9]{0,2}|exact_lexical)$"
+                  }
+                }
               },
               "method_ref": {
                 "$ref": "#/$defs/method_reference"
@@ -877,13 +1182,106 @@
           ]
         },
         "lower_margin": {
-          "$ref": "#/$defs/nullable_quantity"
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "decimal",
+                "precision",
+                "semantic_type",
+                "unit"
+              ],
+              "properties": {
+                "decimal": {
+                  "type": "string",
+                  "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+                },
+                "semantic_type": {
+                  "const": "registered_quantity"
+                },
+                "unit": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "precision": {
+                  "type": "string",
+                  "pattern": "^(?:0|[1-9][0-9]{0,2}|exact_lexical)$"
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
         },
         "upper_margin": {
-          "$ref": "#/$defs/nullable_quantity"
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "decimal",
+                "precision",
+                "semantic_type",
+                "unit"
+              ],
+              "properties": {
+                "decimal": {
+                  "type": "string",
+                  "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+                },
+                "semantic_type": {
+                  "const": "registered_quantity"
+                },
+                "unit": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "precision": {
+                  "type": "string",
+                  "pattern": "^(?:0|[1-9][0-9]{0,2}|exact_lexical)$"
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
         },
         "noninferiority_margin": {
-          "$ref": "#/$defs/nullable_quantity"
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "decimal",
+                "precision",
+                "semantic_type",
+                "unit"
+              ],
+              "properties": {
+                "decimal": {
+                  "type": "string",
+                  "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+                },
+                "semantic_type": {
+                  "const": "registered_quantity"
+                },
+                "unit": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "precision": {
+                  "type": "string",
+                  "pattern": "^(?:0|[1-9][0-9]{0,2}|exact_lexical)$"
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
         },
         "benefit_direction": {
           "enum": [
@@ -2409,10 +2807,58 @@
                 "const": "predeclared"
               },
               "lower_margin": {
-                "$ref": "#/$defs/quantity"
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "decimal",
+                  "precision",
+                  "semantic_type",
+                  "unit"
+                ],
+                "properties": {
+                  "decimal": {
+                    "type": "string",
+                    "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+                  },
+                  "semantic_type": {
+                    "const": "registered_quantity"
+                  },
+                  "unit": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "precision": {
+                    "type": "string",
+                    "pattern": "^(?:0|[1-9][0-9]{0,2}|exact_lexical)$"
+                  }
+                }
               },
               "upper_margin": {
-                "$ref": "#/$defs/quantity"
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "decimal",
+                  "precision",
+                  "semantic_type",
+                  "unit"
+                ],
+                "properties": {
+                  "decimal": {
+                    "type": "string",
+                    "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+                  },
+                  "semantic_type": {
+                    "const": "registered_quantity"
+                  },
+                  "unit": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "precision": {
+                    "type": "string",
+                    "pattern": "^(?:0|[1-9][0-9]{0,2}|exact_lexical)$"
+                  }
+                }
               },
               "noninferiority_margin": {
                 "type": "null"
@@ -2468,7 +2914,31 @@
                 "type": "null"
               },
               "noninferiority_margin": {
-                "$ref": "#/$defs/quantity"
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "decimal",
+                  "precision",
+                  "semantic_type",
+                  "unit"
+                ],
+                "properties": {
+                  "decimal": {
+                    "type": "string",
+                    "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+                  },
+                  "semantic_type": {
+                    "const": "registered_quantity"
+                  },
+                  "unit": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "precision": {
+                    "type": "string",
+                    "pattern": "^(?:0|[1-9][0-9]{0,2}|exact_lexical)$"
+                  }
+                }
               },
               "benefit_direction": {
                 "enum": [
@@ -3009,7 +3479,31 @@
       ],
       "properties": {
         "value": {
-          "$ref": "#/$defs/decimal"
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "decimal",
+            "precision",
+            "semantic_type",
+            "unit"
+          ],
+          "properties": {
+            "decimal": {
+              "type": "string",
+              "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+            },
+            "semantic_type": {
+              "const": "measured_quantity"
+            },
+            "unit": {
+              "type": "string",
+              "minLength": 1
+            },
+            "precision": {
+              "type": "string",
+              "pattern": "^(?:0|[1-9][0-9]{0,2}|exact_lexical)$"
+            }
+          }
         },
         "unit_ref": {
           "$ref": "#/$defs/unit_reference"
@@ -3048,7 +3542,7 @@
           "minimum": 1
         },
         "schema_id": {
-          "const": "urn:odeya:schema:research-mission:0.3.0"
+          "const": "urn:odeya:schema:research-mission:0.4.0"
         },
         "digest": {
           "$ref": "#/$defs/digest"
@@ -3085,7 +3579,7 @@
           "$ref": "#/$defs/claim_type"
         },
         "schema_id": {
-          "const": "urn:odeya:schema:estimand-contract:0.2.0"
+          "const": "urn:odeya:schema:estimand-contract:0.3.0"
         },
         "digest": {
           "$ref": "#/$defs/digest"
@@ -3126,7 +3620,7 @@
           "$ref": "#/$defs/digest"
         },
         "schema_id": {
-          "const": "urn:odeya:schema:protocol-snapshot:0.2.0"
+          "const": "urn:odeya:schema:protocol-snapshot:0.3.0"
         },
         "digest": {
           "$ref": "#/$defs/digest"
@@ -3171,7 +3665,7 @@
           "$ref": "#/$defs/identifier"
         },
         "schema_id": {
-          "const": "urn:odeya:schema:run-manifest:0.2.0"
+          "const": "urn:odeya:schema:run-manifest:0.3.0"
         },
         "digest": {
           "$ref": "#/$defs/digest"
@@ -3240,7 +3734,7 @@
           ]
         },
         "schema_id": {
-          "const": "urn:odeya:schema:metric-result:0.2.0"
+          "const": "urn:odeya:schema:metric-result:0.3.0"
         },
         "digest": {
           "$ref": "#/$defs/digest"
@@ -3273,7 +3767,7 @@
           "$ref": "#/$defs/identifier"
         },
         "schema_id": {
-          "const": "urn:odeya:schema:physical-measurement-result:0.1.0"
+          "const": "urn:odeya:schema:physical-measurement-result:0.2.0"
         },
         "digest": {
           "$ref": "#/$defs/digest"
@@ -3306,7 +3800,7 @@
           "$ref": "#/$defs/identifier"
         },
         "schema_id": {
-          "const": "urn:odeya:schema:physical-model-record:0.1.0"
+          "const": "urn:odeya:schema:physical-model-record:0.2.0"
         },
         "digest": {
           "$ref": "#/$defs/digest"

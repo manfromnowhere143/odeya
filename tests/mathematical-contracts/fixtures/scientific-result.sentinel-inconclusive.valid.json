@@ -1,5 +1,5 @@
 {
-  "schema_version": "0.2.0",
+  "schema_version": "0.3.0",
   "record_status": "immutable_non_authoritative_result",
   "result_envelope_id": "result.sentinel.interval",
   "version": 1,
@@ -11,7 +11,7 @@
       "record_type": "research_mission_spec",
       "mission_id": "mission.sentinel",
       "version": 1,
-      "schema_id": "urn:odeya:schema:research-mission:0.3.0",
+      "schema_id": "urn:odeya:schema:research-mission:0.4.0",
       "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
     },
     "estimand_contract_ref": {
@@ -20,7 +20,7 @@
       "version": 1,
       "mission_id": "mission.sentinel",
       "claim_type": "associational",
-      "schema_id": "urn:odeya:schema:estimand-contract:0.2.0",
+      "schema_id": "urn:odeya:schema:estimand-contract:0.3.0",
       "digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
     },
     "protocol_snapshot_ref": {
@@ -30,7 +30,7 @@
       "mission_id": "mission.sentinel",
       "bound_estimand_id": "estimand.sentinel.association",
       "bound_estimand_digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-      "schema_id": "urn:odeya:schema:protocol-snapshot:0.2.0",
+      "schema_id": "urn:odeya:schema:protocol-snapshot:0.3.0",
       "digest": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
     },
     "run_manifest_ref": {
@@ -41,7 +41,7 @@
       "protocol_snapshot_id": "protocol.sentinel.v1",
       "protocol_snapshot_digest": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
       "attempt_id": "attempt.sentinel.01",
-      "schema_id": "urn:odeya:schema:run-manifest:0.2.0",
+      "schema_id": "urn:odeya:schema:run-manifest:0.3.0",
       "digest": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
     },
     "metric_result_refs": [
@@ -57,7 +57,7 @@
         "estimand_id": "estimand.sentinel.association",
         "estimand_digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
         "result_role": "primary",
-        "schema_id": "urn:odeya:schema:metric-result:0.2.0",
+        "schema_id": "urn:odeya:schema:metric-result:0.3.0",
         "digest": "sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
       }
     ],
@@ -97,13 +97,10 @@
   "result_value": {
     "status": "point_estimate",
     "point_estimate": {
-      "value": "0.031",
-      "unit_ref": {
-        "unit_id": "unit.dimensionless",
-        "version": "1.0.0",
-        "registry_digest": "sha256:4444444444444444444444444444444444444444444444444444444444444444",
-        "dimension_signature": "1"
-      }
+      "decimal": "0.031",
+      "semantic_type": "measured_quantity",
+      "unit": "dimensionless",
+      "precision": "exact_lexical"
     },
     "distribution_ref": null,
     "set_ref": null,
@@ -115,25 +112,24 @@
     "representation": "confidence_interval",
     "sidedness": "two_sided",
     "lower": {
-      "value": "-0.127",
-      "unit_ref": {
-        "unit_id": "unit.dimensionless",
-        "version": "1.0.0",
-        "registry_digest": "sha256:4444444444444444444444444444444444444444444444444444444444444444",
-        "dimension_signature": "1"
-      }
+      "decimal": "-0.127",
+      "semantic_type": "measured_quantity",
+      "unit": "dimensionless",
+      "precision": "exact_lexical"
     },
     "upper": {
-      "value": "0.065",
-      "unit_ref": {
-        "unit_id": "unit.dimensionless",
-        "version": "1.0.0",
-        "registry_digest": "sha256:4444444444444444444444444444444444444444444444444444444444444444",
-        "dimension_signature": "1"
-      }
+      "decimal": "0.065",
+      "semantic_type": "measured_quantity",
+      "unit": "dimensionless",
+      "precision": "exact_lexical"
     },
     "set_ref": null,
-    "level": "0.95",
+    "level": {
+      "decimal": "0.95",
+      "semantic_type": "interval_confidence_level",
+      "unit": "dimensionless",
+      "precision": "6"
+    },
     "simultaneous_scope": "pointwise",
     "method_ref": {
       "method_id": "method.bootstrap.ci",
@@ -142,7 +138,12 @@
       "method_record_digest": "sha256:6666666666666666666666666666666666666666666666666666666666666666"
     },
     "null_reference": {
-      "value": "0",
+      "value": {
+        "decimal": "0",
+        "semantic_type": "measured_quantity",
+        "unit": "dimensionless",
+        "precision": "exact_lexical"
+      },
       "unit_ref": {
         "unit_id": "unit.dimensionless",
         "version": "1.0.0",
@@ -156,7 +157,12 @@
   },
   "evidence_measure": {
     "type": "p_value",
-    "value": "0.510",
+    "value": {
+      "decimal": "0.510",
+      "semantic_type": "statistical_evidence_measure",
+      "unit": "dimensionless",
+      "precision": "exact_lexical"
+    },
     "method_ref": {
       "method_id": "method.association.test",
       "version": "1.0.0",

@@ -1,235 +1,947 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:physical-experiment-contract:0.1.0",
+  "$id": "urn:odeya:schema:physical-experiment-contract:0.2.0",
   "title": "Odeya PhysicalExperimentContract",
   "description": "An immutable recommendation-only physical experiment proposal. It binds hypotheses/rivals, estimand or target quantity, intervention/design, measurement and synchronization, exact asset/model/safety/evidence scope, independent validation partition, and six fail-closed preflights. It cannot self-authorize execution or actuation.",
   "type": "object",
   "additionalProperties": false,
   "required": [
-    "schema_version", "physical_experiment_contract_id", "version", "mission_id", "hypothesis_ref", "rival_hypothesis_refs",
-    "target_quantity_refs", "causal_estimand_ref", "intervention_policy_ref", "design", "measurement_plan",
-    "asset_binding", "physical_model_ref", "baseline_physical_evidence_vector_ref", "context_ref",
-    "expected_information_ref", "decision_value_ref", "cost_ref", "harm_assessment_ref", "reversibility",
-    "safety_envelope_ref", "abort_condition_refs", "stop_rule_ref", "preregistered_analysis_ref",
-    "independent_validation_partition", "preflight", "planning_disposition", "reason_codes", "authority_boundary",
+    "schema_version",
+    "physical_experiment_contract_id",
+    "version",
+    "mission_id",
+    "hypothesis_ref",
+    "rival_hypothesis_refs",
+    "target_quantity_refs",
+    "causal_estimand_ref",
+    "intervention_policy_ref",
+    "design",
+    "measurement_plan",
+    "asset_binding",
+    "physical_model_ref",
+    "baseline_physical_evidence_vector_ref",
+    "context_ref",
+    "expected_information_ref",
+    "decision_value_ref",
+    "cost_ref",
+    "harm_assessment_ref",
+    "reversibility",
+    "safety_envelope_ref",
+    "abort_condition_refs",
+    "stop_rule_ref",
+    "preregistered_analysis_ref",
+    "independent_validation_partition",
+    "preflight",
+    "planning_disposition",
+    "reason_codes",
+    "authority_boundary",
     "experiment_contract_digest"
   ],
   "properties": {
-    "schema_version": { "const": "0.1.0" },
-    "physical_experiment_contract_id": { "$ref": "#/$defs/identifier" },
-    "version": { "type": "integer", "minimum": 1 },
-    "mission_id": { "$ref": "#/$defs/identifier" },
-    "hypothesis_ref": { "$ref": "#/$defs/artifact_reference" },
+    "schema_version": {
+      "const": "0.2.0"
+    },
+    "physical_experiment_contract_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "mission_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "hypothesis_ref": {
+      "$ref": "#/$defs/artifact_reference"
+    },
     "rival_hypothesis_refs": {
-      "type": "array", "minItems": 1, "maxItems": 64, "uniqueItems": true,
-      "items": { "$ref": "#/$defs/artifact_reference" }
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 64,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/artifact_reference"
+      }
     },
     "target_quantity_refs": {
-      "type": "array", "minItems": 1, "maxItems": 64, "uniqueItems": true,
-      "items": { "$ref": "#/$defs/physical_quantity_reference" }
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 64,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/physical_quantity_reference"
+      }
     },
-    "causal_estimand_ref": { "oneOf": [{ "$ref": "#/$defs/artifact_reference" }, { "type": "null" }] },
-    "intervention_policy_ref": { "$ref": "#/$defs/artifact_reference" },
-    "design": { "$ref": "#/$defs/design" },
-    "measurement_plan": { "$ref": "#/$defs/measurement_plan" },
-    "asset_binding": { "$ref": "#/$defs/asset_binding" },
-    "physical_model_ref": { "$ref": "#/$defs/physical_model_reference" },
-    "baseline_physical_evidence_vector_ref": { "$ref": "#/$defs/evidence_vector_reference" },
-    "context_ref": { "$ref": "#/$defs/artifact_reference" },
-    "expected_information_ref": { "$ref": "#/$defs/artifact_reference" },
-    "decision_value_ref": { "$ref": "#/$defs/artifact_reference" },
-    "cost_ref": { "$ref": "#/$defs/artifact_reference" },
-    "harm_assessment_ref": { "$ref": "#/$defs/artifact_reference" },
-    "reversibility": { "enum": ["reversible", "partially_reversible", "irreversible", "unknown"] },
-    "safety_envelope_ref": { "$ref": "#/$defs/safety_envelope_reference" },
+    "causal_estimand_ref": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/artifact_reference"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "intervention_policy_ref": {
+      "$ref": "#/$defs/artifact_reference"
+    },
+    "design": {
+      "$ref": "#/$defs/design"
+    },
+    "measurement_plan": {
+      "$ref": "#/$defs/measurement_plan"
+    },
+    "asset_binding": {
+      "$ref": "#/$defs/asset_binding"
+    },
+    "physical_model_ref": {
+      "$ref": "#/$defs/physical_model_reference"
+    },
+    "baseline_physical_evidence_vector_ref": {
+      "$ref": "#/$defs/evidence_vector_reference"
+    },
+    "context_ref": {
+      "$ref": "#/$defs/artifact_reference"
+    },
+    "expected_information_ref": {
+      "$ref": "#/$defs/artifact_reference"
+    },
+    "decision_value_ref": {
+      "$ref": "#/$defs/artifact_reference"
+    },
+    "cost_ref": {
+      "$ref": "#/$defs/artifact_reference"
+    },
+    "harm_assessment_ref": {
+      "$ref": "#/$defs/artifact_reference"
+    },
+    "reversibility": {
+      "enum": [
+        "reversible",
+        "partially_reversible",
+        "irreversible",
+        "unknown"
+      ]
+    },
+    "safety_envelope_ref": {
+      "$ref": "#/$defs/safety_envelope_reference"
+    },
     "abort_condition_refs": {
-      "type": "array", "minItems": 1, "maxItems": 64, "uniqueItems": true,
-      "items": { "$ref": "#/$defs/artifact_reference" }
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 64,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/artifact_reference"
+      }
     },
-    "stop_rule_ref": { "$ref": "#/$defs/artifact_reference" },
-    "preregistered_analysis_ref": { "$ref": "#/$defs/artifact_reference" },
-    "independent_validation_partition": { "$ref": "#/$defs/validation_partition" },
-    "preflight": { "$ref": "#/$defs/preflight" },
-    "planning_disposition": { "enum": ["eligible_for_planning", "blocked", "refused"] },
-    "reason_codes": { "type": "array", "maxItems": 64, "uniqueItems": true, "items": { "$ref": "#/$defs/identifier" } },
-    "authority_boundary": { "$ref": "#/$defs/authority_boundary" },
-    "experiment_contract_digest": { "$ref": "#/$defs/digest" }
+    "stop_rule_ref": {
+      "$ref": "#/$defs/artifact_reference"
+    },
+    "preregistered_analysis_ref": {
+      "$ref": "#/$defs/artifact_reference"
+    },
+    "independent_validation_partition": {
+      "$ref": "#/$defs/validation_partition"
+    },
+    "preflight": {
+      "$ref": "#/$defs/preflight"
+    },
+    "planning_disposition": {
+      "enum": [
+        "eligible_for_planning",
+        "blocked",
+        "refused"
+      ]
+    },
+    "reason_codes": {
+      "type": "array",
+      "maxItems": 64,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/identifier"
+      }
+    },
+    "authority_boundary": {
+      "$ref": "#/$defs/authority_boundary"
+    },
+    "experiment_contract_digest": {
+      "$ref": "#/$defs/digest"
+    }
   },
   "allOf": [
     {
-      "if": { "properties": { "planning_disposition": { "const": "eligible_for_planning" } }, "required": ["planning_disposition"] },
+      "if": {
+        "properties": {
+          "planning_disposition": {
+            "const": "eligible_for_planning"
+          }
+        },
+        "required": [
+          "planning_disposition"
+        ]
+      },
       "then": {
         "properties": {
-          "asset_binding": { "properties": { "hardware_identity_coverage_observation": { "const": "complete" }, "configuration_currentness": { "const": "current" } } },
-          "preflight": {
+          "asset_binding": {
             "properties": {
-              "observability": { "properties": { "applicability": { "const": "required" }, "disposition": { "const": "pass" } } },
-              "identifiability": { "properties": { "applicability": { "const": "required" }, "disposition": { "const": "pass" } } },
-              "excitation": { "properties": { "applicability": { "const": "required" }, "disposition": { "const": "pass" } } },
-              "measurement_capability": { "properties": { "applicability": { "const": "required" }, "disposition": { "const": "pass" } } },
-              "causal_identification": { "properties": { "disposition": { "enum": ["pass", "not_applicable"] } } },
-              "safety": { "properties": { "applicability": { "const": "required" }, "disposition": { "const": "pass" } } }
+              "hardware_identity_coverage_observation": {
+                "const": "complete"
+              },
+              "configuration_currentness": {
+                "const": "current"
+              }
             }
           },
-          "reason_codes": { "maxItems": 0 }
+          "preflight": {
+            "properties": {
+              "observability": {
+                "properties": {
+                  "applicability": {
+                    "const": "required"
+                  },
+                  "disposition": {
+                    "const": "pass"
+                  }
+                }
+              },
+              "identifiability": {
+                "properties": {
+                  "applicability": {
+                    "const": "required"
+                  },
+                  "disposition": {
+                    "const": "pass"
+                  }
+                }
+              },
+              "excitation": {
+                "properties": {
+                  "applicability": {
+                    "const": "required"
+                  },
+                  "disposition": {
+                    "const": "pass"
+                  }
+                }
+              },
+              "measurement_capability": {
+                "properties": {
+                  "applicability": {
+                    "const": "required"
+                  },
+                  "disposition": {
+                    "const": "pass"
+                  }
+                }
+              },
+              "causal_identification": {
+                "properties": {
+                  "disposition": {
+                    "enum": [
+                      "pass",
+                      "not_applicable"
+                    ]
+                  }
+                }
+              },
+              "safety": {
+                "properties": {
+                  "applicability": {
+                    "const": "required"
+                  },
+                  "disposition": {
+                    "const": "pass"
+                  }
+                }
+              }
+            }
+          },
+          "reason_codes": {
+            "maxItems": 0
+          }
         }
       },
-      "else": { "properties": { "reason_codes": { "minItems": 1 } } }
+      "else": {
+        "properties": {
+          "reason_codes": {
+            "minItems": 1
+          }
+        }
+      }
     },
     {
       "if": {
         "properties": {
           "asset_binding": {
-            "properties": { "hardware_identity_coverage_observation": { "not": { "const": "complete" } } },
-            "required": ["hardware_identity_coverage_observation"]
+            "properties": {
+              "hardware_identity_coverage_observation": {
+                "not": {
+                  "const": "complete"
+                }
+              }
+            },
+            "required": [
+              "hardware_identity_coverage_observation"
+            ]
           }
         },
-        "required": ["asset_binding"]
+        "required": [
+          "asset_binding"
+        ]
       },
-      "then": { "properties": { "planning_disposition": { "enum": ["blocked", "refused"] }, "reason_codes": { "minItems": 1 } } }
+      "then": {
+        "properties": {
+          "planning_disposition": {
+            "enum": [
+              "blocked",
+              "refused"
+            ]
+          },
+          "reason_codes": {
+            "minItems": 1
+          }
+        }
+      }
     }
   ],
   "$defs": {
-    "identifier": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$" },
-    "digest": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$"
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
     "artifact_reference": {
-      "type": "object", "additionalProperties": false,
-      "required": ["artifact_id", "digest", "media_type"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "digest",
+        "media_type"
+      ],
       "properties": {
-        "artifact_id": { "$ref": "#/$defs/identifier" }, "digest": { "$ref": "#/$defs/digest" },
-        "media_type": { "type": "string", "minLength": 1, "maxLength": 255 }
+        "artifact_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        }
       }
     },
     "record_reference": {
-      "type": "object", "additionalProperties": false,
-      "required": ["record_id", "version", "schema_id", "digest"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "record_id",
+        "version",
+        "schema_id",
+        "digest"
+      ],
       "properties": {
-        "record_id": { "$ref": "#/$defs/identifier" }, "version": { "type": "integer", "minimum": 1 },
-        "schema_id": { "type": "string", "pattern": "^urn:odeya:schema:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$" },
-        "digest": { "$ref": "#/$defs/digest" }
+        "record_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "schema_id": {
+          "type": "string",
+          "pattern": "^urn:odeya:schema:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        }
       }
     },
     "physical_quantity_reference": {
-      "allOf": [{ "$ref": "#/$defs/record_reference" }, { "properties": { "schema_id": { "const": "urn:odeya:schema:physical-quantity:0.1.0" } } }]
+      "allOf": [
+        {
+          "$ref": "#/$defs/record_reference"
+        },
+        {
+          "properties": {
+            "schema_id": {
+              "const": "urn:odeya:schema:physical-quantity:0.2.0"
+            }
+          }
+        }
+      ]
     },
     "asset_snapshot_reference": {
-      "allOf": [{ "$ref": "#/$defs/record_reference" }, { "properties": { "schema_id": { "const": "urn:odeya:schema:asset-configuration-snapshot:0.1.0" } } }]
+      "allOf": [
+        {
+          "$ref": "#/$defs/record_reference"
+        },
+        {
+          "properties": {
+            "schema_id": {
+              "const": "urn:odeya:schema:asset-configuration-snapshot:0.2.0"
+            }
+          }
+        }
+      ]
     },
     "physical_model_reference": {
-      "allOf": [{ "$ref": "#/$defs/record_reference" }, { "properties": { "schema_id": { "const": "urn:odeya:schema:physical-model-record:0.1.0" } } }]
+      "allOf": [
+        {
+          "$ref": "#/$defs/record_reference"
+        },
+        {
+          "properties": {
+            "schema_id": {
+              "const": "urn:odeya:schema:physical-model-record:0.2.0"
+            }
+          }
+        }
+      ]
     },
     "evidence_vector_reference": {
-      "allOf": [{ "$ref": "#/$defs/record_reference" }, { "properties": { "schema_id": { "const": "urn:odeya:schema:physical-evidence-vector:0.1.0" } } }]
+      "allOf": [
+        {
+          "$ref": "#/$defs/record_reference"
+        },
+        {
+          "properties": {
+            "schema_id": {
+              "const": "urn:odeya:schema:physical-evidence-vector:0.2.0"
+            }
+          }
+        }
+      ]
     },
     "safety_envelope_reference": {
-      "allOf": [{ "$ref": "#/$defs/record_reference" }, { "properties": { "schema_id": { "const": "urn:odeya:schema:safety-envelope:0.1.0" } } }]
+      "allOf": [
+        {
+          "$ref": "#/$defs/record_reference"
+        },
+        {
+          "properties": {
+            "schema_id": {
+              "const": "urn:odeya:schema:safety-envelope:0.2.0"
+            }
+          }
+        }
+      ]
     },
     "method_reference": {
-      "type": "object", "additionalProperties": false,
-      "required": ["method_id", "version", "registry_digest"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "method_id",
+        "version",
+        "registry_digest"
+      ],
       "properties": {
-        "method_id": { "$ref": "#/$defs/identifier" }, "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
-        "registry_digest": { "$ref": "#/$defs/digest" }
+        "method_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "registry_digest": {
+          "$ref": "#/$defs/digest"
+        }
       }
     },
     "design": {
-      "type": "object", "additionalProperties": false,
-      "required": ["randomization", "control_plan_ref", "blinding", "sampling_plan_ref", "feedback_policy_ref", "intervention_fidelity_ref", "manipulation_check_ref"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "randomization",
+        "control_plan_ref",
+        "blinding",
+        "sampling_plan_ref",
+        "feedback_policy_ref",
+        "intervention_fidelity_ref",
+        "manipulation_check_ref"
+      ],
       "properties": {
-        "randomization": { "enum": ["required", "not_required", "not_possible"] }, "control_plan_ref": { "$ref": "#/$defs/artifact_reference" },
-        "blinding": { "enum": ["required", "not_required", "not_possible"] }, "sampling_plan_ref": { "$ref": "#/$defs/artifact_reference" },
-        "feedback_policy_ref": { "$ref": "#/$defs/artifact_reference" }, "intervention_fidelity_ref": { "$ref": "#/$defs/artifact_reference" },
-        "manipulation_check_ref": { "$ref": "#/$defs/artifact_reference" }
+        "randomization": {
+          "enum": [
+            "required",
+            "not_required",
+            "not_possible"
+          ]
+        },
+        "control_plan_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        },
+        "blinding": {
+          "enum": [
+            "required",
+            "not_required",
+            "not_possible"
+          ]
+        },
+        "sampling_plan_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        },
+        "feedback_policy_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        },
+        "intervention_fidelity_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        },
+        "manipulation_check_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        }
       }
     },
     "measurement_plan": {
-      "type": "object", "additionalProperties": false,
-      "required": ["sensor_refs", "calibration_requirement_refs", "sampling_ref", "synchronization_ref", "bandwidth_requirement_refs", "resolution_requirement_refs", "measurement_method_refs"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sensor_refs",
+        "calibration_requirement_refs",
+        "sampling_ref",
+        "synchronization_ref",
+        "bandwidth_requirement_refs",
+        "resolution_requirement_refs",
+        "measurement_method_refs"
+      ],
       "properties": {
-        "sensor_refs": { "type": "array", "minItems": 1, "maxItems": 64, "uniqueItems": true, "items": { "$ref": "#/$defs/record_reference" } },
-        "calibration_requirement_refs": { "type": "array", "minItems": 1, "maxItems": 64, "uniqueItems": true, "items": { "$ref": "#/$defs/artifact_reference" } },
-        "sampling_ref": { "$ref": "#/$defs/artifact_reference" }, "synchronization_ref": { "$ref": "#/$defs/artifact_reference" },
-        "bandwidth_requirement_refs": { "type": "array", "minItems": 1, "maxItems": 64, "uniqueItems": true, "items": { "$ref": "#/$defs/physical_quantity_reference" } },
-        "resolution_requirement_refs": { "type": "array", "minItems": 1, "maxItems": 64, "uniqueItems": true, "items": { "$ref": "#/$defs/physical_quantity_reference" } },
-        "measurement_method_refs": { "type": "array", "minItems": 1, "maxItems": 64, "uniqueItems": true, "items": { "$ref": "#/$defs/method_reference" } }
+        "sensor_refs": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 64,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/record_reference"
+          }
+        },
+        "calibration_requirement_refs": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 64,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/artifact_reference"
+          }
+        },
+        "sampling_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        },
+        "synchronization_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        },
+        "bandwidth_requirement_refs": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 64,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/physical_quantity_reference"
+          }
+        },
+        "resolution_requirement_refs": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 64,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/physical_quantity_reference"
+          }
+        },
+        "measurement_method_refs": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 64,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/method_reference"
+          }
+        }
       }
     },
     "asset_binding": {
-      "type": "object", "additionalProperties": false,
-      "required": ["asset_configuration_snapshot_ref", "hardware_identity_coverage_observation", "configuration_currentness", "observation_evidence_ref", "reason_codes"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "asset_configuration_snapshot_ref",
+        "hardware_identity_coverage_observation",
+        "configuration_currentness",
+        "observation_evidence_ref",
+        "reason_codes"
+      ],
       "properties": {
-        "asset_configuration_snapshot_ref": { "$ref": "#/$defs/asset_snapshot_reference" },
-        "hardware_identity_coverage_observation": { "enum": ["complete", "partial", "unknown"] },
-        "configuration_currentness": { "enum": ["current", "expired", "invalidated", "unknown"] },
-        "observation_evidence_ref": { "$ref": "#/$defs/artifact_reference" },
-        "reason_codes": { "type": "array", "maxItems": 32, "uniqueItems": true, "items": { "$ref": "#/$defs/identifier" } }
-      },
-      "allOf": [{
-        "if": {
-          "properties": { "hardware_identity_coverage_observation": { "const": "complete" }, "configuration_currentness": { "const": "current" } },
-          "required": ["hardware_identity_coverage_observation", "configuration_currentness"]
+        "asset_configuration_snapshot_ref": {
+          "$ref": "#/$defs/asset_snapshot_reference"
         },
-        "then": { "properties": { "reason_codes": { "maxItems": 0 } } },
-        "else": { "properties": { "reason_codes": { "minItems": 1 } } }
-      }]
-    },
-    "validation_partition": {
-      "type": "object", "additionalProperties": false,
-      "required": ["partition_id", "data_manifest_ref", "selection_rule_ref", "independence_group_id", "data_origin", "independent_from_calibration", "simulation_substitution_permitted"],
-      "properties": {
-        "partition_id": { "$ref": "#/$defs/identifier" }, "data_manifest_ref": { "$ref": "#/$defs/artifact_reference" },
-        "selection_rule_ref": { "$ref": "#/$defs/artifact_reference" }, "independence_group_id": { "$ref": "#/$defs/identifier" },
-        "data_origin": { "const": "physical_world_measurement" }, "independent_from_calibration": { "const": true },
-        "simulation_substitution_permitted": { "const": false }
-      }
-    },
-    "preflight_check": {
-      "type": "object", "additionalProperties": false,
-      "required": ["check_id", "applicability", "disposition", "method_ref", "evidence_refs", "reason_codes"],
-      "properties": {
-        "check_id": { "enum": ["observability", "identifiability", "excitation", "measurement_capability", "causal_identification", "safety"] },
-        "applicability": { "enum": ["required", "not_applicable"] },
-        "disposition": { "enum": ["pass", "fail", "indeterminate", "not_applicable"] },
-        "method_ref": { "$ref": "#/$defs/method_reference" },
-        "evidence_refs": { "type": "array", "maxItems": 128, "uniqueItems": true, "items": { "$ref": "#/$defs/artifact_reference" } },
-        "reason_codes": { "type": "array", "maxItems": 32, "uniqueItems": true, "items": { "$ref": "#/$defs/identifier" } }
+        "hardware_identity_coverage_observation": {
+          "enum": [
+            "complete",
+            "partial",
+            "unknown"
+          ]
+        },
+        "configuration_currentness": {
+          "enum": [
+            "current",
+            "expired",
+            "invalidated",
+            "unknown"
+          ]
+        },
+        "observation_evidence_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        },
+        "reason_codes": {
+          "type": "array",
+          "maxItems": 32,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        }
       },
       "allOf": [
         {
-          "if": { "properties": { "applicability": { "const": "not_applicable" } }, "required": ["applicability"] },
-          "then": { "properties": { "disposition": { "const": "not_applicable" } } },
-          "else": { "properties": { "disposition": { "enum": ["pass", "fail", "indeterminate"] } } }
+          "if": {
+            "properties": {
+              "hardware_identity_coverage_observation": {
+                "const": "complete"
+              },
+              "configuration_currentness": {
+                "const": "current"
+              }
+            },
+            "required": [
+              "hardware_identity_coverage_observation",
+              "configuration_currentness"
+            ]
+          },
+          "then": {
+            "properties": {
+              "reason_codes": {
+                "maxItems": 0
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "reason_codes": {
+                "minItems": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    "validation_partition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "partition_id",
+        "data_manifest_ref",
+        "selection_rule_ref",
+        "independence_group_id",
+        "data_origin",
+        "independent_from_calibration",
+        "simulation_substitution_permitted"
+      ],
+      "properties": {
+        "partition_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "data_manifest_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        },
+        "selection_rule_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        },
+        "independence_group_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "data_origin": {
+          "const": "physical_world_measurement"
+        },
+        "independent_from_calibration": {
+          "const": true
+        },
+        "simulation_substitution_permitted": {
+          "const": false
+        }
+      }
+    },
+    "preflight_check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "check_id",
+        "applicability",
+        "disposition",
+        "method_ref",
+        "evidence_refs",
+        "reason_codes"
+      ],
+      "properties": {
+        "check_id": {
+          "enum": [
+            "observability",
+            "identifiability",
+            "excitation",
+            "measurement_capability",
+            "causal_identification",
+            "safety"
+          ]
+        },
+        "applicability": {
+          "enum": [
+            "required",
+            "not_applicable"
+          ]
+        },
+        "disposition": {
+          "enum": [
+            "pass",
+            "fail",
+            "indeterminate",
+            "not_applicable"
+          ]
+        },
+        "method_ref": {
+          "$ref": "#/$defs/method_reference"
+        },
+        "evidence_refs": {
+          "type": "array",
+          "maxItems": 128,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/artifact_reference"
+          }
+        },
+        "reason_codes": {
+          "type": "array",
+          "maxItems": 32,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "applicability": {
+                "const": "not_applicable"
+              }
+            },
+            "required": [
+              "applicability"
+            ]
+          },
+          "then": {
+            "properties": {
+              "disposition": {
+                "const": "not_applicable"
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "disposition": {
+                "enum": [
+                  "pass",
+                  "fail",
+                  "indeterminate"
+                ]
+              }
+            }
+          }
         },
         {
-          "if": { "properties": { "disposition": { "const": "pass" } }, "required": ["disposition"] },
-          "then": { "properties": { "evidence_refs": { "minItems": 1 }, "reason_codes": { "maxItems": 0 } } },
+          "if": {
+            "properties": {
+              "disposition": {
+                "const": "pass"
+              }
+            },
+            "required": [
+              "disposition"
+            ]
+          },
+          "then": {
+            "properties": {
+              "evidence_refs": {
+                "minItems": 1
+              },
+              "reason_codes": {
+                "maxItems": 0
+              }
+            }
+          },
           "else": {
-            "if": { "properties": { "disposition": { "enum": ["fail", "indeterminate"] } }, "required": ["disposition"] },
-            "then": { "properties": { "reason_codes": { "minItems": 1 } } }
+            "if": {
+              "properties": {
+                "disposition": {
+                  "enum": [
+                    "fail",
+                    "indeterminate"
+                  ]
+                }
+              },
+              "required": [
+                "disposition"
+              ]
+            },
+            "then": {
+              "properties": {
+                "reason_codes": {
+                  "minItems": 1
+                }
+              }
+            }
           }
         }
       ]
     },
     "preflight": {
-      "type": "object", "additionalProperties": false,
-      "required": ["observability", "identifiability", "excitation", "measurement_capability", "causal_identification", "safety"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "observability",
+        "identifiability",
+        "excitation",
+        "measurement_capability",
+        "causal_identification",
+        "safety"
+      ],
       "properties": {
-        "observability": { "allOf": [{ "$ref": "#/$defs/preflight_check" }, { "properties": { "check_id": { "const": "observability" } } }] },
-        "identifiability": { "allOf": [{ "$ref": "#/$defs/preflight_check" }, { "properties": { "check_id": { "const": "identifiability" } } }] },
-        "excitation": { "allOf": [{ "$ref": "#/$defs/preflight_check" }, { "properties": { "check_id": { "const": "excitation" } } }] },
-        "measurement_capability": { "allOf": [{ "$ref": "#/$defs/preflight_check" }, { "properties": { "check_id": { "const": "measurement_capability" } } }] },
-        "causal_identification": { "allOf": [{ "$ref": "#/$defs/preflight_check" }, { "properties": { "check_id": { "const": "causal_identification" } } }] },
-        "safety": { "allOf": [{ "$ref": "#/$defs/preflight_check" }, { "properties": { "check_id": { "const": "safety" } } }] }
+        "observability": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/preflight_check"
+            },
+            {
+              "properties": {
+                "check_id": {
+                  "const": "observability"
+                }
+              }
+            }
+          ]
+        },
+        "identifiability": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/preflight_check"
+            },
+            {
+              "properties": {
+                "check_id": {
+                  "const": "identifiability"
+                }
+              }
+            }
+          ]
+        },
+        "excitation": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/preflight_check"
+            },
+            {
+              "properties": {
+                "check_id": {
+                  "const": "excitation"
+                }
+              }
+            }
+          ]
+        },
+        "measurement_capability": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/preflight_check"
+            },
+            {
+              "properties": {
+                "check_id": {
+                  "const": "measurement_capability"
+                }
+              }
+            }
+          ]
+        },
+        "causal_identification": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/preflight_check"
+            },
+            {
+              "properties": {
+                "check_id": {
+                  "const": "causal_identification"
+                }
+              }
+            }
+          ]
+        },
+        "safety": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/preflight_check"
+            },
+            {
+              "properties": {
+                "check_id": {
+                  "const": "safety"
+                }
+              }
+            }
+          ]
+        }
       }
     },
     "authority_boundary": {
-      "type": "object", "additionalProperties": false,
-      "required": ["proposal_only", "recommendation_only", "execution_authorized", "direct_actuation_permitted", "authority_self_issued", "execution_authority_ref", "actuator_gateway_command_ref", "separate_authority_service_required"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "proposal_only",
+        "recommendation_only",
+        "execution_authorized",
+        "direct_actuation_permitted",
+        "authority_self_issued",
+        "execution_authority_ref",
+        "actuator_gateway_command_ref",
+        "separate_authority_service_required"
+      ],
       "properties": {
-        "proposal_only": { "const": true }, "recommendation_only": { "const": true }, "execution_authorized": { "const": false },
-        "direct_actuation_permitted": { "const": false }, "authority_self_issued": { "const": false },
-        "execution_authority_ref": { "type": "null" }, "actuator_gateway_command_ref": { "type": "null" },
-        "separate_authority_service_required": { "const": true }
+        "proposal_only": {
+          "const": true
+        },
+        "recommendation_only": {
+          "const": true
+        },
+        "execution_authorized": {
+          "const": false
+        },
+        "direct_actuation_permitted": {
+          "const": false
+        },
+        "authority_self_issued": {
+          "const": false
+        },
+        "execution_authority_ref": {
+          "type": "null"
+        },
+        "actuator_gateway_command_ref": {
+          "type": "null"
+        },
+        "separate_authority_service_required": {
+          "const": true
+        }
       }
     }
   }

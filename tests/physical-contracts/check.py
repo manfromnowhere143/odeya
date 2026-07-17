@@ -35,9 +35,14 @@ SCHEMAS = {
     "experiment": "schemas/physical-experiment-contract.schema.json",
 }
 DEPENDENCY_ORDER = list(SCHEMAS)
+# identities follow the live schema bytes: a reissue wave bumps versions and
+# the factories must construct records against the identity that governs now
 SCHEMA_URNS = {
-    key: f"urn:odeya:schema:{Path(path).name.removesuffix('.schema.json')}:0.1.0"
+    key: json.loads((ROOT / path).read_text("utf-8"))["$id"]
     for key, path in SCHEMAS.items()
+}
+SCHEMA_VERSIONS = {
+    key: urn.rsplit(":", 1)[1] for key, urn in SCHEMA_URNS.items()
 }
 EXPECTED_DECIMAL_PATTERN = (
     r"^(0(?:\.[0-9]+)?|[1-9][0-9]*(?:\.[0-9]+)?|"
@@ -48,6 +53,18 @@ EXPECTED_UTC_PATTERN = (
     r"[0-9]{2}\.[0-9]{6}Z$"
 )
 
+
+
+def governed_decimal(value: object) -> object:
+    """Unwrap a frozen typed scientific-decimal object to its lexical string.
+
+    The D3 wave migrated decimal leaves to closed objects carrying `decimal`
+    (or `elements`), `semantic_type`, `unit`, and `precision`. Semantic checks
+    must keep firing on the lexical value inside, never silently skip.
+    """
+    if isinstance(value, dict) and "decimal" in value and "semantic_type" in value:
+        return value["decimal"]
+    return value
 
 def reject_duplicate_keys(pairs: list[tuple[str, object]]) -> dict[str, object]:
     result: dict[str, object] = {}
@@ -89,11 +106,11 @@ def measurement_ref(name: str) -> dict[str, object]:
 
 def quantity() -> dict[str, object]:
     return {
-        "schema_version": "0.1.0",
+        "schema_version": SCHEMA_VERSIONS["quantity"],
         "quantity_id": "quantity.force",
         "version": 1,
         "quantity_kind": "force",
-        "value": {"representation": "exact_decimal", "exact_decimal": "12.5"},
+        "value": {"representation": "exact_decimal", "exact_decimal": {"decimal": "12.5", "semantic_type": "measured_quantity", "unit": "dimensionless", "precision": "exact_lexical"}},
         "unit": {
             "unit_id": "si:newton",
             "registry_ref": record("unit-registry.si", "urn:odeya:registry:unit-registry:1.0.0", "3"),
@@ -115,7 +132,7 @@ def quantity() -> dict[str, object]:
             },
             "conversion_to_si": {
                 "conversion_class": "multiplicative",
-                "scale": "1",
+                "scale": {"decimal": "1", "semantic_type": "unit_conversion_factor", "unit": "dimensionless", "precision": "exact_lexical"},
                 "offset": "0",
                 "ordinary_multiplication_permitted": True,
                 "conversion_method_ref": record(
@@ -173,7 +190,7 @@ def uncertainty() -> dict[str, object]:
     a = contribution("u-repeatability", "repeatability", "1")
     b = contribution("u-calibration", "calibration", "2")
     return {
-        "schema_version": "0.1.0",
+        "schema_version": SCHEMA_VERSIONS["uncertainty"],
         "uncertainty_budget_id": "uncertainty.force",
         "version": 1,
         "subject_quantity_refs": [quantity_ref()],
@@ -196,8 +213,8 @@ def uncertainty() -> dict[str, object]:
         "dependence_model": {
             "representation": "covariance_and_correlation",
             "variable_quantity_refs": [quantity_ref("quantity.u-repeatability"), quantity_ref("quantity.u-calibration")],
-            "covariance_matrix": [["0.04", "0.01"], ["0.01", "0.09"]],
-            "correlation_matrix": [["1", "0.1666666667"], ["0.1666666667", "1"]],
+            "covariance_matrix": {"elements": [["0.04", "0.01"], ["0.01", "0.09"]], "semantic_type": "covariance_element", "unit": "pairwise_unit_product", "precision": "exact_lexical"},
+            "correlation_matrix": {"elements": [["1", "0.1666666667"], ["0.1666666667", "1"]], "semantic_type": "correlation_coefficient", "unit": "dimensionless", "precision": "exact_lexical"},
             "matrix_unit_rule_ref": artifact("matrix-unit-rule.force", "5"),
             "shared_source_groups": [
                 {
@@ -229,8 +246,8 @@ def uncertainty() -> dict[str, object]:
             "status": "computed",
             "combined_standard_uncertainty_ref": quantity_ref("quantity.u-combined"),
             "expanded_uncertainty_ref": quantity_ref("quantity.u-expanded"),
-            "coverage_factor": "2",
-            "coverage_probability": "0.95",
+            "coverage_factor": {"decimal": "2", "semantic_type": "coverage_factor", "unit": "dimensionless", "precision": "exact_lexical"},
+            "coverage_probability": {"decimal": "0.95", "semantic_type": "interval_confidence_level", "unit": "dimensionless", "precision": "6"},
             "distribution_ref": record("distribution.force", "urn:odeya:schema:distribution-record:1.0.0", "e"),
             "reason_codes": [],
         },
@@ -276,7 +293,7 @@ def state(name: str, nibble: str) -> dict[str, object]:
 
 def asset() -> dict[str, object]:
     return {
-        "schema_version": "0.1.0",
+        "schema_version": SCHEMA_VERSIONS["asset"],
         "asset_configuration_snapshot_id": "asset-snapshot.inbar-rig",
         "version": 1,
         "asset_ref": record("asset.inbar-rig", "urn:odeya:schema:physical-asset:1.0.0", "3"),
@@ -333,7 +350,7 @@ def quality_flag(name: str) -> dict[str, object]:
 
 def measurement() -> dict[str, object]:
     return {
-        "schema_version": "0.1.0",
+        "schema_version": SCHEMA_VERSIONS["measurement"],
         "physical_measurement_result_id": "measurement.inbar.validation",
         "version": 1,
         "mission_id": "mission.inbar",
@@ -411,7 +428,7 @@ def model() -> dict[str, object]:
     calibration_measurement = measurement_ref("measurement.inbar.calibration")
     validation_measurement = measurement_ref("measurement.inbar.validation")
     return {
-        "schema_version": "0.1.0",
+        "schema_version": SCHEMA_VERSIONS["model"],
         "physical_model_record_id": "physical-model.inbar-load-response",
         "version": 1,
         "mission_id": "mission.inbar",
@@ -574,7 +591,7 @@ def evidence() -> dict[str, object]:
         "p12_release",
     ]
     return {
-        "schema_version": "0.1.0",
+        "schema_version": SCHEMA_VERSIONS["evidence"],
         "physical_evidence_vector_id": "physical-evidence.inbar",
         "version": 1,
         "mission_id": "mission.inbar",
@@ -613,7 +630,7 @@ def failure_behavior(kind: str) -> dict[str, object]:
 
 def safety() -> dict[str, object]:
     return {
-        "schema_version": "0.1.0",
+        "schema_version": SCHEMA_VERSIONS["safety"],
         "safety_envelope_id": "safety-envelope.inbar",
         "version": 1,
         "mission_id": "mission.inbar",
@@ -693,7 +710,7 @@ def preflight(name: str) -> dict[str, object]:
 
 def experiment() -> dict[str, object]:
     return {
-        "schema_version": "0.1.0",
+        "schema_version": SCHEMA_VERSIONS["experiment"],
         "physical_experiment_contract_id": "experiment.inbar-load-excitation",
         "version": 1,
         "mission_id": "mission.inbar",
@@ -839,7 +856,7 @@ def quantity_semantics(value: dict[str, object]) -> list[str]:
 
 def decimal_matrix(matrix: list[list[str]], name: str, errors: list[str]) -> list[list[Decimal]] | None:
     try:
-        return [[Decimal(cell) for cell in row] for row in matrix]
+        return [[Decimal(governed_decimal(cell)) for cell in row] for row in matrix]
     except InvalidOperation:
         errors.append(f"{name}: invalid decimal")
         return None
@@ -859,6 +876,8 @@ def uncertainty_semantics(value: dict[str, object]) -> list[str]:
     n = len(variables)
     for matrix_name in ("covariance_matrix", "correlation_matrix"):
         raw = value["dependence_model"][matrix_name]
+        if isinstance(raw, dict) and "elements" in raw and "semantic_type" in raw:
+            raw = raw["elements"]
         if len(raw) != n or any(len(row) != n for row in raw):
             errors.append(f"dependence_model.{matrix_name}: must be square and match variable count")
             continue
@@ -884,8 +903,8 @@ def uncertainty_semantics(value: dict[str, object]) -> list[str]:
     if not set(trace_ids).issubset(set(all_ids)):
         errors.append("calibration_traceability: unresolved uncertainty contribution identity")
     if value["combined_result"]["status"] == "computed":
-        probability = Decimal(value["combined_result"]["coverage_probability"])
-        factor = Decimal(value["combined_result"]["coverage_factor"])
+        probability = Decimal(governed_decimal(value["combined_result"]["coverage_probability"]))
+        factor = Decimal(governed_decimal(value["combined_result"]["coverage_factor"]))
         if not Decimal("0") < probability <= Decimal("1"):
             errors.append("combined_result.coverage_probability: must lie in (0, 1]")
         if factor <= 0:
@@ -1134,11 +1153,14 @@ CASES = [
     Case("quantity-detects-unit-symbol-masquerade", "quantity", semantic="invalid", mutate=set_path("unit.symbol", "kg")),
     Case("quantity-detects-dimension-masquerade", "quantity", semantic="invalid", mutate=set_path("unit.dimension_vector.mass", 0)),
     Case("quantity-detects-reversed-time-interval", "quantity", semantic="invalid", mutate=interval_reversed),
-    Case("quantity-accepts-legitimate-negative-nonzero", "quantity", semantic="valid", mutate=set_path("value.exact_decimal", "-0.125")),
-    Case("quantity-rejects-negative-zero-integer", "quantity", structural="invalid", mutate=set_path("value.exact_decimal", "-0")),
-    Case("quantity-rejects-negative-zero-fraction", "quantity", structural="invalid", mutate=set_path("value.exact_decimal", "-0.0")),
-    Case("quantity-rejects-exponent-decimal", "quantity", structural="invalid", mutate=set_path("value.exact_decimal", "1e3")),
-    Case("quantity-rejects-leading-zero-decimal", "quantity", structural="invalid", mutate=set_path("value.exact_decimal", "01")),
+    Case("quantity-accepts-legitimate-negative-nonzero", "quantity", semantic="valid", mutate=set_path("value.exact_decimal.decimal", "-0.125")),
+    Case("quantity-rejects-negative-zero-integer", "quantity", structural="invalid", mutate=set_path("value.exact_decimal.decimal", "-0")),
+    Case("quantity-rejects-negative-zero-fraction", "quantity", structural="invalid", mutate=set_path("value.exact_decimal.decimal", "-0.0")),
+    # the frozen scientific-decimal contract admits lowercase exponents and
+    # rejects the uppercase form; the trap follows the profile, not the retired
+    # local no-exponent rule
+    Case("quantity-rejects-uppercase-exponent-decimal", "quantity", structural="invalid", mutate=set_path("value.exact_decimal.decimal", "1E3")),
+    Case("quantity-rejects-leading-zero-decimal", "quantity", structural="invalid", mutate=set_path("value.exact_decimal.decimal", "01")),
     Case("quantity-rejects-offset-time", "quantity", structural="invalid", mutate=set_path("support.time.start", "2026-07-16T10:00:00.000000+02:00")),
     Case("quantity-rejects-nonmicrosecond-time", "quantity", structural="invalid", mutate=set_path("support.time.start", "2026-07-16T08:00:00Z")),
     Case("quantity-rejects-offset-frame-epoch", "quantity", structural="invalid", mutate=set_path("support.frame.frame.epoch", "2026-07-16T10:00:00.000000+02:00")),
@@ -1146,15 +1168,15 @@ CASES = [
     Case("uncertainty-valid-type-and-nature-partitions", "uncertainty", semantic="valid", fixture="uncertainty-budget.valid.json"),
     Case("uncertainty-detects-type-a-type-b-overlap", "uncertainty", semantic="invalid", mutate=type_partition_overlap),
     Case("uncertainty-detects-missing-nature-classification", "uncertainty", semantic="invalid", mutate=delete_path("nature_classification.1")),
-    Case("uncertainty-detects-nonsquare-covariance", "uncertainty", semantic="invalid", mutate=delete_path("dependence_model.covariance_matrix.1.1")),
-    Case("uncertainty-detects-asymmetric-covariance", "uncertainty", semantic="invalid", mutate=set_path("dependence_model.covariance_matrix.0.1", "0.02")),
-    Case("uncertainty-detects-correlation-out-of-range", "uncertainty", semantic="invalid", mutate=compose(set_path("dependence_model.correlation_matrix.0.1", "1.2"), set_path("dependence_model.correlation_matrix.1.0", "1.2"))),
-    Case("uncertainty-detects-correlation-diagonal-not-one", "uncertainty", semantic="invalid", mutate=set_path("dependence_model.correlation_matrix.0.0", "0.9")),
+    Case("uncertainty-detects-nonsquare-covariance", "uncertainty", semantic="invalid", mutate=delete_path("dependence_model.covariance_matrix.elements.1.1")),
+    Case("uncertainty-detects-asymmetric-covariance", "uncertainty", semantic="invalid", mutate=set_path("dependence_model.covariance_matrix.elements.0.1", "0.02")),
+    Case("uncertainty-detects-correlation-out-of-range", "uncertainty", semantic="invalid", mutate=compose(set_path("dependence_model.correlation_matrix.elements.0.1", "1.2"), set_path("dependence_model.correlation_matrix.elements.1.0", "1.2"))),
+    Case("uncertainty-detects-correlation-diagonal-not-one", "uncertainty", semantic="invalid", mutate=set_path("dependence_model.correlation_matrix.elements.0.0", "0.9")),
     Case("uncertainty-detects-unresolved-shared-source", "uncertainty", semantic="invalid", mutate=set_path("dependence_model.shared_source_groups.0.contribution_ids.1", "u-unknown")),
     Case("uncertainty-rejects-unknown-traceability-pass", "uncertainty", structural="invalid", mutate=compose(set_path("calibration_traceability.status", "unknown"), set_path("calibration_traceability.reason_codes", ["traceability-unknown"]))),
     Case("uncertainty-rejects-not-computed-pass", "uncertainty", structural="invalid", mutate=noncomputed_pass),
-    Case("uncertainty-rejects-negative-zero-covariance", "uncertainty", structural="invalid", mutate=set_path("dependence_model.covariance_matrix.0.0", "-0")),
-    Case("uncertainty-accepts-negative-nonzero-covariance", "uncertainty", semantic="valid", mutate=compose(set_path("dependence_model.covariance_matrix.0.1", "-0.01"), set_path("dependence_model.covariance_matrix.1.0", "-0.01"))),
+    Case("uncertainty-rejects-negative-zero-covariance", "uncertainty", structural="invalid", mutate=set_path("dependence_model.covariance_matrix.elements.0.0", "-0")),
+    Case("uncertainty-accepts-negative-nonzero-covariance", "uncertainty", semantic="valid", mutate=compose(set_path("dependence_model.covariance_matrix.elements.0.1", "-0.01"), set_path("dependence_model.covariance_matrix.elements.1.0", "-0.01"))),
 
     Case("asset-valid-complete-hardware", "asset", semantic="valid"),
     Case("asset-valid-inbar-unknown-hardware-blocked", "asset", semantic="valid", fixture="asset-configuration-snapshot.inbar-blocked.valid.json"),
@@ -1199,7 +1221,7 @@ CASES = [
     Case("safety-rejects-unknown-hardware-as-supported", "safety", structural="invalid", mutate=set_path("asset_hardware_coverage_observation", "unknown")),
     Case("safety-rejects-direct-actuation", "safety", structural="invalid", mutate=set_path("actuator_boundary.direct_actuation_permitted", True)),
     Case("safety-rejects-self-granted-actuator-authority", "safety", structural="invalid", mutate=set_path("actuator_boundary.actuator_authority_granted", True)),
-    Case("safety-rejects-inline-execution-authority", "safety", structural="invalid", mutate=set_path("actuator_boundary.execution_authority_ref", record("authority.inline", "urn:odeya:schema:authority-grant:0.3.0", "5"))),
+    Case("safety-rejects-inline-execution-authority", "safety", structural="invalid", mutate=set_path("actuator_boundary.execution_authority_ref", record("authority.inline", "urn:odeya:schema:authority-grant:0.4.0", "5"))),
     Case("safety-rejects-hard-guarantee-from-chance-constraint", "safety", structural="invalid", mutate=set_path("safe_set.hard_guarantee_claimed", True)),
     Case("safety-detects-reversed-validity", "safety", semantic="invalid", mutate=set_path("validity.expires_at", "2026-07-15T00:00:00.000000Z")),
     Case("safety-rejects-offset-validity-time", "safety", structural="invalid", mutate=set_path("validity.valid_from", "2026-07-16T03:00:00.000000+03:00")),
@@ -1213,7 +1235,7 @@ CASES = [
     Case("experiment-rejects-simulation-validation-partition", "experiment", structural="invalid", mutate=set_path("independent_validation_partition.data_origin", "simulation")),
     Case("experiment-rejects-direct-actuation", "experiment", structural="invalid", mutate=set_path("authority_boundary.direct_actuation_permitted", True)),
     Case("experiment-rejects-self-issued-authority", "experiment", structural="invalid", mutate=set_path("authority_boundary.authority_self_issued", True)),
-    Case("experiment-rejects-inline-execution-authority", "experiment", structural="invalid", mutate=set_path("authority_boundary.execution_authority_ref", record("authority.inline", "urn:odeya:schema:authority-grant:0.3.0", "5"))),
+    Case("experiment-rejects-inline-execution-authority", "experiment", structural="invalid", mutate=set_path("authority_boundary.execution_authority_ref", record("authority.inline", "urn:odeya:schema:authority-grant:0.4.0", "5"))),
     Case("experiment-rejects-required-causal-check-marked-na", "experiment", structural="invalid", mutate=set_path("preflight.causal_identification.disposition", "not_applicable")),
 ]
 
@@ -1330,7 +1352,14 @@ def main() -> int:
             subject = FACTORIES[case.kind]()
         subject = copy.deepcopy(subject)
         if case.mutate:
-            case.mutate(subject)
+            try:
+                case.mutate(subject)
+            except (KeyError, IndexError, TypeError) as exc:
+                failures.append(
+                    f"{case.name}: mutation could not be applied to the current "
+                    f"subject shape: {type(exc).__name__}: {exc}"
+                )
+                continue
         structural_errors = sorted(validators[case.kind].iter_errors(subject), key=lambda item: list(item.path))
         actual_structural = "invalid" if structural_errors else "valid"
         if actual_structural != case.structural:

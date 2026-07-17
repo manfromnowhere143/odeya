@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:research-event:0.9.0",
+  "$id": "urn:odeya:schema:research-event:0.10.0",
   "title": "Odeya ResearchEvent",
   "description": "Architecture-only candidate event envelope for portfolio, pre-mission, mission, authority, incident, learning, data-governance, and recovery streams. Every branch owns exactly one aggregate and one orthogonal fact. The urn:odeya:event-payload logical type is distinct from this JSON Schema resource identity. ResearchEvent 0.7.0 has no frozen per-branch contract extraction/canonicalization profile, so its payload contract digest is necessarily null and every instance is not admitted, not dispatchable, and not replay-authoritative. A future resolved form requires a new ResearchEvent resource identity. Domain-separated digest shapes name exact JSON Pointer subjects; schema validation does not recompute or cryptographically verify them.",
   "type": "object",
@@ -33,7 +33,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.9.0"
+      "const": "0.10.0"
     },
     "event_id": {
       "$ref": "#/$defs/identifier"
@@ -10762,7 +10762,31 @@
               ]
             },
             "value": {
-              "$ref": "#/$defs/nonnegative_decimal_string"
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "decimal",
+                "precision",
+                "semantic_type",
+                "unit"
+              ],
+              "properties": {
+                "decimal": {
+                  "type": "string",
+                  "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+                },
+                "semantic_type": {
+                  "const": "resource_amount"
+                },
+                "unit": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "precision": {
+                  "type": "string",
+                  "pattern": "^(?:0|[1-9][0-9]{0,2}|exact_lexical)$"
+                }
+              }
             }
           }
         },
@@ -10795,7 +10819,29 @@
               "const": "minor_currency_unit"
             },
             "value": {
-              "$ref": "#/$defs/nonnegative_decimal_string"
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "decimal",
+                "precision",
+                "semantic_type",
+                "unit"
+              ],
+              "properties": {
+                "decimal": {
+                  "type": "string",
+                  "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+                },
+                "semantic_type": {
+                  "const": "monetary_amount"
+                },
+                "unit": {
+                  "const": "iso4217_minor_unit"
+                },
+                "precision": {
+                  "const": "0"
+                }
+              }
             }
           }
         },
@@ -10829,7 +10875,29 @@
               "const": "capacity_slot"
             },
             "value": {
-              "$ref": "#/$defs/nonnegative_decimal_string"
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "decimal",
+                "precision",
+                "semantic_type",
+                "unit"
+              ],
+              "properties": {
+                "decimal": {
+                  "type": "string",
+                  "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+                },
+                "semantic_type": {
+                  "const": "resource_amount"
+                },
+                "unit": {
+                  "const": "capacity_slot"
+                },
+                "precision": {
+                  "const": "0"
+                }
+              }
             }
           }
         }
@@ -11802,7 +11870,7 @@
         {
           "properties": {
             "schema_id": {
-              "const": "urn:odeya:schema:protocol-snapshot:0.2.0"
+              "const": "urn:odeya:schema:protocol-snapshot:0.3.0"
             }
           },
           "required": [
@@ -12225,7 +12293,31 @@
         "value": {
           "oneOf": [
             {
-              "$ref": "#/$defs/decimal_string"
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "decimal",
+                "precision",
+                "semantic_type",
+                "unit"
+              ],
+              "properties": {
+                "decimal": {
+                  "type": "string",
+                  "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+                },
+                "semantic_type": {
+                  "const": "measured_quantity"
+                },
+                "unit": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "precision": {
+                  "type": "string",
+                  "pattern": "^(?:0|[1-9][0-9]{0,2}|exact_lexical)$"
+                }
+              }
             },
             {
               "type": "null"
@@ -12263,7 +12355,31 @@
           "then": {
             "properties": {
               "value": {
-                "$ref": "#/$defs/decimal_string"
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "decimal",
+                  "precision",
+                  "semantic_type",
+                  "unit"
+                ],
+                "properties": {
+                  "decimal": {
+                    "type": "string",
+                    "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+                  },
+                  "semantic_type": {
+                    "const": "measured_quantity"
+                  },
+                  "unit": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "precision": {
+                    "type": "string",
+                    "pattern": "^(?:0|[1-9][0-9]{0,2}|exact_lexical)$"
+                  }
+                }
               }
             }
           }
@@ -14476,7 +14592,7 @@
         {
           "properties": {
             "schema_id": {
-              "const": "urn:odeya:schema:work-contract:0.7.0"
+              "const": "urn:odeya:schema:work-contract:0.9.0"
             }
           },
           "required": [

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:research-state-view:0.2.0",
+  "$id": "urn:odeya:schema:research-state-view:0.3.0",
   "title": "Odeya ResearchStateView",
   "description": "An immutable, exposure-bounded model input compiled at one exact canonical position. Command candidates bind exact registry member, activation, and membership-proof bytes; graph absence is not fabricated as version zero. The view is data, never authority; every proposed command is re-admitted against current state and grants.",
   "type": "object",
@@ -41,7 +41,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.2.0"
+      "const": "0.3.0"
     },
     "record_status": {
       "const": "derived_non_authoritative"
@@ -1218,7 +1218,31 @@
           ]
         },
         "limit": {
-          "$ref": "#/$defs/nonnegative_decimal"
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "decimal",
+            "precision",
+            "semantic_type",
+            "unit"
+          ],
+          "properties": {
+            "decimal": {
+              "type": "string",
+              "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+            },
+            "semantic_type": {
+              "const": "resource_amount"
+            },
+            "unit": {
+              "type": "string",
+              "minLength": 1
+            },
+            "precision": {
+              "type": "string",
+              "pattern": "^(?:0|[1-9][0-9]{0,2}|exact_lexical)$"
+            }
+          }
         },
         "unit_ref": {
           "$ref": "#/$defs/immutable_reference"
@@ -1234,7 +1258,30 @@
       ],
       "properties": {
         "amount": {
-          "$ref": "#/$defs/nonnegative_decimal"
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "decimal",
+            "precision",
+            "semantic_type",
+            "unit"
+          ],
+          "properties": {
+            "decimal": {
+              "type": "string",
+              "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+            },
+            "semantic_type": {
+              "const": "monetary_amount"
+            },
+            "unit": {
+              "const": "iso4217_major_unit"
+            },
+            "precision": {
+              "type": "string",
+              "pattern": "^(?:0|[1-9][0-9]{0,2}|exact_lexical)$"
+            }
+          }
         },
         "currency": {
           "type": "string",

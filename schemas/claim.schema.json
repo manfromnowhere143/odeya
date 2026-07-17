@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:claim-version:0.4.0",
+  "$id": "urn:odeya:schema:claim-version:0.5.0",
   "title": "Odeya ClaimVersion",
   "description": "An immutable semantic claim version compiled from a proposal and an adjudication. Operational, verification, replication, transport, and publication state remain separate aggregates and are referenced rather than embedded.",
   "type": "object",
@@ -30,7 +30,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.4.0"
+      "const": "0.5.0"
     },
     "claim_id": {
       "$ref": "#/$defs/identifier"
@@ -584,7 +584,31 @@
       ],
       "properties": {
         "value": {
-          "$ref": "#/$defs/decimal_string"
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "decimal",
+            "precision",
+            "semantic_type",
+            "unit"
+          ],
+          "properties": {
+            "decimal": {
+              "type": "string",
+              "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+            },
+            "semantic_type": {
+              "const": "measured_quantity"
+            },
+            "unit": {
+              "type": "string",
+              "minLength": 1
+            },
+            "precision": {
+              "type": "string",
+              "pattern": "^(?:0|[1-9][0-9]{0,2}|exact_lexical)$"
+            }
+          }
         },
         "unit": {
           "$ref": "#/$defs/unit"
@@ -628,10 +652,31 @@
         "estimate": {
           "oneOf": [
             {
-              "$ref": "#/$defs/quantity"
-            },
-            {
-              "$ref": "#/$defs/artifact_reference"
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "decimal",
+                "precision",
+                "semantic_type",
+                "unit"
+              ],
+              "properties": {
+                "decimal": {
+                  "type": "string",
+                  "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+                },
+                "semantic_type": {
+                  "const": "measured_quantity"
+                },
+                "unit": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "precision": {
+                  "type": "string",
+                  "pattern": "^(?:0|[1-9][0-9]{0,2}|exact_lexical)$"
+                }
+              }
             },
             {
               "type": "null"
@@ -651,13 +696,83 @@
               ],
               "properties": {
                 "lower": {
-                  "$ref": "#/$defs/quantity"
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "decimal",
+                    "precision",
+                    "semantic_type",
+                    "unit"
+                  ],
+                  "properties": {
+                    "decimal": {
+                      "type": "string",
+                      "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+                    },
+                    "semantic_type": {
+                      "const": "measured_quantity"
+                    },
+                    "unit": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "precision": {
+                      "type": "string",
+                      "pattern": "^(?:0|[1-9][0-9]{0,2}|exact_lexical)$"
+                    }
+                  }
                 },
                 "upper": {
-                  "$ref": "#/$defs/quantity"
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "decimal",
+                    "precision",
+                    "semantic_type",
+                    "unit"
+                  ],
+                  "properties": {
+                    "decimal": {
+                      "type": "string",
+                      "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+                    },
+                    "semantic_type": {
+                      "const": "measured_quantity"
+                    },
+                    "unit": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "precision": {
+                      "type": "string",
+                      "pattern": "^(?:0|[1-9][0-9]{0,2}|exact_lexical)$"
+                    }
+                  }
                 },
                 "level": {
-                  "$ref": "#/$defs/decimal_string"
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "decimal",
+                    "precision",
+                    "semantic_type",
+                    "unit"
+                  ],
+                  "properties": {
+                    "decimal": {
+                      "type": "string",
+                      "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+                    },
+                    "semantic_type": {
+                      "const": "interval_confidence_level"
+                    },
+                    "unit": {
+                      "const": "dimensionless"
+                    },
+                    "precision": {
+                      "const": "6"
+                    }
+                  }
                 },
                 "interval_type": {
                   "enum": [

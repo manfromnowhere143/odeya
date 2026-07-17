@@ -232,12 +232,213 @@ def decimal_shape(schema: dict[str, Any], node: Any, depth: int = 0) -> bool:
     return False
 
 
+FROZEN_DECIMAL_PATTERN = (
+    "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+)
+GOVERNED_DECIMAL_MEMBERS = ("precision", "semantic_type", "unit")
+
+
+def load_semantic_type_registry() -> tuple[str, ...]:
+    """Frozen semantic-type registry from the profile core; fails closed.
+
+    The governed-decimal exemption below is a gate that can hide findings, so
+    its vocabulary must come from the frozen profile core, never from this
+    file. When the core or the registry is absent or malformed, the registry
+    is empty and nothing is governed: every decimal keeps counting.
+    """
+    path = ROOT / "architecture/canonicalization-profile-core-candidate.json"
+    try:
+        core = load(path)
+        registry = core["scientific_decimal_contract"]["typed_object_contract"][
+            "semantic_type_registry"
+        ]
+    except (OSError, ValueError, KeyError, TypeError):
+        return ()
+    if not isinstance(registry, list) or not all(
+        isinstance(item, str) for item in registry
+    ):
+        return ()
+    return tuple(registry)
+
+
+SEMANTIC_TYPE_REGISTRY = load_semantic_type_registry()
+
+
+def frozen_lexical_decimal(node: Any) -> bool:
+    return (
+        isinstance(node, dict)
+        and node.get("type") == "string"
+        and node.get("pattern") == FROZEN_DECIMAL_PATTERN
+    )
+
+
+def governed_decimal_object(schema: dict[str, Any], node: Any) -> bool:
+    """Exactly the frozen typed scientific-decimal object; nothing looser.
+
+    Shape law (profile core, scientific_decimal_contract.typed_object_contract):
+    a closed object carrying exactly one value member -- `decimal` with the
+    frozen lexical pattern, or `elements` as an array of arrays of frozen
+    lexical decimals -- plus `semantic_type` (a const in the frozen registry),
+    `unit`, and `precision`, all required. Any deviation is ungoverned and
+    keeps counting as a finding.
+    """
+    resolved = resolve_local(schema, node)
+    if not isinstance(resolved, dict) or resolved.get("type") != "object":
+        return False
+    if resolved.get("additionalProperties") is not False:
+        return False
+    properties = resolved.get("properties")
+    if not isinstance(properties, dict):
+        return False
+    keys = set(properties)
+    value_members = keys & {"decimal", "elements"}
+    if len(value_members) != 1 or keys != value_members | set(GOVERNED_DECIMAL_MEMBERS):
+        return False
+    required = resolved.get("required")
+    if not isinstance(required, list) or set(required) != keys:
+        return False
+    if "decimal" in keys:
+        if not frozen_lexical_decimal(properties["decimal"]):
+            return False
+    else:
+        elements = properties["elements"]
+        rows = elements.get("items") if isinstance(elements, dict) else None
+        cells = rows.get("items") if isinstance(rows, dict) else None
+        if not (
+            isinstance(elements, dict)
+            and elements.get("type") == "array"
+            and isinstance(rows, dict)
+            and rows.get("type") == "array"
+            and frozen_lexical_decimal(cells)
+        ):
+            return False
+    semantic_type = properties["semantic_type"]
+    if not isinstance(semantic_type, dict):
+        return False
+    declared = semantic_type.get("const")
+    if declared not in SEMANTIC_TYPE_REGISTRY:
+        return False
+    for member in ("unit", "precision"):
+        if not isinstance(properties[member], dict):
+            return False
+    return True
+
+
+def governed_decimal_prefixes(schema: dict[str, Any]) -> tuple[str, ...]:
+    prefixes: set[str] = set()
+    for parts, node in walk(schema):
+        if isinstance(node, dict) and "$ref" not in node and governed_decimal_object(
+            schema, node
+        ):
+            prefixes.add(pointer(parts))
+    return tuple(sorted(prefixes))
+
+
 def generic_decimal_uses(schema: dict[str, Any]) -> list[str]:
     results: set[str] = set()
+    prefixes = governed_decimal_prefixes(schema)
     for parts, name, node in property_nodes(schema):
+        path = pointer(parts)
+        if any(path.startswith(prefix + "/") for prefix in prefixes):
+            continue
         if decimal_shape(schema, node) and SCIENTIFIC_FIELD.search(name):
-            results.add(pointer(parts))
+            results.add(path)
     return sorted(results)
+
+
+def detector_self_test() -> list[str]:
+    """Known-bad proofs for the governed-decimal exemption (ADR 0024).
+
+    The exemption can hide findings, so every run proves it admits exactly the
+    frozen shape: a governed scalar and matrix produce zero findings, and each
+    single-member near-miss keeps producing findings. A failure refuses the
+    audit entirely.
+    """
+    failures: list[str] = []
+    if not SEMANTIC_TYPE_REGISTRY:
+        failures.append(
+            "semantic-type registry unavailable from the profile core; "
+            "the governed-decimal exemption has no vocabulary"
+        )
+        return failures
+
+    def scalar() -> dict[str, Any]:
+        return {
+            "type": "object",
+            "additionalProperties": False,
+            "required": ["decimal", "precision", "semantic_type", "unit"],
+            "properties": {
+                "decimal": {"type": "string", "pattern": FROZEN_DECIMAL_PATTERN},
+                "semantic_type": {"const": SEMANTIC_TYPE_REGISTRY[0]},
+                "unit": {"const": "seconds"},
+                "precision": {"const": "6"},
+            },
+        }
+
+    def matrix() -> dict[str, Any]:
+        node = scalar()
+        del node["properties"]["decimal"]
+        node["properties"]["elements"] = {
+            "type": "array",
+            "items": {
+                "type": "array",
+                "items": {"type": "string", "pattern": FROZEN_DECIMAL_PATTERN},
+            },
+        }
+        node["required"] = ["elements", "precision", "semantic_type", "unit"]
+        return node
+
+    def audit_of(node: dict[str, Any]) -> list[str]:
+        return generic_decimal_uses(
+            {
+                "$id": "urn:odeya:schema:detector-self-test:0.0.0",
+                "type": "object",
+                "properties": {"cost_value": node},
+            }
+        )
+
+    if audit_of(scalar()):
+        failures.append("governed scalar decimal was counted as a finding")
+    if audit_of(matrix()):
+        failures.append("governed matrix decimal was counted as a finding")
+
+    plain = {"type": "string", "pattern": FROZEN_DECIMAL_PATTERN}
+    if not audit_of(plain):
+        failures.append("bare lexical decimal produced no finding; positive control dead")
+
+    near_misses: list[tuple[str, dict[str, Any]]] = []
+    missing_unit = scalar()
+    del missing_unit["properties"]["unit"]
+    missing_unit["required"] = ["decimal", "precision", "semantic_type"]
+    near_misses.append(("missing unit member", missing_unit))
+    alien_type = scalar()
+    alien_type["properties"]["semantic_type"] = {"const": "not_a_registered_type"}
+    near_misses.append(("semantic type outside the frozen registry", alien_type))
+    wrong_pattern = scalar()
+    wrong_pattern["properties"]["decimal"] = {
+        "type": "string",
+        "pattern": "^-?[0-9]+(\\.[0-9]+)?$",
+    }
+    near_misses.append(("decimal pattern differs from the frozen lexical law", wrong_pattern))
+    open_object = scalar()
+    open_object["additionalProperties"] = True
+    near_misses.append(("additionalProperties not rejected", open_object))
+    extra_member = scalar()
+    extra_member["properties"]["comment"] = {"type": "string"}
+    near_misses.append(("undeclared extra member admitted", extra_member))
+    unrequired = scalar()
+    unrequired["required"] = ["decimal", "semantic_type"]
+    near_misses.append(("members present but not required", unrequired))
+    both_values = scalar()
+    both_values["properties"]["elements"] = matrix()["properties"]["elements"]
+    near_misses.append(("both decimal and elements value members", both_values))
+    unconstrained_type = scalar()
+    unconstrained_type["properties"]["semantic_type"] = {"type": "string"}
+    near_misses.append(("semantic type unconstrained instead of const", unconstrained_type))
+    for label, node in near_misses:
+        if not audit_of(node):
+            failures.append(f"near-miss admitted as governed: {label}")
+    return failures
 
 
 def digest_fields(schema: dict[str, Any]) -> list[dict[str, Any]]:
@@ -289,6 +490,12 @@ def canonical_profile_bindings(schema: dict[str, Any]) -> list[dict[str, Any]]:
 
 
 def main() -> int:
+    self_test_failures = detector_self_test()
+    if self_test_failures:
+        for failure in self_test_failures:
+            print(f"detector self-test failed: {failure}", file=sys.stderr)
+        return 2
+
     schema_records: list[dict[str, Any]] = []
     definition_variants: dict[str, dict[str, list[dict[str, str]]]] = defaultdict(
         lambda: defaultdict(list)

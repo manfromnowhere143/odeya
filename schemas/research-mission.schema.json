@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:research-mission:0.3.0",
+  "$id": "urn:odeya:schema:research-mission:0.4.0",
   "title": "Odeya ResearchMissionSpec",
   "description": "The single canonical, pre-execution contract for an Odeya research mission.",
   "type": "object",
@@ -37,7 +37,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.3.0"
+      "const": "0.4.0"
     },
     "mission_id": {
       "$ref": "#/$defs/identifier"
@@ -490,7 +490,29 @@
               "level": {
                 "oneOf": [
                   {
-                    "$ref": "#/$defs/decimal_string"
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "decimal",
+                      "precision",
+                      "semantic_type",
+                      "unit"
+                    ],
+                    "properties": {
+                      "decimal": {
+                        "type": "string",
+                        "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+                      },
+                      "semantic_type": {
+                        "const": "interval_confidence_level"
+                      },
+                      "unit": {
+                        "const": "dimensionless"
+                      },
+                      "precision": {
+                        "const": "6"
+                      }
+                    }
                   },
                   {
                     "const": "not_applicable"
@@ -568,7 +590,31 @@
             "else": {
               "properties": {
                 "threshold": {
-                  "$ref": "#/$defs/quantity"
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "decimal",
+                    "precision",
+                    "semantic_type",
+                    "unit"
+                  ],
+                  "properties": {
+                    "decimal": {
+                      "type": "string",
+                      "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+                    },
+                    "semantic_type": {
+                      "const": "registered_quantity"
+                    },
+                    "unit": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "precision": {
+                      "type": "string",
+                      "pattern": "^(?:0|[1-9][0-9]{0,2}|exact_lexical)$"
+                    }
+                  }
                 }
               }
             }
@@ -709,31 +755,94 @@
       ],
       "properties": {
         "wall_time_seconds": {
-          "$ref": "#/$defs/nonnegative_or_unknown"
+          "oneOf": [
+            {
+              "$ref": "#/$defs/governed_wall_time_seconds"
+            },
+            {
+              "const": "unknown"
+            }
+          ]
         },
         "model_tokens": {
-          "$ref": "#/$defs/nonnegative_or_unknown"
+          "oneOf": [
+            {
+              "$ref": "#/$defs/governed_model_tokens"
+            },
+            {
+              "const": "unknown"
+            }
+          ]
         },
         "cpu_seconds": {
-          "$ref": "#/$defs/nonnegative_or_unknown"
+          "oneOf": [
+            {
+              "$ref": "#/$defs/governed_cpu_seconds"
+            },
+            {
+              "const": "unknown"
+            }
+          ]
         },
         "memory_gib_seconds": {
-          "$ref": "#/$defs/nonnegative_or_unknown"
+          "oneOf": [
+            {
+              "$ref": "#/$defs/governed_memory_gib_seconds"
+            },
+            {
+              "const": "unknown"
+            }
+          ]
         },
         "accelerator_seconds": {
-          "$ref": "#/$defs/nonnegative_or_unknown"
+          "oneOf": [
+            {
+              "$ref": "#/$defs/governed_accelerator_seconds"
+            },
+            {
+              "const": "unknown"
+            }
+          ]
         },
         "storage_bytes": {
-          "$ref": "#/$defs/nonnegative_or_unknown"
+          "oneOf": [
+            {
+              "$ref": "#/$defs/governed_storage_bytes"
+            },
+            {
+              "const": "unknown"
+            }
+          ]
         },
         "network_bytes": {
-          "$ref": "#/$defs/nonnegative_or_unknown"
+          "oneOf": [
+            {
+              "$ref": "#/$defs/governed_network_bytes"
+            },
+            {
+              "const": "unknown"
+            }
+          ]
         },
         "external_cost_usd": {
-          "$ref": "#/$defs/nonnegative_or_unknown"
+          "oneOf": [
+            {
+              "$ref": "#/$defs/governed_external_cost_usd"
+            },
+            {
+              "const": "unknown"
+            }
+          ]
         },
         "human_hours": {
-          "$ref": "#/$defs/nonnegative_or_unknown"
+          "oneOf": [
+            {
+              "$ref": "#/$defs/governed_human_hours"
+            },
+            {
+              "const": "unknown"
+            }
+          ]
         }
       }
     },
@@ -997,31 +1106,31 @@
           "resource_budget": {
             "properties": {
               "wall_time_seconds": {
-                "$ref": "#/$defs/nonnegative_number"
+                "$ref": "#/$defs/governed_wall_time_seconds"
               },
               "model_tokens": {
-                "$ref": "#/$defs/nonnegative_number"
+                "$ref": "#/$defs/governed_model_tokens"
               },
               "cpu_seconds": {
-                "$ref": "#/$defs/nonnegative_number"
+                "$ref": "#/$defs/governed_cpu_seconds"
               },
               "memory_gib_seconds": {
-                "$ref": "#/$defs/nonnegative_number"
+                "$ref": "#/$defs/governed_memory_gib_seconds"
               },
               "accelerator_seconds": {
-                "$ref": "#/$defs/nonnegative_number"
+                "$ref": "#/$defs/governed_accelerator_seconds"
               },
               "storage_bytes": {
-                "$ref": "#/$defs/nonnegative_number"
+                "$ref": "#/$defs/governed_storage_bytes"
               },
               "network_bytes": {
-                "$ref": "#/$defs/nonnegative_number"
+                "$ref": "#/$defs/governed_network_bytes"
               },
               "external_cost_usd": {
-                "$ref": "#/$defs/nonnegative_number"
+                "$ref": "#/$defs/governed_external_cost_usd"
               },
               "human_hours": {
-                "$ref": "#/$defs/nonnegative_number"
+                "$ref": "#/$defs/governed_human_hours"
               }
             }
           },
@@ -1200,7 +1309,31 @@
       ],
       "properties": {
         "value": {
-          "$ref": "#/$defs/decimal_string"
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "decimal",
+            "precision",
+            "semantic_type",
+            "unit"
+          ],
+          "properties": {
+            "decimal": {
+              "type": "string",
+              "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+            },
+            "semantic_type": {
+              "const": "registered_quantity"
+            },
+            "unit": {
+              "type": "string",
+              "minLength": 1
+            },
+            "precision": {
+              "type": "string",
+              "pattern": "^(?:0|[1-9][0-9]{0,2}|exact_lexical)$"
+            }
+          }
         },
         "unit": {
           "$ref": "#/$defs/unit"
@@ -1384,21 +1517,6 @@
         "minLength": 1
       }
     },
-    "nonnegative_or_unknown": {
-      "oneOf": [
-        {
-          "type": "number",
-          "minimum": 0
-        },
-        {
-          "const": "unknown"
-        }
-      ]
-    },
-    "nonnegative_number": {
-      "type": "number",
-      "minimum": 0
-    },
     "artifact_reference": {
       "type": "object",
       "additionalProperties": false,
@@ -1486,6 +1604,232 @@
         "null_result",
         "inconclusive"
       ]
+    },
+    "governed_wall_time_seconds": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "decimal",
+        "precision",
+        "semantic_type",
+        "unit"
+      ],
+      "properties": {
+        "decimal": {
+          "type": "string",
+          "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+        },
+        "semantic_type": {
+          "const": "duration_seconds"
+        },
+        "unit": {
+          "const": "seconds"
+        },
+        "precision": {
+          "const": "6"
+        }
+      }
+    },
+    "governed_model_tokens": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "decimal",
+        "precision",
+        "semantic_type",
+        "unit"
+      ],
+      "properties": {
+        "decimal": {
+          "type": "string",
+          "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+        },
+        "semantic_type": {
+          "const": "resource_amount"
+        },
+        "unit": {
+          "const": "tokens"
+        },
+        "precision": {
+          "const": "0"
+        }
+      }
+    },
+    "governed_cpu_seconds": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "decimal",
+        "precision",
+        "semantic_type",
+        "unit"
+      ],
+      "properties": {
+        "decimal": {
+          "type": "string",
+          "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+        },
+        "semantic_type": {
+          "const": "duration_seconds"
+        },
+        "unit": {
+          "const": "seconds"
+        },
+        "precision": {
+          "const": "6"
+        }
+      }
+    },
+    "governed_memory_gib_seconds": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "decimal",
+        "precision",
+        "semantic_type",
+        "unit"
+      ],
+      "properties": {
+        "decimal": {
+          "type": "string",
+          "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+        },
+        "semantic_type": {
+          "const": "memory_gib_seconds"
+        },
+        "unit": {
+          "const": "GiB*s"
+        },
+        "precision": {
+          "const": "6"
+        }
+      }
+    },
+    "governed_accelerator_seconds": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "decimal",
+        "precision",
+        "semantic_type",
+        "unit"
+      ],
+      "properties": {
+        "decimal": {
+          "type": "string",
+          "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+        },
+        "semantic_type": {
+          "const": "duration_seconds"
+        },
+        "unit": {
+          "const": "seconds"
+        },
+        "precision": {
+          "const": "6"
+        }
+      }
+    },
+    "governed_storage_bytes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "decimal",
+        "precision",
+        "semantic_type",
+        "unit"
+      ],
+      "properties": {
+        "decimal": {
+          "type": "string",
+          "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+        },
+        "semantic_type": {
+          "const": "byte_count"
+        },
+        "unit": {
+          "const": "bytes"
+        },
+        "precision": {
+          "const": "0"
+        }
+      }
+    },
+    "governed_network_bytes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "decimal",
+        "precision",
+        "semantic_type",
+        "unit"
+      ],
+      "properties": {
+        "decimal": {
+          "type": "string",
+          "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+        },
+        "semantic_type": {
+          "const": "byte_count"
+        },
+        "unit": {
+          "const": "bytes"
+        },
+        "precision": {
+          "const": "0"
+        }
+      }
+    },
+    "governed_external_cost_usd": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "decimal",
+        "precision",
+        "semantic_type",
+        "unit"
+      ],
+      "properties": {
+        "decimal": {
+          "type": "string",
+          "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+        },
+        "semantic_type": {
+          "const": "monetary_amount_usd"
+        },
+        "unit": {
+          "const": "USD"
+        },
+        "precision": {
+          "type": "string",
+          "pattern": "^(?:0|[1-9][0-9]{0,2}|exact_lexical)$"
+        }
+      }
+    },
+    "governed_human_hours": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "decimal",
+        "precision",
+        "semantic_type",
+        "unit"
+      ],
+      "properties": {
+        "decimal": {
+          "type": "string",
+          "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+        },
+        "semantic_type": {
+          "const": "human_effort_hours"
+        },
+        "unit": {
+          "const": "hours"
+        },
+        "precision": {
+          "const": "2"
+        }
+      }
     }
   }
 }

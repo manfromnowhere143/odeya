@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:method-registry:0.2.0",
+  "$id": "urn:odeya:schema:method-registry:0.3.0",
   "title": "Odeya MethodRegistry",
   "description": "An immutable versioned registry of scientific, statistical, measurement, numerical, and physical methods. Structural validity does not admit a method: exact guarantees, assumptions, vectors, independent implementations, and accountable review are separate semantic obligations.",
   "type": "object",
@@ -24,7 +24,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.2.0"
+      "const": "0.3.0"
     },
     "registry_id": {
       "$ref": "#/$defs/identifier"
@@ -592,7 +592,29 @@
             "level": {
               "oneOf": [
                 {
-                  "$ref": "#/$defs/decimal"
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "decimal",
+                    "precision",
+                    "semantic_type",
+                    "unit"
+                  ],
+                  "properties": {
+                    "decimal": {
+                      "type": "string",
+                      "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+                    },
+                    "semantic_type": {
+                      "const": "interval_confidence_level"
+                    },
+                    "unit": {
+                      "const": "dimensionless"
+                    },
+                    "precision": {
+                      "const": "6"
+                    }
+                  }
                 },
                 {
                   "type": "null"

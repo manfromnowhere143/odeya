@@ -28,6 +28,18 @@ SCHEMAS = (
 )
 
 
+
+def governed_decimal(value: object) -> object:
+    """Unwrap a frozen typed scientific-decimal object to its lexical string.
+
+    The D3 wave migrated decimal leaves to closed objects carrying `decimal`
+    (or `elements`), `semantic_type`, `unit`, and `precision`. Semantic checks
+    must keep firing on the lexical value inside, never silently skip.
+    """
+    if isinstance(value, dict) and "decimal" in value and "semantic_type" in value:
+        return value["decimal"]
+    return value
+
 def load_json(path: Path) -> Any:
     return json.loads(path.read_text(encoding="utf-8"))
 
@@ -171,15 +183,15 @@ def snapshot_semantics(instance: dict[str, Any]) -> list[str]:
         numeric_value = quantity["numeric_value"]
         if numeric_value is not None:
             try:
-                Decimal(numeric_value)
+                Decimal(governed_decimal(numeric_value))
             except (InvalidOperation, TypeError, ValueError):
                 errors.append(f"quantitative_displays[{index}] numeric value is not an exact decimal string")
         interval = quantity["interval"]
         if interval is None:
             continue
         try:
-            lower = Decimal(interval["lower"])
-            upper = Decimal(interval["upper"])
+            lower = Decimal(governed_decimal(interval["lower"]))
+            upper = Decimal(governed_decimal(interval["upper"]))
         except (InvalidOperation, TypeError, ValueError):
             errors.append(f"quantitative_displays[{index}] interval is not exact decimal strings")
             continue
@@ -328,7 +340,7 @@ def walk(node: Any):
 def schema_audit() -> list[str]:
     errors: list[str] = []
     expected_ids = {
-        "schemas/projection-snapshot.schema.json": "urn:odeya:schema:projection-snapshot:0.2.0",
+        "schemas/projection-snapshot.schema.json": "urn:odeya:schema:projection-snapshot:0.3.0",
         "schemas/projection-redaction-manifest.schema.json": "urn:odeya:schema:projection-redaction-manifest:0.2.0",
         "schemas/reducer-equivalence-result.schema.json": "urn:odeya:schema:reducer-equivalence-result:0.2.0",
         "schemas/projection-impact-record.schema.json": "urn:odeya:schema:projection-impact-record:0.2.0",

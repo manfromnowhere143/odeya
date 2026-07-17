@@ -1,296 +1,937 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:uncertainty-budget:0.1.0",
+  "$id": "urn:odeya:schema:uncertainty-budget:0.2.0",
   "title": "Odeya UncertaintyBudget",
   "description": "An immutable uncertainty budget that keeps Type A/Type B evaluation origin separate from aleatory/epistemic nature, retains covariance/correlation and shared-source provenance, and fails closed on incomplete calibration traceability. Structural validity does not prove matrix arithmetic, source independence, calibration truth, or coverage semantics.",
   "type": "object",
   "additionalProperties": false,
   "required": [
-    "schema_version", "uncertainty_budget_id", "version", "subject_quantity_refs",
-    "evaluation_method_ref", "evaluation_origin", "nature_classification", "dependence_model",
-    "calibration_traceability", "propagation", "combined_result", "disposition", "reason_codes",
-    "evidence_refs", "budget_digest"
+    "schema_version",
+    "uncertainty_budget_id",
+    "version",
+    "subject_quantity_refs",
+    "evaluation_method_ref",
+    "evaluation_origin",
+    "nature_classification",
+    "dependence_model",
+    "calibration_traceability",
+    "propagation",
+    "combined_result",
+    "disposition",
+    "reason_codes",
+    "evidence_refs",
+    "budget_digest"
   ],
   "properties": {
-    "schema_version": { "const": "0.1.0" },
-    "uncertainty_budget_id": { "$ref": "#/$defs/identifier" },
-    "version": { "type": "integer", "minimum": 1 },
-    "subject_quantity_refs": {
-      "type": "array", "minItems": 1, "maxItems": 128, "uniqueItems": true,
-      "items": { "$ref": "#/$defs/physical_quantity_reference" }
+    "schema_version": {
+      "const": "0.2.0"
     },
-    "evaluation_method_ref": { "$ref": "#/$defs/method_reference" },
+    "uncertainty_budget_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "subject_quantity_refs": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 128,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/physical_quantity_reference"
+      }
+    },
+    "evaluation_method_ref": {
+      "$ref": "#/$defs/method_reference"
+    },
     "evaluation_origin": {
-      "type": "object", "additionalProperties": false,
-      "required": ["type_a", "type_b"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type_a",
+        "type_b"
+      ],
       "properties": {
-        "type_a": { "$ref": "#/$defs/contribution_partition" },
-        "type_b": { "$ref": "#/$defs/contribution_partition" }
+        "type_a": {
+          "$ref": "#/$defs/contribution_partition"
+        },
+        "type_b": {
+          "$ref": "#/$defs/contribution_partition"
+        }
       }
     },
     "nature_classification": {
-      "type": "array", "minItems": 1, "maxItems": 256, "uniqueItems": true,
-      "items": { "$ref": "#/$defs/nature_assignment" }
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 256,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/nature_assignment"
+      }
     },
-    "dependence_model": { "$ref": "#/$defs/dependence_model" },
-    "calibration_traceability": { "$ref": "#/$defs/calibration_traceability" },
-    "propagation": { "$ref": "#/$defs/propagation" },
-    "combined_result": { "$ref": "#/$defs/combined_result" },
-    "disposition": { "enum": ["pass", "fail", "indeterminate"] },
+    "dependence_model": {
+      "$ref": "#/$defs/dependence_model"
+    },
+    "calibration_traceability": {
+      "$ref": "#/$defs/calibration_traceability"
+    },
+    "propagation": {
+      "$ref": "#/$defs/propagation"
+    },
+    "combined_result": {
+      "$ref": "#/$defs/combined_result"
+    },
+    "disposition": {
+      "enum": [
+        "pass",
+        "fail",
+        "indeterminate"
+      ]
+    },
     "reason_codes": {
-      "type": "array", "maxItems": 64, "uniqueItems": true,
-      "items": { "$ref": "#/$defs/identifier" }
+      "type": "array",
+      "maxItems": 64,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/identifier"
+      }
     },
     "evidence_refs": {
-      "type": "array", "minItems": 1, "maxItems": 128, "uniqueItems": true,
-      "items": { "$ref": "#/$defs/artifact_reference" }
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 128,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/artifact_reference"
+      }
     },
-    "budget_digest": { "$ref": "#/$defs/digest" }
+    "budget_digest": {
+      "$ref": "#/$defs/digest"
+    }
   },
   "allOf": [
     {
       "if": {
         "properties": {
           "calibration_traceability": {
-            "properties": { "status": { "not": { "const": "complete" } } },
-            "required": ["status"]
+            "properties": {
+              "status": {
+                "not": {
+                  "const": "complete"
+                }
+              }
+            },
+            "required": [
+              "status"
+            ]
           }
         },
-        "required": ["calibration_traceability"]
+        "required": [
+          "calibration_traceability"
+        ]
       },
-      "then": { "properties": { "disposition": { "enum": ["fail", "indeterminate"] } } }
+      "then": {
+        "properties": {
+          "disposition": {
+            "enum": [
+              "fail",
+              "indeterminate"
+            ]
+          }
+        }
+      }
     },
     {
       "if": {
         "properties": {
           "combined_result": {
-            "properties": { "status": { "not": { "const": "computed" } } },
-            "required": ["status"]
+            "properties": {
+              "status": {
+                "not": {
+                  "const": "computed"
+                }
+              }
+            },
+            "required": [
+              "status"
+            ]
           }
         },
-        "required": ["combined_result"]
+        "required": [
+          "combined_result"
+        ]
       },
-      "then": { "properties": { "disposition": { "enum": ["fail", "indeterminate"] } } }
-    },
-    {
-      "if": { "properties": { "disposition": { "const": "pass" } }, "required": ["disposition"] },
       "then": {
         "properties": {
-          "calibration_traceability": { "properties": { "status": { "const": "complete" } } },
-          "combined_result": { "properties": { "status": { "const": "computed" } } },
-          "reason_codes": { "maxItems": 0 }
+          "disposition": {
+            "enum": [
+              "fail",
+              "indeterminate"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "disposition": {
+            "const": "pass"
+          }
+        },
+        "required": [
+          "disposition"
+        ]
+      },
+      "then": {
+        "properties": {
+          "calibration_traceability": {
+            "properties": {
+              "status": {
+                "const": "complete"
+              }
+            }
+          },
+          "combined_result": {
+            "properties": {
+              "status": {
+                "const": "computed"
+              }
+            }
+          },
+          "reason_codes": {
+            "maxItems": 0
+          }
         }
       },
-      "else": { "properties": { "reason_codes": { "minItems": 1 } } }
+      "else": {
+        "properties": {
+          "reason_codes": {
+            "minItems": 1
+          }
+        }
+      }
     }
   ],
   "$defs": {
-    "identifier": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$" },
-    "digest": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
-    "decimal": { "type": "string", "pattern": "^(0(?:\\.[0-9]+)?|[1-9][0-9]*(?:\\.[0-9]+)?|-(?:[1-9][0-9]*(?:\\.[0-9]+)?|0\\.[0-9]*[1-9][0-9]*))$" },
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$"
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "decimal": {
+      "type": "string",
+      "pattern": "^(0(?:\\.[0-9]+)?|[1-9][0-9]*(?:\\.[0-9]+)?|-(?:[1-9][0-9]*(?:\\.[0-9]+)?|0\\.[0-9]*[1-9][0-9]*))$"
+    },
     "artifact_reference": {
-      "type": "object", "additionalProperties": false,
-      "required": ["artifact_id", "digest", "media_type"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "digest",
+        "media_type"
+      ],
       "properties": {
-        "artifact_id": { "$ref": "#/$defs/identifier" },
-        "digest": { "$ref": "#/$defs/digest" },
-        "media_type": { "type": "string", "minLength": 1, "maxLength": 255 }
+        "artifact_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        }
       }
     },
     "record_reference": {
-      "type": "object", "additionalProperties": false,
-      "required": ["record_id", "version", "schema_id", "digest"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "record_id",
+        "version",
+        "schema_id",
+        "digest"
+      ],
       "properties": {
-        "record_id": { "$ref": "#/$defs/identifier" },
-        "version": { "type": "integer", "minimum": 1 },
-        "schema_id": { "type": "string", "pattern": "^urn:odeya:schema:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$" },
-        "digest": { "$ref": "#/$defs/digest" }
+        "record_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "schema_id": {
+          "type": "string",
+          "pattern": "^urn:odeya:schema:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        }
       }
     },
     "physical_quantity_reference": {
       "allOf": [
-        { "$ref": "#/$defs/record_reference" },
-        { "properties": { "schema_id": { "const": "urn:odeya:schema:physical-quantity:0.1.0" } } }
+        {
+          "$ref": "#/$defs/record_reference"
+        },
+        {
+          "properties": {
+            "schema_id": {
+              "const": "urn:odeya:schema:physical-quantity:0.2.0"
+            }
+          }
+        }
       ]
     },
     "method_reference": {
-      "type": "object", "additionalProperties": false,
-      "required": ["method_id", "version", "registry_digest"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "method_id",
+        "version",
+        "registry_digest"
+      ],
       "properties": {
-        "method_id": { "$ref": "#/$defs/identifier" },
-        "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
-        "registry_digest": { "$ref": "#/$defs/digest" }
+        "method_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "registry_digest": {
+          "$ref": "#/$defs/digest"
+        }
       }
     },
     "contribution": {
-      "type": "object", "additionalProperties": false,
+      "type": "object",
+      "additionalProperties": false,
       "required": [
-        "contribution_id", "source_kind", "standard_uncertainty_ref", "degrees_of_freedom",
-        "sensitivity_coefficient_ref", "source_provenance_ref", "calibration_chain_member_refs"
+        "contribution_id",
+        "source_kind",
+        "standard_uncertainty_ref",
+        "degrees_of_freedom",
+        "sensitivity_coefficient_ref",
+        "source_provenance_ref",
+        "calibration_chain_member_refs"
       ],
       "properties": {
-        "contribution_id": { "$ref": "#/$defs/identifier" },
-        "source_kind": { "$ref": "#/$defs/identifier" },
-        "standard_uncertainty_ref": { "$ref": "#/$defs/physical_quantity_reference" },
-        "degrees_of_freedom": { "oneOf": [{ "type": "integer", "minimum": 1 }, { "type": "null" }] },
-        "sensitivity_coefficient_ref": { "$ref": "#/$defs/physical_quantity_reference" },
-        "source_provenance_ref": { "$ref": "#/$defs/artifact_reference" },
+        "contribution_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "source_kind": {
+          "$ref": "#/$defs/identifier"
+        },
+        "standard_uncertainty_ref": {
+          "$ref": "#/$defs/physical_quantity_reference"
+        },
+        "degrees_of_freedom": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "sensitivity_coefficient_ref": {
+          "$ref": "#/$defs/physical_quantity_reference"
+        },
+        "source_provenance_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        },
         "calibration_chain_member_refs": {
-          "type": "array", "maxItems": 64, "uniqueItems": true,
-          "items": { "$ref": "#/$defs/artifact_reference" }
+          "type": "array",
+          "maxItems": 64,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/artifact_reference"
+          }
         }
       }
     },
     "contribution_partition": {
-      "type": "array", "maxItems": 128, "uniqueItems": true,
-      "items": { "$ref": "#/$defs/contribution" }
+      "type": "array",
+      "maxItems": 128,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/contribution"
+      }
     },
     "nature_assignment": {
-      "type": "object", "additionalProperties": false,
-      "required": ["contribution_id", "nature", "classification_method_ref", "classification_evidence_ref"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contribution_id",
+        "nature",
+        "classification_method_ref",
+        "classification_evidence_ref"
+      ],
       "properties": {
-        "contribution_id": { "$ref": "#/$defs/identifier" },
-        "nature": { "enum": ["aleatory", "epistemic", "mixed", "unknown"] },
-        "classification_method_ref": { "$ref": "#/$defs/method_reference" },
-        "classification_evidence_ref": { "$ref": "#/$defs/artifact_reference" }
+        "contribution_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "nature": {
+          "enum": [
+            "aleatory",
+            "epistemic",
+            "mixed",
+            "unknown"
+          ]
+        },
+        "classification_method_ref": {
+          "$ref": "#/$defs/method_reference"
+        },
+        "classification_evidence_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        }
       }
     },
     "matrix": {
-      "type": "array", "minItems": 1, "maxItems": 64,
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 64,
       "items": {
-        "type": "array", "minItems": 1, "maxItems": 64,
-        "items": { "$ref": "#/$defs/decimal" }
+        "type": "array",
+        "minItems": 1,
+        "maxItems": 64,
+        "items": {
+          "$ref": "#/$defs/decimal"
+        }
       }
     },
     "shared_source_group": {
-      "type": "object", "additionalProperties": false,
-      "required": ["group_id", "contribution_ids", "source_provenance_ref", "calibration_provenance_refs"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "group_id",
+        "contribution_ids",
+        "source_provenance_ref",
+        "calibration_provenance_refs"
+      ],
       "properties": {
-        "group_id": { "$ref": "#/$defs/identifier" },
-        "contribution_ids": {
-          "type": "array", "minItems": 2, "maxItems": 64, "uniqueItems": true,
-          "items": { "$ref": "#/$defs/identifier" }
+        "group_id": {
+          "$ref": "#/$defs/identifier"
         },
-        "source_provenance_ref": { "$ref": "#/$defs/artifact_reference" },
+        "contribution_ids": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 64,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "source_provenance_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        },
         "calibration_provenance_refs": {
-          "type": "array", "minItems": 1, "maxItems": 64, "uniqueItems": true,
-          "items": { "$ref": "#/$defs/artifact_reference" }
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 64,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/artifact_reference"
+          }
         }
       }
     },
     "dependence_model": {
-      "type": "object", "additionalProperties": false,
+      "type": "object",
+      "additionalProperties": false,
       "required": [
-        "representation", "variable_quantity_refs", "covariance_matrix", "correlation_matrix",
-        "matrix_unit_rule_ref", "shared_source_groups", "provenance_ref"
+        "representation",
+        "variable_quantity_refs",
+        "covariance_matrix",
+        "correlation_matrix",
+        "matrix_unit_rule_ref",
+        "shared_source_groups",
+        "provenance_ref"
       ],
       "properties": {
-        "representation": { "enum": ["covariance_and_correlation", "independent_diagonal_declared"] },
+        "representation": {
+          "enum": [
+            "covariance_and_correlation",
+            "independent_diagonal_declared"
+          ]
+        },
         "variable_quantity_refs": {
-          "type": "array", "minItems": 1, "maxItems": 64, "uniqueItems": true,
-          "items": { "$ref": "#/$defs/physical_quantity_reference" }
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 64,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/physical_quantity_reference"
+          }
         },
-        "covariance_matrix": { "$ref": "#/$defs/matrix" },
-        "correlation_matrix": { "$ref": "#/$defs/matrix" },
-        "matrix_unit_rule_ref": { "$ref": "#/$defs/artifact_reference" },
+        "covariance_matrix": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "elements",
+            "precision",
+            "semantic_type",
+            "unit"
+          ],
+          "properties": {
+            "elements": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+                }
+              }
+            },
+            "semantic_type": {
+              "const": "covariance_element"
+            },
+            "unit": {
+              "const": "pairwise_unit_product"
+            },
+            "precision": {
+              "type": "string",
+              "pattern": "^(?:0|[1-9][0-9]{0,2}|exact_lexical)$"
+            }
+          }
+        },
+        "correlation_matrix": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "elements",
+            "precision",
+            "semantic_type",
+            "unit"
+          ],
+          "properties": {
+            "elements": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+                }
+              }
+            },
+            "semantic_type": {
+              "const": "correlation_coefficient"
+            },
+            "unit": {
+              "const": "dimensionless"
+            },
+            "precision": {
+              "type": "string",
+              "pattern": "^(?:0|[1-9][0-9]{0,2}|exact_lexical)$"
+            }
+          }
+        },
+        "matrix_unit_rule_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        },
         "shared_source_groups": {
-          "type": "array", "maxItems": 64, "uniqueItems": true,
-          "items": { "$ref": "#/$defs/shared_source_group" }
+          "type": "array",
+          "maxItems": 64,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/shared_source_group"
+          }
         },
-        "provenance_ref": { "$ref": "#/$defs/artifact_reference" }
+        "provenance_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        }
       }
     },
     "calibration_traceability": {
-      "type": "object", "additionalProperties": false,
-      "required": ["status", "certificate_refs", "chain_refs", "root_standard_ref", "uncertainty_contribution_ids", "reason_codes"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "certificate_refs",
+        "chain_refs",
+        "root_standard_ref",
+        "uncertainty_contribution_ids",
+        "reason_codes"
+      ],
       "properties": {
-        "status": { "enum": ["complete", "incomplete", "unknown"] },
+        "status": {
+          "enum": [
+            "complete",
+            "incomplete",
+            "unknown"
+          ]
+        },
         "certificate_refs": {
-          "type": "array", "maxItems": 64, "uniqueItems": true,
-          "items": { "$ref": "#/$defs/artifact_reference" }
-        },
-        "chain_refs": {
-          "type": "array", "maxItems": 64, "uniqueItems": true,
-          "items": { "$ref": "#/$defs/artifact_reference" }
-        },
-        "root_standard_ref": { "oneOf": [{ "$ref": "#/$defs/artifact_reference" }, { "type": "null" }] },
-        "uncertainty_contribution_ids": {
-          "type": "array", "maxItems": 128, "uniqueItems": true,
-          "items": { "$ref": "#/$defs/identifier" }
-        },
-        "reason_codes": {
-          "type": "array", "maxItems": 32, "uniqueItems": true,
-          "items": { "$ref": "#/$defs/identifier" }
-        }
-      },
-      "allOf": [{
-        "if": { "properties": { "status": { "const": "complete" } }, "required": ["status"] },
-        "then": {
-          "properties": {
-            "certificate_refs": { "minItems": 1 }, "chain_refs": { "minItems": 1 },
-            "root_standard_ref": { "$ref": "#/$defs/artifact_reference" }, "reason_codes": { "maxItems": 0 }
+          "type": "array",
+          "maxItems": 64,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/artifact_reference"
           }
         },
-        "else": { "properties": { "reason_codes": { "minItems": 1 } } }
-      }]
-    },
-    "propagation": {
-      "type": "object", "additionalProperties": false,
-      "required": ["method_ref", "regime", "linearization_used", "jacobian_ref", "distribution_propagation_ref", "assumption_refs"],
-      "properties": {
-        "method_ref": { "$ref": "#/$defs/method_reference" },
-        "regime": { "enum": ["linear_first_order", "nonlinear_numerical", "set_propagation"] },
-        "linearization_used": { "type": "boolean" },
-        "jacobian_ref": { "oneOf": [{ "$ref": "#/$defs/artifact_reference" }, { "type": "null" }] },
-        "distribution_propagation_ref": { "oneOf": [{ "$ref": "#/$defs/artifact_reference" }, { "type": "null" }] },
-        "assumption_refs": {
-          "type": "array", "minItems": 1, "maxItems": 64, "uniqueItems": true,
-          "items": { "$ref": "#/$defs/artifact_reference" }
+        "chain_refs": {
+          "type": "array",
+          "maxItems": 64,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/artifact_reference"
+          }
+        },
+        "root_standard_ref": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/artifact_reference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "uncertainty_contribution_ids": {
+          "type": "array",
+          "maxItems": 128,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "reason_codes": {
+          "type": "array",
+          "maxItems": 32,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
         }
       },
       "allOf": [
         {
-          "if": { "properties": { "regime": { "const": "linear_first_order" } }, "required": ["regime"] },
-          "then": { "properties": { "linearization_used": { "const": true }, "jacobian_ref": { "$ref": "#/$defs/artifact_reference" }, "distribution_propagation_ref": { "type": "null" } } }
+          "if": {
+            "properties": {
+              "status": {
+                "const": "complete"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "certificate_refs": {
+                "minItems": 1
+              },
+              "chain_refs": {
+                "minItems": 1
+              },
+              "root_standard_ref": {
+                "$ref": "#/$defs/artifact_reference"
+              },
+              "reason_codes": {
+                "maxItems": 0
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "reason_codes": {
+                "minItems": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    "propagation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "method_ref",
+        "regime",
+        "linearization_used",
+        "jacobian_ref",
+        "distribution_propagation_ref",
+        "assumption_refs"
+      ],
+      "properties": {
+        "method_ref": {
+          "$ref": "#/$defs/method_reference"
+        },
+        "regime": {
+          "enum": [
+            "linear_first_order",
+            "nonlinear_numerical",
+            "set_propagation"
+          ]
+        },
+        "linearization_used": {
+          "type": "boolean"
+        },
+        "jacobian_ref": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/artifact_reference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "distribution_propagation_ref": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/artifact_reference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "assumption_refs": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 64,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/artifact_reference"
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "regime": {
+                "const": "linear_first_order"
+              }
+            },
+            "required": [
+              "regime"
+            ]
+          },
+          "then": {
+            "properties": {
+              "linearization_used": {
+                "const": true
+              },
+              "jacobian_ref": {
+                "$ref": "#/$defs/artifact_reference"
+              },
+              "distribution_propagation_ref": {
+                "type": "null"
+              }
+            }
+          }
         },
         {
-          "if": { "properties": { "regime": { "const": "nonlinear_numerical" } }, "required": ["regime"] },
-          "then": { "properties": { "distribution_propagation_ref": { "$ref": "#/$defs/artifact_reference" } } }
+          "if": {
+            "properties": {
+              "regime": {
+                "const": "nonlinear_numerical"
+              }
+            },
+            "required": [
+              "regime"
+            ]
+          },
+          "then": {
+            "properties": {
+              "distribution_propagation_ref": {
+                "$ref": "#/$defs/artifact_reference"
+              }
+            }
+          }
         }
       ]
     },
     "combined_result": {
-      "type": "object", "additionalProperties": false,
-      "required": ["status", "combined_standard_uncertainty_ref", "expanded_uncertainty_ref", "coverage_factor", "coverage_probability", "distribution_ref", "reason_codes"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "combined_standard_uncertainty_ref",
+        "expanded_uncertainty_ref",
+        "coverage_factor",
+        "coverage_probability",
+        "distribution_ref",
+        "reason_codes"
+      ],
       "properties": {
-        "status": { "enum": ["computed", "indeterminate", "not_computed"] },
-        "combined_standard_uncertainty_ref": { "oneOf": [{ "$ref": "#/$defs/physical_quantity_reference" }, { "type": "null" }] },
-        "expanded_uncertainty_ref": { "oneOf": [{ "$ref": "#/$defs/physical_quantity_reference" }, { "type": "null" }] },
-        "coverage_factor": { "oneOf": [{ "$ref": "#/$defs/decimal" }, { "type": "null" }] },
-        "coverage_probability": { "oneOf": [{ "$ref": "#/$defs/decimal" }, { "type": "null" }] },
-        "distribution_ref": { "oneOf": [{ "$ref": "#/$defs/record_reference" }, { "type": "null" }] },
+        "status": {
+          "enum": [
+            "computed",
+            "indeterminate",
+            "not_computed"
+          ]
+        },
+        "combined_standard_uncertainty_ref": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/physical_quantity_reference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expanded_uncertainty_ref": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/physical_quantity_reference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "coverage_factor": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "decimal",
+                "precision",
+                "semantic_type",
+                "unit"
+              ],
+              "properties": {
+                "decimal": {
+                  "type": "string",
+                  "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+                },
+                "semantic_type": {
+                  "const": "coverage_factor"
+                },
+                "unit": {
+                  "const": "dimensionless"
+                },
+                "precision": {
+                  "type": "string",
+                  "pattern": "^(?:0|[1-9][0-9]{0,2}|exact_lexical)$"
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "coverage_probability": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "decimal",
+                "precision",
+                "semantic_type",
+                "unit"
+              ],
+              "properties": {
+                "decimal": {
+                  "type": "string",
+                  "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+                },
+                "semantic_type": {
+                  "const": "interval_confidence_level"
+                },
+                "unit": {
+                  "const": "dimensionless"
+                },
+                "precision": {
+                  "const": "6"
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "distribution_ref": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/record_reference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
         "reason_codes": {
-          "type": "array", "maxItems": 32, "uniqueItems": true,
-          "items": { "$ref": "#/$defs/identifier" }
+          "type": "array",
+          "maxItems": 32,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
         }
       },
-      "allOf": [{
-        "if": { "properties": { "status": { "const": "computed" } }, "required": ["status"] },
-        "then": {
-          "properties": {
-            "combined_standard_uncertainty_ref": { "$ref": "#/$defs/physical_quantity_reference" },
-            "expanded_uncertainty_ref": { "$ref": "#/$defs/physical_quantity_reference" },
-            "reason_codes": { "maxItems": 0 }
-          }
-        },
-        "else": {
-          "properties": {
-            "combined_standard_uncertainty_ref": { "type": "null" }, "expanded_uncertainty_ref": { "type": "null" },
-            "coverage_factor": { "type": "null" }, "coverage_probability": { "type": "null" }, "distribution_ref": { "type": "null" },
-            "reason_codes": { "minItems": 1 }
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "computed"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "combined_standard_uncertainty_ref": {
+                "$ref": "#/$defs/physical_quantity_reference"
+              },
+              "expanded_uncertainty_ref": {
+                "$ref": "#/$defs/physical_quantity_reference"
+              },
+              "reason_codes": {
+                "maxItems": 0
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "combined_standard_uncertainty_ref": {
+                "type": "null"
+              },
+              "expanded_uncertainty_ref": {
+                "type": "null"
+              },
+              "coverage_factor": {
+                "type": "null"
+              },
+              "coverage_probability": {
+                "type": "null"
+              },
+              "distribution_ref": {
+                "type": "null"
+              },
+              "reason_codes": {
+                "minItems": 1
+              }
+            }
           }
         }
-      }]
+      ]
     }
   }
 }

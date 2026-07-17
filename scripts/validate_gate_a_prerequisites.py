@@ -282,7 +282,7 @@ def main() -> int:
         and profile_candidate.get("profile_evidence_ref")
         == "architecture/canonicalization-profile-candidate-evidence.json"
         and profile_candidate.get("profile_core_schema_id")
-        == "urn:odeya:schema:canonicalization-profile-core:0.2.0"
+        == "urn:odeya:schema:canonicalization-profile-core:0.3.0"
         and profile_candidate.get("parameter_status")
         == "candidate_parameters_frozen_for_review_profile_unissued"
         == canonical_profile_core.get("candidate_status")

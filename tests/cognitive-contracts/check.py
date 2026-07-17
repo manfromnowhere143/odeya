@@ -63,6 +63,19 @@ def mutated_copy(instance: object, mutations: list[dict[str, object]]) -> object
     return result
 
 
+
+
+def governed_decimal(value: object) -> object:
+    """Unwrap a frozen typed scientific-decimal object to its lexical string.
+
+    The D3 wave migrated decimal leaves to closed objects carrying `decimal`
+    (or `elements`), `semantic_type`, `unit`, and `precision`. Semantic checks
+    must keep firing on the lexical value inside, never silently skip.
+    """
+    if isinstance(value, dict) and "decimal" in value and "semantic_type" in value:
+        return value["decimal"]
+    return value
+
 def ref_key(ref: object) -> tuple[object, ...]:
     if not isinstance(ref, dict):
         return (None,)
@@ -78,9 +91,9 @@ def parse_time(value: str) -> datetime:
 def check_estimate(estimate: object, path: str, errors: list[str]) -> None:
     if not isinstance(estimate, dict):
         return
-    lower = estimate.get("lower")
-    point = estimate.get("point")
-    upper = estimate.get("upper")
+    lower = governed_decimal(estimate.get("lower"))
+    point = governed_decimal(estimate.get("point"))
+    upper = governed_decimal(estimate.get("upper"))
     if all(isinstance(value, str) for value in (lower, point, upper)):
         try:
             lower_decimal, point_decimal, upper_decimal = (
@@ -194,8 +207,8 @@ def routing_decision_semantics(instance: dict[str, object]) -> list[str]:
                     f"candidate_set[{candidate_index}].constraint_results[{result['constraint']}]: rule reference mismatch"
                 )
         for dimension_index, observation in enumerate(candidate["dimension_observations"]):
-            lower = observation["lower_bound"]
-            upper = observation["upper_bound"]
+            lower = governed_decimal(observation["lower_bound"])
+            upper = governed_decimal(observation["upper_bound"])
             if observation["disposition"] == "bounded":
                 try:
                     reversed_bounds = Decimal(lower) > Decimal(upper)

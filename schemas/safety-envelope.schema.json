@@ -1,175 +1,573 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:safety-envelope:0.1.0",
+  "$id": "urn:odeya:schema:safety-envelope:0.2.0",
   "title": "Odeya SafetyEnvelope",
   "description": "An immutable recommendation-only physical safety envelope. It binds the asset/model/evidence scope, safe set, disturbance and uncertainty sets, actuator/latency/estimation limits, monitor/fallback/switching behavior, hazards, and validity. It grants no actuator authority; execution requires a separate authority service and gateway.",
   "type": "object",
   "additionalProperties": false,
   "required": [
-    "schema_version", "safety_envelope_id", "version", "mission_id", "asset_configuration_snapshot_ref",
-    "asset_hardware_coverage_observation", "physical_model_ref", "physical_evidence_vector_ref", "operational_domain_ref",
-    "safe_set", "disturbance_set_ref", "state_estimation_error_ref", "actuator_limits", "latency_limit_ref",
-    "barrier_or_invariance_evidence_refs", "stability_evidence_refs", "runtime_assurance", "infeasibility_behavior",
-    "saturation_behavior", "hazard_analysis_ref", "risk_assessment_ref", "validity", "envelope_disposition",
-    "reason_codes", "actuator_boundary", "independent_safety_review_refs", "safety_envelope_digest"
+    "schema_version",
+    "safety_envelope_id",
+    "version",
+    "mission_id",
+    "asset_configuration_snapshot_ref",
+    "asset_hardware_coverage_observation",
+    "physical_model_ref",
+    "physical_evidence_vector_ref",
+    "operational_domain_ref",
+    "safe_set",
+    "disturbance_set_ref",
+    "state_estimation_error_ref",
+    "actuator_limits",
+    "latency_limit_ref",
+    "barrier_or_invariance_evidence_refs",
+    "stability_evidence_refs",
+    "runtime_assurance",
+    "infeasibility_behavior",
+    "saturation_behavior",
+    "hazard_analysis_ref",
+    "risk_assessment_ref",
+    "validity",
+    "envelope_disposition",
+    "reason_codes",
+    "actuator_boundary",
+    "independent_safety_review_refs",
+    "safety_envelope_digest"
   ],
   "properties": {
-    "schema_version": { "const": "0.1.0" },
-    "safety_envelope_id": { "$ref": "#/$defs/identifier" },
-    "version": { "type": "integer", "minimum": 1 },
-    "mission_id": { "$ref": "#/$defs/identifier" },
-    "asset_configuration_snapshot_ref": { "$ref": "#/$defs/asset_snapshot_reference" },
-    "asset_hardware_coverage_observation": { "enum": ["complete", "partial", "unknown"] },
-    "physical_model_ref": { "$ref": "#/$defs/physical_model_reference" },
-    "physical_evidence_vector_ref": { "$ref": "#/$defs/evidence_vector_reference" },
-    "operational_domain_ref": { "$ref": "#/$defs/artifact_reference" },
-    "safe_set": { "$ref": "#/$defs/safe_set" },
-    "disturbance_set_ref": { "$ref": "#/$defs/artifact_reference" },
-    "state_estimation_error_ref": { "$ref": "#/$defs/artifact_reference" },
-    "actuator_limits": {
-      "type": "array", "minItems": 1, "maxItems": 128, "uniqueItems": true,
-      "items": { "$ref": "#/$defs/actuator_limit" }
+    "schema_version": {
+      "const": "0.2.0"
     },
-    "latency_limit_ref": { "$ref": "#/$defs/physical_quantity_reference" },
+    "safety_envelope_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "mission_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "asset_configuration_snapshot_ref": {
+      "$ref": "#/$defs/asset_snapshot_reference"
+    },
+    "asset_hardware_coverage_observation": {
+      "enum": [
+        "complete",
+        "partial",
+        "unknown"
+      ]
+    },
+    "physical_model_ref": {
+      "$ref": "#/$defs/physical_model_reference"
+    },
+    "physical_evidence_vector_ref": {
+      "$ref": "#/$defs/evidence_vector_reference"
+    },
+    "operational_domain_ref": {
+      "$ref": "#/$defs/artifact_reference"
+    },
+    "safe_set": {
+      "$ref": "#/$defs/safe_set"
+    },
+    "disturbance_set_ref": {
+      "$ref": "#/$defs/artifact_reference"
+    },
+    "state_estimation_error_ref": {
+      "$ref": "#/$defs/artifact_reference"
+    },
+    "actuator_limits": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 128,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/actuator_limit"
+      }
+    },
+    "latency_limit_ref": {
+      "$ref": "#/$defs/physical_quantity_reference"
+    },
     "barrier_or_invariance_evidence_refs": {
-      "type": "array", "minItems": 1, "maxItems": 128, "uniqueItems": true,
-      "items": { "$ref": "#/$defs/artifact_reference" }
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 128,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/artifact_reference"
+      }
     },
     "stability_evidence_refs": {
-      "type": "array", "minItems": 1, "maxItems": 128, "uniqueItems": true,
-      "items": { "$ref": "#/$defs/artifact_reference" }
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 128,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/artifact_reference"
+      }
     },
-    "runtime_assurance": { "$ref": "#/$defs/runtime_assurance" },
-    "infeasibility_behavior": { "$ref": "#/$defs/failure_behavior" },
-    "saturation_behavior": { "$ref": "#/$defs/failure_behavior" },
-    "hazard_analysis_ref": { "$ref": "#/$defs/artifact_reference" },
-    "risk_assessment_ref": { "$ref": "#/$defs/artifact_reference" },
-    "validity": { "$ref": "#/$defs/validity" },
-    "envelope_disposition": { "enum": ["recommendation_supported", "blocked", "indeterminate", "expired"] },
-    "reason_codes": { "type": "array", "maxItems": 64, "uniqueItems": true, "items": { "$ref": "#/$defs/identifier" } },
-    "actuator_boundary": { "$ref": "#/$defs/actuator_boundary" },
+    "runtime_assurance": {
+      "$ref": "#/$defs/runtime_assurance"
+    },
+    "infeasibility_behavior": {
+      "$ref": "#/$defs/failure_behavior"
+    },
+    "saturation_behavior": {
+      "$ref": "#/$defs/failure_behavior"
+    },
+    "hazard_analysis_ref": {
+      "$ref": "#/$defs/artifact_reference"
+    },
+    "risk_assessment_ref": {
+      "$ref": "#/$defs/artifact_reference"
+    },
+    "validity": {
+      "$ref": "#/$defs/validity"
+    },
+    "envelope_disposition": {
+      "enum": [
+        "recommendation_supported",
+        "blocked",
+        "indeterminate",
+        "expired"
+      ]
+    },
+    "reason_codes": {
+      "type": "array",
+      "maxItems": 64,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/identifier"
+      }
+    },
+    "actuator_boundary": {
+      "$ref": "#/$defs/actuator_boundary"
+    },
     "independent_safety_review_refs": {
-      "type": "array", "minItems": 1, "maxItems": 64, "uniqueItems": true,
-      "items": { "$ref": "#/$defs/artifact_reference" }
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 64,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/artifact_reference"
+      }
     },
-    "safety_envelope_digest": { "$ref": "#/$defs/digest" }
+    "safety_envelope_digest": {
+      "$ref": "#/$defs/digest"
+    }
   },
   "allOf": [
     {
-      "if": { "properties": { "asset_hardware_coverage_observation": { "not": { "const": "complete" } } }, "required": ["asset_hardware_coverage_observation"] },
-      "then": { "properties": { "envelope_disposition": { "enum": ["blocked", "indeterminate"] }, "reason_codes": { "minItems": 1 } } }
-    },
-    {
-      "if": { "properties": { "envelope_disposition": { "const": "recommendation_supported" } }, "required": ["envelope_disposition"] },
+      "if": {
+        "properties": {
+          "asset_hardware_coverage_observation": {
+            "not": {
+              "const": "complete"
+            }
+          }
+        },
+        "required": [
+          "asset_hardware_coverage_observation"
+        ]
+      },
       "then": {
         "properties": {
-          "asset_hardware_coverage_observation": { "const": "complete" },
-          "validity": { "properties": { "status": { "const": "current" } } },
-          "reason_codes": { "maxItems": 0 }
+          "envelope_disposition": {
+            "enum": [
+              "blocked",
+              "indeterminate"
+            ]
+          },
+          "reason_codes": {
+            "minItems": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "envelope_disposition": {
+            "const": "recommendation_supported"
+          }
+        },
+        "required": [
+          "envelope_disposition"
+        ]
+      },
+      "then": {
+        "properties": {
+          "asset_hardware_coverage_observation": {
+            "const": "complete"
+          },
+          "validity": {
+            "properties": {
+              "status": {
+                "const": "current"
+              }
+            }
+          },
+          "reason_codes": {
+            "maxItems": 0
+          }
         }
       },
-      "else": { "properties": { "reason_codes": { "minItems": 1 } } }
+      "else": {
+        "properties": {
+          "reason_codes": {
+            "minItems": 1
+          }
+        }
+      }
     }
   ],
   "$defs": {
-    "identifier": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$" },
-    "digest": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$"
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
     "utc_timestamp": {
       "type": "string",
       "format": "date-time",
       "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
     },
     "artifact_reference": {
-      "type": "object", "additionalProperties": false,
-      "required": ["artifact_id", "digest", "media_type"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "digest",
+        "media_type"
+      ],
       "properties": {
-        "artifact_id": { "$ref": "#/$defs/identifier" }, "digest": { "$ref": "#/$defs/digest" },
-        "media_type": { "type": "string", "minLength": 1, "maxLength": 255 }
+        "artifact_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        }
       }
     },
     "record_reference": {
-      "type": "object", "additionalProperties": false,
-      "required": ["record_id", "version", "schema_id", "digest"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "record_id",
+        "version",
+        "schema_id",
+        "digest"
+      ],
       "properties": {
-        "record_id": { "$ref": "#/$defs/identifier" }, "version": { "type": "integer", "minimum": 1 },
-        "schema_id": { "type": "string", "pattern": "^urn:odeya:schema:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$" },
-        "digest": { "$ref": "#/$defs/digest" }
+        "record_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "schema_id": {
+          "type": "string",
+          "pattern": "^urn:odeya:schema:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        }
       }
     },
     "asset_snapshot_reference": {
-      "allOf": [{ "$ref": "#/$defs/record_reference" }, { "properties": { "schema_id": { "const": "urn:odeya:schema:asset-configuration-snapshot:0.1.0" } } }]
+      "allOf": [
+        {
+          "$ref": "#/$defs/record_reference"
+        },
+        {
+          "properties": {
+            "schema_id": {
+              "const": "urn:odeya:schema:asset-configuration-snapshot:0.2.0"
+            }
+          }
+        }
+      ]
     },
     "physical_model_reference": {
-      "allOf": [{ "$ref": "#/$defs/record_reference" }, { "properties": { "schema_id": { "const": "urn:odeya:schema:physical-model-record:0.1.0" } } }]
+      "allOf": [
+        {
+          "$ref": "#/$defs/record_reference"
+        },
+        {
+          "properties": {
+            "schema_id": {
+              "const": "urn:odeya:schema:physical-model-record:0.2.0"
+            }
+          }
+        }
+      ]
     },
     "evidence_vector_reference": {
-      "allOf": [{ "$ref": "#/$defs/record_reference" }, { "properties": { "schema_id": { "const": "urn:odeya:schema:physical-evidence-vector:0.1.0" } } }]
+      "allOf": [
+        {
+          "$ref": "#/$defs/record_reference"
+        },
+        {
+          "properties": {
+            "schema_id": {
+              "const": "urn:odeya:schema:physical-evidence-vector:0.2.0"
+            }
+          }
+        }
+      ]
     },
     "physical_quantity_reference": {
-      "allOf": [{ "$ref": "#/$defs/record_reference" }, { "properties": { "schema_id": { "const": "urn:odeya:schema:physical-quantity:0.1.0" } } }]
+      "allOf": [
+        {
+          "$ref": "#/$defs/record_reference"
+        },
+        {
+          "properties": {
+            "schema_id": {
+              "const": "urn:odeya:schema:physical-quantity:0.2.0"
+            }
+          }
+        }
+      ]
     },
     "safe_set": {
-      "type": "object", "additionalProperties": false,
-      "required": ["definition_ref", "state_quantity_refs", "constraint_method_ref", "robustness_margin_ref", "chance_constraint_used", "hard_guarantee_claimed"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "definition_ref",
+        "state_quantity_refs",
+        "constraint_method_ref",
+        "robustness_margin_ref",
+        "chance_constraint_used",
+        "hard_guarantee_claimed"
+      ],
       "properties": {
-        "definition_ref": { "$ref": "#/$defs/artifact_reference" },
-        "state_quantity_refs": { "type": "array", "minItems": 1, "maxItems": 128, "uniqueItems": true, "items": { "$ref": "#/$defs/physical_quantity_reference" } },
-        "constraint_method_ref": { "$ref": "#/$defs/record_reference" },
-        "robustness_margin_ref": { "$ref": "#/$defs/physical_quantity_reference" },
-        "chance_constraint_used": { "type": "boolean" },
-        "hard_guarantee_claimed": { "type": "boolean" }
+        "definition_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        },
+        "state_quantity_refs": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 128,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/physical_quantity_reference"
+          }
+        },
+        "constraint_method_ref": {
+          "$ref": "#/$defs/record_reference"
+        },
+        "robustness_margin_ref": {
+          "$ref": "#/$defs/physical_quantity_reference"
+        },
+        "chance_constraint_used": {
+          "type": "boolean"
+        },
+        "hard_guarantee_claimed": {
+          "type": "boolean"
+        }
       },
-      "allOf": [{
-        "if": { "properties": { "chance_constraint_used": { "const": true } }, "required": ["chance_constraint_used"] },
-        "then": { "properties": { "hard_guarantee_claimed": { "const": false } } }
-      }]
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "chance_constraint_used": {
+                "const": true
+              }
+            },
+            "required": [
+              "chance_constraint_used"
+            ]
+          },
+          "then": {
+            "properties": {
+              "hard_guarantee_claimed": {
+                "const": false
+              }
+            }
+          }
+        }
+      ]
     },
     "actuator_limit": {
-      "type": "object", "additionalProperties": false,
-      "required": ["actuator_id", "minimum_ref", "maximum_ref", "rate_limit_ref", "evidence_ref"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "actuator_id",
+        "minimum_ref",
+        "maximum_ref",
+        "rate_limit_ref",
+        "evidence_ref"
+      ],
       "properties": {
-        "actuator_id": { "$ref": "#/$defs/identifier" },
-        "minimum_ref": { "$ref": "#/$defs/physical_quantity_reference" }, "maximum_ref": { "$ref": "#/$defs/physical_quantity_reference" },
-        "rate_limit_ref": { "$ref": "#/$defs/physical_quantity_reference" }, "evidence_ref": { "$ref": "#/$defs/artifact_reference" }
+        "actuator_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "minimum_ref": {
+          "$ref": "#/$defs/physical_quantity_reference"
+        },
+        "maximum_ref": {
+          "$ref": "#/$defs/physical_quantity_reference"
+        },
+        "rate_limit_ref": {
+          "$ref": "#/$defs/physical_quantity_reference"
+        },
+        "evidence_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        }
       }
     },
     "runtime_assurance": {
-      "type": "object", "additionalProperties": false,
-      "required": ["advanced_controller_ref", "trusted_fallback_ref", "independent_monitor_ref", "switching_horizon_ref", "common_mode_analysis_ref", "monitor_independence_disposition"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "advanced_controller_ref",
+        "trusted_fallback_ref",
+        "independent_monitor_ref",
+        "switching_horizon_ref",
+        "common_mode_analysis_ref",
+        "monitor_independence_disposition"
+      ],
       "properties": {
-        "advanced_controller_ref": { "$ref": "#/$defs/artifact_reference" }, "trusted_fallback_ref": { "$ref": "#/$defs/artifact_reference" },
-        "independent_monitor_ref": { "$ref": "#/$defs/artifact_reference" }, "switching_horizon_ref": { "$ref": "#/$defs/physical_quantity_reference" },
-        "common_mode_analysis_ref": { "$ref": "#/$defs/artifact_reference" },
-        "monitor_independence_disposition": { "enum": ["independent_under_profile", "partially_independent", "unknown"] }
+        "advanced_controller_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        },
+        "trusted_fallback_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        },
+        "independent_monitor_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        },
+        "switching_horizon_ref": {
+          "$ref": "#/$defs/physical_quantity_reference"
+        },
+        "common_mode_analysis_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        },
+        "monitor_independence_disposition": {
+          "enum": [
+            "independent_under_profile",
+            "partially_independent",
+            "unknown"
+          ]
+        }
       }
     },
     "failure_behavior": {
-      "type": "object", "additionalProperties": false,
-      "required": ["behavior", "fallback_ref", "operator_alert_required", "evidence_ref"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "behavior",
+        "fallback_ref",
+        "operator_alert_required",
+        "evidence_ref"
+      ],
       "properties": {
-        "behavior": { "enum": ["transition_to_trusted_fallback", "safe_stop", "hold_last_safe_command", "block_recommendation"] },
-        "fallback_ref": { "$ref": "#/$defs/artifact_reference" }, "operator_alert_required": { "const": true },
-        "evidence_ref": { "$ref": "#/$defs/artifact_reference" }
+        "behavior": {
+          "enum": [
+            "transition_to_trusted_fallback",
+            "safe_stop",
+            "hold_last_safe_command",
+            "block_recommendation"
+          ]
+        },
+        "fallback_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        },
+        "operator_alert_required": {
+          "const": true
+        },
+        "evidence_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        }
       }
     },
     "validity": {
-      "type": "object", "additionalProperties": false,
-      "required": ["status", "valid_from", "expires_at", "invalidation_trigger_refs", "controlled_time_source_ref"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "valid_from",
+        "expires_at",
+        "invalidation_trigger_refs",
+        "controlled_time_source_ref"
+      ],
       "properties": {
-        "status": { "enum": ["current", "expired", "invalidated", "unknown"] },
-        "valid_from": { "$ref": "#/$defs/utc_timestamp" }, "expires_at": { "$ref": "#/$defs/utc_timestamp" },
-        "invalidation_trigger_refs": { "type": "array", "minItems": 1, "maxItems": 64, "uniqueItems": true, "items": { "$ref": "#/$defs/artifact_reference" } },
-        "controlled_time_source_ref": { "$ref": "#/$defs/artifact_reference" }
+        "status": {
+          "enum": [
+            "current",
+            "expired",
+            "invalidated",
+            "unknown"
+          ]
+        },
+        "valid_from": {
+          "$ref": "#/$defs/utc_timestamp"
+        },
+        "expires_at": {
+          "$ref": "#/$defs/utc_timestamp"
+        },
+        "invalidation_trigger_refs": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 64,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/artifact_reference"
+          }
+        },
+        "controlled_time_source_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        }
       }
     },
     "actuator_boundary": {
-      "type": "object", "additionalProperties": false,
-      "required": ["output_class", "recommendation_only", "direct_actuation_permitted", "actuator_authority_granted", "execution_authority_ref", "actuator_gateway_command_ref", "authority_separation", "execution_requires_separate_authority_service"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "output_class",
+        "recommendation_only",
+        "direct_actuation_permitted",
+        "actuator_authority_granted",
+        "execution_authority_ref",
+        "actuator_gateway_command_ref",
+        "authority_separation",
+        "execution_requires_separate_authority_service"
+      ],
       "properties": {
-        "output_class": { "const": "control_recommendation" }, "recommendation_only": { "const": true },
-        "direct_actuation_permitted": { "const": false }, "actuator_authority_granted": { "const": false },
-        "execution_authority_ref": { "type": "null" }, "actuator_gateway_command_ref": { "type": "null" },
-        "authority_separation": { "const": "required" }, "execution_requires_separate_authority_service": { "const": true }
+        "output_class": {
+          "const": "control_recommendation"
+        },
+        "recommendation_only": {
+          "const": true
+        },
+        "direct_actuation_permitted": {
+          "const": false
+        },
+        "actuator_authority_granted": {
+          "const": false
+        },
+        "execution_authority_ref": {
+          "type": "null"
+        },
+        "actuator_gateway_command_ref": {
+          "type": "null"
+        },
+        "authority_separation": {
+          "const": "required"
+        },
+        "execution_requires_separate_authority_service": {
+          "const": true
+        }
       }
     }
   }

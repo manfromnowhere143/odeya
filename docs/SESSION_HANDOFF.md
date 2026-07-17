@@ -438,11 +438,15 @@ their ledgered commits, never live files). D2b executed: ResearchEvent
 reissued 0.9.0 with its 20 paths pinned, eight consumers lawfully reissued
 behind it, 62 fixture instances and the identity map's 62 byte-bindings
 migrated (ADR 0041). Class D2 is CLOSED by measurement: 273 profiled datetime
-paths, zero unprofiled, alongside D1's zero. The closure engine is now
-reusable (exact full-URN repoints only; ledger repointed JSON-aware so
-predecessor history is unreachable; frozen vectors excluded). Next: D3 (127
-decimal migrations), D4 (2), D5a (668 digest scopes), D6-D8 (55 defs), then
-D9 pins strictly last.**
+paths, zero unprofiled, alongside D1's zero. D3+D4 executed (ADR 0042): the
+profile core freezes the typed scientific-decimal object (17-type registry,
+negative-zero-free value pattern), the audit detector recognizes exactly that
+shape with a fail-closed self-test, all 127 decimal leaves and both
+binary-number domains migrated with union alternatives preserved, ~200
+fixture values converted, four suites' semantic checkers unwrap the governed
+object, and the ledger holds 69 reissues + 14 candidates. FOUR OF SIX classes
+now measure zero. Next: D5a (668 digest scopes), D6-D8 (55 defs), then D9
+pins strictly last.**
 Residue for the reissue wave is recorded in the candidate's
 decimal_closure_residue).
 

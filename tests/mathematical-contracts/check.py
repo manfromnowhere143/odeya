@@ -42,6 +42,18 @@ NEGATIVE_OUTCOMES = {
 }
 
 
+
+def governed_decimal(value: object) -> object:
+    """Unwrap a frozen typed scientific-decimal object to its lexical string.
+
+    The D3 wave migrated decimal leaves to closed objects carrying `decimal`
+    (or `elements`), `semantic_type`, `unit`, and `precision`. Semantic checks
+    must keep firing on the lexical value inside, never silently skip.
+    """
+    if isinstance(value, dict) and "decimal" in value and "semantic_type" in value:
+        return value["decimal"]
+    return value
+
 def load(path: Path) -> Any:
     return json.loads(path.read_text(encoding="utf-8"))
 
@@ -90,6 +102,7 @@ def mutate(instance: Any, changes: list[dict[str, Any]]) -> Any:
 
 
 def decimal(value: Any, path: str, errors: list[str]) -> Decimal | None:
+    value = governed_decimal(value)
     if not isinstance(value, str):
         errors.append(f"{path}: exact decimal must be a string")
         return None
@@ -104,13 +117,30 @@ def quantity_value(quantity: Any, path: str, errors: list[str]) -> Decimal | Non
     if not isinstance(quantity, dict):
         errors.append(f"{path}: quantity missing")
         return None
+    if "decimal" in quantity and "semantic_type" in quantity:
+        return decimal(quantity.get("decimal"), f"{path}.decimal", errors)
     return decimal(quantity.get("value"), f"{path}.value", errors)
+
+
+def unit_token(unit: Any) -> Any:
+    """One comparable token across forms: governed unit strings and unit_ref
+    objects both reduce to the unit identity without registry decoration."""
+    if isinstance(unit, dict):
+        unit = unit.get("unit_id", unit.get("code", unit.get("system")))
+    if isinstance(unit, str) and unit.startswith("unit."):
+        unit = unit[len("unit."):]
+    return unit
 
 
 def quantity_unit(quantity: Any) -> Any:
     if not isinstance(quantity, dict):
         return None
-    return quantity.get("unit_ref", quantity.get("unit"))
+    if "decimal" in quantity and "semantic_type" in quantity:
+        return unit_token(quantity.get("unit"))
+    inner = quantity.get("value")
+    if isinstance(inner, dict) and "decimal" in inner and "semantic_type" in inner:
+        return unit_token(inner.get("unit"))
+    return unit_token(quantity.get("unit_ref", quantity.get("unit")))
 
 
 def same_quantity_unit(left: Any, right: Any) -> bool:
@@ -162,7 +192,7 @@ def estimand_semantics(instance: dict[str, Any]) -> list[str]:
     reference = instance["contrast"].get("reference_value")
     null_reference = instance["decision_rule"].get("null_or_reference_value")
     for name, value in (("contrast.reference_value", reference), ("decision_rule.null_or_reference_value", null_reference)):
-        if value is not None and quantity_unit(value) != scale_unit:
+        if value is not None and quantity_unit(value) != unit_token(scale_unit):
             errors.append(f"{name}: unit does not equal effect scale unit")
 
     partitions = instance["data_role_plan"]["partitions"]

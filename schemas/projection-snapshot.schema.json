@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:projection-snapshot:0.2.0",
+  "$id": "urn:odeya:schema:projection-snapshot:0.3.0",
   "title": "Odeya ProjectionSnapshot",
   "description": "A closed, rebuildable, derived and non-authoritative view over exact canonical facts. Validation does not make the snapshot canonical state, evidence, authority, a publication decision, or proof of external visibility. The subject intentionally contains no self or enclosing-package digest.",
   "type": "object",
@@ -35,7 +35,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.2.0"
+      "const": "0.3.0"
     },
     "record_status": {
       "const": "derived_non_authoritative_projection"
@@ -2229,7 +2229,31 @@
         "numeric_value": {
           "oneOf": [
             {
-              "$ref": "#/$defs/exact_decimal"
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "decimal",
+                "precision",
+                "semantic_type",
+                "unit"
+              ],
+              "properties": {
+                "decimal": {
+                  "type": "string",
+                  "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+                },
+                "semantic_type": {
+                  "const": "measured_quantity"
+                },
+                "unit": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "precision": {
+                  "type": "string",
+                  "pattern": "^(?:0|[1-9][0-9]{0,2}|exact_lexical)$"
+                }
+              }
             },
             {
               "type": "null"
@@ -2248,10 +2272,58 @@
               ],
               "properties": {
                 "lower": {
-                  "$ref": "#/$defs/exact_decimal"
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "decimal",
+                    "precision",
+                    "semantic_type",
+                    "unit"
+                  ],
+                  "properties": {
+                    "decimal": {
+                      "type": "string",
+                      "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+                    },
+                    "semantic_type": {
+                      "const": "measured_quantity"
+                    },
+                    "unit": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "precision": {
+                      "type": "string",
+                      "pattern": "^(?:0|[1-9][0-9]{0,2}|exact_lexical)$"
+                    }
+                  }
                 },
                 "upper": {
-                  "$ref": "#/$defs/exact_decimal"
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "decimal",
+                    "precision",
+                    "semantic_type",
+                    "unit"
+                  ],
+                  "properties": {
+                    "decimal": {
+                      "type": "string",
+                      "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+                    },
+                    "semantic_type": {
+                      "const": "measured_quantity"
+                    },
+                    "unit": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "precision": {
+                      "type": "string",
+                      "pattern": "^(?:0|[1-9][0-9]{0,2}|exact_lexical)$"
+                    }
+                  }
                 },
                 "contains_zero": {
                   "type": "boolean"

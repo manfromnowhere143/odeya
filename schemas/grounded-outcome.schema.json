@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:grounded-outcome:0.2.0",
+  "$id": "urn:odeya:schema:grounded-outcome:0.3.0",
   "title": "Odeya GroundedOutcome",
   "description": "An immutable observation used for bounded learning after world contact. It is separate from scientific adjudication and preserves multiple dimensions, missingness, counterevidence, and applicability rather than collapsing them into reward.",
   "type": "object",
@@ -29,7 +29,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.2.0"
+      "const": "0.3.0"
     },
     "grounded_outcome_id": {
       "$ref": "#/$defs/identifier"
@@ -168,7 +168,31 @@
           "value": {
             "oneOf": [
               {
-                "$ref": "#/$defs/quantity"
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "decimal",
+                  "precision",
+                  "semantic_type",
+                  "unit"
+                ],
+                "properties": {
+                  "decimal": {
+                    "type": "string",
+                    "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+                  },
+                  "semantic_type": {
+                    "const": "measured_quantity"
+                  },
+                  "unit": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "precision": {
+                    "type": "string",
+                    "pattern": "^(?:0|[1-9][0-9]{0,2}|exact_lexical)$"
+                  }
+                }
               },
               {
                 "type": "null"
@@ -215,7 +239,31 @@
             "then": {
               "properties": {
                 "value": {
-                  "$ref": "#/$defs/quantity"
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "decimal",
+                    "precision",
+                    "semantic_type",
+                    "unit"
+                  ],
+                  "properties": {
+                    "decimal": {
+                      "type": "string",
+                      "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+                    },
+                    "semantic_type": {
+                      "const": "measured_quantity"
+                    },
+                    "unit": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "precision": {
+                      "type": "string",
+                      "pattern": "^(?:0|[1-9][0-9]{0,2}|exact_lexical)$"
+                    }
+                  }
                 },
                 "evidence_refs": {
                   "minItems": 1
@@ -385,7 +433,31 @@
       ],
       "properties": {
         "value": {
-          "$ref": "#/$defs/decimal"
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "decimal",
+            "precision",
+            "semantic_type",
+            "unit"
+          ],
+          "properties": {
+            "decimal": {
+              "type": "string",
+              "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+            },
+            "semantic_type": {
+              "const": "measured_quantity"
+            },
+            "unit": {
+              "type": "string",
+              "minLength": 1
+            },
+            "precision": {
+              "type": "string",
+              "pattern": "^(?:0|[1-9][0-9]{0,2}|exact_lexical)$"
+            }
+          }
         },
         "unit": {
           "$ref": "#/$defs/unit"
@@ -448,31 +520,293 @@
       ],
       "properties": {
         "wall_time_seconds": {
-          "$ref": "#/$defs/resource_value"
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "decimal",
+                "precision",
+                "semantic_type",
+                "unit"
+              ],
+              "properties": {
+                "decimal": {
+                  "type": "string",
+                  "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+                },
+                "semantic_type": {
+                  "const": "duration_seconds"
+                },
+                "unit": {
+                  "const": "seconds"
+                },
+                "precision": {
+                  "const": "6"
+                }
+              }
+            },
+            {
+              "const": "unknown"
+            }
+          ]
         },
         "model_tokens": {
-          "$ref": "#/$defs/resource_value"
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "decimal",
+                "precision",
+                "semantic_type",
+                "unit"
+              ],
+              "properties": {
+                "decimal": {
+                  "type": "string",
+                  "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+                },
+                "semantic_type": {
+                  "const": "resource_amount"
+                },
+                "unit": {
+                  "const": "tokens"
+                },
+                "precision": {
+                  "const": "0"
+                }
+              }
+            },
+            {
+              "const": "unknown"
+            }
+          ]
         },
         "cpu_seconds": {
-          "$ref": "#/$defs/resource_value"
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "decimal",
+                "precision",
+                "semantic_type",
+                "unit"
+              ],
+              "properties": {
+                "decimal": {
+                  "type": "string",
+                  "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+                },
+                "semantic_type": {
+                  "const": "duration_seconds"
+                },
+                "unit": {
+                  "const": "seconds"
+                },
+                "precision": {
+                  "const": "6"
+                }
+              }
+            },
+            {
+              "const": "unknown"
+            }
+          ]
         },
         "memory_gib_seconds": {
-          "$ref": "#/$defs/resource_value"
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "decimal",
+                "precision",
+                "semantic_type",
+                "unit"
+              ],
+              "properties": {
+                "decimal": {
+                  "type": "string",
+                  "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+                },
+                "semantic_type": {
+                  "const": "memory_gib_seconds"
+                },
+                "unit": {
+                  "const": "GiB*s"
+                },
+                "precision": {
+                  "const": "6"
+                }
+              }
+            },
+            {
+              "const": "unknown"
+            }
+          ]
         },
         "accelerator_seconds": {
-          "$ref": "#/$defs/resource_value"
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "decimal",
+                "precision",
+                "semantic_type",
+                "unit"
+              ],
+              "properties": {
+                "decimal": {
+                  "type": "string",
+                  "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+                },
+                "semantic_type": {
+                  "const": "duration_seconds"
+                },
+                "unit": {
+                  "const": "seconds"
+                },
+                "precision": {
+                  "const": "6"
+                }
+              }
+            },
+            {
+              "const": "unknown"
+            }
+          ]
         },
         "storage_bytes": {
-          "$ref": "#/$defs/resource_value"
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "decimal",
+                "precision",
+                "semantic_type",
+                "unit"
+              ],
+              "properties": {
+                "decimal": {
+                  "type": "string",
+                  "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+                },
+                "semantic_type": {
+                  "const": "byte_count"
+                },
+                "unit": {
+                  "const": "bytes"
+                },
+                "precision": {
+                  "const": "0"
+                }
+              }
+            },
+            {
+              "const": "unknown"
+            }
+          ]
         },
         "network_bytes": {
-          "$ref": "#/$defs/resource_value"
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "decimal",
+                "precision",
+                "semantic_type",
+                "unit"
+              ],
+              "properties": {
+                "decimal": {
+                  "type": "string",
+                  "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+                },
+                "semantic_type": {
+                  "const": "byte_count"
+                },
+                "unit": {
+                  "const": "bytes"
+                },
+                "precision": {
+                  "const": "0"
+                }
+              }
+            },
+            {
+              "const": "unknown"
+            }
+          ]
         },
         "external_cost_usd": {
-          "$ref": "#/$defs/resource_value"
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "decimal",
+                "precision",
+                "semantic_type",
+                "unit"
+              ],
+              "properties": {
+                "decimal": {
+                  "type": "string",
+                  "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+                },
+                "semantic_type": {
+                  "const": "monetary_amount_usd"
+                },
+                "unit": {
+                  "const": "USD"
+                },
+                "precision": {
+                  "type": "string",
+                  "pattern": "^(?:0|[1-9][0-9]{0,2}|exact_lexical)$"
+                }
+              }
+            },
+            {
+              "const": "unknown"
+            }
+          ]
         },
         "human_hours": {
-          "$ref": "#/$defs/resource_value"
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "decimal",
+                "precision",
+                "semantic_type",
+                "unit"
+              ],
+              "properties": {
+                "decimal": {
+                  "type": "string",
+                  "pattern": "^(?:(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?|-(?:0\\.[0-9]*[1-9][0-9]*|[1-9][0-9]*(?:\\.[0-9]+)?))(?:e-?(?:0|[1-9][0-9]*))?$"
+                },
+                "semantic_type": {
+                  "const": "human_effort_hours"
+                },
+                "unit": {
+                  "const": "hours"
+                },
+                "precision": {
+                  "const": "2"
+                }
+              }
+            },
+            {
+              "const": "unknown"
+            }
+          ]
         }
       }
     },

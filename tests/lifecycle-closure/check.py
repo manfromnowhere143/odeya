@@ -105,10 +105,10 @@ def schema_contract_errors(
     errors.extend(branch_errors)
     if len(branches) != 135:
         errors.append(f"ResearchEvent global branch count changed from 135 to {len(branches)}")
-    if schema.get("$id") != "urn:odeya:schema:research-event:0.9.0":
-        errors.append("lifecycle closure is not carried by exact ResearchEvent 0.9.0")
-    if nested(schema, "properties", "schema_version", "const") != "0.9.0":
-        errors.append("ResearchEvent instance version is not exactly 0.9.0")
+    if schema.get("$id") != "urn:odeya:schema:research-event:0.10.0":
+        errors.append("lifecycle closure is not carried by exact ResearchEvent 0.10.0")
+    if nested(schema, "properties", "schema_version", "const") != "0.10.0":
+        errors.append("ResearchEvent instance version is not exactly 0.10.0")
     required_envelope_fields = {
         "payload_type_id",
         "payload_contract_resolution_status",
@@ -658,7 +658,7 @@ def protocol_origin_errors(subject: dict[str, Any]) -> list[str]:
         errors.append("protocol origin is not explicitly from aggregate absence")
     if subject.get("first_materialized_version") != 1:
         errors.append("protocol origin does not materialize version 1")
-    if not valid_record_ref(subject.get("frozen_protocol_snapshot_ref"), schema_id="urn:odeya:schema:protocol-snapshot:0.2.0"):
+    if not valid_record_ref(subject.get("frozen_protocol_snapshot_ref"), schema_id="urn:odeya:schema:protocol-snapshot:0.3.0"):
         errors.append("protocol origin lacks an exact frozen ProtocolSnapshot reference")
     if not valid_artifact_ref(subject.get("source_draft_evidence_ref")):
         errors.append("protocol origin lacks exact source-draft evidence")

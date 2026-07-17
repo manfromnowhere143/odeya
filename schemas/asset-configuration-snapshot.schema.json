@@ -1,249 +1,755 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:asset-configuration-snapshot:0.1.0",
+  "$id": "urn:odeya:schema:asset-configuration-snapshot:0.2.0",
   "title": "Odeya AssetConfigurationSnapshot",
   "description": "An immutable effective-time snapshot of a physical asset. It binds geometry, material, topology, hardware identities, software/firmware, boundary/initial conditions, maintenance/damage/modification, and sensor/calibration state. Missing or unknown hardware blocks in-force applicability and is never interpreted as zero components or success.",
   "type": "object",
   "additionalProperties": false,
   "required": [
-    "schema_version", "asset_configuration_snapshot_id", "version", "asset_ref", "effective_interval",
-    "geometry_ref", "material_manifest_ref", "topology_ref", "hardware_identity_coverage",
-    "software_components", "boundary_condition_refs", "initial_condition_refs", "maintenance_state",
-    "damage_state", "modification_state", "sensor_topology_ref", "sensor_calibration_state_ref",
-    "applicability_disposition", "reason_codes", "invalidation_triggers", "snapshot_digest"
+    "schema_version",
+    "asset_configuration_snapshot_id",
+    "version",
+    "asset_ref",
+    "effective_interval",
+    "geometry_ref",
+    "material_manifest_ref",
+    "topology_ref",
+    "hardware_identity_coverage",
+    "software_components",
+    "boundary_condition_refs",
+    "initial_condition_refs",
+    "maintenance_state",
+    "damage_state",
+    "modification_state",
+    "sensor_topology_ref",
+    "sensor_calibration_state_ref",
+    "applicability_disposition",
+    "reason_codes",
+    "invalidation_triggers",
+    "snapshot_digest"
   ],
   "properties": {
-    "schema_version": { "const": "0.1.0" },
-    "asset_configuration_snapshot_id": { "$ref": "#/$defs/identifier" },
-    "version": { "type": "integer", "minimum": 1 },
-    "asset_ref": { "$ref": "#/$defs/record_reference" },
-    "effective_interval": { "$ref": "#/$defs/effective_interval" },
-    "geometry_ref": { "$ref": "#/$defs/artifact_reference" },
-    "material_manifest_ref": { "$ref": "#/$defs/artifact_reference" },
-    "topology_ref": { "$ref": "#/$defs/artifact_reference" },
-    "hardware_identity_coverage": { "$ref": "#/$defs/hardware_coverage" },
+    "schema_version": {
+      "const": "0.2.0"
+    },
+    "asset_configuration_snapshot_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "asset_ref": {
+      "$ref": "#/$defs/record_reference"
+    },
+    "effective_interval": {
+      "$ref": "#/$defs/effective_interval"
+    },
+    "geometry_ref": {
+      "$ref": "#/$defs/artifact_reference"
+    },
+    "material_manifest_ref": {
+      "$ref": "#/$defs/artifact_reference"
+    },
+    "topology_ref": {
+      "$ref": "#/$defs/artifact_reference"
+    },
+    "hardware_identity_coverage": {
+      "$ref": "#/$defs/hardware_coverage"
+    },
     "software_components": {
-      "type": "array", "maxItems": 256, "uniqueItems": true,
-      "items": { "$ref": "#/$defs/software_component" }
+      "type": "array",
+      "maxItems": 256,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/software_component"
+      }
     },
     "boundary_condition_refs": {
-      "type": "array", "minItems": 1, "maxItems": 128, "uniqueItems": true,
-      "items": { "$ref": "#/$defs/physical_quantity_reference" }
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 128,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/physical_quantity_reference"
+      }
     },
     "initial_condition_refs": {
-      "type": "array", "minItems": 1, "maxItems": 128, "uniqueItems": true,
-      "items": { "$ref": "#/$defs/physical_quantity_reference" }
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 128,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/physical_quantity_reference"
+      }
     },
-    "maintenance_state": { "$ref": "#/$defs/state_record" },
-    "damage_state": { "$ref": "#/$defs/state_record" },
-    "modification_state": { "$ref": "#/$defs/state_record" },
-    "sensor_topology_ref": { "$ref": "#/$defs/artifact_reference" },
-    "sensor_calibration_state_ref": { "$ref": "#/$defs/artifact_reference" },
-    "applicability_disposition": { "enum": ["in_force", "blocked", "indeterminate", "expired"] },
+    "maintenance_state": {
+      "$ref": "#/$defs/state_record"
+    },
+    "damage_state": {
+      "$ref": "#/$defs/state_record"
+    },
+    "modification_state": {
+      "$ref": "#/$defs/state_record"
+    },
+    "sensor_topology_ref": {
+      "$ref": "#/$defs/artifact_reference"
+    },
+    "sensor_calibration_state_ref": {
+      "$ref": "#/$defs/artifact_reference"
+    },
+    "applicability_disposition": {
+      "enum": [
+        "in_force",
+        "blocked",
+        "indeterminate",
+        "expired"
+      ]
+    },
     "reason_codes": {
-      "type": "array", "maxItems": 64, "uniqueItems": true,
-      "items": { "$ref": "#/$defs/identifier" }
+      "type": "array",
+      "maxItems": 64,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/identifier"
+      }
     },
     "invalidation_triggers": {
-      "type": "array", "minItems": 7, "maxItems": 32, "uniqueItems": true,
+      "type": "array",
+      "minItems": 7,
+      "maxItems": 32,
+      "uniqueItems": true,
       "items": {
         "enum": [
-          "geometry_change", "material_change", "topology_change", "hardware_identity_change",
-          "software_or_firmware_change", "maintenance_change", "damage_change", "modification_change",
-          "sensor_topology_change", "calibration_change", "boundary_condition_change", "effective_interval_expiry"
+          "geometry_change",
+          "material_change",
+          "topology_change",
+          "hardware_identity_change",
+          "software_or_firmware_change",
+          "maintenance_change",
+          "damage_change",
+          "modification_change",
+          "sensor_topology_change",
+          "calibration_change",
+          "boundary_condition_change",
+          "effective_interval_expiry"
         ]
       },
       "allOf": [
-        { "contains": { "const": "hardware_identity_change" } },
-        { "contains": { "const": "software_or_firmware_change" } },
-        { "contains": { "const": "damage_change" } },
-        { "contains": { "const": "calibration_change" } }
+        {
+          "contains": {
+            "const": "hardware_identity_change"
+          }
+        },
+        {
+          "contains": {
+            "const": "software_or_firmware_change"
+          }
+        },
+        {
+          "contains": {
+            "const": "damage_change"
+          }
+        },
+        {
+          "contains": {
+            "const": "calibration_change"
+          }
+        }
       ]
     },
-    "snapshot_digest": { "$ref": "#/$defs/digest" }
+    "snapshot_digest": {
+      "$ref": "#/$defs/digest"
+    }
   },
   "allOf": [
     {
       "if": {
         "properties": {
           "hardware_identity_coverage": {
-            "properties": { "status": { "not": { "const": "complete" } } },
-            "required": ["status"]
+            "properties": {
+              "status": {
+                "not": {
+                  "const": "complete"
+                }
+              }
+            },
+            "required": [
+              "status"
+            ]
           }
         },
-        "required": ["hardware_identity_coverage"]
+        "required": [
+          "hardware_identity_coverage"
+        ]
       },
       "then": {
         "properties": {
-          "applicability_disposition": { "enum": ["blocked", "indeterminate"] },
-          "reason_codes": { "minItems": 1 }
+          "applicability_disposition": {
+            "enum": [
+              "blocked",
+              "indeterminate"
+            ]
+          },
+          "reason_codes": {
+            "minItems": 1
+          }
         }
       }
     },
     {
-      "if": { "properties": { "applicability_disposition": { "const": "in_force" } }, "required": ["applicability_disposition"] },
+      "if": {
+        "properties": {
+          "applicability_disposition": {
+            "const": "in_force"
+          }
+        },
+        "required": [
+          "applicability_disposition"
+        ]
+      },
       "then": {
         "properties": {
-          "hardware_identity_coverage": { "properties": { "status": { "const": "complete" } } },
-          "reason_codes": { "maxItems": 0 }
+          "hardware_identity_coverage": {
+            "properties": {
+              "status": {
+                "const": "complete"
+              }
+            }
+          },
+          "reason_codes": {
+            "maxItems": 0
+          }
         }
       },
-      "else": { "properties": { "reason_codes": { "minItems": 1 } } }
+      "else": {
+        "properties": {
+          "reason_codes": {
+            "minItems": 1
+          }
+        }
+      }
     }
   ],
   "$defs": {
-    "identifier": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$" },
-    "digest": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$"
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
     "utc_timestamp": {
       "type": "string",
       "format": "date-time",
       "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
     },
     "artifact_reference": {
-      "type": "object", "additionalProperties": false,
-      "required": ["artifact_id", "digest", "media_type"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "digest",
+        "media_type"
+      ],
       "properties": {
-        "artifact_id": { "$ref": "#/$defs/identifier" },
-        "digest": { "$ref": "#/$defs/digest" },
-        "media_type": { "type": "string", "minLength": 1, "maxLength": 255 }
+        "artifact_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        }
       }
     },
     "record_reference": {
-      "type": "object", "additionalProperties": false,
-      "required": ["record_id", "version", "schema_id", "digest"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "record_id",
+        "version",
+        "schema_id",
+        "digest"
+      ],
       "properties": {
-        "record_id": { "$ref": "#/$defs/identifier" },
-        "version": { "type": "integer", "minimum": 1 },
-        "schema_id": { "type": "string", "pattern": "^urn:odeya:schema:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$" },
-        "digest": { "$ref": "#/$defs/digest" }
+        "record_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "schema_id": {
+          "type": "string",
+          "pattern": "^urn:odeya:schema:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        }
       }
     },
     "physical_quantity_reference": {
       "allOf": [
-        { "$ref": "#/$defs/record_reference" },
-        { "properties": { "schema_id": { "const": "urn:odeya:schema:physical-quantity:0.1.0" } } }
+        {
+          "$ref": "#/$defs/record_reference"
+        },
+        {
+          "properties": {
+            "schema_id": {
+              "const": "urn:odeya:schema:physical-quantity:0.2.0"
+            }
+          }
+        }
       ]
     },
     "effective_interval": {
-      "type": "object", "additionalProperties": false,
-      "required": ["effective_from", "effective_until", "controlled_time_source_ref"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "effective_from",
+        "effective_until",
+        "controlled_time_source_ref"
+      ],
       "properties": {
-        "effective_from": { "$ref": "#/$defs/utc_timestamp" },
-        "effective_until": { "oneOf": [{ "$ref": "#/$defs/utc_timestamp" }, { "type": "null" }] },
-        "controlled_time_source_ref": { "$ref": "#/$defs/artifact_reference" }
+        "effective_from": {
+          "$ref": "#/$defs/utc_timestamp"
+        },
+        "effective_until": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/utc_timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "controlled_time_source_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        }
       }
     },
     "firmware_binding": {
-      "type": "object", "additionalProperties": false,
-      "required": ["status", "version", "image_ref", "reason_codes"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "version",
+        "image_ref",
+        "reason_codes"
+      ],
       "properties": {
-        "status": { "enum": ["known", "missing", "unknown", "not_applicable"] },
-        "version": { "oneOf": [{ "type": "string", "minLength": 1, "maxLength": 128 }, { "type": "null" }] },
-        "image_ref": { "oneOf": [{ "$ref": "#/$defs/artifact_reference" }, { "type": "null" }] },
-        "reason_codes": {
-          "type": "array", "maxItems": 16, "uniqueItems": true,
-          "items": { "$ref": "#/$defs/identifier" }
-        }
-      },
-      "allOf": [{
-        "if": { "properties": { "status": { "const": "known" } }, "required": ["status"] },
-        "then": { "properties": { "version": { "type": "string", "minLength": 1 }, "image_ref": { "$ref": "#/$defs/artifact_reference" }, "reason_codes": { "maxItems": 0 } } },
-        "else": { "properties": { "version": { "type": "null" }, "image_ref": { "type": "null" }, "reason_codes": { "minItems": 1 } } }
-      }]
-    },
-    "hardware_component": {
-      "type": "object", "additionalProperties": false,
-      "required": ["component_id", "component_class", "manufacturer", "model", "serial_status", "serial_number", "hardware_manifest_ref", "firmware", "reason_codes"],
-      "properties": {
-        "component_id": { "$ref": "#/$defs/identifier" },
-        "component_class": { "$ref": "#/$defs/identifier" },
-        "manufacturer": { "type": "string", "minLength": 1, "maxLength": 128 },
-        "model": { "type": "string", "minLength": 1, "maxLength": 128 },
-        "serial_status": { "enum": ["known", "missing", "unknown"] },
-        "serial_number": { "oneOf": [{ "type": "string", "minLength": 1, "maxLength": 128 }, { "type": "null" }] },
-        "hardware_manifest_ref": { "$ref": "#/$defs/artifact_reference" },
-        "firmware": { "$ref": "#/$defs/firmware_binding" },
-        "reason_codes": {
-          "type": "array", "maxItems": 16, "uniqueItems": true,
-          "items": { "$ref": "#/$defs/identifier" }
-        }
-      },
-      "allOf": [{
-        "if": { "properties": { "serial_status": { "const": "known" } }, "required": ["serial_status"] },
-        "then": { "properties": { "serial_number": { "type": "string", "minLength": 1 }, "reason_codes": { "maxItems": 0 } } },
-        "else": { "properties": { "serial_number": { "type": "null" }, "reason_codes": { "minItems": 1 } } }
-      }]
-    },
-    "hardware_coverage": {
-      "type": "object", "additionalProperties": false,
-      "required": ["status", "expected_component_count", "observed_component_count", "expected_component_ids", "components", "coverage_evidence_ref", "reason_codes"],
-      "properties": {
-        "status": { "enum": ["complete", "partial", "unknown"] },
-        "expected_component_count": { "oneOf": [{ "type": "integer", "minimum": 1 }, { "type": "null" }] },
-        "observed_component_count": { "type": "integer", "minimum": 0 },
-        "expected_component_ids": {
-          "type": "array", "maxItems": 256, "uniqueItems": true,
-          "items": { "$ref": "#/$defs/identifier" }
+        "status": {
+          "enum": [
+            "known",
+            "missing",
+            "unknown",
+            "not_applicable"
+          ]
         },
-        "components": {
-          "type": "array", "maxItems": 256, "uniqueItems": true,
-          "items": { "$ref": "#/$defs/hardware_component" }
+        "version": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            {
+              "type": "null"
+            }
+          ]
         },
-        "coverage_evidence_ref": { "$ref": "#/$defs/artifact_reference" },
+        "image_ref": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/artifact_reference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
         "reason_codes": {
-          "type": "array", "maxItems": 32, "uniqueItems": true,
-          "items": { "$ref": "#/$defs/identifier" }
+          "type": "array",
+          "maxItems": 16,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
         }
       },
-      "allOf": [{
-        "if": { "properties": { "status": { "const": "complete" } }, "required": ["status"] },
-        "then": {
-          "properties": {
-            "expected_component_count": { "type": "integer", "minimum": 1 },
-            "expected_component_ids": { "minItems": 1 }, "reason_codes": { "maxItems": 0 },
-            "components": {
-              "minItems": 1,
-              "items": {
-                "allOf": [
-                  { "$ref": "#/$defs/hardware_component" },
-                  { "properties": { "serial_status": { "const": "known" }, "firmware": { "properties": { "status": { "enum": ["known", "not_applicable"] } } } } }
-                ]
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "known"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "version": {
+                "type": "string",
+                "minLength": 1
+              },
+              "image_ref": {
+                "$ref": "#/$defs/artifact_reference"
+              },
+              "reason_codes": {
+                "maxItems": 0
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "version": {
+                "type": "null"
+              },
+              "image_ref": {
+                "type": "null"
+              },
+              "reason_codes": {
+                "minItems": 1
               }
             }
           }
+        }
+      ]
+    },
+    "hardware_component": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "component_id",
+        "component_class",
+        "manufacturer",
+        "model",
+        "serial_status",
+        "serial_number",
+        "hardware_manifest_ref",
+        "firmware",
+        "reason_codes"
+      ],
+      "properties": {
+        "component_id": {
+          "$ref": "#/$defs/identifier"
         },
-        "else": { "properties": { "reason_codes": { "minItems": 1 } } }
-      }]
+        "component_class": {
+          "$ref": "#/$defs/identifier"
+        },
+        "manufacturer": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "model": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "serial_status": {
+          "enum": [
+            "known",
+            "missing",
+            "unknown"
+          ]
+        },
+        "serial_number": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "hardware_manifest_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        },
+        "firmware": {
+          "$ref": "#/$defs/firmware_binding"
+        },
+        "reason_codes": {
+          "type": "array",
+          "maxItems": 16,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "serial_status": {
+                "const": "known"
+              }
+            },
+            "required": [
+              "serial_status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "serial_number": {
+                "type": "string",
+                "minLength": 1
+              },
+              "reason_codes": {
+                "maxItems": 0
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "serial_number": {
+                "type": "null"
+              },
+              "reason_codes": {
+                "minItems": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    "hardware_coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "expected_component_count",
+        "observed_component_count",
+        "expected_component_ids",
+        "components",
+        "coverage_evidence_ref",
+        "reason_codes"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "complete",
+            "partial",
+            "unknown"
+          ]
+        },
+        "expected_component_count": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "observed_component_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "expected_component_ids": {
+          "type": "array",
+          "maxItems": 256,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "components": {
+          "type": "array",
+          "maxItems": 256,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/hardware_component"
+          }
+        },
+        "coverage_evidence_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        },
+        "reason_codes": {
+          "type": "array",
+          "maxItems": 32,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "complete"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "expected_component_count": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "expected_component_ids": {
+                "minItems": 1
+              },
+              "reason_codes": {
+                "maxItems": 0
+              },
+              "components": {
+                "minItems": 1,
+                "items": {
+                  "allOf": [
+                    {
+                      "$ref": "#/$defs/hardware_component"
+                    },
+                    {
+                      "properties": {
+                        "serial_status": {
+                          "const": "known"
+                        },
+                        "firmware": {
+                          "properties": {
+                            "status": {
+                              "enum": [
+                                "known",
+                                "not_applicable"
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "reason_codes": {
+                "minItems": 1
+              }
+            }
+          }
+        }
+      ]
     },
     "software_component": {
-      "type": "object", "additionalProperties": false,
-      "required": ["component_id", "version", "artifact_ref", "role"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "component_id",
+        "version",
+        "artifact_ref",
+        "role"
+      ],
       "properties": {
-        "component_id": { "$ref": "#/$defs/identifier" },
-        "version": { "type": "string", "minLength": 1, "maxLength": 128 },
-        "artifact_ref": { "$ref": "#/$defs/artifact_reference" },
-        "role": { "enum": ["control", "estimation", "acquisition", "firmware_support", "monitoring", "other"] }
+        "component_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "artifact_ref": {
+          "$ref": "#/$defs/artifact_reference"
+        },
+        "role": {
+          "enum": [
+            "control",
+            "estimation",
+            "acquisition",
+            "firmware_support",
+            "monitoring",
+            "other"
+          ]
+        }
       }
     },
     "state_record": {
-      "type": "object", "additionalProperties": false,
-      "required": ["status", "evidence_refs", "reason_codes"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "evidence_refs",
+        "reason_codes"
+      ],
       "properties": {
-        "status": { "enum": ["known_nominal", "known_non_nominal", "unknown", "not_applicable"] },
+        "status": {
+          "enum": [
+            "known_nominal",
+            "known_non_nominal",
+            "unknown",
+            "not_applicable"
+          ]
+        },
         "evidence_refs": {
-          "type": "array", "maxItems": 64, "uniqueItems": true,
-          "items": { "$ref": "#/$defs/artifact_reference" }
+          "type": "array",
+          "maxItems": 64,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/artifact_reference"
+          }
         },
         "reason_codes": {
-          "type": "array", "maxItems": 32, "uniqueItems": true,
-          "items": { "$ref": "#/$defs/identifier" }
+          "type": "array",
+          "maxItems": 32,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
         }
       },
-      "allOf": [{
-        "if": { "properties": { "status": { "enum": ["known_nominal", "known_non_nominal"] } }, "required": ["status"] },
-        "then": { "properties": { "evidence_refs": { "minItems": 1 } } },
-        "else": { "properties": { "reason_codes": { "minItems": 1 } } }
-      }]
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "enum": [
+                  "known_nominal",
+                  "known_non_nominal"
+                ]
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "evidence_refs": {
+                "minItems": 1
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "reason_codes": {
+                "minItems": 1
+              }
+            }
+          }
+        }
+      ]
     }
   }
 }
