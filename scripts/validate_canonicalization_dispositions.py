@@ -258,6 +258,33 @@ def candidate_errors(candidate: dict, audit: dict, derived: dict | None = None) 
     require(stored_d5 == derived["d5_groups"],
             "d5 field table does not match the recomputed field groups")
 
+    # Proposal slots: the proposing tranche filled them; the operator has not
+    # decided. Every row must carry a complete, well-formed proposal -- a half-
+    # proposed table is not decidable -- and rows deferring to the operator must
+    # say so explicitly rather than by leaving a slot null.
+    d3_confidences = {"certain", "likely", "needs_operator"}
+    for row in candidate.get("d3_decimal_table", []):
+        if not all(isinstance(row.get(k), str) and row[k] for k in
+                   ("proposed_semantic_type", "proposed_unit", "proposed_precision")):
+            errors.append(f"d3 row {row.get('pointer')} lacks a complete proposal")
+        if row.get("confidence") not in d3_confidences:
+            errors.append(f"d3 row {row.get('pointer')} has no valid confidence")
+    d5_kinds = {"byte_digest", "canonical_object_digest", "mixed_needs_split", "needs_operator"}
+    for row in candidate.get("d5_field_table", []):
+        if row.get("proposed_digest_kind") not in d5_kinds:
+            errors.append(f"d5 field {row.get('field_name')} has no valid digest kind")
+        subject = row.get("proposed_subject_class_or_domain")
+        if not isinstance(subject, str) or not subject:
+            errors.append(f"d5 field {row.get('field_name')} lacks a subject proposal")
+        if row.get("requires_new_domain_registration") not in (True, False, "partial", "unknown"):
+            errors.append(f"d5 field {row.get('field_name')} lacks a new-domain disposition")
+        if row.get("proposed_digest_kind") in {"mixed_needs_split", "needs_operator"} and not (
+            isinstance(row.get("note"), str) and row["note"]
+        ) and not (isinstance(subject, str) and len(subject) > 20):
+            errors.append(
+                f"d5 field {row.get('field_name')} defers to the operator without saying why"
+            )
+
     acceptance = candidate.get("operator_acceptance", {})
     require(set(acceptance) == set(declared),
             "operator_acceptance must carry one slot per class")
@@ -299,6 +326,9 @@ def self_test(candidate: dict, audit: dict, derived: dict | None = None) -> int:
         ("duplicate d5 row prepended", lambda c: c["d5_field_table"].insert(0, dict(c["d5_field_table"][0], occurrences=9999))),
         ("duplicate union entry appended", lambda c: c["touched_schema_union"].append(c["touched_schema_union"][0])),
         ("comparator declaration gutted", lambda c: c["defs_comparator"].__setitem__("vocabulary_keys", ["enum"])),
+        ("d3 proposal blanked", lambda c: c["d3_decimal_table"][0].__setitem__("proposed_semantic_type", None)),
+        ("d5 kind invalidated", lambda c: c["d5_field_table"][0].__setitem__("proposed_digest_kind", "sha256")),
+        ("d5 new-domain slot blanked", lambda c: c["d5_field_table"][0].__setitem__("requires_new_domain_registration", None)),
     ]
     if all(mutate(label, fn) for label, fn in checks):
         print(f"disposition self-test passed: {len(checks)} known-bad mutations refused")
