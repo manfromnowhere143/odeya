@@ -1135,7 +1135,19 @@ HARNESS_SELF_TEST_SUBJECT = {
 }
 
 
-def harness_self_test() -> list[str]:
+def refusal_matches(observed: list[str], expected: str) -> bool:
+    """Whether a declared refusal actually appears. Factored so the
+    self-test can prove its own matcher rejects a non-matching
+    expectation: review showed this collapsing to a polarity check
+    (`if not observed`) with the suite green (ADR 0069)."""
+    return any(expected in failure for failure in observed)
+
+
+def harness_self_test(
+    evaluator: Callable[[list[Any]], tuple] | None = None,
+    coverage: Callable[..., list[str]] | None = None,
+    collector: Callable[[dict[str, Any]], tuple] | None = None,
+) -> list[str]:
     """Prove the harness's own hygiene guards fire (law 11).
 
     Each synthetic case below is malformed in exactly one way and must be
@@ -1145,10 +1157,18 @@ def harness_self_test() -> list[str]:
     """
     failures: list[str] = []
 
+    run = evaluator or evaluate_cases
+    cover = coverage or coverage_failures
+    collect = collector or collect_case_failures
+
     def refuses(case: dict[str, Any], expected: str, label: str) -> None:
-        observed, _, _, _ = evaluate_cases([case])
-        if not any(expected in failure for failure in observed):
+        observed, _, _, _ = run([case])
+        if not refusal_matches(observed, expected):
             failures.append(f"harness self-test: {label} was not refused; got {observed}")
+
+    # The matcher itself must discriminate, not merely detect non-emptiness.
+    if refusal_matches(["an unrelated failure"], "odeya-self-test-never-appears"):
+        failures.append("harness self-test: the refusal matcher accepts a non-matching expectation")
 
     base = {
         "name": "odeya-harness-self-test",
@@ -1222,22 +1242,67 @@ def harness_self_test() -> list[str]:
     # not proof that the intended path produced it. This self-test first
     # accepted the coverage failure as evidence for the case path, which is
     # the same incidental-refusal defect ADR 0024 named, committed here.
-    collected, _, _ = collect_case_failures(
+    collected, _, _ = collect(
         {"cases": [{"name": "odeya-harness-self-test", "model": "no-such-model", "expect": "reject"}]}
     )
     if not any("unknown model" in failure for failure in collected):
         failures.append("harness self-test: the case-failure collection path is not load-bearing")
-    collected, _, _ = collect_case_failures({"cases": [], "required_adversarial_tags": []})
+    collected, _, _ = collect({"cases": [], "required_adversarial_tags": []})
     if not any("minimum safe/adversarial coverage" in failure for failure in collected):
         failures.append("harness self-test: the coverage-failure collection path is not load-bearing")
 
-    # The floors: each disjunct must be independently load-bearing.
-    if not coverage_failures(0, 100, set(), set()):
-        failures.append("harness self-test: a safe-reference floor breach was not refused")
-    if not coverage_failures(100, 0, set(), set()):
-        failures.append("harness self-test: an adversarial floor breach was not refused")
-    if not coverage_failures(100, 100, {"extra"}, set()):
-        failures.append("harness self-test: a tag-coverage mismatch was not refused")
+    # The floors, pinned at their exact thresholds in both directions.
+    # Probing only (0, 100) and (100, 0) proves a floor exists but leaves the
+    # constants free: review lowered them to 1 and 1 with the suite green,
+    # which is the suite shrinking to nothing undetected (ADR 0069).
+    floor = "minimum safe/adversarial coverage"
+    for safe, adversarial, should_refuse, label in (
+        (9, 100, True, "one case below the safe-reference floor"),
+        (10, 100, False, "the exact safe-reference floor"),
+        (100, 14, True, "one case below the adversarial floor"),
+        (100, 15, False, "the exact adversarial floor"),
+    ):
+        refused = refusal_matches(cover(safe, adversarial, set(), set()), floor)
+        if refused != should_refuse:
+            failures.append(
+                f"harness self-test: {label} was "
+                f"{'not refused' if should_refuse else 'refused'} ({safe} safe, {adversarial} adversarial)"
+            )
+    # Both directions of tag coverage: extras and omissions.
+    if not cover(100, 100, {"extra"}, set()):
+        failures.append("harness self-test: an extra adversarial tag was not refused")
+    if not cover(100, 100, set(), {"required-but-absent"}):
+        failures.append("harness self-test: a missing adversarial tag was not refused")
+    return failures
+
+
+def harness_self_test_meta_proof() -> list[str]:
+    """Prove the self-test's own refusal statements are load-bearing.
+
+    ADR 0066 called these structurally unprovable and named them the point
+    where the proof-of-proof regress terminates. Independent review
+    disproved that by construction (ADR 0069): injecting a blind evaluator
+    is the same move the self-test already makes one level down —
+    construct the malformed thing in memory — applied to a malformed
+    harness instead of a malformed case. The regress does terminate, but
+    one level higher than claimed, and the claim was wrong.
+    """
+    failures: list[str] = []
+    # Each injection blinds one collaborator; the exact failure count makes
+    # every individual self-test refusal load-bearing, since removing one
+    # lowers its count. The counts are deliberate: changing a probe must
+    # change them here too.
+    for label, kwargs, expected in (
+        ("evaluator", {"evaluator": lambda cases: ([], 0, 0, set())}, 10),
+        ("coverage", {"coverage": lambda *args, **kw: []}, 4),
+        ("collector", {"collector": lambda cases: ([], 0, 0)}, 2),
+    ):
+        observed = harness_self_test(**kwargs)
+        if len(observed) != expected:
+            failures.append(
+                f"harness meta self-test: blinding the {label} produced {len(observed)} "
+                f"refusals, expected {expected}; a self-test refusal is not load-bearing"
+            )
     return failures
 
 
@@ -1273,6 +1338,7 @@ def main() -> int:
     data_fixture = load_json(DATA_USE_FIXTURE_PATH)
 
     failures: list[str] = harness_self_test()
+    failures.extend(harness_self_test_meta_proof())
     failures.extend(schema_contract_errors(schema, inventory, identity))
     failures.extend(data_fixture_errors(data_fixture))
 

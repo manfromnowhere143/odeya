@@ -6,7 +6,7 @@
   "status": "candidate_measurement_not_admitted",
   "method": "each errors.append branch of a declared lifecycle model is disabled one at a time in an isolated copy; a guard is proved only when the suite fails without it",
   "subject": "tests/lifecycle-closure/check.py",
-  "subject_sha256": "sha256:405e62cc5fdb7ad828c622fdef7256c40f370c40dc0bceb04730abfc9067ddac",
+  "subject_sha256": "sha256:3409b71d8dd5653a84a58d8554f9e5bcbb1f4773c6ad5117ec36a147c8d17e9a",
   "models": [
     {
       "function": "branch_map",
@@ -1046,9 +1046,15 @@
     },
     {
       "function": "main",
-      "branch_count": 3,
+      "branch_count": 4,
       "proved_count": 0,
       "branches": [
+        {
+          "guard": "harness_self_test_meta_proof()",
+          "proved": false,
+          "proved_by": null,
+          "detection": null
+        },
         {
           "guard": "schema_contract_errors(schema, inventory, identity)",
           "proved": false,
@@ -1139,44 +1145,50 @@
     },
     {
       "function": "harness_self_test",
-      "branch_count": 6,
-      "proved_count": 0,
+      "branch_count": 7,
+      "proved_count": 6,
       "branches": [
         {
           "guard": "harness self-test: {} was not refused; got {}",
+          "proved": true,
+          "proved_by": "harness meta self-test",
+          "detection": "case_attributed"
+        },
+        {
+          "guard": "harness self-test: the refusal matcher accepts a non-matching expectation",
           "proved": false,
           "proved_by": null,
           "detection": null
         },
         {
           "guard": "harness self-test: the case-failure collection path is not load-bearing",
-          "proved": false,
-          "proved_by": null,
-          "detection": null
+          "proved": true,
+          "proved_by": "harness meta self-test",
+          "detection": "case_attributed"
         },
         {
           "guard": "harness self-test: the coverage-failure collection path is not load-bearing",
-          "proved": false,
-          "proved_by": null,
-          "detection": null
+          "proved": true,
+          "proved_by": "harness meta self-test",
+          "detection": "case_attributed"
         },
         {
-          "guard": "harness self-test: a safe-reference floor breach was not refused",
-          "proved": false,
-          "proved_by": null,
-          "detection": null
+          "guard": "harness self-test: {} was {} ({} safe, {} adversarial)",
+          "proved": true,
+          "proved_by": "harness meta self-test",
+          "detection": "case_attributed"
         },
         {
-          "guard": "harness self-test: an adversarial floor breach was not refused",
-          "proved": false,
-          "proved_by": null,
-          "detection": null
+          "guard": "harness self-test: an extra adversarial tag was not refused",
+          "proved": true,
+          "proved_by": "harness meta self-test",
+          "detection": "case_attributed"
         },
         {
-          "guard": "harness self-test: a tag-coverage mismatch was not refused",
-          "proved": false,
-          "proved_by": null,
-          "detection": null
+          "guard": "harness self-test: a missing adversarial tag was not refused",
+          "proved": true,
+          "proved_by": "harness meta self-test",
+          "detection": "case_attributed"
         }
       ]
     },
@@ -1202,9 +1214,9 @@
   ],
   "not_auditable": [],
   "summary": {
-    "branch_count": 181,
-    "proved": 172,
-    "unproved": 9,
+    "branch_count": 183,
+    "proved": 178,
+    "unproved": 5,
     "crash_detected": 0
   },
   "boundary": "architecture evidence about retained bytes only; not a runtime, an admitted member, an independently reproduced verdict, or Gate A acceptance"

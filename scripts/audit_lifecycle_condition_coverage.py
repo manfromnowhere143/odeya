@@ -107,6 +107,17 @@ AUDITED_HELPERS = (
     "valid_record_ref",
     "valid_versioned_identity",
 )
+# Refusal-DETERMINING helpers: they hold no refusal themselves, but their
+# boolean tests decide what every guard downstream can see. Independent
+# review found a removable conjunct here that was invisible to both the
+# numerator and the not-audited residue -- the defensive filter on the
+# repository walk feeding the canonical defining-path guard (ADR 0069).
+AUDITED_VALUE_HELPERS = (
+    "nested",
+    "scan_defining_paths",
+    "exact_value",
+    "transition_spec",
+)
 
 
 def sha256_file(path: Path) -> str:
@@ -222,6 +233,27 @@ def discover_conditions(source: str) -> tuple[dict[str, list[dict[str, Any]]], d
                             }
                         )
             found[node.name] = units
+        elif node.name in AUDITED_VALUE_HELPERS:
+            units = []
+            for inner in ast.walk(node):
+                if not (isinstance(inner, ast.If) and isinstance(inner.test, ast.BoolOp)):
+                    continue
+                role = "disjunct" if isinstance(inner.test.op, ast.Or) else "conjunct"
+                for index, member in enumerate(inner.test.values):
+                    if isinstance(member, ast.BoolOp):
+                        not_audited["nested_boolean_groups"] += 1
+                    units.append(
+                        {
+                            "guard": f"value helper {node.name}",
+                            "role": role,
+                            "index": index,
+                            "condition": ast.unparse(member),
+                            "lineno": inner.lineno,
+                            "col_offset": inner.col_offset,
+                            "site": "if",
+                        }
+                    )
+            found[node.name] = units
         elif node.name in AUDITED_HELPERS:
             units = []
             for inner in ast.walk(node):
@@ -243,7 +275,11 @@ def discover_conditions(source: str) -> tuple[dict[str, list[dict[str, Any]]], d
                         }
                     )
             found[node.name] = units
-    missing = [name for name in (*AUDITED_MODELS, *AUDITED_HELPERS) if name not in found]
+    missing = [
+        name
+        for name in (*AUDITED_MODELS, *AUDITED_HELPERS, *AUDITED_VALUE_HELPERS)
+        if name not in found
+    ]
     if missing:
         raise SystemExit(f"declared function(s) absent from checker: {missing}")
     return found, not_audited
@@ -348,7 +384,7 @@ def measure(python: str) -> dict[str, Any]:
             )
 
         results = []
-        for name in (*AUDITED_MODELS, *AUDITED_HELPERS):
+        for name in (*AUDITED_MODELS, *AUDITED_HELPERS, *AUDITED_VALUE_HELPERS):
             conditions = []
             for unit in units_by_function[name]:
                 target.write_text(mutated_source(tree, unit))

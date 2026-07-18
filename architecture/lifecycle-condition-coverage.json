@@ -6,7 +6,7 @@
   "status": "candidate_measurement_not_admitted",
   "method": "each top-level member of a guarded boolean chain in a declared lifecycle model or helper predicate is removed one at a time in an isolated copy; a condition is proved only when the suite fails without it",
   "subject": "tests/lifecycle-closure/check.py",
-  "subject_sha256": "sha256:405e62cc5fdb7ad828c622fdef7256c40f370c40dc0bceb04730abfc9067ddac",
+  "subject_sha256": "sha256:3409b71d8dd5653a84a58d8554f9e5bcbb1f4773c6ad5117ec36a147c8d17e9a",
   "models": [
     {
       "function": "branch_map",
@@ -734,7 +734,7 @@
       "proved_count": 1,
       "conditions": [
         {
-          "guard": "comprehension at line 1164",
+          "guard": "comprehension at line 1184",
           "role": "comprehension_filter",
           "condition": "k != 'expected_refusal_contains'",
           "proved": true,
@@ -921,18 +921,76 @@
           "detection": "case_attributed"
         }
       ]
+    },
+    {
+      "function": "nested",
+      "condition_count": 2,
+      "proved_count": 2,
+      "conditions": [
+        {
+          "guard": "value helper nested",
+          "role": "disjunct",
+          "condition": "not isinstance(current, dict)",
+          "proved": true,
+          "proved_by": "TypeError",
+          "detection": "crash"
+        },
+        {
+          "guard": "value helper nested",
+          "role": "disjunct",
+          "condition": "key not in current",
+          "proved": true,
+          "proved_by": "KeyError",
+          "detection": "crash"
+        }
+      ]
+    },
+    {
+      "function": "scan_defining_paths",
+      "condition_count": 2,
+      "proved_count": 1,
+      "conditions": [
+        {
+          "guard": "value helper scan_defining_paths",
+          "role": "conjunct",
+          "condition": "isinstance(candidate, dict)",
+          "proved": false,
+          "proved_by": null,
+          "detection": null
+        },
+        {
+          "guard": "value helper scan_defining_paths",
+          "role": "conjunct",
+          "condition": "candidate.get('$id') == CANONICAL_WORK_LEASE_ID",
+          "proved": true,
+          "proved_by": "canonical WorkLease resource identity must have one exact defining path",
+          "detection": "case_attributed"
+        }
+      ]
+    },
+    {
+      "function": "exact_value",
+      "condition_count": 0,
+      "proved_count": 0,
+      "conditions": []
+    },
+    {
+      "function": "transition_spec",
+      "condition_count": 0,
+      "proved_count": 0,
+      "conditions": []
     }
   ],
   "not_audited": {
-    "single_condition_tests": 145,
+    "single_condition_tests": 146,
     "nested_boolean_groups": 0,
-    "ternary_selectors": 4
+    "ternary_selectors": 5
   },
   "summary": {
-    "condition_count": 99,
-    "proved": 97,
-    "unproved": 2,
-    "crash_detected": 14
+    "condition_count": 103,
+    "proved": 100,
+    "unproved": 3,
+    "crash_detected": 16
   },
   "boundary": "condition-level architecture evidence about retained bytes only; single-condition tests and nested boolean groups are counted, not audited; structural comparisons are one condition regardless of field count; not a runtime, an admitted member, an independently reproduced verdict, or Gate A acceptance"
 }

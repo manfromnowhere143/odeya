@@ -468,12 +468,27 @@ against each case's intent (ADR 0068); and attribution everywhere is
 binding, never weakening-mutation coverage — no schema-based suite is
 proven unweakenable at its declared location.
 
-**REVIEW BOUNDARY: ADRs 0064-0068 have NOT been independently reviewed.**
-Round two (ADR 0063) covered 0052-0062 only. Everything after it is
-producer-certified work that has passed its gates but not an independent
-refutation attempt, which law 4 requires before any of it counts as
-settled. A round-three review of 0064-0068 is the next evidence-lane
-unit; until it runs, treat those five tranches as unreviewed.
+**ROUND THREE (ADR 0069) reviewed ADRs 0064-0068 and refuted three
+surfaces.** The coverage floors were free (probes fired for any threshold
+>= 1, so 10/15 could become 1/1 with the suite green), tag coverage was
+proved one-directionally, the self-test's own refusal matcher collapsed
+to a polarity check, a removable conjunct in the repository walk was
+invisible to both the numerator and the residue, and — most
+importantly — ADR 0066's "structurally unprovable terminal turtle" was
+disproved by construction. All are closed: floors pinned from both
+sides, both tag directions probed, matcher factored and proved,
+refusal-determining helpers audited, and the self-test's collaborators
+made injectable with a meta proof asserting exact refusal counts.
+Current: statements **178/183**, conditions **100/103**.
+
+The standing correction from that round: the proof-of-proof regress is
+UNBOUNDED, and every level can be closed by one more injection point.
+Never claim a residue is impossible — state where you stopped and what
+the next injection would cost. The current residue is five statements
+and three conditions, each with a known injection named in ADR 0069.
+
+Still unreviewed: the round-three response itself, and ADR 0068's schema
+corpus attribution if its reviewer's verdict is not yet retained.
 
 With that boundary stated, the dependency-ordered mission below resumes:
 the canonical profile decision remains the gating item, and it terminates
