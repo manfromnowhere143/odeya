@@ -25,7 +25,44 @@
     "c8_stale_p0_frontier",
     "c8_ambiguous_p0_frontier",
     "c8_ambiguous_p0_frontier_prong_unresolved_fork",
-    "c8_ambiguous_p0_frontier_prong_open_recovery_case"
+    "c8_ambiguous_p0_frontier_prong_open_recovery_case",
+    "first_slice_inventory_version",
+    "first_slice_inventory_status",
+    "first_slice_inventory_scope_c1_through_c8_choices_resolved",
+    "first_slice_inventory_scope_representational_member_sets_exact",
+    "first_slice_inventory_scope_activation_dependency_complete",
+    "first_slice_inventory_scope_immutable_registry_members_exist",
+    "first_slice_inventory_scope_engine_contract_root_exists",
+    "first_slice_inventory_scope_constitutional_prerequisite_instance_exists",
+    "first_slice_inventory_scope_registry_activation_exists",
+    "first_slice_inventory_scope_may_construct_verification_assignment_member",
+    "first_slice_inventory_scope_may_freeze_registry_snapshot",
+    "first_slice_inventory_scope_may_activate",
+    "first_slice_inventory_scope_may_start_runtime_implementation",
+    "first_slice_inventory_count_required_commands_exact",
+    "first_slice_inventory_count_outside_commands_exact",
+    "first_slice_inventory_count_required_event_types_exact",
+    "first_slice_inventory_count_aggregate_state_reducer_families_exact",
+    "first_slice_inventory_count_owner_modules_exact",
+    "first_slice_inventory_count_design",
+    "first_slice_inventory_count_unresolved",
+    "first_slice_inventory_law_distinct_grant_per_slot",
+    "first_slice_inventory_law_action_instance_bound",
+    "first_slice_inventory_law_single_use",
+    "first_slice_inventory_law_max_uses",
+    "first_slice_inventory_law_consumption_point",
+    "first_slice_inventory_law_used_set_equals_exhausted_set",
+    "first_slice_inventory_law_rejection_noop_or_replay_emits_new_use",
+    "first_slice_inventory_law_caller_may_select_authority_path",
+    "first_slice_inventory_cmd_dup",
+    "first_slice_inventory_cmd_overlap",
+    "first_slice_inventory_event_dup",
+    "first_slice_inventory_resource_observed",
+    "first_slice_inventory_conflicts_incomplete",
+    "first_slice_inventory_mut_not_replace",
+    "first_slice_inventory_mut_path_absent",
+    "first_slice_inventory_mut_index_noninteger",
+    "first_slice_inventory_mut_unresolvable"
   ],
   "cases": [
     {
@@ -1161,6 +1198,783 @@
         }
       },
       "expected_refusal_contains": "recovery frontier contains an open recovery case"
+    },
+    {
+      "name": "inventory-bad-version",
+      "kind": "adversarial",
+      "model": "inventory_mutation",
+      "conflict_ids": [
+        "C5"
+      ],
+      "subject": {
+        "mutation": {
+          "op": "replace",
+          "path": [
+            "schema_version"
+          ],
+          "value": "0.0.0"
+        }
+      },
+      "adversarial_tag": "first_slice_inventory_version",
+      "expected_refusal_contains": "was not reissued as exact version 0.2.0",
+      "expect": "reject"
+    },
+    {
+      "name": "inventory-bad-status",
+      "kind": "adversarial",
+      "model": "inventory_mutation",
+      "conflict_ids": [
+        "C5"
+      ],
+      "subject": {
+        "mutation": {
+          "op": "replace",
+          "path": [
+            "status"
+          ],
+          "value": "odeya-inv-probe"
+        }
+      },
+      "adversarial_tag": "first_slice_inventory_status",
+      "expected_refusal_contains": "does not expose the blocking C5 boundary",
+      "expect": "reject"
+    },
+    {
+      "name": "inventory-bad-scope-c1-through-c8-choices-resolved",
+      "kind": "adversarial",
+      "model": "inventory_mutation",
+      "conflict_ids": [
+        "C5"
+      ],
+      "subject": {
+        "mutation": {
+          "op": "replace",
+          "path": [
+            "scope_verdict",
+            "c1_through_c8_choices_resolved"
+          ],
+          "value": true
+        }
+      },
+      "adversarial_tag": "first_slice_inventory_scope_c1_through_c8_choices_resolved",
+      "expected_refusal_contains": "scope_verdict.c1_through_c8_choices_resolved is not False",
+      "expect": "reject"
+    },
+    {
+      "name": "inventory-bad-scope-representational-member-sets-exact",
+      "kind": "adversarial",
+      "model": "inventory_mutation",
+      "conflict_ids": [
+        "C5"
+      ],
+      "subject": {
+        "mutation": {
+          "op": "replace",
+          "path": [
+            "scope_verdict",
+            "representational_member_sets_exact"
+          ],
+          "value": false
+        }
+      },
+      "adversarial_tag": "first_slice_inventory_scope_representational_member_sets_exact",
+      "expected_refusal_contains": "scope_verdict.representational_member_sets_exact is not True",
+      "expect": "reject"
+    },
+    {
+      "name": "inventory-bad-scope-activation-dependency-complete",
+      "kind": "adversarial",
+      "model": "inventory_mutation",
+      "conflict_ids": [
+        "C5"
+      ],
+      "subject": {
+        "mutation": {
+          "op": "replace",
+          "path": [
+            "scope_verdict",
+            "activation_dependency_complete"
+          ],
+          "value": true
+        }
+      },
+      "adversarial_tag": "first_slice_inventory_scope_activation_dependency_complete",
+      "expected_refusal_contains": "scope_verdict.activation_dependency_complete is not False",
+      "expect": "reject"
+    },
+    {
+      "name": "inventory-bad-scope-immutable-registry-members-exist",
+      "kind": "adversarial",
+      "model": "inventory_mutation",
+      "conflict_ids": [
+        "C5"
+      ],
+      "subject": {
+        "mutation": {
+          "op": "replace",
+          "path": [
+            "scope_verdict",
+            "immutable_registry_members_exist"
+          ],
+          "value": true
+        }
+      },
+      "adversarial_tag": "first_slice_inventory_scope_immutable_registry_members_exist",
+      "expected_refusal_contains": "scope_verdict.immutable_registry_members_exist is not False",
+      "expect": "reject"
+    },
+    {
+      "name": "inventory-bad-scope-engine-contract-root-exists",
+      "kind": "adversarial",
+      "model": "inventory_mutation",
+      "conflict_ids": [
+        "C5"
+      ],
+      "subject": {
+        "mutation": {
+          "op": "replace",
+          "path": [
+            "scope_verdict",
+            "engine_contract_root_exists"
+          ],
+          "value": true
+        }
+      },
+      "adversarial_tag": "first_slice_inventory_scope_engine_contract_root_exists",
+      "expected_refusal_contains": "scope_verdict.engine_contract_root_exists is not False",
+      "expect": "reject"
+    },
+    {
+      "name": "inventory-bad-scope-constitutional-prerequisite-instance-exists",
+      "kind": "adversarial",
+      "model": "inventory_mutation",
+      "conflict_ids": [
+        "C5"
+      ],
+      "subject": {
+        "mutation": {
+          "op": "replace",
+          "path": [
+            "scope_verdict",
+            "constitutional_prerequisite_instance_exists"
+          ],
+          "value": true
+        }
+      },
+      "adversarial_tag": "first_slice_inventory_scope_constitutional_prerequisite_instance_exists",
+      "expected_refusal_contains": "scope_verdict.constitutional_prerequisite_instance_exists is not False",
+      "expect": "reject"
+    },
+    {
+      "name": "inventory-bad-scope-registry-activation-exists",
+      "kind": "adversarial",
+      "model": "inventory_mutation",
+      "conflict_ids": [
+        "C5"
+      ],
+      "subject": {
+        "mutation": {
+          "op": "replace",
+          "path": [
+            "scope_verdict",
+            "registry_activation_exists"
+          ],
+          "value": true
+        }
+      },
+      "adversarial_tag": "first_slice_inventory_scope_registry_activation_exists",
+      "expected_refusal_contains": "scope_verdict.registry_activation_exists is not False",
+      "expect": "reject"
+    },
+    {
+      "name": "inventory-bad-scope-may-construct-verification-assignment-member",
+      "kind": "adversarial",
+      "model": "inventory_mutation",
+      "conflict_ids": [
+        "C5"
+      ],
+      "subject": {
+        "mutation": {
+          "op": "replace",
+          "path": [
+            "scope_verdict",
+            "may_construct_verification_assignment_member"
+          ],
+          "value": true
+        }
+      },
+      "adversarial_tag": "first_slice_inventory_scope_may_construct_verification_assignment_member",
+      "expected_refusal_contains": "scope_verdict.may_construct_verification_assignment_member is not False",
+      "expect": "reject"
+    },
+    {
+      "name": "inventory-bad-scope-may-freeze-registry-snapshot",
+      "kind": "adversarial",
+      "model": "inventory_mutation",
+      "conflict_ids": [
+        "C5"
+      ],
+      "subject": {
+        "mutation": {
+          "op": "replace",
+          "path": [
+            "scope_verdict",
+            "may_freeze_registry_snapshot"
+          ],
+          "value": true
+        }
+      },
+      "adversarial_tag": "first_slice_inventory_scope_may_freeze_registry_snapshot",
+      "expected_refusal_contains": "scope_verdict.may_freeze_registry_snapshot is not False",
+      "expect": "reject"
+    },
+    {
+      "name": "inventory-bad-scope-may-activate",
+      "kind": "adversarial",
+      "model": "inventory_mutation",
+      "conflict_ids": [
+        "C5"
+      ],
+      "subject": {
+        "mutation": {
+          "op": "replace",
+          "path": [
+            "scope_verdict",
+            "may_activate"
+          ],
+          "value": true
+        }
+      },
+      "adversarial_tag": "first_slice_inventory_scope_may_activate",
+      "expected_refusal_contains": "scope_verdict.may_activate is not False",
+      "expect": "reject"
+    },
+    {
+      "name": "inventory-bad-scope-may-start-runtime-implementation",
+      "kind": "adversarial",
+      "model": "inventory_mutation",
+      "conflict_ids": [
+        "C5"
+      ],
+      "subject": {
+        "mutation": {
+          "op": "replace",
+          "path": [
+            "scope_verdict",
+            "may_start_runtime_implementation"
+          ],
+          "value": true
+        }
+      },
+      "adversarial_tag": "first_slice_inventory_scope_may_start_runtime_implementation",
+      "expected_refusal_contains": "scope_verdict.may_start_runtime_implementation is not False",
+      "expect": "reject"
+    },
+    {
+      "name": "inventory-bad-count-required-commands-exact",
+      "kind": "adversarial",
+      "model": "inventory_mutation",
+      "conflict_ids": [
+        "C5"
+      ],
+      "subject": {
+        "mutation": {
+          "op": "replace",
+          "path": [
+            "counts",
+            "required_commands_exact"
+          ],
+          "value": 999999
+        }
+      },
+      "adversarial_tag": "first_slice_inventory_count_required_commands_exact",
+      "expected_refusal_contains": "counts.required_commands_exact does not equal represented length",
+      "expect": "reject"
+    },
+    {
+      "name": "inventory-bad-count-outside-commands-exact",
+      "kind": "adversarial",
+      "model": "inventory_mutation",
+      "conflict_ids": [
+        "C5"
+      ],
+      "subject": {
+        "mutation": {
+          "op": "replace",
+          "path": [
+            "counts",
+            "outside_commands_exact"
+          ],
+          "value": 999999
+        }
+      },
+      "adversarial_tag": "first_slice_inventory_count_outside_commands_exact",
+      "expected_refusal_contains": "counts.outside_commands_exact does not equal represented length",
+      "expect": "reject"
+    },
+    {
+      "name": "inventory-bad-count-required-event-types-exact",
+      "kind": "adversarial",
+      "model": "inventory_mutation",
+      "conflict_ids": [
+        "C5"
+      ],
+      "subject": {
+        "mutation": {
+          "op": "replace",
+          "path": [
+            "counts",
+            "required_event_types_exact"
+          ],
+          "value": 999999
+        }
+      },
+      "adversarial_tag": "first_slice_inventory_count_required_event_types_exact",
+      "expected_refusal_contains": "counts.required_event_types_exact does not equal represented length",
+      "expect": "reject"
+    },
+    {
+      "name": "inventory-bad-count-aggregate-state-reducer-families-exact",
+      "kind": "adversarial",
+      "model": "inventory_mutation",
+      "conflict_ids": [
+        "C5"
+      ],
+      "subject": {
+        "mutation": {
+          "op": "replace",
+          "path": [
+            "counts",
+            "aggregate_state_reducer_families_exact"
+          ],
+          "value": 999999
+        }
+      },
+      "adversarial_tag": "first_slice_inventory_count_aggregate_state_reducer_families_exact",
+      "expected_refusal_contains": "counts.aggregate_state_reducer_families_exact does not equal represented length",
+      "expect": "reject"
+    },
+    {
+      "name": "inventory-bad-count-owner-modules-exact",
+      "kind": "adversarial",
+      "model": "inventory_mutation",
+      "conflict_ids": [
+        "C5"
+      ],
+      "subject": {
+        "mutation": {
+          "op": "replace",
+          "path": [
+            "counts",
+            "owner_modules_exact"
+          ],
+          "value": 999999
+        }
+      },
+      "adversarial_tag": "first_slice_inventory_count_owner_modules_exact",
+      "expected_refusal_contains": "counts.owner_modules_exact does not equal represented length",
+      "expect": "reject"
+    },
+    {
+      "name": "inventory-bad-count-design",
+      "kind": "adversarial",
+      "model": "inventory_mutation",
+      "conflict_ids": [
+        "C5"
+      ],
+      "subject": {
+        "mutation": {
+          "op": "replace",
+          "path": [
+            "counts",
+            "design_commands_exact"
+          ],
+          "value": 999999
+        }
+      },
+      "adversarial_tag": "first_slice_inventory_count_design",
+      "expected_refusal_contains": "design command count does not equal required plus outside",
+      "expect": "reject"
+    },
+    {
+      "name": "inventory-bad-count-unresolved",
+      "kind": "adversarial",
+      "model": "inventory_mutation",
+      "conflict_ids": [
+        "C5"
+      ],
+      "subject": {
+        "mutation": {
+          "op": "replace",
+          "path": [
+            "counts",
+            "unresolved_c1_through_c8_choices"
+          ],
+          "value": 7
+        }
+      },
+      "adversarial_tag": "first_slice_inventory_count_unresolved",
+      "expected_refusal_contains": "unresolved_c1_through_c8_choices is not exactly one",
+      "expect": "reject"
+    },
+    {
+      "name": "inventory-bad-law-distinct-grant-per-slot",
+      "kind": "adversarial",
+      "model": "inventory_mutation",
+      "conflict_ids": [
+        "C5"
+      ],
+      "subject": {
+        "mutation": {
+          "op": "replace",
+          "path": [
+            "authority_model",
+            "bounded_grant_law",
+            "distinct_grant_per_slot"
+          ],
+          "value": false
+        }
+      },
+      "adversarial_tag": "first_slice_inventory_law_distinct_grant_per_slot",
+      "expected_refusal_contains": "bounded_grant_law.distinct_grant_per_slot is not",
+      "expect": "reject"
+    },
+    {
+      "name": "inventory-bad-law-action-instance-bound",
+      "kind": "adversarial",
+      "model": "inventory_mutation",
+      "conflict_ids": [
+        "C5"
+      ],
+      "subject": {
+        "mutation": {
+          "op": "replace",
+          "path": [
+            "authority_model",
+            "bounded_grant_law",
+            "action_instance_bound"
+          ],
+          "value": false
+        }
+      },
+      "adversarial_tag": "first_slice_inventory_law_action_instance_bound",
+      "expected_refusal_contains": "bounded_grant_law.action_instance_bound is not",
+      "expect": "reject"
+    },
+    {
+      "name": "inventory-bad-law-single-use",
+      "kind": "adversarial",
+      "model": "inventory_mutation",
+      "conflict_ids": [
+        "C5"
+      ],
+      "subject": {
+        "mutation": {
+          "op": "replace",
+          "path": [
+            "authority_model",
+            "bounded_grant_law",
+            "single_use"
+          ],
+          "value": false
+        }
+      },
+      "adversarial_tag": "first_slice_inventory_law_single_use",
+      "expected_refusal_contains": "bounded_grant_law.single_use is not",
+      "expect": "reject"
+    },
+    {
+      "name": "inventory-bad-law-max-uses",
+      "kind": "adversarial",
+      "model": "inventory_mutation",
+      "conflict_ids": [
+        "C5"
+      ],
+      "subject": {
+        "mutation": {
+          "op": "replace",
+          "path": [
+            "authority_model",
+            "bounded_grant_law",
+            "max_uses"
+          ],
+          "value": 999
+        }
+      },
+      "adversarial_tag": "first_slice_inventory_law_max_uses",
+      "expected_refusal_contains": "bounded_grant_law.max_uses is not",
+      "expect": "reject"
+    },
+    {
+      "name": "inventory-bad-law-consumption-point",
+      "kind": "adversarial",
+      "model": "inventory_mutation",
+      "conflict_ids": [
+        "C5"
+      ],
+      "subject": {
+        "mutation": {
+          "op": "replace",
+          "path": [
+            "authority_model",
+            "bounded_grant_law",
+            "consumption_point"
+          ],
+          "value": "odeya-inv-probe"
+        }
+      },
+      "adversarial_tag": "first_slice_inventory_law_consumption_point",
+      "expected_refusal_contains": "bounded_grant_law.consumption_point is not",
+      "expect": "reject"
+    },
+    {
+      "name": "inventory-bad-law-used-set-equals-exhausted-set",
+      "kind": "adversarial",
+      "model": "inventory_mutation",
+      "conflict_ids": [
+        "C5"
+      ],
+      "subject": {
+        "mutation": {
+          "op": "replace",
+          "path": [
+            "authority_model",
+            "bounded_grant_law",
+            "used_set_equals_exhausted_set"
+          ],
+          "value": false
+        }
+      },
+      "adversarial_tag": "first_slice_inventory_law_used_set_equals_exhausted_set",
+      "expected_refusal_contains": "bounded_grant_law.used_set_equals_exhausted_set is not",
+      "expect": "reject"
+    },
+    {
+      "name": "inventory-bad-law-rejection-noop-or-replay-emits-new-use",
+      "kind": "adversarial",
+      "model": "inventory_mutation",
+      "conflict_ids": [
+        "C5"
+      ],
+      "subject": {
+        "mutation": {
+          "op": "replace",
+          "path": [
+            "authority_model",
+            "bounded_grant_law",
+            "rejection_noop_or_replay_emits_new_use"
+          ],
+          "value": true
+        }
+      },
+      "adversarial_tag": "first_slice_inventory_law_rejection_noop_or_replay_emits_new_use",
+      "expected_refusal_contains": "bounded_grant_law.rejection_noop_or_replay_emits_new_use is not",
+      "expect": "reject"
+    },
+    {
+      "name": "inventory-bad-law-caller-may-select-authority-path",
+      "kind": "adversarial",
+      "model": "inventory_mutation",
+      "conflict_ids": [
+        "C5"
+      ],
+      "subject": {
+        "mutation": {
+          "op": "replace",
+          "path": [
+            "authority_model",
+            "bounded_grant_law",
+            "caller_may_select_authority_path"
+          ],
+          "value": true
+        }
+      },
+      "adversarial_tag": "first_slice_inventory_law_caller_may_select_authority_path",
+      "expected_refusal_contains": "bounded_grant_law.caller_may_select_authority_path is not",
+      "expect": "reject"
+    },
+    {
+      "name": "inventory-bad-cmd-dup",
+      "kind": "adversarial",
+      "model": "inventory_mutation",
+      "expect": "reject",
+      "conflict_ids": [
+        "C5"
+      ],
+      "subject": {
+        "mutation": {
+          "op": "replace",
+          "path": [
+            "required_commands",
+            0
+          ],
+          "value": "artifact.promote"
+        }
+      },
+      "adversarial_tag": "first_slice_inventory_cmd_dup",
+      "expected_refusal_contains": "command partition contains duplicate members"
+    },
+    {
+      "name": "inventory-bad-cmd-overlap",
+      "kind": "adversarial",
+      "model": "inventory_mutation",
+      "expect": "reject",
+      "conflict_ids": [
+        "C5"
+      ],
+      "subject": {
+        "mutation": {
+          "op": "replace",
+          "path": [
+            "outside_commands",
+            0
+          ],
+          "value": "adjudication.record"
+        }
+      },
+      "adversarial_tag": "first_slice_inventory_cmd_overlap",
+      "expected_refusal_contains": "required and outside command partitions overlap"
+    },
+    {
+      "name": "inventory-bad-event-dup",
+      "kind": "adversarial",
+      "model": "inventory_mutation",
+      "expect": "reject",
+      "conflict_ids": [
+        "C5"
+      ],
+      "subject": {
+        "mutation": {
+          "op": "replace",
+          "path": [
+            "required_event_types",
+            0
+          ],
+          "value": "artifact.promoted"
+        }
+      },
+      "adversarial_tag": "first_slice_inventory_event_dup",
+      "expected_refusal_contains": "required event set contains duplicate members"
+    },
+    {
+      "name": "inventory-bad-resource-observed",
+      "kind": "adversarial",
+      "model": "inventory_mutation",
+      "expect": "reject",
+      "conflict_ids": [
+        "C5"
+      ],
+      "subject": {
+        "mutation": {
+          "op": "replace",
+          "path": [
+            "required_event_types",
+            0
+          ],
+          "value": "resource.observed"
+        }
+      },
+      "adversarial_tag": "first_slice_inventory_resource_observed",
+      "expected_refusal_contains": "resource.observed remains in required resource truth vocabulary"
+    },
+    {
+      "name": "inventory-bad-conflicts-incomplete",
+      "kind": "adversarial",
+      "model": "inventory_mutation",
+      "expect": "reject",
+      "conflict_ids": [
+        "C5"
+      ],
+      "subject": {
+        "mutation": {
+          "op": "remove",
+          "path": [
+            "resolved_conflicts",
+            0
+          ]
+        }
+      },
+      "adversarial_tag": "first_slice_inventory_conflicts_incomplete",
+      "expected_refusal_contains": "resolved_conflicts is not exactly C1 through C8"
+    },
+    {
+      "name": "inventory-bad-mut-not-replace",
+      "kind": "adversarial",
+      "model": "inventory_mutation",
+      "expect": "reject",
+      "conflict_ids": [
+        "C5"
+      ],
+      "subject": {
+        "mutation": {
+          "op": "delete",
+          "path": [
+            "status"
+          ]
+        }
+      },
+      "adversarial_tag": "first_slice_inventory_mut_not_replace",
+      "expected_refusal_contains": "not one bounded replace or remove"
+    },
+    {
+      "name": "inventory-bad-mut-path-absent",
+      "kind": "adversarial",
+      "model": "inventory_mutation",
+      "expect": "reject",
+      "conflict_ids": [
+        "C5"
+      ],
+      "subject": {
+        "mutation": {
+          "op": "replace",
+          "path": [],
+          "value": 1
+        }
+      },
+      "adversarial_tag": "first_slice_inventory_mut_path_absent",
+      "expected_refusal_contains": "inventory mutation path is absent"
+    },
+    {
+      "name": "inventory-bad-mut-index-noninteger",
+      "kind": "adversarial",
+      "model": "inventory_mutation",
+      "expect": "reject",
+      "conflict_ids": [
+        "C5"
+      ],
+      "subject": {
+        "mutation": {
+          "op": "replace",
+          "path": [
+            "required_commands",
+            "x"
+          ],
+          "value": 1
+        }
+      },
+      "adversarial_tag": "first_slice_inventory_mut_index_noninteger",
+      "expected_refusal_contains": "list mutation index is not an integer"
+    },
+    {
+      "name": "inventory-bad-mut-unresolvable",
+      "kind": "adversarial",
+      "model": "inventory_mutation",
+      "expect": "reject",
+      "conflict_ids": [
+        "C5"
+      ],
+      "subject": {
+        "mutation": {
+          "op": "replace",
+          "path": [
+            "no_such_field",
+            "deeper"
+          ],
+          "value": 1
+        }
+      },
+      "adversarial_tag": "first_slice_inventory_mut_unresolvable",
+      "expected_refusal_contains": "inventory mutation path does not resolve"
     }
   ]
 }

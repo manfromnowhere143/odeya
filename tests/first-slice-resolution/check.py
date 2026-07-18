@@ -257,6 +257,40 @@ def inventory_errors(inventory: dict[str, Any]) -> list[str]:
     return errors
 
 
+def inventory_mutation_errors(subject: dict[str, Any], inventory: dict[str, Any]) -> list[str]:
+    """Prove each inventory guard fires by breaking exactly one field.
+
+    inventory_errors runs once on the loaded record, so before ADR 0082 not
+    one of its guards had a known-bad case and the generalized audit measured
+    them all unproved. One bounded replace against a deep copy -- the exact
+    shape lifecycle-closure's identity_map_mutation uses (ADR 0028) -- lets a
+    case break a single field and bind the guard that must refuse it. The
+    real record is never touched; a fresh deepcopy is mutated per case.
+    """
+    mutated = deepcopy(inventory)
+    mutation = subject.get("mutation")
+    if mutation is not None:
+        if not isinstance(mutation, dict) or mutation.get("op") not in {"replace", "remove"}:
+            return ["inventory mutation is not one bounded replace or remove"]
+        path = mutation.get("path")
+        if not isinstance(path, list) or not path:
+            return ["inventory mutation path is absent"]
+        cursor: Any = mutated
+        try:
+            for segment in path[:-1]:
+                cursor = cursor[segment]
+            final = path[-1]
+            if isinstance(cursor, list) and not isinstance(final, int):
+                return ["inventory list mutation index is not an integer"]
+            if mutation["op"] == "remove":
+                del cursor[final]
+            else:
+                cursor[final] = mutation.get("value")
+        except (KeyError, IndexError, TypeError):
+            return ["inventory mutation path does not resolve"]
+    return inventory_errors(mutated)
+
+
 def resource_settlement_errors(subject: dict[str, Any], _: dict[str, Any]) -> list[str]:
     errors: list[str] = []
     reservation = subject.get("reservation", {})
@@ -656,6 +690,7 @@ CHECKERS: dict[str, Callable[[dict[str, Any], dict[str, Any]], list[str]]] = {
     "verification_assign_obligation": verification_assign_obligation_errors,
     "verification_reducer_authority": verification_reducer_errors,
     "p0_frontier": p0_frontier_errors,
+    "inventory_mutation": inventory_mutation_errors,
 }
 
 

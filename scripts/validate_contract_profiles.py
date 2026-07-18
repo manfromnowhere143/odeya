@@ -21,7 +21,7 @@ SUITES = {
     "cognitive-contracts": (150, 31, 119),
     "command-identity-contracts": (19, 2, 17),
     "constitutional-construction": (35, 3, 32),
-    "first-slice-resolution": (35, 12, 23),
+    "first-slice-resolution": (72, 12, 60),
     "lifecycle-closure": (231, 14, 217),
     "mathematical-contracts": (57, 20, 37),
     "physical-contracts": (85, 14, 71),
