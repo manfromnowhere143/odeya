@@ -450,6 +450,17 @@ stage. 132 single-condition tests and structural dict comparisons are
 counted, not audited; field-level blindness inside structural expectations
 remains unmeasured.
 
+**REVIEWERS THIS SESSION WERE CORRELATED, NOT INDEPENDENT.** All four
+rounds shared the producer's provider, model family, prompt family,
+harness and human principal — five of the twelve axes
+`ModelConfigurationRecord` already enumerates, with
+`independence_conclusion_permitted` fixed false. The ADRs called them
+"independent"; that is corrected. A contracted refutation worker, the
+cross-family stage this session omitted, and the boundary that
+`review-determination` fixes `reviewer.principal_type` to `human` are
+proposed in `docs/REVIEWER_AGENT_PROPOSAL.md` for the operator's
+decision.
+
 **THE MUTATION AUDITS ARE RECORDS, NOT GATES (ADR 0077).** `--check` is a
 byte comparison against a record that `--write` regenerates from whatever
 the checker currently says, so an author can launder a weakening by

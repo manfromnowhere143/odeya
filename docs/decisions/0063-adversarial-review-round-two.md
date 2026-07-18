@@ -94,7 +94,11 @@ its biconditional claim is corrected here, not silently.
 ## Boundary
 
 The reviewers were independent-context model sessions instructed to
-refute, not human reviewers, and this response was authored by the
+refute, not human reviewers, and — corrected 2026-07-18 — they shared
+the producer's provider, model family, prompt family, harness and human
+principal, so they were context-isolated but correlated on five of the
+twelve axes `ModelConfigurationRecord` enumerates (see
+../REVIEWER_AGENT_PROPOSAL.md), and this response was authored by the
 session under review; the corrections are verified by re-run gates, not
 by anyone's confidence. Nothing here is an accountable Gate A review
 determination, an admitted member, or acceptance of any kind.
