@@ -307,6 +307,7 @@ ARCHITECTURE_EVIDENCE_CHECKS = (
     "scripts/validate_contract_profiles.py",
     "scripts/validate_refusal_attribution.py",
     "scripts/validate_schema_rule_ablation.py",
+    "scripts/validate_suite_guard_coverage.py",
 )
 REPOSITORY_RELEASE_CHECKS = (
     "scripts/validate_repository_release.py",

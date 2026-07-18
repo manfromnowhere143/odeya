@@ -200,6 +200,16 @@ fi
 # with every local rehearsal green: seven commits published with the remote
 # Foundation workflow red because nothing local read the pins. The partition
 # gate now runs in the default validator and, for the exact bytes, here.
+CURRENT_STAGE="suite-guard-coverage"
+if [[ -f scripts/audit_suite_guard_coverage.py ]]; then
+  .venv-architecture/bin/python scripts/audit_suite_guard_coverage.py \
+    --check --python .venv-architecture/bin/python \
+    2>&1 | tee artifacts/rehearsal/suite-guard-coverage.log
+else
+  printf 'suite guard audit absent at %s; nothing to reproduce\n' \
+    "$EXPECTED_COMMIT" 2>&1 | tee artifacts/rehearsal/suite-guard-coverage.log
+fi
+
 CURRENT_STAGE="schema-rule-ablation"
 if [[ -f scripts/audit_schema_rule_ablation.py ]]; then
   .venv-architecture/bin/python scripts/audit_schema_rule_ablation.py \

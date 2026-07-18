@@ -450,7 +450,16 @@ stage. 132 single-condition tests and structural dict comparisons are
 counted, not audited; field-level blindness inside structural expectations
 remains unmeasured.
 
-**THE REPOSITORY MEASURES 23% OF ITS OWN GUARDS (ADR 0078).** 717 refusal
+**THE GENERALIZED AUDIT EXISTS AND THE NUMBER IS 161/579 (ADR 0079).**
+The suite-agnostic mutation audit now measures twelve suites in under
+seven minutes: 161 guards proved, **418 with no known-bad proof**, zero
+crash-detections. Four suites prove nothing at all — 45 guards, including
+three of the suites whose declared inventories ADR 0067 made exact, which
+shows exactness binds what a case declares and not what the checker does.
+Closing the 418 is case-writing at scale, not another instrument, and
+every unproved guard is enumerated by name in the record.
+
+**THE REPOSITORY MEASURED 23% OF ITS OWN GUARDS (ADR 0078).** 717 refusal
 statements across thirteen suites; 169 proved to fire; **548 never
 measured at all**. Every coverage number this session produced describes
 lifecycle-closure alone. The other twelve suites are in the exact state
