@@ -22,7 +22,7 @@ SUITES = {
     "command-identity-contracts": (19, 2, 17),
     "constitutional-construction": (32, 3, 29),
     "first-slice-resolution": (33, 12, 21),
-    "lifecycle-closure": (133, 14, 119),
+    "lifecycle-closure": (230, 14, 216),
     "mathematical-contracts": (57, 20, 37),
     "physical-contracts": (85, 14, 71),
     "projection-contracts": (62, 8, 54),
@@ -58,7 +58,13 @@ def adversarial_case(case: dict[str, Any]) -> bool:
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--profile", choices=("semantic", "adversarial"), required=True)
+    # Without --profile this is the fast partition-only gate: the default
+    # validator runs it so a suite growing past its pinned partition fails
+    # locally, before a commit, instead of only on the remote CI surface.
+    # That gap existed once: seven attribution tranches published with the
+    # remote Foundation workflow red while every local rehearsal was green,
+    # because this file was CI-only and nothing local read its pins.
+    parser.add_argument("--profile", choices=("semantic", "adversarial"))
     args = parser.parse_args()
 
     errors: list[str] = []
@@ -88,10 +94,15 @@ def main() -> int:
         profile_total += semantic if args.profile == "semantic" else adversarial
 
     if errors:
-        print(f"Odeya {args.profile} contract profile FAILED")
+        label = args.profile or "partition"
+        print(f"Odeya {label} contract profile FAILED")
         for error in errors:
             print(f"- {error}")
         return 1
+
+    if args.profile is None:
+        print("Odeya contract profile partitions checked: 8 suites match their exact pins")
+        return 0
 
     for suite in SUITES:
         checker = ROOT / "tests" / suite / "check.py"

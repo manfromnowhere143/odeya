@@ -749,6 +749,21 @@ available, an investor asks, or a deadline feels important. Pressure is handled
 by making the next dependency smaller and more falsifiable, not by weakening
 the gate.
 
+## The published surface is part of the evidence
+
+A push is not complete when the bytes leave this machine. It is complete
+when every remote workflow on the canonical repository reports green for
+the pushed head. After every push, verify with `gh run list` (or watch
+the head commit's checks) and treat a red remote check exactly like a
+failed local gate: stop, diagnose from the workflow log, fix or re-pin
+lawfully, and push the correction before any further work. This law
+exists because seven commits were once published with the remote
+Foundation workflow red while every local rehearsal was green — the
+CI-only contract-profile pins had no local reader. The partition gate now
+runs in the default validator and in the rehearsal, but tooling can only
+cover known gaps: the operator's public surface shows the truth of the
+head commit, and no session may leave it red, or unverified, at handoff.
+
 ## Definition of a proper continuation handoff
 
 Before ending a future session:
@@ -760,7 +775,8 @@ Before ending a future session:
 4. create a scoped local commit with an intentional message;
 5. rerun the exact-commit fresh-clone rehearsal when release bytes changed;
 6. record the branch, commit, tree, evidence location, checks, open blockers,
-   and absence of remote authority;
+   and absence of remote authority, and verify the pushed head's remote
+   workflows are green;
 7. update this handoff when mission state or decisions materially change; and
 8. leave every unsupported claim and incomplete item explicit.
 

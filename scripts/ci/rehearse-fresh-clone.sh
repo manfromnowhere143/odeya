@@ -186,6 +186,19 @@ else
     "$EXPECTED_COMMIT" 2>&1 | tee artifacts/rehearsal/lifecycle-guard-coverage.log
 fi
 
+# The CI-only contract-profile pins once diverged from the retained suites
+# with every local rehearsal green: seven commits published with the remote
+# Foundation workflow red because nothing local read the pins. The partition
+# gate now runs in the default validator and, for the exact bytes, here.
+CURRENT_STAGE="contract-profile-partitions"
+if [[ -f scripts/validate_contract_profiles.py ]]; then
+  .venv-architecture/bin/python scripts/validate_contract_profiles.py \
+    2>&1 | tee artifacts/rehearsal/contract-profile-partitions.log
+else
+  printf 'contract-profile gate absent at %s; nothing to reproduce\n' \
+    "$EXPECTED_COMMIT" 2>&1 | tee artifacts/rehearsal/contract-profile-partitions.log
+fi
+
 # Same enforcement shape one level deeper: the condition-coverage record can
 # be falsified consistently past its cheap gate, so only re-measurement here
 # binds it to the exact bytes.
