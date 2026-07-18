@@ -434,47 +434,126 @@ def semantic_errors(schema_path: str, instance: Any) -> list[str]:
     return dispatch[schema_path](instance)
 
 
+def evaluate_case(manifest: dict[str, Any], case: dict[str, Any]) -> tuple[list[str], str | None]:
+    """One case's failures plus its coverage class for the counters."""
+    failures: list[str] = []
+    schema_path = case["schema"]
+    schema = load(ROOT / schema_path)
+    Draft202012Validator.check_schema(schema)
+    changes: list[dict[str, Any]] = []
+    for set_name in case.get("use_mutation_sets", []):
+        changes.extend(manifest["mutation_sets"][set_name])
+    changes.extend(case.get("mutations", []))
+    subject = mutate(load(ROOT / case["fixture"]), changes)
+    schema_errors = sorted(
+        Draft202012Validator(schema, format_checker=FormatChecker()).iter_errors(subject),
+        key=lambda error: list(error.absolute_path),
+    )
+    structural_actual = "invalid" if schema_errors else "valid"
+    if structural_actual != case["expect"]:
+        detail = schema_errors[0].message if schema_errors else "mutation was unexpectedly accepted"
+        failures.append(f"{case['name']}: expected structural {case['expect']}, got {structural_actual}: {detail}")
+        return failures, None
+
+    if case["expect"] == "invalid":
+        # Refusal for an incidental reason is not proof that the intended
+        # constraint fires. Bind each structurally known-bad case to the
+        # exact instance location and keyword that must refuse it.
+        declared = case.get("expected_refusal")
+        if not isinstance(declared, dict) or "pointer" not in declared or "keyword" not in declared:
+            failures.append(
+                f"{case['name']}: known-bad case does not declare the constraint that must refuse it"
+            )
+        elif not any(
+            "/" + "/".join(str(part) for part in error.absolute_path) == declared["pointer"]
+            and error.validator == declared["keyword"]
+            for error in schema_errors
+        ):
+            observed = [
+                ("/" + "/".join(str(part) for part in error.absolute_path), error.validator)
+                for error in schema_errors
+            ]
+            failures.append(
+                f"{case['name']}: refused, but not at its declared constraint "
+                f"{declared['pointer']!r} by {declared['keyword']!r}; got {observed}"
+            )
+
+    coverage = "valid" if case["expect"] == "valid" else "invalid"
+
+    if "semantic_expect" in case:
+        coverage = coverage + "+semantic"
+        if schema_errors:
+            failures.append(f"{case['name']}: semantic check requires a structurally valid subject")
+            return failures, coverage
+        bounded_errors = semantic_errors(schema_path, subject)
+        semantic_actual = "invalid" if bounded_errors else "valid"
+        if semantic_actual != case["semantic_expect"]:
+            detail = bounded_errors[0] if bounded_errors else "semantic mutation was unexpectedly accepted"
+            failures.append(f"{case['name']}: expected semantic {case['semantic_expect']}, got {semantic_actual}: {detail}")
+        if case["semantic_expect"] == "invalid":
+            # The bounded semantic checkers are authored here, so the binding
+            # is a message substring, the lifecycle suite's spelling.
+            expected = case.get("expected_semantic_refusal_contains")
+            if not isinstance(expected, str) or not expected:
+                failures.append(
+                    f"{case['name']}: semantic known-bad case does not declare the check that must refuse it"
+                )
+            elif not any(expected in error for error in bounded_errors):
+                failures.append(
+                    f"{case['name']}: semantically refused, but not by its declared check "
+                    f"{expected!r}; got {bounded_errors}"
+                )
+    return failures, coverage
+
+
+def attribution_self_test(manifest: dict[str, Any]) -> list[str]:
+    """Prove on every run that both binding checks fire (law 11)."""
+    failures: list[str] = []
+    structural = next((c for c in manifest["cases"] if c["expect"] == "invalid"), None)
+    semantic = next(
+        (c for c in manifest["cases"]
+         if c["expect"] == "valid" and c.get("semantic_expect") == "invalid"),
+        None,
+    )
+    if structural is None or semantic is None:
+        return ["attribution self-test found no known-bad case to tamper with"]
+    tampered = json.loads(json.dumps(structural))
+    tampered["expected_refusal"] = {"pointer": "/odeya-self-test/never-fires", "keyword": "const"}
+    if not any("refused, but not at its declared constraint" in f for f in evaluate_case(manifest, tampered)[0]):
+        failures.append("attribution self-test: a misdeclared structural constraint was not detected")
+    tampered = json.loads(json.dumps(structural))
+    tampered.pop("expected_refusal", None)
+    if not any("does not declare the constraint" in f for f in evaluate_case(manifest, tampered)[0]):
+        failures.append("attribution self-test: a missing structural declaration was not detected")
+    tampered = json.loads(json.dumps(semantic))
+    tampered["expected_semantic_refusal_contains"] = "odeya-self-test-never-appears"
+    if not any("not by its declared check" in f for f in evaluate_case(manifest, tampered)[0]):
+        failures.append("attribution self-test: a misdeclared semantic check was not detected")
+    tampered = json.loads(json.dumps(semantic))
+    tampered.pop("expected_semantic_refusal_contains", None)
+    if not any("does not declare the check" in f for f in evaluate_case(manifest, tampered)[0]):
+        failures.append("attribution self-test: a missing semantic declaration was not detected")
+    return failures
+
+
 def main() -> int:
     manifest = load(CASES)
-    failures: list[str] = []
+    failures: list[str] = attribution_self_test(manifest)
     semantic_count = 0
     valid_count = 0
     invalid_count = 0
 
     for case in manifest["cases"]:
-        schema_path = case["schema"]
-        schema = load(ROOT / schema_path)
-        Draft202012Validator.check_schema(schema)
-        changes: list[dict[str, Any]] = []
-        for set_name in case.get("use_mutation_sets", []):
-            changes.extend(manifest["mutation_sets"][set_name])
-        changes.extend(case.get("mutations", []))
-        subject = mutate(load(ROOT / case["fixture"]), changes)
-        schema_errors = sorted(
-            Draft202012Validator(schema, format_checker=FormatChecker()).iter_errors(subject),
-            key=lambda error: list(error.absolute_path),
-        )
-        structural_actual = "invalid" if schema_errors else "valid"
-        if structural_actual != case["expect"]:
-            detail = schema_errors[0].message if schema_errors else "mutation was unexpectedly accepted"
-            failures.append(f"{case['name']}: expected structural {case['expect']}, got {structural_actual}: {detail}")
+        case_failures, coverage = evaluate_case(manifest, case)
+        failures.extend(case_failures)
+        if coverage is None:
             continue
-
-        if case["expect"] == "valid":
+        if coverage.startswith("valid"):
             valid_count += 1
         else:
             invalid_count += 1
-
-        if "semantic_expect" in case:
+        if coverage.endswith("+semantic"):
             semantic_count += 1
-            if schema_errors:
-                failures.append(f"{case['name']}: semantic check requires a structurally valid subject")
-                continue
-            bounded_errors = semantic_errors(schema_path, subject)
-            semantic_actual = "invalid" if bounded_errors else "valid"
-            if semantic_actual != case["semantic_expect"]:
-                detail = bounded_errors[0] if bounded_errors else "semantic mutation was unexpectedly accepted"
-                failures.append(f"{case['name']}: expected semantic {case['semantic_expect']}, got {semantic_actual}: {detail}")
 
     if failures:
         print("Mathematical contract cases failed:", file=sys.stderr)

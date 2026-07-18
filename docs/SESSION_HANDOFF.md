@@ -454,17 +454,19 @@ lane's next units are the six unattributed suites (229 known-bad cases
 that cannot distinguish a guard firing from an incidental refusal) and the
 five-spelling refusal-attribution convergence.
 
-Two further follow-ons are open. Five suites still assert refusal
-without attribution across 213 known-bad cases — `cognitive-contracts` (107),
-`projection-contracts` (37), `constitutional-construction` (29),
-`first-slice-resolution` (21), and `mathematical-contracts` (19). They are
-not shown to be blind; they cannot currently distinguish a guard firing from
-an incidental refusal, which is the condition that made lifecycle closure
-blind. ADR 0055 attributed `architecture-review` (16 cases bound to exact
-instance pointer + keyword, fail-closed self-test on every run) and is the
-pattern for the rest. Separately, refusal attribution now has five spellings
-across the suites and should converge on one exact vocabulary once the
-remaining suites are attributed.
+Two further follow-ons are open. Four suites still assert refusal
+without attribution — `cognitive-contracts` (107), `projection-contracts`
+(37), `constitutional-construction` (29), and `first-slice-resolution`
+(21), with each count to be re-measured when attributed: the
+mathematical-contract count was carried as 19 and measured 37. They cannot
+currently distinguish a guard firing from an incidental refusal, the
+condition that made lifecycle closure blind. ADR 0055 attributed
+`architecture-review` (16 cases, exact instance pointer + keyword,
+fail-closed self-test every run) and ADR 0056 attributed
+`mathematical-contracts` (20 structural + 17 semantic, both domains bound,
+four-way self-test); together they are the pattern for the rest.
+Separately, refusal attribution should converge on one exact vocabulary
+once the remaining suites are attributed.
 
 Read the tranche's convergence honestly. Across this tranche the canonical
 profile audit moved from 675 to 668 unscoped digest fields, 118 to 122

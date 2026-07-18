@@ -1195,7 +1195,11 @@
           "path": "/claim_type",
           "value": "causal"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/claim_contract",
+        "keyword": "required"
+      }
     },
     {
       "name": "estimand-rejects-unprofiled-timestamp",
@@ -1208,7 +1212,11 @@
           "path": "/created_at",
           "value": "2026-07-15T12:00:00Z"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/created_at",
+        "keyword": "pattern"
+      }
     },
     {
       "name": "estimand-rejects-numeric-decimal",
@@ -1221,7 +1229,11 @@
           "path": "/time/horizon/decimal",
           "value": 1
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/time/horizon/decimal",
+        "keyword": "type"
+      }
     },
     {
       "name": "estimand-rejects-confirmatory-outcome-exposure",
@@ -1234,7 +1246,11 @@
           "path": "/prospective_freeze/exposure_level",
           "value": "partial_outcome_exposure"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/prospective_freeze/exposure_level",
+        "keyword": "const"
+      }
     },
     {
       "name": "estimand-rejects-unknown-as-zero",
@@ -1247,7 +1263,11 @@
           "path": "/decision_rule/unknown_treated_as_zero",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/decision_rule/unknown_treated_as_zero",
+        "keyword": "const"
+      }
     },
     {
       "name": "estimand-rejects-nonpositive-horizon-semantically",
@@ -1261,7 +1281,8 @@
           "path": "/time/horizon/decimal",
           "value": "0"
         }
-      ]
+      ],
+      "expected_semantic_refusal_contains": "time.horizon: must be strictly positive"
     },
     {
       "name": "estimand-rejects-reversed-equivalence-margins-semantically",
@@ -1278,7 +1299,8 @@
           "path": "/claim_contract/lower_margin/decimal",
           "value": "0.20"
         }
-      ]
+      ],
+      "expected_semantic_refusal_contains": "equivalence requires lower margin < reference < upper margin"
     },
     {
       "name": "estimand-rejects-nonpositive-noninferiority-margin-semantically",
@@ -1295,7 +1317,8 @@
           "path": "/claim_contract/margin/decimal",
           "value": "-0.01"
         }
-      ]
+      ],
+      "expected_semantic_refusal_contains": "noninferiority margin must be strictly positive"
     },
     {
       "name": "estimand-rejects-simulation-as-physical-validation",
@@ -1311,7 +1334,11 @@
           "path": "/claim_contract/simulation_sufficient",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/claim_contract/simulation_sufficient",
+        "keyword": "const"
+      }
     },
     {
       "name": "estimand-rejects-cross-role-manifest-reuse-semantically",
@@ -1333,7 +1360,8 @@
             "dependency_group_id": "dependency.training"
           }
         }
-      ]
+      ],
+      "expected_semantic_refusal_contains": "one manifest cannot occupy multiple data roles"
     },
     {
       "name": "protocol-mathematical-binding-valid",
@@ -1366,7 +1394,11 @@
           "path": "/mathematical_contract/exact_binding_required",
           "value": false
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/mathematical_contract/exact_binding_required",
+        "keyword": "const"
+      }
     },
     {
       "name": "protocol-rejects-claim-mismatch-semantically",
@@ -1380,7 +1412,8 @@
           "path": "/mathematical_contract/claim_type",
           "value": "causal"
         }
-      ]
+      ],
+      "expected_semantic_refusal_contains": "mathematical_contract: claim_type mismatch"
     },
     {
       "name": "protocol-rejects-mission-mismatch-semantically",
@@ -1394,7 +1427,8 @@
           "path": "/mathematical_contract/estimand_contract_ref/mission_id",
           "value": "mission.other"
         }
-      ]
+      ],
+      "expected_semantic_refusal_contains": "mission mismatch"
     },
     {
       "name": "protocol-rejects-unprofiled-mathematical-timestamp-semantically",
@@ -1408,7 +1442,11 @@
           "value": "2026-07-15T12:00:01Z"
         }
       ],
-      "note": "before the D2 reissue this timestamp passed structure and was refused semantically; the reissued schema pins the frozen microsecond pattern, so the refusal is now structural. The semantic guard remains as defense in depth behind the schema."
+      "note": "before the D2 reissue this timestamp passed structure and was refused semantically; the reissued schema pins the frozen microsecond pattern, so the refusal is now structural. The semantic guard remains as defense in depth behind the schema.",
+      "expected_refusal": {
+        "pointer": "/frozen_at",
+        "keyword": "pattern"
+      }
     },
     {
       "name": "metric-mathematical-binding-valid",
@@ -1504,7 +1542,11 @@
           "path": "/comparator_assessment/disposition",
           "value": "indeterminate"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/measurement/estimate",
+        "keyword": "oneOf"
+      }
     },
     {
       "name": "metric-rejects-simulation-as-physical-eligible",
@@ -1522,7 +1564,11 @@
           "path": "/mathematical_binding/physical_validation_eligible",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/mathematical_binding/physical_validation_eligible",
+        "keyword": "const"
+      }
     },
     {
       "name": "metric-rejects-claim-mismatch-semantically",
@@ -1536,7 +1582,8 @@
           "path": "/mathematical_binding/claim_type",
           "value": "causal"
         }
-      ]
+      ],
+      "expected_semantic_refusal_contains": "mathematical_binding: claim_type mismatch"
     },
     {
       "name": "metric-rejects-equivalence-label-with-association-binding",
@@ -1558,7 +1605,11 @@
             "media_type": "application/json"
           }
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/mathematical_binding/claim_type",
+        "keyword": "const"
+      }
     },
     {
       "name": "metric-legacy-equivalence-shape-remains-structurally-valid",
@@ -1605,7 +1656,11 @@
           "path": "/recorded_at",
           "value": "2026-07-15T12:30:00Z"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/recorded_at",
+        "keyword": "pattern"
+      }
     },
     {
       "name": "result-rejects-numeric-decimal",
@@ -1618,7 +1673,11 @@
           "path": "/result_value/point_estimate/decimal",
           "value": 0.031
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/result_value/point_estimate/decimal",
+        "keyword": "type"
+      }
     },
     {
       "name": "result-rejects-mission-chain-mismatch-semantically",
@@ -1632,7 +1691,8 @@
           "path": "/identity_chain/metric_result_refs/0/mission_id",
           "value": "mission.other"
         }
-      ]
+      ],
+      "expected_semantic_refusal_contains": "every record must bind the same mission_id"
     },
     {
       "name": "result-rejects-protocol-chain-mismatch-semantically",
@@ -1646,7 +1706,8 @@
           "path": "/identity_chain/run_manifest_ref/protocol_snapshot_digest",
           "value": "sha256:0000000000000000000000000000000000000000000000000000000000000000"
         }
-      ]
+      ],
+      "expected_semantic_refusal_contains": "protocol binding mismatch"
     },
     {
       "name": "result-rejects-false-includes-null-semantically",
@@ -1660,7 +1721,8 @@
           "path": "/uncertainty/includes_null",
           "value": "no"
         }
-      ]
+      ],
+      "expected_semantic_refusal_contains": "declared 'no', recomputed 'yes'"
     },
     {
       "name": "result-rejects-reversed-interval-semantically",
@@ -1674,7 +1736,8 @@
           "path": "/uncertainty/lower/decimal",
           "value": "0.10"
         }
-      ]
+      ],
+      "expected_semantic_refusal_contains": "uncertainty: lower bound exceeds upper bound"
     },
     {
       "name": "sentinel-crossing-zero-cannot-support-association",
@@ -1710,7 +1773,8 @@
             "association_within_scope"
           ]
         }
-      ]
+      ],
+      "expected_semantic_refusal_contains": "directional support is forbidden when the interval crosses the reference"
     },
     {
       "name": "result-rejects-null-result-outcome",
@@ -1723,7 +1787,11 @@
           "path": "/decision/scientific_outcome",
           "value": "null_result"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/decision/scientific_outcome",
+        "keyword": "enum"
+      }
     },
     {
       "name": "result-rejects-effect-absence-as-supported-predicate",
@@ -1738,7 +1806,11 @@
             "effect_proven_absent"
           ]
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/claim_consequence/supported_predicates/0",
+        "keyword": "enum"
+      }
     },
     {
       "name": "result-equivalence-valid-only-inside-predeclared-margin",
@@ -1765,7 +1837,8 @@
           "path": "/uncertainty/lower/decimal",
           "value": "-0.127"
         }
-      ]
+      ],
+      "expected_semantic_refusal_contains": "not strictly inside both predeclared margins"
     },
     {
       "name": "sentinel-crossing-zero-cannot-be-equivalence-without-margin",
@@ -1781,7 +1854,11 @@
           "path": "/margin_binding/status",
           "value": "not_applicable"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/margin_binding/margin_contract_ref",
+        "keyword": "type"
+      }
     },
     {
       "name": "result-noninferiority-valid-with-one-sided-bound",
@@ -1808,7 +1885,8 @@
           "path": "/uncertainty/lower/decimal",
           "value": "-0.11"
         }
-      ]
+      ],
+      "expected_semantic_refusal_contains": "does not meet the noninferiority boundary"
     },
     {
       "name": "result-physical-validation-valid-with-physical-provenance",
@@ -1839,7 +1917,11 @@
           "path": "/physical_evidence/physical_measurement_refs",
           "value": []
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/physical_evidence/evidence_origin",
+        "keyword": "enum"
+      }
     },
     {
       "name": "result-retains-incomplete-unknown",
@@ -1875,7 +1957,11 @@
           "path": "/multiplicity_accounting/status",
           "value": "incomplete"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/multiplicity_accounting/error_criterion",
+        "keyword": "not"
+      }
     },
     {
       "name": "result-rejects-fixed-horizon-extra-look-semantically",
@@ -1892,7 +1978,8 @@
           "path": "/sequential_accounting/observed_look_count",
           "value": 2
         }
-      ]
+      ],
+      "expected_semantic_refusal_contains": "observed look count exceeds planned look count"
     },
     {
       "name": "result-rejects-missingness-count-mismatch-semantically",
@@ -1906,7 +1993,8 @@
           "path": "/missingness_accounting/missing_count",
           "value": 5
         }
-      ]
+      ],
+      "expected_semantic_refusal_contains": "eligible != observed + missing + excluded"
     },
     {
       "name": "result-rejects-pvalue-outside-unit-interval-semantically",
@@ -1925,7 +2013,8 @@
             "precision": "exact_lexical"
           }
         }
-      ]
+      ],
+      "expected_semantic_refusal_contains": "p-value must lie in [0,1]"
     },
     {
       "name": "result-rejects-failed-recomputation-for-affirmative",
@@ -1953,7 +2042,11 @@
             "recomputation.failed"
           ]
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/recomputation/status",
+        "keyword": "const"
+      }
     },
     {
       "name": "result-rejects-unknown-with-numeric-zero",
@@ -1977,7 +2070,11 @@
             }
           }
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/result_value/point_estimate",
+        "keyword": "oneOf"
+      }
     }
   ]
 }
