@@ -384,8 +384,22 @@ def semantic_attribution_failures(case: dict, semantic_failures: list[str]) -> l
     return []
 
 
-def attribution_self_test(manifest: dict) -> list[str]:
+def attribution_self_test_meta_proof(manifest: dict) -> list[str]:
+    """Prove the self-test's own refusals are load-bearing (ADR 0069/0080)."""
+    blind = lambda *args, **kw: []  # noqa: E731 - a binding check that refuses nothing
+    distinct = {f for f in attribution_self_test(manifest, struct_check=blind, sem_check=blind)}
+    if len(distinct) != 4:
+        return [
+            f"attribution meta self-test: blinding the binding checks produced {len(distinct)} "
+            "distinct refusals, expected 4; a self-test refusal is not load-bearing"
+        ]
+    return []
+
+
+def attribution_self_test(manifest: dict, struct_check=None, sem_check=None) -> list[str]:
     """Prove on every run that both binding checks fire (law 11)."""
+    sc = struct_check or structural_attribution_failures
+    mc = sem_check or semantic_attribution_failures
     failures: list[str] = []
     structural = next((c for c in manifest["cases"] if c["expect"] == "invalid"), None)
     semantic = next(
@@ -400,11 +414,11 @@ def attribution_self_test(manifest: dict) -> list[str]:
     errors = list(Draft202012Validator(schema, format_checker=FormatChecker()).iter_errors(instance))
     misdeclared = dict(structural, expected_refusal={"pointer": "/odeya-self-test/never-fires", "keyword": "const"})
     if not any("refused, but not at its declared constraint" in f
-               for f in structural_attribution_failures(misdeclared, errors)):
+               for f in sc(misdeclared, errors)):
         failures.append("attribution self-test: a misdeclared structural constraint was not detected")
     undeclared = {k: v for k, v in structural.items() if k != "expected_refusal"}
     if not any("does not declare the constraint" in f
-               for f in structural_attribution_failures(undeclared, errors)):
+               for f in sc(undeclared, errors)):
         failures.append("attribution self-test: a missing structural declaration was not detected")
     semantic_failures = semantic_errors(
         str(semantic["schema"]),
@@ -412,11 +426,11 @@ def attribution_self_test(manifest: dict) -> list[str]:
     )
     misdeclared = dict(semantic, expected_semantic_refusal_contains="odeya-self-test-never-appears")
     if not any("not by its declared check" in f
-               for f in semantic_attribution_failures(misdeclared, semantic_failures)):
+               for f in mc(misdeclared, semantic_failures)):
         failures.append("attribution self-test: a misdeclared semantic check was not detected")
     undeclared = {k: v for k, v in semantic.items() if k != "expected_semantic_refusal_contains"}
     if not any("does not declare the check" in f
-               for f in semantic_attribution_failures(undeclared, semantic_failures)):
+               for f in mc(undeclared, semantic_failures)):
         failures.append("attribution self-test: a missing semantic declaration was not detected")
     return failures
 
@@ -461,6 +475,7 @@ def main() -> int:
                 failures.extend(semantic_attribution_failures(case, semantic_failures))
 
     failures.extend(attribution_self_test(manifest))
+    failures.extend(attribution_self_test_meta_proof(manifest))
 
     if failures:
         print("Cognitive contract schema cases failed:", file=sys.stderr)

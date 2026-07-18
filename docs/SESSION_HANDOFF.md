@@ -450,7 +450,7 @@ stage. 132 single-condition tests and structural dict comparisons are
 counted, not audited; field-level blindness inside structural expectations
 remains unmeasured.
 
-**GUARD COVERAGE IS 219/615 WITH A DESIGNED CLOSURE PLAN (ADR 0079/0080).** The 418
+**GUARD COVERAGE IS 235/623 WITH A DESIGNED CLOSURE PLAN (ADR 0079/0080).** The 418
 unproved guards split into 116 harness-hygiene (closable by ~12
 self-tests, ADR 0066 pattern) and 302 domain (need retained cases). ADR
 0080 closed three zero-coverage suites by in-harness self-test:

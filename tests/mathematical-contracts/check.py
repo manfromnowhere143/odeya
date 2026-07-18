@@ -506,8 +506,21 @@ def evaluate_case(manifest: dict[str, Any], case: dict[str, Any]) -> tuple[list[
     return failures, coverage
 
 
-def attribution_self_test(manifest: dict[str, Any]) -> list[str]:
+def attribution_self_test_meta_proof(manifest: dict[str, Any]) -> list[str]:
+    """Prove the self-test's own refusals are load-bearing (ADR 0069/0080)."""
+    blind = lambda mf, case: ([], None)  # noqa: E731
+    distinct = {f for f in attribution_self_test(manifest, evaluator=blind)}
+    if len(distinct) != 4:
+        return [
+            f"attribution meta self-test: blinding the evaluator produced {len(distinct)} distinct "
+            "refusals, expected 4; a self-test refusal is not load-bearing"
+        ]
+    return []
+
+
+def attribution_self_test(manifest: dict[str, Any], evaluator=None) -> list[str]:
     """Prove on every run that both binding checks fire (law 11)."""
+    run = evaluator or evaluate_case
     failures: list[str] = []
     structural = next((c for c in manifest["cases"] if c["expect"] == "invalid"), None)
     semantic = next(
@@ -519,19 +532,19 @@ def attribution_self_test(manifest: dict[str, Any]) -> list[str]:
         return ["attribution self-test found no known-bad case to tamper with"]
     tampered = json.loads(json.dumps(structural))
     tampered["expected_refusal"] = {"pointer": "/odeya-self-test/never-fires", "keyword": "const"}
-    if not any("refused, but not at its declared constraint" in f for f in evaluate_case(manifest, tampered)[0]):
+    if not any("refused, but not at its declared constraint" in f for f in run(manifest, tampered)[0]):
         failures.append("attribution self-test: a misdeclared structural constraint was not detected")
     tampered = json.loads(json.dumps(structural))
     tampered.pop("expected_refusal", None)
-    if not any("does not declare the constraint" in f for f in evaluate_case(manifest, tampered)[0]):
+    if not any("does not declare the constraint" in f for f in run(manifest, tampered)[0]):
         failures.append("attribution self-test: a missing structural declaration was not detected")
     tampered = json.loads(json.dumps(semantic))
     tampered["expected_semantic_refusal_contains"] = "odeya-self-test-never-appears"
-    if not any("not by its declared check" in f for f in evaluate_case(manifest, tampered)[0]):
+    if not any("not by its declared check" in f for f in run(manifest, tampered)[0]):
         failures.append("attribution self-test: a misdeclared semantic check was not detected")
     tampered = json.loads(json.dumps(semantic))
     tampered.pop("expected_semantic_refusal_contains", None)
-    if not any("does not declare the check" in f for f in evaluate_case(manifest, tampered)[0]):
+    if not any("does not declare the check" in f for f in run(manifest, tampered)[0]):
         failures.append("attribution self-test: a missing semantic declaration was not detected")
     return failures
 
@@ -539,6 +552,7 @@ def attribution_self_test(manifest: dict[str, Any]) -> list[str]:
 def main() -> int:
     manifest = load(CASES)
     failures: list[str] = attribution_self_test(manifest)
+    failures.extend(attribution_self_test_meta_proof(manifest))
     semantic_count = 0
     valid_count = 0
     invalid_count = 0

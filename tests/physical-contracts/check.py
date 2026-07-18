@@ -1343,8 +1343,23 @@ def semantic_attribution_failures(case: "Case", semantic_errors: list[str]) -> l
     return []
 
 
-def attribution_self_test(validators: dict[str, Draft202012Validator]) -> list[str]:
+def attribution_self_test_meta_proof(validators: dict[str, Draft202012Validator]) -> list[str]:
+    """Prove the self-test's own refusals are load-bearing (ADR 0069/0080)."""
+    blind = lambda *args, **kw: []  # noqa: E731 - a binding check that refuses nothing
+    distinct = {f for f in attribution_self_test(validators, struct_check=blind, sem_check=blind)}
+    if len(distinct) != 4:
+        return [
+            f"attribution meta self-test: blinding the binding checks produced {len(distinct)} "
+            "distinct refusals, expected 4; a self-test refusal is not load-bearing"
+        ]
+    return []
+
+
+def attribution_self_test(validators: dict[str, Draft202012Validator],
+                          struct_check=None, sem_check=None) -> list[str]:
     """Prove on every run that both binding checks fire (law 11)."""
+    sc = struct_check or structural_attribution_failures
+    mc = sem_check or semantic_attribution_failures
     failures: list[str] = []
     structural = next((c for c in CASES if c.structural == "invalid"), None)
     semantic = next((c for c in CASES if c.structural == "valid" and c.semantic == "invalid"), None)
@@ -1356,11 +1371,11 @@ def attribution_self_test(validators: dict[str, Draft202012Validator]) -> list[s
     errors = sorted(validators[structural.kind].iter_errors(subject), key=lambda item: list(item.path))
     misdeclared = dataclasses.replace(structural, expected_refusal=("/odeya-self-test/never-fires", "const"))
     if not any("refused, but not at its declared constraint" in f
-               for f in structural_attribution_failures(misdeclared, errors)):
+               for f in sc(misdeclared, errors)):
         failures.append("attribution self-test: a misdeclared structural constraint was not detected")
     undeclared = dataclasses.replace(structural, expected_refusal=None)
     if not any("does not declare the constraint" in f
-               for f in structural_attribution_failures(undeclared, errors)):
+               for f in sc(undeclared, errors)):
         failures.append("attribution self-test: a missing structural declaration was not detected")
     subject = copy.deepcopy(load(FIXTURES / semantic.fixture) if semantic.fixture else FACTORIES[semantic.kind]())
     if semantic.mutate:
@@ -1368,11 +1383,11 @@ def attribution_self_test(validators: dict[str, Draft202012Validator]) -> list[s
     semantic_errors = SEMANTIC_CHECKERS[semantic.kind](subject)
     misdeclared = dataclasses.replace(semantic, expected_semantic="odeya-self-test-never-appears")
     if not any("not by its declared check" in f
-               for f in semantic_attribution_failures(misdeclared, semantic_errors)):
+               for f in mc(misdeclared, semantic_errors)):
         failures.append("attribution self-test: a misdeclared semantic check was not detected")
     undeclared = dataclasses.replace(semantic, expected_semantic=None)
     if not any("does not declare the check" in f
-               for f in semantic_attribution_failures(undeclared, semantic_errors)):
+               for f in mc(undeclared, semantic_errors)):
         failures.append("attribution self-test: a missing semantic declaration was not detected")
     return failures
 
@@ -1468,6 +1483,7 @@ def main() -> int:
                 failures.extend(semantic_attribution_failures(case, semantic_errors))
 
     failures.extend(attribution_self_test(validators))
+    failures.extend(attribution_self_test_meta_proof(validators))
 
     if failures:
         print("physical-contract checks failed:", file=sys.stderr)
