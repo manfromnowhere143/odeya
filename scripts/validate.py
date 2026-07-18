@@ -671,19 +671,53 @@ def build_preloaded_schema_registry(
     return registry
 
 
+SCHEMA_CONTAINER_KEYWORDS = {
+    "required", "additionalProperties", "propertyNames", "minProperties",
+    "maxProperties", "contains", "minItems", "maxItems", "oneOf", "anyOf",
+    "allOf", "not", "dependentRequired", "dependentSchemas",
+    "unevaluatedProperties", "unevaluatedItems",
+}
+
+
+def schema_refusal_class(pointer: str, keyword, mutation_paths: set[str]) -> str:
+    """Where a refusal fires relative to what the case mutated.
+
+    Recomputed here on every run so the declared class cannot drift from
+    reality: independent review inverted all 457 declared classes with zero
+    failures, proving the field decorative (ADR 0070).
+    """
+    for mutated in mutation_paths:
+        if pointer == mutated or pointer.startswith(mutated + "/"):
+            return "at_mutation"
+    if keyword in SCHEMA_CONTAINER_KEYWORDS:
+        for mutated in mutation_paths:
+            if pointer == "/" or mutated == pointer or mutated.startswith(pointer.rstrip("/") + "/"):
+                return "container_of_mutation"
+    return "implication"
+
+
 def schema_case_attribution_errors(name: str, case: dict, validation_errors: list) -> list[str]:
     """Bind a known-bad schema case to the exact constraint that refuses it.
 
-    `refusal_class` records whether the refusal fires at the mutated path
-    (`at_mutation`) or at the consequence a mutated discriminator implies
-    (`implication`); both are legitimate, and the distinction is retained
-    rather than flattened.
+    `refusal_class` records where the refusal fires relative to the
+    mutation: at it, at a container of it, or at a consequence the mutation
+    implies. All three are legitimate; the class is recomputed and must
+    match, so it cannot be declared freely.
     """
     declared = case.get("expected_refusal")
     if not isinstance(declared, dict) or not isinstance(declared.get("pointer"), str):
         return [f"schema case {name}: known-bad case does not declare the constraint that must refuse it"]
-    if case.get("refusal_class") not in {"at_mutation", "implication"}:
+    if case.get("refusal_class") not in {"at_mutation", "container_of_mutation", "implication"}:
         return [f"schema case {name}: known-bad case does not declare its refusal class"]
+    mutation_paths = {
+        m.get("path") for m in case.get("mutations", []) if isinstance(m, dict) and m.get("path")
+    }
+    recomputed = schema_refusal_class(declared["pointer"], declared.get("keyword"), mutation_paths)
+    if recomputed != case["refusal_class"]:
+        return [
+            f"schema case {name}: declares refusal class {case['refusal_class']!r} but its "
+            f"binding is {recomputed!r} relative to the mutation"
+        ]
     for error in validation_errors:
         pointer = "/" + "/".join(str(part) for part in error.absolute_path)
         if pointer == declared["pointer"] and error.validator == declared.get("keyword"):

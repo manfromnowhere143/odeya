@@ -487,8 +487,27 @@ Never claim a residue is impossible — state where you stopped and what
 the next injection would cost. The current residue is five statements
 and three conditions, each with a known injection named in ADR 0069.
 
-Still unreviewed: the round-three response itself, and ADR 0068's schema
-corpus attribution if its reviewer's verdict is not yet retained.
+Round three also refuted ALL FOUR surfaces of ADR 0068, and ADR 0070
+retracts two published claims: `refusal_class` was decorative (inverting
+all 457 produced zero failures; it is now recomputed and enforced, and
+the replayed inversion produces 457 detections), and "417 refuse at the
+mutated path" was wrong because the derivation treated `/` as an
+ancestor of everything. Corrected: **232 at_mutation, 169
+container_of_mutation, 56 implication**.
+
+**THE NEXT MAJOR EVIDENCE UNIT IS CORPUS COVERAGE, NOT ATTRIBUTION.**
+Review swept every root-level if/then cross-field rule in every schema
+with invalid cases and deleted each in turn: **210 of 286 can be removed
+with the entire 457-case corpus still green**, mostly because no case
+exercises them at all. Attribution binds what a corpus exercises; this
+corpus exercises well under half of the cross-field rules it exists to
+protect. Two smaller open items from the same round: 100 cases bind at
+the root (75 of 92 research-event cases share `('/', 'oneOf')`, because
+a large oneOf yields only the branch failure and the informative
+sub-errors live in its context), and conjunctive case names still bind
+one conjunct at corpus scale.
+
+Still unreviewed: the round-three responses themselves (ADR 0069, 0070).
 
 With that boundary stated, the dependency-ordered mission below resumes:
 the canonical profile decision remains the gating item, and it terminates
