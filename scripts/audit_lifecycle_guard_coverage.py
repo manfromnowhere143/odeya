@@ -198,7 +198,10 @@ def discover(source: str) -> dict[str, list[dict[str, Any]]]:
     return found
 
 
-def run_suite(tree: Path, python: str) -> tuple[bool, str]:
+def run_suite(tree: Path, python: str) -> tuple[bool, str, bool]:
+    # attributed distinguishes a suite-reported case failure from a checker
+    # crash; a crash proves detection but is fragile to defensive respelling
+    # of adjacent code (independent review, ADR 0065).
     proc = subprocess.run(
         [python, SUITE_REL], cwd=tree, capture_output=True, text=True
     )
@@ -207,7 +210,7 @@ def run_suite(tree: Path, python: str) -> tuple[bool, str]:
         (l.strip().removeprefix("- ") for l in proc.stdout.splitlines() if l.startswith("- ")),
         "",
     )
-    return passed, first
+    return passed, first, bool(first)
 
 
 def measure(python: str) -> dict[str, Any]:
@@ -222,7 +225,7 @@ def measure(python: str) -> dict[str, Any]:
         )
         target = work / SUITE_REL
 
-        passed, _ = run_suite(work, python)
+        passed, _, _ = run_suite(work, python)
         if not passed:
             raise SystemExit(
                 "control failed: the unmutated copy must pass or the audit is meaningless"
@@ -240,13 +243,18 @@ def measure(python: str) -> dict[str, Any]:
                     " " * indent + branch["replacement"] + "\n"
                 ]
                 target.write_text("".join(mutated))
-                suite_passed, first = run_suite(work, python)
+                suite_passed, first, attributed = run_suite(work, python)
                 target.write_text(source)
                 branches.append(
                     {
                         "guard": branch["guard"],
                         "proved": not suite_passed,
                         "proved_by": first.split(":")[0] if not suite_passed else None,
+                        "detection": (
+                            ("case_attributed" if attributed else "crash")
+                            if not suite_passed
+                            else None
+                        ),
                     }
                 )
             results.append(
@@ -279,6 +287,12 @@ def measure(python: str) -> dict[str, Any]:
             "branch_count": total,
             "proved": proved,
             "unproved": total - proved,
+            "crash_detected": sum(
+                1
+                for model in results
+                for branch in model["branches"]
+                if branch.get("detection") == "crash"
+            ),
         },
         "boundary": (
             "architecture evidence about retained bytes only; not a runtime, an "

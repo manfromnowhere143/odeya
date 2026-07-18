@@ -103,6 +103,8 @@ def main() -> int:
                     f"{model.get('function')}: a condition claims a proof without naming "
                     "the failure that establishes it",
                 )
+            if condition.get("proved") is True and condition.get("detection") not in {"case_attributed", "crash"}:
+                add(errors, f"{model.get('function')}: a proved condition does not declare its detection kind")
             if condition.get("proved") is False and condition.get("proved_by"):
                 add(errors, f"{model.get('function')}: an unproved condition names a proof")
         total += len(conditions)

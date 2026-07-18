@@ -112,6 +112,8 @@ def main() -> int:
                     f"{model.get('function')}: a guard claims a proof without naming the "
                     "known-bad case that establishes it",
                 )
+            if branch.get("proved") is True and branch.get("detection") not in {"case_attributed", "crash"}:
+                add(errors, f"{model.get('function')}: a proved guard does not declare its detection kind")
             if branch.get("proved") is False and branch.get("proved_by"):
                 add(errors, f"{model.get('function')}: an unproved guard names a proof")
         total += len(branches)

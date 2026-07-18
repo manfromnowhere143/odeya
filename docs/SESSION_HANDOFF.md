@@ -487,11 +487,12 @@ readers (schema pins, bare-interpreter imports, TLA pin copies), four
 misbound and one ambiguous binding were rebound to intent, and ADR 0054's
 impossibility claim was half-retracted by a retained zero-use-grant
 counterexample — condition coverage now measures 88/89. Surviving
-weaknesses are enumerated in ADR 0063, not resolved: 13 crash-artifact
-condition proofs, ≥22 denominator omissions including four removable
-harness guards, subset-semantics rebindability in the expected_errors
-suites (the 8 compound-name under-bindings were dissolved by ADR 0064:
-18 prong cases, ablation-controlled). Any future frontier claim
+weaknesses are enumerated in ADR 0063, not resolved: ≥22 denominator omissions including four removable
+harness guards, and subset-semantics rebindability in the expected_errors
+suites (the 8 compound-name under-bindings were dissolved by ADR 0064
+with 18 ablation-controlled prong cases; the 13 crash-artifact proofs
+are now declared as `detection: crash` in the retained records by ADR
+0065, with the cheap gates refusing an undeclared proof kind). Any future frontier claim
 must cite the census gate's output, not a carried list. Attribution is intent binding, not mutation coverage: no
 schema-based suite is proven unweakenable at its declared location.
 

@@ -248,16 +248,25 @@ def mutated_source(tree: ast.Module, unit: dict[str, Any]) -> str:
     )
 
 
-def run_suite(tree_path: Path, python: str) -> tuple[bool, str]:
+def run_suite(tree_path: Path, python: str) -> tuple[bool, str, bool]:
+    """(passed, first failure, attributed).
+
+    attributed is True when the failure is a suite-reported case failure and
+    False when the checker crashed before reporting any. Independent review
+    showed the distinction matters: a crash proof establishes detection of
+    the removal but is fragile to any defensive respelling of the adjacent
+    code, so the record must not present the two as the same strength.
+    """
     proc = subprocess.run([python, SUITE_REL], cwd=tree_path, capture_output=True, text=True)
     passed = proc.returncode == 0 and "passed" in proc.stdout
     first = next(
         (l.strip().removeprefix("- ") for l in proc.stdout.splitlines() if l.startswith("- ")),
         "",
     )
+    attributed = bool(first)
     if not passed and not first:
         first = (proc.stderr.strip().splitlines() or ["checker crashed"])[-1][:200]
-    return passed, first
+    return passed, first, attributed
 
 
 def measure(python: str) -> dict[str, Any]:
@@ -276,7 +285,7 @@ def measure(python: str) -> dict[str, Any]:
         # of the removed condition, never of serialization itself.
         baseline = ast.unparse(deepcopy(tree))
         target.write_text(baseline)
-        passed, _ = run_suite(work, python)
+        passed, _, _ = run_suite(work, python)
         if not passed:
             raise SystemExit(
                 "control failed: the unmutated re-serialized copy must pass or the audit is meaningless"
@@ -287,7 +296,7 @@ def measure(python: str) -> dict[str, Any]:
             conditions = []
             for unit in units_by_function[name]:
                 target.write_text(mutated_source(tree, unit))
-                suite_passed, first = run_suite(work, python)
+                suite_passed, first, attributed = run_suite(work, python)
                 conditions.append(
                     {
                         "guard": unit["guard"],
@@ -295,6 +304,11 @@ def measure(python: str) -> dict[str, Any]:
                         "condition": unit["condition"],
                         "proved": not suite_passed,
                         "proved_by": first.split(":")[0] if not suite_passed else None,
+                        "detection": (
+                            ("case_attributed" if attributed else "crash")
+                            if not suite_passed
+                            else None
+                        ),
                     }
                 )
             target.write_text(baseline)
@@ -329,6 +343,12 @@ def measure(python: str) -> dict[str, Any]:
             "condition_count": total,
             "proved": proved,
             "unproved": total - proved,
+            "crash_detected": sum(
+                1
+                for model in results
+                for condition in model["conditions"]
+                if condition.get("detection") == "crash"
+            ),
         },
         "boundary": (
             "condition-level architecture evidence about retained bytes only; "
@@ -351,8 +371,9 @@ def report(document: dict[str, Any]) -> None:
                 )
     summary = document["summary"]
     print(
-        f"\n{summary['proved']}/{summary['condition_count']} conditions proved; "
-        f"{summary['unproved']} removable with the suite green"
+        f"\n{summary['proved']}/{summary['condition_count']} conditions proved "
+        f"({summary['crash_detected']} by crash, which is fragile detection, not "
+        f"case-attributed evidence); {summary['unproved']} removable with the suite green"
     )
     not_audited = document["not_audited"]
     print(
