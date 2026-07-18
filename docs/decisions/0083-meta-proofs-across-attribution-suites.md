@@ -47,7 +47,8 @@ is the recorded decision, per suite.
 
 ## Boundary
 
-Statement reachability of harness guards only. constitutional-construction
-and first-slice-resolution carry a differently-shaped invariant self-test
-and are the next hygiene targets. Nothing here is an accountable review
+Statement reachability of harness guards only. constitutional-construction (31->33/88) and first-slice-resolution
+(36->38/131) carry a differently-shaped invariant self-test, closed by the
+same injection with a two-refusal count; all six attribution suites now
+carry meta-proofs. Nothing here is an accountable review
 determination, an admitted member, or Gate A acceptance.

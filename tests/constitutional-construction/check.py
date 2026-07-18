@@ -443,8 +443,21 @@ def attribution_failures(name: str, case: dict, errors: list[str]) -> list[str]:
     return []
 
 
-def attribution_self_test(cases: list, evaluate) -> list[str]:
+def attribution_self_test_meta_proof(cases: list, evaluate) -> list[str]:
+    """Prove the self-test's own refusals are load-bearing (ADR 0069/0080)."""
+    blind = lambda name, case, errors: []  # noqa: E731 - a binder that refuses nothing
+    distinct = {f for f in attribution_self_test(cases, evaluate, binder=blind)}
+    if len(distinct) != 2:
+        return [
+            f"attribution meta self-test: blinding the binder produced {len(distinct)} distinct "
+            "refusals, expected 2; a self-test refusal is not load-bearing"
+        ]
+    return []
+
+
+def attribution_self_test(cases: list, evaluate, binder=None) -> list[str]:
     """Prove on every run that the binding check itself fires (law 11)."""
+    bind = binder or attribution_failures
     template = next((c for c in cases if isinstance(c, dict) and c.get("expect") == "reject"), None)
     if template is None:
         return ["attribution self-test found no known-bad case to tamper with"]
@@ -452,11 +465,11 @@ def attribution_self_test(cases: list, evaluate) -> list[str]:
     failures: list[str] = []
     misdeclared = dict(template, expected_refusal_contains="odeya-self-test-never-appears")
     if not any("not by its declared invariant" in f
-               for f in attribution_failures(str(template.get("name")), misdeclared, errors)):
+               for f in bind(str(template.get("name")), misdeclared, errors)):
         failures.append("attribution self-test: a misdeclared invariant was not detected")
     undeclared = {k: v for k, v in template.items() if k != "expected_refusal_contains"}
     if not any("does not declare the invariant" in f
-               for f in attribution_failures(str(template.get("name")), undeclared, errors)):
+               for f in bind(str(template.get("name")), undeclared, errors)):
         failures.append("attribution self-test: a missing declaration was not detected")
     return failures
 
@@ -497,6 +510,7 @@ def main() -> int:
         return model_checkers[str(case.get("model"))](instance)
 
     failures.extend(attribution_self_test(cases, evaluate))
+    failures.extend(attribution_self_test_meta_proof(cases, evaluate))
 
     safe_count = 0
     rejected_count = 0
