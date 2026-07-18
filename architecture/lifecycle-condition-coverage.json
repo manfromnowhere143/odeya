@@ -6,7 +6,7 @@
   "status": "candidate_measurement_not_admitted",
   "method": "each top-level member of a guarded boolean chain in a declared lifecycle model or helper predicate is removed one at a time in an isolated copy; a condition is proved only when the suite fails without it",
   "subject": "tests/lifecycle-closure/check.py",
-  "subject_sha256": "sha256:6e30a4b687f1d7eb205f943eea1d8e31e9f5e74fc674e71323bb54c96e3ffa70",
+  "subject_sha256": "sha256:dba5bd75c922c92ce4dd11e47cdc364b7e8148e7b2d15b21c7bf7231eece2663",
   "models": [
     {
       "function": "branch_map",
@@ -17,7 +17,7 @@
     {
       "function": "schema_contract_errors",
       "condition_count": 8,
-      "proved_count": 4,
+      "proved_count": 8,
       "conditions": [
         {
           "guard": "first-slice required event count is not preserved at exactly 60",
@@ -30,8 +30,8 @@
           "guard": "first-slice required event count is not preserved at exactly 60",
           "role": "disjunct",
           "condition": "len(required_events) != 60",
-          "proved": false,
-          "proved_by": null
+          "proved": true,
+          "proved_by": "cond-schema-required-events-length-only"
         },
         {
           "guard": "first-slice aggregate/reducer-family count is not preserved at exactly 25",
@@ -44,8 +44,8 @@
           "guard": "first-slice aggregate/reducer-family count is not preserved at exactly 25",
           "role": "disjunct",
           "condition": "len(inventory.get('aggregate_dependencies', [])) != 25",
-          "proved": false,
-          "proved_by": null
+          "proved": true,
+          "proved_by": "cond-schema-aggregate-deps-length-only"
         },
         {
           "guard": "recorded ResearchEvent release/claimed-reservation blocker no longer matches exact bytes",
@@ -58,15 +58,15 @@
           "guard": "recorded ResearchEvent release/claimed-reservation blocker no longer matches exact bytes",
           "role": "disjunct",
           "condition": "current_release_claim_ref_type != 'null'",
-          "proved": false,
-          "proved_by": null
+          "proved": true,
+          "proved_by": "cond-schema-release-claim-ref-type-only"
         },
         {
           "guard": "ResearchEvent branch {} lacks an exact logical payload type ID",
           "role": "disjunct",
           "condition": "not isinstance(logical_type, str)",
-          "proved": false,
-          "proved_by": null
+          "proved": true,
+          "proved_by": "AttributeError"
         },
         {
           "guard": "ResearchEvent branch {} lacks an exact logical payload type ID",
@@ -80,7 +80,7 @@
     {
       "function": "data_fixture_errors",
       "condition_count": 4,
-      "proved_count": 2,
+      "proved_count": 4,
       "conditions": [
         {
           "guard": "data-use fixture does not bind exactly one grant and use event",
@@ -93,15 +93,15 @@
           "guard": "data-use fixture does not bind exactly one grant and use event",
           "role": "disjunct",
           "condition": "len(authority.get('grant_use_event_refs', [])) != 1",
-          "proved": false,
-          "proved_by": null
+          "proved": true,
+          "proved_by": "cond-data-fixture-two-use-events"
         },
         {
           "guard": "data-use fixture does not retain the exact three-event commit position",
           "role": "disjunct",
           "condition": "fixture.get('commit', {}).get('batch_index') != 1",
-          "proved": false,
-          "proved_by": null
+          "proved": true,
+          "proved_by": "cond-data-fixture-batch-index-zero"
         },
         {
           "guard": "data-use fixture does not retain the exact three-event commit position",
@@ -115,7 +115,7 @@
     {
       "function": "authority_grant_trace_errors",
       "condition_count": 5,
-      "proved_count": 2,
+      "proved_count": 3,
       "conditions": [
         {
           "guard": "step {} exposes a final grant use without immediate exhaustion",
@@ -135,8 +135,8 @@
           "guard": "step {} exhausts before the exact final legal use",
           "role": "disjunct",
           "condition": "state != 'active'",
-          "proved": false,
-          "proved_by": null
+          "proved": true,
+          "proved_by": "cond-grant-exhaust-after-expiry-of-pending-use"
         },
         {
           "guard": "step {} exhausts before the exact final legal use",
@@ -157,14 +157,14 @@
     {
       "function": "protocol_origin_errors",
       "condition_count": 9,
-      "proved_count": 4,
+      "proved_count": 9,
       "conditions": [
         {
           "guard": "protocol origin lacks one or more exact validation evidence references",
           "role": "disjunct",
           "condition": "not isinstance(evidence, list)",
-          "proved": false,
-          "proved_by": null
+          "proved": true,
+          "proved_by": "TypeError"
         },
         {
           "guard": "protocol origin lacks one or more exact validation evidence references",
@@ -177,8 +177,8 @@
           "guard": "protocol origin lacks one or more exact validation evidence references",
           "role": "disjunct",
           "condition": "not all((valid_artifact_ref(item) for item in evidence))",
-          "proved": false,
-          "proved_by": null
+          "proved": true,
+          "proved_by": "cond-protocol-evidence-one-invalid-item"
         },
         {
           "guard": "protocol freeze lacks the bounded protocol grant",
@@ -191,15 +191,15 @@
           "guard": "protocol freeze lacks the bounded protocol grant",
           "role": "disjunct",
           "condition": "subject.get('role_slot') != 'protocol'",
-          "proved": false,
-          "proved_by": null
+          "proved": true,
+          "proved_by": "cond-protocol-wrong-role-slot-only"
         },
         {
           "guard": "protocol freeze is not at index 1 of one four-event commit",
           "role": "disjunct",
           "condition": "subject.get('commit_batch_index') != 1",
-          "proved": false,
-          "proved_by": null
+          "proved": true,
+          "proved_by": "cond-protocol-batch-index-zero-only"
         },
         {
           "guard": "protocol freeze is not at index 1 of one four-event commit",
@@ -212,8 +212,8 @@
           "guard": "protocol origin lacks {}",
           "role": "disjunct",
           "condition": "not isinstance(subject.get(field), str)",
-          "proved": false,
-          "proved_by": null
+          "proved": true,
+          "proved_by": "cond-protocol-grant-use-ref-not-string"
         },
         {
           "guard": "protocol origin lacks {}",
@@ -227,7 +227,7 @@
     {
       "function": "data_use_cohort_errors",
       "condition_count": 10,
-      "proved_count": 7,
+      "proved_count": 10,
       "conditions": [
         {
           "guard": "data-use decision must retain exactly one data_rights grant and use event",
@@ -240,8 +240,8 @@
           "guard": "data-use decision must retain exactly one data_rights grant and use event",
           "role": "disjunct",
           "condition": "len(use_refs) != 1",
-          "proved": false,
-          "proved_by": null
+          "proved": true,
+          "proved_by": "cond-data-use-two-use-refs"
         },
         {
           "guard": "data-use payload grant differs from authority evidence",
@@ -275,8 +275,8 @@
           "guard": "data-use grant is not single-use at domain commit",
           "role": "disjunct",
           "condition": "subject.get('consumption_point') != 'domain_commit'",
-          "proved": false,
-          "proved_by": null
+          "proved": true,
+          "proved_by": "cond-data-use-wrong-consumption-point"
         },
         {
           "guard": "data-use grant is not single-use at domain commit",
@@ -289,8 +289,8 @@
           "guard": "data-use decision is not index 1 of exactly three events",
           "role": "disjunct",
           "condition": "subject.get('commit_batch_index') != 1",
-          "proved": false,
-          "proved_by": null
+          "proved": true,
+          "proved_by": "cond-data-use-batch-index-zero"
         },
         {
           "guard": "data-use decision is not index 1 of exactly three events",
@@ -309,15 +309,15 @@
     },
     {
       "function": "work_lease_record_candidate_errors",
-      "condition_count": 20,
-      "proved_count": 10,
+      "condition_count": 22,
+      "proved_count": 22,
       "conditions": [
         {
           "guard": "WorkLease record fixture fabricates profile or canonical digest",
           "role": "disjunct",
           "condition": "record.get('canonicalization_profile_ref') is not None",
-          "proved": false,
-          "proved_by": null
+          "proved": true,
+          "proved_by": "cond-lease-fabricated-profile-only"
         },
         {
           "guard": "WorkLease record fixture fabricates profile or canonical digest",
@@ -365,8 +365,8 @@
           "guard": "WorkLease acquisition is not version-one origin from aggregate absence",
           "role": "disjunct",
           "condition": "transition.get('prior_active_event_ref') is not None",
-          "proved": false,
-          "proved_by": null
+          "proved": true,
+          "proved_by": "cond-lease-acquisition-with-prior-event"
         },
         {
           "guard": "non-origin WorkLease transition lacks an active predecessor",
@@ -379,8 +379,8 @@
           "guard": "non-origin WorkLease transition lacks an active predecessor",
           "role": "disjunct",
           "condition": "prior_type not in {'work.lease_acquired'}",
-          "proved": false,
-          "proved_by": null
+          "proved": true,
+          "proved_by": "cond-lease-release-prior-not-acquisition"
         },
         {
           "guard": "WorkLease acquisition does not begin with an unclaimed reservation",
@@ -393,43 +393,57 @@
           "guard": "WorkLease acquisition does not begin with an unclaimed reservation",
           "role": "disjunct",
           "condition": "reservation.get('reservation_claim_event_ref') is not None",
-          "proved": false,
-          "proved_by": null
+          "proved": true,
+          "proved_by": "cond-lease-acquisition-claim-event-present"
         },
         {
           "guard": "first-slice WorkLease release forgets the claimed reservation awaiting settlement",
           "role": "disjunct",
           "condition": "claim_state != 'claimed'",
-          "proved": false,
-          "proved_by": null
+          "proved": true,
+          "proved_by": "cond-lease-release-claim-state-pending"
         },
         {
           "guard": "first-slice WorkLease release forgets the claimed reservation awaiting settlement",
           "role": "disjunct",
           "condition": "claim_event_type != 'resource.reservation_claimed'",
-          "proved": false,
-          "proved_by": null
+          "proved": true,
+          "proved_by": "cond-lease-release-claim-event-wrong-type"
         },
         {
           "guard": "first-slice WorkLease expiry is not the pre-claim deadline branch",
           "role": "disjunct",
           "condition": "claim_state != 'unclaimed'",
-          "proved": false,
-          "proved_by": null
+          "proved": true,
+          "proved_by": "cond-lease-expiry-claim-state-claimed"
         },
         {
           "guard": "first-slice WorkLease expiry is not the pre-claim deadline branch",
           "role": "disjunct",
           "condition": "reservation.get('reservation_claim_event_ref') is not None",
-          "proved": false,
-          "proved_by": null
+          "proved": true,
+          "proved_by": "cond-lease-expiry-claim-event-present"
+        },
+        {
+          "guard": "WorkLease record mutation is not one bounded replace operation",
+          "role": "disjunct",
+          "condition": "not isinstance(entry, dict)",
+          "proved": true,
+          "proved_by": "AttributeError"
+        },
+        {
+          "guard": "WorkLease record mutation is not one bounded replace operation",
+          "role": "disjunct",
+          "condition": "entry.get('op') != 'replace'",
+          "proved": true,
+          "proved_by": "work-lease-record-bad-mutation-not-a-replace"
         },
         {
           "guard": "WorkLease record mutation path is absent",
           "role": "disjunct",
           "condition": "not isinstance(path, list)",
-          "proved": false,
-          "proved_by": null
+          "proved": true,
+          "proved_by": "cond-lease-mutation-path-not-list"
         },
         {
           "guard": "WorkLease record mutation path is absent",
@@ -449,22 +463,22 @@
           "guard": "WorkLease record list mutation index is not an integer",
           "role": "conjunct",
           "condition": "not isinstance(final, int)",
-          "proved": false,
-          "proved_by": null
+          "proved": true,
+          "proved_by": "cond-lease-list-index-integer-path"
         }
       ]
     },
     {
       "function": "identity_map_mutation_errors",
       "condition_count": 6,
-      "proved_count": 4,
+      "proved_count": 6,
       "conditions": [
         {
           "guard": "identity-map mutation is not one bounded replace operation",
           "role": "disjunct",
           "condition": "not isinstance(mutation, dict)",
-          "proved": false,
-          "proved_by": null
+          "proved": true,
+          "proved_by": "AttributeError"
         },
         {
           "guard": "identity-map mutation is not one bounded replace operation",
@@ -477,8 +491,8 @@
           "guard": "identity-map mutation path is absent",
           "role": "disjunct",
           "condition": "not isinstance(path, list)",
-          "proved": false,
-          "proved_by": null
+          "proved": true,
+          "proved_by": "cond-identity-mutation-path-not-list"
         },
         {
           "guard": "identity-map mutation path is absent",
@@ -506,14 +520,14 @@
     {
       "function": "data_fixture_mutation_errors",
       "condition_count": 6,
-      "proved_count": 3,
+      "proved_count": 6,
       "conditions": [
         {
           "guard": "data-use fixture mutation is not one bounded replace operation",
           "role": "disjunct",
           "condition": "not isinstance(mutation, dict)",
-          "proved": false,
-          "proved_by": null
+          "proved": true,
+          "proved_by": "AttributeError"
         },
         {
           "guard": "data-use fixture mutation is not one bounded replace operation",
@@ -526,8 +540,8 @@
           "guard": "data-use fixture mutation path is absent",
           "role": "disjunct",
           "condition": "not isinstance(path, list)",
-          "proved": false,
-          "proved_by": null
+          "proved": true,
+          "proved_by": "cond-data-fixture-mutation-path-not-list"
         },
         {
           "guard": "data-use fixture mutation path is absent",
@@ -547,15 +561,15 @@
           "guard": "data-use fixture list mutation index is not an integer",
           "role": "conjunct",
           "condition": "not isinstance(final, int)",
-          "proved": false,
-          "proved_by": null
+          "proved": true,
+          "proved_by": "cond-data-fixture-list-index-integer-path"
         }
       ]
     },
     {
       "function": "valid_artifact_ref",
       "condition_count": 6,
-      "proved_count": 1,
+      "proved_count": 6,
       "conditions": [
         {
           "guard": "return of valid_artifact_ref",
@@ -568,78 +582,78 @@
           "guard": "return of valid_artifact_ref",
           "role": "conjunct",
           "condition": "isinstance(value.get('artifact_id'), str)",
-          "proved": false,
-          "proved_by": null
+          "proved": true,
+          "proved_by": "cond-artifact-id-not-string"
         },
         {
           "guard": "return of valid_artifact_ref",
           "role": "conjunct",
           "condition": "bool(value['artifact_id'])",
-          "proved": false,
-          "proved_by": null
+          "proved": true,
+          "proved_by": "cond-artifact-id-empty"
         },
         {
           "guard": "return of valid_artifact_ref",
           "role": "conjunct",
           "condition": "DIGEST.fullmatch(str(value.get('digest', ''))) is not None",
-          "proved": false,
-          "proved_by": null
+          "proved": true,
+          "proved_by": "cond-protocol-evidence-one-invalid-item"
         },
         {
           "guard": "return of valid_artifact_ref",
           "role": "conjunct",
           "condition": "isinstance(value.get('media_type'), str)",
-          "proved": false,
-          "proved_by": null
+          "proved": true,
+          "proved_by": "cond-artifact-media-type-not-string"
         },
         {
           "guard": "return of valid_artifact_ref",
           "role": "conjunct",
           "condition": "bool(value['media_type'])",
-          "proved": false,
-          "proved_by": null
+          "proved": true,
+          "proved_by": "cond-artifact-media-type-empty"
         }
       ]
     },
     {
       "function": "valid_record_ref",
       "condition_count": 8,
-      "proved_count": 1,
+      "proved_count": 8,
       "conditions": [
         {
           "guard": "return of valid_record_ref",
           "role": "conjunct",
           "condition": "isinstance(value, dict)",
-          "proved": false,
-          "proved_by": null
+          "proved": true,
+          "proved_by": "AttributeError"
         },
         {
           "guard": "return of valid_record_ref",
           "role": "conjunct",
           "condition": "isinstance(value.get('object_id'), str)",
-          "proved": false,
-          "proved_by": null
+          "proved": true,
+          "proved_by": "cond-record-object-id-not-string"
         },
         {
           "guard": "return of valid_record_ref",
           "role": "conjunct",
           "condition": "bool(value['object_id'])",
-          "proved": false,
-          "proved_by": null
+          "proved": true,
+          "proved_by": "cond-record-object-id-empty"
         },
         {
           "guard": "return of valid_record_ref",
           "role": "conjunct",
           "condition": "isinstance(value.get('version'), int)",
-          "proved": false,
-          "proved_by": null
+          "proved": true,
+          "proved_by": "TypeError"
         },
         {
           "guard": "return of valid_record_ref",
           "role": "conjunct",
           "condition": "value['version'] >= 1",
-          "proved": false,
-          "proved_by": null
+          "proved": true,
+          "proved_by": "cond-record-version-zero"
         },
         {
           "guard": "return of valid_record_ref",
@@ -652,22 +666,22 @@
           "guard": "return of valid_record_ref",
           "role": "conjunct",
           "condition": "DIGEST.fullmatch(str(value.get('digest', ''))) is not None",
-          "proved": false,
-          "proved_by": null
+          "proved": true,
+          "proved_by": "cond-record-digest-malformed"
         },
         {
           "guard": "return of valid_record_ref",
           "role": "conjunct",
           "condition": "valid_artifact_ref(value.get('artifact_ref'))",
-          "proved": false,
-          "proved_by": null
+          "proved": true,
+          "proved_by": "cond-record-artifact-ref-null"
         }
       ]
     },
     {
       "function": "valid_versioned_identity",
       "condition_count": 5,
-      "proved_count": 1,
+      "proved_count": 5,
       "conditions": [
         {
           "guard": "return of valid_versioned_identity",
@@ -680,29 +694,29 @@
           "guard": "return of valid_versioned_identity",
           "role": "conjunct",
           "condition": "isinstance(value.get('name'), str)",
-          "proved": false,
-          "proved_by": null
+          "proved": true,
+          "proved_by": "cond-versioned-name-not-string"
         },
         {
           "guard": "return of valid_versioned_identity",
           "role": "conjunct",
           "condition": "bool(value['name'])",
-          "proved": false,
-          "proved_by": null
+          "proved": true,
+          "proved_by": "cond-versioned-name-empty"
         },
         {
           "guard": "return of valid_versioned_identity",
           "role": "conjunct",
           "condition": "re.fullmatch('[0-9]+\\\\.[0-9]+\\\\.[0-9]+', str(value.get('version', ''))) is not None",
-          "proved": false,
-          "proved_by": null
+          "proved": true,
+          "proved_by": "cond-versioned-version-not-semver"
         },
         {
           "guard": "return of valid_versioned_identity",
           "role": "conjunct",
           "condition": "DIGEST.fullmatch(str(value.get('digest', ''))) is not None",
-          "proved": false,
-          "proved_by": null
+          "proved": true,
+          "proved_by": "cond-versioned-digest-malformed"
         }
       ]
     }
@@ -712,9 +726,9 @@
     "nested_boolean_groups": 0
   },
   "summary": {
-    "condition_count": 87,
-    "proved": 39,
-    "unproved": 48
+    "condition_count": 89,
+    "proved": 87,
+    "unproved": 2
   },
   "boundary": "condition-level architecture evidence about retained bytes only; single-condition tests and nested boolean groups are counted, not audited; structural comparisons are one condition regardless of field count; not a runtime, an admitted member, an independently reproduced verdict, or Gate A acceptance"
 }

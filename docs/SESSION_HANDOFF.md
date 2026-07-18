@@ -376,10 +376,20 @@ mutation vocabulary gained `work_lease_schema`, `module_manifest`, and
 `defining_paths` injection targets, the third recurrence of the
 closed-vocabulary defect ADR 0028 and ADR 0031 fixed before. The suite now
 caches file text per process (parse stays fresh per call, so case isolation
-is unchanged): a run is 0.64s with 182 cases and the full audit re-measures
-in under a minute. Coverage is still not correctness: every guard is shown to
-fire, none is shown to enforce the right rule, and ADR 0030's condition-level
-boundary below stands in full.
+is unchanged): a run is 0.64s and the full audit re-measures in under a
+minute. Coverage is still not correctness: every guard is shown to fire,
+none is shown to enforce the right rule, and ADR 0030's condition-level
+boundary below stands in full. ADR 0054 then closed the measured
+condition blindness at **87 of 89** with 46 sharpened cases (one wrong
+part, every sibling safe): helpers complete, the conjoined release/claim
+case dissolved, the fabricated-profile disjunct proved, statement
+coverage re-measured complete at 161/161 after the WorkLease harness
+gained an ordered replace-list (fourth closed-vocabulary recurrence, own
+hygiene guards proved). The two remaining disjuncts are
+invariant-coupled (`pending_exhaustion ⟺ uses == max_uses` while
+active) and retained deliberately as defense in depth — ADR 0054 is
+their standing explanation, and a future full-coverage claim must
+reproduce that argument or refute it with traces.
 
 Read the denominator with suspicion. It has been 69, then 71, then 75, then 139;
 every figure was published as fact and every one was wrong, because the
@@ -438,9 +448,11 @@ and arithmetic only — it cannot detect a falsified record and says so) and
 re-measured for real by the rehearsal's new `lifecycle-condition-coverage`
 stage. 132 single-condition tests and structural dict comparisons are
 counted, not audited; field-level blindness inside structural expectations
-remains unmeasured. Closing the 48 is the next lifecycle unit — one case
-per condition, each setting exactly the mutated part wrong while holding
-every sibling safe, which also dissolves the conjoined-case masking form.
+remains unmeasured. ADR 0054 closed the 48 (see above): 87/89 proved, two
+invariant-coupled disjuncts retained deliberately. The evidence-quality
+lane's next units are the six unattributed suites (229 known-bad cases
+that cannot distinguish a guard firing from an incidental refusal) and the
+five-spelling refusal-attribution convergence.
 
 Three further follow-ons are open. Six suites still assert refusal
 without attribution across 229 known-bad cases — `cognitive-contracts` (107),
