@@ -23,7 +23,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "architecture/suite-guard-coverage.json"
 AUDIT_TOOL = ROOT / "scripts/audit_suite_guard_coverage.py"
-EXPECTED_SUMMARY = {"guard_count": 601, "proved": 195, "unproved": 406, "crash_detected": 0}
+EXPECTED_SUMMARY = {"guard_count": 611, "proved": 203, "unproved": 408, "crash_detected": 0}
 
 
 def main() -> int:

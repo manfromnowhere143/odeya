@@ -291,45 +291,38 @@ def evaluate(subjects: dict[str, dict[str, Any]], preloaded_ids: set[str]) -> di
     }
 
 
-def main() -> int:
-    manifest = load(MANIFEST)
+def manifest_failures(manifest: dict[str, Any]) -> list[str]:
     failures: list[str] = []
     if manifest.get("contract_status") != "architecture_only_non_admitted" or manifest.get("usable_for_admission") is not False:
         failures.append("manifest must remain architecture-only and unusable for admission")
     case_names = {case["name"] for case in manifest["cases"]}
-    exact_reason_sets = manifest.get("exact_mismatch_reason_sets", {})
-    if set(exact_reason_sets) != case_names:
+    if set(manifest.get("exact_mismatch_reason_sets", {})) != case_names:
         failures.append("exact mismatch-reason inventory must cover every case exactly once")
+    return failures
 
-    schemas_by_id: dict[str, dict[str, Any]] = {}
-    for path in sorted((ROOT / "schemas").glob("*.json")):
-        schema = load(path)
-        resource_id = schema.get("$id")
-        if isinstance(resource_id, str):
-            schemas_by_id[resource_id] = schema
-    registry = Registry().with_resources(
-        (resource_id, Resource.from_contents(schema))
-        for resource_id, schema in schemas_by_id.items()
-    )
 
-    subjects = {name: load(ROOT / relative) for name, relative in manifest["fixtures"].items()}
-    validators: dict[str, Draft202012Validator] = {}
-    for name, relative in manifest["schemas"].items():
-        schema = load(ROOT / relative)
-        validators[name] = Draft202012Validator(
-            schema,
-            registry=registry,
-            format_checker=FormatChecker(),
-        )
+def baseline_failures(validators: dict, subjects: dict) -> list[str]:
+    failures: list[str] = []
+    for name, validator in validators.items():
         validation_errors = sorted(
-            validators[name].iter_errors(subjects[name]),
+            validator.iter_errors(subjects[name]),
             key=lambda error: list(error.absolute_path),
         )
         if validation_errors:
             failures.append(f"baseline {name} fixture is not structurally valid: {validation_errors[0].message}")
+    return failures
 
+
+def evaluate_cases(cases: list, subjects: dict, validators: dict,
+                   schemas_by_id: dict, manifest: dict) -> tuple[list[str], int]:
+    """Run every case. Factored out of main so the harness's own hygiene
+    guards can be exercised by a self-test (ADR 0080): a malformed case
+    cannot live in the retained set, so before this every hygiene guard had
+    no proof and the generalized audit measured this suite at 0 of 10."""
+    failures: list[str] = []
+    exact_reason_sets = manifest.get("exact_mismatch_reason_sets", {})
     passed = 0
-    for case in manifest["cases"]:
+    for case in cases:
         case_subjects = copy.deepcopy(subjects)
         try:
             for mutation in case.get("mutations", []):
@@ -387,6 +380,133 @@ def main() -> int:
             )
             continue
         passed += 1
+    return failures, passed
+
+
+def build_context(manifest: dict) -> tuple[dict, dict, dict]:
+    schemas_by_id: dict[str, dict[str, Any]] = {}
+    for path in sorted((ROOT / "schemas").glob("*.json")):
+        schema = load(path)
+        resource_id = schema.get("$id")
+        if isinstance(resource_id, str):
+            schemas_by_id[resource_id] = schema
+    registry = Registry().with_resources(
+        (resource_id, Resource.from_contents(schema))
+        for resource_id, schema in schemas_by_id.items()
+    )
+    subjects = {name: load(ROOT / relative) for name, relative in manifest["fixtures"].items()}
+    validators: dict[str, Draft202012Validator] = {}
+    for name, relative in manifest["schemas"].items():
+        schema = load(ROOT / relative)
+        validators[name] = Draft202012Validator(
+            schema, registry=registry, format_checker=FormatChecker()
+        )
+    return subjects, validators, schemas_by_id
+
+
+def harness_self_test_meta_proof(subjects: dict, validators: dict,
+                                 schemas_by_id: dict, manifest: dict) -> list[str]:
+    """Prove the self-test's own refusal statements are load-bearing.
+
+    Blinding the case evaluator makes every per-case probe fail
+    unconditionally; the exact count of DISTINCT refusals is asserted, so a
+    duplicated probe collapses the set and is caught (ADR 0069/0080).
+    """
+    blind = lambda cases, s, v, sb, mf: ([], 0)  # noqa: E731
+    distinct = {
+        f for f in harness_self_test(subjects, validators, schemas_by_id, manifest, evaluator=blind)
+    }
+    if len(distinct) != 4:
+        return [
+            f"harness meta self-test: blinding the evaluator produced {len(distinct)} distinct "
+            "refusals, expected 4; a probe is duplicated or a refusal is not load-bearing"
+        ]
+    return []
+
+
+def harness_self_test(subjects: dict, validators: dict, schemas_by_id: dict,
+                      manifest: dict, evaluator=None) -> list[str]:
+    """Prove the harness's hygiene guards fire (law 11, ADR 0066/0080).
+
+    Each synthetic case is malformed in exactly one way and must be refused
+    by exactly one guard; probe subjects are required distinct. The
+    manifest-level and baseline guards, which sit outside the per-case loop,
+    are driven with deliberately-broken inputs. The defensive
+    usable-for-admission guard and the unresolved-reason-drift guard require
+    real evaluate semantics that no synthetic case reaches without deep
+    reconstruction, and are recorded as open in ADR 0081 rather than
+    asserted here.
+    """
+    run = evaluator or evaluate_cases
+    failures: list[str] = []
+    probed: list = []
+    ok_name = manifest["cases"][0]["name"]
+
+    def refuses_case(case: dict, expected: str, label: str) -> None:
+        if any(case == earlier for earlier in probed):
+            failures.append(f"harness self-test: {label} duplicates an earlier probe subject")
+        probed.append(copy.deepcopy(case))
+        observed, _ = run([case], subjects, validators, schemas_by_id, manifest)
+        if not any(expected in failure for failure in observed):
+            failures.append(f"harness self-test: {label} was not refused; got {observed}")
+
+    obj = next(iter(subjects))
+    refuses_case(
+        {"name": ok_name, "mutations": [{"object": "no-such-object", "op": "replace",
+                                         "path": "/x", "value": 1}]},
+        "mutation failed", "an unresolvable mutation object")
+    refuses_case(
+        {"name": ok_name, "mutations": [], "comparison_overrides": [
+            {"object": "no-such-object", "op": "replace", "path": "/x", "value": 1}]},
+        "comparison override failed", "an unresolvable comparison override")
+    refuses_case(
+        {"name": ok_name, "mutations": [], "expected_status": "odeya-self-test-wrong-status",
+         "expected_reasons": []},
+        "expected ", "a wrong expected status")
+    # The clean baseline evaluates to blocked_unresolved_identity; declaring
+    # that exact status passes the status guard so the missing-reasons guard
+    # is the one this probe reaches.
+    baseline_status = evaluate(copy.deepcopy(subjects), set(schemas_by_id))["status"]
+    refuses_case(
+        {"name": ok_name, "mutations": [], "expected_status": baseline_status,
+         "expected_reasons": ["odeya-self-test-never-produced"]},
+        "missing expected reasons", "an expected reason the result never produces")
+    # The mismatch-reason-drift and unresolved-reason-drift guards fire only
+    # after the status and missing-reason checks pass with real evaluate
+    # semantics AND the exact retained set differs from what the case
+    # produces. No synthetic case reaches that state without reconstructing a
+    # full drift, and the defensive usable-for-admission guard is unreachable
+    # while evaluate never admits. All three are recorded open in ADR 0081,
+    # not asserted here -- claiming them would be the fiction this suite exists
+    # to prevent.
+
+    # Manifest-level guards, driven with broken manifests.
+    if not manifest_failures({**manifest, "contract_status": "admitted"}):
+        failures.append("harness self-test: an admittable manifest was not refused")
+    if not manifest_failures({**manifest, "exact_mismatch_reason_sets": {}}):
+        failures.append("harness self-test: an incomplete reason inventory was not refused")
+
+    # Baseline guard, driven with a structurally-broken fixture.
+    if validators:
+        first = next(iter(validators))
+        broken = {name: (copy.deepcopy(subj) if name != first else {"odeya": "broken"})
+                  for name, subj in subjects.items()}
+        if not baseline_failures(validators, broken):
+            failures.append("harness self-test: a structurally invalid baseline was not refused")
+    return failures
+
+
+def main() -> int:
+    manifest = load(MANIFEST)
+    subjects, validators, schemas_by_id = build_context(manifest)
+    failures: list[str] = manifest_failures(manifest)
+    failures.extend(baseline_failures(validators, subjects))
+    failures.extend(harness_self_test(subjects, validators, schemas_by_id, manifest))
+    failures.extend(harness_self_test_meta_proof(subjects, validators, schemas_by_id, manifest))
+    case_failures, passed = evaluate_cases(
+        manifest["cases"], subjects, validators, schemas_by_id, manifest
+    )
+    failures.extend(case_failures)
 
     if failures:
         print("Command identity contract validation FAILED")
