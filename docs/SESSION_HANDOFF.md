@@ -164,7 +164,9 @@ git remote -v
 git log --oneline --decorate -5
 test "$(git symbolic-ref --short HEAD)" = agent/t0-work-lease-20260716
 test "$(git rev-parse main)" = f8c71c8e3174f07619e0bbd31cb3d6df5d848361
-test -z "$(git remote)"
+test "$(git remote)" = origin
+test "$(git remote get-url origin)" = \
+  https://github.com/manfromnowhere143/odeya.git
 git merge-base --is-ancestor \
   f79ce3cc7c1dd300e6f3c2c54a85b200c8ca119c HEAD
 git diff --cached --name-only
@@ -182,7 +184,7 @@ Expected invariants:
   protected UI/UX changes untouched;
 - `main` remains the exact commit recorded above;
 - the validated predecessor is an ancestor of `HEAD`;
-- no remote is configured;
+- the only remote is the canonical public `origin` created under ADR 0047;
 - no unexpected worktree path is dirty; and
 - Daniel's protected UI/UX lane remains outside architecture/release staging.
 
@@ -364,10 +366,20 @@ mutation gained a `target` (identity|schema|inventory) because the model could
 mutate only one of its three inputs, which is the same closed-vocabulary defect
 ADR 0028 fixed one model earlier.
 
-**50 guards remain unproved, all in `schema_contract_errors`** — branch-level
-payload identity and the canonical WorkLease candidate's authority boundary.
-That is the next lifecycle unit. Coverage is also not correctness: 89 guards are
-exercised, none is shown to enforce the right rule.
+**ADR 0052 closed statement coverage at 160 of 160.** The forty-nine missing
+proofs — branch-level payload identity, the canonical WorkLease candidate's
+entire null/false authority boundary, the release/claimed-reservation blocker
+PRQ-009 turns on, and the protocol and data-use cohort bindings — each gained
+one adversarial case bound to its own guard. Twelve were unprovable by
+construction because their guards read resources the model loads itself; the
+mutation vocabulary gained `work_lease_schema`, `module_manifest`, and
+`defining_paths` injection targets, the third recurrence of the
+closed-vocabulary defect ADR 0028 and ADR 0031 fixed before. The suite now
+caches file text per process (parse stays fresh per call, so case isolation
+is unchanged): a run is 0.64s with 182 cases and the full audit re-measures
+in under a minute. Coverage is still not correctness: every guard is shown to
+fire, none is shown to enforce the right rule, and ADR 0030's condition-level
+boundary below stands in full.
 
 Read the denominator with suspicion. It has been 69, then 71, then 75, then 139;
 every figure was published as fact and every one was wrong, because the
@@ -412,8 +424,10 @@ gates — exactly as two `return [...]` guards were, uncounted, until ADR 0027.
 Extend `discover()` before adding a new refusal construct, and treat the guard
 count as a claim requiring review rather than as a measurement.
 
-Extend the same audit to `schema_contract_errors`, which the harness cannot
-currently reach.
+ADR 0052 extended the harness to `schema_contract_errors` and closed it at
+64/64; statement coverage stands complete at 160/160, and the next lifecycle
+unit is condition-level mutation (ADR 0030's MC/DC boundary), not more
+statement cases.
 
 Three further follow-ons are open. Six suites still assert refusal
 without attribution across 229 known-bad cases — `cognitive-contracts` (107),

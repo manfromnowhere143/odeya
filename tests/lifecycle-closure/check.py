@@ -40,8 +40,27 @@ EXPECTED_V2_PAYLOAD_TYPE_EVENTS = {
 CANONICAL_WORK_LEASE_ID = "urn:odeya:schema:canonical-work-lease:0.8.0"
 
 
+_TEXT_CACHE: dict[Path, str] = {}
+_BYTES_CACHE: dict[Path, bytes] = {}
+
+
 def load_json(path: Path) -> Any:
-    return json.loads(path.read_text(encoding="utf-8"))
+    # The text is cached per process; the parse is fresh per call. A mutation
+    # mutates the parsed object, never the cached text, so one case still
+    # cannot leak state into another.
+    text = _TEXT_CACHE.get(path)
+    if text is None:
+        text = path.read_text(encoding="utf-8")
+        _TEXT_CACHE[path] = text
+    return json.loads(text)
+
+
+def load_bytes(path: Path) -> bytes:
+    data = _BYTES_CACHE.get(path)
+    if data is None:
+        data = path.read_bytes()
+        _BYTES_CACHE[path] = data
+    return data
 
 
 def stable_json_digest(value: Any) -> str:
@@ -88,6 +107,30 @@ def transition_spec(branch: dict[str, Any]) -> dict[str, Any]:
     return result
 
 
+_DEFINING_PATHS_SCAN: list[str] | None = None
+
+
+def scan_defining_paths() -> list[str]:
+    """Every repository path whose schema claims the canonical WorkLease ID.
+
+    One real repository walk per process, returned as a fresh copy each call.
+    A mutation case injects its own list instead of this scan, so the cache
+    cannot mask a mutation; it only stops the walk repeating once per case.
+    """
+    global _DEFINING_PATHS_SCAN
+    if _DEFINING_PATHS_SCAN is None:
+        found: list[str] = []
+        for candidate_path in ROOT.rglob("*.schema.json"):
+            try:
+                candidate = load_json(candidate_path)
+            except (OSError, json.JSONDecodeError):
+                continue
+            if isinstance(candidate, dict) and candidate.get("$id") == CANONICAL_WORK_LEASE_ID:
+                found.append(str(candidate_path.relative_to(ROOT)))
+        _DEFINING_PATHS_SCAN = found
+    return list(_DEFINING_PATHS_SCAN)
+
+
 def nested(value: dict[str, Any], *keys: str) -> Any:
     current: Any = value
     for key in keys:
@@ -98,8 +141,19 @@ def nested(value: dict[str, Any], *keys: str) -> Any:
 
 
 def schema_contract_errors(
-    schema: dict[str, Any], inventory: dict[str, Any], identity: dict[str, Any]
+    schema: dict[str, Any],
+    inventory: dict[str, Any],
+    identity: dict[str, Any],
+    work_lease_schema: dict[str, Any] | None = None,
+    module_manifest: dict[str, Any] | None = None,
+    defining_paths: list[str] | None = None,
 ) -> list[str]:
+    # The three optional inputs default to the exact on-disk resources. They
+    # exist because this model also validates resources it loads itself, so
+    # every guard reading them was unprovable by construction -- the same
+    # closed-vocabulary defect ADR 0028 and ADR 0031 each fixed one model
+    # earlier. A mutation case may inject a mutated copy; every other caller
+    # gets the real bytes, and for defining_paths the real repository scan.
     errors: list[str] = []
     branches, branch_errors = branch_map(schema)
     errors.extend(branch_errors)
@@ -158,7 +212,7 @@ def schema_contract_errors(
         errors.append("event identity map is not exactly the 60-event first-slice set")
 
     source = identity.get("source", {})
-    raw = SCHEMA_PATH.read_bytes()
+    raw = load_bytes(SCHEMA_PATH)
     raw_digest = "sha256:" + hashlib.sha256(raw).hexdigest()
     if source.get("schema_resource_raw_sha256") != raw_digest:
         errors.append("identity map ResearchEvent raw-byte digest is stale")
@@ -178,8 +232,9 @@ def schema_contract_errors(
     if identity.get("missing_required_schema_resources") != []:
         errors.append("identity map still claims a required schema resource is absent")
 
-    work_lease_raw = WORK_LEASE_SCHEMA_PATH.read_bytes()
-    work_lease_schema = load_json(WORK_LEASE_SCHEMA_PATH)
+    work_lease_raw = load_bytes(WORK_LEASE_SCHEMA_PATH)
+    if work_lease_schema is None:
+        work_lease_schema = load_json(WORK_LEASE_SCHEMA_PATH)
     expected_work_lease_candidate = {
         "schema_resource_id": CANONICAL_WORK_LEASE_ID,
         "schema_path": "schemas/canonical-work-lease.schema.json",
@@ -357,7 +412,8 @@ def schema_contract_errors(
     if current_release_claim_state != "unclaimed" or current_release_claim_ref_type != "null":
         errors.append("recorded ResearchEvent release/claimed-reservation blocker no longer matches exact bytes")
 
-    module_manifest = load_json(MODULE_MANIFEST_PATH)
+    if module_manifest is None:
+        module_manifest = load_json(MODULE_MANIFEST_PATH)
     matching_owners = [
         item
         for item in module_manifest.get("schema_owners", [])
@@ -394,14 +450,8 @@ def schema_contract_errors(
         }
         if CANONICAL_WORK_LEASE_ID not in lease_ids:
             errors.append("ResearchEvent canonical WorkLease reference ID drifted")
-    defining_paths: list[str] = []
-    for candidate_path in ROOT.rglob("*.schema.json"):
-        try:
-            candidate = load_json(candidate_path)
-        except (OSError, json.JSONDecodeError):
-            continue
-        if isinstance(candidate, dict) and candidate.get("$id") == CANONICAL_WORK_LEASE_ID:
-            defining_paths.append(str(candidate_path.relative_to(ROOT)))
+    if defining_paths is None:
+        defining_paths = scan_defining_paths()
     if defining_paths != ["schemas/canonical-work-lease.schema.json"]:
         errors.append(
             "canonical WorkLease resource identity must have one exact defining path: "
@@ -915,7 +965,11 @@ def identity_map_mutation_errors(subject: dict[str, Any]) -> list[str]:
     schema = load_json(SCHEMA_PATH)
     inventory = load_json(INVENTORY_PATH)
     identity = deepcopy(load_json(IDENTITY_MAP_PATH))
+    work_lease_schema = deepcopy(load_json(WORK_LEASE_SCHEMA_PATH))
+    module_manifest = deepcopy(load_json(MODULE_MANIFEST_PATH))
+    defining_paths = ["schemas/canonical-work-lease.schema.json"]
     mutation = subject.get("mutation")
+    target_name = "identity"
     if mutation is not None:
         if not isinstance(mutation, dict) or mutation.get("op") != "replace":
             return ["identity-map mutation is not one bounded replace operation"]
@@ -927,8 +981,19 @@ def identity_map_mutation_errors(subject: dict[str, Any]) -> list[str]:
         # construction -- 4 of 64, including the 60-event and 25-family
         # first-slice boundary guards. Naming the target widens what a case may
         # express without weakening a guard. load_json re-reads each call, so a
-        # mutated input cannot leak into another case.
-        targets = {"identity": identity, "schema": schema, "inventory": inventory}
+        # mutated input cannot leak into another case. The canonical WorkLease
+        # schema, module manifest, and defining-path targets extend the same
+        # correction to the resources the model loads itself; the injected
+        # defining_paths list stands in for the repository scan only in the
+        # case that mutates it, so the safe reference still exercises the scan.
+        targets: dict[str, Any] = {
+            "identity": identity,
+            "schema": schema,
+            "inventory": inventory,
+            "work_lease_schema": work_lease_schema,
+            "module_manifest": module_manifest,
+            "defining_paths": defining_paths,
+        }
         target_name = mutation.get("target", "identity")
         if target_name not in targets:
             return [f"identity-map mutation names an unknown target {target_name!r}"]
@@ -942,7 +1007,14 @@ def identity_map_mutation_errors(subject: dict[str, Any]) -> list[str]:
             current[final] = mutation.get("value")
         except (KeyError, IndexError, TypeError):
             return ["identity-map mutation path does not resolve"]
-    return schema_contract_errors(schema, inventory, identity)
+    return schema_contract_errors(
+        schema,
+        inventory,
+        identity,
+        work_lease_schema=work_lease_schema,
+        module_manifest=module_manifest,
+        defining_paths=defining_paths if target_name == "defining_paths" else None,
+    )
 
 
 def data_fixture_mutation_errors(subject: dict[str, Any]) -> list[str]:

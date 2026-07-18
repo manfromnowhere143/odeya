@@ -121,7 +121,56 @@
     "identity_map_mutation_path_unresolvable",
     "schema_contract_branch_missing_event_type",
     "schema_contract_branch_duplicate_event_type",
-    "identity_source_byte_count_drift"
+    "identity_source_byte_count_drift",
+    "schema_contract_proof_schema_contract_bad_global_branch_count",
+    "schema_contract_proof_schema_contract_bad_envelope_boundary_not_required",
+    "schema_contract_proof_schema_contract_bad_resolution_status_not_fail_closed",
+    "schema_contract_proof_schema_contract_bad_fabricated_branch_contract_digest",
+    "schema_contract_proof_schema_contract_bad_unresolved_claims_event_authority",
+    "schema_contract_proof_schema_contract_bad_payload_digest_binding_source",
+    "schema_contract_proof_schema_contract_bad_branch_lacks_logical_type",
+    "schema_contract_proof_schema_contract_bad_branch_substitutes_resource_id",
+    "schema_contract_proof_schema_contract_bad_mappings_not_sixty_rows",
+    "schema_contract_proof_schema_contract_bad_identity_map_version_regressed",
+    "schema_contract_proof_schema_contract_bad_claims_schema_resource_absent",
+    "schema_contract_proof_schema_contract_bad_work_lease_candidate_binding_drift",
+    "schema_contract_proof_work_lease_schema_bad_wrong_resource_identity",
+    "schema_contract_proof_work_lease_schema_bad_instance_version_mismatch",
+    "schema_contract_proof_work_lease_schema_bad_unbounded_scope_profile",
+    "schema_contract_proof_work_lease_schema_bad_identity_not_fail_closed",
+    "schema_contract_proof_work_lease_schema_bad_fabricated_profile",
+    "schema_contract_proof_work_lease_schema_bad_fabricated_canonical_digest",
+    "schema_contract_proof_work_lease_schema_bad_claims_execution_authority",
+    "schema_contract_proof_work_lease_schema_bad_ambiguous_digest_scope",
+    "schema_contract_proof_work_lease_schema_bad_loose_timestamps",
+    "schema_contract_proof_work_lease_schema_bad_state_machine_drift",
+    "schema_contract_proof_schema_contract_bad_release_claim_blocker_drift",
+    "schema_contract_proof_module_manifest_bad_work_lease_ownership",
+    "schema_contract_proof_schema_contract_bad_lost_work_lease_reference",
+    "schema_contract_proof_schema_contract_bad_work_lease_reference_id_drift",
+    "schema_contract_proof_defining_paths_bad_ambiguous_work_lease_identity",
+    "schema_contract_proof_schema_contract_bad_mapping_row_not_object",
+    "schema_contract_proof_schema_contract_bad_mapping_without_branch",
+    "schema_contract_proof_schema_contract_bad_underived_payload_type_version",
+    "schema_contract_proof_schema_contract_bad_payload_type_not_urn",
+    "schema_contract_proof_schema_contract_bad_event_version_not_frozen",
+    "schema_contract_proof_schema_contract_bad_v2_exception_set_changed",
+    "schema_contract_proof_schema_contract_bad_identity_semantics_flag",
+    "schema_contract_proof_schema_contract_bad_v2_branch_retention_lost",
+    "schema_contract_proof_schema_contract_bad_lease_transition_drift",
+    "schema_contract_proof_schema_contract_bad_protocol_payload_unbound",
+    "schema_contract_proof_schema_contract_bad_protocol_batch_index",
+    "schema_contract_proof_schema_contract_bad_protocol_batch_size",
+    "schema_contract_proof_schema_contract_bad_protocol_unbounded_authority",
+    "schema_contract_proof_schema_contract_bad_protocol_payload_requirements_lost",
+    "schema_contract_proof_schema_contract_bad_protocol_prior_ref_not_null",
+    "schema_contract_proof_schema_contract_bad_protocol_absence_not_asserted",
+    "schema_contract_proof_schema_contract_bad_protocol_first_version_not_one",
+    "schema_contract_proof_schema_contract_bad_protocol_batch_order",
+    "schema_contract_proof_schema_contract_bad_data_use_assigned_role",
+    "schema_contract_proof_schema_contract_bad_data_use_batch_index",
+    "schema_contract_proof_schema_contract_bad_data_use_batch_size",
+    "schema_contract_proof_schema_contract_bad_data_use_batch_order"
   ],
   "cases": [
     {
@@ -3576,6 +3625,1067 @@
       },
       "adversarial_tag": "identity_source_byte_count_drift",
       "expected_refusal_contains": "ResearchEvent byte count is stale"
+    },
+    {
+      "name": "schema-contract-bad-global-branch-count",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "schema",
+          "op": "replace",
+          "path": [
+            "oneOf",
+            0,
+            "properties",
+            "event_type"
+          ],
+          "value": {}
+        }
+      },
+      "adversarial_tag": "schema_contract_proof_schema_contract_bad_global_branch_count",
+      "expected_refusal_contains": "ResearchEvent global branch count changed from 135"
+    },
+    {
+      "name": "schema-contract-bad-envelope-boundary-not-required",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "schema",
+          "op": "replace",
+          "path": [
+            "required"
+          ],
+          "value": [
+            "schema_version",
+            "event_id",
+            "event_type",
+            "event_version",
+            "payload_contract_resolution_status",
+            "payload_contract_digest",
+            "event_contract_authority_status",
+            "stream",
+            "mission_scope",
+            "aggregate",
+            "commit",
+            "command_binding",
+            "recorded_at",
+            "fact_time",
+            "actor",
+            "authority_evidence",
+            "correlation_id",
+            "causation_refs",
+            "inputs",
+            "outputs",
+            "system_identity",
+            "payload",
+            "integrity"
+          ]
+        }
+      },
+      "adversarial_tag": "schema_contract_proof_schema_contract_bad_envelope_boundary_not_required",
+      "expected_refusal_contains": "does not require the complete logical-type/unresolved-contract boundary"
+    },
+    {
+      "name": "schema-contract-bad-resolution-status-not-fail-closed",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "schema",
+          "op": "replace",
+          "path": [
+            "properties",
+            "payload_contract_resolution_status",
+            "const"
+          ],
+          "value": "resolved"
+        }
+      },
+      "adversarial_tag": "schema_contract_proof_schema_contract_bad_resolution_status_not_fail_closed",
+      "expected_refusal_contains": "does not fail closed on unresolved branch contracts"
+    },
+    {
+      "name": "schema-contract-bad-fabricated-branch-contract-digest",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "schema",
+          "op": "replace",
+          "path": [
+            "properties",
+            "payload_contract_digest",
+            "type"
+          ],
+          "value": "string"
+        }
+      },
+      "adversarial_tag": "schema_contract_proof_schema_contract_bad_fabricated_branch_contract_digest",
+      "expected_refusal_contains": "permits a fabricated per-branch contract digest"
+    },
+    {
+      "name": "schema-contract-bad-unresolved-claims-event-authority",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "schema",
+          "op": "replace",
+          "path": [
+            "properties",
+            "event_contract_authority_status",
+            "const"
+          ],
+          "value": "admitted"
+        }
+      },
+      "adversarial_tag": "schema_contract_proof_schema_contract_bad_unresolved_claims_event_authority",
+      "expected_refusal_contains": "unresolved ResearchEvent candidates can claim event authority"
+    },
+    {
+      "name": "schema-contract-bad-payload-digest-binding-source",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "schema",
+          "op": "replace",
+          "path": [
+            "$defs",
+            "payload_digest_contract",
+            "properties",
+            "payload_contract_binding_source",
+            "const"
+          ],
+          "value": "event.payload_type_id"
+        }
+      },
+      "adversarial_tag": "schema_contract_proof_schema_contract_bad_payload_digest_binding_source",
+      "expected_refusal_contains": "payload digest contract does not bind logical type plus unresolved contract state"
+    },
+    {
+      "name": "schema-contract-bad-branch-lacks-logical-type",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "schema",
+          "op": "replace",
+          "path": [
+            "oneOf",
+            0,
+            "properties",
+            "payload_type_id",
+            "const"
+          ],
+          "value": "urn:wrong:thing:1.0.0"
+        }
+      },
+      "adversarial_tag": "schema_contract_proof_schema_contract_bad_branch_lacks_logical_type",
+      "expected_refusal_contains": "lacks an exact logical payload type ID"
+    },
+    {
+      "name": "schema-contract-bad-branch-substitutes-resource-id",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "schema",
+          "op": "replace",
+          "path": [
+            "oneOf",
+            0,
+            "properties",
+            "payload_type_id",
+            "const"
+          ],
+          "value": "urn:odeya:schema:research-event:0.17.0"
+        }
+      },
+      "adversarial_tag": "schema_contract_proof_schema_contract_bad_branch_substitutes_resource_id",
+      "expected_refusal_contains": "substitutes the schema resource ID for its logical payload type"
+    },
+    {
+      "name": "schema-contract-bad-mappings-not-sixty-rows",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "identity",
+          "op": "replace",
+          "path": [
+            "mappings"
+          ],
+          "value": []
+        }
+      },
+      "adversarial_tag": "schema_contract_proof_schema_contract_bad_mappings_not_sixty_rows",
+      "expected_refusal_contains": "event identity map does not contain exactly 60 rows"
+    },
+    {
+      "name": "schema-contract-bad-identity-map-version-regressed",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "identity",
+          "op": "replace",
+          "path": [
+            "version"
+          ],
+          "value": "0.1.0"
+        }
+      },
+      "adversarial_tag": "schema_contract_proof_schema_contract_bad_identity_map_version_regressed",
+      "expected_refusal_contains": "did not advance to the WorkLease-aware 0.2.0 candidate"
+    },
+    {
+      "name": "schema-contract-bad-claims-schema-resource-absent",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "identity",
+          "op": "replace",
+          "path": [
+            "missing_required_schema_resources"
+          ],
+          "value": [
+            "schemas/canonical-work-lease.schema.json"
+          ]
+        }
+      },
+      "adversarial_tag": "schema_contract_proof_schema_contract_bad_claims_schema_resource_absent",
+      "expected_refusal_contains": "still claims a required schema resource is absent"
+    },
+    {
+      "name": "schema-contract-bad-work-lease-candidate-binding-drift",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "identity",
+          "op": "replace",
+          "path": [
+            "required_schema_resource_candidates",
+            0,
+            "owner_module"
+          ],
+          "value": "research"
+        }
+      },
+      "adversarial_tag": "schema_contract_proof_schema_contract_bad_work_lease_candidate_binding_drift",
+      "expected_refusal_contains": "does not bind the exact present-but-unissued WorkLease candidate"
+    },
+    {
+      "name": "work-lease-schema-bad-wrong-resource-identity",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "work_lease_schema",
+          "op": "replace",
+          "path": [
+            "$id"
+          ],
+          "value": "urn:odeya:schema:canonical-work-lease:0.0.1"
+        }
+      },
+      "adversarial_tag": "schema_contract_proof_work_lease_schema_bad_wrong_resource_identity",
+      "expected_refusal_contains": "canonical WorkLease candidate has the wrong schema resource identity"
+    },
+    {
+      "name": "work-lease-schema-bad-instance-version-mismatch",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "work_lease_schema",
+          "op": "replace",
+          "path": [
+            "properties",
+            "schema_version",
+            "const"
+          ],
+          "value": "0.0.1"
+        }
+      },
+      "adversarial_tag": "schema_contract_proof_work_lease_schema_bad_instance_version_mismatch",
+      "expected_refusal_contains": "instance version does not match its resource identity"
+    },
+    {
+      "name": "work-lease-schema-bad-unbounded-scope-profile",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "work_lease_schema",
+          "op": "replace",
+          "path": [
+            "properties",
+            "scope_profile",
+            "const"
+          ],
+          "value": "global_execution"
+        }
+      },
+      "adversarial_tag": "schema_contract_proof_work_lease_schema_bad_unbounded_scope_profile",
+      "expected_refusal_contains": "is not bounded to the first-slice local profile"
+    },
+    {
+      "name": "work-lease-schema-bad-identity-not-fail-closed",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "work_lease_schema",
+          "op": "replace",
+          "path": [
+            "properties",
+            "identity_resolution_status",
+            "const"
+          ],
+          "value": "resolved"
+        }
+      },
+      "adversarial_tag": "schema_contract_proof_work_lease_schema_bad_identity_not_fail_closed",
+      "expected_refusal_contains": "canonical WorkLease candidate does not fail closed on identity"
+    },
+    {
+      "name": "work-lease-schema-bad-fabricated-profile",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "work_lease_schema",
+          "op": "replace",
+          "path": [
+            "properties",
+            "canonicalization_profile_ref",
+            "type"
+          ],
+          "value": "string"
+        }
+      },
+      "adversarial_tag": "schema_contract_proof_work_lease_schema_bad_fabricated_profile",
+      "expected_refusal_contains": "canonical WorkLease candidate fabricates a canonicalization profile"
+    },
+    {
+      "name": "work-lease-schema-bad-fabricated-canonical-digest",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "work_lease_schema",
+          "op": "replace",
+          "path": [
+            "properties",
+            "canonical_digest",
+            "type"
+          ],
+          "value": "string"
+        }
+      },
+      "adversarial_tag": "schema_contract_proof_work_lease_schema_bad_fabricated_canonical_digest",
+      "expected_refusal_contains": "canonical WorkLease candidate fabricates a canonical digest"
+    },
+    {
+      "name": "work-lease-schema-bad-claims-execution-authority",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "work_lease_schema",
+          "op": "replace",
+          "path": [
+            "properties",
+            "record_authority_status",
+            "const"
+          ],
+          "value": "admitted_execution_authority"
+        }
+      },
+      "adversarial_tag": "schema_contract_proof_work_lease_schema_bad_claims_execution_authority",
+      "expected_refusal_contains": "canonical WorkLease candidate can claim execution authority"
+    },
+    {
+      "name": "work-lease-schema-bad-ambiguous-digest-scope",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "work_lease_schema",
+          "op": "replace",
+          "path": [
+            "properties",
+            "canonical_digest",
+            "x-odeya-digest-scope",
+            "status"
+          ],
+          "value": "resolved"
+        }
+      },
+      "adversarial_tag": "schema_contract_proof_work_lease_schema_bad_ambiguous_digest_scope",
+      "expected_refusal_contains": "digest-scope annotations are absent or ambiguous"
+    },
+    {
+      "name": "work-lease-schema-bad-loose-timestamps",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "work_lease_schema",
+          "op": "replace",
+          "path": [
+            "$defs",
+            "work_lease_timestamp",
+            "pattern"
+          ],
+          "value": "^.*$"
+        }
+      },
+      "adversarial_tag": "schema_contract_proof_work_lease_schema_bad_loose_timestamps",
+      "expected_refusal_contains": "timestamps do not pin UTC microseconds"
+    },
+    {
+      "name": "work-lease-schema-bad-state-machine-drift",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "work_lease_schema",
+          "op": "replace",
+          "path": [
+            "x-odeya-work-lease-state-machine",
+            "terminal_reentry_allowed"
+          ],
+          "value": true
+        }
+      },
+      "adversarial_tag": "schema_contract_proof_work_lease_schema_bad_state_machine_drift",
+      "expected_refusal_contains": "state-machine annotation drifted"
+    },
+    {
+      "name": "schema-contract-bad-release-claim-blocker-drift",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "schema",
+          "op": "replace",
+          "path": [
+            "oneOf",
+            21,
+            "properties",
+            "payload",
+            "allOf",
+            1,
+            "properties",
+            "reservation_claim_state",
+            "const"
+          ],
+          "value": "claimed"
+        }
+      },
+      "adversarial_tag": "schema_contract_proof_schema_contract_bad_release_claim_blocker_drift",
+      "expected_refusal_contains": "release/claimed-reservation blocker no longer matches exact bytes"
+    },
+    {
+      "name": "module-manifest-bad-work-lease-ownership",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "module_manifest",
+          "op": "replace",
+          "path": [
+            "schema_owners",
+            15,
+            "owner_module"
+          ],
+          "value": "research"
+        }
+      },
+      "adversarial_tag": "schema_contract_proof_module_manifest_bad_work_lease_ownership",
+      "expected_refusal_contains": "does not have exact work-module ownership"
+    },
+    {
+      "name": "schema-contract-bad-lost-work-lease-reference",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "schema",
+          "op": "replace",
+          "path": [
+            "$defs",
+            "canonical_work_lease_record_reference",
+            "allOf"
+          ],
+          "value": null
+        }
+      },
+      "adversarial_tag": "schema_contract_proof_schema_contract_bad_lost_work_lease_reference",
+      "expected_refusal_contains": "ResearchEvent lost its declared canonical WorkLease reference"
+    },
+    {
+      "name": "schema-contract-bad-work-lease-reference-id-drift",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "schema",
+          "op": "replace",
+          "path": [
+            "$defs",
+            "canonical_work_lease_record_reference",
+            "allOf",
+            1,
+            "properties",
+            "schema_id",
+            "const"
+          ],
+          "value": "urn:odeya:schema:canonical-work-lease:0.0.1"
+        }
+      },
+      "adversarial_tag": "schema_contract_proof_schema_contract_bad_work_lease_reference_id_drift",
+      "expected_refusal_contains": "ResearchEvent canonical WorkLease reference ID drifted"
+    },
+    {
+      "name": "defining-paths-bad-ambiguous-work-lease-identity",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "defining_paths",
+          "op": "replace",
+          "path": [
+            0
+          ],
+          "value": "schemas/other-copy.schema.json"
+        }
+      },
+      "adversarial_tag": "schema_contract_proof_defining_paths_bad_ambiguous_work_lease_identity",
+      "expected_refusal_contains": "canonical WorkLease resource identity must have one exact defining path"
+    },
+    {
+      "name": "schema-contract-bad-mapping-row-not-object",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "identity",
+          "op": "replace",
+          "path": [
+            "mappings",
+            0
+          ],
+          "value": "bogus-row"
+        }
+      },
+      "adversarial_tag": "schema_contract_proof_schema_contract_bad_mapping_row_not_object",
+      "expected_refusal_contains": "identity map row is not an object"
+    },
+    {
+      "name": "schema-contract-bad-mapping-without-branch",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "identity",
+          "op": "replace",
+          "path": [
+            "mappings",
+            0,
+            "event_type"
+          ],
+          "value": "no.such_event"
+        }
+      },
+      "adversarial_tag": "schema_contract_proof_schema_contract_bad_mapping_without_branch",
+      "expected_refusal_contains": "has no ResearchEvent branch"
+    },
+    {
+      "name": "schema-contract-bad-underived-payload-type-version",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "identity",
+          "op": "replace",
+          "path": [
+            "mappings",
+            0,
+            "payload_type_version"
+          ],
+          "value": "9.9.9"
+        }
+      },
+      "adversarial_tag": "schema_contract_proof_schema_contract_bad_underived_payload_type_version",
+      "expected_refusal_contains": "payload_type_version is not derived from its logical payload type ID"
+    },
+    {
+      "name": "schema-contract-bad-payload-type-not-urn",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "identity",
+          "op": "replace",
+          "path": [
+            "mappings",
+            0,
+            "payload_type_id"
+          ],
+          "value": "not-a-urn"
+        }
+      },
+      "adversarial_tag": "schema_contract_proof_schema_contract_bad_payload_type_not_urn",
+      "expected_refusal_contains": "payload_type_id is not a logical event-payload URN"
+    },
+    {
+      "name": "schema-contract-bad-event-version-not-frozen",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "identity",
+          "op": "replace",
+          "path": [
+            "mappings",
+            0,
+            "event_version"
+          ],
+          "value": "2.0.0"
+        }
+      },
+      "adversarial_tag": "schema_contract_proof_schema_contract_bad_event_version_not_frozen",
+      "expected_refusal_contains": "is not frozen at event version 1.0.0"
+    },
+    {
+      "name": "schema-contract-bad-v2-exception-set-changed",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "identity",
+          "op": "replace",
+          "path": [
+            "mappings",
+            0,
+            "payload_type_id"
+          ],
+          "value": "urn:odeya:event-payload:adjudication.recorded:2.0.0"
+        }
+      },
+      "adversarial_tag": "schema_contract_proof_schema_contract_bad_v2_exception_set_changed",
+      "expected_refusal_contains": "payload-type-v2 exception set changed"
+    },
+    {
+      "name": "schema-contract-bad-identity-semantics-flag",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "identity",
+          "op": "replace",
+          "path": [
+            "identity_semantics",
+            "payload_type_id_is_logical_not_schema_resource_id"
+          ],
+          "value": false
+        }
+      },
+      "adversarial_tag": "schema_contract_proof_schema_contract_bad_identity_semantics_flag",
+      "expected_refusal_contains": "identity_semantics.payload_type_id_is_logical_not_schema_resource_id is not"
+    },
+    {
+      "name": "schema-contract-bad-v2-branch-retention-lost",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "identity",
+          "op": "replace",
+          "path": [
+            "identity_semantics",
+            "logical_payload_type_major_version_two_event_types"
+          ],
+          "value": [
+            "reproducibility.determined"
+          ]
+        }
+      },
+      "adversarial_tag": "schema_contract_proof_schema_contract_bad_v2_branch_retention_lost",
+      "expected_refusal_contains": "does not explicitly retain the four payload-type-v2/event-v1 branches"
+    },
+    {
+      "name": "schema-contract-bad-lease-transition-drift",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "schema",
+          "op": "replace",
+          "path": [
+            "oneOf",
+            18,
+            "properties",
+            "payload",
+            "allOf",
+            1,
+            "properties",
+            "from",
+            "const"
+          ],
+          "value": "leased"
+        }
+      },
+      "adversarial_tag": "schema_contract_proof_schema_contract_bad_lease_transition_drift",
+      "expected_refusal_contains": "work.lease_acquired from is"
+    },
+    {
+      "name": "schema-contract-bad-protocol-payload-unbound",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "schema",
+          "op": "replace",
+          "path": [
+            "oneOf",
+            11,
+            "properties",
+            "payload",
+            "$ref"
+          ],
+          "value": "#/$defs/nothing"
+        }
+      },
+      "adversarial_tag": "schema_contract_proof_schema_contract_bad_protocol_payload_unbound",
+      "expected_refusal_contains": "protocol.frozen is not bound to the exact absence-origin payload"
+    },
+    {
+      "name": "schema-contract-bad-protocol-batch-index",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "schema",
+          "op": "replace",
+          "path": [
+            "oneOf",
+            11,
+            "properties",
+            "commit",
+            "properties",
+            "batch_index",
+            "const"
+          ],
+          "value": 0
+        }
+      },
+      "adversarial_tag": "schema_contract_proof_schema_contract_bad_protocol_batch_index",
+      "expected_refusal_contains": "protocol.frozen is not second in its exact commit cohort"
+    },
+    {
+      "name": "schema-contract-bad-protocol-batch-size",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "schema",
+          "op": "replace",
+          "path": [
+            "oneOf",
+            11,
+            "properties",
+            "commit",
+            "properties",
+            "batch_size",
+            "const"
+          ],
+          "value": 3
+        }
+      },
+      "adversarial_tag": "schema_contract_proof_schema_contract_bad_protocol_batch_size",
+      "expected_refusal_contains": "protocol.frozen commit cohort is not exactly four events"
+    },
+    {
+      "name": "schema-contract-bad-protocol-unbounded-authority",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "schema",
+          "op": "replace",
+          "path": [
+            "oneOf",
+            11,
+            "properties",
+            "authority_evidence",
+            "properties",
+            "mode",
+            "const"
+          ],
+          "value": "assigned_role"
+        }
+      },
+      "adversarial_tag": "schema_contract_proof_schema_contract_bad_protocol_unbounded_authority",
+      "expected_refusal_contains": "protocol.frozen does not require bounded grant authority"
+    },
+    {
+      "name": "schema-contract-bad-protocol-payload-requirements-lost",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "schema",
+          "op": "replace",
+          "path": [
+            "$defs",
+            "protocol_frozen_origin_payload",
+            "required"
+          ],
+          "value": []
+        }
+      },
+      "adversarial_tag": "schema_contract_proof_schema_contract_bad_protocol_payload_requirements_lost",
+      "expected_refusal_contains": "protocol absence-origin payload lacks exact snapshot/evidence requirements"
+    },
+    {
+      "name": "schema-contract-bad-protocol-prior-ref-not-null",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "schema",
+          "op": "replace",
+          "path": [
+            "$defs",
+            "protocol_frozen_origin_payload",
+            "properties",
+            "prior_canonical_protocol_ref",
+            "type"
+          ],
+          "value": "string"
+        }
+      },
+      "adversarial_tag": "schema_contract_proof_schema_contract_bad_protocol_prior_ref_not_null",
+      "expected_refusal_contains": "protocol origin does not require absence of prior canonical protocol"
+    },
+    {
+      "name": "schema-contract-bad-protocol-absence-not-asserted",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "schema",
+          "op": "replace",
+          "path": [
+            "$defs",
+            "protocol_frozen_origin_payload",
+            "properties",
+            "origin_from_aggregate_absence",
+            "const"
+          ],
+          "value": false
+        }
+      },
+      "adversarial_tag": "schema_contract_proof_schema_contract_bad_protocol_absence_not_asserted",
+      "expected_refusal_contains": "protocol origin does not assert aggregate absence"
+    },
+    {
+      "name": "schema-contract-bad-protocol-first-version-not-one",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "schema",
+          "op": "replace",
+          "path": [
+            "$defs",
+            "protocol_frozen_origin_payload",
+            "properties",
+            "first_materialized_version",
+            "const"
+          ],
+          "value": 2
+        }
+      },
+      "adversarial_tag": "schema_contract_proof_schema_contract_bad_protocol_first_version_not_one",
+      "expected_refusal_contains": "protocol origin does not materialize first version 1"
+    },
+    {
+      "name": "schema-contract-bad-protocol-batch-order",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "schema",
+          "op": "replace",
+          "path": [
+            "$defs",
+            "protocol_grant_commit_binding",
+            "properties",
+            "batch_order",
+            "const"
+          ],
+          "value": [
+            "authority.grant_exhausted(protocol)",
+            "protocol.integrity_determined",
+            "protocol.frozen",
+            "authority.grant_used(protocol)"
+          ]
+        }
+      },
+      "adversarial_tag": "schema_contract_proof_schema_contract_bad_protocol_batch_order",
+      "expected_refusal_contains": "protocol freeze grant/integrity/exhaustion order is not exact"
+    },
+    {
+      "name": "schema-contract-bad-data-use-assigned-role",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "schema",
+          "op": "replace",
+          "path": [
+            "oneOf",
+            106,
+            "properties",
+            "authority_evidence",
+            "properties",
+            "mode",
+            "const"
+          ],
+          "value": "assigned_role"
+        }
+      },
+      "adversarial_tag": "schema_contract_proof_schema_contract_bad_data_use_assigned_role",
+      "expected_refusal_contains": "data_use.decided still permits assigned_role authority"
+    },
+    {
+      "name": "schema-contract-bad-data-use-batch-index",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "schema",
+          "op": "replace",
+          "path": [
+            "oneOf",
+            106,
+            "properties",
+            "commit",
+            "properties",
+            "batch_index",
+            "const"
+          ],
+          "value": 2
+        }
+      },
+      "adversarial_tag": "schema_contract_proof_schema_contract_bad_data_use_batch_index",
+      "expected_refusal_contains": "data_use.decided is not second in its exact commit cohort"
+    },
+    {
+      "name": "schema-contract-bad-data-use-batch-size",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "schema",
+          "op": "replace",
+          "path": [
+            "oneOf",
+            106,
+            "properties",
+            "commit",
+            "properties",
+            "batch_size",
+            "const"
+          ],
+          "value": 4
+        }
+      },
+      "adversarial_tag": "schema_contract_proof_schema_contract_bad_data_use_batch_size",
+      "expected_refusal_contains": "data_use.decided commit cohort is not exactly three events"
+    },
+    {
+      "name": "schema-contract-bad-data-use-batch-order",
+      "kind": "adversarial",
+      "model": "identity_map_mutation",
+      "expect": "reject",
+      "subject": {
+        "mutation": {
+          "target": "schema",
+          "op": "replace",
+          "path": [
+            "$defs",
+            "data_rights_grant_commit_binding",
+            "properties",
+            "batch_order",
+            "const"
+          ],
+          "value": [
+            "authority.grant_exhausted(data_rights)",
+            "data_use.decided",
+            "authority.grant_used(data_rights)"
+          ]
+        }
+      },
+      "adversarial_tag": "schema_contract_proof_schema_contract_bad_data_use_batch_order",
+      "expected_refusal_contains": "data-use grant/domain/exhaustion order is not exact"
     }
   ]
 }
