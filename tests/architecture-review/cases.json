@@ -14,8 +14,16 @@
       "fixture": "tests/architecture-review/fixtures/architecture-candidate-manifest.valid.json",
       "expect": "invalid",
       "mutations": [
-        {"op": "replace", "path": "/candidate_status", "value": "ready_for_independent_review"}
-      ]
+        {
+          "op": "replace",
+          "path": "/candidate_status",
+          "value": "ready_for_independent_review"
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/candidate_signature/status",
+        "keyword": "const"
+      }
     },
     {
       "name": "architecture-candidate-requires-correction-fixtures",
@@ -23,8 +31,15 @@
       "fixture": "tests/architecture-review/fixtures/architecture-candidate-manifest.valid.json",
       "expect": "invalid",
       "mutations": [
-        {"op": "remove", "path": "/fixture_packages/correction"}
-      ]
+        {
+          "op": "remove",
+          "path": "/fixture_packages/correction"
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/fixture_packages",
+        "keyword": "required"
+      }
     },
     {
       "name": "architecture-candidate-requires-all-eight-review-lanes",
@@ -32,8 +47,15 @@
       "fixture": "tests/architecture-review/fixtures/architecture-candidate-manifest.valid.json",
       "expect": "invalid",
       "mutations": [
-        {"op": "remove", "path": "/review_scope/required_lanes/7"}
-      ]
+        {
+          "op": "remove",
+          "path": "/review_scope/required_lanes/7"
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/review_scope/required_lanes",
+        "keyword": "minItems"
+      }
     },
     {
       "name": "architecture-finding-valid-open-high",
@@ -47,17 +69,32 @@
       "fixture": "tests/architecture-review/fixtures/architecture-finding.valid.json",
       "expect": "invalid",
       "mutations": [
-        {"op": "replace", "path": "/disposition/state", "value": "accepted_limitation"},
+        {
+          "op": "replace",
+          "path": "/disposition/state",
+          "value": "accepted_limitation"
+        },
         {
           "op": "replace",
           "path": "/disposition/accepted_limitation",
           "value": {
-            "evidence_ref": {"artifact_id": "fixture.false-acceptance", "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "media_type": "application/json"},
+            "evidence_ref": {
+              "artifact_id": "fixture.false-acceptance",
+              "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "media_type": "application/json"
+            },
             "residual_consequence": "A high authority defect would remain.",
-            "accepted_by": {"principal_id": "fixture.operator-not-daniel", "principal_type": "human"}
+            "accepted_by": {
+              "principal_id": "fixture.operator-not-daniel",
+              "principal_type": "human"
+            }
           }
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/severity",
+        "keyword": "enum"
+      }
     },
     {
       "name": "architecture-finding-high-cannot-be-deferred-probe",
@@ -65,17 +102,29 @@
       "fixture": "tests/architecture-review/fixtures/architecture-finding.valid.json",
       "expect": "invalid",
       "mutations": [
-        {"op": "replace", "path": "/disposition/state", "value": "deferred_probe"},
+        {
+          "op": "replace",
+          "path": "/disposition/state",
+          "value": "deferred_probe"
+        },
         {
           "op": "replace",
           "path": "/disposition/deferred_probe",
           "value": {
-            "probe_ref": {"artifact_id": "fixture.false-deferral", "digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "media_type": "application/json"},
+            "probe_ref": {
+              "artifact_id": "fixture.false-deferral",
+              "digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "media_type": "application/json"
+            },
             "semantics_frozen": true,
             "product_empirical_only": true
           }
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/severity",
+        "keyword": "enum"
+      }
     },
     {
       "name": "architecture-finding-closure-requires-human-reviewed-evidence",
@@ -83,8 +132,16 @@
       "fixture": "tests/architecture-review/fixtures/architecture-finding.valid.json",
       "expect": "invalid",
       "mutations": [
-        {"op": "replace", "path": "/disposition/state", "value": "closed"}
-      ]
+        {
+          "op": "replace",
+          "path": "/disposition/state",
+          "value": "closed"
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/closure/closure_reviewer",
+        "keyword": "type"
+      }
     },
     {
       "name": "architecture-finding-changed-candidate-requires-new-identity-impact-map-and-evidence",
@@ -92,8 +149,16 @@
       "fixture": "tests/architecture-review/fixtures/architecture-finding.valid.json",
       "expect": "invalid",
       "mutations": [
-        {"op": "replace", "path": "/disposition/state", "value": "changed_candidate"}
-      ]
+        {
+          "op": "replace",
+          "path": "/disposition/state",
+          "value": "changed_candidate"
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/closure/change_impact_map_ref",
+        "keyword": "type"
+      }
     },
     {
       "name": "review-determination-valid-unable-to-determine",
@@ -107,8 +172,16 @@
       "fixture": "tests/architecture-review/fixtures/review-determination.valid.json",
       "expect": "invalid",
       "mutations": [
-        {"op": "replace", "path": "/result", "value": "accept_for_gate_a"}
-      ]
+        {
+          "op": "replace",
+          "path": "/result",
+          "value": "accept_for_gate_a"
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/independence/overall_disposition",
+        "keyword": "const"
+      }
     },
     {
       "name": "review-determination-high-finding-cannot-be-recorded-as-accepted-limitation",
@@ -116,8 +189,16 @@
       "fixture": "tests/architecture-review/fixtures/review-determination.valid.json",
       "expect": "invalid",
       "mutations": [
-        {"op": "replace", "path": "/finding_dispositions/0/state", "value": "accepted_limitation"}
-      ]
+        {
+          "op": "replace",
+          "path": "/finding_dispositions/0/state",
+          "value": "accepted_limitation"
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/finding_dispositions/0",
+        "keyword": null
+      }
     },
     {
       "name": "review-determination-carry-forward-requires-prior-identity-change-evidence-and-human-signature",
@@ -125,8 +206,16 @@
       "fixture": "tests/architecture-review/fixtures/review-determination.valid.json",
       "expect": "invalid",
       "mutations": [
-        {"op": "replace", "path": "/carry_forward/mode", "value": "signed_outside_lane"}
-      ]
+        {
+          "op": "replace",
+          "path": "/carry_forward/mode",
+          "value": "signed_outside_lane"
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/carry_forward/signed_by",
+        "keyword": "type"
+      }
     },
     {
       "name": "operator-architecture-decision-valid-not-accepted",
@@ -140,8 +229,16 @@
       "fixture": "tests/architecture-review/fixtures/operator-architecture-decision.valid.json",
       "expect": "invalid",
       "mutations": [
-        {"op": "replace", "path": "/decision", "value": "accepted_for_gate_a"}
-      ]
+        {
+          "op": "replace",
+          "path": "/decision",
+          "value": "accepted_for_gate_a"
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/lane_results/mission_product_boundary/result",
+        "keyword": "const"
+      }
     },
     {
       "name": "operator-architecture-decision-not-accepted-cannot-advance-to-gate-b",
@@ -149,8 +246,16 @@
       "fixture": "tests/architecture-review/fixtures/operator-architecture-decision.valid.json",
       "expect": "invalid",
       "mutations": [
-        {"op": "replace", "path": "/authorized_next_state", "value": "gate_b_probes_only"}
-      ]
+        {
+          "op": "replace",
+          "path": "/authorized_next_state",
+          "value": "gate_b_probes_only"
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/authorized_next_state",
+        "keyword": "const"
+      }
     },
     {
       "name": "operator-architecture-decision-lane-result-must-bind-common-candidate",
@@ -158,8 +263,16 @@
       "fixture": "tests/architecture-review/fixtures/operator-architecture-decision.valid.json",
       "expect": "invalid",
       "mutations": [
-        {"op": "replace", "path": "/lane_results/security_authority_cryptography/candidate_binding", "value": "different_candidate"}
-      ]
+        {
+          "op": "replace",
+          "path": "/lane_results/security_authority_cryptography/candidate_binding",
+          "value": "different_candidate"
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/lane_results/security_authority_cryptography/candidate_binding",
+        "keyword": "const"
+      }
     },
     {
       "name": "operator-architecture-decision-never-authorizes-runtime-implementation",
@@ -167,8 +280,16 @@
       "fixture": "tests/architecture-review/fixtures/operator-architecture-decision.valid.json",
       "expect": "invalid",
       "mutations": [
-        {"op": "replace", "path": "/implementation_lock/runtime_product_implementation_authorized", "value": true}
-      ]
+        {
+          "op": "replace",
+          "path": "/implementation_lock/runtime_product_implementation_authorized",
+          "value": true
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/implementation_lock/runtime_product_implementation_authorized",
+        "keyword": "const"
+      }
     },
     {
       "name": "operator-architecture-decision-never-authorizes-gate-c-increment",
@@ -176,8 +297,16 @@
       "fixture": "tests/architecture-review/fixtures/operator-architecture-decision.valid.json",
       "expect": "invalid",
       "mutations": [
-        {"op": "replace", "path": "/implementation_lock/gate_c_increment_authorized", "value": true}
-      ]
+        {
+          "op": "replace",
+          "path": "/implementation_lock/gate_c_increment_authorized",
+          "value": true
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/implementation_lock/gate_c_increment_authorized",
+        "keyword": "const"
+      }
     },
     {
       "name": "operator-architecture-decision-rejects-high-accepted-limitation",
@@ -189,13 +318,25 @@
           "op": "add",
           "path": "/review_compilation/accepted_limitations/0",
           "value": {
-            "finding_ref": {"id": "finding.fixture.open-high", "version": 1, "digest": "sha256:c000000000000000000000000000000000000000000000000000000000000000"},
+            "finding_ref": {
+              "id": "finding.fixture.open-high",
+              "version": 1,
+              "digest": "sha256:c000000000000000000000000000000000000000000000000000000000000000"
+            },
             "severity": "high",
             "limitation_text": "A high defect cannot be accepted at Gate A.",
-            "evidence_ref": {"artifact_id": "fixture.false-acceptance", "digest": "sha256:d000000000000000000000000000000000000000000000000000000000000000", "media_type": "application/json"}
+            "evidence_ref": {
+              "artifact_id": "fixture.false-acceptance",
+              "digest": "sha256:d000000000000000000000000000000000000000000000000000000000000000",
+              "media_type": "application/json"
+            }
           }
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/review_compilation/accepted_limitations/0/severity",
+        "keyword": "enum"
+      }
     }
   ]
 }

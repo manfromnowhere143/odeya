@@ -67,22 +67,76 @@ def mutate(instance: object, mutations: list[dict[str, object]]) -> object:
     return result
 
 
+def evaluate_case(case: dict) -> list[str]:
+    failures: list[str] = []
+    schema_path = ROOT / case["schema"]
+    fixture_path = ROOT / case["fixture"]
+    schema = load_json(schema_path)
+    Draft202012Validator.check_schema(schema)
+    instance = mutate(load_json(fixture_path), case.get("mutations", []))
+    errors = list(
+        Draft202012Validator(schema, format_checker=FormatChecker()).iter_errors(instance)
+    )
+    actual = "invalid" if errors else "valid"
+    if actual != case["expect"]:
+        detail = errors[0].message if errors else "mutation was unexpectedly accepted"
+        failures.append(f"{case['name']}: expected {case['expect']}, got {actual}: {detail}")
+    if case["expect"] == "invalid":
+        # Refusal for an incidental reason is not proof that the intended
+        # constraint fires: a case corrupted in transit would still count
+        # as refused while the rule it names is broken. Bind each known-bad
+        # case to the exact instance location and keyword that must refuse
+        # it. The keyword is null where a boolean false schema refuses,
+        # because jsonschema reports no keyword for those.
+        declared = case.get("expected_refusal")
+        if not isinstance(declared, dict) or "pointer" not in declared or "keyword" not in declared:
+            failures.append(
+                f"{case['name']}: known-bad case does not declare the constraint that must refuse it"
+            )
+        elif not any(
+            "/" + "/".join(str(part) for part in error.absolute_path) == declared["pointer"]
+            and error.validator == declared["keyword"]
+            for error in errors
+        ):
+            observed = [
+                ("/" + "/".join(str(part) for part in error.absolute_path), error.validator)
+                for error in errors
+            ]
+            failures.append(
+                f"{case['name']}: refused, but not at its declared constraint "
+                f"{declared['pointer']!r} by {declared['keyword']!r}; got {observed}"
+            )
+    return failures
+
+
+def attribution_self_test(manifest: dict) -> list[str]:
+    """Prove on every run that the binding check itself fires.
+
+    A gate without a known-bad proof is prose (law 11). Two tampered copies
+    of the first known-bad case must each be refused by the attribution
+    check: one declaring a constraint that never fires, one declaring
+    nothing at all. Fail closed if either sails through.
+    """
+    template = next((c for c in manifest["cases"] if c["expect"] == "invalid"), None)
+    if template is None:
+        return ["attribution self-test found no known-bad case to tamper with"]
+    failures: list[str] = []
+    misdeclared = json.loads(json.dumps(template))
+    misdeclared["expected_refusal"] = {"pointer": "/odeya-self-test/never-fires", "keyword": "const"}
+    if not any("refused, but not at its declared constraint" in f for f in evaluate_case(misdeclared)):
+        failures.append("attribution self-test: a misdeclared constraint was not detected")
+    undeclared = json.loads(json.dumps(template))
+    undeclared.pop("expected_refusal", None)
+    if not any("does not declare the constraint" in f for f in evaluate_case(undeclared)):
+        failures.append("attribution self-test: a missing declaration was not detected")
+    return failures
+
+
 def main() -> int:
     manifest = load_json(CASES)
-    failures: list[str] = []
+    failures: list[str] = attribution_self_test(manifest)
     for case in manifest["cases"]:
-        schema_path = ROOT / case["schema"]
-        fixture_path = ROOT / case["fixture"]
-        schema = load_json(schema_path)
-        Draft202012Validator.check_schema(schema)
-        instance = mutate(load_json(fixture_path), case.get("mutations", []))
-        errors = list(
-            Draft202012Validator(schema, format_checker=FormatChecker()).iter_errors(instance)
-        )
-        actual = "invalid" if errors else "valid"
-        if actual != case["expect"]:
-            detail = errors[0].message if errors else "mutation was unexpectedly accepted"
-            failures.append(f"{case['name']}: expected {case['expect']}, got {actual}: {detail}")
+        failures.extend(evaluate_case(case))
 
     if failures:
         print("Architecture review schema cases failed:", file=sys.stderr)
