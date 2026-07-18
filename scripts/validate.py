@@ -305,6 +305,7 @@ ARCHITECTURE_EVIDENCE_CHECKS = (
     "scripts/validate_lifecycle_condition_coverage.py",
     "scripts/validate_canonicalization_dispositions.py",
     "scripts/validate_contract_profiles.py",
+    "scripts/validate_refusal_attribution.py",
 )
 REPOSITORY_RELEASE_CHECKS = (
     "scripts/validate_repository_release.py",

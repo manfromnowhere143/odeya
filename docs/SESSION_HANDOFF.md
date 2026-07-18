@@ -474,11 +474,13 @@ domains bound, four-way self-test), and ADR 0057 attributed
 ADR 0058 attributed `constitutional-construction` (29 cases), ADR 0059
 attributed `projection-contracts` (37 structural + 17 semantic), and ADR
 0060 attributed `cognitive-contracts` (107 structural + 12 semantic).
-The follow-on is the convergence decision over the measured
-seven-spelling census: one vocabulary, or an explicitly standardized
-set with a gate that refuses a new suite shipping unattributed
-negatives. Any future frontier claim must cite a census, not a carried
-list. Attribution is intent binding, not mutation coverage: no
+ADR 0062 closed the family: the domain-exact spellings are frozen as
+the standard (no cosmetic re-spelling of proven bindings), and the
+seventh architecture-evidence check enforces them by census — every
+tests/*/cases.json is swept, a registered suite's unbound negative
+fails, and an unknown suite carrying negatives fails closed. First
+census: 671 bound negative cases across 14 manifests. Any future
+frontier claim must cite that gate's output, not a carried list. Attribution is intent binding, not mutation coverage: no
 schema-based suite is proven unweakenable at its declared location.
 
 Read the tranche's convergence honestly. Across this tranche the canonical
