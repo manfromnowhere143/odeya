@@ -659,11 +659,44 @@ CHECKERS: dict[str, Callable[[dict[str, Any], dict[str, Any]], list[str]]] = {
 }
 
 
+def attribution_failures(name: str, case: dict[str, Any], errors: list[str]) -> list[str]:
+    """Refusal for an incidental reason is not proof that the intended
+    invariant fires. Bind each known-bad case to its own refusal, the
+    lifecycle suite's spelling (ADR 0024, 0055, 0056)."""
+    expected_refusal = case.get("expected_refusal_contains")
+    if not isinstance(expected_refusal, str) or not expected_refusal:
+        return [f"{name}: adversarial case does not declare the invariant that must refuse it"]
+    if not any(expected_refusal in error for error in errors):
+        return [
+            f"{name}: refused, but not by its declared invariant "
+            f"{expected_refusal!r}; got {errors}"
+        ]
+    return []
+
+
+def attribution_self_test(manifest: dict[str, Any], inventory: dict[str, Any]) -> list[str]:
+    """Prove on every run that the binding check itself fires (law 11)."""
+    template = next((c for c in manifest.get("cases", []) if c.get("kind") == "adversarial"), None)
+    if template is None:
+        return ["attribution self-test found no adversarial case to tamper with"]
+    errors = CHECKERS[template["model"]](template["subject"], inventory)
+    failures: list[str] = []
+    misdeclared = dict(template, expected_refusal_contains="odeya-self-test-never-appears")
+    if not any("not by its declared invariant" in f
+               for f in attribution_failures(template["name"], misdeclared, errors)):
+        failures.append("attribution self-test: a misdeclared invariant was not detected")
+    undeclared = {k: v for k, v in template.items() if k != "expected_refusal_contains"}
+    if not any("does not declare the invariant" in f
+               for f in attribution_failures(template["name"], undeclared, errors)):
+        failures.append("attribution self-test: a missing declaration was not detected")
+    return failures
+
+
 def main() -> int:
     manifest = load_json(CASES_PATH)
     inventory_path = ROOT / manifest["inventory"]
     inventory = load_json(inventory_path)
-    failures: list[str] = []
+    failures: list[str] = attribution_self_test(manifest, inventory)
 
     inv_errors = inventory_errors(inventory)
     if inv_errors:
@@ -730,6 +763,8 @@ def main() -> int:
                 failures.append(f"KNOWN-BAD CASE ACCEPTED: {name}: {detail}")
             else:
                 failures.append(f"{name}: expected {expected}, got {actual}: {detail}")
+        if kind == "adversarial":
+            failures.extend(attribution_failures(name, case, errors))
 
     if covered_conflicts != EXPECTED_CONFLICTS:
         failures.append(f"case coverage is not exactly C1-C8; covered {sorted(covered_conflicts)}")
