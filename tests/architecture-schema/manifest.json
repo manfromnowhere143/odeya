@@ -19,7 +19,12 @@
           "path": "/role",
           "value": "publication"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/consumption/reservation_identity_fields",
+        "keyword": "const"
+      },
+      "refusal_class": "implication"
     },
     {
       "name": "authority-grant-rejects-malformed-date-time",
@@ -32,7 +37,12 @@
           "path": "/limits/expires_at",
           "value": "tomorrow"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/limits/expires_at",
+        "keyword": "format"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "blocker-valid-open",
@@ -51,7 +61,12 @@
           "path": "/resolved_by_event",
           "value": "event.002"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/resolved_by_event",
+        "keyword": "type"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "blocker-resolved-requires-resolution-event",
@@ -64,7 +79,12 @@
           "path": "/status",
           "value": "resolved"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/resolved_by_event",
+        "keyword": "type"
+      },
+      "refusal_class": "implication"
     },
     {
       "name": "claim-proposal-valid-exploratory",
@@ -83,7 +103,12 @@
           "path": "/mode",
           "value": "confirmatory"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/exposure_at_creation/level",
+        "keyword": "const"
+      },
+      "refusal_class": "implication"
     },
     {
       "name": "claim-proposal-rejects-malformed-date-time",
@@ -96,7 +121,12 @@
           "path": "/created_at",
           "value": "not-a-date"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/created_at",
+        "keyword": "format"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "adjudication-valid-refusal",
@@ -121,7 +151,12 @@
           "path": "/status",
           "value": "determined"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/status",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "adjudication-refusal-cannot-carry-scientific-outcome",
@@ -134,7 +169,12 @@
           "path": "/scientific_outcome",
           "value": "null_result"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/scientific_outcome",
+        "keyword": "type"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "claim-version-valid-initial-ineligible",
@@ -153,7 +193,12 @@
           "path": "/version",
           "value": 2
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/version",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "claim-version-eligible-requires-approved-language",
@@ -166,7 +211,12 @@
           "path": "/eligibility/eligible_language",
           "value": []
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/eligibility/eligible_language",
+        "keyword": "minItems"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "claim-version-supported-requires-supporting-edge",
@@ -179,7 +229,12 @@
           "path": "/scientific_outcome",
           "value": "supported_within_scope"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/evidence_edges",
+        "keyword": "contains"
+      },
+      "refusal_class": "implication"
     },
     {
       "name": "claim-version-unmeasured-channel-cannot-retain-estimate-or-interval",
@@ -192,7 +247,12 @@
           "path": "/uncertainty/0/missingness",
           "value": "unmeasured"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/uncertainty/0/estimate",
+        "keyword": "type"
+      },
+      "refusal_class": "implication"
     },
     {
       "name": "publication-manifest-valid-private",
@@ -211,7 +271,12 @@
           "path": "/visibility",
           "value": "public"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/expires_at",
+        "keyword": "type"
+      },
+      "refusal_class": "implication"
     },
     {
       "name": "publication-manifest-rejects-malformed-seal-time",
@@ -224,7 +289,12 @@
           "path": "/sealed_at",
           "value": "not-a-date"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/sealed_at",
+        "keyword": "format"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "command-envelope-valid-pre-mission-proposal",
@@ -243,7 +313,12 @@
           "path": "/target/stream_type",
           "value": "mission"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "command-envelope-caller-cannot-select-bounded-grant-mode",
@@ -256,7 +331,12 @@
           "path": "/presented_authority_hints/mode",
           "value": "bounded_grants"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/presented_authority_hints",
+        "keyword": "additionalProperties"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "command-envelope-rejects-unregistered-command-type",
@@ -269,7 +349,12 @@
           "path": "/command_type",
           "value": "model.declare_truth"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/command_type",
+        "keyword": "enum"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "command-envelope-rejects-wrong-aggregate-owner",
@@ -282,7 +367,12 @@
           "path": "/target/aggregate_type",
           "value": "mission"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "command-envelope-rejects-mismatched-logical-payload-type",
@@ -295,7 +385,12 @@
           "path": "/payload_type_id",
           "value": "urn:odeya:command-payload:proposal.decide:1.0.0"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "command-receipt-valid-accepted-settlement",
@@ -314,7 +409,12 @@
           "path": "/result/events",
           "value": []
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/result",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "command-receipt-replay-cannot-change-bound-result-policy",
@@ -327,7 +427,12 @@
           "path": "/replay_contract/mode",
           "value": "reevaluate_current_state"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/replay_contract/mode",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "research-event-valid-pre-mission-proposal-submission",
@@ -346,7 +451,12 @@
           "path": "/payload_contract_digest",
           "value": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/payload_contract_digest",
+        "keyword": "type"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "research-event-null-contract-digest-rejects-resolved-label",
@@ -359,7 +469,12 @@
           "path": "/payload_contract_resolution_status",
           "value": "resolved_exact"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/payload_contract_resolution_status",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "research-event-rejects-logical-payload-type-resource-id-substitution",
@@ -372,7 +487,12 @@
           "path": "/payload_type_id",
           "value": "urn:odeya:schema:research-event:0.17.0"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/payload_type_id",
+        "keyword": "pattern"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "research-event-unresolved-contract-cannot-claim-authority",
@@ -385,7 +505,12 @@
           "path": "/event_contract_authority_status",
           "value": "admitted_dispatchable_replay_authoritative"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/event_contract_authority_status",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "research-event-valid-human-release-decision",
@@ -458,7 +583,12 @@
           "path": "/expected_state/scientific_outcome",
           "value": "null_result"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/expected_state/scientific_outcome",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "research-event-release-decision-rejects-model-actor",
@@ -471,7 +601,12 @@
           "path": "/actor/principal_type",
           "value": "model_run"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/actor/principal_type",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "research-event-release-decision-cannot-reference-later-dispatch-grant",
@@ -488,7 +623,12 @@
             "media_type": "application/json"
           }
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "research-event-release-decision-cannot-consume-dispatch-grant",
@@ -511,7 +651,12 @@
           "path": "/authority_evidence/grant_use_event_refs/0",
           "value": "event.grant-use.publication-dispatch.001"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/authority_evidence/grant_use_event_refs",
+        "keyword": "maxItems"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "research-event-publication-seal-rejects-legacy-authorization-reference",
@@ -528,7 +673,12 @@
           "path": "/payload/authorization_event_ref",
           "value": "event.release-decided.001"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "research-event-rejects-payload-schema-alias",
@@ -541,7 +691,12 @@
           "path": "/payload/record_type",
           "value": "grounded_outcome.recorded"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "research-event-rejects-wrong-aggregate-owner",
@@ -554,7 +709,12 @@
           "path": "/aggregate/aggregate_type",
           "value": "measurement"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "research-event-mission-stream-rejects-null-mission-scope",
@@ -567,7 +727,12 @@
           "path": "/mission_scope",
           "value": null
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/mission_scope",
+        "keyword": "type"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "research-event-rejects-empty-typed-payload",
@@ -580,7 +745,12 @@
           "path": "/payload",
           "value": {}
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "research-event-no-valid-measurement-cannot-carry-measurement",
@@ -597,7 +767,12 @@
             "media_type": "application/json"
           }
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "research-event-ambiguous-effect-forbids-blind-retry",
@@ -610,7 +785,12 @@
           "path": "/payload/retry_disposition",
           "value": "safe_same_key"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "research-event-released-publication-requires-channel-observation",
@@ -623,7 +803,12 @@
           "path": "/payload/channel_observation_ref",
           "value": null
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "research-event-open-verification-dispute-cannot-have-resolution",
@@ -640,7 +825,12 @@
             "media_type": "application/json"
           }
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "research-event-grant-use-count-must-be-positive",
@@ -653,7 +843,12 @@
           "path": "/payload/use_count",
           "value": 0
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "research-event-rejects-mismatched-logical-payload-type-id",
@@ -666,7 +861,12 @@
           "path": "/payload_type_id",
           "value": "urn:odeya:event-payload:proposal.decided:1.0.0"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "research-event-rejects-malformed-date-time",
@@ -679,7 +879,12 @@
           "path": "/recorded_at",
           "value": "not-a-date"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/recorded_at",
+        "keyword": "format"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "research-mission-valid-private-r0",
@@ -700,7 +905,12 @@
             "This key is not a registered scientific outcome."
           ]
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/claim_boundary/eligible_by_scientific_outcome",
+        "keyword": "additionalProperties"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "research-mission-between-comparator-rejects-scalar-threshold",
@@ -713,7 +923,12 @@
           "path": "/metrics/0/comparator",
           "value": "between"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/metrics/0/threshold",
+        "keyword": "type"
+      },
+      "refusal_class": "implication"
     },
     {
       "name": "research-mission-r4-rejects-unknown-budgets",
@@ -752,7 +967,12 @@
             }
           ]
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/resource_budget/accelerator_seconds",
+        "keyword": "type"
+      },
+      "refusal_class": "implication"
     },
     {
       "name": "research-mission-public-candidate-rejects-unresolved-digests",
@@ -776,7 +996,12 @@
             }
           ]
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/verification/required_artifacts/0/expected_digest",
+        "keyword": "pattern"
+      },
+      "refusal_class": "implication"
     },
     {
       "name": "research-mission-requires-every-authority-role",
@@ -788,7 +1013,12 @@
           "op": "remove",
           "path": "/authorities/outcome"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/authorities",
+        "keyword": "required"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "research-mission-rejects-malformed-date-time",
@@ -801,7 +1031,12 @@
           "path": "/created_at",
           "value": "not-a-date"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/created_at",
+        "keyword": "format"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "verification-run-valid-confirmed-clean-reproduction",
@@ -862,7 +1097,12 @@
           "path": "/terminal_assessment/status",
           "value": "requested"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/terminal_assessment/status",
+        "keyword": "enum"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "verification-run-terminal-package-rejects-running",
@@ -875,7 +1115,12 @@
           "path": "/terminal_assessment/status",
           "value": "running"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/terminal_assessment/status",
+        "keyword": "enum"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "verification-run-terminal-package-rejects-disputed",
@@ -888,7 +1133,12 @@
           "path": "/terminal_assessment/status",
           "value": "disputed"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/terminal_assessment/status",
+        "keyword": "enum"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "verification-run-requires-at-least-one-exact-subject",
@@ -900,7 +1150,12 @@
           "op": "remove",
           "path": "/subject_set/subjects/0"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/subject_set/subjects",
+        "keyword": "minItems"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "verification-run-confirmed-cannot-fail-known-bad-control",
@@ -913,7 +1168,12 @@
           "path": "/controls/known_bad/0/status",
           "value": "fail"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/controls/known_bad/0/status",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "verification-run-not-started-blocker-cannot-fabricate-success",
@@ -942,7 +1202,12 @@
           "path": "/dimensions/artifact_integrity/not_run_reason_codes",
           "value": []
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/dimensions/artifact_integrity/verdict",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "verification-run-requires-capacity-reservation-binding",
@@ -954,7 +1219,12 @@
           "op": "remove",
           "path": "/frozen_assignment/verification_capacity_reservation_ref"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/frozen_assignment",
+        "keyword": "required"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "verification-run-requires-exposure-plan-binding",
@@ -966,7 +1236,12 @@
           "op": "remove",
           "path": "/frozen_assignment/exposure_plan_ref"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/frozen_assignment",
+        "keyword": "required"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "verification-run-requires-verification-plan-binding",
@@ -978,7 +1253,12 @@
           "op": "remove",
           "path": "/frozen_assignment/verification_plan_ref"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/frozen_assignment",
+        "keyword": "required"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "verification-run-requires-verification-requirement-profile",
@@ -990,7 +1270,12 @@
           "op": "remove",
           "path": "/frozen_assignment/verification_requirement_profile_ref"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/frozen_assignment",
+        "keyword": "required"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "verification-run-requires-explicit-iv-class",
@@ -1002,7 +1287,12 @@
           "op": "remove",
           "path": "/frozen_assignment/required_verification_class"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/frozen_assignment",
+        "keyword": "required"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "verification-run-different-prompt-cannot-assert-independence",
@@ -1015,7 +1305,12 @@
           "path": "/correlation_axes/context/relation",
           "value": "same_inputs_different_prompt"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/correlation_axes/context/relation",
+        "keyword": "enum"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "verification-run-required-independence-must-be-met",
@@ -1028,7 +1323,12 @@
           "path": "/independence_assessment/disposition",
           "value": "correlated"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/independence_assessment/disposition",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "verification-run-required-iv4-cannot-report-iv3-pass",
@@ -1041,7 +1341,12 @@
           "path": "/independence_assessment/observed_verification_class",
           "value": "IV3_independent_reimplementation"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/independence_assessment/observed_verification_class",
+        "keyword": "enum"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "verification-run-all-pass-cannot-be-rejected",
@@ -1054,7 +1359,12 @@
           "path": "/terminal_assessment/status",
           "value": "rejected"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "anyOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "verification-run-all-pass-cannot-be-invalid",
@@ -1067,7 +1377,12 @@
           "path": "/terminal_assessment/status",
           "value": "invalid"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "anyOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "verification-run-all-determined-cannot-be-inconclusive",
@@ -1080,7 +1395,12 @@
           "path": "/terminal_assessment/status",
           "value": "inconclusive"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/assessment_summary/dimension_disposition",
+        "keyword": "const"
+      },
+      "refusal_class": "implication"
     },
     {
       "name": "verification-run-failed-blocked-cannot-retain-all-pass-vector",
@@ -1119,7 +1439,12 @@
           "path": "/assessment_summary/decisive_basis",
           "value": "operational_blocker"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "anyOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "verification-run-unknown-settlement-requires-exact-case",
@@ -1142,7 +1467,12 @@
           "path": "/resource_reconciliation/reconciliation_ref",
           "value": null
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/resource_reconciliation/reconciliation_ref",
+        "keyword": "type"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "verification-run-completion-unknown-cannot-release-reservation",
@@ -1155,7 +1485,12 @@
           "path": "/resource_reconciliation/reservation_settlement",
           "value": "reconciled_released"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/resource_reconciliation/reservation_settlement",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "verification-run-requires-exposure-audit-for-every-disposition",
@@ -1167,7 +1502,12 @@
           "op": "remove",
           "path": "/observed_exposure/exposure_audit_ref"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/observed_exposure",
+        "keyword": "required"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "verification-run-indeterminate-control-requires-basis",
@@ -1200,7 +1540,12 @@
           "path": "/controls/known_bad/0/reason_codes",
           "value": []
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/controls/known_bad/0/evidence_refs",
+        "keyword": "minItems"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "verification-run-completed-requires-actual-run-manifest",
@@ -1212,7 +1557,12 @@
           "op": "remove",
           "path": "/execution/actual_run_manifest_ref"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/execution",
+        "keyword": "required"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "verification-run-completed-requires-actual-input-manifest",
@@ -1224,7 +1574,12 @@
           "op": "remove",
           "path": "/execution/actual_input_manifest_ref"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/execution",
+        "keyword": "required"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "verification-run-completed-requires-actual-environment-manifest",
@@ -1236,7 +1591,12 @@
           "op": "remove",
           "path": "/execution/actual_environment_manifest_ref"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/execution",
+        "keyword": "required"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "verification-run-completed-requires-actual-code-manifest",
@@ -1248,7 +1608,12 @@
           "op": "remove",
           "path": "/execution/actual_code_manifest_ref"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/execution",
+        "keyword": "required"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "verification-run-not-started-cannot-claim-actual-run",
@@ -1265,7 +1630,12 @@
             "media_type": "application/json"
           }
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/execution/actual_run_manifest_ref",
+        "keyword": "type"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "verification-run-confirmed-requires-plan-match",
@@ -1289,7 +1659,12 @@
             }
           ]
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/execution/plan_comparison",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "verification-run-required-dimension-cannot-be-not-applicable",
@@ -1314,7 +1689,12 @@
             "fabricated_not_applicable"
           ]
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/dimensions/artifact_integrity/verdict",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "verification-run-cannot-embed-successor-completion-event",
@@ -1329,7 +1709,12 @@
             "event_id": "event.verification-completed.001"
           }
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "additionalProperties"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "verification-run-advisory-next-action-cannot-grant-authority",
@@ -1342,7 +1727,12 @@
           "path": "/eligible_next_actions/authority_granted",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/eligible_next_actions/authority_granted",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "verification-run-rejects-malformed-date-time",
@@ -1355,7 +1745,12 @@
           "path": "/recorded_at",
           "value": "not-a-date"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/recorded_at",
+        "keyword": "format"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "research-event-valid-verification-assigned-exact-profile",
@@ -1385,7 +1780,12 @@
           "op": "remove",
           "path": "/payload/verification_requirement_profile_ref"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "research-event-verification-assigned-requires-capacity-reservation",
@@ -1397,7 +1797,12 @@
           "op": "remove",
           "path": "/payload/verification_capacity_reservation_ref"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "research-event-verification-completed-requires-exact-package",
@@ -1409,7 +1814,12 @@
           "op": "remove",
           "path": "/payload/verification_package_ref"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "research-event-verification-completed-cannot-use-disputed-terminal",
@@ -1422,7 +1832,12 @@
           "path": "/payload/terminal_status",
           "value": "disputed"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "research-event-verification-dimension-requires-assignment",
@@ -1434,7 +1849,12 @@
           "op": "remove",
           "path": "/payload/assignment_event_ref"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "research-event-verification-dispute-rejects-loose-run-id",
@@ -1451,7 +1871,12 @@
           "path": "/payload/verification_run_id",
           "value": "verification.001"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "protocol-snapshot-valid-confirmatory-blind",
@@ -1470,7 +1895,12 @@
           "path": "/exposure_at_freeze/level",
           "value": "partial_outcome_exposure"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/exposure_at_freeze/level",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "protocol-amendment-valid-prospective-decision",
@@ -1489,7 +1919,12 @@
           "path": "/decision",
           "value": "approved_fork"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/effect_scope",
+        "keyword": "const"
+      },
+      "refusal_class": "implication"
     },
     {
       "name": "run-manifest-valid-authorized-producer",
@@ -1508,7 +1943,12 @@
           "path": "/run_class",
           "value": "verification"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/independence_profile_ref",
+        "keyword": "type"
+      },
+      "refusal_class": "implication"
     },
     {
       "name": "artifact-manifest-valid-original-bytes",
@@ -1527,7 +1967,12 @@
           "path": "/representation",
           "value": "derived"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/lineage/transformation_activity_id",
+        "keyword": "type"
+      },
+      "refusal_class": "implication"
     },
     {
       "name": "artifact-custody-valid-promotion",
@@ -1546,7 +1991,12 @@
           "path": "/integrity_check/verdict",
           "value": "fail"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/integrity_check/verdict",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "metric-result-valid-measured-threshold-pass",
@@ -1565,7 +2015,12 @@
           "path": "/measurement/status",
           "value": "unmeasured"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/measurement/status",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "falsifier-result-valid-known-bad-trigger",
@@ -1584,7 +2039,12 @@
           "path": "/observed_verdict",
           "value": "not_triggered"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/gate_consequence",
+        "keyword": "const"
+      },
+      "refusal_class": "implication"
     },
     {
       "name": "validation-rule-registry-valid-active-version",
@@ -1602,7 +2062,12 @@
           "op": "remove",
           "path": "/rules/0/implementation_refs/1"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/rules/0/implementation_refs",
+        "keyword": "minItems"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "validation-result-valid-required-rule-pass",
@@ -1621,7 +2086,12 @@
           "path": "/rule_results/0/verdict",
           "value": "fail"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/rule_results",
+        "keyword": "not"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "claim-correction-valid-replacement-version",
@@ -1640,7 +2110,12 @@
           "path": "/correction_kind",
           "value": "retraction_notice"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/replacement_claims",
+        "keyword": "maxItems"
+      },
+      "refusal_class": "implication"
     },
     {
       "name": "handoff-valid-paused-recovery-packet",
@@ -1659,7 +2134,12 @@
           "path": "/mode",
           "value": "close"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/mission_state/lifecycle",
+        "keyword": "const"
+      },
+      "refusal_class": "implication"
     },
     {
       "name": "grounded-outcome-valid-verified-multidimensional-observation",
@@ -1678,7 +2158,12 @@
           "path": "/dimensions/0/measurement_status",
           "value": "unmeasured"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/dimensions/0/reason_codes",
+        "keyword": "minItems"
+      },
+      "refusal_class": "implication"
     },
     {
       "name": "strategy-candidate-valid-quarantined-proposal",
@@ -1697,7 +2182,12 @@
           "path": "/quarantine/production_write_authority",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/quarantine/production_write_authority",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "promotion-decision-valid-deferred-without-deployment-authority",
@@ -1716,7 +2206,12 @@
           "path": "/decision",
           "value": "approved_rollout"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/independent_review_refs",
+        "keyword": "minItems"
+      },
+      "refusal_class": "implication"
     },
     {
       "name": "authority-grant-valid-single-use-publication-dispatch-claim",
@@ -1734,7 +2229,12 @@
           "op": "remove",
           "path": "/scope/external_effect_id"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/scope",
+        "keyword": "required"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "authority-grant-ordinary-command-cannot-defer-consumption-to-dispatch",
@@ -1747,7 +2247,12 @@
           "path": "/consumption/consumption_point",
           "value": "dispatch_claim"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/consumption/consumption_point",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "authority-grant-publication-cannot-consume-at-intent-domain-commit",
@@ -1760,7 +2265,12 @@
           "path": "/consumption/consumption_point",
           "value": "domain_commit"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/consumption/consumption_point",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "authority-grant-publication-reservation-requires-positive-ttl",
@@ -1773,7 +2283,12 @@
           "path": "/consumption/reservation_ttl_seconds",
           "value": 0
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/consumption/reservation_ttl_seconds",
+        "keyword": "minimum"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "root-authority-manifest-valid-architecture-only-bootstrap",
@@ -1792,7 +2307,12 @@
           "path": "/constitutional_scope/external_effects_allowed",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/constitutional_scope/external_effects_allowed",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "authority-assignment-valid-initial-human-publication-role",
@@ -1811,7 +2331,12 @@
           "path": "/assignment_kind",
           "value": "delegated"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/source/issuer_assignment_ref",
+        "keyword": "type"
+      },
+      "refusal_class": "implication"
     },
     {
       "name": "publication-candidate-valid-private-exact-projection",
@@ -1830,7 +2355,12 @@
           "path": "/visibility",
           "value": "public"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/audience",
+        "keyword": "contains"
+      },
+      "refusal_class": "implication"
     },
     {
       "name": "publication-candidate-cannot-smuggle-a-future-grant",
@@ -1843,7 +2373,12 @@
           "path": "/publication_grant_ref",
           "value": "grant.publication.001"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "additionalProperties"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "publication-decision-valid-every-gate-human-approved",
@@ -1862,7 +2397,12 @@
           "path": "/gates/rights/check_disposition",
           "value": "indeterminate"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/gates/rights/check_disposition",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "publication-decision-requires-exact-candidate-digest",
@@ -1874,7 +2414,12 @@
           "op": "remove",
           "path": "/candidate/candidate_digest"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/candidate",
+        "keyword": "required"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "data-asset-record-valid-admitted-exact-bytes",
@@ -1893,7 +2438,12 @@
           "path": "/classification/disposition",
           "value": "indeterminate"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/classification/subject_classes",
+        "keyword": "contains"
+      },
+      "refusal_class": "implication"
     },
     {
       "name": "rights-assertion-valid-evidence-only",
@@ -1912,7 +2462,12 @@
           "path": "/authority_effect",
           "value": "permission_granted"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/authority_effect",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "data-use-decision-valid-exact-private-scope",
@@ -1938,7 +2493,12 @@
             "provider-retention-unknown"
           ]
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/retention_schedule_ref",
+        "keyword": "type"
+      },
+      "refusal_class": "implication"
     },
     {
       "name": "data-exposure-valid-authorized-intent",
@@ -1969,7 +2529,12 @@
           "path": "/detail/disposition",
           "value": "indeterminate"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/detail/recipient_configuration",
+        "keyword": "type"
+      },
+      "refusal_class": "implication"
     },
     {
       "name": "confirmed-exposure-observation-requires-exact-payload-receipt-and-config",
@@ -1982,7 +2547,12 @@
           "path": "/detail/outcome",
           "value": "confirmed_disclosed"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/detail/observed_configuration_ref",
+        "keyword": "type"
+      },
+      "refusal_class": "implication"
     },
     {
       "name": "ambiguous-exposure-settlement-requires-declared-limitation",
@@ -1995,7 +2565,12 @@
           "path": "/detail/limitations",
           "value": []
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/detail/limitations",
+        "keyword": "minItems"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "transformation-record-valid-verified-redaction",
@@ -2019,7 +2594,12 @@
           "path": "/validation/aggregate_disposition",
           "value": "fail"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/output_assets/0/quarantined",
+        "keyword": "const"
+      },
+      "refusal_class": "implication"
     },
     {
       "name": "retention-schedule-valid-active-bounded-planes",
@@ -2038,7 +2618,12 @@
           "path": "/representation_planes/0/terminal_action",
           "value": "unknown"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/representation_planes",
+        "keyword": "not"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "deletion-case-valid-bounded-completed-plane",
@@ -2059,7 +2644,12 @@
             "backup-copy-unknown"
           ]
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/residual_copies",
+        "keyword": "maxItems"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "legal-hold-valid-active-destruction-pause",
@@ -2078,7 +2668,12 @@
           "path": "/access_authority_effect",
           "value": "grants_analysis_access"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/access_authority_effect",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "released-legal-hold-requires-release-evidence-and-time",
@@ -2096,7 +2691,12 @@
           "path": "/destruction_disposition",
           "value": "no_pause_after_release"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/release_evidence_ref",
+        "keyword": "type"
+      },
+      "refusal_class": "implication"
     },
     {
       "name": "external-effect-authorize-command-valid-exact-reservation-request",
@@ -2115,7 +2715,12 @@
           "path": "/grant_refs",
           "value": []
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/grant_refs",
+        "keyword": "minItems"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "external-effect-start-command-valid-dispatch-claim",
@@ -2134,7 +2739,12 @@
           "path": "/grant_use_reservation_refs",
           "value": []
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/grant_use_reservation_refs",
+        "keyword": "minItems"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "external-effect-cancel-command-valid-before-dispatch",
@@ -2153,7 +2763,12 @@
           "path": "/expected_effect_state",
           "value": "started"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/expected_effect_state",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "research-event-valid-dispatch-grant-use-reservation",
@@ -2172,7 +2787,12 @@
           "path": "/payload/consumption_point",
           "value": "domain_commit"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "research-event-valid-authorized-effect-with-reservation",
@@ -2191,7 +2811,12 @@
           "path": "/payload/grant_use_reservation_event_refs",
           "value": []
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "research-event-valid-dispatch-claim-grant-consumption",
@@ -2210,7 +2835,12 @@
           "path": "/payload/consumption_point",
           "value": "domain_commit"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "research-event-valid-started-effect-with-consumed-reservation",
@@ -2229,7 +2859,12 @@
           "path": "/payload/grant_use_event_refs",
           "value": []
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "research-event-valid-terminal-reservation-release",
@@ -2248,7 +2883,12 @@
           "path": "/payload/release_reason",
           "value": "grant_expired"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "research-event-valid-effect-cancelled-before-dispatch",
@@ -2267,7 +2907,12 @@
           "path": "/payload/from",
           "value": "started"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "research-event-trace-valid-reservation-to-dispatch-claim",
@@ -2286,7 +2931,12 @@
           "path": "/expected_state/grant_use_reservation",
           "value": "cancelled"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/expected_state/grant_use_reservation",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "research-event-trace-valid-cancel-before-dispatch",
@@ -2305,7 +2955,12 @@
           "path": "/expected_state/dispatch_claim",
           "value": "claimed"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/expected_state/dispatch_claim",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "method-registry-valid-proposed-first-slice-method",
@@ -2324,7 +2979,12 @@
           "path": "/methods/0/conformance_vectors/synthetic_null/artifact_refs",
           "value": []
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/methods/0/conformance_vectors/synthetic_null/artifact_refs",
+        "keyword": "minItems"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "ledger-checkpoint-valid-signed-frontier",
@@ -2343,7 +3003,12 @@
           "path": "/signatures",
           "value": []
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/signatures",
+        "keyword": "minItems"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "backup-manifest-valid-written-verified-not-yet-recoverability-proven",
@@ -2362,7 +3027,12 @@
           "path": "/encryption/key_material_embedded",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/encryption/key_material_embedded",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "key-profile-valid-founding-logical-hierarchy",
@@ -2381,7 +3051,12 @@
           "path": "/key_material_embedded",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/key_material_embedded",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "restore-report-valid-quarantine-on-missing-claim-evidence",
@@ -2400,7 +3075,12 @@
           "path": "/recommended_service_state/canonical_reads/state",
           "value": "enabled"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/recommended_service_state/canonical_reads/state",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "recovery-decision-valid-remain-quarantined",
@@ -2421,7 +3101,12 @@
             "canonical_reads"
           ]
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/allowed_service_scopes/0",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "module-dependency-manifest-valid-complete-logical-ownership",
@@ -2440,7 +3125,12 @@
           "path": "/global_rules/one_owner_per_schema",
           "value": false
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/global_rules/one_owner_per_schema",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "architecture-candidate-manifest-valid-draft-not-review-ready",
@@ -2459,7 +3149,12 @@
           "path": "/repository/worktree_state",
           "value": "dirty"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/repository/worktree_state",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "architecture-finding-valid-open-high-finding",
@@ -2478,7 +3173,12 @@
           "path": "/disposition/state",
           "value": "accepted_limitation"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/disposition/accepted_limitation",
+        "keyword": "type"
+      },
+      "refusal_class": "implication"
     },
     {
       "name": "review-determination-valid-unable-to-determine-fixture",
@@ -2497,7 +3197,12 @@
           "path": "/result",
           "value": "accept_for_gate_a"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/review_passes/adversarial_execution/result",
+        "keyword": "const"
+      },
+      "refusal_class": "implication"
     },
     {
       "name": "operator-architecture-decision-valid-not-accepted-remain-architecture",
@@ -2516,7 +3221,12 @@
           "path": "/implementation_lock/runtime_product_implementation_authorized",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/implementation_lock/runtime_product_implementation_authorized",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "research-event-valid-backup-recoverability-observed",
@@ -2583,7 +3293,12 @@
           "path": "/payload/prior_canonical_protocol_ref",
           "value": "protocol.hidden-draft.001"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "protocol-frozen-origin-must-assert-aggregate-absence",
@@ -2596,7 +3311,12 @@
           "path": "/payload/origin_from_aggregate_absence",
           "value": false
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "protocol-frozen-origin-requires-validation-evidence",
@@ -2608,7 +3328,12 @@
           "op": "remove",
           "path": "/payload/validation_evidence_refs/0"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "protocol-frozen-origin-rejects-split-integrity-order",
@@ -2621,7 +3346,12 @@
           "path": "/payload/grant_commit_binding/batch_order/2",
           "value": "authority.grant_exhausted(protocol)"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "protocol-frozen-origin-requires-bounded-protocol-grant",
@@ -2634,7 +3364,12 @@
           "path": "/authority_evidence/mode",
           "value": "assigned_role"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "protocol-frozen-origin-requires-exact-four-event-position",
@@ -2652,7 +3387,12 @@
           "path": "/commit/batch_size",
           "value": 1
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "research-event-valid-data-use-decided",
@@ -2671,7 +3411,12 @@
           "path": "/authority_evidence/mode",
           "value": "assigned_role"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "data-use-decision-rejects-domain-event-outside-atomic-grant-cohort",
@@ -2689,7 +3434,12 @@
           "path": "/commit/batch_size",
           "value": 1
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "data-use-decision-requires-atomic-grant-commit-binding",
@@ -2701,7 +3451,12 @@
           "op": "remove",
           "path": "/payload/grant_commit_binding"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "data-use-decision-rejects-wrong-authority-slot",
@@ -2714,7 +3469,12 @@
           "path": "/payload/grant_commit_binding/role_slot",
           "value": "protocol"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "data-use-decision-requires-final-use-exhaustion-in-same-cohort",
@@ -2726,7 +3486,12 @@
           "op": "remove",
           "path": "/payload/grant_commit_binding/grant_exhaustion_event_ref"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "research-event-valid-data-use-revoked",
@@ -2877,7 +3642,12 @@
           "path": "/payload/authority_effect",
           "value": "permission_granted"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "authorized-data-use-event-requires-exact-scope",
@@ -2890,7 +3660,12 @@
           "path": "/payload/scope_digest",
           "value": null
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "ambiguous-exposure-observation-cannot-drop-limitation",
@@ -2903,7 +3678,12 @@
           "path": "/payload/limitations",
           "value": []
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "ambiguous-exposure-settlement-cannot-be-zeroed",
@@ -2916,7 +3696,12 @@
           "path": "/payload/limitations",
           "value": []
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "completed-deletion-event-cannot-retain-residual-copy",
@@ -2931,7 +3716,12 @@
             "restored-stale-copy"
           ]
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "legal-hold-event-never-grants-access",
@@ -2944,7 +3734,12 @@
           "path": "/payload/access_authority_effect",
           "value": "grants_analysis_access"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "sealed-checkpoint-event-requires-verified-signature-evidence",
@@ -2957,7 +3752,12 @@
           "path": "/payload/signature_verification",
           "value": "not_run"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "witness-consistency-failure-cannot-hide-limitation",
@@ -2975,7 +3775,12 @@
           "path": "/payload/limitations",
           "value": []
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "backup-write-event-cannot-masquerade-as-recoverability",
@@ -2988,7 +3793,12 @@
           "path": "/payload/axis",
           "value": "recoverability"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "restore-report-event-has-no-reopen-authority",
@@ -3001,7 +3811,12 @@
           "path": "/payload/authority_effect",
           "value": "reopen_service"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "recovery-decision-failed-quorum-requires-limitation",
@@ -3019,7 +3834,12 @@
           "path": "/payload/limitations",
           "value": []
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "fork-detection-forbids-wall-clock-selection",
@@ -3032,7 +3852,12 @@
           "path": "/payload/wall_clock_branch_selection",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "new-epoch-event-requires-constitutional-selection",
@@ -3045,7 +3870,12 @@
           "path": "/payload/branch_selection_basis",
           "value": "none_pending_recovery_decision"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "open-recovery-scope-requires-complete-frontier",
@@ -3058,7 +3888,12 @@
           "path": "/payload/frontier_completeness",
           "value": "incomplete"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "data-use-decide-command-valid-exact-authorized-scope",
@@ -3077,7 +3912,12 @@
           "path": "/decision",
           "value": "denied"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/effective_at",
+        "keyword": "type"
+      },
+      "refusal_class": "implication"
     },
     {
       "name": "data-use-revoke-command-valid-active-decision",
@@ -3096,7 +3936,12 @@
           "path": "/expected_decision",
           "value": "revoked"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/expected_decision",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "data-exposure-intent-command-valid-nondispatching-record",
@@ -3115,7 +3960,12 @@
           "path": "/recording_intent_does_not_dispatch",
           "value": false
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/recording_intent_does_not_dispatch",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "deletion-close-command-valid-verified-tombstone",
@@ -3138,7 +3988,12 @@
             "media_type": "application/json"
           }
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/residual_set_ref",
+        "keyword": "type"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "legal-hold-issue-command-valid-destruction-pause-only",
@@ -3157,7 +4012,12 @@
           "path": "/access_authority_effect",
           "value": "grants_analysis_access"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/access_authority_effect",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "legal-hold-release-command-valid-removes-pause-only",
@@ -3176,7 +4036,12 @@
           "path": "/access_authority_effect",
           "value": "grants_analysis_access"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/access_authority_effect",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "ledger-checkpoint-seal-command-valid-verified-signature-set",
@@ -3195,7 +4060,12 @@
           "path": "/signature_verification_refs",
           "value": []
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/signature_verification_refs",
+        "keyword": "minItems"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "recovery-record-decision-command-valid-quarantine",
@@ -3219,7 +4089,12 @@
             "canonical_reads"
           ]
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/prohibited_service_scopes",
+        "keyword": "contains"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "ledger-begin-epoch-command-valid-constitutional-decision",
@@ -3238,7 +4113,12 @@
           "path": "/wall_clock_branch_selection",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/wall_clock_branch_selection",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "recovery-change-scope-command-valid-read-only",
@@ -3257,7 +4137,12 @@
           "path": "/publication_enabled",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/publication_enabled",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "research-event-trace-valid-deleted-data-no-resurrection",
@@ -3312,7 +4197,12 @@
           "path": "/expected_state/artifact_recovery",
           "value": "verified_present"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/expected_state/artifact_recovery",
+        "keyword": "not"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "stale-grant-restore-trace-rejects-read-reopen",
@@ -3325,7 +4215,12 @@
           "path": "/expected_state/recovery_control",
           "value": "read_only"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/expected_state/recovery_control",
+        "keyword": "enum"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "missing-artifact-trace-rejects-read-reopen",
@@ -3338,7 +4233,12 @@
           "path": "/expected_state/recovery_control",
           "value": "read_only"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/expected_state/recovery_control",
+        "keyword": "enum"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "fork-trace-rejects-wall-clock-open-branch",
@@ -3351,7 +4251,12 @@
           "path": "/expected_state/recovery_control",
           "value": "read_only"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/expected_state/recovery_control",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "restore-report-trace-rejects-implicit-reopen",
@@ -3364,7 +4269,12 @@
           "path": "/expected_state/recovery_control",
           "value": "read_only"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/expected_state/recovery_control",
+        "keyword": "enum"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "cognitive-research-state-view-valid-derived-nonauthoritative",
@@ -3383,7 +4293,12 @@
           "path": "/selected_context/0/content_class",
           "value": "sealed_evaluator_truth"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/selected_context/0/content_class",
+        "keyword": "enum"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "cognitive-context-compilation-receipt-valid-derived-nonauthoritative",
@@ -3402,7 +4317,12 @@
           "path": "/candidate_dispositions/0/disposition",
           "value": "omitted_by_budget"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/candidate_dispositions/0/disposition",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "cognitive-epistemic-node-version-valid-proposed",
@@ -3423,7 +4343,12 @@
             "supporting": []
           }
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "additionalProperties"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "cognitive-epistemic-graph-delta-valid-additive-proposal",
@@ -3442,7 +4367,12 @@
           "path": "/edge_changes/0/graph_operation",
           "value": "delete_existing_edge"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/edge_changes/0/graph_operation",
+        "keyword": "enum"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "cognitive-experiment-candidate-valid-identifiable-proposal",
@@ -3461,7 +4391,12 @@
           "path": "/feasibility/status",
           "value": "not_identifiable"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/promotion/status",
+        "keyword": "const"
+      },
+      "refusal_class": "implication"
     },
     {
       "name": "cognitive-planning-epoch-valid-proposal",
@@ -3480,7 +4415,12 @@
           "path": "/ranking_signals/0/hypothesis_evidence_credit",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/ranking_signals/0/hypothesis_evidence_credit",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "cognitive-work-contract-valid-blocked-candidate",
@@ -3499,7 +4439,12 @@
           "path": "/canonical_digest",
           "value": "sha256:0000000000000000000000000000000000000000000000000000000000000000"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/canonical_digest",
+        "keyword": "type"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "cognitive-work-intent-valid-unresolved-prospective-candidate",
@@ -3520,7 +4465,12 @@
             "grant.fabricated.001"
           ]
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/prospective_authority_boundary/authority_grant_refs",
+        "keyword": "maxItems"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "canonical-work-lease-valid-blocked-acquisition-candidate",
@@ -3545,7 +4495,12 @@
           "path": "/lease_allows_new_start_claims",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/lease_allows_new_start_claims",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "canonical-work-lease-release-retains-claimed-reservation-for-settlement",
@@ -3563,7 +4518,12 @@
           "path": "/reservation_frontier/reservation_claim_event_ref",
           "value": null
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/reservation_frontier/reservation_claim_event_ref",
+        "keyword": "type"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "canonical-work-lease-rejects-fabricated-canonical-identity",
@@ -3576,7 +4536,12 @@
           "path": "/canonical_digest",
           "value": "sha256:0800000000000000000000000000000000000000000000000000000000000000"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/canonical_digest",
+        "keyword": "type"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "canonical-work-lease-rejects-execution-authority-claim",
@@ -3589,7 +4554,12 @@
           "path": "/record_authority_status",
           "value": "admitted_execution_authority"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/record_authority_status",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "canonical-work-lease-rejects-projection-label-as-canonical-state",
@@ -3602,7 +4572,12 @@
           "path": "/lease_state",
           "value": "stale"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/lease_state",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "canonical-work-lease-acquisition-rejects-prior-active-event",
@@ -3620,7 +4595,12 @@
             "digest": "sha256:0900000000000000000000000000000000000000000000000000000000000000"
           }
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/transition/prior_active_event_ref",
+        "keyword": "type"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "canonical-work-lease-acquisition-must-create-version-one",
@@ -3633,7 +4613,12 @@
           "path": "/lease_version",
           "value": 2
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/lease_version",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "canonical-work-lease-rejects-reordered-assignment-grant-roles",
@@ -3646,7 +4631,12 @@
           "path": "/assignment_binding/ordered_grant_roles/0",
           "value": "verification"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/assignment_binding/ordered_grant_roles/0",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "canonical-work-lease-rejects-fabricated-resolved-assignment-cohort",
@@ -3659,7 +4649,12 @@
           "path": "/assignment_binding/cohort_resolution_status",
           "value": "resolved"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/assignment_binding/cohort_resolution_status",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "canonical-work-lease-rejects-unprofiled-timestamp",
@@ -3672,7 +4667,12 @@
           "path": "/temporal_bounds/expires_at",
           "value": "2026-07-16T10:10:00Z"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/temporal_bounds/expires_at",
+        "keyword": "pattern"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "canonical-work-lease-rejects-event-state-mismatch",
@@ -3685,7 +4685,12 @@
           "path": "/transition/event_ref/event_type",
           "value": "work.lease_released"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/reservation_frontier/reservation_claim_event_ref",
+        "keyword": "type"
+      },
+      "refusal_class": "implication"
     },
     {
       "name": "canonical-work-lease-rejects-outside-slice-renewal",
@@ -3698,7 +4703,12 @@
           "path": "/transition/event_ref/event_type",
           "value": "work.lease_renewed"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/transition/event_ref/event_type",
+        "keyword": "enum"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "canonical-work-lease-rejects-unknown-field",
@@ -3711,7 +4721,12 @@
           "path": "/projection_state",
           "value": "completed"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "additionalProperties"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "cognitive-candidate-artifact-valid-untrusted",
@@ -3730,7 +4745,12 @@
           "path": "/observable_receipts/0/producer_asserted",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/observable_receipts/0/producer_asserted",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "cognitive-epistemic-transition-record-valid-proposed",
@@ -3748,7 +4768,12 @@
           "op": "remove",
           "path": "/material_evidence/0/disposition"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/material_evidence/0",
+        "keyword": "required"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "external-effect-authorize-governed-processing-valid-current-bindings",
@@ -3766,7 +4791,12 @@
           "op": "remove",
           "path": "/data_use_decision_refs"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "required"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "external-effect-start-governed-processing-valid-current-recheck",
@@ -3784,7 +4814,12 @@
           "op": "remove",
           "path": "/current_policy_inputs_digest"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "required"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "research-event-governed-processing-authorized-valid-exact-bindings",
@@ -3802,7 +4837,12 @@
           "op": "remove",
           "path": "/payload/provider_configuration_observation_ref"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "research-event-trace-stale-processing-dispatch-refused",
@@ -3821,7 +4861,12 @@
           "path": "/expected_state/dispatch_claim",
           "value": "claimed"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/expected_state/dispatch_claim",
+        "keyword": "enum"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "external-effect-start-governed-processing-requires-effect-class",
@@ -3833,7 +4878,12 @@
           "op": "remove",
           "path": "/effect_class"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "not"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "external-effect-start-governed-processing-class-cannot-be-aliased-as-message",
@@ -3846,7 +4896,12 @@
           "path": "/effect_class",
           "value": "message"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "not"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "external-effect-cancel-requires-bound-effect-class",
@@ -3858,7 +4913,12 @@
           "op": "remove",
           "path": "/effect_class"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "required"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "external-effect-authorize-governed-processing-rejects-wrong-work-contract-schema",
@@ -3871,7 +4931,12 @@
           "path": "/work_contract_ref/schema_id",
           "value": "urn:odeya:schema:data-use-decision:0.3.0"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/work_contract_ref/schema_id",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "research-event-governed-processing-rejects-wrong-data-use-schema",
@@ -3884,7 +4949,12 @@
           "path": "/payload/data_use_decision_refs/0/schema_id",
           "value": "urn:odeya:schema:work-contract:0.1.0"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "command-receipt-governed-processing-valid-stale-data-use-rejection",
@@ -3903,7 +4973,12 @@
           "path": "/result/kind",
           "value": "accepted"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/result",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "research-event-trace-rejected-processing-command-cannot-commit-effect-cohort",
@@ -3916,7 +4991,12 @@
           "path": "/command_attempts/0/external_effect_authorization_committed",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/command_attempts/0/external_effect_authorization_committed",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "command-envelope-requires-command-registry-snapshot",
@@ -3928,7 +5008,12 @@
           "op": "remove",
           "path": "/command_registry_snapshot_ref"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "required"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "command-envelope-rejects-latest-command-registry-alias",
@@ -3941,7 +5026,12 @@
           "path": "/command_registry_snapshot_ref/version",
           "value": "latest"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/command_registry_snapshot_ref/version",
+        "keyword": "pattern"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "command-envelope-rejects-wrong-command-registry-schema",
@@ -3954,7 +5044,12 @@
           "path": "/command_registry_snapshot_ref/schema_id",
           "value": "urn:odeya:schema:command-contract-record:0.6.0"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/command_registry_snapshot_ref/schema_id",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "command-envelope-request-digest-scope-cannot-omit-registry-snapshot",
@@ -3966,7 +5061,12 @@
           "op": "remove",
           "path": "/request_digest_contract/included_json_pointers/12"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/request_digest_contract/included_json_pointers",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "command-envelope-requires-command-registry-activation",
@@ -3978,7 +5078,12 @@
           "op": "remove",
           "path": "/command_registry_activation_ref"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "required"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "command-envelope-rejects-wrong-command-registry-activation-schema",
@@ -3991,7 +5096,12 @@
           "path": "/command_registry_activation_ref/schema_id",
           "value": "urn:odeya:schema:command-registry-snapshot:0.1.0"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/command_registry_activation_ref/schema_id",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "command-envelope-request-digest-scope-cannot-omit-registry-activation",
@@ -4003,7 +5113,12 @@
           "op": "remove",
           "path": "/request_digest_contract/included_json_pointers/13"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/request_digest_contract/included_json_pointers",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "command-receipt-requires-resolved-command-contract-record",
@@ -4015,7 +5130,12 @@
           "op": "remove",
           "path": "/command_contract_record_ref"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "required"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "command-receipt-rejects-wrong-command-contract-schema",
@@ -4028,7 +5148,12 @@
           "path": "/command_contract_record_ref/schema_id",
           "value": "urn:odeya:schema:command-registry-snapshot:0.1.0"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/command_contract_record_ref/schema_id",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "command-receipt-digest-scope-cannot-omit-resolved-record",
@@ -4040,7 +5165,12 @@
           "op": "remove",
           "path": "/integrity/receipt_digest_contract/included_json_pointers/15"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/integrity/receipt_digest_contract/included_json_pointers",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "command-receipt-requires-resolved-command-registry-activation",
@@ -4052,7 +5182,12 @@
           "op": "remove",
           "path": "/command_registry_activation_ref"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "required"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "command-receipt-rejects-wrong-command-registry-activation-schema",
@@ -4065,7 +5200,12 @@
           "path": "/command_registry_activation_ref/schema_id",
           "value": "urn:odeya:schema:command-contract-record:0.6.0"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/command_registry_activation_ref/schema_id",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "command-receipt-digest-scope-cannot-omit-registry-activation",
@@ -4077,7 +5217,12 @@
           "op": "remove",
           "path": "/integrity/receipt_digest_contract/included_json_pointers/14"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/integrity/receipt_digest_contract/included_json_pointers",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "research-event-payload-digest-rejects-wrong-domain-separator",
@@ -4090,7 +5235,12 @@
           "path": "/integrity/payload_digest_contract/domain_separator",
           "value": "odeya-research-event-v1"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/integrity/payload_digest_contract/domain_separator",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "research-event-digest-scope-cannot-omit-payload",
@@ -4102,7 +5252,12 @@
           "op": "remove",
           "path": "/integrity/event_digest_contract/included_json_pointers/22"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/integrity/event_digest_contract/included_json_pointers",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "research-event-digest-scope-cannot-omit-logical-payload-type",
@@ -4114,7 +5269,12 @@
           "op": "remove",
           "path": "/integrity/event_digest_contract/included_json_pointers/4"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/integrity/event_digest_contract/included_json_pointers",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "research-event-digest-scope-cannot-omit-payload-contract-resolution-status",
@@ -4126,7 +5286,12 @@
           "op": "remove",
           "path": "/integrity/event_digest_contract/included_json_pointers/5"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/integrity/event_digest_contract/included_json_pointers",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "research-event-digest-scope-cannot-omit-payload-contract-digest",
@@ -4138,7 +5303,12 @@
           "op": "remove",
           "path": "/integrity/event_digest_contract/included_json_pointers/6"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/integrity/event_digest_contract/included_json_pointers",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "research-event-digest-scope-cannot-omit-event-contract-authority-status",
@@ -4150,7 +5320,12 @@
           "op": "remove",
           "path": "/integrity/event_digest_contract/included_json_pointers/7"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/integrity/event_digest_contract/included_json_pointers",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "ledger-checkpoint-requires-command-contract-registry-snapshot",
@@ -4162,7 +5337,12 @@
           "op": "remove",
           "path": "/constitutional_snapshots/command_contract_registry"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/constitutional_snapshots",
+        "keyword": "required"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "ledger-checkpoint-digest-contract-rejects-wrong-domain-separator",
@@ -4175,7 +5355,12 @@
           "path": "/checkpoint_digest_contract/domain_separator",
           "value": "odeya-research-event-v1"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/checkpoint_digest_contract/domain_separator",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "ledger-checkpoint-digest-contract-requires-exact-schema-binding",
@@ -4188,7 +5373,12 @@
           "path": "/checkpoint_digest_contract/schema_binding/schema_id",
           "value": "urn:odeya:schema:ledger-checkpoint:latest"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/checkpoint_digest_contract/schema_binding/schema_id",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "ledger-checkpoint-digest-contract-cannot-hash-self-digest",
@@ -4201,7 +5391,12 @@
           "path": "/checkpoint_digest_contract/included_json_pointers/12",
           "value": "/checkpoint_digest"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/checkpoint_digest_contract/included_json_pointers",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "ledger-checkpoint-digest-contract-cannot-hash-signatures",
@@ -4214,7 +5409,12 @@
           "path": "/checkpoint_digest_contract/included_json_pointers/12",
           "value": "/signatures"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/checkpoint_digest_contract/included_json_pointers",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "ledger-checkpoint-digest-contract-must-exclude-self-digest",
@@ -4226,7 +5426,12 @@
           "op": "remove",
           "path": "/checkpoint_digest_contract/excluded_json_pointers/0"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/checkpoint_digest_contract/excluded_json_pointers",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "ledger-checkpoint-digest-contract-must-exclude-signatures",
@@ -4238,7 +5443,12 @@
           "op": "remove",
           "path": "/checkpoint_digest_contract/excluded_json_pointers/1"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/checkpoint_digest_contract/excluded_json_pointers",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "policy-decision-valid-kernel-produced-allow",
@@ -4257,7 +5467,12 @@
           "path": "/decision/disposition",
           "value": "deny"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/obligations",
+        "keyword": "maxItems"
+      },
+      "refusal_class": "implication"
     },
     {
       "name": "policy-decision-allow-requires-completed-evaluation",
@@ -4270,7 +5485,12 @@
           "path": "/decision/evaluation_status",
           "value": "engine_error"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/decision/evaluation_status",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "policy-decision-cannot-claim-caller-production-boundary",
@@ -4283,7 +5503,12 @@
           "path": "/production_boundary",
           "value": "caller"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/production_boundary",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "policy-decision-digest-contract-cannot-hash-self-digest",
@@ -4296,7 +5521,12 @@
           "path": "/integrity/digest_contract/included_json_pointers/16",
           "value": "/integrity/decision_digest"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/integrity/digest_contract/included_json_pointers",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "admission-evidence-bundle-valid-accepted-decision",
@@ -4315,7 +5545,12 @@
           "path": "/terminal_disposition/terminal_stage",
           "value": "policy"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/terminal_disposition/terminal_stage",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "admission-evidence-policy-record-requires-exact-policy-schema",
@@ -4328,7 +5563,12 @@
           "path": "/evidence_records/5/schema_id",
           "value": "urn:odeya:schema:validation-result:0.4.0"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/evidence_records/5/schema_id",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "admission-evidence-digest-contract-cannot-omit-evidence-records",
@@ -4340,7 +5580,12 @@
           "op": "remove",
           "path": "/integrity/digest_contract/included_json_pointers/9"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/integrity/digest_contract/included_json_pointers",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "command-receipt-valid-schema-unresolvable-after-member-resolution",
@@ -4359,7 +5604,12 @@
           "path": "/result/rejection_code",
           "value": "unknown_command"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/result",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "command-receipt-requires-admission-evidence-bundle",
@@ -4371,7 +5621,12 @@
           "op": "remove",
           "path": "/admission_evidence"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "required"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "command-receipt-rejects-wrong-policy-decision-schema",
@@ -4384,7 +5639,12 @@
           "path": "/admission_evidence/policy_decision_refs/0/schema_id",
           "value": "urn:odeya:schema:validation-result:0.4.0"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/admission_evidence/policy_decision_refs/0/schema_id",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "command-receipt-digest-scope-cannot-omit-admission-evidence",
@@ -4396,7 +5656,12 @@
           "op": "remove",
           "path": "/integrity/receipt_digest_contract/included_json_pointers/20"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/integrity/receipt_digest_contract/included_json_pointers",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "ledger-checkpoint-requires-admission-evidence-set-commitment",
@@ -4408,7 +5673,12 @@
           "op": "remove",
           "path": "/commitments/admission_evidence_set"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/commitments",
+        "keyword": "required"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "command-envelope-caller-cannot-submit-policy-decision-reference",
@@ -4423,7 +5693,12 @@
             "policy-decision.caller.001"
           ]
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/presented_authority_hints",
+        "keyword": "additionalProperties"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "schema-registry-valid-structural-only-subject",
@@ -4442,7 +5717,12 @@
           "path": "/members/urn:odeya:schema:structural-probe:0.1.0@0.1.0/parent_registry_digest",
           "value": "sha256:0000000000000000000000000000000000000000000000000000000000000000"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/members/urn:odeya:schema:structural-probe:0.1.0@0.1.0",
+        "keyword": "additionalProperties"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "schema-registry-member-cannot-embed-checkpoint-reference",
@@ -4455,7 +5735,12 @@
           "path": "/members/urn:odeya:schema:structural-probe:0.1.0@0.1.0/checkpoint_ref",
           "value": "checkpoint.synthetic"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/members/urn:odeya:schema:structural-probe:0.1.0@0.1.0",
+        "keyword": "additionalProperties"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "schema-registry-member-requires-exact-raw-byte-digest",
@@ -4467,7 +5752,12 @@
           "op": "remove",
           "path": "/members/urn:odeya:schema:structural-probe:0.1.0@0.1.0/schema_bytes/byte_digest"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/members/urn:odeya:schema:structural-probe:0.1.0@0.1.0/schema_bytes",
+        "keyword": "required"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "schema-registry-digest-scope-must-include-its-contract",
@@ -4480,7 +5770,12 @@
           "path": "/registry_digest_contract/included_json_pointers/15",
           "value": "/registry_digest"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/registry_digest_contract/included_json_pointers/15",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "schema-registry-member-cannot-embed-signatures",
@@ -4493,7 +5788,12 @@
           "path": "/members/urn:odeya:schema:structural-probe:0.1.0@0.1.0/signatures",
           "value": []
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/members/urn:odeya:schema:structural-probe:0.1.0@0.1.0",
+        "keyword": "additionalProperties"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "schema-registry-rejects-latest-resolution-alias",
@@ -4506,7 +5806,12 @@
           "path": "/historical_read_policy/resolution",
           "value": "latest"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/historical_read_policy/resolution",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "command-contract-record-valid-structural-only-unresolved-subject",
@@ -4525,7 +5830,12 @@
           "path": "/record_digest",
           "value": "sha256:0000000000000000000000000000000000000000000000000000000000000000"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/record_digest",
+        "keyword": "type"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "command-contract-registry-valid-structural-only-subject",
@@ -4544,7 +5854,12 @@
           "path": "/admission_contract/reserved_design_vocabulary_membership",
           "value": "allowed"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/admission_contract/reserved_design_vocabulary_membership",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "command-contract-member-requires-payload-contract",
@@ -4556,7 +5871,12 @@
           "op": "remove",
           "path": "/members/proposal.submit@1.0.0/payload_contract"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/members/proposal.submit@1.0.0",
+        "keyword": "required"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "command-contract-member-rejects-nullable-payload",
@@ -4569,7 +5889,12 @@
           "path": "/members/proposal.submit@1.0.0/payload_contract/nullable",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/members/proposal.submit@1.0.0/payload_contract/nullable",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "command-contract-member-cannot-embed-parent-registry-digest",
@@ -4582,7 +5907,12 @@
           "path": "/members/proposal.submit@1.0.0/parent_registry_digest",
           "value": "sha256:0000000000000000000000000000000000000000000000000000000000000000"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/members/proposal.submit@1.0.0",
+        "keyword": "additionalProperties"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "command-contract-handler-port-cannot-claim-runtime-conformance",
@@ -4595,7 +5925,12 @@
           "path": "/members/proposal.submit@1.0.0/handler_port_contract/runtime_conformance_evidence_in_subject",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/members/proposal.submit@1.0.0/handler_port_contract/runtime_conformance_evidence_in_subject",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "command-contract-registry-rejects-invented-registry-digest",
@@ -4608,7 +5943,12 @@
           "path": "/registry_digest",
           "value": "sha256:0000000000000000000000000000000000000000000000000000000000000000"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/registry_digest",
+        "keyword": "type"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "command-contract-registry-rejects-latest-resolution-alias",
@@ -4621,7 +5961,12 @@
           "path": "/historical_read_policy/resolution",
           "value": "latest"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/historical_read_policy/resolution",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "event-contract-registry-valid-structural-only-subject",
@@ -4640,7 +5985,12 @@
           "path": "/members/structural.event_recorded@0.1.0/secondary_aggregate_owner",
           "value": {}
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/members/structural.event_recorded@0.1.0",
+        "keyword": "additionalProperties"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "event-contract-member-requires-payload-branch",
@@ -4652,7 +6002,12 @@
           "op": "remove",
           "path": "/members/structural.event_recorded@0.1.0/payload_contract"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/members/structural.event_recorded@0.1.0",
+        "keyword": "required"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "event-contract-member-cannot-embed-checkpoint-reference",
@@ -4665,7 +6020,12 @@
           "path": "/members/structural.event_recorded@0.1.0/checkpoint_ref",
           "value": "checkpoint.synthetic"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/members/structural.event_recorded@0.1.0",
+        "keyword": "additionalProperties"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "event-contract-registry-digest-scope-must-include-its-contract",
@@ -4678,7 +6038,12 @@
           "path": "/registry_digest_contract/included_json_pointers/16",
           "value": "/external_attestations"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/registry_digest_contract/included_json_pointers/16",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "event-contract-registry-rejects-latest-resolution-alias",
@@ -4691,7 +6056,12 @@
           "path": "/historical_read_policy/resolution",
           "value": "latest"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/historical_read_policy/resolution",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "reducer-registry-valid-structural-only-subject",
@@ -4709,7 +6079,12 @@
           "op": "remove",
           "path": "/members_by_aggregate/structural-aggregate/origin_contract"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/members_by_aggregate/structural-aggregate",
+        "keyword": "required"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "reducer-registry-rejects-two-canonical-reducers-in-one-aggregate-slot",
@@ -4725,7 +6100,12 @@
             {}
           ]
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/members_by_aggregate/structural-aggregate",
+        "keyword": "type"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "reducer-origin-cannot-fabricate-version-zero-state",
@@ -4738,7 +6118,12 @@
           "path": "/members_by_aggregate/structural-aggregate/origin_contract/first_materialized_version",
           "value": 0
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/members_by_aggregate/structural-aggregate/origin_contract/first_materialized_version",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "reducer-member-requires-two-independent-implementation-requirements",
@@ -4750,7 +6135,12 @@
           "op": "remove",
           "path": "/members_by_aggregate/structural-aggregate/implementation_requirements/requirement_refs/1"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/members_by_aggregate/structural-aggregate/implementation_requirements/requirement_refs",
+        "keyword": "minItems"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "reducer-member-cannot-embed-signatures",
@@ -4763,7 +6153,12 @@
           "path": "/members_by_aggregate/structural-aggregate/signatures",
           "value": []
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/members_by_aggregate/structural-aggregate",
+        "keyword": "additionalProperties"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "reducer-registry-digest-scope-must-include-its-contract",
@@ -4776,7 +6171,12 @@
           "path": "/registry_digest_contract/included_json_pointers/16",
           "value": "/registry_digest"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/registry_digest_contract/included_json_pointers/16",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "aggregate-state-registry-valid-structural-only-subject",
@@ -4795,7 +6195,12 @@
           "path": "/members_by_aggregate/structural-aggregate/origin_contract/first_materialized_version",
           "value": 0
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/members_by_aggregate/structural-aggregate/origin_contract/first_materialized_version",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "aggregate-state-member-cannot-embed-checkpoint-reference",
@@ -4808,7 +6213,12 @@
           "path": "/members_by_aggregate/structural-aggregate/checkpoint_ref",
           "value": "checkpoint.synthetic"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/members_by_aggregate/structural-aggregate",
+        "keyword": "additionalProperties"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "aggregate-state-member-requires-exact-state-schema-bytes",
@@ -4820,7 +6230,12 @@
           "op": "remove",
           "path": "/members_by_aggregate/structural-aggregate/state_schema_ref"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/members_by_aggregate/structural-aggregate",
+        "keyword": "required"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "aggregate-state-registry-rejects-latest-resolution-alias",
@@ -4833,7 +6248,12 @@
           "path": "/historical_read_policy/resolution",
           "value": "latest"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/historical_read_policy/resolution",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "aggregate-state-registry-digest-scope-must-include-its-contract",
@@ -4846,7 +6266,12 @@
           "path": "/registry_digest_contract/included_json_pointers/16",
           "value": "/registry_digest"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/registry_digest_contract/included_json_pointers/16",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "engine-contract-root-valid-structural-only-subject",
@@ -4864,7 +6289,12 @@
           "op": "remove",
           "path": "/components/schema_registry"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/components",
+        "keyword": "required"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "engine-contract-root-rejects-wrong-component-kind",
@@ -4877,7 +6307,12 @@
           "path": "/components/schema_registry/component_kind",
           "value": "command_contract_registry"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/components/schema_registry/component_kind",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "engine-contract-root-rejects-wrong-component-order",
@@ -4890,7 +6325,12 @@
           "path": "/component_order/0",
           "value": "command_contract_registry"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/component_order/0",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "engine-contract-root-rejects-mutable-alias-field",
@@ -4903,7 +6343,12 @@
           "path": "/reader_requirements/latest_alias",
           "value": "allowed"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/reader_requirements",
+        "keyword": "additionalProperties"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "engine-contract-root-requires-two-independent-validations",
@@ -4915,7 +6360,12 @@
           "op": "remove",
           "path": "/independent_validation_refs/1"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/independent_validation_refs",
+        "keyword": "minItems"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "engine-contract-root-digest-scope-must-include-its-contract",
@@ -4928,7 +6378,12 @@
           "path": "/root_digest_contract/included_json_pointers/16",
           "value": "/root_digest"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/root_digest_contract/included_json_pointers/16",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "c0-registry-bundle-valid-structural-only-subject",
@@ -4947,7 +6402,12 @@
           "path": "/registry_activation_ref",
           "value": {}
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "additionalProperties"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "c0-registry-bundle-cannot-embed-checkpoint-reference",
@@ -4960,7 +6420,12 @@
           "path": "/root_checkpoint_ref",
           "value": {}
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "additionalProperties"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "c0-registry-bundle-rejects-wrong-component-kind",
@@ -4973,7 +6438,12 @@
           "path": "/component_refs/0/component_kind",
           "value": "command_contract_registry"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/component_refs/0/component_kind",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "c0-registry-bundle-requires-complete-component-set",
@@ -4985,7 +6455,12 @@
           "op": "remove",
           "path": "/component_refs/11"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/component_refs",
+        "keyword": "minItems"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "c0-registry-bundle-rejects-wrong-component-order",
@@ -4998,7 +6473,12 @@
           "path": "/component_order/0",
           "value": "command_contract_registry"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/component_order/0",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "c0-registry-bundle-digest-scope-must-include-its-contract",
@@ -5011,7 +6491,12 @@
           "path": "/bundle_digest_contract/included_json_pointers/12",
           "value": "/bundle_digest"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/bundle_digest_contract/included_json_pointers/12",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "registry-activation-valid-structural-only-record",
@@ -5029,7 +6514,12 @@
           "op": "remove",
           "path": "/handler_conformance"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "required"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "registry-activation-initial-activate-cannot-have-previous-activation",
@@ -5046,7 +6536,12 @@
             "activation_digest": "sha256:0000000000000000000000000000000000000000000000000000000000000000"
           }
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/previous_activation_ref",
+        "keyword": "type"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "registry-activation-all-tenant-missions-forbids-named-mission-ids",
@@ -5059,7 +6554,12 @@
           "path": "/scope/mission_scope",
           "value": "all_tenant_missions"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/scope/mission_ids",
+        "keyword": "maxItems"
+      },
+      "refusal_class": "implication"
     },
     {
       "name": "registry-activation-digest-scope-cannot-include-attestations",
@@ -5072,7 +6572,12 @@
           "path": "/activation_digest_contract/included_json_pointers/17",
           "value": "/attestations"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/activation_digest_contract/included_json_pointers/17",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "registry-activation-requires-external-attestation",
@@ -5084,7 +6589,12 @@
           "op": "remove",
           "path": "/attestations/0"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/attestations",
+        "keyword": "minItems"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "research-event-valid-resource-reservation-created",
@@ -5133,7 +6643,12 @@
           "path": "/payload/reserved_ceiling_vector/cross_resource_conversion_allowed",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "resource-reservation-created-requires-atomic-cohort",
@@ -5146,7 +6661,12 @@
           "path": "/commit/batch_size",
           "value": 1
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "resource-reservation-created-requires-cohort-event",
@@ -5158,7 +6678,12 @@
           "op": "remove",
           "path": "/payload/cohort_event_refs/0"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "verification-resource-reservation-requires-assignment-cohort",
@@ -5171,7 +6696,12 @@
           "path": "/payload/cohort_event_refs/0/event_type",
           "value": "external_effect.authorized"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "resource-claim-does-not-invent-actual-use",
@@ -5184,7 +6714,12 @@
           "path": "/payload/actual_use_effect",
           "value": "observed"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "resource-claim-requires-atomic-start-cohort",
@@ -5197,7 +6732,12 @@
           "path": "/commit/batch_size",
           "value": 1
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "verification-resource-claim-requires-start-cohort",
@@ -5210,7 +6750,12 @@
           "path": "/payload/cohort_event_refs/0/event_type",
           "value": "attempt.started"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "resource-release-is-preclaim-only",
@@ -5223,7 +6768,12 @@
           "path": "/payload/from",
           "value": "claimed"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "resource-release-cannot-claim-commit",
@@ -5236,7 +6786,12 @@
           "path": "/payload/claim_committed",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "resource-expiry-is-preclaim-only",
@@ -5249,7 +6804,12 @@
           "path": "/payload/from",
           "value": "claimed"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "resource-usage-unavailable-cannot-carry-vector",
@@ -5262,7 +6822,12 @@
           "path": "/payload/measurement_status",
           "value": "unavailable"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "resource-usage-observed-requires-vector",
@@ -5275,7 +6840,12 @@
           "path": "/payload/observed_vector",
           "value": null
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "resource-usage-forbids-zero-inference",
@@ -5288,7 +6858,12 @@
           "path": "/payload/zero_inference_allowed",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "resource-settlement-forbids-unknown-usage",
@@ -5301,7 +6876,12 @@
           "path": "/payload/usage_unknown",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "resource-settlement-requires-usage-observation",
@@ -5313,7 +6893,12 @@
           "op": "remove",
           "path": "/payload/usage_observation_event_refs/0"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "resource-settlement-requires-overage-vector",
@@ -5325,7 +6910,12 @@
           "op": "remove",
           "path": "/payload/overage_vector"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "resource-settlement-forbids-dimension-compensation",
@@ -5338,7 +6928,12 @@
           "path": "/payload/net_consumed_vector/dimension_compensation_allowed",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "research-event-requires-admission-evidence-bundle",
@@ -5350,7 +6945,12 @@
           "op": "remove",
           "path": "/command_binding/admission_evidence_bundle_ref"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/command_binding",
+        "keyword": "required"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "research-event-rejects-loose-policy-decision-id",
@@ -5363,7 +6963,12 @@
           "path": "/authority_evidence/policy_decision_refs/0",
           "value": "policy-decision.spoof.001"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/authority_evidence/policy_decision_refs/0",
+        "keyword": "type"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "research-event-rejects-wrong-policy-decision-schema",
@@ -5376,7 +6981,12 @@
           "path": "/authority_evidence/policy_decision_refs/0/schema_id",
           "value": "urn:odeya:schema:validation-result:0.4.0"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/authority_evidence/policy_decision_refs/0/schema_id",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "research-event-trace-valid-resource-claimed-crash-holds",
@@ -5419,7 +7029,12 @@
           "path": "/expected_state/resource_accounting/ceiling_hold",
           "value": "zero"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/expected_state/resource_accounting/ceiling_hold",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "resource-release-trace-cannot-masquerade-as-claimed",
@@ -5432,7 +7047,12 @@
           "path": "/expected_state/resource_accounting/reservation_state",
           "value": "claimed"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/expected_state/resource_accounting/ceiling_hold",
+        "keyword": "const"
+      },
+      "refusal_class": "implication"
     },
     {
       "name": "resource-expiry-trace-cannot-masquerade-as-claimed",
@@ -5445,7 +7065,12 @@
           "path": "/expected_state/resource_accounting/reservation_state",
           "value": "claimed"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/expected_state/resource_accounting/ceiling_hold",
+        "keyword": "const"
+      },
+      "refusal_class": "implication"
     },
     {
       "name": "resource-settlement-trace-requires-actual-observation-axis",
@@ -5457,7 +7082,12 @@
           "op": "remove",
           "path": "/expected_state/resource_accounting/observation_axes/0"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/expected_state/resource_accounting/observation_axes",
+        "keyword": "contains"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "resource-unknown-trace-cannot-settle",
@@ -5470,7 +7100,12 @@
           "path": "/expected_state/resource_accounting/settlement",
           "value": "settled_exact"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/expected_state/resource_accounting/settlement",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "resource-claimed-trace-forbids-conversion-policy",
@@ -5483,7 +7118,12 @@
           "path": "/expected_state/resource_accounting/conversion_policy",
           "value": "not_applicable"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/expected_state/resource_accounting/conversion_policy",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "command-envelope-caller-cannot-submit-derivation-rule",
@@ -5500,7 +7140,12 @@
             "digest": "sha256:0000000000000000000000000000000000000000000000000000000000000000"
           }
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/presented_authority_hints",
+        "keyword": "additionalProperties"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "command-envelope-authority-hints-remain-untrusted",
@@ -5513,7 +7158,12 @@
           "path": "/presented_authority_hints/trust_level",
           "value": "kernel_verified"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/presented_authority_hints/trust_level",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "command-envelope-rejects-loose-assignment-hint",
@@ -5526,7 +7176,12 @@
           "path": "/presented_authority_hints/presented_assignment_refs/0",
           "value": "assignment.spoof.001"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/presented_authority_hints/presented_assignment_refs/0",
+        "keyword": "type"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "event-contract-producer-back-reference-cannot-embed-command-member-digest",
@@ -5539,7 +7194,12 @@
           "path": "/members/structural.event_recorded@0.1.0/producer_commands/0/command_member_digest",
           "value": "sha256:0000000000000000000000000000000000000000000000000000000000000000"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/members/structural.event_recorded@0.1.0/producer_commands/0",
+        "keyword": "additionalProperties"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "reducer-accepted-event-back-reference-cannot-embed-event-member-digest",
@@ -5552,7 +7212,12 @@
           "path": "/members_by_aggregate/structural-aggregate/accepted_events/0/event_member_digest",
           "value": "sha256:0000000000000000000000000000000000000000000000000000000000000000"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/members_by_aggregate/structural-aggregate/accepted_events/0",
+        "keyword": "additionalProperties"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "aggregate-state-reducer-back-reference-cannot-embed-reducer-member-digest",
@@ -5565,7 +7230,12 @@
           "path": "/members_by_aggregate/structural-aggregate/canonical_reducer_ref/reducer_member_digest",
           "value": "sha256:0000000000000000000000000000000000000000000000000000000000000000"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/members_by_aggregate/structural-aggregate/canonical_reducer_ref",
+        "keyword": "additionalProperties"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "command-design-vocabulary-valid-non-executable-planning-artifact",
@@ -5584,7 +7254,12 @@
           "path": "/entries/0/disposition",
           "value": "contract_admitted"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/entries/0/disposition",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "command-design-vocabulary-entry-cannot-promise-payload-schema",
@@ -5597,7 +7272,12 @@
           "path": "/entries/0/payload_schema_ref",
           "value": "urn:odeya:schema:fabricated:1.0.0"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/entries/0",
+        "keyword": "additionalProperties"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "command-design-vocabulary-requires-exact-121-entry-extraction",
@@ -5609,7 +7289,12 @@
           "op": "remove",
           "path": "/entries/120"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/entries",
+        "keyword": "minItems"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "command-design-vocabulary-rejects-old-envelope-schema-version",
@@ -5622,7 +7307,12 @@
           "path": "/source_envelope_candidate_ref/semantic_version",
           "value": "0.3.0"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/source_envelope_candidate_ref/semantic_version",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "command-design-vocabulary-cannot-enable-execution-promise",
@@ -5635,7 +7325,12 @@
           "path": "/prohibited_promises/execution",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/prohibited_promises/execution",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "command-design-vocabulary-digest-scope-must-include-its-contract",
@@ -5648,7 +7343,12 @@
           "path": "/vocabulary_digest_contract/included_json_pointers/9",
           "value": "/vocabulary_digest"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/vocabulary_digest_contract/included_json_pointers/9",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "admission-evidence-bundle-valid-rejected-at-policy-with-closed-suffix",
@@ -5667,7 +7367,12 @@
           "path": "/stage_results/6/disposition",
           "value": "fail"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/stage_results/6/disposition",
+        "keyword": "enum"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "admission-evidence-accepted-result-cannot-contain-not-run-stage",
@@ -5680,7 +7385,12 @@
           "path": "/stage_results/11/disposition",
           "value": "not_run_due_to_prior_failure"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/stage_results/11/disposition",
+        "keyword": "enum"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "admission-evidence-rejected-result-cannot-have-passing-terminal-stage",
@@ -5693,7 +7403,12 @@
           "path": "/stage_results/6/disposition",
           "value": "pass"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/stage_results/6/disposition",
+        "keyword": "enum"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "admission-evidence-failed-stage-requires-closed-not-run-suffix",
@@ -5713,7 +7428,12 @@
             "policy-decision.proposal-submit.001"
           ]
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/stage_results/7/disposition",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "admission-evidence-stage-sequence-is-canonical-and-nonduplicated",
@@ -5726,7 +7446,12 @@
           "path": "/stage_results/0/stage",
           "value": "idempotency"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/stage_results/0/stage",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "admission-evidence-failure-requires-decisive-evidence-record",
@@ -5739,7 +7464,12 @@
           "path": "/stage_results/6/evidence_record_ids",
           "value": []
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/stage_results/6/evidence_record_ids",
+        "keyword": "minItems"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "admission-evidence-not-applicable-stage-cannot-cite-decisive-evidence",
@@ -5754,7 +7484,12 @@
             "policy-decision.proposal-submit.001"
           ]
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/stage_results/5/evidence_record_ids",
+        "keyword": "maxItems"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "ledger-checkpoint-requires-engine-contract-root-snapshot",
@@ -5766,7 +7501,12 @@
           "op": "remove",
           "path": "/constitutional_snapshots/engine_contract_root"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/constitutional_snapshots",
+        "keyword": "required"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "ledger-checkpoint-engine-contract-root-snapshot-is-exactly-typed",
@@ -5779,7 +7519,12 @@
           "path": "/constitutional_snapshots/engine_contract_root/schema_id",
           "value": "urn:odeya:schema:engine-contract-root:latest"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/constitutional_snapshots/engine_contract_root/schema_id",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "ledger-checkpoint-requires-aggregate-state-subject-registry-snapshot",
@@ -5791,7 +7536,12 @@
           "op": "remove",
           "path": "/constitutional_snapshots/aggregate_state_subject_registry"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/constitutional_snapshots",
+        "keyword": "required"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "ledger-checkpoint-aggregate-state-subject-registry-snapshot-is-exact-version",
@@ -5804,7 +7554,12 @@
           "path": "/constitutional_snapshots/aggregate_state_subject_registry/version",
           "value": "0.2.0"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/constitutional_snapshots/aggregate_state_subject_registry/version",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "model-configuration-record-valid-observed-candidate",
@@ -5823,7 +7578,12 @@
           "path": "/invocation_configuration/secrets_embedded",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/invocation_configuration/secrets_embedded",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "model-configuration-record-rejects-unknown-training-use-without-reason",
@@ -5836,7 +7596,12 @@
           "path": "/data_handling/provider_training_use",
           "value": "unknown"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/data_handling/unknown_reason_codes",
+        "keyword": "minItems"
+      },
+      "refusal_class": "implication"
     },
     {
       "name": "model-configuration-record-rejects-evaluated-status-without-metrics",
@@ -5848,7 +7613,12 @@
           "op": "remove",
           "path": "/evaluation_evidence/metric_observations/0"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/evaluation_evidence/metric_observations",
+        "keyword": "minItems"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "model-configuration-record-rejects-self-certified-independence",
@@ -5861,7 +7631,12 @@
           "path": "/correlation_profile/independence_conclusion_permitted",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/correlation_profile/independence_conclusion_permitted",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "model-configuration-record-rejects-identity-on-unknown-correlation-axis",
@@ -5878,7 +7653,12 @@
             "digest": "sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
           }
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/correlation_profile/weights_lineage/identity_refs",
+        "keyword": "maxItems"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "model-configuration-record-rejects-dispatch-authority",
@@ -5891,7 +7671,12 @@
           "path": "/authority_boundary/dispatch_authorized",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/authority_boundary/dispatch_authorized",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "model-configuration-record-rejects-observed-provider-without-observed-region",
@@ -5904,7 +7689,12 @@
           "path": "/provider_identity/observed_region",
           "value": null
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/provider_identity/observed_region",
+        "keyword": "type"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "model-configuration-record-rejects-attested-model-without-version",
@@ -5917,7 +7707,12 @@
           "path": "/model_identity/provider_model_version",
           "value": null
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/model_identity/provider_model_version",
+        "keyword": "type"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "model-configuration-record-rejects-nonzero-no-retention",
@@ -5930,7 +7725,12 @@
           "path": "/data_handling/provider_retention/maximum_seconds",
           "value": 60
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/data_handling/provider_retention/maximum_seconds",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "model-configuration-record-rejects-contaminated-evaluation-for-selection",
@@ -5943,7 +7743,12 @@
           "path": "/evaluation_evidence/contamination_assessment/disposition",
           "value": "material_overlap_observed"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/evaluation_evidence/selection_use",
+        "keyword": "enum"
+      },
+      "refusal_class": "implication"
     },
     {
       "name": "model-configuration-record-rejects-not-evaluated-with-retained-metric-claims",
@@ -5966,7 +7771,12 @@
           "path": "/evaluation_evidence/reason_codes/0",
           "value": "evaluation-not-run"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/evaluation_evidence/evaluation_suite_refs",
+        "keyword": "maxItems"
+      },
+      "refusal_class": "implication"
     },
     {
       "name": "model-configuration-record-rejects-duplicate-operating-dimension",
@@ -5979,7 +7789,12 @@
           "path": "/operational_observations/3/dimension",
           "value": "performance"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/operational_observations",
+        "keyword": "contains"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "routing-decision-valid-selected-candidate",
@@ -5998,7 +7813,12 @@
           "path": "/candidate_set/0/selection_disposition",
           "value": "eligible_not_selected"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/candidate_set",
+        "keyword": "contains"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "routing-decision-rejects-no-selection-method-on-selected-result",
@@ -6011,7 +7831,12 @@
           "path": "/decision/selection_method",
           "value": "no_selection"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/decision/selection_method",
+        "keyword": "enum"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "routing-decision-rejects-eligible-candidate-with-failed-hard-constraint",
@@ -6029,7 +7854,12 @@
           "path": "/candidate_set/0/constraint_results/6/reason_codes/0",
           "value": "risk-rule-failed"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/candidate_set/0/constraint_results",
+        "keyword": "not"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "routing-decision-rejects-fallback-inside-same-attempt",
@@ -6042,7 +7872,12 @@
           "path": "/fallback/same_attempt_identity_reuse_allowed",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/fallback/same_attempt_identity_reuse_allowed",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "routing-decision-rejects-routing-as-dispatch-authority",
@@ -6055,7 +7890,12 @@
           "path": "/dispatch_boundary/routing_decision_is_dispatch_authority",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/dispatch_boundary/routing_decision_is_dispatch_authority",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "routing-decision-rejects-unknown-dimension-coerced-to-bounds",
@@ -6073,7 +7913,12 @@
           "path": "/candidate_set/0/dimension_observations/1/reason_codes/0",
           "value": "measurement-unavailable"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/candidate_set/0/dimension_observations/1/lower_bound",
+        "keyword": "type"
+      },
+      "refusal_class": "implication"
     },
     {
       "name": "projection-snapshot-valid-private-cockpit",
@@ -6092,7 +7937,12 @@
           "path": "/quantitative_displays/0/interval/lower",
           "value": 0.2
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/quantitative_displays/0/interval",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "projection-redaction-manifest-valid-limitation-preservation",
@@ -6111,7 +7961,12 @@
           "path": "/scientific_limitation_preservation/all_required_limitations_preserved",
           "value": false
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/scientific_limitation_preservation/all_required_limitations_preserved",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "reducer-equivalence-result-valid-live-independent-pass",
@@ -6130,7 +7985,12 @@
           "path": "/reader_safety/unknown_safety_enum_behavior",
           "value": "ignore"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/reader_safety/unknown_safety_enum_behavior",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "projection-impact-record-valid-deletion-fanout",
@@ -6149,7 +8009,12 @@
           "path": "/fanout_protocol/ordered_phases/1",
           "value": "rebuild_under_current_policy_and_reader"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/fanout_protocol/ordered_phases/1",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "physical-quantity-valid-exact-value-and-unit",
@@ -6167,7 +8032,12 @@
           "op": "remove",
           "path": "/unit/dimension_vector/luminous_intensity"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/unit/dimension_vector",
+        "keyword": "required"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "uncertainty-budget-valid-complete-traceability",
@@ -6186,7 +8056,12 @@
           "path": "/calibration_traceability/status",
           "value": "unknown"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/calibration_traceability/status",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "asset-configuration-snapshot-valid-inbar-hardware-blocker",
@@ -6205,7 +8080,12 @@
           "path": "/applicability_disposition",
           "value": "in_force"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/applicability_disposition",
+        "keyword": "enum"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "physical-measurement-result-valid-calibration-traceability",
@@ -6224,7 +8104,12 @@
           "path": "/calibration_traceability/evidence_role",
           "value": "physical_validation"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/calibration_traceability/evidence_role",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "physical-model-record-valid-independent-physical-validation",
@@ -6243,7 +8128,12 @@
           "path": "/validation_partition/data_origin",
           "value": "simulation"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/validation_partition/data_origin",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "physical-evidence-vector-valid-independent-world-evidence",
@@ -6262,7 +8152,12 @@
           "path": "/credibility_vector/physical_validation/evidence_origin",
           "value": "simulation"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/credibility_vector/physical_validation/evidence_origin",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "safety-envelope-valid-recommendation-only-boundary",
@@ -6281,7 +8176,12 @@
           "path": "/actuator_boundary/direct_actuation_permitted",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/actuator_boundary/direct_actuation_permitted",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "physical-experiment-contract-valid-inbar-refusal",
@@ -6300,7 +8200,12 @@
           "path": "/planning_disposition",
           "value": "eligible_for_planning"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/planning_disposition",
+        "keyword": "enum"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "estimand-contract-valid-descriptive-prospective-contract",
@@ -6319,7 +8224,12 @@
           "path": "/time/horizon/decimal",
           "value": 1
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/time/horizon/decimal",
+        "keyword": "type"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "scientific-result-envelope-valid-sentinel-inconclusive",
@@ -6338,7 +8248,12 @@
           "path": "/decision/scientific_outcome",
           "value": "null_result"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/decision/scientific_outcome",
+        "keyword": "enum"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "work-lease-acquired-valid-local-assignment-binding",
@@ -6357,7 +8272,12 @@
           "path": "/payload/from",
           "value": "issued"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "work-lease-acquired-rejects-already-claimed-reservation",
@@ -6370,7 +8290,12 @@
           "path": "/payload/reservation_claim_state",
           "value": "claimed"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "attempt-started-valid-local-atomic-start-binding",
@@ -6389,7 +8314,12 @@
           "path": "/payload/bytes_visible_at_commit",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "attempt-started-requires-same-commit-reservation-claim-reference",
@@ -6401,7 +8331,12 @@
           "op": "remove",
           "path": "/payload/binding/reservation/reservation_claim_event_ref"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "attempt-started-rejects-expired-lease-as-active-frontier",
@@ -6414,7 +8349,12 @@
           "path": "/payload/lease_state_event_ref/event_type",
           "value": "work.lease_expired"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "attempt-completed-valid-local-observation-report",
@@ -6433,7 +8373,12 @@
           "path": "/payload/actual_input_manifest_ref",
           "value": null
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "attempt-completed-cannot-release-claimed-ceiling-before-settlement",
@@ -6446,7 +8391,12 @@
           "path": "/payload/claimed_ceiling_release_before_settlement_allowed",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "attempt-completed-rejects-provider-or-model-use",
@@ -6459,7 +8409,12 @@
           "path": "/payload/provider_or_model_use_observation",
           "value": "violation"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "command-contract-kernel-selection-cannot-be-caller-selected",
@@ -6472,7 +8427,12 @@
           "path": "/members/proposal.submit@1.0.0/authority_contract/alternative_selection/caller_may_select",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/members/proposal.submit@1.0.0/authority_contract/alternative_selection/caller_may_select",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "command-contract-bounded-authority-requires-grant-slots",
@@ -6485,7 +8445,12 @@
           "path": "/members/proposal.submit@1.0.0/authority_contract/alternatives/3/grant_slots",
           "value": []
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/members/proposal.submit@1.0.0/authority_contract/alternatives/3/grant_slots",
+        "keyword": "minItems"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "command-contract-internal-deterministic-path-cannot-be-caller-invoked",
@@ -6498,7 +8463,12 @@
           "path": "/members/proposal.submit@1.0.0/authority_contract/alternatives/2/caller_invocation_permitted",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/members/proposal.submit@1.0.0/authority_contract/alternatives/2/caller_invocation_permitted",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "command-contract-first-slice-grant-is-single-use",
@@ -6511,7 +8481,12 @@
           "path": "/members/proposal.submit@1.0.0/authority_contract/alternatives/3/grant_slots/0/max_uses",
           "value": 2
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/members/proposal.submit@1.0.0/authority_contract/alternatives/3/grant_slots/0/max_uses",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "command-contract-grant-used-event-requires-use-slot-binding",
@@ -6524,7 +8499,12 @@
           "path": "/members/proposal.submit@1.0.0/legal_event_alternatives/3/events/0/grant_slot_binding/grant_fact",
           "value": "exhaustion"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/members/proposal.submit@1.0.0/legal_event_alternatives/3/events/0/grant_slot_binding/grant_fact",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "command-contract-domain-event-cannot-carry-grant-slot-binding",
@@ -6541,7 +8521,12 @@
             "grant_fact": "use"
           }
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/members/proposal.submit@1.0.0/legal_event_alternatives/3/events/3/grant_slot_binding",
+        "keyword": "type"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "command-contract-noop-cannot-retain-event-cohort",
@@ -6554,7 +8539,12 @@
           "path": "/members/proposal.submit@1.0.0/legal_event_alternatives/0/decision_kind",
           "value": "noop"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/members/proposal.submit@1.0.0/legal_event_alternatives/0/events",
+        "keyword": "maxItems"
+      },
+      "refusal_class": "implication"
     },
     {
       "name": "registry-activation-requires-nonrecursive-p0",
@@ -6566,7 +8556,12 @@
           "op": "remove",
           "path": "/p0_constitutional_recovery_admission"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "required"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "registry-activation-p0-cannot-reference-its-own-activation",
@@ -6579,7 +8574,12 @@
           "path": "/p0_constitutional_recovery_admission/nonrecursive_boundary/activation_reference_permitted",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/p0_constitutional_recovery_admission/nonrecursive_boundary/activation_reference_permitted",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "registry-activation-p0-root-authority-cannot-be-self-issued",
@@ -6592,7 +8592,12 @@
           "path": "/p0_constitutional_recovery_admission/root_authority_binding/self_issued",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/p0_constitutional_recovery_admission/root_authority_binding/self_issued",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "registry-activation-p0-rejects-unresolved-fork",
@@ -6605,7 +8610,12 @@
           "path": "/p0_constitutional_recovery_admission/current_recovery_frontier/unresolved_fork_count",
           "value": 1
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/p0_constitutional_recovery_admission/current_recovery_frontier/unresolved_fork_count",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "registry-activation-p0-rejects-wall-clock-branch-selection",
@@ -6618,7 +8628,12 @@
           "path": "/p0_constitutional_recovery_admission/current_recovery_frontier/wall_clock_branch_selection",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/p0_constitutional_recovery_admission/current_recovery_frontier/wall_clock_branch_selection",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "registry-activation-p0-rejects-ambiguous-open-recovery-case",
@@ -6631,7 +8646,12 @@
           "path": "/p0_constitutional_recovery_admission/current_recovery_frontier/ambiguous_recovery_case_count",
           "value": 1
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/p0_constitutional_recovery_admission/current_recovery_frontier/ambiguous_recovery_case_count",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "registry-activation-p0-rejects-any-open-recovery-case",
@@ -6644,7 +8664,12 @@
           "path": "/p0_constitutional_recovery_admission/current_recovery_frontier/open_recovery_case_count",
           "value": 1
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/p0_constitutional_recovery_admission/current_recovery_frontier/open_recovery_case_count",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "registry-activation-p0-cannot-enable-publication",
@@ -6657,7 +8682,12 @@
           "path": "/p0_constitutional_recovery_admission/current_recovery_frontier/publication_enabled",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/p0_constitutional_recovery_admission/current_recovery_frontier/publication_enabled",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "command-envelope-activation-binding-requires-p0-digest",
@@ -6669,7 +8699,12 @@
           "op": "remove",
           "path": "/command_registry_activation_ref/p0_admission_digest"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/command_registry_activation_ref",
+        "keyword": "required"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "command-receipt-activation-binding-requires-p0-identity",
@@ -6681,7 +8716,12 @@
           "op": "remove",
           "path": "/command_registry_activation_ref/p0_prerequisite_id"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/command_registry_activation_ref",
+        "keyword": "required"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "admission-evidence-command-binding-requires-p0-digest",
@@ -6693,7 +8733,12 @@
           "op": "remove",
           "path": "/command_binding/command_registry_activation_ref/p0_admission_digest"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/command_binding/command_registry_activation_ref",
+        "keyword": "required"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "canonicalization-profile-core-valid-fail-closed-candidate",
@@ -6712,7 +8757,12 @@
           "path": "/profile_id",
           "value": "urn:odeya:canonicalization:odeya-jcs-latest"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/profile_id",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "canonicalization-profile-core-rejects-self-hash",
@@ -6725,7 +8775,12 @@
           "path": "/bootstrap_boundary/core_contains_self_hash",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/bootstrap_boundary/core_contains_self_hash",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "canonicalization-profile-core-rejects-parser-limit-drift",
@@ -6738,7 +8793,12 @@
           "path": "/parser_contract/limits/max_depth",
           "value": 65
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/parser_contract/limits/max_depth",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "canonicalization-profile-core-rejects-fabricated-canonical-digest",
@@ -6751,7 +8811,12 @@
           "path": "/canonical_object_digest_contract/canonical_digest",
           "value": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/canonical_object_digest_contract/canonical_digest",
+        "keyword": "type"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "canonicalization-profile-core-requires-all-current-domain-registrations",
@@ -6763,7 +8828,12 @@
           "op": "remove",
           "path": "/domain_registry/20"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/domain_registry",
+        "keyword": "minItems"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "canonicalization-profile-core-rejects-version-axis-reorder",
@@ -6776,7 +8846,12 @@
           "path": "/version_axes/0/axis_id",
           "value": "logical_command_payload_version"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/version_axes/0/axis_id",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "canonicalization-profile-core-cannot-authorize-runtime",
@@ -6789,7 +8864,12 @@
           "path": "/authority_boundary/runtime_authorized",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/authority_boundary/runtime_authorized",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "canonicalization-profile-candidate-evidence-valid-blocked-binding",
@@ -6808,7 +8888,12 @@
           "path": "/candidate_status",
           "value": "accepted"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/candidate_status",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "canonicalization-profile-candidate-evidence-rejects-self-hash-claim",
@@ -6821,7 +8906,12 @@
           "path": "/profile_core_binding/core_contains_self_hash",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/profile_core_binding/core_contains_self_hash",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "canonicalization-profile-candidate-evidence-rejects-vector-count-drift",
@@ -6834,7 +8924,12 @@
           "path": "/conformance_evidence/case_count",
           "value": 63
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/conformance_evidence/case_count",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "canonicalization-profile-candidate-evidence-cannot-invent-independence",
@@ -6847,7 +8942,12 @@
           "path": "/conformance_evidence/organizational_independence_proven",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/conformance_evidence/organizational_independence_proven",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "canonicalization-profile-candidate-evidence-rejects-domain-count-drift",
@@ -6860,7 +8960,12 @@
           "path": "/declared_domain_inventory/declared_domain_count",
           "value": 20
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/declared_domain_inventory/declared_domain_count",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "canonicalization-profile-candidate-evidence-cannot-invent-migration-completion",
@@ -6873,7 +8978,12 @@
           "path": "/migration_snapshot/current_consumer_migration_complete",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/migration_snapshot/current_consumer_migration_complete",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "canonicalization-profile-candidate-evidence-cannot-invent-operator-acceptance",
@@ -6886,7 +8996,12 @@
           "path": "/acceptance_boundary/operator_acceptance_ref",
           "value": "operator-decision.fabricated"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/acceptance_boundary/operator_acceptance_ref",
+        "keyword": "type"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "canonicalization-profile-candidate-evidence-cannot-authorize-runtime",
@@ -6899,7 +9014,12 @@
           "path": "/acceptance_boundary/runtime_authorized",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/acceptance_boundary/runtime_authorized",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "work-intent-core-valid-non-authoritative-candidate",
@@ -6918,7 +9038,12 @@
           "path": "/canonical_digest",
           "value": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "additionalProperties"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "work-intent-core-rejects-unprofiled-timestamp",
@@ -6931,7 +9056,12 @@
           "path": "/created_at",
           "value": "2026-07-16T09:00:00Z"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/created_at",
+        "keyword": "pattern"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "work-intent-core-cannot-authorize-dispatch",
@@ -6944,7 +9074,12 @@
           "path": "/prospective_authority_boundary/dispatch_authority_granted",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/prospective_authority_boundary/dispatch_authority_granted",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "work-intent-identity-candidate-evidence-valid-blocked-binding",
@@ -6963,7 +9098,12 @@
           "path": "/candidate_status",
           "value": "accepted"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/candidate_status",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "work-intent-identity-candidate-evidence-rejects-self-hash-claim",
@@ -6976,7 +9116,12 @@
           "path": "/work_intent_core_binding/core_contains_self_hash",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/work_intent_core_binding/core_contains_self_hash",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "work-intent-identity-candidate-evidence-rejects-canonical-digest-fabrication",
@@ -6989,7 +9134,12 @@
           "path": "/identity_construction_boundary/canonical_digest",
           "value": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/identity_construction_boundary/canonical_digest",
+        "keyword": "type"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "work-intent-identity-candidate-evidence-requires-both-direct-consumers",
@@ -7001,7 +9151,12 @@
           "op": "remove",
           "path": "/transitive_reissue_boundary/direct_schema_consumers/1"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/transitive_reissue_boundary/direct_schema_consumers",
+        "keyword": "minItems"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "work-intent-identity-candidate-evidence-cannot-unblock-assignment",
@@ -7014,7 +9169,12 @@
           "path": "/transitive_reissue_boundary/assignment_construction_unblocked",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/transitive_reissue_boundary/assignment_construction_unblocked",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "work-intent-identity-candidate-evidence-cannot-authorize-runtime",
@@ -7027,7 +9187,12 @@
           "path": "/authority_boundary/runtime_authorized",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/authority_boundary/runtime_authorized",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "work-intent-profile-bound-successor-valid-blocked-candidate",
@@ -7046,7 +9211,12 @@
           "path": "/canonical_digest",
           "value": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/canonical_digest",
+        "keyword": "type"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "work-intent-profile-bound-successor-rejects-profile-alias",
@@ -7059,7 +9229,12 @@
           "path": "/canonicalization_profile_ref/profile_id",
           "value": "urn:odeya:canonicalization:latest"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/canonicalization_profile_ref/profile_id",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "work-intent-profile-bound-successor-rejects-target-schema-drift",
@@ -7072,7 +9247,12 @@
           "path": "/identity_subject/nested_reference_bindings/0/target_schema_raw_digest",
           "value": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/identity_subject/nested_reference_bindings/0/target_schema_raw_digest",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "work-intent-profile-bound-successor-cannot-claim-assignable",
@@ -7085,7 +9265,12 @@
           "path": "/authority_boundary/work_intent_assignable",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/authority_boundary/work_intent_assignable",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "canonical-work-lease-profile-bound-successor-valid-blocked-candidate",
@@ -7104,7 +9289,12 @@
           "path": "/canonical_digest",
           "value": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/canonical_digest",
+        "keyword": "type"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "canonical-work-lease-profile-bound-successor-rejects-work-intent-substitution",
@@ -7117,7 +9307,12 @@
           "path": "/identity_subject/work_intent_successor_binding/successor_work_intent_schema_id",
           "value": "urn:odeya:schema:work-intent:0.7.0"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/identity_subject/work_intent_successor_binding/successor_work_intent_schema_id",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "canonical-work-lease-profile-bound-successor-cannot-authorize-start",
@@ -7130,7 +9325,12 @@
           "path": "/authority_boundary/start_claim_authorized",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/authority_boundary/start_claim_authorized",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "work-contract-profile-bound-successor-valid-blocked-candidate",
@@ -7149,7 +9349,12 @@
           "path": "/canonical_digest",
           "value": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/canonical_digest",
+        "keyword": "type"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "work-contract-profile-bound-successor-rejects-work-intent-substitution",
@@ -7162,7 +9367,12 @@
           "path": "/identity_subject/work_intent_successor_binding/successor_work_intent_schema_id",
           "value": "urn:odeya:schema:work-intent:0.7.0"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/identity_subject/work_intent_successor_binding/successor_work_intent_schema_id",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "work-contract-profile-bound-successor-cannot-claim-constructed",
@@ -7175,7 +9385,12 @@
           "path": "/authority_boundary/work_contract_constructed",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/authority_boundary/work_contract_constructed",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "work-identity-successor-cohort-evidence-valid-blocked-candidate",
@@ -7194,7 +9409,12 @@
           "path": "/candidate_status",
           "value": "accepted"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/candidate_status",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "work-identity-successor-cohort-evidence-requires-all-successors",
@@ -7206,7 +9426,12 @@
           "op": "remove",
           "path": "/successor_resources/2"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/successor_resources",
+        "keyword": "minItems"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "work-identity-successor-cohort-evidence-rejects-successor-hash-drift",
@@ -7219,7 +9444,12 @@
           "path": "/successor_resources/0/successor_raw_digest",
           "value": "sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/successor_resources/0/successor_raw_digest",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "work-identity-successor-cohort-evidence-rejects-same-path-mutation-claim",
@@ -7232,7 +9462,12 @@
           "path": "/retention_boundary/same_path_schema_mutation_used",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/retention_boundary/same_path_schema_mutation_used",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "work-identity-successor-cohort-evidence-cannot-invent-complete-registry",
@@ -7245,7 +9480,12 @@
           "path": "/retention_boundary/complete_offline_schema_registry",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/retention_boundary/complete_offline_schema_registry",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "work-identity-successor-cohort-evidence-cannot-invent-canonical-digest",
@@ -7258,7 +9498,12 @@
           "path": "/bounded_equality_evidence/canonical_digest_issued",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/bounded_equality_evidence/canonical_digest_issued",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "work-identity-successor-cohort-evidence-cannot-invent-profile-issuance",
@@ -7271,7 +9516,12 @@
           "path": "/acceptance_boundary/profile_issued",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/acceptance_boundary/profile_issued",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "work-identity-successor-cohort-evidence-cannot-accept-gate-a",
@@ -7284,7 +9534,12 @@
           "path": "/acceptance_boundary/gate_a_accepted",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/acceptance_boundary/gate_a_accepted",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "work-identity-successor-cohort-evidence-cannot-authorize-runtime",
@@ -7297,7 +9552,12 @@
           "path": "/authority_boundary/runtime_authorized",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/authority_boundary/runtime_authorized",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "work-intent-reference-resolved-core-valid-exact-raw-targets",
@@ -7316,7 +9576,12 @@
           "path": "/source_view_ref/canonical_digest",
           "value": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/source_view_ref/canonical_digest",
+        "keyword": "type"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "work-intent-exact-reference-successor-valid-blocked-candidate",
@@ -7335,7 +9600,12 @@
           "path": "/authority_boundary/runtime_authorized",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/authority_boundary/runtime_authorized",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "work-intent-reference-resolution-evidence-valid-blocked-candidate",
@@ -7354,7 +9624,12 @@
           "path": "/proof_obligations/profile_issued",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/proof_obligations/profile_issued",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "projection-snapshot-rejects-leading-zero-semantic-version",
@@ -7367,7 +9642,12 @@
           "path": "/purpose/purpose_version",
           "value": "01.0.0"
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/purpose/purpose_version",
+        "keyword": "pattern"
+      },
+      "refusal_class": "at_mutation"
     },
     {
       "name": "schema-registry-rejects-oversized-member-key",
@@ -7382,7 +9662,12 @@
             "placeholder": true
           }
         }
-      ]
+      ],
+      "expected_refusal": {
+        "pointer": "/members/kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk@1.0.0",
+        "keyword": "additionalProperties"
+      },
+      "refusal_class": "at_mutation"
     }
   ]
 }

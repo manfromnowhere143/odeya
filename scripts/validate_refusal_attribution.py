@@ -130,6 +130,8 @@ REGISTRY: dict[str, tuple[str, Any, Any]] = {
     "work-intent-identity-candidate": ("cases.json", intent_and_inventory("expected_errors"), None),
     "canonical-profile-candidate": ("cases.json", intent_and_inventory("required_errors"), None),
     "command-identity-contracts": ("cases.json", exact_reason_set, None),
+    # The repository's largest adversarial corpus, attributed by ADR 0068.
+    "architecture-schema": ("manifest.json", pointer_keyword, None),
 }
 
 # Case-bearing manifests whose negatives are NOT attributed, held visible by
@@ -137,9 +139,6 @@ REGISTRY: dict[str, tuple[str, Any, Any]] = {
 # 0063); removing an entry here requires attributing the suite, because the
 # census fails closed on any unregistered case-bearing manifest.
 KNOWN_UNATTRIBUTED: dict[str, str] = {
-    "architecture-schema/manifest.json": (
-        "schema mutation corpus; refusal polarity only, no per-case constraint binding"
-    ),
     "canonicalization/manifest.json": (
         "canonical-identity vectors; refusals are code-bound in expectations.json"
     ),

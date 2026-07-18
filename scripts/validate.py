@@ -671,6 +671,33 @@ def build_preloaded_schema_registry(
     return registry
 
 
+def schema_case_attribution_errors(name: str, case: dict, validation_errors: list) -> list[str]:
+    """Bind a known-bad schema case to the exact constraint that refuses it.
+
+    `refusal_class` records whether the refusal fires at the mutated path
+    (`at_mutation`) or at the consequence a mutated discriminator implies
+    (`implication`); both are legitimate, and the distinction is retained
+    rather than flattened.
+    """
+    declared = case.get("expected_refusal")
+    if not isinstance(declared, dict) or not isinstance(declared.get("pointer"), str):
+        return [f"schema case {name}: known-bad case does not declare the constraint that must refuse it"]
+    if case.get("refusal_class") not in {"at_mutation", "implication"}:
+        return [f"schema case {name}: known-bad case does not declare its refusal class"]
+    for error in validation_errors:
+        pointer = "/" + "/".join(str(part) for part in error.absolute_path)
+        if pointer == declared["pointer"] and error.validator == declared.get("keyword"):
+            return []
+    observed = [
+        ("/" + "/".join(str(part) for part in error.absolute_path), error.validator)
+        for error in validation_errors[:6]
+    ]
+    return [
+        f"schema case {name}: refused, but not at its declared constraint "
+        f"{declared['pointer']!r} by {declared.get('keyword')!r}; got {observed}"
+    ]
+
+
 def validate_schema_fixtures(
     errors: list[str], schemas: dict[str, dict], dependency_ready: bool
 ) -> int:
@@ -754,6 +781,13 @@ def validate_schema_fixtures(
             add(errors, f"schema case {name}: expected valid, failed at {format_error_path(first)}: {first.message}")
         elif expectation == "invalid" and not validation_errors:
             add(errors, f"schema case {name}: expected invalid but schema accepted it")
+        elif expectation == "invalid":
+            # Polarity is not attribution: for 457 cases this suite counted any
+            # validation error as proof, so a constraint could stop firing while
+            # an incidental one kept the case red (independent review, ADR 0068).
+            add_errors = schema_case_attribution_errors(name, raw_case, validation_errors)
+            for message in add_errors:
+                add(errors, message)
 
     for schema_name, expectations in coverage.items():
         missing = {"valid", "invalid"} - expectations

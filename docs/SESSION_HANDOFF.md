@@ -480,8 +480,10 @@ seventh architecture-evidence check enforces them by census — every
 tests/*/cases.json is swept, a registered suite's unbound negative
 fails, and an unknown suite carrying negatives fails closed. REVIEW ROUND
 TWO (ADR 0063) then refuted three of four surfaces: the census itself was
-rewritten fail-closed (total registry over case-bearing manifests, 457
-architecture-schema negatives now counted explicitly, command-identity
+rewritten fail-closed (total registry over case-bearing manifests, the architecture-schema
+corpus attributed in full by ADR 0068 — 417 cases refusing at the mutated
+path, 40 by implication, each declaring its refusal class — so the census
+now reports 1,147 bound negatives and zero unattributed; command-identity
 certified on its exact field), three further CI-only gates gained local
 readers (schema pins, bare-interpreter imports, TLA pin copies), four
 misbound and one ambiguous binding were rebound to intent, and ADR 0054's
