@@ -1,7 +1,7 @@
 # Odeya Session Handoff
 
 Status: canonical recovery entrypoint for the current Odeya architecture and
-repository-release mission. Last updated 2026-07-17, Asia/Jerusalem. This is a
+repository-release mission. Last updated 2026-07-18, Asia/Jerusalem. This is a
 handoff contract, not Gate A acceptance, implementation authorization, remote
 authority, or scientific evidence.
 
@@ -65,6 +65,111 @@ Sentinel, Telos, and Inbar are proof missions and requirements sources. They are
 not Odeya runtime dependencies and their results do not prove that Odeya is
 implemented. Maestro and Aweb may be inspected as technical references only;
 neither is Odeya authority, storage, namespace, runtime, or control plane.
+
+## The standard — read this before you touch anything
+
+You are inheriting a system built to one standard, and the standard is the
+point. Hold it the way a launch-vehicle avionics team holds a flight rule and
+the way a frontier-lab safety team holds an eval: **a claim does not exist
+until its gate accepts it, and the gate must have a known-bad proof that it
+fires.** Green is not truth. A passing suite is not correctness. A number you
+did not measure this run is a rumor. Write nothing into the record that you
+have not watched fail when it should fail.
+
+The bar, stated concretely so it cannot be softened by fatigue or ambition:
+
+- **Measure before you claim.** Every count in every document is bound to a
+  gate that recomputes it. When you change a suite, the partition pins, the
+  README checkpoint, and the coverage records will refuse the commit until you
+  re-measure. That friction is the feature. Do not tune the pin to the number;
+  re-run the audit and let the pin follow reality.
+- **Refuse the flattering number.** Every coverage figure this repository has
+  ever published — 69, 71, 75, 139, 161, "417 at the mutated path" — was wrong
+  in the direction that flattered the author, and every one was caught by an
+  outside attempt to break it, never by the author admiring the record. When a
+  number pleases you, that is the moment to attack it.
+- **Name the boundary; never paper over it.** The proof-of-proof regress is
+  unbounded (ADR 0069): a self-test needs a self-test needs a self-test. You
+  stop where the next injection buys less than it costs, and you *say where you
+  stopped* and what the next step would cost. "Impossible" is almost always
+  false and was disproved by construction once already. "We stopped here, on
+  purpose, and here is the residue" is the honest sentence.
+- **Production and verification are separate — including from yourself.** No
+  session certifies its own work. A model cannot conclude its own independence:
+  `ModelConfigurationRecord` fixes twelve correlation axes and pins
+  `independence_conclusion_permitted` to false, and every review this project
+  has run shared five of those axes with the producer. Run the reviews anyway —
+  they find real defects — but label them context-isolated, not independent,
+  and never let a model signature stand where the schema demands a human one
+  (`review-determination` fixes `reviewer.principal_type` to `human`).
+- **The published surface is evidence.** A push is not finished when the bytes
+  leave the machine; it is finished when every remote workflow on the pushed
+  commit is green, verified. Publish only through
+  `scripts/ci/push-rehearsed-head.sh`, guarded by the `.githooks/pre-push`
+  hook, and never with a plain `git push`. This rule was written, then broken
+  the same day by its author reading a formal model's "Finished" line as the
+  rehearsal's — so it is now a gate, not a memory (ADR 0072, 0075).
+
+If a decision optimizes the number at the cost of the truth of the number,
+you have already failed, no matter how green the check. Slow is smooth and
+smooth is fast: land verified increments, prove each one, and let the
+fresh-clone rehearsal catch what your convenient local environment hides — it
+has caught fabricated evidence, bypassed gates, and three separate bugs in a
+single audit instrument, every time before a number reached the record.
+
+## What this lane established, and where to put pressure next
+
+The migration wave is closed at audit zero and the profile is unissued by
+design; the section below on the T0 descendant carries the exact history. The
+evidence-quality lane is the live work, and its shape is now known:
+
+- **Guard coverage is measured across the whole repository.** The lifecycle
+  checker has dedicated statement (178/185) and condition (100/103) audits; the
+  generalized `audit_suite_guard_coverage.py` measures every other suite, at
+  239 of 627 refusal statements proved. The 388 open are categorized by exact
+  closure method in `docs/GUARD_COVERAGE_CLOSURE_PLAN.md`. Three closure
+  patterns are proven and mechanical: harness self-tests (ADR 0080/0081),
+  meta-proofs for the attribution self-tests (ADR 0083, now complete across all
+  six), and the artifact-mutation vocabulary for once-loaded records (ADR 0082,
+  proven on the first-slice inventory).
+- **Where to put pressure.** The remaining bulk is the per-case domain-logic
+  layer: guards inside per-case checkers that no retained case exercises. They
+  close by targeted, ablation-verified cases in the ADR 0071 style — one
+  mutation crafted to trip exactly that guard, proven to fire before retention.
+  This is bespoke per-guard work, not another instrument, and some guards are
+  genuinely unreachable by a candidate mutation without editing retained
+  fixtures (which would corrupt the safe baseline); those are honest residue,
+  named per suite, not oversights. **Do this work fresh and unhurried.** It is
+  precisely the work where a rushed session produces a case that passes without
+  proving anything, and a case that looks like proof and is not is worse than
+  an open guard that is honestly counted.
+- **Correctness is the frontier beyond coverage.** Everything measured so far
+  is *statement reachability* — a guard is shown to fire, never shown to
+  enforce the right rule. Condition-level (MC/DC) mutation exists for one suite;
+  extending it, and moving from "the guard fires" to "the guard enforces the
+  intended constraint," is the deep unit that outranks raw coverage percentage.
+
+## The ambition, stated plainly so the standard has a reason
+
+The immediate mission is small and strict on purpose: finish an exact,
+independently reviewable architecture before any engine runtime exists. The
+reason the bar is this high is the size of what it is a foundation for. Odeya
+is meant to become a private, provider-neutral cognitive research engine that
+can take a contributed thesis, accept or decline it through explicit contracts,
+run admitted research missions against real scientific and engineering
+problems, learn only from grounded outcomes, and earn greater autonomy one
+replayable increment at a time — where every warranted claim traverses back to
+exact inputs, methods, environment, cost, and provenance, and where a wrong
+byte in the identity layer cannot silently poison every downstream claim.
+
+That is why the profile decision is a human's and not a session's; why nulls
+and failures are first-class; why negative evidence is never deleted; why the
+kernel governs and the models only propose. The discipline is not bureaucracy
+around a demo. It is the thing that will let this engine, if it is ever
+allowed to run a real mission, be believed — and the only version worth
+building is the one whose claims survive an adversary who wants them to be
+false. Build to that. The next session that holds this standard is the one
+that deserves to carry the mission forward.
 
 ## Non-negotiable engineering laws
 
