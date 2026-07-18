@@ -28,6 +28,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from copy import deepcopy
 from pathlib import Path
@@ -49,6 +50,7 @@ def measure() -> dict:
     manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
 
     results = []
+    seen: set[tuple[str, int]] = set()
     for case in manifest.get("cases", []):
         declared = case.get("ablation_verified_rule")
         if not declared:
@@ -60,7 +62,35 @@ def measure() -> dict:
             errors,
             case["name"],
         )
-        index = int(declared.rsplit("/", 1)[1])
+        # The declared rule pointer was unvalidated prose: review showed a case
+        # declaring "/this/pointer/is/not/a/rule/at/all/7" passing, because only
+        # the trailing integer was ever read (ADR 0075).
+        match = re.fullmatch(r"/allOf/(\d+)", declared)
+        if match is None:
+            results.append({"case": case["name"], "schema": case["schema"],
+                            "rule": declared, "isolates": False,
+                            "reason": "declared rule is not an /allOf/N pointer"})
+            continue
+        index = int(match.group(1))
+        rules = schema.get("allOf")
+        if not isinstance(rules, list) or index >= len(rules):
+            results.append({"case": case["name"], "schema": case["schema"],
+                            "rule": declared, "isolates": False,
+                            "reason": "declared rule index is out of range"})
+            continue
+        named = re.search(r"-rule-(\d+)-is-enforced$", case["name"])
+        if named and int(named.group(1)) != index:
+            results.append({"case": case["name"], "schema": case["schema"],
+                            "rule": declared, "isolates": False,
+                            "reason": "declared rule index disagrees with the case name"})
+            continue
+        claimed = (case["schema"], index)
+        if claimed in seen:
+            results.append({"case": case["name"], "schema": case["schema"],
+                            "rule": declared, "isolates": False,
+                            "reason": "another case already claims this rule"})
+            continue
+        seen.add(claimed)
         ablated = deepcopy(schema)
         del ablated["allOf"][index]
         refused_with = bool(

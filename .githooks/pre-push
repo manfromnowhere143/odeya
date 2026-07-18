@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+# Refuse to publish a commit that has no rehearsal evidence bound to its SHA.
+#
+# ADR 0072 claimed the sequencing law had been made mechanical by a helper
+# script. Independent review refuted that in one line: plain `git push`
+# ignored the helper entirely, so the "gate" was convention wearing a
+# gate's name (ADR 0075). This hook is the mechanism that claim needed.
+# It is still local configuration -- a clone without `core.hooksPath` set
+# has no protection -- and that residue is stated rather than implied away.
+set -euo pipefail
+
+EVIDENCE_ROOT="${ODEYA_EVIDENCE_ROOT:-/Users/danielwahnich/workspace/odeya-release-evidence}"
+readonly EVIDENCE_ROOT
+
+status=0
+while read -r _local_ref local_sha remote_ref _remote_sha; do
+  [[ "$local_sha" =~ ^0+$ ]] && continue          # branch deletion
+  [[ "$remote_ref" == refs/heads/main ]] || continue
+
+  manifest="$EVIDENCE_ROOT/$local_sha/rehearsal-evidence-manifest.json"
+  if [[ ! -f "$manifest" ]]; then
+    printf 'pre-push: refusing %s -> %s\n' "${local_sha:0:9}" "$remote_ref" >&2
+    printf 'pre-push: no rehearsal evidence at %s\n' "$manifest" >&2
+    status=1
+    continue
+  fi
+  if ! python3 - "$manifest" "$local_sha" <<'PY'
+import json, sys
+document = json.loads(open(sys.argv[1], encoding="utf-8").read())
+if document.get("subject_commit") != sys.argv[2]:
+    print(f"pre-push: evidence binds {document.get('subject_commit')}, not the pushed commit",
+          file=sys.stderr)
+    raise SystemExit(1)
+if document.get("canonical_scientific_evidence") is not False:
+    print("pre-push: evidence claims canonical scientific status", file=sys.stderr)
+    raise SystemExit(1)
+files = document.get("files")
+if not isinstance(files, list) or len(files) < 10:
+    print("pre-push: evidence manifest carries no plausible file inventory", file=sys.stderr)
+    raise SystemExit(1)
+PY
+  then
+    status=1
+  fi
+done
+
+if [[ "$status" -ne 0 ]]; then
+  printf 'pre-push: rehearse the exact commit first (scripts/ci/rehearse-fresh-clone.sh).\n' >&2
+fi
+exit "$status"

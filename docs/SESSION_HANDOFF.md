@@ -849,7 +849,11 @@ the gate.
 
 ## The published surface is part of the evidence
 
-**Publish only through `scripts/ci/push-rehearsed-head.sh`**, and audit
+**A `.githooks/pre-push` hook refuses any push to `main` lacking evidence
+bound to the pushed SHA; run `git config core.hooksPath .githooks` in
+every clone, since the hook is local configuration and a fresh clone has
+no protection without it (ADR 0075). Publish through
+`scripts/ci/push-rehearsed-head.sh`**, and audit
 history with `scripts/ci/audit-publication-evidence.py <range>`: this
 session's 24 published commits all carry evidence bound to their exact
 SHA, while nine older commits on the branch carry none (ADR 0074). It refuses

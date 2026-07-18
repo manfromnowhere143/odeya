@@ -135,6 +135,14 @@ jobs:
           python scripts/validate_schema_contracts.py \
             2>&1 | tee artifacts/ci/schema-contracts.log
 
+      # Re-measured here because the cheap gate cannot detect a shifted rule
+      # index or a falsified record, and independent review found this audit
+      # running in no workflow at all (ADR 0075).
+      - name: Re-measure cross-field rule ablation
+        run: |
+          python scripts/audit_schema_rule_ablation.py --check \
+            2>&1 | tee artifacts/ci/schema-rule-ablation.log
+
       - name: Prove schema validation did not mutate tracked evidence
         run: git diff --exit-code
 
