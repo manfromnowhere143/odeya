@@ -428,6 +428,39 @@ def constitutional_chain_errors(instance: Any) -> list[str]:
     return errors
 
 
+def attribution_failures(name: str, case: dict, errors: list[str]) -> list[str]:
+    """Refusal for an incidental reason is not proof that the intended
+    invariant fires. Bind each known-bad case to its own refusal, the
+    lifecycle suite's spelling (ADR 0024, 0055-0057)."""
+    expected_refusal = case.get("expected_refusal_contains")
+    if not isinstance(expected_refusal, str) or not expected_refusal:
+        return [f"{name}: known-bad case does not declare the invariant that must refuse it"]
+    if not any(expected_refusal in error for error in errors):
+        return [
+            f"{name}: refused, but not by its declared invariant "
+            f"{expected_refusal!r}; got {errors}"
+        ]
+    return []
+
+
+def attribution_self_test(cases: list, evaluate) -> list[str]:
+    """Prove on every run that the binding check itself fires (law 11)."""
+    template = next((c for c in cases if isinstance(c, dict) and c.get("expect") == "reject"), None)
+    if template is None:
+        return ["attribution self-test found no known-bad case to tamper with"]
+    errors = evaluate(template)
+    failures: list[str] = []
+    misdeclared = dict(template, expected_refusal_contains="odeya-self-test-never-appears")
+    if not any("not by its declared invariant" in f
+               for f in attribution_failures(str(template.get("name")), misdeclared, errors)):
+        failures.append("attribution self-test: a misdeclared invariant was not detected")
+    undeclared = {k: v for k, v in template.items() if k != "expected_refusal_contains"}
+    if not any("does not declare the invariant" in f
+               for f in attribution_failures(str(template.get("name")), undeclared, errors)):
+        failures.append("attribution self-test: a missing declaration was not detected")
+    return failures
+
+
 def main() -> int:
     manifest = load_json(CASES_PATH)
     schemas = {name: load_json(path) for name, path in SCHEMA_PATHS.items()}
@@ -459,6 +492,12 @@ def main() -> int:
         "blocked_receipt": lambda value: blocked_receipt_errors(value, schemas["blocked_receipt"]),
         "constitutional_chain": constitutional_chain_errors,
     }
+    def evaluate(case: dict) -> list[str]:
+        instance = mutated_copy(load_json(ROOT / str(case.get("fixture"))), case.get("mutations", []))
+        return model_checkers[str(case.get("model"))](instance)
+
+    failures.extend(attribution_self_test(cases, evaluate))
+
     safe_count = 0
     rejected_count = 0
     for case in cases:
@@ -488,6 +527,7 @@ def main() -> int:
                 failures.append(f"{name}: known-bad mutation was accepted")
             else:
                 rejected_count += 1
+            failures.extend(attribution_failures(name, case, errors))
         else:
             failures.append(f"{name}: unknown expectation {expectation!r}")
 

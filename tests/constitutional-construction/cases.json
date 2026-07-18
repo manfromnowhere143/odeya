@@ -60,7 +60,8 @@
             "produce_external_attestations_over_seal_digest"
           ]
         }
-      ]
+      ],
+      "expected_refusal_contains": "phase order is not core -> core digest -> evidence -> seal -> seal digest -> attestation"
     },
     {
       "name": "construction-order-rejects-evidence-over-future-seal",
@@ -75,7 +76,8 @@
           "path": "/family_profiles/engine_contract_root/evidence_binding_target",
           "value": "seal_digest"
         }
-      ]
+      ],
+      "expected_refusal_contains": "evidence does not bind the core digest"
     },
     {
       "name": "construction-order-rejects-existing-schema-conformance-claim",
@@ -90,7 +92,8 @@
           "path": "/family_profiles/engine_contract_root/existing_schema_bytes_conform",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal_contains": "falsely claimed conforming"
     },
     {
       "name": "construction-order-rejects-false-canonical-profile-freeze",
@@ -105,7 +108,8 @@
           "path": "/unresolved_profile_prerequisites/canonicalization_profile_frozen",
           "value": true
         }
-      ]
+      ],
+      "expected_refusal_contains": "unfinished canonical/framing/digest-contract profiles are not exactly blocking"
     },
     {
       "name": "construction-order-rejects-core-seal-domain-collapse",
@@ -120,7 +124,8 @@
           "path": "/family_profiles/engine_contract_root/reserved_seal_digest_domain_separator",
           "value": "odeya-engine-contract-root-core-v1"
         }
-      ]
+      ],
+      "expected_refusal_contains": "constitutional core/seal domain reservations are not globally unique"
     },
     {
       "name": "construction-order-rejects-valid-looking-reserved-domain-drift",
@@ -135,7 +140,8 @@
           "path": "/family_profiles/engine_contract_root/reserved_seal_digest_domain_separator",
           "value": "odeya-c0-registry-bundle-seal-v1"
         }
-      ]
+      ],
+      "expected_refusal_contains": "reserved core/seal domain pair drifted"
     },
     {
       "name": "blocked-construction-receipt-safe-reference",
@@ -152,8 +158,13 @@
       "fixture": "tests/constitutional-construction/fixtures/blocked-construction-receipt.valid.json",
       "expect": "reject",
       "mutations": [
-        { "op": "replace", "path": "/disposition/admission_claim", "value": "admitted" }
-      ]
+        {
+          "op": "replace",
+          "path": "/disposition/admission_claim",
+          "value": "admitted"
+        }
+      ],
+      "expected_refusal_contains": "$.disposition.admission_claim"
     },
     {
       "name": "blocked-receipt-cannot-emit-p0-digest",
@@ -168,7 +179,8 @@
           "path": "/p0_digest",
           "value": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
         }
-      ]
+      ],
+      "expected_refusal_contains": "'p0_digest' was unexpected"
     },
     {
       "name": "blocked-receipt-placeholder-cannot-be-admission-input",
@@ -178,8 +190,13 @@
       "fixture": "tests/constitutional-construction/fixtures/blocked-construction-receipt.valid.json",
       "expect": "reject",
       "mutations": [
-        { "op": "replace", "path": "/observed_inputs/0/usable_for_admission", "value": true }
-      ]
+        {
+          "op": "replace",
+          "path": "/observed_inputs/0/usable_for_admission",
+          "value": true
+        }
+      ],
+      "expected_refusal_contains": "usable_for_admission"
     },
     {
       "name": "blocked-receipt-missing-count-must-equal-missing-subjects",
@@ -189,8 +206,13 @@
       "fixture": "tests/constitutional-construction/fixtures/blocked-construction-receipt.valid.json",
       "expect": "reject",
       "mutations": [
-        { "op": "replace", "path": "/construction_boundary/missing_real_subject_count", "value": 1 }
-      ]
+        {
+          "op": "replace",
+          "path": "/construction_boundary/missing_real_subject_count",
+          "value": 1
+        }
+      ],
+      "expected_refusal_contains": "missing_real_subject_count does not equal the exact missing subject inventory"
     },
     {
       "name": "constitutional-chain-safe-structural-reference",
@@ -212,7 +234,8 @@
           "path": "/p0/activation_digest",
           "value": "sha256:7777777777777777777777777777777777777777777777777777777777777777"
         }
-      ]
+      ],
+      "expected_refusal_contains": "P0 contains parent activation fields"
     },
     {
       "name": "activation-outer-root-must-equal-p0-root",
@@ -227,7 +250,8 @@
           "path": "/activation/engine_contract_root_digest",
           "value": "sha256:a111111111111111111111111111111111111111111111111111111111111111"
         }
-      ]
+      ],
+      "expected_refusal_contains": "outer activation root digest does not equal embedded P0 root digest"
     },
     {
       "name": "activation-outer-c0-must-equal-p0-c0",
@@ -242,7 +266,8 @@
           "path": "/activation/c0_registry_bundle_digest",
           "value": "sha256:a222222222222222222222222222222222222222222222222222222222222222"
         }
-      ]
+      ],
+      "expected_refusal_contains": "outer activation C0 digest does not equal embedded P0 C0 digest"
     },
     {
       "name": "activation-outer-checkpoint-must-equal-p0-checkpoint",
@@ -257,7 +282,8 @@
           "path": "/activation/checkpoint_digest",
           "value": "sha256:a333333333333333333333333333333333333333333333333333333333333333"
         }
-      ]
+      ],
+      "expected_refusal_contains": "outer activation checkpoint digest does not equal embedded P0 checkpoint digest"
     },
     {
       "name": "c0-components-must-equal-root-components",
@@ -272,7 +298,8 @@
           "path": "/c0_registry_bundle/component_digests/event_contract_registry",
           "value": "sha256:a282828282828282828282828282828282828282828282828282828282828282"
         }
-      ]
+      ],
+      "expected_refusal_contains": "C0 component digest set does not equal the EngineContractRoot component set"
     },
     {
       "name": "p0-frontier-reference-digest-must-equal-frontier-digest",
@@ -287,7 +314,8 @@
           "path": "/p0/frontier/ref_digest",
           "value": "sha256:a444444444444444444444444444444444444444444444444444444444444444"
         }
-      ]
+      ],
+      "expected_refusal_contains": "recovery frontier reference digest does not equal frontier digest"
     },
     {
       "name": "p0-frontier-cannot-postdate-activation",
@@ -297,8 +325,13 @@
       "fixture": "tests/constitutional-construction/fixtures/constitutional-chain.safe.json",
       "expect": "reject",
       "mutations": [
-        { "op": "replace", "path": "/p0/frontier/position", "value": 102 }
-      ]
+        {
+          "op": "replace",
+          "path": "/p0/frontier/position",
+          "value": 102
+        }
+      ],
+      "expected_refusal_contains": "required order checkpoint <= recovery frontier < activation is violated"
     },
     {
       "name": "p0-frontier-epoch-must-equal-checkpoint-and-activation",
@@ -308,8 +341,13 @@
       "fixture": "tests/constitutional-construction/fixtures/constitutional-chain.safe.json",
       "expect": "reject",
       "mutations": [
-        { "op": "replace", "path": "/p0/frontier/ledger_epoch", "value": "ledger-epoch.other" }
-      ]
+        {
+          "op": "replace",
+          "path": "/p0/frontier/ledger_epoch",
+          "value": "ledger-epoch.other"
+        }
+      ],
+      "expected_refusal_contains": "recovery frontier epoch does not equal checkpoint and activation epochs"
     },
     {
       "name": "witness-must-observe-bound-checkpoint",
@@ -324,7 +362,8 @@
           "path": "/p0/witnesses/1/checkpoint_digest",
           "value": "sha256:a333333333333333333333333333333333333333333333333333333333333333"
         }
-      ]
+      ],
+      "expected_refusal_contains": "does not observe the bound checkpoint digest"
     },
     {
       "name": "witness-identities-must-be-distinct",
@@ -334,8 +373,13 @@
       "fixture": "tests/constitutional-construction/fixtures/constitutional-chain.safe.json",
       "expect": "reject",
       "mutations": [
-        { "op": "replace", "path": "/p0/witnesses/1/witness_id", "value": "witness.alpha" }
-      ]
+        {
+          "op": "replace",
+          "path": "/p0/witnesses/1/witness_id",
+          "value": "witness.alpha"
+        }
+      ],
+      "expected_refusal_contains": "witness identities are missing or duplicated"
     },
     {
       "name": "witness-failure-domains-must-be-distinct",
@@ -350,7 +394,8 @@
           "path": "/p0/witnesses/1/failure_domain_id",
           "value": "failure-domain.alpha"
         }
-      ]
+      ],
+      "expected_refusal_contains": "witness failure domains are missing or duplicated"
     },
     {
       "name": "handler-member-count-must-equal-command-surface",
@@ -360,8 +405,13 @@
       "fixture": "tests/constitutional-construction/fixtures/constitutional-chain.safe.json",
       "expect": "reject",
       "mutations": [
-        { "op": "replace", "path": "/activation/handler_conformance/declared_member_count", "value": 1 }
-      ]
+        {
+          "op": "replace",
+          "path": "/activation/handler_conformance/declared_member_count",
+          "value": 1
+        }
+      ],
+      "expected_refusal_contains": "declared handler count does not equal the handler member set"
     },
     {
       "name": "handler-set-digest-must-equal-command-surface",
@@ -376,7 +426,8 @@
           "path": "/activation/handler_conformance/set_digest",
           "value": "sha256:a666666666666666666666666666666666666666666666666666666666666666"
         }
-      ]
+      ],
+      "expected_refusal_contains": "handler set digest does not equal the admitted command-set digest"
     },
     {
       "name": "declared-command-count-must-equal-envelope-discriminators",
@@ -386,8 +437,13 @@
       "fixture": "tests/constitutional-construction/fixtures/constitutional-chain.safe.json",
       "expect": "reject",
       "mutations": [
-        { "op": "replace", "path": "/activation/command_surface/declared_member_count", "value": 3 }
-      ]
+        {
+          "op": "replace",
+          "path": "/activation/command_surface/declared_member_count",
+          "value": 3
+        }
+      ],
+      "expected_refusal_contains": "declared command count does not equal generated envelope discriminator count"
     },
     {
       "name": "sequence-two-activation-requires-predecessor",
@@ -397,8 +453,13 @@
       "fixture": "tests/constitutional-construction/fixtures/constitutional-chain.safe.json",
       "expect": "reject",
       "mutations": [
-        { "op": "replace", "path": "/activation/activation_sequence", "value": 2 }
-      ]
+        {
+          "op": "replace",
+          "path": "/activation/activation_sequence",
+          "value": 2
+        }
+      ],
+      "expected_refusal_contains": "later activation sequence requires an exact predecessor and maintenance effect"
     },
     {
       "name": "p0-bounded-recovery-cannot-escalate-effects",
@@ -408,11 +469,32 @@
       "fixture": "tests/constitutional-construction/fixtures/constitutional-chain.safe.json",
       "expect": "reject",
       "mutations": [
-        { "op": "replace", "path": "/activation/scope/risk_ceiling", "value": "R4" },
-        { "op": "replace", "path": "/activation/scope/environment_classes", "value": ["production"] },
-        { "op": "replace", "path": "/activation/scope/permitted_action_classes", "value": ["external_dispatch"] },
-        { "op": "replace", "path": "/activation/scope/external_effects_enabled", "value": true }
-      ]
+        {
+          "op": "replace",
+          "path": "/activation/scope/risk_ceiling",
+          "value": "R4"
+        },
+        {
+          "op": "replace",
+          "path": "/activation/scope/environment_classes",
+          "value": [
+            "production"
+          ]
+        },
+        {
+          "op": "replace",
+          "path": "/activation/scope/permitted_action_classes",
+          "value": [
+            "external_dispatch"
+          ]
+        },
+        {
+          "op": "replace",
+          "path": "/activation/scope/external_effects_enabled",
+          "value": true
+        }
+      ],
+      "expected_refusal_contains": "exceeds the R0/R1 risk ceiling"
     },
     {
       "name": "activation-attestation-must-sign-activation-seal",
@@ -427,7 +509,8 @@
           "path": "/activation/attestations/0/signed_digest",
           "value": "sha256:a777777777777777777777777777777777777777777777777777777777777777"
         }
-      ]
+      ],
+      "expected_refusal_contains": "does not sign the activation seal digest"
     },
     {
       "name": "recovery-quorum-cannot-exceed-distinct-principals",
@@ -437,8 +520,13 @@
       "fixture": "tests/constitutional-construction/fixtures/constitutional-chain.safe.json",
       "expect": "reject",
       "mutations": [
-        { "op": "replace", "path": "/root_authority/recovery/quorum", "value": 3 }
-      ]
+        {
+          "op": "replace",
+          "path": "/root_authority/recovery/quorum",
+          "value": 3
+        }
+      ],
+      "expected_refusal_contains": "root recovery quorum exceeds the distinct recovery principals"
     },
     {
       "name": "operational-root-cannot-collapse-critical-roles-to-one-principal",
@@ -463,7 +551,8 @@
             "publication": "principal.alpha"
           }
         }
-      ]
+      ],
+      "expected_refusal_contains": "operational root collapses critical roles"
     }
   ]
 }
