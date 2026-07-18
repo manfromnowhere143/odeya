@@ -450,6 +450,14 @@ stage. 132 single-condition tests and structural dict comparisons are
 counted, not audited; field-level blindness inside structural expectations
 remains unmeasured.
 
+**THE REPOSITORY MEASURES 23% OF ITS OWN GUARDS (ADR 0078).** 717 refusal
+statements across thirteen suites; 169 proved to fire; **548 never
+measured at all**. Every coverage number this session produced describes
+lifecycle-closure alone. The other twelve suites are in the exact state
+lifecycle-closure was in before ADR 0025: any guard deletable with its
+suite green. A suite-agnostic mutation audit is the largest unblocked
+evidence unit in the repository and is the next step.
+
 **REVIEWERS THIS SESSION WERE CORRELATED, NOT INDEPENDENT.** All four
 rounds shared the producer's provider, model family, prompt family,
 harness and human principal — five of the twelve axes
