@@ -23,7 +23,9 @@
     "c5_assignment_partial_grants",
     "c7_duplicate_reducer_authority",
     "c8_stale_p0_frontier",
-    "c8_ambiguous_p0_frontier"
+    "c8_ambiguous_p0_frontier",
+    "c8_ambiguous_p0_frontier_prong_unresolved_fork",
+    "c8_ambiguous_p0_frontier_prong_open_recovery_case"
   ],
   "cases": [
     {
@@ -1077,6 +1079,88 @@
         }
       },
       "expected_refusal_contains": "recovery frontier is ambiguous"
+    },
+    {
+      "name": "c8-bad-ambiguous-open-recovery-and-fork-frontier--prong-unresolved-fork",
+      "conflict_ids": [
+        "C8"
+      ],
+      "kind": "adversarial",
+      "adversarial_tag": "c8_ambiguous_p0_frontier_prong_unresolved_fork",
+      "model": "p0_frontier",
+      "expect": "reject",
+      "subject": {
+        "prerequisite_id": "P0.constitutional-recovery-admission",
+        "nonrecursive_boundary": {
+          "activation_reference_permitted": false,
+          "activation_identity_included": false,
+          "activation_sequence_included": false,
+          "parent_activation_digest_included": false,
+          "outer_activation_must_bind_exact_p0_digest": true
+        },
+        "root_authority_non_self_issued": true,
+        "exact_engine_contract_root_bound": true,
+        "exact_c0_registry_bundle_bound": true,
+        "witnessed_checkpoint": true,
+        "controlled_time_current": true,
+        "bounded_scope": true,
+        "recovery_frontier": {
+          "current": true,
+          "ledger_epoch_matches": true,
+          "root_matches": true,
+          "unresolved_fork_count": 1,
+          "quarantined": false,
+          "open_recovery_case_count": 1,
+          "ambiguous": true
+        },
+        "outer_activation_binding": {
+          "exact_p0_digest_bound": true,
+          "expired": false,
+          "superseded": false
+        }
+      },
+      "expected_refusal_contains": "recovery frontier contains an unresolved fork"
+    },
+    {
+      "name": "c8-bad-ambiguous-open-recovery-and-fork-frontier--prong-open-recovery-case",
+      "conflict_ids": [
+        "C8"
+      ],
+      "kind": "adversarial",
+      "adversarial_tag": "c8_ambiguous_p0_frontier_prong_open_recovery_case",
+      "model": "p0_frontier",
+      "expect": "reject",
+      "subject": {
+        "prerequisite_id": "P0.constitutional-recovery-admission",
+        "nonrecursive_boundary": {
+          "activation_reference_permitted": false,
+          "activation_identity_included": false,
+          "activation_sequence_included": false,
+          "parent_activation_digest_included": false,
+          "outer_activation_must_bind_exact_p0_digest": true
+        },
+        "root_authority_non_self_issued": true,
+        "exact_engine_contract_root_bound": true,
+        "exact_c0_registry_bundle_bound": true,
+        "witnessed_checkpoint": true,
+        "controlled_time_current": true,
+        "bounded_scope": true,
+        "recovery_frontier": {
+          "current": true,
+          "ledger_epoch_matches": true,
+          "root_matches": true,
+          "unresolved_fork_count": 1,
+          "quarantined": false,
+          "open_recovery_case_count": 1,
+          "ambiguous": true
+        },
+        "outer_activation_binding": {
+          "exact_p0_digest_bound": true,
+          "expired": false,
+          "superseded": false
+        }
+      },
+      "expected_refusal_contains": "recovery frontier contains an open recovery case"
     }
   ]
 }

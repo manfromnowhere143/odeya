@@ -337,6 +337,227 @@
         "pointer": "/review_compilation/accepted_limitations/0/severity",
         "keyword": "enum"
       }
+    },
+    {
+      "name": "architecture-candidate-review-ready-requires-complete-passing-signed-evidence--prong-canonicalization-pass",
+      "schema": "schemas/architecture-candidate-manifest.schema.json",
+      "fixture": "tests/architecture-review/fixtures/architecture-candidate-manifest.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/candidate_status",
+          "value": "ready_for_independent_review"
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/conformance_evidence/canonicalization_result",
+        "keyword": "const"
+      }
+    },
+    {
+      "name": "architecture-candidate-review-ready-requires-complete-passing-signed-evidence--prong-semantic-trace-pass",
+      "schema": "schemas/architecture-candidate-manifest.schema.json",
+      "fixture": "tests/architecture-review/fixtures/architecture-candidate-manifest.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/candidate_status",
+          "value": "ready_for_independent_review"
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/conformance_evidence/semantic_trace_result",
+        "keyword": "const"
+      }
+    },
+    {
+      "name": "architecture-candidate-review-ready-requires-complete-passing-signed-evidence--prong-formal-model-pass",
+      "schema": "schemas/architecture-candidate-manifest.schema.json",
+      "fixture": "tests/architecture-review/fixtures/architecture-candidate-manifest.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/candidate_status",
+          "value": "ready_for_independent_review"
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/formal_models/0/result",
+        "keyword": "const"
+      }
+    },
+    {
+      "name": "architecture-candidate-review-ready-requires-complete-passing-signed-evidence--prong-validator-pass",
+      "schema": "schemas/architecture-candidate-manifest.schema.json",
+      "fixture": "tests/architecture-review/fixtures/architecture-candidate-manifest.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/candidate_status",
+          "value": "ready_for_independent_review"
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/validator_evidence/result",
+        "keyword": "const"
+      }
+    },
+    {
+      "name": "architecture-finding-closure-requires-human-reviewed-evidence--prong-closure-evidence",
+      "schema": "schemas/architecture-finding.schema.json",
+      "fixture": "tests/architecture-review/fixtures/architecture-finding.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/disposition/state",
+          "value": "closed"
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/closure/closure_evidence_refs",
+        "keyword": "minItems"
+      }
+    },
+    {
+      "name": "architecture-finding-closure-requires-human-reviewed-evidence--prong-reviewed-at",
+      "schema": "schemas/architecture-finding.schema.json",
+      "fixture": "tests/architecture-review/fixtures/architecture-finding.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/disposition/state",
+          "value": "closed"
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/closure/closure_reviewed_at",
+        "keyword": "type"
+      }
+    },
+    {
+      "name": "architecture-finding-changed-candidate-requires-new-identity-impact-map-and-evidence--prong-new-identity",
+      "schema": "schemas/architecture-finding.schema.json",
+      "fixture": "tests/architecture-review/fixtures/architecture-finding.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/disposition/state",
+          "value": "changed_candidate"
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/closure/changed_candidate",
+        "keyword": "type"
+      }
+    },
+    {
+      "name": "architecture-finding-changed-candidate-requires-new-identity-impact-map-and-evidence--prong-closure-evidence",
+      "schema": "schemas/architecture-finding.schema.json",
+      "fixture": "tests/architecture-review/fixtures/architecture-finding.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/disposition/state",
+          "value": "changed_candidate"
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/closure/closure_evidence_refs",
+        "keyword": "minItems"
+      }
+    },
+    {
+      "name": "review-determination-acceptance-rejects-indeterminate-independence-and-open-high--prong-open-high",
+      "schema": "schemas/review-determination.schema.json",
+      "fixture": "tests/architecture-review/fixtures/review-determination.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/result",
+          "value": "accept_for_gate_a"
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/finding_summary/open_high",
+        "keyword": "const"
+      }
+    },
+    {
+      "name": "review-determination-carry-forward-requires-prior-identity-change-evidence-and-human-signature--prong-prior-determination",
+      "schema": "schemas/review-determination.schema.json",
+      "fixture": "tests/architecture-review/fixtures/review-determination.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/carry_forward/mode",
+          "value": "signed_outside_lane"
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/carry_forward/previous_determination_ref",
+        "keyword": "type"
+      }
+    },
+    {
+      "name": "review-determination-carry-forward-requires-prior-identity-change-evidence-and-human-signature--prong-prior-digest",
+      "schema": "schemas/review-determination.schema.json",
+      "fixture": "tests/architecture-review/fixtures/review-determination.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/carry_forward/mode",
+          "value": "signed_outside_lane"
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/carry_forward/previous_candidate_digest",
+        "keyword": "type"
+      }
+    },
+    {
+      "name": "review-determination-carry-forward-requires-prior-identity-change-evidence-and-human-signature--prong-change-evidence",
+      "schema": "schemas/review-determination.schema.json",
+      "fixture": "tests/architecture-review/fixtures/review-determination.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/carry_forward/mode",
+          "value": "signed_outside_lane"
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/carry_forward/reviewed_change_artifact_refs",
+        "keyword": "minItems"
+      }
+    },
+    {
+      "name": "operator-architecture-decision-cannot-accept-incomplete-lanes-or-open-high--prong-open-high",
+      "schema": "schemas/operator-architecture-decision.schema.json",
+      "fixture": "tests/architecture-review/fixtures/operator-architecture-decision.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/decision",
+          "value": "accepted_for_gate_a"
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/review_compilation/open_high",
+        "keyword": "const"
+      }
     }
   ]
 }

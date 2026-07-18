@@ -489,8 +489,9 @@ impossibility claim was half-retracted by a retained zero-use-grant
 counterexample — condition coverage now measures 88/89. Surviving
 weaknesses are enumerated in ADR 0063, not resolved: 13 crash-artifact
 condition proofs, ≥22 denominator omissions including four removable
-harness guards, 8 compound-name under-bindings, subset-semantics
-rebindability in the expected_errors suites. Any future frontier claim
+harness guards, subset-semantics rebindability in the expected_errors
+suites (the 8 compound-name under-bindings were dissolved by ADR 0064:
+18 prong cases, ablation-controlled). Any future frontier claim
 must cite the census gate's output, not a carried list. Attribution is intent binding, not mutation coverage: no
 schema-based suite is proven unweakenable at its declared location.
 

@@ -30,7 +30,10 @@
     "p0_scope_effect_escalation",
     "activation_attestation_digest_mismatch",
     "recovery_quorum_exceeds_principals",
-    "operational_root_single_principal_roles"
+    "operational_root_single_principal_roles",
+    "p0_scope_effect_escalation_prong_local_isolated",
+    "p0_scope_effect_escalation_prong_action_class",
+    "p0_scope_effect_escalation_prong_external_effects"
   ],
   "cases": [
     {
@@ -553,6 +556,111 @@
         }
       ],
       "expected_refusal_contains": "operational root collapses critical roles"
+    },
+    {
+      "name": "p0-bounded-recovery-cannot-escalate-effects--prong-local-isolated",
+      "kind": "adversarial",
+      "adversarial_tag": "p0_scope_effect_escalation_prong_local_isolated",
+      "model": "constitutional_chain",
+      "fixture": "tests/constitutional-construction/fixtures/constitutional-chain.safe.json",
+      "expect": "reject",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/activation/scope/risk_ceiling",
+          "value": "R4"
+        },
+        {
+          "op": "replace",
+          "path": "/activation/scope/environment_classes",
+          "value": [
+            "production"
+          ]
+        },
+        {
+          "op": "replace",
+          "path": "/activation/scope/permitted_action_classes",
+          "value": [
+            "external_dispatch"
+          ]
+        },
+        {
+          "op": "replace",
+          "path": "/activation/scope/external_effects_enabled",
+          "value": true
+        }
+      ],
+      "expected_refusal_contains": "P0 recovery activation is not confined to local_isolated"
+    },
+    {
+      "name": "p0-bounded-recovery-cannot-escalate-effects--prong-action-class",
+      "kind": "adversarial",
+      "adversarial_tag": "p0_scope_effect_escalation_prong_action_class",
+      "model": "constitutional_chain",
+      "fixture": "tests/constitutional-construction/fixtures/constitutional-chain.safe.json",
+      "expect": "reject",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/activation/scope/risk_ceiling",
+          "value": "R4"
+        },
+        {
+          "op": "replace",
+          "path": "/activation/scope/environment_classes",
+          "value": [
+            "production"
+          ]
+        },
+        {
+          "op": "replace",
+          "path": "/activation/scope/permitted_action_classes",
+          "value": [
+            "external_dispatch"
+          ]
+        },
+        {
+          "op": "replace",
+          "path": "/activation/scope/external_effects_enabled",
+          "value": true
+        }
+      ],
+      "expected_refusal_contains": "P0 recovery activation admits an external or unknown action class"
+    },
+    {
+      "name": "p0-bounded-recovery-cannot-escalate-effects--prong-external-effects",
+      "kind": "adversarial",
+      "adversarial_tag": "p0_scope_effect_escalation_prong_external_effects",
+      "model": "constitutional_chain",
+      "fixture": "tests/constitutional-construction/fixtures/constitutional-chain.safe.json",
+      "expect": "reject",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/activation/scope/risk_ceiling",
+          "value": "R4"
+        },
+        {
+          "op": "replace",
+          "path": "/activation/scope/environment_classes",
+          "value": [
+            "production"
+          ]
+        },
+        {
+          "op": "replace",
+          "path": "/activation/scope/permitted_action_classes",
+          "value": [
+            "external_dispatch"
+          ]
+        },
+        {
+          "op": "replace",
+          "path": "/activation/scope/external_effects_enabled",
+          "value": true
+        }
+      ],
+      "expected_refusal_contains": "does not fail closed for external_effects_enabled"
     }
   ]
 }
