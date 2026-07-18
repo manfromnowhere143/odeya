@@ -849,7 +849,10 @@ the gate.
 
 ## The published surface is part of the evidence
 
-**Publish only through `scripts/ci/push-rehearsed-head.sh`.** It refuses
+**Publish only through `scripts/ci/push-rehearsed-head.sh`**, and audit
+history with `scripts/ci/audit-publication-evidence.py <range>`: this
+session's 24 published commits all carry evidence bound to their exact
+SHA, while nine older commits on the branch carry none (ADR 0074). It refuses
 to push a commit that has no rehearsal evidence bound to its exact SHA, a
 dirty worktree, or a non-fast-forward head. This exists because the law
 below was broken the same day it was written: a session pushed while the
