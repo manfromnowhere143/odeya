@@ -67,6 +67,15 @@ readonly EVIDENCE_STAGING
 readonly TLA_ROOT="${TMPDIR:-/tmp}/odeya-tla/v1.7.4"
 readonly TLA_JAR="$TLA_ROOT/tla2tools.jar"
 readonly TLA_SHA256="936a262061c914694dfd669a543be24573c45d5aa0ff20a8b96b23d01e050e88"
+STAGE_LEDGER="$REHEARSAL_ROOT/stage-outcomes.txt"
+readonly STAGE_LEDGER
+# Every disposition the manifest reports must come from a stage that actually
+# ran. Before ADR 0076 the manifest carried six hardcoded "passed" values that
+# could not express a failure or a skip, which independent review identified as
+# a fabricated measurement in retained evidence.
+record_stage() {
+  printf '%s=%s\n' "$1" "$2" >> "$STAGE_LEDGER"
+}
 CURRENT_STAGE="clone"
 SUCCESS=0
 REMOTE_MAIN_COMMIT=""
@@ -164,6 +173,7 @@ python3 -m venv .venv-architecture
 CURRENT_STAGE="foundation"
 .venv-architecture/bin/python scripts/validate.py \
   2>&1 | tee artifacts/rehearsal/foundation.log
+record_stage foundation passed
 
 # The cheap gate inside validate.py binds the guard-coverage record to the
 # checker digest and to its own arithmetic. It cannot detect a record that was
@@ -226,6 +236,7 @@ fi
 
 CURRENT_STAGE="release-surface"
 bash scripts/ci/check-repository-release.sh
+record_stage repository_release_surface passed
 
 CURRENT_STAGE="tla-toolchain"
 mkdir -p "$TLA_ROOT"
@@ -244,6 +255,7 @@ fi
 
 CURRENT_STAGE="formal-models"
 bash formal/tla/check.sh 2>&1 | tee artifacts/rehearsal/formal.log
+record_stage bounded_formal_models passed
 
 CURRENT_STAGE="mutation-audit"
 isolated_git diff --exit-code
@@ -271,6 +283,9 @@ while IFS= read -r -d '' ignored; do
   esac
 done < <(isolated_git status --porcelain=v1 -z --ignored --untracked-files=all)
 
+record_stage tracked_and_nonignored_mutation_audit passed
+record_stage ignored_output_allowlist passed
+
 CURRENT_STAGE="evidence-assembly"
 cp -p artifacts/rehearsal/foundation.log "$EVIDENCE_STAGING"/
 cp -p artifacts/rehearsal/formal.log "$EVIDENCE_STAGING"/
@@ -291,6 +306,7 @@ env -u GITLEAKS_CONFIG -u GITLEAKS_CONFIG_TOML "$GITLEAKS_BIN" dir \
   "$EVIDENCE_STAGING" \
   > "$GITLEAKS_REPORT" 2>&1
 mv -- "$GITLEAKS_REPORT" "$EVIDENCE_STAGING/gitleaks-evidence.log"
+record_stage retained_evidence_secret_scan passed
 
 CURRENT_STAGE="evidence-manifest"
 manifest_args=(
@@ -298,6 +314,7 @@ manifest_args=(
   --subject-commit "$EXPECTED_COMMIT"
   --source-class "$SOURCE_CLASS"
   --source-identity-sha256 "$SOURCE_IDENTITY_SHA256"
+  --stage-ledger "$STAGE_LEDGER"
 )
 if [[ "$SOURCE_CLASS" == "remote-main" ]]; then
   manifest_args+=(--remote-main-commit "$REMOTE_MAIN_COMMIT")

@@ -153,8 +153,21 @@ def rehearsal_document_errors(document: dict[str, Any]) -> list[str]:
         errors.append("profile_files does not contain the exact pinned profile inventory")
     elif any(not isinstance(value, str) or not SHA256.fullmatch(value) for value in profile.values()):
         errors.append("profile_files contains a non-SHA-256 identity")
-    if document.get("pass_dispositions") != PASS_DISPOSITIONS:
-        errors.append("pass_dispositions is not the exact all-passed profile")
+    dispositions = document.get("pass_dispositions")
+    if dispositions != PASS_DISPOSITIONS:
+        # Derived from the rehearsal's stage ledger since ADR 0076: a stage
+        # that did not run reports not_run, and a manifest carrying one is
+        # not evidence that the stage passed.
+        unrun = (
+            sorted(stage for stage, outcome in dispositions.items() if outcome != "passed")
+            if isinstance(dispositions, dict)
+            else None
+        )
+        errors.append(
+            f"pass_dispositions reports stages that did not pass: {unrun}"
+            if unrun
+            else "pass_dispositions is not the exact all-passed profile"
+        )
     source_identity = document.get("source_identity_sha256")
     if not isinstance(source_identity, str) or not SHA256.fullmatch(source_identity):
         errors.append("source_identity_sha256 is not one lowercase SHA-256")

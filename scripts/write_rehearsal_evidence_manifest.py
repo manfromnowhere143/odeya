@@ -33,19 +33,38 @@ PROFILE_PATHS = (
     ".github/workflows/formal.yml",
     "formal/tla/results-manifest.json",
 )
-PASS_DISPOSITIONS = {
-    "foundation": "passed",
-    "repository_release_surface": "passed",
-    "bounded_formal_models": "passed",
-    "tracked_and_nonignored_mutation_audit": "passed",
-    "ignored_output_allowlist": "passed",
-    "retained_evidence_secret_scan": "passed",
-}
+# The stages a complete rehearsal must report. Their dispositions are DERIVED
+# from the ledger the rehearsal appends to as each stage completes; a stage
+# that did not run is reported as not_run, never as passed. Until ADR 0076
+# these were six hardcoded "passed" values written unconditionally -- a
+# fabricated measurement inside retained evidence, found by independent
+# review.
+REQUIRED_STAGES = (
+    "foundation",
+    "repository_release_surface",
+    "bounded_formal_models",
+    "tracked_and_nonignored_mutation_audit",
+    "ignored_output_allowlist",
+    "retained_evidence_secret_scan",
+)
+PASS_DISPOSITIONS = {stage: "passed" for stage in REQUIRED_STAGES}
+
+
+def derive_dispositions(ledger: Path) -> dict[str, str]:
+    observed: dict[str, str] = {}
+    if ledger.is_file():
+        for line in ledger.read_text(encoding="utf-8").splitlines():
+            stage, _, outcome = line.partition("=")
+            if stage and outcome:
+                observed[stage.strip()] = outcome.strip()
+    return {stage: observed.get(stage, "not_run") for stage in REQUIRED_STAGES}
 
 
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--evidence-root", required=True, type=Path)
+    parser.add_argument("--stage-ledger", type=Path,
+                        help="ledger of stage outcomes; dispositions are derived from it")
     parser.add_argument("--subject-commit", required=True)
     parser.add_argument("--source-class", required=True, choices=("local", "remote-main"))
     parser.add_argument("--source-identity-sha256", required=True)
@@ -109,7 +128,9 @@ def main() -> int:
         "remote_main_commit": args.remote_main_commit,
         "canonical_scientific_evidence": False,
         "profile_files": profile_files,
-        "pass_dispositions": PASS_DISPOSITIONS,
+        "pass_dispositions": derive_dispositions(args.stage_ledger)
+        if args.stage_ledger
+        else dict(PASS_DISPOSITIONS),
         "files": entries,
     }
     target = root / MANIFEST_NAME
