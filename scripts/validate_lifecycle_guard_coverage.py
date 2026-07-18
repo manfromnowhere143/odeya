@@ -37,6 +37,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "architecture/lifecycle-guard-coverage.json"
+EXPECTED_SUMMARY = {"branch_count": 185, "proved": 178, "unproved": 7, "crash_detected": 0}
 AUDIT_TOOL = ROOT / "scripts/audit_lifecycle_guard_coverage.py"
 
 
@@ -119,6 +120,16 @@ def main() -> int:
         total += len(branches)
         proved += actual_proved
 
+    # A retained record is regenerable: `--write` reproduces it from whatever
+    # the checker currently says, so an author can launder a weakening by
+    # re-measuring (independent review, ADR 0077). Pinning the measured totals
+    # here does not stop that, but it converts a silent regeneration into a
+    # deliberate, reviewable edit of this file.
+    if EXPECTED_SUMMARY is not None:
+        for field, value in EXPECTED_SUMMARY.items():
+            if (document.get("summary") or {}).get(field) != value:
+                add(errors, f"retained {field} is {(document.get('summary') or {}).get(field)!r}, "
+                            f"but this gate pins {value!r}; re-measure and update the pin deliberately")
     summary = document.get("summary") or {}
     if summary.get("branch_count") != total:
         add(errors, "summary branch_count disagrees with the enumerated models")

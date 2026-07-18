@@ -113,6 +113,11 @@ AUDITED_HELPERS = (
 # numerator and the not-audited residue -- the defensive filter on the
 # repository walk feeding the canonical defining-path guard (ADR 0069).
 AUDITED_VALUE_HELPERS = (
+    # refusal_matches decides whether a declared refusal counts at all, and the
+    # meta proof decides whether the self-test is load-bearing; review found
+    # both outside every audited tuple, with weakenings surviving (ADR 0077).
+    "refusal_matches",
+    "harness_self_test_meta_proof",
     "nested",
     "scan_defining_paths",
     "exact_value",

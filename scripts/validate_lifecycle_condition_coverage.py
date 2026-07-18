@@ -28,6 +28,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "architecture/lifecycle-condition-coverage.json"
+EXPECTED_SUMMARY = {"condition_count": 103, "proved": 100, "unproved": 3, "crash_detected": 16}
 AUDIT_TOOL = ROOT / "scripts/audit_lifecycle_condition_coverage.py"
 
 
@@ -110,6 +111,16 @@ def main() -> int:
         total += len(conditions)
         proved += actual_proved
 
+    # A retained record is regenerable: `--write` reproduces it from whatever
+    # the checker currently says, so an author can launder a weakening by
+    # re-measuring (independent review, ADR 0077). Pinning the measured totals
+    # here does not stop that, but it converts a silent regeneration into a
+    # deliberate, reviewable edit of this file.
+    if EXPECTED_SUMMARY is not None:
+        for field, value in EXPECTED_SUMMARY.items():
+            if (document.get("summary") or {}).get(field) != value:
+                add(errors, f"retained {field} is {(document.get('summary') or {}).get(field)!r}, "
+                            f"but this gate pins {value!r}; re-measure and update the pin deliberately")
     summary = document.get("summary") or {}
     if summary.get("condition_count") != total:
         add(errors, "summary condition_count disagrees with the enumerated functions")

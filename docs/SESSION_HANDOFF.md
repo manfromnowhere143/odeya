@@ -450,6 +450,16 @@ stage. 132 single-condition tests and structural dict comparisons are
 counted, not audited; field-level blindness inside structural expectations
 remains unmeasured.
 
+**THE MUTATION AUDITS ARE RECORDS, NOT GATES (ADR 0077).** `--check` is a
+byte comparison against a record that `--write` regenerates from whatever
+the checker currently says, so an author can launder a weakening by
+re-measuring. Review demonstrated it end to end: floors lowered, record
+regenerated, case set trimmed to one safe and one adversarial trace, every
+check green. Both coverage gates now pin their measured totals, which
+converts silent regeneration into a deliberate edit of a gate file but
+does not close the hole. Closing it needs an independent baseline no
+session can supply for itself — the same shape as the profile decision.
+
 **EVIDENCE-QUALITY LANE STATUS, 2026-07-18.** ADRs 0052-0068 closed this
 lane by measurement. Current retained numbers, all reproduced by the
 exact-commit rehearsal: lifecycle statement coverage **172/181**,

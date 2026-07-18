@@ -107,6 +107,7 @@ AUDITED_MODELS = (
     "evaluate_cases",
     "coverage_failures",
     "harness_self_test",
+    "harness_self_test_meta_proof",
     "collect_case_failures",
 )
 

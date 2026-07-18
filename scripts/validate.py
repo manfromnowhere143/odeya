@@ -691,8 +691,18 @@ def schema_refusal_class(pointer: str, keyword, mutation_paths: set[str]) -> str
         if pointer == mutated or pointer.startswith(mutated + "/"):
             return "at_mutation"
     if keyword in SCHEMA_CONTAINER_KEYWORDS:
+        # A container keyword only speaks for the mutation when the mutated
+        # path is a MEMBER of that container. Review showed the previous rule
+        # vacuous at the root -- `pointer == "/"` was dead code subsumed by the
+        # prefix test, and every root container error classified as correlated
+        # regardless of what was mutated, making 43% of the corpus's classes a
+        # function of (pointer, keyword) alone (ADR 0077).
+        prefix = "" if pointer == "/" else pointer.rstrip("/")
         for mutated in mutation_paths:
-            if pointer == "/" or mutated == pointer or mutated.startswith(pointer.rstrip("/") + "/"):
+            if not mutated.startswith(prefix + "/"):
+                continue
+            remainder = mutated[len(prefix) + 1:]
+            if "/" not in remainder:
                 return "container_of_mutation"
     return "implication"
 

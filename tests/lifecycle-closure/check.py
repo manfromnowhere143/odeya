@@ -1160,8 +1160,16 @@ def harness_self_test(
     run = evaluator or evaluate_cases
     cover = coverage or coverage_failures
     collect = collector or collect_case_failures
+    probed: list[dict[str, Any]] = []
 
     def refuses(case: dict[str, Any], expected: str, label: str) -> None:
+        # Two probes made identical keep every count intact while one guard
+        # becomes removable, which is how review defeated the meta proof
+        # (ADR 0077). Distinct malformations are the evidence, so a repeated
+        # subject is itself a failure.
+        if any(case == earlier for earlier in probed):
+            failures.append(f"harness self-test: {label} duplicates an earlier probe subject")
+        probed.append(deepcopy(case))
         observed, _, _, _ = run([case])
         if not refusal_matches(observed, expected):
             failures.append(f"harness self-test: {label} was not refused; got {observed}")
@@ -1292,16 +1300,22 @@ def harness_self_test_meta_proof() -> list[str]:
     # every individual self-test refusal load-bearing, since removing one
     # lowers its count. The counts are deliberate: changing a probe must
     # change them here too.
+    # Counting refusals proved arity, not attribution: under a blinded
+    # collaborator every probe fails unconditionally, so two probes made
+    # identical kept the count while one guard became removable (ADR 0077).
+    # The DISTINCT refusal texts are the evidence, and duplicates collapse.
     for label, kwargs, expected in (
         ("evaluator", {"evaluator": lambda cases: ([], 0, 0, set())}, 10),
         ("coverage", {"coverage": lambda *args, **kw: []}, 4),
         ("collector", {"collector": lambda cases: ([], 0, 0)}, 2),
     ):
         observed = harness_self_test(**kwargs)
-        if len(observed) != expected:
+        distinct = {failure for failure in observed}
+        if len(distinct) != expected:
             failures.append(
-                f"harness meta self-test: blinding the {label} produced {len(observed)} "
-                f"refusals, expected {expected}; a self-test refusal is not load-bearing"
+                f"harness meta self-test: blinding the {label} produced {len(distinct)} "
+                f"distinct refusals, expected {expected}; a self-test probe is duplicated "
+                "or a refusal is not load-bearing"
             )
     return failures
 
