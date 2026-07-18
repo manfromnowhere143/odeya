@@ -21,58 +21,85 @@
       "name": "quantity-rejects-both-value-alternatives",
       "schema": "schemas/physical-quantity.schema.json",
       "base": "bounded_factory:quantity",
-      "structural_expect": "invalid"
+      "structural_expect": "invalid",
+      "expected_refusal": {
+        "pointer": "/value",
+        "keyword": "oneOf"
+      }
     },
     {
       "name": "quantity-rejects-incomplete-seven-base-vector",
       "schema": "schemas/physical-quantity.schema.json",
       "base": "bounded_factory:quantity",
-      "structural_expect": "invalid"
+      "structural_expect": "invalid",
+      "expected_refusal": {
+        "pointer": "/unit/dimension_vector",
+        "keyword": "required"
+      }
     },
     {
       "name": "quantity-rejects-affine-ordinary-multiplication",
       "schema": "schemas/physical-quantity.schema.json",
       "base": "bounded_factory:quantity",
-      "structural_expect": "invalid"
+      "structural_expect": "invalid",
+      "expected_refusal": {
+        "pointer": "/unit/conversion_to_si",
+        "keyword": "oneOf"
+      }
     },
     {
       "name": "quantity-rejects-required-null-frame",
       "schema": "schemas/physical-quantity.schema.json",
       "base": "bounded_factory:quantity",
-      "structural_expect": "invalid"
+      "structural_expect": "invalid",
+      "expected_refusal": {
+        "pointer": "/support/frame/frame",
+        "keyword": "type"
+      }
     },
     {
       "name": "quantity-rejects-instant-without-clock",
       "schema": "schemas/physical-quantity.schema.json",
       "base": "bounded_factory:quantity",
-      "structural_expect": "invalid"
+      "structural_expect": "invalid",
+      "expected_refusal": {
+        "pointer": "/support/time/clock_ref",
+        "keyword": "type"
+      }
     },
     {
       "name": "quantity-rejects-spatial-point-without-support",
       "schema": "schemas/physical-quantity.schema.json",
       "base": "bounded_factory:quantity",
-      "structural_expect": "invalid"
+      "structural_expect": "invalid",
+      "expected_refusal": {
+        "pointer": "/support/spatial/support_ref",
+        "keyword": "type"
+      }
     },
     {
       "name": "quantity-detects-unit-symbol-masquerade",
       "schema": "schemas/physical-quantity.schema.json",
       "base": "bounded_factory:quantity",
       "structural_expect": "valid",
-      "semantic_expect": "invalid"
+      "semantic_expect": "invalid",
+      "expected_semantic_refusal_contains": "unit.symbol: does not match registered unit"
     },
     {
       "name": "quantity-detects-dimension-masquerade",
       "schema": "schemas/physical-quantity.schema.json",
       "base": "bounded_factory:quantity",
       "structural_expect": "valid",
-      "semantic_expect": "invalid"
+      "semantic_expect": "invalid",
+      "expected_semantic_refusal_contains": "unit.dimension_vector: does not match registered unit"
     },
     {
       "name": "quantity-detects-reversed-time-interval",
       "schema": "schemas/physical-quantity.schema.json",
       "base": "bounded_factory:quantity",
       "structural_expect": "valid",
-      "semantic_expect": "invalid"
+      "semantic_expect": "invalid",
+      "expected_semantic_refusal_contains": "interval start must precede end"
     },
     {
       "name": "quantity-accepts-legitimate-negative-nonzero",
@@ -85,43 +112,71 @@
       "name": "quantity-rejects-negative-zero-integer",
       "schema": "schemas/physical-quantity.schema.json",
       "base": "bounded_factory:quantity",
-      "structural_expect": "invalid"
+      "structural_expect": "invalid",
+      "expected_refusal": {
+        "pointer": "/value",
+        "keyword": "oneOf"
+      }
     },
     {
       "name": "quantity-rejects-negative-zero-fraction",
       "schema": "schemas/physical-quantity.schema.json",
       "base": "bounded_factory:quantity",
-      "structural_expect": "invalid"
+      "structural_expect": "invalid",
+      "expected_refusal": {
+        "pointer": "/value",
+        "keyword": "oneOf"
+      }
     },
     {
       "name": "quantity-rejects-uppercase-exponent-decimal",
       "schema": "schemas/physical-quantity.schema.json",
       "base": "bounded_factory:quantity",
-      "structural_expect": "invalid"
+      "structural_expect": "invalid",
+      "expected_refusal": {
+        "pointer": "/value",
+        "keyword": "oneOf"
+      }
     },
     {
       "name": "quantity-rejects-leading-zero-decimal",
       "schema": "schemas/physical-quantity.schema.json",
       "base": "bounded_factory:quantity",
-      "structural_expect": "invalid"
+      "structural_expect": "invalid",
+      "expected_refusal": {
+        "pointer": "/value",
+        "keyword": "oneOf"
+      }
     },
     {
       "name": "quantity-rejects-offset-time",
       "schema": "schemas/physical-quantity.schema.json",
       "base": "bounded_factory:quantity",
-      "structural_expect": "invalid"
+      "structural_expect": "invalid",
+      "expected_refusal": {
+        "pointer": "/support/time/start",
+        "keyword": "pattern"
+      }
     },
     {
       "name": "quantity-rejects-nonmicrosecond-time",
       "schema": "schemas/physical-quantity.schema.json",
       "base": "bounded_factory:quantity",
-      "structural_expect": "invalid"
+      "structural_expect": "invalid",
+      "expected_refusal": {
+        "pointer": "/support/time/start",
+        "keyword": "pattern"
+      }
     },
     {
       "name": "quantity-rejects-offset-frame-epoch",
       "schema": "schemas/physical-quantity.schema.json",
       "base": "bounded_factory:quantity",
-      "structural_expect": "invalid"
+      "structural_expect": "invalid",
+      "expected_refusal": {
+        "pointer": "/support/frame/frame/epoch",
+        "keyword": "oneOf"
+      }
     },
     {
       "name": "uncertainty-valid-type-and-nature-partitions",
@@ -135,67 +190,86 @@
       "schema": "schemas/uncertainty-budget.schema.json",
       "base": "bounded_factory:uncertainty",
       "structural_expect": "valid",
-      "semantic_expect": "invalid"
+      "semantic_expect": "invalid",
+      "expected_semantic_refusal_contains": "Type A and Type B contribution identities must be unique and disjoint"
     },
     {
       "name": "uncertainty-detects-missing-nature-classification",
       "schema": "schemas/uncertainty-budget.schema.json",
       "base": "bounded_factory:uncertainty",
       "structural_expect": "valid",
-      "semantic_expect": "invalid"
+      "semantic_expect": "invalid",
+      "expected_semantic_refusal_contains": "must classify every contribution exactly once"
     },
     {
       "name": "uncertainty-detects-nonsquare-covariance",
       "schema": "schemas/uncertainty-budget.schema.json",
       "base": "bounded_factory:uncertainty",
       "structural_expect": "valid",
-      "semantic_expect": "invalid"
+      "semantic_expect": "invalid",
+      "expected_semantic_refusal_contains": "must be square and match variable count"
     },
     {
       "name": "uncertainty-detects-asymmetric-covariance",
       "schema": "schemas/uncertainty-budget.schema.json",
       "base": "bounded_factory:uncertainty",
       "structural_expect": "valid",
-      "semantic_expect": "invalid"
+      "semantic_expect": "invalid",
+      "expected_semantic_refusal_contains": "must be symmetric"
     },
     {
       "name": "uncertainty-detects-correlation-out-of-range",
       "schema": "schemas/uncertainty-budget.schema.json",
       "base": "bounded_factory:uncertainty",
       "structural_expect": "valid",
-      "semantic_expect": "invalid"
+      "semantic_expect": "invalid",
+      "expected_semantic_refusal_contains": "entries must lie in [-1, 1]"
     },
     {
       "name": "uncertainty-detects-correlation-diagonal-not-one",
       "schema": "schemas/uncertainty-budget.schema.json",
       "base": "bounded_factory:uncertainty",
       "structural_expect": "valid",
-      "semantic_expect": "invalid"
+      "semantic_expect": "invalid",
+      "expected_semantic_refusal_contains": "diagonal must equal one"
     },
     {
       "name": "uncertainty-detects-unresolved-shared-source",
       "schema": "schemas/uncertainty-budget.schema.json",
       "base": "bounded_factory:uncertainty",
       "structural_expect": "valid",
-      "semantic_expect": "invalid"
+      "semantic_expect": "invalid",
+      "expected_semantic_refusal_contains": "shared_source_groups: unresolved contribution identity"
     },
     {
       "name": "uncertainty-rejects-unknown-traceability-pass",
       "schema": "schemas/uncertainty-budget.schema.json",
       "base": "bounded_factory:uncertainty",
-      "structural_expect": "invalid"
+      "structural_expect": "invalid",
+      "expected_refusal": {
+        "pointer": "/disposition",
+        "keyword": "enum"
+      }
     },
     {
       "name": "uncertainty-rejects-not-computed-pass",
       "schema": "schemas/uncertainty-budget.schema.json",
       "base": "bounded_factory:uncertainty",
-      "structural_expect": "invalid"
+      "structural_expect": "invalid",
+      "expected_refusal": {
+        "pointer": "/disposition",
+        "keyword": "enum"
+      }
     },
     {
       "name": "uncertainty-rejects-negative-zero-covariance",
       "schema": "schemas/uncertainty-budget.schema.json",
       "base": "bounded_factory:uncertainty",
-      "structural_expect": "invalid"
+      "structural_expect": "invalid",
+      "expected_refusal": {
+        "pointer": "/dependence_model/covariance_matrix/elements/0/0",
+        "keyword": "pattern"
+      }
     },
     {
       "name": "uncertainty-accepts-negative-nonzero-covariance",
@@ -222,27 +296,37 @@
       "name": "asset-rejects-complete-unknown-serial",
       "schema": "schemas/asset-configuration-snapshot.schema.json",
       "base": "bounded_factory:asset",
-      "structural_expect": "invalid"
+      "structural_expect": "invalid",
+      "expected_refusal": {
+        "pointer": "/hardware_identity_coverage/components/0/serial_status",
+        "keyword": "const"
+      }
     },
     {
       "name": "asset-detects-complete-count-mismatch",
       "schema": "schemas/asset-configuration-snapshot.schema.json",
       "base": "bounded_factory:asset",
       "structural_expect": "valid",
-      "semantic_expect": "invalid"
+      "semantic_expect": "invalid",
+      "expected_semantic_refusal_contains": "complete expected count must equal enumerated components"
     },
     {
       "name": "asset-detects-complete-identity-mismatch",
       "schema": "schemas/asset-configuration-snapshot.schema.json",
       "base": "bounded_factory:asset",
       "structural_expect": "valid",
-      "semantic_expect": "invalid"
+      "semantic_expect": "invalid",
+      "expected_semantic_refusal_contains": "complete expected identities must equal observed identities"
     },
     {
       "name": "asset-rejects-unknown-hardware-in-force",
       "schema": "schemas/asset-configuration-snapshot.schema.json",
       "base": "bounded_factory:asset",
-      "structural_expect": "invalid"
+      "structural_expect": "invalid",
+      "expected_refusal": {
+        "pointer": "/applicability_disposition",
+        "keyword": "enum"
+      }
     },
     {
       "name": "asset-allows-zero-observed-only-while-blocked",
@@ -255,13 +339,21 @@
       "name": "asset-rejects-offset-effective-time",
       "schema": "schemas/asset-configuration-snapshot.schema.json",
       "base": "bounded_factory:asset",
-      "structural_expect": "invalid"
+      "structural_expect": "invalid",
+      "expected_refusal": {
+        "pointer": "/effective_interval/effective_from",
+        "keyword": "pattern"
+      }
     },
     {
       "name": "asset-rejects-nonmicrosecond-effective-time",
       "schema": "schemas/asset-configuration-snapshot.schema.json",
       "base": "bounded_factory:asset",
-      "structural_expect": "invalid"
+      "structural_expect": "invalid",
+      "expected_refusal": {
+        "pointer": "/effective_interval/effective_until",
+        "keyword": "oneOf"
+      }
     },
     {
       "name": "measurement-valid-physical-world-result",
@@ -274,50 +366,79 @@
       "name": "measurement-rejects-measured-with-missing-raw-signal",
       "schema": "schemas/physical-measurement-result.schema.json",
       "base": "bounded_factory:measurement",
-      "structural_expect": "invalid"
+      "structural_expect": "invalid",
+      "expected_refusal": {
+        "pointer": "/raw_signal/artifact_ref",
+        "keyword": "type"
+      }
     },
     {
       "name": "measurement-rejects-valid-with-unknown-firmware",
       "schema": "schemas/physical-measurement-result.schema.json",
       "base": "bounded_factory:measurement",
-      "structural_expect": "invalid"
+      "structural_expect": "invalid",
+      "expected_refusal": {
+        "pointer": "/instrument/firmware/status",
+        "keyword": "enum"
+      }
     },
     {
       "name": "measurement-rejects-calibration-relabeled-validation",
       "schema": "schemas/physical-measurement-result.schema.json",
       "base": "bounded_factory:measurement",
-      "structural_expect": "invalid"
+      "structural_expect": "invalid",
+      "expected_refusal": {
+        "pointer": "/calibration_traceability/evidence_role",
+        "keyword": "const"
+      }
     },
     {
       "name": "measurement-rejects-valid-detected-saturation",
       "schema": "schemas/physical-measurement-result.schema.json",
       "base": "bounded_factory:measurement",
-      "structural_expect": "invalid"
+      "structural_expect": "invalid",
+      "expected_refusal": {
+        "pointer": "/quality_flags/saturation/disposition",
+        "keyword": "enum"
+      }
     },
     {
       "name": "measurement-detects-reversed-calibration-validity",
       "schema": "schemas/physical-measurement-result.schema.json",
       "base": "bounded_factory:measurement",
       "structural_expect": "valid",
-      "semantic_expect": "invalid"
+      "semantic_expect": "invalid",
+      "expected_semantic_refusal_contains": "effective_at must precede expires_at"
     },
     {
       "name": "measurement-rejects-unavailable-result-with-stale-measured-refs",
       "schema": "schemas/physical-measurement-result.schema.json",
       "base": "bounded_factory:measurement",
-      "structural_expect": "invalid"
+      "structural_expect": "invalid",
+      "expected_refusal": {
+        "pointer": "/measured_quantity_ref",
+        "keyword": "type"
+      }
     },
     {
       "name": "measurement-rejects-offset-recorded-time",
       "schema": "schemas/physical-measurement-result.schema.json",
       "base": "bounded_factory:measurement",
-      "structural_expect": "invalid"
+      "structural_expect": "invalid",
+      "expected_refusal": {
+        "pointer": "/recorded_at",
+        "keyword": "pattern"
+      }
     },
     {
       "name": "measurement-rejects-nonmicrosecond-calibration-time",
       "schema": "schemas/physical-measurement-result.schema.json",
       "base": "bounded_factory:measurement",
-      "structural_expect": "invalid"
+      "structural_expect": "invalid",
+      "expected_refusal": {
+        "pointer": "/calibration_traceability/effective_at",
+        "keyword": "pattern"
+      }
     },
     {
       "name": "model-valid-independent-calibration-and-validation",
@@ -331,45 +452,64 @@
       "schema": "schemas/physical-model-record.schema.json",
       "base": "bounded_factory:model",
       "structural_expect": "valid",
-      "semantic_expect": "invalid"
+      "semantic_expect": "invalid",
+      "expected_semantic_refusal_contains": "calibration and validation measurement partitions must be disjoint"
     },
     {
       "name": "model-detects-shared-independence-group",
       "schema": "schemas/physical-model-record.schema.json",
       "base": "bounded_factory:model",
       "structural_expect": "valid",
-      "semantic_expect": "invalid"
+      "semantic_expect": "invalid",
+      "expected_semantic_refusal_contains": "require distinct independence groups"
     },
     {
       "name": "model-rejects-simulation-validation-partition",
       "schema": "schemas/physical-model-record.schema.json",
       "base": "bounded_factory:model",
-      "structural_expect": "invalid"
+      "structural_expect": "invalid",
+      "expected_refusal": {
+        "pointer": "/validation_partition/data_origin",
+        "keyword": "const"
+      }
     },
     {
       "name": "model-rejects-simulation-as-physical-validation",
       "schema": "schemas/physical-model-record.schema.json",
       "base": "bounded_factory:model",
-      "structural_expect": "invalid"
+      "structural_expect": "invalid",
+      "expected_refusal": {
+        "pointer": "/physical_validation/evidence_origin",
+        "keyword": "const"
+      }
     },
     {
       "name": "model-rejects-calibration-or-simulation-substitution",
       "schema": "schemas/physical-model-record.schema.json",
       "base": "bounded_factory:model",
-      "structural_expect": "invalid"
+      "structural_expect": "invalid",
+      "expected_refusal": {
+        "pointer": "/physical_validation/calibration_or_simulation_substitution_permitted",
+        "keyword": "const"
+      }
     },
     {
       "name": "model-rejects-code-verification-as-physical-validation",
       "schema": "schemas/physical-model-record.schema.json",
       "base": "bounded_factory:model",
-      "structural_expect": "invalid"
+      "structural_expect": "invalid",
+      "expected_refusal": {
+        "pointer": "/code_verification/evidence_origin",
+        "keyword": "const"
+      }
     },
     {
       "name": "model-detects-physical-validation-partition-ref-mismatch",
       "schema": "schemas/physical-model-record.schema.json",
       "base": "bounded_factory:model",
       "structural_expect": "valid",
-      "semantic_expect": "invalid"
+      "semantic_expect": "invalid",
+      "expected_semantic_refusal_contains": "validation_partition_id mismatch"
     },
     {
       "name": "evidence-valid-exact-ten-vector-and-p0-p12",
@@ -382,50 +522,79 @@
       "name": "evidence-rejects-missing-credibility-component",
       "schema": "schemas/physical-evidence-vector.schema.json",
       "base": "bounded_factory:evidence",
-      "structural_expect": "invalid"
+      "structural_expect": "invalid",
+      "expected_refusal": {
+        "pointer": "/credibility_vector",
+        "keyword": "required"
+      }
     },
     {
       "name": "evidence-rejects-missing-p12",
       "schema": "schemas/physical-evidence-vector.schema.json",
       "base": "bounded_factory:evidence",
-      "structural_expect": "invalid"
+      "structural_expect": "invalid",
+      "expected_refusal": {
+        "pointer": "/vvuq_gates",
+        "keyword": "required"
+      }
     },
     {
       "name": "evidence-rejects-simulation-as-world",
       "schema": "schemas/physical-evidence-vector.schema.json",
       "base": "bounded_factory:evidence",
-      "structural_expect": "invalid"
+      "structural_expect": "invalid",
+      "expected_refusal": {
+        "pointer": "/credibility_vector/physical_validation/evidence_origin",
+        "keyword": "const"
+      }
     },
     {
       "name": "evidence-rejects-calibration-as-validation",
       "schema": "schemas/physical-evidence-vector.schema.json",
       "base": "bounded_factory:evidence",
-      "structural_expect": "invalid"
+      "structural_expect": "invalid",
+      "expected_refusal": {
+        "pointer": "/credibility_vector/physical_validation/evidence_origin",
+        "keyword": "const"
+      }
     },
     {
       "name": "evidence-rejects-validation-substitution",
       "schema": "schemas/physical-evidence-vector.schema.json",
       "base": "bounded_factory:evidence",
-      "structural_expect": "invalid"
+      "structural_expect": "invalid",
+      "expected_refusal": {
+        "pointer": "/credibility_vector/physical_validation/calibration_or_simulation_substitution_permitted",
+        "keyword": "const"
+      }
     },
     {
       "name": "evidence-rejects-eligible-vector-with-p7-fail",
       "schema": "schemas/physical-evidence-vector.schema.json",
       "base": "bounded_factory:evidence",
-      "structural_expect": "invalid"
+      "structural_expect": "invalid",
+      "expected_refusal": {
+        "pointer": "/vvuq_gates/p7_physical_validation/disposition",
+        "keyword": "const"
+      }
     },
     {
       "name": "evidence-rejects-scalar-confidence-collapse",
       "schema": "schemas/physical-evidence-vector.schema.json",
       "base": "bounded_factory:evidence",
-      "structural_expect": "invalid"
+      "structural_expect": "invalid",
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "additionalProperties"
+      }
     },
     {
       "name": "evidence-detects-validation-measurement-outside-record-scope",
       "schema": "schemas/physical-evidence-vector.schema.json",
       "base": "bounded_factory:evidence",
       "structural_expect": "valid",
-      "semantic_expect": "invalid"
+      "semantic_expect": "invalid",
+      "expected_semantic_refusal_contains": "physical measurements must be declared at record scope"
     },
     {
       "name": "safety-valid-recommendation-only-envelope",
@@ -438,50 +607,79 @@
       "name": "safety-rejects-unknown-hardware-as-supported",
       "schema": "schemas/safety-envelope.schema.json",
       "base": "bounded_factory:safety",
-      "structural_expect": "invalid"
+      "structural_expect": "invalid",
+      "expected_refusal": {
+        "pointer": "/envelope_disposition",
+        "keyword": "enum"
+      }
     },
     {
       "name": "safety-rejects-direct-actuation",
       "schema": "schemas/safety-envelope.schema.json",
       "base": "bounded_factory:safety",
-      "structural_expect": "invalid"
+      "structural_expect": "invalid",
+      "expected_refusal": {
+        "pointer": "/actuator_boundary/direct_actuation_permitted",
+        "keyword": "const"
+      }
     },
     {
       "name": "safety-rejects-self-granted-actuator-authority",
       "schema": "schemas/safety-envelope.schema.json",
       "base": "bounded_factory:safety",
-      "structural_expect": "invalid"
+      "structural_expect": "invalid",
+      "expected_refusal": {
+        "pointer": "/actuator_boundary/actuator_authority_granted",
+        "keyword": "const"
+      }
     },
     {
       "name": "safety-rejects-inline-execution-authority",
       "schema": "schemas/safety-envelope.schema.json",
       "base": "bounded_factory:safety",
-      "structural_expect": "invalid"
+      "structural_expect": "invalid",
+      "expected_refusal": {
+        "pointer": "/actuator_boundary/execution_authority_ref",
+        "keyword": "type"
+      }
     },
     {
       "name": "safety-rejects-hard-guarantee-from-chance-constraint",
       "schema": "schemas/safety-envelope.schema.json",
       "base": "bounded_factory:safety",
-      "structural_expect": "invalid"
+      "structural_expect": "invalid",
+      "expected_refusal": {
+        "pointer": "/safe_set/hard_guarantee_claimed",
+        "keyword": "const"
+      }
     },
     {
       "name": "safety-detects-reversed-validity",
       "schema": "schemas/safety-envelope.schema.json",
       "base": "bounded_factory:safety",
       "structural_expect": "valid",
-      "semantic_expect": "invalid"
+      "semantic_expect": "invalid",
+      "expected_semantic_refusal_contains": "valid_from must precede expires_at"
     },
     {
       "name": "safety-rejects-offset-validity-time",
       "schema": "schemas/safety-envelope.schema.json",
       "base": "bounded_factory:safety",
-      "structural_expect": "invalid"
+      "structural_expect": "invalid",
+      "expected_refusal": {
+        "pointer": "/validity/valid_from",
+        "keyword": "pattern"
+      }
     },
     {
       "name": "safety-rejects-nonmicrosecond-validity-time",
       "schema": "schemas/safety-envelope.schema.json",
       "base": "bounded_factory:safety",
-      "structural_expect": "invalid"
+      "structural_expect": "invalid",
+      "expected_refusal": {
+        "pointer": "/validity/expires_at",
+        "keyword": "pattern"
+      }
     },
     {
       "name": "experiment-valid-six-axis-preflight",
@@ -501,49 +699,81 @@
       "name": "experiment-rejects-unknown-hardware-as-eligible",
       "schema": "schemas/physical-experiment-contract.schema.json",
       "base": "bounded_factory:experiment",
-      "structural_expect": "invalid"
+      "structural_expect": "invalid",
+      "expected_refusal": {
+        "pointer": "/planning_disposition",
+        "keyword": "enum"
+      }
     },
     {
       "name": "experiment-rejects-indeterminate-measurement-preflight-as-eligible",
       "schema": "schemas/physical-experiment-contract.schema.json",
       "base": "bounded_factory:experiment",
-      "structural_expect": "invalid"
+      "structural_expect": "invalid",
+      "expected_refusal": {
+        "pointer": "/preflight/measurement_capability/disposition",
+        "keyword": "const"
+      }
     },
     {
       "name": "experiment-rejects-failed-safety-preflight-as-eligible",
       "schema": "schemas/physical-experiment-contract.schema.json",
       "base": "bounded_factory:experiment",
-      "structural_expect": "invalid"
+      "structural_expect": "invalid",
+      "expected_refusal": {
+        "pointer": "/preflight/safety/disposition",
+        "keyword": "const"
+      }
     },
     {
       "name": "experiment-rejects-simulation-validation-partition",
       "schema": "schemas/physical-experiment-contract.schema.json",
       "base": "bounded_factory:experiment",
-      "structural_expect": "invalid"
+      "structural_expect": "invalid",
+      "expected_refusal": {
+        "pointer": "/independent_validation_partition/data_origin",
+        "keyword": "const"
+      }
     },
     {
       "name": "experiment-rejects-direct-actuation",
       "schema": "schemas/physical-experiment-contract.schema.json",
       "base": "bounded_factory:experiment",
-      "structural_expect": "invalid"
+      "structural_expect": "invalid",
+      "expected_refusal": {
+        "pointer": "/authority_boundary/direct_actuation_permitted",
+        "keyword": "const"
+      }
     },
     {
       "name": "experiment-rejects-self-issued-authority",
       "schema": "schemas/physical-experiment-contract.schema.json",
       "base": "bounded_factory:experiment",
-      "structural_expect": "invalid"
+      "structural_expect": "invalid",
+      "expected_refusal": {
+        "pointer": "/authority_boundary/authority_self_issued",
+        "keyword": "const"
+      }
     },
     {
       "name": "experiment-rejects-inline-execution-authority",
       "schema": "schemas/physical-experiment-contract.schema.json",
       "base": "bounded_factory:experiment",
-      "structural_expect": "invalid"
+      "structural_expect": "invalid",
+      "expected_refusal": {
+        "pointer": "/authority_boundary/execution_authority_ref",
+        "keyword": "type"
+      }
     },
     {
       "name": "experiment-rejects-required-causal-check-marked-na",
       "schema": "schemas/physical-experiment-contract.schema.json",
       "base": "bounded_factory:experiment",
-      "structural_expect": "invalid"
+      "structural_expect": "invalid",
+      "expected_refusal": {
+        "pointer": "/preflight/causal_identification/disposition",
+        "keyword": "enum"
+      }
     }
   ]
 }

@@ -10,6 +10,7 @@ registry, reducer, metrology, VVUQ, domain, or safety approval.
 from __future__ import annotations
 
 import copy
+import dataclasses
 import json
 import sys
 from dataclasses import dataclass
@@ -1009,6 +1010,12 @@ class Case:
     semantic: str | None = None
     mutate: Mutator | None = None
     fixture: str | None = None
+    # Refusal attribution (ADR 0055-0061): a structurally known-bad case
+    # declares the exact instance pointer and schema keyword that must refuse
+    # it; a semantically known-bad case declares a substring of the authored
+    # checker message. Refusal for an incidental reason is not proof.
+    expected_refusal: tuple[str, str] | None = None
+    expected_semantic: str | None = None
 
 
 def set_path(path: str, value: object) -> Mutator:
@@ -1144,99 +1151,99 @@ def inbar_experiment_refused() -> dict[str, object]:
 CASES = [
     Case("quantity-valid-exact-decimal", "quantity", semantic="valid", fixture="physical-quantity.valid.json"),
     Case("quantity-valid-distribution-alternative", "quantity", semantic="valid", mutate=distribution_quantity),
-    Case("quantity-rejects-both-value-alternatives", "quantity", structural="invalid", mutate=duplicate_value_alternatives),
-    Case("quantity-rejects-incomplete-seven-base-vector", "quantity", structural="invalid", mutate=delete_path("unit.dimension_vector.luminous_intensity")),
-    Case("quantity-rejects-affine-ordinary-multiplication", "quantity", structural="invalid", mutate=compose(set_path("unit.conversion_to_si.conversion_class", "affine"), set_path("unit.conversion_to_si.offset", "273.15"), set_path("unit.conversion_to_si.ordinary_multiplication_permitted", True))),
-    Case("quantity-rejects-required-null-frame", "quantity", structural="invalid", mutate=set_path("support.frame.frame", None)),
-    Case("quantity-rejects-instant-without-clock", "quantity", structural="invalid", mutate=set_path("support.time.clock_ref", None)),
-    Case("quantity-rejects-spatial-point-without-support", "quantity", structural="invalid", mutate=set_path("support.spatial.support_ref", None)),
-    Case("quantity-detects-unit-symbol-masquerade", "quantity", semantic="invalid", mutate=set_path("unit.symbol", "kg")),
-    Case("quantity-detects-dimension-masquerade", "quantity", semantic="invalid", mutate=set_path("unit.dimension_vector.mass", 0)),
-    Case("quantity-detects-reversed-time-interval", "quantity", semantic="invalid", mutate=interval_reversed),
+    Case("quantity-rejects-both-value-alternatives", "quantity", structural="invalid", mutate=duplicate_value_alternatives, expected_refusal=("/value", "oneOf")),
+    Case("quantity-rejects-incomplete-seven-base-vector", "quantity", structural="invalid", mutate=delete_path("unit.dimension_vector.luminous_intensity"), expected_refusal=("/unit/dimension_vector", "required")),
+    Case("quantity-rejects-affine-ordinary-multiplication", "quantity", structural="invalid", mutate=compose(set_path("unit.conversion_to_si.conversion_class", "affine"), set_path("unit.conversion_to_si.offset", "273.15"), set_path("unit.conversion_to_si.ordinary_multiplication_permitted", True)), expected_refusal=("/unit/conversion_to_si", "oneOf")),
+    Case("quantity-rejects-required-null-frame", "quantity", structural="invalid", mutate=set_path("support.frame.frame", None), expected_refusal=("/support/frame/frame", "type")),
+    Case("quantity-rejects-instant-without-clock", "quantity", structural="invalid", mutate=set_path("support.time.clock_ref", None), expected_refusal=("/support/time/clock_ref", "type")),
+    Case("quantity-rejects-spatial-point-without-support", "quantity", structural="invalid", mutate=set_path("support.spatial.support_ref", None), expected_refusal=("/support/spatial/support_ref", "type")),
+    Case("quantity-detects-unit-symbol-masquerade", "quantity", semantic="invalid", mutate=set_path("unit.symbol", "kg"), expected_semantic="unit.symbol: does not match registered unit"),
+    Case("quantity-detects-dimension-masquerade", "quantity", semantic="invalid", mutate=set_path("unit.dimension_vector.mass", 0), expected_semantic="unit.dimension_vector: does not match registered unit"),
+    Case("quantity-detects-reversed-time-interval", "quantity", semantic="invalid", mutate=interval_reversed, expected_semantic="interval start must precede end"),
     Case("quantity-accepts-legitimate-negative-nonzero", "quantity", semantic="valid", mutate=set_path("value.exact_decimal.decimal", "-0.125")),
-    Case("quantity-rejects-negative-zero-integer", "quantity", structural="invalid", mutate=set_path("value.exact_decimal.decimal", "-0")),
-    Case("quantity-rejects-negative-zero-fraction", "quantity", structural="invalid", mutate=set_path("value.exact_decimal.decimal", "-0.0")),
+    Case("quantity-rejects-negative-zero-integer", "quantity", structural="invalid", mutate=set_path("value.exact_decimal.decimal", "-0"), expected_refusal=("/value", "oneOf")),
+    Case("quantity-rejects-negative-zero-fraction", "quantity", structural="invalid", mutate=set_path("value.exact_decimal.decimal", "-0.0"), expected_refusal=("/value", "oneOf")),
     # the frozen scientific-decimal contract admits lowercase exponents and
     # rejects the uppercase form; the trap follows the profile, not the retired
     # local no-exponent rule
-    Case("quantity-rejects-uppercase-exponent-decimal", "quantity", structural="invalid", mutate=set_path("value.exact_decimal.decimal", "1E3")),
-    Case("quantity-rejects-leading-zero-decimal", "quantity", structural="invalid", mutate=set_path("value.exact_decimal.decimal", "01")),
-    Case("quantity-rejects-offset-time", "quantity", structural="invalid", mutate=set_path("support.time.start", "2026-07-16T10:00:00.000000+02:00")),
-    Case("quantity-rejects-nonmicrosecond-time", "quantity", structural="invalid", mutate=set_path("support.time.start", "2026-07-16T08:00:00Z")),
-    Case("quantity-rejects-offset-frame-epoch", "quantity", structural="invalid", mutate=set_path("support.frame.frame.epoch", "2026-07-16T10:00:00.000000+02:00")),
+    Case("quantity-rejects-uppercase-exponent-decimal", "quantity", structural="invalid", mutate=set_path("value.exact_decimal.decimal", "1E3"), expected_refusal=("/value", "oneOf")),
+    Case("quantity-rejects-leading-zero-decimal", "quantity", structural="invalid", mutate=set_path("value.exact_decimal.decimal", "01"), expected_refusal=("/value", "oneOf")),
+    Case("quantity-rejects-offset-time", "quantity", structural="invalid", mutate=set_path("support.time.start", "2026-07-16T10:00:00.000000+02:00"), expected_refusal=("/support/time/start", "pattern")),
+    Case("quantity-rejects-nonmicrosecond-time", "quantity", structural="invalid", mutate=set_path("support.time.start", "2026-07-16T08:00:00Z"), expected_refusal=("/support/time/start", "pattern")),
+    Case("quantity-rejects-offset-frame-epoch", "quantity", structural="invalid", mutate=set_path("support.frame.frame.epoch", "2026-07-16T10:00:00.000000+02:00"), expected_refusal=("/support/frame/frame/epoch", "oneOf")),
 
     Case("uncertainty-valid-type-and-nature-partitions", "uncertainty", semantic="valid", fixture="uncertainty-budget.valid.json"),
-    Case("uncertainty-detects-type-a-type-b-overlap", "uncertainty", semantic="invalid", mutate=type_partition_overlap),
-    Case("uncertainty-detects-missing-nature-classification", "uncertainty", semantic="invalid", mutate=delete_path("nature_classification.1")),
-    Case("uncertainty-detects-nonsquare-covariance", "uncertainty", semantic="invalid", mutate=delete_path("dependence_model.covariance_matrix.elements.1.1")),
-    Case("uncertainty-detects-asymmetric-covariance", "uncertainty", semantic="invalid", mutate=set_path("dependence_model.covariance_matrix.elements.0.1", "0.02")),
-    Case("uncertainty-detects-correlation-out-of-range", "uncertainty", semantic="invalid", mutate=compose(set_path("dependence_model.correlation_matrix.elements.0.1", "1.2"), set_path("dependence_model.correlation_matrix.elements.1.0", "1.2"))),
-    Case("uncertainty-detects-correlation-diagonal-not-one", "uncertainty", semantic="invalid", mutate=set_path("dependence_model.correlation_matrix.elements.0.0", "0.9")),
-    Case("uncertainty-detects-unresolved-shared-source", "uncertainty", semantic="invalid", mutate=set_path("dependence_model.shared_source_groups.0.contribution_ids.1", "u-unknown")),
-    Case("uncertainty-rejects-unknown-traceability-pass", "uncertainty", structural="invalid", mutate=compose(set_path("calibration_traceability.status", "unknown"), set_path("calibration_traceability.reason_codes", ["traceability-unknown"]))),
-    Case("uncertainty-rejects-not-computed-pass", "uncertainty", structural="invalid", mutate=noncomputed_pass),
-    Case("uncertainty-rejects-negative-zero-covariance", "uncertainty", structural="invalid", mutate=set_path("dependence_model.covariance_matrix.elements.0.0", "-0")),
+    Case("uncertainty-detects-type-a-type-b-overlap", "uncertainty", semantic="invalid", mutate=type_partition_overlap, expected_semantic="Type A and Type B contribution identities must be unique and disjoint"),
+    Case("uncertainty-detects-missing-nature-classification", "uncertainty", semantic="invalid", mutate=delete_path("nature_classification.1"), expected_semantic="must classify every contribution exactly once"),
+    Case("uncertainty-detects-nonsquare-covariance", "uncertainty", semantic="invalid", mutate=delete_path("dependence_model.covariance_matrix.elements.1.1"), expected_semantic="must be square and match variable count"),
+    Case("uncertainty-detects-asymmetric-covariance", "uncertainty", semantic="invalid", mutate=set_path("dependence_model.covariance_matrix.elements.0.1", "0.02"), expected_semantic="must be symmetric"),
+    Case("uncertainty-detects-correlation-out-of-range", "uncertainty", semantic="invalid", mutate=compose(set_path("dependence_model.correlation_matrix.elements.0.1", "1.2"), set_path("dependence_model.correlation_matrix.elements.1.0", "1.2")), expected_semantic="entries must lie in [-1, 1]"),
+    Case("uncertainty-detects-correlation-diagonal-not-one", "uncertainty", semantic="invalid", mutate=set_path("dependence_model.correlation_matrix.elements.0.0", "0.9"), expected_semantic="diagonal must equal one"),
+    Case("uncertainty-detects-unresolved-shared-source", "uncertainty", semantic="invalid", mutate=set_path("dependence_model.shared_source_groups.0.contribution_ids.1", "u-unknown"), expected_semantic="shared_source_groups: unresolved contribution identity"),
+    Case("uncertainty-rejects-unknown-traceability-pass", "uncertainty", structural="invalid", mutate=compose(set_path("calibration_traceability.status", "unknown"), set_path("calibration_traceability.reason_codes", ["traceability-unknown"])), expected_refusal=("/disposition", "enum")),
+    Case("uncertainty-rejects-not-computed-pass", "uncertainty", structural="invalid", mutate=noncomputed_pass, expected_refusal=("/disposition", "enum")),
+    Case("uncertainty-rejects-negative-zero-covariance", "uncertainty", structural="invalid", mutate=set_path("dependence_model.covariance_matrix.elements.0.0", "-0"), expected_refusal=("/dependence_model/covariance_matrix/elements/0/0", "pattern")),
     Case("uncertainty-accepts-negative-nonzero-covariance", "uncertainty", semantic="valid", mutate=compose(set_path("dependence_model.covariance_matrix.elements.0.1", "-0.01"), set_path("dependence_model.covariance_matrix.elements.1.0", "-0.01"))),
 
     Case("asset-valid-complete-hardware", "asset", semantic="valid"),
     Case("asset-valid-inbar-unknown-hardware-blocked", "asset", semantic="valid", fixture="asset-configuration-snapshot.inbar-blocked.valid.json"),
-    Case("asset-rejects-complete-unknown-serial", "asset", structural="invalid", mutate=compose(set_path("hardware_identity_coverage.components.0.serial_status", "unknown"), set_path("hardware_identity_coverage.components.0.serial_number", None), set_path("hardware_identity_coverage.components.0.reason_codes", ["serial-unknown"]))),
-    Case("asset-detects-complete-count-mismatch", "asset", semantic="invalid", mutate=set_path("hardware_identity_coverage.expected_component_count", 3)),
-    Case("asset-detects-complete-identity-mismatch", "asset", semantic="invalid", mutate=set_path("hardware_identity_coverage.expected_component_ids.1", "load-cell-c")),
-    Case("asset-rejects-unknown-hardware-in-force", "asset", structural="invalid", mutate=compose(set_path("hardware_identity_coverage.status", "unknown"), set_path("hardware_identity_coverage.reason_codes", ["hardware-unknown"]))),
+    Case("asset-rejects-complete-unknown-serial", "asset", structural="invalid", mutate=compose(set_path("hardware_identity_coverage.components.0.serial_status", "unknown"), set_path("hardware_identity_coverage.components.0.serial_number", None), set_path("hardware_identity_coverage.components.0.reason_codes", ["serial-unknown"])), expected_refusal=("/hardware_identity_coverage/components/0/serial_status", "const")),
+    Case("asset-detects-complete-count-mismatch", "asset", semantic="invalid", mutate=set_path("hardware_identity_coverage.expected_component_count", 3), expected_semantic="complete expected count must equal enumerated components"),
+    Case("asset-detects-complete-identity-mismatch", "asset", semantic="invalid", mutate=set_path("hardware_identity_coverage.expected_component_ids.1", "load-cell-c"), expected_semantic="complete expected identities must equal observed identities"),
+    Case("asset-rejects-unknown-hardware-in-force", "asset", structural="invalid", mutate=compose(set_path("hardware_identity_coverage.status", "unknown"), set_path("hardware_identity_coverage.reason_codes", ["hardware-unknown"])), expected_refusal=("/applicability_disposition", "enum")),
     Case("asset-allows-zero-observed-only-while-blocked", "asset", semantic="valid", fixture="asset-configuration-snapshot.inbar-blocked.valid.json"),
-    Case("asset-rejects-offset-effective-time", "asset", structural="invalid", mutate=set_path("effective_interval.effective_from", "2026-07-16T10:00:00.000000+03:00")),
-    Case("asset-rejects-nonmicrosecond-effective-time", "asset", structural="invalid", mutate=set_path("effective_interval.effective_until", "2026-08-16T07:00:00Z")),
+    Case("asset-rejects-offset-effective-time", "asset", structural="invalid", mutate=set_path("effective_interval.effective_from", "2026-07-16T10:00:00.000000+03:00"), expected_refusal=("/effective_interval/effective_from", "pattern")),
+    Case("asset-rejects-nonmicrosecond-effective-time", "asset", structural="invalid", mutate=set_path("effective_interval.effective_until", "2026-08-16T07:00:00Z"), expected_refusal=("/effective_interval/effective_until", "oneOf")),
 
     Case("measurement-valid-physical-world-result", "measurement", semantic="valid", fixture="physical-measurement-result.valid.json"),
-    Case("measurement-rejects-measured-with-missing-raw-signal", "measurement", structural="invalid", mutate=set_path("raw_signal.status", "missing")),
-    Case("measurement-rejects-valid-with-unknown-firmware", "measurement", structural="invalid", mutate=compose(set_path("instrument.firmware.status", "unknown"), set_path("instrument.firmware.version", None), set_path("instrument.firmware.image_ref", None), set_path("instrument.firmware.reason_codes", ["firmware-unknown"]))),
-    Case("measurement-rejects-calibration-relabeled-validation", "measurement", structural="invalid", mutate=set_path("calibration_traceability.evidence_role", "physical_validation")),
-    Case("measurement-rejects-valid-detected-saturation", "measurement", structural="invalid", mutate=set_path("quality_flags.saturation.disposition", "detected")),
-    Case("measurement-detects-reversed-calibration-validity", "measurement", semantic="invalid", mutate=set_path("calibration_traceability.expires_at", "2026-06-01T00:00:00.000000Z")),
-    Case("measurement-rejects-unavailable-result-with-stale-measured-refs", "measurement", structural="invalid", mutate=measurement_unavailable_with_stale_refs),
-    Case("measurement-rejects-offset-recorded-time", "measurement", structural="invalid", mutate=set_path("recorded_at", "2026-07-16T11:05:00.000000+03:00")),
-    Case("measurement-rejects-nonmicrosecond-calibration-time", "measurement", structural="invalid", mutate=set_path("calibration_traceability.effective_at", "2026-07-01T00:00:00Z")),
+    Case("measurement-rejects-measured-with-missing-raw-signal", "measurement", structural="invalid", mutate=set_path("raw_signal.status", "missing"), expected_refusal=("/raw_signal/artifact_ref", "type")),
+    Case("measurement-rejects-valid-with-unknown-firmware", "measurement", structural="invalid", mutate=compose(set_path("instrument.firmware.status", "unknown"), set_path("instrument.firmware.version", None), set_path("instrument.firmware.image_ref", None), set_path("instrument.firmware.reason_codes", ["firmware-unknown"])), expected_refusal=("/instrument/firmware/status", "enum")),
+    Case("measurement-rejects-calibration-relabeled-validation", "measurement", structural="invalid", mutate=set_path("calibration_traceability.evidence_role", "physical_validation"), expected_refusal=("/calibration_traceability/evidence_role", "const")),
+    Case("measurement-rejects-valid-detected-saturation", "measurement", structural="invalid", mutate=set_path("quality_flags.saturation.disposition", "detected"), expected_refusal=("/quality_flags/saturation/disposition", "enum")),
+    Case("measurement-detects-reversed-calibration-validity", "measurement", semantic="invalid", mutate=set_path("calibration_traceability.expires_at", "2026-06-01T00:00:00.000000Z"), expected_semantic="effective_at must precede expires_at"),
+    Case("measurement-rejects-unavailable-result-with-stale-measured-refs", "measurement", structural="invalid", mutate=measurement_unavailable_with_stale_refs, expected_refusal=("/measured_quantity_ref", "type")),
+    Case("measurement-rejects-offset-recorded-time", "measurement", structural="invalid", mutate=set_path("recorded_at", "2026-07-16T11:05:00.000000+03:00"), expected_refusal=("/recorded_at", "pattern")),
+    Case("measurement-rejects-nonmicrosecond-calibration-time", "measurement", structural="invalid", mutate=set_path("calibration_traceability.effective_at", "2026-07-01T00:00:00Z"), expected_refusal=("/calibration_traceability/effective_at", "pattern")),
 
     Case("model-valid-independent-calibration-and-validation", "model", semantic="valid", fixture="physical-model-record.valid.json"),
-    Case("model-detects-overlapping-calibration-validation-data", "model", semantic="invalid", mutate=partition_overlap),
-    Case("model-detects-shared-independence-group", "model", semantic="invalid", mutate=set_path("validation_partition.independence_group_id", "independence.calibration")),
-    Case("model-rejects-simulation-validation-partition", "model", structural="invalid", mutate=set_path("validation_partition.data_origin", "simulation")),
-    Case("model-rejects-simulation-as-physical-validation", "model", structural="invalid", mutate=set_path("physical_validation.evidence_origin", "simulation")),
-    Case("model-rejects-calibration-or-simulation-substitution", "model", structural="invalid", mutate=set_path("physical_validation.calibration_or_simulation_substitution_permitted", True)),
-    Case("model-rejects-code-verification-as-physical-validation", "model", structural="invalid", mutate=set_path("code_verification.evidence_origin", "independent_physical_world_measurement")),
-    Case("model-detects-physical-validation-partition-ref-mismatch", "model", semantic="invalid", mutate=set_path("physical_validation.validation_partition_id", "partition.calibration")),
+    Case("model-detects-overlapping-calibration-validation-data", "model", semantic="invalid", mutate=partition_overlap, expected_semantic="calibration and validation measurement partitions must be disjoint"),
+    Case("model-detects-shared-independence-group", "model", semantic="invalid", mutate=set_path("validation_partition.independence_group_id", "independence.calibration"), expected_semantic="require distinct independence groups"),
+    Case("model-rejects-simulation-validation-partition", "model", structural="invalid", mutate=set_path("validation_partition.data_origin", "simulation"), expected_refusal=("/validation_partition/data_origin", "const")),
+    Case("model-rejects-simulation-as-physical-validation", "model", structural="invalid", mutate=set_path("physical_validation.evidence_origin", "simulation"), expected_refusal=("/physical_validation/evidence_origin", "const")),
+    Case("model-rejects-calibration-or-simulation-substitution", "model", structural="invalid", mutate=set_path("physical_validation.calibration_or_simulation_substitution_permitted", True), expected_refusal=("/physical_validation/calibration_or_simulation_substitution_permitted", "const")),
+    Case("model-rejects-code-verification-as-physical-validation", "model", structural="invalid", mutate=set_path("code_verification.evidence_origin", "independent_physical_world_measurement"), expected_refusal=("/code_verification/evidence_origin", "const")),
+    Case("model-detects-physical-validation-partition-ref-mismatch", "model", semantic="invalid", mutate=set_path("physical_validation.validation_partition_id", "partition.calibration"), expected_semantic="validation_partition_id mismatch"),
 
     Case("evidence-valid-exact-ten-vector-and-p0-p12", "evidence", semantic="valid", fixture="physical-evidence-vector.valid.json"),
-    Case("evidence-rejects-missing-credibility-component", "evidence", structural="invalid", mutate=delete_path("credibility_vector.safety_case")),
-    Case("evidence-rejects-missing-p12", "evidence", structural="invalid", mutate=delete_path("vvuq_gates.p12_release")),
-    Case("evidence-rejects-simulation-as-world", "evidence", structural="invalid", mutate=set_path("credibility_vector.physical_validation.evidence_origin", "simulation")),
-    Case("evidence-rejects-calibration-as-validation", "evidence", structural="invalid", mutate=set_path("credibility_vector.physical_validation.evidence_origin", "calibration_partition")),
-    Case("evidence-rejects-validation-substitution", "evidence", structural="invalid", mutate=set_path("credibility_vector.physical_validation.calibration_or_simulation_substitution_permitted", True)),
-    Case("evidence-rejects-eligible-vector-with-p7-fail", "evidence", structural="invalid", mutate=compose(set_path("vvuq_gates.p7_physical_validation.disposition", "fail"), set_path("vvuq_gates.p7_physical_validation.reason_codes", ["validation-failed"]))),
-    Case("evidence-rejects-scalar-confidence-collapse", "evidence", structural="invalid", mutate=set_path("scalar_confidence", "0.99")),
-    Case("evidence-detects-validation-measurement-outside-record-scope", "evidence", semantic="invalid", mutate=evidence_ref_outside_scope),
+    Case("evidence-rejects-missing-credibility-component", "evidence", structural="invalid", mutate=delete_path("credibility_vector.safety_case"), expected_refusal=("/credibility_vector", "required")),
+    Case("evidence-rejects-missing-p12", "evidence", structural="invalid", mutate=delete_path("vvuq_gates.p12_release"), expected_refusal=("/vvuq_gates", "required")),
+    Case("evidence-rejects-simulation-as-world", "evidence", structural="invalid", mutate=set_path("credibility_vector.physical_validation.evidence_origin", "simulation"), expected_refusal=("/credibility_vector/physical_validation/evidence_origin", "const")),
+    Case("evidence-rejects-calibration-as-validation", "evidence", structural="invalid", mutate=set_path("credibility_vector.physical_validation.evidence_origin", "calibration_partition"), expected_refusal=("/credibility_vector/physical_validation/evidence_origin", "const")),
+    Case("evidence-rejects-validation-substitution", "evidence", structural="invalid", mutate=set_path("credibility_vector.physical_validation.calibration_or_simulation_substitution_permitted", True), expected_refusal=("/credibility_vector/physical_validation/calibration_or_simulation_substitution_permitted", "const")),
+    Case("evidence-rejects-eligible-vector-with-p7-fail", "evidence", structural="invalid", mutate=compose(set_path("vvuq_gates.p7_physical_validation.disposition", "fail"), set_path("vvuq_gates.p7_physical_validation.reason_codes", ["validation-failed"])), expected_refusal=("/vvuq_gates/p7_physical_validation/disposition", "const")),
+    Case("evidence-rejects-scalar-confidence-collapse", "evidence", structural="invalid", mutate=set_path("scalar_confidence", "0.99"), expected_refusal=("/", "additionalProperties")),
+    Case("evidence-detects-validation-measurement-outside-record-scope", "evidence", semantic="invalid", mutate=evidence_ref_outside_scope, expected_semantic="physical measurements must be declared at record scope"),
 
     Case("safety-valid-recommendation-only-envelope", "safety", semantic="valid", fixture="safety-envelope.valid.json"),
-    Case("safety-rejects-unknown-hardware-as-supported", "safety", structural="invalid", mutate=set_path("asset_hardware_coverage_observation", "unknown")),
-    Case("safety-rejects-direct-actuation", "safety", structural="invalid", mutate=set_path("actuator_boundary.direct_actuation_permitted", True)),
-    Case("safety-rejects-self-granted-actuator-authority", "safety", structural="invalid", mutate=set_path("actuator_boundary.actuator_authority_granted", True)),
-    Case("safety-rejects-inline-execution-authority", "safety", structural="invalid", mutate=set_path("actuator_boundary.execution_authority_ref", record("authority.inline", "urn:odeya:schema:authority-grant:0.7.0", "5"))),
-    Case("safety-rejects-hard-guarantee-from-chance-constraint", "safety", structural="invalid", mutate=set_path("safe_set.hard_guarantee_claimed", True)),
-    Case("safety-detects-reversed-validity", "safety", semantic="invalid", mutate=set_path("validity.expires_at", "2026-07-15T00:00:00.000000Z")),
-    Case("safety-rejects-offset-validity-time", "safety", structural="invalid", mutate=set_path("validity.valid_from", "2026-07-16T03:00:00.000000+03:00")),
-    Case("safety-rejects-nonmicrosecond-validity-time", "safety", structural="invalid", mutate=set_path("validity.expires_at", "2026-08-16T00:00:00Z")),
+    Case("safety-rejects-unknown-hardware-as-supported", "safety", structural="invalid", mutate=set_path("asset_hardware_coverage_observation", "unknown"), expected_refusal=("/envelope_disposition", "enum")),
+    Case("safety-rejects-direct-actuation", "safety", structural="invalid", mutate=set_path("actuator_boundary.direct_actuation_permitted", True), expected_refusal=("/actuator_boundary/direct_actuation_permitted", "const")),
+    Case("safety-rejects-self-granted-actuator-authority", "safety", structural="invalid", mutate=set_path("actuator_boundary.actuator_authority_granted", True), expected_refusal=("/actuator_boundary/actuator_authority_granted", "const")),
+    Case("safety-rejects-inline-execution-authority", "safety", structural="invalid", mutate=set_path("actuator_boundary.execution_authority_ref", record("authority.inline", "urn:odeya:schema:authority-grant:0.7.0", "5")), expected_refusal=("/actuator_boundary/execution_authority_ref", "type")),
+    Case("safety-rejects-hard-guarantee-from-chance-constraint", "safety", structural="invalid", mutate=set_path("safe_set.hard_guarantee_claimed", True), expected_refusal=("/safe_set/hard_guarantee_claimed", "const")),
+    Case("safety-detects-reversed-validity", "safety", semantic="invalid", mutate=set_path("validity.expires_at", "2026-07-15T00:00:00.000000Z"), expected_semantic="valid_from must precede expires_at"),
+    Case("safety-rejects-offset-validity-time", "safety", structural="invalid", mutate=set_path("validity.valid_from", "2026-07-16T03:00:00.000000+03:00"), expected_refusal=("/validity/valid_from", "pattern")),
+    Case("safety-rejects-nonmicrosecond-validity-time", "safety", structural="invalid", mutate=set_path("validity.expires_at", "2026-08-16T00:00:00Z"), expected_refusal=("/validity/expires_at", "pattern")),
 
     Case("experiment-valid-six-axis-preflight", "experiment", semantic="valid"),
     Case("experiment-valid-inbar-unknown-hardware-refusal", "experiment", semantic="valid", fixture="physical-experiment-contract.inbar-refused.valid.json"),
-    Case("experiment-rejects-unknown-hardware-as-eligible", "experiment", structural="invalid", mutate=compose(set_path("asset_binding.hardware_identity_coverage_observation", "unknown"), set_path("asset_binding.reason_codes", ["hardware-unknown"]))),
-    Case("experiment-rejects-indeterminate-measurement-preflight-as-eligible", "experiment", structural="invalid", mutate=compose(set_path("preflight.measurement_capability.disposition", "indeterminate"), set_path("preflight.measurement_capability.reason_codes", ["measurement-indeterminate"]))),
-    Case("experiment-rejects-failed-safety-preflight-as-eligible", "experiment", structural="invalid", mutate=compose(set_path("preflight.safety.disposition", "fail"), set_path("preflight.safety.reason_codes", ["safety-failed"]))),
-    Case("experiment-rejects-simulation-validation-partition", "experiment", structural="invalid", mutate=set_path("independent_validation_partition.data_origin", "simulation")),
-    Case("experiment-rejects-direct-actuation", "experiment", structural="invalid", mutate=set_path("authority_boundary.direct_actuation_permitted", True)),
-    Case("experiment-rejects-self-issued-authority", "experiment", structural="invalid", mutate=set_path("authority_boundary.authority_self_issued", True)),
-    Case("experiment-rejects-inline-execution-authority", "experiment", structural="invalid", mutate=set_path("authority_boundary.execution_authority_ref", record("authority.inline", "urn:odeya:schema:authority-grant:0.7.0", "5"))),
-    Case("experiment-rejects-required-causal-check-marked-na", "experiment", structural="invalid", mutate=set_path("preflight.causal_identification.disposition", "not_applicable")),
+    Case("experiment-rejects-unknown-hardware-as-eligible", "experiment", structural="invalid", mutate=compose(set_path("asset_binding.hardware_identity_coverage_observation", "unknown"), set_path("asset_binding.reason_codes", ["hardware-unknown"])), expected_refusal=("/planning_disposition", "enum")),
+    Case("experiment-rejects-indeterminate-measurement-preflight-as-eligible", "experiment", structural="invalid", mutate=compose(set_path("preflight.measurement_capability.disposition", "indeterminate"), set_path("preflight.measurement_capability.reason_codes", ["measurement-indeterminate"])), expected_refusal=("/preflight/measurement_capability/disposition", "const")),
+    Case("experiment-rejects-failed-safety-preflight-as-eligible", "experiment", structural="invalid", mutate=compose(set_path("preflight.safety.disposition", "fail"), set_path("preflight.safety.reason_codes", ["safety-failed"])), expected_refusal=("/preflight/safety/disposition", "const")),
+    Case("experiment-rejects-simulation-validation-partition", "experiment", structural="invalid", mutate=set_path("independent_validation_partition.data_origin", "simulation"), expected_refusal=("/independent_validation_partition/data_origin", "const")),
+    Case("experiment-rejects-direct-actuation", "experiment", structural="invalid", mutate=set_path("authority_boundary.direct_actuation_permitted", True), expected_refusal=("/authority_boundary/direct_actuation_permitted", "const")),
+    Case("experiment-rejects-self-issued-authority", "experiment", structural="invalid", mutate=set_path("authority_boundary.authority_self_issued", True), expected_refusal=("/authority_boundary/authority_self_issued", "const")),
+    Case("experiment-rejects-inline-execution-authority", "experiment", structural="invalid", mutate=set_path("authority_boundary.execution_authority_ref", record("authority.inline", "urn:odeya:schema:authority-grant:0.7.0", "5")), expected_refusal=("/authority_boundary/execution_authority_ref", "type")),
+    Case("experiment-rejects-required-causal-check-marked-na", "experiment", structural="invalid", mutate=set_path("preflight.causal_identification.disposition", "not_applicable"), expected_refusal=("/preflight/causal_identification/disposition", "enum")),
 ]
 
 
@@ -1305,6 +1312,71 @@ def check_dependency_dag(schemas: dict[str, dict[str, object]]) -> list[str]:
     return errors
 
 
+def structural_attribution_failures(case: "Case", errors: list) -> list[str]:
+    if case.expected_refusal is None:
+        return [f"{case.name}: known-bad case does not declare the constraint that must refuse it"]
+    pointer, keyword = case.expected_refusal
+    if not any(
+        "/" + "/".join(str(part) for part in error.absolute_path) == pointer
+        and error.validator == keyword
+        for error in errors
+    ):
+        observed = [
+            ("/" + "/".join(str(part) for part in error.absolute_path), error.validator)
+            for error in errors
+        ]
+        return [
+            f"{case.name}: refused, but not at its declared constraint "
+            f"{pointer!r} by {keyword!r}; got {observed}"
+        ]
+    return []
+
+
+def semantic_attribution_failures(case: "Case", semantic_errors: list[str]) -> list[str]:
+    if not case.expected_semantic:
+        return [f"{case.name}: semantic known-bad case does not declare the check that must refuse it"]
+    if not any(case.expected_semantic in error for error in semantic_errors):
+        return [
+            f"{case.name}: semantically refused, but not by its declared check "
+            f"{case.expected_semantic!r}; got {semantic_errors}"
+        ]
+    return []
+
+
+def attribution_self_test(validators: dict[str, Draft202012Validator]) -> list[str]:
+    """Prove on every run that both binding checks fire (law 11)."""
+    failures: list[str] = []
+    structural = next((c for c in CASES if c.structural == "invalid"), None)
+    semantic = next((c for c in CASES if c.structural == "valid" and c.semantic == "invalid"), None)
+    if structural is None or semantic is None:
+        return ["attribution self-test found no known-bad case to tamper with"]
+    subject = copy.deepcopy(load(FIXTURES / structural.fixture) if structural.fixture else FACTORIES[structural.kind]())
+    if structural.mutate:
+        structural.mutate(subject)
+    errors = sorted(validators[structural.kind].iter_errors(subject), key=lambda item: list(item.path))
+    misdeclared = dataclasses.replace(structural, expected_refusal=("/odeya-self-test/never-fires", "const"))
+    if not any("refused, but not at its declared constraint" in f
+               for f in structural_attribution_failures(misdeclared, errors)):
+        failures.append("attribution self-test: a misdeclared structural constraint was not detected")
+    undeclared = dataclasses.replace(structural, expected_refusal=None)
+    if not any("does not declare the constraint" in f
+               for f in structural_attribution_failures(undeclared, errors)):
+        failures.append("attribution self-test: a missing structural declaration was not detected")
+    subject = copy.deepcopy(load(FIXTURES / semantic.fixture) if semantic.fixture else FACTORIES[semantic.kind]())
+    if semantic.mutate:
+        semantic.mutate(subject)
+    semantic_errors = SEMANTIC_CHECKERS[semantic.kind](subject)
+    misdeclared = dataclasses.replace(semantic, expected_semantic="odeya-self-test-never-appears")
+    if not any("not by its declared check" in f
+               for f in semantic_attribution_failures(misdeclared, semantic_errors)):
+        failures.append("attribution self-test: a misdeclared semantic check was not detected")
+    undeclared = dataclasses.replace(semantic, expected_semantic=None)
+    if not any("does not declare the check" in f
+               for f in semantic_attribution_failures(undeclared, semantic_errors)):
+        failures.append("attribution self-test: a missing semantic declaration was not detected")
+    return failures
+
+
 def main() -> int:
     failures: list[str] = []
     manifest = load(CASE_MANIFEST)
@@ -1317,6 +1389,16 @@ def main() -> int:
             "base": case.fixture or f"bounded_factory:{case.kind}",
             "structural_expect": case.structural,
             **({"semantic_expect": case.semantic} if case.semantic is not None else {}),
+            **(
+                {"expected_refusal": {"pointer": case.expected_refusal[0], "keyword": case.expected_refusal[1]}}
+                if case.expected_refusal is not None
+                else {}
+            ),
+            **(
+                {"expected_semantic_refusal_contains": case.expected_semantic}
+                if case.expected_semantic is not None
+                else {}
+            ),
         }
         for case in CASES
     ]
@@ -1368,6 +1450,8 @@ def main() -> int:
                 f"{case.name}: expected structural {case.structural}, got {actual_structural}: {detail}"
             )
             continue
+        if case.structural == "invalid":
+            failures.extend(structural_attribution_failures(case, structural_errors))
         if case.semantic is not None:
             semantic_expectations += 1
             if structural_errors:
@@ -1380,6 +1464,10 @@ def main() -> int:
                 failures.append(
                     f"{case.name}: expected semantic {case.semantic}, got {actual_semantic}: {detail}"
                 )
+            if case.semantic == "invalid":
+                failures.extend(semantic_attribution_failures(case, semantic_errors))
+
+    failures.extend(attribution_self_test(validators))
 
     if failures:
         print("physical-contract checks failed:", file=sys.stderr)

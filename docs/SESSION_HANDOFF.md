@@ -454,12 +454,17 @@ lane's next units are the six unattributed suites (229 known-bad cases
 that cannot distinguish a guard firing from an incidental refusal) and the
 five-spelling refusal-attribution convergence.
 
-THE SIX-SUITE ATTRIBUTION BLINDNESS IS CLOSED (ADR 0055-0060): every
-known-bad case in every isolated suite — 313 as now measured; every
-carried count was an under-count (mathematical 19→37, projection 37→54,
-cognitive 107→119) — binds the exact constraint that must refuse it,
-with a fail-closed self-test in each suite proving the attribution gate
-fires on every run. They cannot currently distinguish a guard firing
+THE ATTRIBUTION BLINDNESS IS CLOSED BY CENSUS, NOT BY LIST (ADR
+0055-0061): the six-suite frontier was itself an enumeration error — a
+census found a seventh blind suite, `physical-contracts` (71 cases),
+never on the list. All negative cases in all suites now bind the exact
+constraint that must refuse them (384 across the seven attributed
+suites; every carried count was an under-count: mathematical 19→37,
+projection 37→54, cognitive 107→119, physical 0-listed→71), each suite
+with a fail-closed self-test proving its attribution gate fires on
+every run. Four further suites were already bound under earlier
+spellings (`expected_errors`, `required_errors`,
+`expected_status`/`expected_reasons`). They cannot currently distinguish a guard firing
 from an incidental refusal, the condition that made lifecycle closure
 blind. ADR 0055 attributed `architecture-review` (16 cases, exact
 instance pointer + keyword, fail-closed self-test every run), ADR 0056
@@ -469,12 +474,11 @@ domains bound, four-way self-test), and ADR 0057 attributed
 ADR 0058 attributed `constitutional-construction` (29 cases), ADR 0059
 attributed `projection-contracts` (37 structural + 17 semantic), and ADR
 0060 attributed `cognitive-contracts` (107 structural + 12 semantic).
-The follow-on is the convergence decision: attribution now has exactly
-two spellings — `expected_refusal` (pointer + keyword, jsonschema
-domains) and `expected_refusal_contains`/`expected_semantic_refusal_contains`
-(message substring, authored-checker domains) — and either one
-vocabulary or an explicitly recorded two-domain standard should be
-decided. Attribution is intent binding, not mutation coverage: no
+The follow-on is the convergence decision over the measured
+seven-spelling census: one vocabulary, or an explicitly standardized
+set with a gate that refuses a new suite shipping unattributed
+negatives. Any future frontier claim must cite a census, not a carried
+list. Attribution is intent binding, not mutation coverage: no
 schema-based suite is proven unweakenable at its declared location.
 
 Read the tranche's convergence honestly. Across this tranche the canonical
