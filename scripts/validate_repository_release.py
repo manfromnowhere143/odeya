@@ -855,6 +855,101 @@ def validate_supporting_files(errors: list[str]) -> None:
         errors.append(".gitleaks.toml: exact default-extension profile is required")
 
 
+# (path, carries_url): every copy carries the digest; only the two
+# downloaders carry the URL — formal/tla/check.sh consumes a local jar.
+TLA_PIN_SOURCES = (
+    (".github/workflows/formal.yml", True),
+    ("scripts/ci/rehearse-fresh-clone.sh", True),
+    ("formal/tla/check.sh", False),
+)
+
+
+def validate_tla_pin_copies(errors: list[str]) -> None:
+    """One TLA+ jar identity, however many copies carry it.
+
+    The jar URL and sha256 exist in the formal workflow, the rehearsal
+    script, the formal check script, and formal/tla/toolchain.lock.json. No
+    gate bound the copies to each other, so a partial toolchain bump was
+    local-green and remote-red — the incident's mechanism one file over
+    (independent review, ADR 0063). The lock file is the reference; every
+    text copy must carry exactly its URL and digest.
+    """
+    lock = load_json("formal/tla/toolchain.lock.json", errors)
+    asset = lock.get("asset", {}) if isinstance(lock, dict) else {}
+    url = asset.get("url")
+    sha = asset.get("sha256")
+    if not (isinstance(url, str) and url and isinstance(sha, str) and len(sha) == 64):
+        errors.append("formal/tla/toolchain.lock.json: asset url/sha256 are absent or malformed")
+        return
+    for relative, carries_url in TLA_PIN_SOURCES:
+        text = read(relative, errors)
+        if carries_url and url not in text:
+            errors.append(f"{relative}: TLA+ jar URL does not match formal/tla/toolchain.lock.json")
+        if sha not in text:
+            errors.append(f"{relative}: TLA+ jar sha256 does not match formal/tla/toolchain.lock.json")
+
+
+# CI jobs that run scripts on a bare interpreter, with the exact scripts they
+# invoke. A non-stdlib import added to any of these passes every local gate
+# that runs inside an installed environment and fails only on the remote
+# runner — the incident's mechanism one layer down (environment pin instead
+# of count pin; independent review, ADR 0063).
+BARE_INTERPRETER_SCRIPTS = (
+    "scripts/validate_repository_release.py",
+    "tests/canonicalization/compare_results.py",
+    "tests/canonicalization/audit_schemas.py",
+    "scripts/validate_gate_a_prerequisites.py",
+    "scripts/validate_schema_resource_reissues.py",
+    "scripts/validate_lifecycle_guard_coverage.py",
+    "scripts/validate_lifecycle_condition_coverage.py",
+    "scripts/validate_canonicalization_dispositions.py",
+    "scripts/validate_contract_profiles.py",
+    "scripts/validate_refusal_attribution.py",
+)
+
+
+def validate_bare_interpreter_imports(errors: list[str]) -> None:
+    """Every bare-job script must import only the standard library.
+
+    Local-module imports are followed one level so a stdlib facade cannot
+    hide a third-party import behind `import validate`.
+    """
+    import ast
+
+    stdlib = set(sys.stdlib_module_names)
+    seen: set[str] = set()
+    queue = list(BARE_INTERPRETER_SCRIPTS)
+    while queue:
+        relative = queue.pop()
+        if relative in seen:
+            continue
+        seen.add(relative)
+        path = ROOT / relative
+        if not path.is_file():
+            errors.append(f"bare-interpreter script is missing: {relative}")
+            continue
+        try:
+            tree = ast.parse(path.read_text(encoding="utf-8"))
+        except SyntaxError as exc:
+            errors.append(f"{relative}: does not parse: {exc}")
+            continue
+        for node in ast.walk(tree):
+            names: list[str] = []
+            if isinstance(node, ast.Import):
+                names = [alias.name.split(".")[0] for alias in node.names]
+            elif isinstance(node, ast.ImportFrom) and node.level == 0 and node.module:
+                names = [node.module.split(".")[0]]
+            for name in names:
+                sibling = path.parent / f"{name}.py"
+                if sibling.is_file():
+                    queue.append(str(sibling.relative_to(ROOT)))
+                elif name not in stdlib:
+                    errors.append(
+                        f"{relative}: imports non-stdlib module {name!r} but runs on a "
+                        "bare CI interpreter; it would fail only on the remote runner"
+                    )
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--extract-mermaid", type=Path)
@@ -872,6 +967,8 @@ def main() -> int:
     action_count, policy_mutation_count = validate_workflows(lock, errors)
     validate_release_scripts(lock, errors)
     validate_supporting_files(errors)
+    validate_tla_pin_copies(errors)
+    validate_bare_interpreter_imports(errors)
 
     if errors:
         print("Odeya repository release validation FAILED", file=sys.stderr)

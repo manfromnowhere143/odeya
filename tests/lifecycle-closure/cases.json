@@ -218,7 +218,8 @@
     "lifecycle_cond_lease_mutation_path_not_list",
     "lifecycle_cond_lease_list_index_integer_path",
     "lifecycle_lease_mutation_list_empty",
-    "lifecycle_lease_mutation_list_non_replace_entry"
+    "lifecycle_lease_mutation_list_non_replace_entry",
+    "lifecycle_cond_grant_exhaust_zero_use_grant"
   ],
   "cases": [
     {
@@ -6458,6 +6459,35 @@
       },
       "adversarial_tag": "lifecycle_lease_mutation_list_non_replace_entry",
       "expected_refusal_contains": "WorkLease record mutation is not one bounded replace operation"
+    },
+    {
+      "name": "cond-grant-exhaust-zero-use-grant",
+      "kind": "adversarial",
+      "model": "authority_grant_trace",
+      "expect": "reject",
+      "subject": {
+        "initial_state": "not_issued",
+        "max_uses": 0,
+        "steps": [
+          {
+            "event_type": "authority.grant_issued",
+            "declared_from": "not_issued",
+            "declared_to": "issued"
+          },
+          {
+            "event_type": "authority.grant_activated",
+            "declared_from": "issued",
+            "declared_to": "active"
+          },
+          {
+            "event_type": "authority.grant_exhausted",
+            "declared_from": "active",
+            "declared_to": "exhausted"
+          }
+        ]
+      },
+      "adversarial_tag": "lifecycle_cond_grant_exhaust_zero_use_grant",
+      "expected_refusal_contains": "exhausts before the exact final legal use"
     }
   ]
 }

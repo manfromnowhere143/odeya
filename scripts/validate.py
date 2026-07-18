@@ -1454,12 +1454,42 @@ def readme_checkpoint_errors(
     return errors
 
 
+def validate_schema_contract_pins(errors: list[str], schema_count: int) -> None:
+    """Read the CI schema-contract pins locally.
+
+    The pins in scripts/validate_schema_contracts.py were CI-only, the same
+    failure class as the contract-profile incident: a schema or
+    fixture-classification change passed every local gate and failed only
+    the remote Schema contracts job, because the valid/invalid split was
+    bound by no other artifact (found live by independent review, ADR
+    0063). The import is lazy so the pin module's own import of this file
+    resolves after this module is fully loaded.
+    """
+    import validate_schema_contracts as pins
+
+    if schema_count != pins.EXPECTED_SCHEMAS:
+        add(errors, f"CI schema pin drifted: workflow expects {pins.EXPECTED_SCHEMAS}, tree has {schema_count}")
+    manifest = json.loads(SCHEMA_TEST_MANIFEST.read_text(encoding="utf-8"))
+    observed = {"valid": 0, "invalid": 0}
+    for case in manifest.get("cases", []):
+        expectation = case.get("expect")
+        if expectation in observed:
+            observed[expectation] += 1
+    if observed != pins.EXPECTED_CASES:
+        add(
+            errors,
+            "CI schema case-partition pin drifted: workflow expects "
+            f"{pins.EXPECTED_CASES}, manifest has {observed}",
+        )
+
+
 def main() -> int:
     errors: list[str] = []
     validate_required(errors)
     schema_ready, fixture_ready = validate_jsonschema_dependencies(errors)
     schema_count, schemas = validate_schemas(errors, schema_ready)
     schema_case_count = validate_schema_fixtures(errors, schemas, fixture_ready)
+    validate_schema_contract_pins(errors, schema_count)
     document_count, local_link_count = validate_markdown_links(errors)
     validate_foundation_invariants(errors)
     semantic_fixture_check_count = validate_architecture_semantic_fixtures(errors)

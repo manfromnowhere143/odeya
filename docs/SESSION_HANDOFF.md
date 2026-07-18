@@ -478,9 +478,20 @@ ADR 0062 closed the family: the domain-exact spellings are frozen as
 the standard (no cosmetic re-spelling of proven bindings), and the
 seventh architecture-evidence check enforces them by census — every
 tests/*/cases.json is swept, a registered suite's unbound negative
-fails, and an unknown suite carrying negatives fails closed. First
-census: 671 bound negative cases across 14 manifests. Any future
-frontier claim must cite that gate's output, not a carried list. Attribution is intent binding, not mutation coverage: no
+fails, and an unknown suite carrying negatives fails closed. REVIEW ROUND
+TWO (ADR 0063) then refuted three of four surfaces: the census itself was
+rewritten fail-closed (total registry over case-bearing manifests, 457
+architecture-schema negatives now counted explicitly, command-identity
+certified on its exact field), three further CI-only gates gained local
+readers (schema pins, bare-interpreter imports, TLA pin copies), four
+misbound and one ambiguous binding were rebound to intent, and ADR 0054's
+impossibility claim was half-retracted by a retained zero-use-grant
+counterexample — condition coverage now measures 88/89. Surviving
+weaknesses are enumerated in ADR 0063, not resolved: 13 crash-artifact
+condition proofs, ≥22 denominator omissions including four removable
+harness guards, 8 compound-name under-bindings, subset-semantics
+rebindability in the expected_errors suites. Any future frontier claim
+must cite the census gate's output, not a carried list. Attribution is intent binding, not mutation coverage: no
 schema-based suite is proven unweakenable at its declared location.
 
 Read the tranche's convergence honestly. Across this tranche the canonical
