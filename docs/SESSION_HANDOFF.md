@@ -454,19 +454,20 @@ lane's next units are the six unattributed suites (229 known-bad cases
 that cannot distinguish a guard firing from an incidental refusal) and the
 five-spelling refusal-attribution convergence.
 
-Two further follow-ons are open. Two suites still assert refusal
-without attribution — `cognitive-contracts` (107) and
-`projection-contracts` (37), with each count to be re-measured when
-attributed: the mathematical-contract count was carried as 19 and
-measured 37. They cannot currently distinguish a guard firing
+Two further follow-ons are open. One suite still asserts refusal
+without attribution — `cognitive-contracts` (107 carried, to be
+re-measured when attributed: every attributed suite so far
+under-counted; mathematical-contracts carried 19 measured 37,
+projection-contracts carried 37 measured 54). They cannot currently distinguish a guard firing
 from an incidental refusal, the condition that made lifecycle closure
 blind. ADR 0055 attributed `architecture-review` (16 cases, exact
 instance pointer + keyword, fail-closed self-test every run), ADR 0056
 attributed `mathematical-contracts` (20 structural + 17 semantic, both
 domains bound, four-way self-test), and ADR 0057 attributed
 `first-slice-resolution` (21 C1-C8 cases bound to their invariants), and
-ADR 0058 attributed `constitutional-construction` (29 cases); together
-they are the pattern for the rest. Separately, refusal
+ADR 0058 attributed `constitutional-construction` (29 cases), and ADR
+0059 attributed `projection-contracts` (37 structural + 17 semantic);
+together they are the pattern for the last suite. Separately, refusal
 attribution should converge on one exact vocabulary once the remaining
 suites are attributed.
 

@@ -443,6 +443,98 @@ def package_semantics() -> list[str]:
     return errors
 
 
+def evaluate_case(case: dict) -> tuple[list[str], str | None]:
+    failures: list[str] = []
+    schema_path = str(case["schema"])
+    schema = load_json(ROOT / schema_path)
+    instance = mutate(load_json(ROOT / case["fixture"]), case.get("mutations", []))
+    structural_errors = list(
+        Draft202012Validator(schema, format_checker=FormatChecker()).iter_errors(instance)
+    )
+    actual = "invalid" if structural_errors else "valid"
+    if actual != case["expect"]:
+        detail = structural_errors[0].message if structural_errors else "mutation was unexpectedly accepted"
+        failures.append(f"{case['name']}: expected structural {case['expect']}, got {actual}: {detail}")
+        return failures, None
+    if structural_errors:
+        # Refusal for an incidental reason is not proof that the intended
+        # constraint fires. Bind each structurally known-bad case to the
+        # exact instance location and keyword that must refuse it
+        # (ADR 0055/0056 spelling). A semantic_expect declared on a
+        # structurally invalid case is never evaluated by this harness.
+        declared = case.get("expected_refusal")
+        if not isinstance(declared, dict) or "pointer" not in declared or "keyword" not in declared:
+            failures.append(
+                f"{case['name']}: known-bad case does not declare the constraint that must refuse it"
+            )
+        elif not any(
+            "/" + "/".join(str(part) for part in error.absolute_path) == declared["pointer"]
+            and error.validator == declared["keyword"]
+            for error in structural_errors
+        ):
+            observed = [
+                ("/" + "/".join(str(part) for part in error.absolute_path), error.validator)
+                for error in structural_errors
+            ]
+            failures.append(
+                f"{case['name']}: refused, but not at its declared constraint "
+                f"{declared['pointer']!r} by {declared['keyword']!r}; got {observed}"
+            )
+        return failures, "structural_invalid"
+    if "semantic_expect" in case:
+        semantic_failures = semantic_errors(schema_path, instance)
+        semantic_actual = "invalid" if semantic_failures else "valid"
+        if semantic_actual != case["semantic_expect"]:
+            detail = semantic_failures[0] if semantic_failures else "semantic mutation was unexpectedly accepted"
+            failures.append(
+                f"{case['name']}: expected semantic {case['semantic_expect']}, "
+                f"got {semantic_actual}: {detail}"
+            )
+        if case["semantic_expect"] == "invalid":
+            expected = case.get("expected_semantic_refusal_contains")
+            if not isinstance(expected, str) or not expected:
+                failures.append(
+                    f"{case['name']}: semantic known-bad case does not declare the check that must refuse it"
+                )
+            elif not any(expected in error for error in semantic_failures):
+                failures.append(
+                    f"{case['name']}: semantically refused, but not by its declared check "
+                    f"{expected!r}; got {semantic_failures}"
+                )
+        return failures, "semantic"
+    return failures, None
+
+
+def attribution_self_test(manifest: dict) -> list[str]:
+    """Prove on every run that both binding checks fire (law 11)."""
+    failures: list[str] = []
+    structural = next((c for c in manifest["cases"] if c["expect"] == "invalid"), None)
+    semantic = next(
+        (c for c in manifest["cases"]
+         if c["expect"] == "valid" and c.get("semantic_expect") == "invalid"),
+        None,
+    )
+    if structural is None or semantic is None:
+        return ["attribution self-test found no known-bad case to tamper with"]
+    tampered = json.loads(json.dumps(structural))
+    tampered["expected_refusal"] = {"pointer": "/odeya-self-test/never-fires", "keyword": "const"}
+    if not any("refused, but not at its declared constraint" in f for f in evaluate_case(tampered)[0]):
+        failures.append("attribution self-test: a misdeclared structural constraint was not detected")
+    tampered = json.loads(json.dumps(structural))
+    tampered.pop("expected_refusal", None)
+    if not any("does not declare the constraint" in f for f in evaluate_case(tampered)[0]):
+        failures.append("attribution self-test: a missing structural declaration was not detected")
+    tampered = json.loads(json.dumps(semantic))
+    tampered["expected_semantic_refusal_contains"] = "odeya-self-test-never-appears"
+    if not any("not by its declared check" in f for f in evaluate_case(tampered)[0]):
+        failures.append("attribution self-test: a misdeclared semantic check was not detected")
+    tampered = json.loads(json.dumps(semantic))
+    tampered.pop("expected_semantic_refusal_contains", None)
+    if not any("does not declare the check" in f for f in evaluate_case(tampered)[0]):
+        failures.append("attribution self-test: a missing semantic declaration was not detected")
+    return failures
+
+
 def main() -> int:
     failures = schema_audit()
     manifest = load_json(CASES)
@@ -460,31 +552,14 @@ def main() -> int:
 
     structural_invalid_count = 0
     semantic_case_count = 0
+    failures.extend(attribution_self_test(manifest))
     for case in manifest["cases"]:
-        schema_path = str(case["schema"])
-        schema = load_json(ROOT / schema_path)
-        instance = mutate(load_json(ROOT / case["fixture"]), case.get("mutations", []))
-        structural_errors = list(
-            Draft202012Validator(schema, format_checker=FormatChecker()).iter_errors(instance)
-        )
-        actual = "invalid" if structural_errors else "valid"
-        if actual != case["expect"]:
-            detail = structural_errors[0].message if structural_errors else "mutation was unexpectedly accepted"
-            failures.append(f"{case['name']}: expected structural {case['expect']}, got {actual}: {detail}")
-            continue
-        if structural_errors:
+        case_failures, coverage = evaluate_case(case)
+        failures.extend(case_failures)
+        if coverage == "structural_invalid":
             structural_invalid_count += 1
-            continue
-        if "semantic_expect" in case:
+        elif coverage == "semantic":
             semantic_case_count += 1
-            semantic_failures = semantic_errors(schema_path, instance)
-            semantic_actual = "invalid" if semantic_failures else "valid"
-            if semantic_actual != case["semantic_expect"]:
-                detail = semantic_failures[0] if semantic_failures else "semantic mutation was unexpectedly accepted"
-                failures.append(
-                    f"{case['name']}: expected semantic {case['semantic_expect']}, "
-                    f"got {semantic_actual}: {detail}"
-                )
 
     package_failures = package_semantics()
     failures.extend(f"package: {failure}" for failure in package_failures)
