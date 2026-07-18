@@ -495,12 +495,16 @@ mutated path" was wrong because the derivation treated `/` as an
 ancestor of everything. Corrected: **232 at_mutation, 169
 container_of_mutation, 56 implication**.
 
-**CORPUS COVERAGE IS UNDER WAY (ADR 0071): 112 of the 286 cross-field
-rules now have an ablation-verified case** — refused with the rule
+**CORPUS COVERAGE IS UNDER WAY (ADR 0071/0072/0073): 152 of the 286
+cross-field rules now have an ablation-verified case** — refused with the rule
 present, accepted with it deleted, re-proven by an eighth
-architecture-evidence check and a rehearsal stage. 174 remain: 143 not
-isolable without instance-minimizing generation, 17 still-valid, 9
-unmutatable, 5 with no violable requirement recognized. The original
+architecture-evidence check and a rehearsal stage. 134 remain. Three
+increments yielded 112, then 20, then 20; the profile is measured (ADR
+0073) and the remainder resist because their `if` conditions entangle
+neighbouring rules semantically, not syntactically. Further mechanical
+generation looks unlikely to pay: the next real step is authored cases
+from each rule's intent (~134 units) or a whole-schema constraint
+solver. The original
 finding stands as the reason:
 
 **CORPUS COVERAGE, NOT ATTRIBUTION, IS THE MAJOR EVIDENCE UNIT.**
