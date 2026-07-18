@@ -448,7 +448,36 @@ and arithmetic only — it cannot detect a falsified record and says so) and
 re-measured for real by the rehearsal's new `lifecycle-condition-coverage`
 stage. 132 single-condition tests and structural dict comparisons are
 counted, not audited; field-level blindness inside structural expectations
-remains unmeasured. ADR 0054 closed the 48 (see above): 87/89 proved, two
+remains unmeasured.
+
+**EVIDENCE-QUALITY LANE STATUS, 2026-07-18.** ADRs 0052-0068 closed this
+lane by measurement. Current retained numbers, all reproduced by the
+exact-commit rehearsal: lifecycle statement coverage **172/181**,
+condition coverage **97/99**, refusal attribution **1,147 bound negative
+cases, zero unattributed** across every case-bearing manifest. Every
+audit denominator is now itself audited, including the suite harness
+(ADR 0066), and every proved item declares whether its detection was
+case-attributed or a crash (ADR 0065).
+
+What remains open in this lane, none of it silent: four ternary selectors
+counted and unaudited; fourteen crash-detected condition proofs, fragile
+by nature; nine statements and two conditions structurally unprovable and
+individually explained (ADR 0066); the architecture-schema bindings are
+observation-derived and mutation-correlated rather than hand-verified
+against each case's intent (ADR 0068); and attribution everywhere is
+binding, never weakening-mutation coverage — no schema-based suite is
+proven unweakenable at its declared location.
+
+**REVIEW BOUNDARY: ADRs 0064-0068 have NOT been independently reviewed.**
+Round two (ADR 0063) covered 0052-0062 only. Everything after it is
+producer-certified work that has passed its gates but not an independent
+refutation attempt, which law 4 requires before any of it counts as
+settled. A round-three review of 0064-0068 is the next evidence-lane
+unit; until it runs, treat those five tranches as unreviewed.
+
+With that boundary stated, the dependency-ordered mission below resumes:
+the canonical profile decision remains the gating item, and it terminates
+in Daniel's exact-byte review, which no session can grant itself. ADR 0054 closed the 48 (see above): 87/89 proved, two
 invariant-coupled disjuncts retained deliberately. The evidence-quality
 lane's next units are the six unattributed suites (229 known-bad cases
 that cannot distinguish a guard firing from an incidental refusal) and the
