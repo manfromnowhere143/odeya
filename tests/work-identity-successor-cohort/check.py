@@ -514,6 +514,30 @@ def main() -> int:
         print(f"Work identity successor cohort: invalid suite: {exc}", file=sys.stderr)
         return 1
 
+    failures, safe_count, adversarial_count = evaluate_cases(cases, references)
+    failures.extend(coverage_failures(safe_count, adversarial_count))
+    failures.extend(harness_self_test(references))
+    failures.extend(harness_self_test_meta_proof(references))
+    if failures:
+        print("Work identity successor cohort: FAIL", file=sys.stderr)
+        for failure in failures:
+            print(f"- {failure}", file=sys.stderr)
+        return 1
+    print(
+        "Work identity successor cohort: PASS — "
+        f"{safe_count} safe reference and {adversarial_count} known-bad mutations; "
+        "three immutable predecessors retained, three exact successors bound, "
+        "while profile issuance, canonical identity, admission, assignment, "
+        "Gate A, deployment, runtime, and effects remain blocked."
+    )
+    return 0
+
+
+def evaluate_cases(cases: list, references: dict) -> tuple[list[str], int, int]:
+    """Run every case. Factored out of main so the harness's own hygiene
+    guards can be exercised by a self-test: a malformed case cannot live in
+    the retained set, so before ADR 0080 none of them had any proof and the
+    generalized audit measured this suite at 0 of 12."""
     failures: list[str] = []
     names: set[str] = set()
     safe_count = 0
@@ -576,23 +600,106 @@ def main() -> int:
                 )
         else:
             failures.append(f"{name}: unknown kind {kind!r}")
+    return failures, safe_count, adversarial_count
+
+
+def coverage_failures(safe_count: int, adversarial_count: int) -> list[str]:
+    failures: list[str] = []
     if safe_count != 1:
         failures.append(f"expected exactly one safe case, found {safe_count}")
     if adversarial_count < 30:
         failures.append(f"expected at least 30 adversarial cases, found {adversarial_count}")
-    if failures:
-        print("Work identity successor cohort: FAIL", file=sys.stderr)
-        for failure in failures:
-            print(f"- {failure}", file=sys.stderr)
-        return 1
-    print(
-        "Work identity successor cohort: PASS — "
-        f"{safe_count} safe reference and {adversarial_count} known-bad mutations; "
-        "three immutable predecessors retained, three exact successors bound, "
-        "while profile issuance, canonical identity, admission, assignment, "
-        "Gate A, deployment, runtime, and effects remain blocked."
-    )
-    return 0
+    return failures
+
+
+def harness_self_test_meta_proof(references: dict) -> list[str]:
+    """Prove the self-test's own refusal statements are load-bearing.
+
+    Blinding the evaluator is the same move the self-test makes one level
+    down -- construct the malformed thing in memory -- applied to a
+    malformed harness instead of a malformed case (ADR 0069/0080). The
+    exact count of DISTINCT refusals is asserted, so a duplicated probe
+    collapses the set and is caught.
+    """
+    blind = lambda cases, refs: ([], 0, 0)  # noqa: E731 - a harness refusing nothing
+    observed = harness_self_test(references, evaluator=blind)
+    distinct = {failure for failure in observed}
+    if len(distinct) != 10:
+        return [
+            f"harness meta self-test: blinding the evaluator produced {len(distinct)} distinct "
+            "refusals, expected 10; a probe is duplicated or a refusal is not load-bearing"
+        ]
+    return []
+
+
+def harness_self_test(references: dict, evaluator=None) -> list[str]:
+    """Prove the harness's own hygiene guards fire (law 11).
+
+    Each synthetic case is malformed in exactly one way and must be refused
+    by exactly one guard; the floors are probed from both sides so their
+    constants are pinned rather than merely present (ADR 0069). Probe
+    subjects must be distinct, because two identical probes preserve every
+    count while a guard becomes removable.
+    """
+    failures: list[str] = []
+    probed: list = []
+
+    def refuses(case, expected: str, label: str) -> None:
+        if any(case == earlier for earlier in probed):
+            failures.append(f"harness self-test: {label} duplicates an earlier probe subject")
+        probed.append(copy.deepcopy(case))
+        observed, _, _ = (evaluator or evaluate_cases)([case], references)
+        if not any(expected in failure for failure in observed):
+            failures.append(f"harness self-test: {label} was not refused; got {observed}")
+
+    safe = {"name": "odeya-self-test", "kind": "safe", "mutations": []}
+    bad_target = [{"target": "no-such-target", "op": "replace", "path": "/x", "value": 1}]
+    refuses("not-an-object", "is not an object", "a non-object case")
+    refuses({"kind": "safe"}, "missing or duplicate name", "a case without a name")
+    refuses(dict(safe, mutations=bad_target), "mutation failed", "an unresolvable mutation target")
+    refuses(dict(safe, name="odeya-self-test-2", mutations=[{"target": "work_intent",
+            "op": "replace", "path": "/schema_version", "value": "0.0.0"}]),
+            "safe case failed with", "a safe case carrying a mutation")
+    refuses({"name": "odeya-self-test-3", "kind": "adversarial", "mutations": [],
+             "intent_errors": ["x"], "expected_errors": ["x"]},
+            "adversarial case has no mutation", "an adversarial case with no mutation")
+    refuses({"name": "odeya-self-test-4", "kind": "adversarial",
+             "mutations": [{"target": "work_intent", "op": "replace",
+                            "path": "/schema_version", "value": "0.0.0"}],
+             "expected_errors": ["x"]},
+            "declares no intent error", "an adversarial case with no declared intent")
+    refuses({"name": "odeya-self-test-5", "kind": "adversarial",
+             "mutations": [{"target": "work_intent", "op": "replace",
+                            "path": "/schema_version", "value": "0.0.0"}],
+             "intent_errors": ["odeya-self-test-never-fires"], "expected_errors": ["x"]},
+            "did not fire", "an intent error that never fires")
+    refuses({"name": "odeya-self-test-6", "kind": "bogus"}, "unknown kind", "an unknown case kind")
+    noop = [{"target": "work_intent", "op": "replace", "path": "/schema_version",
+             "value": references["work_intent"].get("schema_version")}]
+    refuses({"name": "odeya-self-test-7", "kind": "adversarial", "mutations": noop,
+             "intent_errors": ["x"], "expected_errors": ["x"]},
+            "known-bad mutation was accepted", "a known-bad mutation that changes nothing")
+    refuses({"name": "odeya-self-test-8", "kind": "adversarial",
+             "mutations": [{"target": "work_intent", "op": "replace",
+                            "path": "/schema_version", "value": "0.0.0"}],
+             "intent_errors": ["work_intent_schema_invalid"],
+             "expected_errors": ["odeya-self-test-not-the-observed-set"]},
+            "declared", "an inventory that does not equal the observed set")
+
+    # Both floors, pinned from each side so the constants are load-bearing.
+    for safe_n, adversarial_n, should_refuse, label in (
+        (0, 30, True, "no safe reference"),
+        (1, 30, False, "the exact safe-reference count"),
+        (1, 29, True, "one case below the adversarial floor"),
+        (1, 30, False, "the exact adversarial floor"),
+    ):
+        refused = bool(coverage_failures(safe_n, adversarial_n))
+        if refused != should_refuse:
+            failures.append(
+                f"harness self-test: {label} was "
+                f"{'not refused' if should_refuse else 'refused'}"
+            )
+    return failures
 
 
 if __name__ == "__main__":

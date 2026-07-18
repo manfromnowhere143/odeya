@@ -491,15 +491,52 @@ def main() -> int:
         print(f"Canonical profile candidate: invalid input: {exc}", file=sys.stderr)
         return 1
 
-    failures: list[str] = []
-    base_errors = evaluate(core, evidence)
-    if base_errors:
-        failures.append(f"base candidate rejected: {sorted(base_errors)}")
+    failures = base_failures(core, evidence)
+    case_failures, safe_count, adversarial_count, observed_tags = evaluate_cases(cases.get("cases", []), core, evidence)
+    failures.extend(case_failures)
+    failures.extend(tag_failures(observed_tags, set(cases.get("required_adversarial_tags", []))))
+    failures.extend(harness_self_test(core, evidence))
+    failures.extend(harness_self_test_meta_proof(core, evidence))
+    if failures:
+        for failure in failures:
+            print(f"ERROR: {failure}", file=sys.stderr)
+        print(
+            f"Canonical profile candidate: FAIL ({len(failures)} failure(s)); "
+            "profile remains unissued",
+            file=sys.stderr,
+        )
+        return 1
+    print(
+        "Canonical profile candidate: PASS — exact nonrecursive core/evidence "
+        f"binding; {safe_count} safe reference and {adversarial_count} known-bad "
+        "mutations; profile remains unissued, Gate A blocked, runtime unauthorized"
+    )
+    return 0
 
+
+def base_failures(core: dict, evidence: dict) -> list[str]:
+    base_errors = evaluate(core, evidence)
+    return [f"base candidate rejected: {sorted(base_errors)}"] if base_errors else []
+
+
+def tag_failures(observed_tags: set, required_tags: set) -> list[str]:
+    if observed_tags != required_tags:
+        return [
+            "adversarial tag inventory mismatch: "
+            f"required {sorted(required_tags)}, observed {sorted(observed_tags)}"
+        ]
+    return []
+
+
+def evaluate_cases(cases: list, core: dict, evidence: dict) -> tuple[list[str], int, int, set]:
+    """Factored so the harness's hygiene guards can be exercised by a self-test
+    (ADR 0080): a malformed case cannot live in the retained set, so before this
+    every hygiene guard had no proof and the audit measured this suite at 0/10."""
+    failures: list[str] = []
     observed_tags: set[str] = set()
     safe_count = 0
     adversarial_count = 0
-    for case in cases.get("cases", []):
+    for case in cases:
         name = case.get("name", "<unnamed>")
         mutated_core = copy.deepcopy(core)
         mutated_evidence = copy.deepcopy(evidence)
@@ -551,30 +588,73 @@ def main() -> int:
                 )
         else:
             failures.append(f"{name}: unknown case kind {case.get('kind')!r}")
+    return failures, safe_count, adversarial_count, observed_tags
 
-    required_tags = set(cases.get("required_adversarial_tags", []))
-    if observed_tags != required_tags:
-        failures.append(
-            "adversarial tag inventory mismatch: "
-            f"required {sorted(required_tags)}, observed {sorted(observed_tags)}"
-        )
 
-    if failures:
-        for failure in failures:
-            print(f"ERROR: {failure}", file=sys.stderr)
-        print(
-            f"Canonical profile candidate: FAIL ({len(failures)} failure(s)); "
-            "profile remains unissued",
-            file=sys.stderr,
-        )
-        return 1
+def harness_self_test_meta_proof(core: dict, evidence: dict) -> list[str]:
+    blind = lambda cases, c, e: ([], 0, 0, set())  # noqa: E731
+    distinct = {f for f in harness_self_test(core, evidence, evaluator=blind)}
+    if len(distinct) != 7:
+        return [
+            f"harness meta self-test: blinding the evaluator produced {len(distinct)} distinct "
+            "refusals, expected 7; a probe is duplicated or a refusal is not load-bearing"
+        ]
+    return []
 
-    print(
-        "Canonical profile candidate: PASS — exact nonrecursive core/evidence "
-        f"binding; {safe_count} safe reference and {adversarial_count} known-bad "
-        "mutations; profile remains unissued, Gate A blocked, runtime unauthorized"
-    )
-    return 0
+
+def harness_self_test(core: dict, evidence: dict, evaluator=None) -> list[str]:
+    """Each synthetic case is malformed in exactly one way and must be refused
+    by exactly one guard; probe subjects distinct (ADR 0069/0080). Also proves
+    the base-acceptance and tag-inventory guards fire, which are outside the
+    per-case loop."""
+    failures: list[str] = []
+    probed: list = []
+
+    def refuses(case, expected: str, label: str) -> None:
+        if any(case == earlier for earlier in probed):
+            failures.append(f"harness self-test: {label} duplicates an earlier probe subject")
+        probed.append(copy.deepcopy(case))
+        observed, _, _, _ = (evaluator or evaluate_cases)([case], core, evidence)
+        if not any(expected in failure for failure in observed):
+            failures.append(f"harness self-test: {label} was not refused; got {observed}")
+
+    bad_mut = [{"target": "core", "op": "replace", "path": "/schema_version", "value": "0.0.0"}]
+    refuses({"name": "odeya-self-test-1", "kind": "safe_reference",
+             "mutations": [{"target": "no-such", "op": "replace", "path": "/x", "value": 1}]},
+            "invalid mutation", "an unresolvable mutation target")
+    refuses({"name": "odeya-self-test-2", "kind": "safe_reference", "mutations": bad_mut},
+            "expected accept, got", "a safe reference that a mutation broke")
+    refuses({"name": "odeya-self-test-3", "kind": "adversarial", "mutations": bad_mut,
+             "adversarial_tag": 7, "intent_errors": ["x"], "required_errors": ["x"]},
+            "missing adversarial_tag", "a non-string adversarial tag")
+    refuses({"name": "odeya-self-test-4", "kind": "adversarial", "mutations": bad_mut,
+             "adversarial_tag": "t", "required_errors": ["x"]},
+            "declares no intent error", "an adversarial case with no declared intent")
+    refuses({"name": "odeya-self-test-5", "kind": "adversarial", "mutations": bad_mut,
+             "adversarial_tag": "t", "intent_errors": ["odeya-never-fires"],
+             "required_errors": ["x"]},
+            "did not fire", "an intent error that never fires")
+    refuses({"name": "odeya-self-test-6", "kind": "adversarial", "mutations": [],
+             "adversarial_tag": "t", "intent_errors": ["x"], "required_errors": ["x"]},
+            "expected rejection, got accept", "a known-bad case that changes nothing")
+    refuses({"name": "odeya-self-test-7", "kind": "bogus"},
+            "unknown case kind", "an unknown case kind")
+
+    # The base-acceptance guard fires only when the loaded base is broken.
+    if not base_failures(_mutated(core, bad_mut), evidence):
+        failures.append("harness self-test: a broken base candidate was not refused")
+    # The tag-inventory guard fires when observed tags diverge from required.
+    if not tag_failures({"odeya-extra"}, set()):
+        failures.append("harness self-test: a tag-inventory mismatch was not refused")
+    return failures
+
+
+def _mutated(core: dict, mutations: list) -> dict:
+    candidate = copy.deepcopy(core)
+    for mutation in mutations:
+        if mutation.get("target") == "core":
+            apply_mutation(candidate, mutation)
+    return candidate
 
 
 if __name__ == "__main__":

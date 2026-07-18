@@ -450,7 +450,18 @@ stage. 132 single-condition tests and structural dict comparisons are
 counted, not audited; field-level blindness inside structural expectations
 remains unmeasured.
 
-**THE GENERALIZED AUDIT EXISTS AND THE NUMBER IS 161/579 (ADR 0079).**
+**GUARD COVERAGE IS 195/601 AND CLIMBING (ADR 0079/0080).** The 418
+unproved guards split into 116 harness-hygiene (closable by ~12
+self-tests, ADR 0066 pattern) and 302 domain (need retained cases). ADR
+0080 closed three zero-coverage suites by in-harness self-test:
+work-identity-successor-cohort 0→13/19, work-intent-identity-candidate
+0→12/20, canonical-profile-candidate 0→9/18. command-identity-contracts
+is the fourth zero suite and is structurally different (manifest guards,
+validator construction) -- the named next harness unit, deliberately not
+rushed. After the harness guards, the 302 domain guards are case-writing
+at scale.
+
+**THE GENERALIZED AUDIT MEASURED 161/579 AT FIRST (ADR 0079).**
 The suite-agnostic mutation audit now measures twelve suites in under
 seven minutes: 161 guards proved, **418 with no known-bad proof**, zero
 crash-detections. Four suites prove nothing at all — 45 guards, including
