@@ -302,6 +302,7 @@ ARCHITECTURE_EVIDENCE_CHECKS = (
     "scripts/validate_gate_a_prerequisites.py",
     "scripts/validate_schema_resource_reissues.py",
     "scripts/validate_lifecycle_guard_coverage.py",
+    "scripts/validate_lifecycle_condition_coverage.py",
     "scripts/validate_canonicalization_dispositions.py",
 )
 REPOSITORY_RELEASE_CHECKS = (

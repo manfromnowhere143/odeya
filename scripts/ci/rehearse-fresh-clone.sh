@@ -186,6 +186,22 @@ else
     "$EXPECTED_COMMIT" 2>&1 | tee artifacts/rehearsal/lifecycle-guard-coverage.log
 fi
 
+# Same enforcement shape one level deeper: the condition-coverage record can
+# be falsified consistently past its cheap gate, so only re-measurement here
+# binds it to the exact bytes.
+CURRENT_STAGE="lifecycle-condition-coverage"
+if [[ -f scripts/audit_lifecycle_condition_coverage.py ]]; then
+  .venv-architecture/bin/python scripts/audit_lifecycle_condition_coverage.py \
+    --check --python .venv-architecture/bin/python \
+    2>&1 | tee artifacts/rehearsal/lifecycle-condition-coverage.log
+else
+  # This commit predates the condition audit. Fail-closed for the same reason
+  # as the stage above: validate.py refuses a retained condition record whose
+  # audit tool is absent, so a commit reaching this branch has none.
+  printf 'condition audit tool absent at %s; no retained condition record to reproduce\n' \
+    "$EXPECTED_COMMIT" 2>&1 | tee artifacts/rehearsal/lifecycle-condition-coverage.log
+fi
+
 CURRENT_STAGE="release-surface"
 bash scripts/ci/check-repository-release.sh
 

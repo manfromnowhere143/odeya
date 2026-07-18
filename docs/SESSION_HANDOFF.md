@@ -425,9 +425,22 @@ Extend `discover()` before adding a new refusal construct, and treat the guard
 count as a claim requiring review rather than as a measurement.
 
 ADR 0052 extended the harness to `schema_contract_errors` and closed it at
-64/64; statement coverage stands complete at 160/160, and the next lifecycle
-unit is condition-level mutation (ADR 0030's MC/DC boundary), not more
-statement cases.
+64/64; statement coverage stands complete at 160/160. ADR 0053 then
+mechanized ADR 0030's condition-level boundary: every top-level member of a
+guarded boolean chain is removed by mutation, in the ten models and the
+three helper predicates. **The measurement is 39 of 87 conditions proved —
+48 removable with the suite green**, including the fabricated-profile
+disjunct ADR 0030 named, both halves of the conjoined release/claim case,
+and the helper predicates almost whole (`valid_record_ref` 1/8). The record
+is retained at `architecture/lifecycle-condition-coverage.json`, gated
+cheaply in the default validator (fifth architecture-evidence check, digest
+and arithmetic only — it cannot detect a falsified record and says so) and
+re-measured for real by the rehearsal's new `lifecycle-condition-coverage`
+stage. 132 single-condition tests and structural dict comparisons are
+counted, not audited; field-level blindness inside structural expectations
+remains unmeasured. Closing the 48 is the next lifecycle unit — one case
+per condition, each setting exactly the mutated part wrong while holding
+every sibling safe, which also dissolves the conjoined-case masking form.
 
 Three further follow-ons are open. Six suites still assert refusal
 without attribution across 229 known-bad cases — `cognitive-contracts` (107),
