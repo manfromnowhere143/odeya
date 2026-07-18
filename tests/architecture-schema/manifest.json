@@ -11902,6 +11902,620 @@
       },
       "refusal_class": "implication",
       "ablation_verified_rule": "/allOf/16"
+    },
+    {
+      "name": "data-use-decision-cross-field-rule-1-is-enforced",
+      "schema": "schemas/data-use-decision.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/data-use-decision.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/decision",
+          "value": "indeterminate"
+        },
+        {
+          "op": "replace",
+          "path": "/unresolved_facts",
+          "value": []
+        },
+        {
+          "op": "replace",
+          "path": "/authorization_scope",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/retention_schedule_ref",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/effective_at",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/expires_at",
+          "value": null
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/unresolved_facts",
+        "keyword": "minItems"
+      },
+      "refusal_class": "at_mutation",
+      "ablation_verified_rule": "/allOf/1"
+    },
+    {
+      "name": "deletion-case-cross-field-rule-0-is-enforced",
+      "schema": "schemas/deletion-case.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/deletion-case.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/status",
+          "value": "blocked_by_hold"
+        },
+        {
+          "op": "replace",
+          "path": "/legal_hold_refs",
+          "value": []
+        },
+        {
+          "op": "replace",
+          "path": "/closed_at",
+          "value": null
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/legal_hold_refs",
+        "keyword": "minItems"
+      },
+      "refusal_class": "at_mutation",
+      "ablation_verified_rule": "/allOf/0"
+    },
+    {
+      "name": "deletion-case-cross-field-rule-3-is-enforced",
+      "schema": "schemas/deletion-case.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/deletion-case.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/status",
+          "value": "limited"
+        },
+        {
+          "op": "replace",
+          "path": "/residual_copies",
+          "value": []
+        },
+        {
+          "op": "replace",
+          "path": "/closed_at",
+          "value": null
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/residual_copies",
+        "keyword": "minItems"
+      },
+      "refusal_class": "at_mutation",
+      "ablation_verified_rule": "/allOf/3"
+    },
+    {
+      "name": "epistemic-graph-delta-cross-field-rule-3-is-enforced",
+      "schema": "schemas/epistemic-graph-delta.schema.json",
+      "fixture": "tests/cognitive-contracts/fixtures/epistemic-graph-delta.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/admission_controls/admission_class",
+          "value": "correction_supersession"
+        },
+        {
+          "op": "replace",
+          "path": "/node_version_additions",
+          "value": []
+        },
+        {
+          "op": "replace",
+          "path": "/admission_controls/admission_profile_ref/profile_type",
+          "value": "correction_verification_only"
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/correction_obligations/prior_version_resurrection_forbidden",
+        "keyword": "const"
+      },
+      "refusal_class": "implication",
+      "ablation_verified_rule": "/allOf/3"
+    },
+    {
+      "name": "projection-snapshot-cross-field-rule-0-is-enforced",
+      "schema": "schemas/projection-snapshot.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/private-cockpit.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/freshness/state",
+          "value": "current"
+        },
+        {
+          "op": "replace",
+          "path": "/freshness/reason_codes",
+          "value": [
+            "odeya-rule-probe"
+          ]
+        },
+        {
+          "op": "replace",
+          "path": "/freshness/reason_codes/0",
+          "value": "projection_lag"
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/freshness/reason_codes",
+        "keyword": "maxItems"
+      },
+      "refusal_class": "at_mutation",
+      "ablation_verified_rule": "/allOf/0"
+    },
+    {
+      "name": "projection-snapshot-cross-field-rule-6-is-enforced",
+      "schema": "schemas/projection-snapshot.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/private-cockpit.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/semantic_axes/scientific_outcome",
+          "value": "null_result"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_axes/scientific_validity",
+          "value": "odeya-rule-probe"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_axes/scientific_validity",
+          "value": "not_assessed"
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/semantic_axes/scientific_validity",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation",
+      "ablation_verified_rule": "/allOf/6"
+    },
+    {
+      "name": "projection-snapshot-cross-field-rule-8-is-enforced",
+      "schema": "schemas/projection-snapshot.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/private-cockpit.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/semantic_axes/claim",
+          "value": "eligible"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_axes/required_verification_disposition",
+          "value": "odeya-rule-probe"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_axes/required_verification_disposition",
+          "value": "not_required"
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/semantic_axes/required_verification_disposition",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation",
+      "ablation_verified_rule": "/allOf/8"
+    },
+    {
+      "name": "publication-decision-cross-field-rule-1-is-enforced",
+      "schema": "schemas/publication-decision.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/publication-decision.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/decision",
+          "value": "denied"
+        },
+        {
+          "op": "replace",
+          "path": "/authorization_scope",
+          "value": null
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/gates",
+        "keyword": "anyOf"
+      },
+      "refusal_class": "implication",
+      "ablation_verified_rule": "/allOf/1"
+    },
+    {
+      "name": "publication-decision-cross-field-rule-2-is-enforced",
+      "schema": "schemas/publication-decision.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/publication-decision.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/decision",
+          "value": "indeterminate"
+        },
+        {
+          "op": "replace",
+          "path": "/authorization_scope",
+          "value": null
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/gates",
+        "keyword": "anyOf"
+      },
+      "refusal_class": "implication",
+      "ablation_verified_rule": "/allOf/2"
+    },
+    {
+      "name": "restore-verification-report-cross-field-rule-0-is-enforced",
+      "schema": "schemas/restore-verification-report.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/restore-verification-report.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/overall_disposition",
+          "value": "quarantined"
+        },
+        {
+          "op": "replace",
+          "path": "/recommended_service_state/canonical_reads/state",
+          "value": "odeya-rule-probe"
+        },
+        {
+          "op": "replace",
+          "path": "/recommended_service_state/canonical_reads/state",
+          "value": "enabled"
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/recommended_service_state/canonical_reads/state",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation",
+      "ablation_verified_rule": "/allOf/0"
+    },
+    {
+      "name": "safety-envelope-cross-field-rule-1-is-enforced",
+      "schema": "schemas/safety-envelope.schema.json",
+      "fixture": "tests/physical-contracts/fixtures/safety-envelope.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/envelope_disposition",
+          "value": "recommendation_supported"
+        },
+        {
+          "op": "replace",
+          "path": "/asset_hardware_coverage_observation",
+          "value": "odeya-rule-probe"
+        },
+        {
+          "op": "replace",
+          "path": "/asset_hardware_coverage_observation",
+          "value": "complete"
+        },
+        {
+          "op": "replace",
+          "path": "/envelope_disposition",
+          "value": "blocked"
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/reason_codes",
+        "keyword": "minItems"
+      },
+      "refusal_class": "implication",
+      "ablation_verified_rule": "/allOf/1"
+    },
+    {
+      "name": "scientific-result-envelope-cross-field-rule-4-is-enforced",
+      "schema": "schemas/scientific-result-envelope.schema.json",
+      "fixture": "tests/mathematical-contracts/fixtures/scientific-result.sentinel-inconclusive.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/decision/scientific_outcome",
+          "value": "inconclusive"
+        },
+        {
+          "op": "replace",
+          "path": "/claim_consequence/supported_predicates",
+          "value": [
+            "odeya-rule-probe"
+          ]
+        },
+        {
+          "op": "replace",
+          "path": "/claim_consequence/supported_predicates/0",
+          "value": "descriptive_estimate_within_scope"
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/claim_consequence/supported_predicates",
+        "keyword": "maxItems"
+      },
+      "refusal_class": "at_mutation",
+      "ablation_verified_rule": "/allOf/4"
+    },
+    {
+      "name": "scientific-result-envelope-cross-field-rule-5-is-enforced",
+      "schema": "schemas/scientific-result-envelope.schema.json",
+      "fixture": "tests/mathematical-contracts/fixtures/scientific-result.sentinel-inconclusive.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/decision/scientific_outcome",
+          "value": "estimate_reported"
+        },
+        {
+          "op": "replace",
+          "path": "/completion/status",
+          "value": "odeya-rule-probe"
+        },
+        {
+          "op": "replace",
+          "path": "/completion/status",
+          "value": "completed"
+        },
+        {
+          "op": "replace",
+          "path": "/decision/scientific_outcome",
+          "value": "association_supported"
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/claim_consequence/supported_predicates",
+        "keyword": "minItems"
+      },
+      "refusal_class": "implication",
+      "ablation_verified_rule": "/allOf/5"
+    },
+    {
+      "name": "scientific-result-envelope-cross-field-rule-7-is-enforced",
+      "schema": "schemas/scientific-result-envelope.schema.json",
+      "fixture": "tests/mathematical-contracts/fixtures/scientific-result.sentinel-inconclusive.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/decision/scientific_outcome",
+          "value": "inconclusive"
+        },
+        {
+          "op": "replace",
+          "path": "/decision/evaluation",
+          "value": "odeya-rule-probe"
+        },
+        {
+          "op": "replace",
+          "path": "/decision/evaluation",
+          "value": "satisfied"
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/decision/evaluation",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation",
+      "ablation_verified_rule": "/allOf/7"
+    },
+    {
+      "name": "scientific-result-envelope-cross-field-rule-9-is-enforced",
+      "schema": "schemas/scientific-result-envelope.schema.json",
+      "fixture": "tests/mathematical-contracts/fixtures/scientific-result.sentinel-inconclusive.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/claim_type",
+          "value": "associational"
+        },
+        {
+          "op": "replace",
+          "path": "/decision/rule_type",
+          "value": "odeya-rule-probe"
+        },
+        {
+          "op": "replace",
+          "path": "/decision/rule_type",
+          "value": "descriptive_estimation"
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/decision/rule_type",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation",
+      "ablation_verified_rule": "/allOf/9"
+    },
+    {
+      "name": "transformation-record-cross-field-rule-2-is-enforced",
+      "schema": "schemas/transformation-record.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/transformation-record.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/kind",
+          "value": "redaction"
+        },
+        {
+          "op": "replace",
+          "path": "/information_effect/loss_mode",
+          "value": "odeya-rule-probe"
+        },
+        {
+          "op": "replace",
+          "path": "/information_effect/loss_mode",
+          "value": "lossless"
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/information_effect/loss_mode",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation",
+      "ablation_verified_rule": "/allOf/2"
+    },
+    {
+      "name": "uncertainty-budget-cross-field-rule-2-is-enforced",
+      "schema": "schemas/uncertainty-budget.schema.json",
+      "fixture": "tests/physical-contracts/fixtures/uncertainty-budget.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/disposition",
+          "value": "pass"
+        },
+        {
+          "op": "replace",
+          "path": "/calibration_traceability/status",
+          "value": "odeya-rule-probe"
+        },
+        {
+          "op": "replace",
+          "path": "/calibration_traceability/status",
+          "value": "complete"
+        },
+        {
+          "op": "replace",
+          "path": "/disposition",
+          "value": "fail"
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/reason_codes",
+        "keyword": "minItems"
+      },
+      "refusal_class": "implication",
+      "ablation_verified_rule": "/allOf/2"
+    },
+    {
+      "name": "verification-run-cross-field-rule-9-is-enforced",
+      "schema": "schemas/verification-run.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/verification-run.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/independence_assessment/disposition",
+          "value": "independent_under_profile"
+        },
+        {
+          "op": "replace",
+          "path": "/correlation_axes/principal/relation",
+          "value": "odeya-rule-probe"
+        },
+        {
+          "op": "replace",
+          "path": "/correlation_axes/principal/relation",
+          "value": "same"
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/correlation_axes/principal/relation",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation",
+      "ablation_verified_rule": "/allOf/9"
+    },
+    {
+      "name": "verification-run-cross-field-rule-13-is-enforced",
+      "schema": "schemas/verification-run.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/verification-run.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/frozen_assignment/required_verification_class",
+          "value": "IV1_reexecution"
+        },
+        {
+          "op": "replace",
+          "path": "/independence_assessment/requirement_satisfaction",
+          "value": "pass"
+        },
+        {
+          "op": "replace",
+          "path": "/independence_assessment/observed_verification_class",
+          "value": "odeya-rule-probe"
+        },
+        {
+          "op": "replace",
+          "path": "/independence_assessment/observed_verification_class",
+          "value": "IV0_integrity"
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/independence_assessment/observed_verification_class",
+        "keyword": "enum"
+      },
+      "refusal_class": "at_mutation",
+      "ablation_verified_rule": "/allOf/13"
+    },
+    {
+      "name": "verification-run-cross-field-rule-14-is-enforced",
+      "schema": "schemas/verification-run.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/verification-run.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/frozen_assignment/required_verification_class",
+          "value": "IV2_clean_reproduction"
+        },
+        {
+          "op": "replace",
+          "path": "/independence_assessment/requirement_satisfaction",
+          "value": "pass"
+        },
+        {
+          "op": "replace",
+          "path": "/independence_assessment/observed_verification_class",
+          "value": "odeya-rule-probe"
+        },
+        {
+          "op": "replace",
+          "path": "/independence_assessment/observed_verification_class",
+          "value": "IV0_integrity"
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/independence_assessment/observed_verification_class",
+        "keyword": "enum"
+      },
+      "refusal_class": "at_mutation",
+      "ablation_verified_rule": "/allOf/14"
     }
   ]
 }

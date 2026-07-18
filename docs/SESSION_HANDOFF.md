@@ -845,6 +845,14 @@ the gate.
 
 ## The published surface is part of the evidence
 
+**Publish only through `scripts/ci/push-rehearsed-head.sh`.** It refuses
+to push a commit that has no rehearsal evidence bound to its exact SHA, a
+dirty worktree, or a non-fast-forward head. This exists because the law
+below was broken the same day it was written: a session pushed while the
+rehearsal was still running, mistaking a formal model's completion line
+for the rehearsal's. That rehearsal passed, which is luck, not process
+(ADR 0072).
+
 A push is not complete when the bytes leave this machine. It is complete
 when every remote workflow on the canonical repository reports green for
 the pushed head. After every push, verify with `gh run list` (or watch
