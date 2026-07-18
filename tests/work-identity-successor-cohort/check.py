@@ -552,14 +552,27 @@ def main() -> int:
                 failures.append(f"{name}: safe case failed with {sorted(observed)!r}")
         elif kind == "adversarial":
             adversarial_count += 1
-            missing = expected - observed
+            # Exact, not subset. Independent review showed 35 of 37 cases
+            # could be rebound to an incidental co-firing code with the suite
+            # green, because a subset check cannot tell the declared code from
+            # any other the mutation happens to trigger (ADR 0067). An exact
+            # inventory makes every co-firing code a declared expectation, so
+            # a rebinding drops the intended code and fails.
+            intent = set(case.get("intent_errors", []))
             if not mutations:
                 failures.append(f"{name}: adversarial case has no mutation")
+            if not intent:
+                failures.append(f"{name}: adversarial case declares no intent error")
+            elif intent - observed:
+                failures.append(
+                    f"{name}: intent {sorted(intent - observed)!r} did not fire; "
+                    f"observed={sorted(observed)!r}"
+                )
             if not observed:
                 failures.append(f"{name}: known-bad mutation was accepted")
-            elif missing:
+            elif expected != observed:
                 failures.append(
-                    f"{name}: missing {sorted(missing)!r}; observed={sorted(observed)!r}"
+                    f"{name}: declared {sorted(expected)!r} but observed {sorted(observed)!r}"
                 )
         else:
             failures.append(f"{name}: unknown kind {kind!r}")

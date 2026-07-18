@@ -491,13 +491,22 @@ def main() -> int:
             adversarial_count += 1
             if not mutations:
                 failures.append(f"{name}: adversarial case has no mutation")
-            missing = expected - observed
+            # Exact inventory plus declared intent (ADR 0067): a subset check
+            # cannot distinguish the intended code from any incidental
+            # co-firing one, which independent review exploited.
+            intent = set(case.get("intent_errors", []))
+            if not intent:
+                failures.append(f"{name}: adversarial case declares no intent error")
+            elif intent - observed:
+                failures.append(
+                    f"{name}: intent {sorted(intent - observed)!r} did not fire; "
+                    f"observed={sorted(observed)!r}"
+                )
             if not observed:
                 failures.append(f"{name}: known-bad mutation was accepted")
-            elif missing:
+            elif expected != observed:
                 failures.append(
-                    f"{name}: missing expected errors {sorted(missing)!r}; "
-                    f"observed={sorted(observed)!r}"
+                    f"{name}: declared {sorted(expected)!r} but observed {sorted(observed)!r}"
                 )
         else:
             failures.append(f"{name}: unknown case kind {kind!r}")

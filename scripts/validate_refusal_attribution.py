@@ -21,11 +21,11 @@ enforces vacuously. This version answers each refutation structurally:
   is certified on the field its harness actually enforces exactly.
 
 This gate checks binding presence and shape; each suite's harness proves
-its bindings fire. Binding SEMANTICS still vary by suite: the substring and
-pointer+keyword forms bind one declared constraint, while the older
-expected_errors/required_errors forms are enforced as subsets by their
-harnesses, which independent review showed admits incidental rebinding.
-That residue is recorded in ADR 0063, not hidden here.
+its bindings fire. Binding SEMANTICS vary by suite by design: pointer plus
+keyword where the refusing engine is the pinned validator, message
+substring where the checker is authored here, and declared intent plus an
+equality-enforced observed inventory in the three suites whose subset
+checks independent review defeated (ADR 0067).
 """
 
 from __future__ import annotations
@@ -55,6 +55,22 @@ def substring(field: str) -> Callable[[dict[str, Any], dict[str, Any]], bool]:
     def check(case: dict[str, Any], _: dict[str, Any]) -> bool:
         value = case.get(field)
         return isinstance(value, str) and bool(value)
+
+    return check
+
+
+def intent_and_inventory(field: str) -> Callable[[dict[str, Any], dict[str, Any]], bool]:
+    """Declared intent plus the exact observed inventory (ADR 0067).
+
+    The inventory is enforced by equality in these harnesses, so the intent
+    code cannot be dropped from the declaration while it still fires — the
+    incidental-rebinding attack independent review demonstrated.
+    """
+    inventory = string_list(field)
+    intent = string_list("intent_errors")
+
+    def check(case: dict[str, Any], document: dict[str, Any]) -> bool:
+        return inventory(case, document) and intent(case, document)
 
     return check
 
@@ -110,9 +126,9 @@ REGISTRY: dict[str, tuple[str, Any, Any]] = {
     "lifecycle-closure": ("cases.json", substring("expected_refusal_contains"), None),
     "first-slice-resolution": ("cases.json", substring("expected_refusal_contains"), None),
     "constitutional-construction": ("cases.json", substring("expected_refusal_contains"), None),
-    "work-identity-successor-cohort": ("cases.json", string_list("expected_errors"), None),
-    "work-intent-identity-candidate": ("cases.json", string_list("expected_errors"), None),
-    "canonical-profile-candidate": ("cases.json", string_list("required_errors"), None),
+    "work-identity-successor-cohort": ("cases.json", intent_and_inventory("expected_errors"), None),
+    "work-intent-identity-candidate": ("cases.json", intent_and_inventory("expected_errors"), None),
+    "canonical-profile-candidate": ("cases.json", intent_and_inventory("required_errors"), None),
     "command-identity-contracts": ("cases.json", exact_reason_set, None),
 }
 
@@ -245,7 +261,8 @@ def main() -> int:
         f"refusal attribution checked by census: {bound} bound negative cases across "
         f"{swept} case-bearing manifests; {unattributed} negatives remain explicitly "
         "unattributed in registered corpora (ADR 0063); unknown case-bearing manifests "
-        "fail closed; binding presence only, and binding semantics vary by suite"
+        "fail closed; binding presence only, and binding semantics vary by suite "
+        "(pointer+keyword, message substring, or intent+exact inventory)"
     )
     return 0
 

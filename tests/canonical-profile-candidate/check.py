@@ -535,11 +535,19 @@ def main() -> int:
             else:
                 observed_tags.add(tag)
             required = set(case.get("required_errors", []))
+            # Exact inventory plus declared intent (ADR 0067).
+            intent = set(case.get("intent_errors", []))
+            if not intent:
+                failures.append(f"{name}: adversarial case declares no intent error")
+            elif intent - result:
+                failures.append(
+                    f"{name}: intent {sorted(intent - result)} did not fire; got {sorted(result)}"
+                )
             if not result:
                 failures.append(f"{name}: expected rejection, got accept")
-            elif not required <= result:
+            elif required != result:
                 failures.append(
-                    f"{name}: required errors {sorted(required)} not in {sorted(result)}"
+                    f"{name}: declared {sorted(required)} but observed {sorted(result)}"
                 )
         else:
             failures.append(f"{name}: unknown case kind {case.get('kind')!r}")

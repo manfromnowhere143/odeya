@@ -11,7 +11,12 @@
     {
       "name": "core-rejects-canonical-self-digest",
       "kind": "adversarial",
-      "expected_errors": ["core_contains_identity_binding"],
+      "expected_errors": [
+        "core_contains_identity_binding",
+        "core_raw_binding_mismatch",
+        "core_schema_invalid",
+        "legacy_projection_mismatch"
+      ],
       "mutations": [
         {
           "target": "core",
@@ -19,12 +24,20 @@
           "path": "/canonical_digest",
           "value": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
         }
+      ],
+      "intent_errors": [
+        "core_contains_identity_binding"
       ]
     },
     {
       "name": "core-rejects-embedded-profile-binding",
       "kind": "adversarial",
-      "expected_errors": ["core_contains_identity_binding"],
+      "expected_errors": [
+        "core_contains_identity_binding",
+        "core_raw_binding_mismatch",
+        "core_schema_invalid",
+        "legacy_projection_mismatch"
+      ],
       "mutations": [
         {
           "target": "core",
@@ -34,12 +47,20 @@
             "profile_id": "urn:odeya:canonicalization:odeya-jcs-0.1"
           }
         }
+      ],
+      "intent_errors": [
+        "core_contains_identity_binding"
       ]
     },
     {
       "name": "core-rejects-nonprofiled-timestamp",
       "kind": "adversarial",
-      "expected_errors": ["core_timestamp_not_profiled"],
+      "expected_errors": [
+        "core_raw_binding_mismatch",
+        "core_schema_invalid",
+        "core_timestamp_not_profiled",
+        "legacy_projection_mismatch"
+      ],
       "mutations": [
         {
           "target": "core",
@@ -47,12 +68,19 @@
           "path": "/created_at",
           "value": "2026-07-16T09:00:00Z"
         }
+      ],
+      "intent_errors": [
+        "core_timestamp_not_profiled"
       ]
     },
     {
       "name": "core-rejects-set-order-drift",
       "kind": "adversarial",
-      "expected_errors": ["core_set_order_invalid"],
+      "expected_errors": [
+        "core_raw_binding_mismatch",
+        "core_set_order_invalid",
+        "legacy_projection_mismatch"
+      ],
       "mutations": [
         {
           "target": "core",
@@ -66,12 +94,20 @@
           "path": "/permitted_deliverable_classes/1",
           "value": "candidate_artifact"
         }
+      ],
+      "intent_errors": [
+        "core_set_order_invalid"
       ]
     },
     {
       "name": "core-cannot-claim-dispatch-authority",
       "kind": "adversarial",
-      "expected_errors": ["core_authority_boundary_invalid"],
+      "expected_errors": [
+        "core_authority_boundary_invalid",
+        "core_raw_binding_mismatch",
+        "core_schema_invalid",
+        "legacy_projection_mismatch"
+      ],
       "mutations": [
         {
           "target": "core",
@@ -79,6 +115,9 @@
           "path": "/prospective_authority_boundary/dispatch_authority_granted",
           "value": true
         }
+      ],
+      "intent_errors": [
+        "core_authority_boundary_invalid"
       ]
     },
     {
@@ -95,12 +134,18 @@
           "path": "/objective",
           "value": "Different unreviewed objective."
         }
+      ],
+      "intent_errors": [
+        "core_raw_binding_mismatch",
+        "legacy_projection_mismatch"
       ]
     },
     {
       "name": "external-binding-rejects-core-digest-drift",
       "kind": "adversarial",
-      "expected_errors": ["core_raw_binding_mismatch"],
+      "expected_errors": [
+        "core_raw_binding_mismatch"
+      ],
       "mutations": [
         {
           "target": "evidence",
@@ -108,12 +153,17 @@
           "path": "/work_intent_core_binding/core_raw_digest",
           "value": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
         }
+      ],
+      "intent_errors": [
+        "core_raw_binding_mismatch"
       ]
     },
     {
       "name": "external-binding-rejects-core-byte-count-drift",
       "kind": "adversarial",
-      "expected_errors": ["core_raw_binding_mismatch"],
+      "expected_errors": [
+        "core_raw_binding_mismatch"
+      ],
       "mutations": [
         {
           "target": "evidence",
@@ -121,12 +171,17 @@
           "path": "/work_intent_core_binding/core_bytes",
           "value": 3609
         }
+      ],
+      "intent_errors": [
+        "core_raw_binding_mismatch"
       ]
     },
     {
       "name": "external-binding-rejects-core-schema-digest-drift",
       "kind": "adversarial",
-      "expected_errors": ["core_schema_raw_binding_mismatch"],
+      "expected_errors": [
+        "core_schema_raw_binding_mismatch"
+      ],
       "mutations": [
         {
           "target": "evidence",
@@ -134,12 +189,18 @@
           "path": "/work_intent_core_binding/core_schema_raw_digest",
           "value": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
         }
+      ],
+      "intent_errors": [
+        "core_schema_raw_binding_mismatch"
       ]
     },
     {
       "name": "external-binding-rejects-profile-core-substitution",
       "kind": "adversarial",
-      "expected_errors": ["profile_candidate_binding_mismatch"],
+      "expected_errors": [
+        "evidence_schema_invalid",
+        "profile_candidate_binding_mismatch"
+      ],
       "mutations": [
         {
           "target": "evidence",
@@ -147,12 +208,18 @@
           "path": "/profile_candidate_binding/profile_core_raw_digest",
           "value": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
         }
+      ],
+      "intent_errors": [
+        "profile_candidate_binding_mismatch"
       ]
     },
     {
       "name": "profile-candidate-cannot-invent-operator-acceptance",
       "kind": "adversarial",
-      "expected_errors": ["profile_acceptance_fabricated"],
+      "expected_errors": [
+        "evidence_schema_invalid",
+        "profile_acceptance_fabricated"
+      ],
       "mutations": [
         {
           "target": "evidence",
@@ -160,12 +227,18 @@
           "path": "/profile_candidate_binding/operator_acceptance_ref",
           "value": "operator-decision.fabricated"
         }
+      ],
+      "intent_errors": [
+        "profile_acceptance_fabricated"
       ]
     },
     {
       "name": "profile-candidate-cannot-invent-root-membership",
       "kind": "adversarial",
-      "expected_errors": ["profile_acceptance_fabricated"],
+      "expected_errors": [
+        "evidence_schema_invalid",
+        "profile_acceptance_fabricated"
+      ],
       "mutations": [
         {
           "target": "evidence",
@@ -173,12 +246,18 @@
           "path": "/profile_candidate_binding/same_active_root_membership_proven",
           "value": true
         }
+      ],
+      "intent_errors": [
+        "profile_acceptance_fabricated"
       ]
     },
     {
       "name": "legacy-projection-cannot-claim-schema-replacement",
       "kind": "adversarial",
-      "expected_errors": ["legacy_status_escalated"],
+      "expected_errors": [
+        "evidence_schema_invalid",
+        "legacy_status_escalated"
+      ],
       "mutations": [
         {
           "target": "evidence",
@@ -186,12 +265,18 @@
           "path": "/legacy_projection_binding/legacy_schema_resource_replaced",
           "value": true
         }
+      ],
+      "intent_errors": [
+        "legacy_status_escalated"
       ]
     },
     {
       "name": "legacy-projection-rejects-removed-field-reorder",
       "kind": "adversarial",
-      "expected_errors": ["legacy_projection_claim_invalid"],
+      "expected_errors": [
+        "evidence_schema_invalid",
+        "legacy_projection_claim_invalid"
+      ],
       "mutations": [
         {
           "target": "evidence",
@@ -199,12 +284,18 @@
           "path": "/legacy_projection_binding/identity_fields_removed/0",
           "value": "canonical_digest"
         }
+      ],
+      "intent_errors": [
+        "legacy_projection_claim_invalid"
       ]
     },
     {
       "name": "legacy-projection-cannot-relabel-synthetic-values",
       "kind": "adversarial",
-      "expected_errors": ["legacy_status_escalated"],
+      "expected_errors": [
+        "evidence_schema_invalid",
+        "legacy_status_escalated"
+      ],
       "mutations": [
         {
           "target": "evidence",
@@ -212,24 +303,36 @@
           "path": "/legacy_projection_binding/legacy_reference_identity_status",
           "value": "admitted_canonical_values"
         }
+      ],
+      "intent_errors": [
+        "legacy_status_escalated"
       ]
     },
     {
       "name": "consumer-inventory-rejects-missing-work-contract",
       "kind": "adversarial",
-      "expected_errors": ["direct_consumer_inventory_mismatch"],
+      "expected_errors": [
+        "direct_consumer_inventory_mismatch",
+        "evidence_schema_invalid"
+      ],
       "mutations": [
         {
           "target": "evidence",
           "op": "remove",
           "path": "/transitive_reissue_boundary/direct_schema_consumers/1"
         }
+      ],
+      "intent_errors": [
+        "direct_consumer_inventory_mismatch"
       ]
     },
     {
       "name": "consumer-inventory-rejects-latest-alias",
       "kind": "adversarial",
-      "expected_errors": ["direct_consumer_inventory_mismatch"],
+      "expected_errors": [
+        "direct_consumer_inventory_mismatch",
+        "evidence_schema_invalid"
+      ],
       "mutations": [
         {
           "target": "evidence",
@@ -237,12 +340,18 @@
           "path": "/transitive_reissue_boundary/direct_schema_consumers/0/prospective_schema_id",
           "value": "urn:odeya:schema:canonical-work-lease:latest"
         }
+      ],
+      "intent_errors": [
+        "direct_consumer_inventory_mismatch"
       ]
     },
     {
       "name": "reissue-order-rejects-consumer-before-producer",
       "kind": "adversarial",
-      "expected_errors": ["direct_consumer_inventory_mismatch"],
+      "expected_errors": [
+        "direct_consumer_inventory_mismatch",
+        "evidence_schema_invalid"
+      ],
       "mutations": [
         {
           "target": "evidence",
@@ -250,12 +359,18 @@
           "path": "/transitive_reissue_boundary/required_reissue_order/0/path",
           "value": "schemas/canonical-work-lease.schema.json"
         }
+      ],
+      "intent_errors": [
+        "direct_consumer_inventory_mismatch"
       ]
     },
     {
       "name": "transitive-boundary-cannot-claim-work-intent-reissued",
       "kind": "adversarial",
-      "expected_errors": ["transitive_reissue_boundary_escalated"],
+      "expected_errors": [
+        "evidence_schema_invalid",
+        "transitive_reissue_boundary_escalated"
+      ],
       "mutations": [
         {
           "target": "evidence",
@@ -263,12 +378,18 @@
           "path": "/transitive_reissue_boundary/current_work_intent_resource_reissued",
           "value": true
         }
+      ],
+      "intent_errors": [
+        "transitive_reissue_boundary_escalated"
       ]
     },
     {
       "name": "transitive-boundary-cannot-invent-offline-registry",
       "kind": "adversarial",
-      "expected_errors": ["transitive_reissue_boundary_escalated"],
+      "expected_errors": [
+        "evidence_schema_invalid",
+        "transitive_reissue_boundary_escalated"
+      ],
       "mutations": [
         {
           "target": "evidence",
@@ -276,12 +397,18 @@
           "path": "/transitive_reissue_boundary/complete_offline_predecessor_registry",
           "value": true
         }
+      ],
+      "intent_errors": [
+        "transitive_reissue_boundary_escalated"
       ]
     },
     {
       "name": "transitive-boundary-cannot-unblock-assignment",
       "kind": "adversarial",
-      "expected_errors": ["transitive_reissue_boundary_escalated"],
+      "expected_errors": [
+        "evidence_schema_invalid",
+        "transitive_reissue_boundary_escalated"
+      ],
       "mutations": [
         {
           "target": "evidence",
@@ -289,12 +416,18 @@
           "path": "/transitive_reissue_boundary/assignment_construction_unblocked",
           "value": true
         }
+      ],
+      "intent_errors": [
+        "transitive_reissue_boundary_escalated"
       ]
     },
     {
       "name": "identity-boundary-rejects-envelope-schema-substitution",
       "kind": "adversarial",
-      "expected_errors": ["canonical_envelope_mismatch"],
+      "expected_errors": [
+        "canonical_envelope_mismatch",
+        "evidence_schema_invalid"
+      ],
       "mutations": [
         {
           "target": "evidence",
@@ -302,12 +435,18 @@
           "path": "/identity_construction_boundary/canonical_envelope_schema_id",
           "value": "urn:odeya:schema:work-intent:0.7.0"
         }
+      ],
+      "intent_errors": [
+        "canonical_envelope_mismatch"
       ]
     },
     {
       "name": "identity-boundary-rejects-fabricated-canonical-digest",
       "kind": "adversarial",
-      "expected_errors": ["canonical_digest_fabricated"],
+      "expected_errors": [
+        "canonical_digest_fabricated",
+        "evidence_schema_invalid"
+      ],
       "mutations": [
         {
           "target": "evidence",
@@ -315,12 +454,18 @@
           "path": "/identity_construction_boundary/canonical_digest",
           "value": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
         }
+      ],
+      "intent_errors": [
+        "canonical_digest_fabricated"
       ]
     },
     {
       "name": "identity-boundary-cannot-relabel-raw-binding",
       "kind": "adversarial",
-      "expected_errors": ["raw_binding_mislabeled_as_canonical_identity"],
+      "expected_errors": [
+        "evidence_schema_invalid",
+        "raw_binding_mislabeled_as_canonical_identity"
+      ],
       "mutations": [
         {
           "target": "evidence",
@@ -328,12 +473,18 @@
           "path": "/identity_construction_boundary/raw_byte_binding_is_canonical_object_identity",
           "value": true
         }
+      ],
+      "intent_errors": [
+        "raw_binding_mislabeled_as_canonical_identity"
       ]
     },
     {
       "name": "identity-boundary-rejects-self-hash-claim",
       "kind": "adversarial",
-      "expected_errors": ["external_binding_boundary_invalid"],
+      "expected_errors": [
+        "evidence_schema_invalid",
+        "external_binding_boundary_invalid"
+      ],
       "mutations": [
         {
           "target": "evidence",
@@ -341,12 +492,18 @@
           "path": "/identity_construction_boundary/subject_contains_self_hash",
           "value": true
         }
+      ],
+      "intent_errors": [
+        "external_binding_boundary_invalid"
       ]
     },
     {
       "name": "identity-boundary-cannot-invent-admission",
       "kind": "adversarial",
-      "expected_errors": ["canonical_admission_fabricated"],
+      "expected_errors": [
+        "canonical_admission_fabricated",
+        "evidence_schema_invalid"
+      ],
       "mutations": [
         {
           "target": "evidence",
@@ -354,12 +511,18 @@
           "path": "/identity_construction_boundary/admission_ref",
           "value": "admission.fabricated"
         }
+      ],
+      "intent_errors": [
+        "canonical_admission_fabricated"
       ]
     },
     {
       "name": "authority-boundary-cannot-authorize-runtime",
       "kind": "adversarial",
-      "expected_errors": ["authority_boundary_fabricated"],
+      "expected_errors": [
+        "authority_boundary_fabricated",
+        "evidence_schema_invalid"
+      ],
       "mutations": [
         {
           "target": "evidence",
@@ -367,12 +530,18 @@
           "path": "/authority_boundary/runtime_authorized",
           "value": true
         }
+      ],
+      "intent_errors": [
+        "authority_boundary_fabricated"
       ]
     },
     {
       "name": "authority-boundary-cannot-authorize-assignment",
       "kind": "adversarial",
-      "expected_errors": ["authority_boundary_fabricated"],
+      "expected_errors": [
+        "authority_boundary_fabricated",
+        "evidence_schema_invalid"
+      ],
       "mutations": [
         {
           "target": "evidence",
@@ -380,6 +549,9 @@
           "path": "/authority_boundary/assignment_authorized",
           "value": true
         }
+      ],
+      "intent_errors": [
+        "authority_boundary_fabricated"
       ]
     }
   ]

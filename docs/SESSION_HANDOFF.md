@@ -487,8 +487,9 @@ readers (schema pins, bare-interpreter imports, TLA pin copies), four
 misbound and one ambiguous binding were rebound to intent, and ADR 0054's
 impossibility claim was half-retracted by a retained zero-use-grant
 counterexample — condition coverage now measures 88/89. Surviving
-weaknesses are enumerated in ADR 0063, not resolved: subset-semantics rebindability in the expected_errors
-suites (ADR 0066 closed the denominator omissions by auditing the harness
+weaknesses are enumerated in ADR 0063, not resolved: (ADR 0067 closed the last one: the three subset suites now
+declare intent plus an equality-enforced observed inventory, and the
+reviewer's rebinding attack is refused in all three) (ADR 0066 closed the denominator omissions by auditing the harness
 itself: both headline numbers retracted by measurement to statements
 172/181 and conditions 97/99, the harness hygiene guards closed by an
 in-harness self-test, and the residue structurally explained — six
