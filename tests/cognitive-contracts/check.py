@@ -349,6 +349,78 @@ def semantic_errors(schema_path: str, instance: object) -> list[str]:
     return [f"no semantic checker registered for {schema_path}"]
 
 
+def structural_attribution_failures(case: dict, errors: list) -> list[str]:
+    """Refusal for an incidental reason is not proof that the intended
+    constraint fires. Bind each structurally known-bad case to the exact
+    instance location and keyword that must refuse it (ADR 0055/0056)."""
+    declared = case.get("expected_refusal")
+    if not isinstance(declared, dict) or "pointer" not in declared or "keyword" not in declared:
+        return [f"{case['name']}: known-bad case does not declare the constraint that must refuse it"]
+    if not any(
+        "/" + "/".join(str(part) for part in error.absolute_path) == declared["pointer"]
+        and error.validator == declared["keyword"]
+        for error in errors
+    ):
+        observed = [
+            ("/" + "/".join(str(part) for part in error.absolute_path), error.validator)
+            for error in errors
+        ]
+        return [
+            f"{case['name']}: refused, but not at its declared constraint "
+            f"{declared['pointer']!r} by {declared['keyword']!r}; got {observed}"
+        ]
+    return []
+
+
+def semantic_attribution_failures(case: dict, semantic_failures: list[str]) -> list[str]:
+    expected = case.get("expected_semantic_refusal_contains")
+    if not isinstance(expected, str) or not expected:
+        return [f"{case['name']}: semantic known-bad case does not declare the check that must refuse it"]
+    if not any(expected in error for error in semantic_failures):
+        return [
+            f"{case['name']}: semantically refused, but not by its declared check "
+            f"{expected!r}; got {semantic_failures}"
+        ]
+    return []
+
+
+def attribution_self_test(manifest: dict) -> list[str]:
+    """Prove on every run that both binding checks fire (law 11)."""
+    failures: list[str] = []
+    structural = next((c for c in manifest["cases"] if c["expect"] == "invalid"), None)
+    semantic = next(
+        (c for c in manifest["cases"]
+         if c["expect"] == "valid" and c.get("semantic_expect") == "invalid"),
+        None,
+    )
+    if structural is None or semantic is None:
+        return ["attribution self-test found no known-bad case to tamper with"]
+    schema = load(ROOT / structural["schema"])
+    instance = mutated_copy(load(ROOT / structural["fixture"]), structural.get("mutations", []))
+    errors = list(Draft202012Validator(schema, format_checker=FormatChecker()).iter_errors(instance))
+    misdeclared = dict(structural, expected_refusal={"pointer": "/odeya-self-test/never-fires", "keyword": "const"})
+    if not any("refused, but not at its declared constraint" in f
+               for f in structural_attribution_failures(misdeclared, errors)):
+        failures.append("attribution self-test: a misdeclared structural constraint was not detected")
+    undeclared = {k: v for k, v in structural.items() if k != "expected_refusal"}
+    if not any("does not declare the constraint" in f
+               for f in structural_attribution_failures(undeclared, errors)):
+        failures.append("attribution self-test: a missing structural declaration was not detected")
+    semantic_failures = semantic_errors(
+        str(semantic["schema"]),
+        mutated_copy(load(ROOT / semantic["fixture"]), semantic.get("mutations", [])),
+    )
+    misdeclared = dict(semantic, expected_semantic_refusal_contains="odeya-self-test-never-appears")
+    if not any("not by its declared check" in f
+               for f in semantic_attribution_failures(misdeclared, semantic_failures)):
+        failures.append("attribution self-test: a misdeclared semantic check was not detected")
+    undeclared = {k: v for k, v in semantic.items() if k != "expected_semantic_refusal_contains"}
+    if not any("does not declare the check" in f
+               for f in semantic_attribution_failures(undeclared, semantic_failures)):
+        failures.append("attribution self-test: a missing semantic declaration was not detected")
+    return failures
+
+
 def main() -> int:
     manifest = load(MANIFEST)
     failures: list[str] = []
@@ -370,6 +442,8 @@ def main() -> int:
             detail = errors[0].message if errors else "mutation was unexpectedly accepted"
             failures.append(f"{case['name']}: expected {case['expect']}, got {actual}: {detail}")
             continue
+        if case["expect"] == "invalid":
+            failures.extend(structural_attribution_failures(case, errors))
         if "semantic_expect" in case:
             semantic_case_count += 1
             if errors:
@@ -383,6 +457,10 @@ def main() -> int:
                     f"{case['name']}: expected semantic {case['semantic_expect']}, "
                     f"got {semantic_actual}: {detail}"
                 )
+            if case["semantic_expect"] == "invalid":
+                failures.extend(semantic_attribution_failures(case, semantic_failures))
+
+    failures.extend(attribution_self_test(manifest))
 
     if failures:
         print("Cognitive contract schema cases failed:", file=sys.stderr)

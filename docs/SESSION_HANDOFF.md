@@ -454,22 +454,28 @@ lane's next units are the six unattributed suites (229 known-bad cases
 that cannot distinguish a guard firing from an incidental refusal) and the
 five-spelling refusal-attribution convergence.
 
-Two further follow-ons are open. One suite still asserts refusal
-without attribution — `cognitive-contracts` (107 carried, to be
-re-measured when attributed: every attributed suite so far
-under-counted; mathematical-contracts carried 19 measured 37,
-projection-contracts carried 37 measured 54). They cannot currently distinguish a guard firing
+THE SIX-SUITE ATTRIBUTION BLINDNESS IS CLOSED (ADR 0055-0060): every
+known-bad case in every isolated suite — 313 as now measured; every
+carried count was an under-count (mathematical 19→37, projection 37→54,
+cognitive 107→119) — binds the exact constraint that must refuse it,
+with a fail-closed self-test in each suite proving the attribution gate
+fires on every run. They cannot currently distinguish a guard firing
 from an incidental refusal, the condition that made lifecycle closure
 blind. ADR 0055 attributed `architecture-review` (16 cases, exact
 instance pointer + keyword, fail-closed self-test every run), ADR 0056
 attributed `mathematical-contracts` (20 structural + 17 semantic, both
 domains bound, four-way self-test), and ADR 0057 attributed
 `first-slice-resolution` (21 C1-C8 cases bound to their invariants), and
-ADR 0058 attributed `constitutional-construction` (29 cases), and ADR
-0059 attributed `projection-contracts` (37 structural + 17 semantic);
-together they are the pattern for the last suite. Separately, refusal
-attribution should converge on one exact vocabulary once the remaining
-suites are attributed.
+ADR 0058 attributed `constitutional-construction` (29 cases), ADR 0059
+attributed `projection-contracts` (37 structural + 17 semantic), and ADR
+0060 attributed `cognitive-contracts` (107 structural + 12 semantic).
+The follow-on is the convergence decision: attribution now has exactly
+two spellings — `expected_refusal` (pointer + keyword, jsonschema
+domains) and `expected_refusal_contains`/`expected_semantic_refusal_contains`
+(message substring, authored-checker domains) — and either one
+vocabulary or an explicitly recorded two-domain standard should be
+decided. Attribution is intent binding, not mutation coverage: no
+schema-based suite is proven unweakenable at its declared location.
 
 Read the tranche's convergence honestly. Across this tranche the canonical
 profile audit moved from 675 to 668 unscoped digest fields, 118 to 122
