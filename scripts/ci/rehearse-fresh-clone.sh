@@ -190,6 +190,15 @@ fi
 # with every local rehearsal green: seven commits published with the remote
 # Foundation workflow red because nothing local read the pins. The partition
 # gate now runs in the default validator and, for the exact bytes, here.
+CURRENT_STAGE="schema-rule-ablation"
+if [[ -f scripts/audit_schema_rule_ablation.py ]]; then
+  .venv-architecture/bin/python scripts/audit_schema_rule_ablation.py \
+    --check 2>&1 | tee artifacts/rehearsal/schema-rule-ablation.log
+else
+  printf 'ablation audit absent at %s; nothing to reproduce\n' \
+    "$EXPECTED_COMMIT" 2>&1 | tee artifacts/rehearsal/schema-rule-ablation.log
+fi
+
 CURRENT_STAGE="contract-profile-partitions"
 if [[ -f scripts/validate_contract_profiles.py ]]; then
   .venv-architecture/bin/python scripts/validate_contract_profiles.py \

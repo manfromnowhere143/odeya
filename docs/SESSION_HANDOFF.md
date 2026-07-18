@@ -495,7 +495,15 @@ mutated path" was wrong because the derivation treated `/` as an
 ancestor of everything. Corrected: **232 at_mutation, 169
 container_of_mutation, 56 implication**.
 
-**THE NEXT MAJOR EVIDENCE UNIT IS CORPUS COVERAGE, NOT ATTRIBUTION.**
+**CORPUS COVERAGE IS UNDER WAY (ADR 0071): 112 of the 286 cross-field
+rules now have an ablation-verified case** — refused with the rule
+present, accepted with it deleted, re-proven by an eighth
+architecture-evidence check and a rehearsal stage. 174 remain: 143 not
+isolable without instance-minimizing generation, 17 still-valid, 9
+unmutatable, 5 with no violable requirement recognized. The original
+finding stands as the reason:
+
+**CORPUS COVERAGE, NOT ATTRIBUTION, IS THE MAJOR EVIDENCE UNIT.**
 Review swept every root-level if/then cross-field rule in every schema
 with invalid cases and deleted each in turn: **210 of 286 can be removed
 with the entire 457-case corpus still green**, mostly because no case
