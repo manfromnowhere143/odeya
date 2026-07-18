@@ -282,7 +282,7 @@ def main() -> int:
         and profile_candidate.get("profile_evidence_ref")
         == "architecture/canonicalization-profile-candidate-evidence.json"
         and profile_candidate.get("profile_core_schema_id")
-        == "urn:odeya:schema:canonicalization-profile-core:0.4.0"
+        == "urn:odeya:schema:canonicalization-profile-core:0.5.0"
         and profile_candidate.get("parameter_status")
         == "candidate_parameters_frozen_for_review_profile_unissued"
         == canonical_profile_core.get("candidate_status")
@@ -338,7 +338,7 @@ def main() -> int:
         require(
             prq008.get("finding_id") == "PRQ-008"
             and prq008.get("status") == "unresolved_blocking"
-            and "urn:odeya:schema:canonical-work-lease:0.7.0" in prq008.get("closure", "")
+            and "urn:odeya:schema:canonical-work-lease:0.8.0" in prq008.get("closure", "")
             and "present_unissued_candidate" in prq008.get("closure", ""),
             "PRQ-008 must expose the present-but-unadmitted canonical WorkLease resource as unresolved_blocking",
             errors,

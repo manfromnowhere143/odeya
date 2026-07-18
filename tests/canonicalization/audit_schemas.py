@@ -319,7 +319,21 @@ def governed_decimal_object(schema: dict[str, Any], node: Any) -> bool:
     if declared not in SEMANTIC_TYPE_REGISTRY:
         return False
     for member in ("unit", "precision"):
-        if not isinstance(properties[member], dict):
+        declaration = properties[member]
+        if not isinstance(declaration, dict):
+            return False
+        # a contentless {} constrains nothing; review proved it hides the
+        # decimal leaf. Only a constant or a constrained string declares.
+        constrains = (
+            isinstance(declaration.get("const"), str) and declaration["const"]
+        ) or (
+            declaration.get("type") == "string"
+            and (
+                isinstance(declaration.get("minLength"), int) and declaration["minLength"] >= 1
+                or isinstance(declaration.get("pattern"), str) and declaration["pattern"]
+            )
+        )
+        if not constrains:
             return False
     return True
 
@@ -372,16 +386,36 @@ def enum_vocabulary_violations(schema: dict[str, Any]) -> list[str]:
     exemptions (every family name then counts as a violation).
     """
     violations: list[str] = []
+
+    def check_values(label: str, body: Any, family: str, allowed: tuple[str, ...],
+                     demand_enum: bool) -> None:
+        if not isinstance(body, dict):
+            return
+        values = body.get("enum")
+        constant = body.get("const")
+        if isinstance(constant, list) and sorted(constant) == sorted(allowed):
+            return  # the meta-schema's own vocabulary declaration
+        if isinstance(values, list):
+            alien = sorted(set(values) - set(allowed))
+            if alien:
+                violations.append(f"{label}: values outside the closed vocabulary: {alien}")
+        elif isinstance(constant, str):
+            if constant not in allowed:
+                violations.append(f"{label}: const outside the closed vocabulary: {constant}")
+        elif demand_enum:
+            violations.append(f"{label}: vocabulary definition has no enum")
+
     for name, body in (schema.get("$defs") or {}).items():
         for family, allowed in ENUM_VOCABULARIES.items():
-            if name == family or name.endswith(f"_{family}_subset"):
-                values = body.get("enum") if isinstance(body, dict) else None
-                if not isinstance(values, list):
-                    violations.append(f"{name}: vocabulary definition has no enum")
-                    continue
-                alien = sorted(set(values) - set(allowed))
-                if alien:
-                    violations.append(f"{name}: values outside the closed vocabulary: {alien}")
+            # review dodged the gate with claim_type_v2; any definition name
+            # carrying the family token owes the subset obligation
+            if family in name:
+                check_values(name, body, family, allowed, demand_enum=True)
+    for parts, name, node in property_nodes(schema):
+        for family, allowed in ENUM_VOCABULARIES.items():
+            if name == family:
+                resolved = resolve_local(schema, node)
+                check_values(pointer(parts), resolved, family, allowed, demand_enum=False)
     if not ENUM_VOCABULARIES:
         for name in (schema.get("$defs") or {}):
             for family in ("claim_type", "operation", "scientific_outcome"):
@@ -441,8 +475,62 @@ def detector_self_test() -> list[str]:
             }
         )
 
+    # review round one (ADR 0051): each hardened gate proves both directions
+    empty_scope = {"properties": {"x_digest": {
+        "type": "string", "pattern": "^sha256:[a-f0-9]{64}$",
+        "x-odeya-digest-scope": {}}}}
+    fields = digest_fields(empty_scope)
+    if fields and fields[0]["scope_annotation_present"]:
+        failures.append("an empty digest-scope annotation counted as scoped")
+    garbage_scope = {"properties": {"x_digest": {
+        "type": "string", "pattern": "^sha256:[a-f0-9]{64}$",
+        "x-odeya-digest-scope": {"garbage": True}}}}
+    fields = digest_fields(garbage_scope)
+    if fields and fields[0]["scope_annotation_present"]:
+        failures.append("a garbage digest-scope annotation counted as scoped")
+    real_scope = {"properties": {"x_digest": {
+        "type": "string", "pattern": "^sha256:[a-f0-9]{64}$",
+        "x-odeya-digest-scope": {"kind": "byte_digest", "subject": "bytes",
+                                  "algorithm": "sha-256",
+                                  "profile": "not_a_canonical_object_digest",
+                                  "status": "accepted_disposition_annotation"}}}}
+    fields = digest_fields(real_scope)
+    if not (fields and fields[0]["scope_annotation_present"]):
+        failures.append("a well-formed digest-scope annotation was refused")
+
+    contentless = scalar()
+    contentless["properties"]["unit"] = {}
+    if not audit_of(contentless):
+        failures.append("a contentless unit declaration counted as governed")
+    contentless = scalar()
+    contentless["properties"]["precision"] = {}
+    if not audit_of(contentless):
+        failures.append("a contentless precision declaration counted as governed")
+
+    unrequired_pin = {"properties": {"canonicalization_profile": {
+        "type": "object",
+        "properties": {"profile_id": {"const": PROFILE_ID}}}}}
+    rec = canonical_profile_bindings(unrequired_pin)
+    if rec and rec[0]["pins_candidate_profile"]:
+        failures.append("a const on an optional member counted as a profile pin")
+
+    if ENUM_VOCABULARIES:
+        dodge = {"$defs": {"x_claim_type_v2": {"enum": ["alien_value"]}}}
+        if not enum_vocabulary_violations(dodge):
+            failures.append("a token-carrying definition name dodged the vocabulary gate")
+        inline = {"type": "object", "properties": {"claim_type": {"enum": ["alien_inline"]}}}
+        if not enum_vocabulary_violations(inline):
+            failures.append("an inline family enum dodged the vocabulary gate")
+        alien_const = {"type": "object", "properties": {"scientific_outcome": {"const": "alien_const"}}}
+        if not enum_vocabulary_violations(alien_const):
+            failures.append("an alien family const dodged the vocabulary gate")
+        good_const = {"type": "object", "properties": {"scientific_outcome": {"const": ENUM_VOCABULARIES["scientific_outcome"][0]}}}
+        if enum_vocabulary_violations(good_const):
+            failures.append("a vocabulary-member const was refused")
+
     pinned_binding = {"properties": {"canonicalization_profile": {
         "type": "object",
+        "required": ["profile_id"],
         "properties": {"profile_id": {"const": PROFILE_ID}}}}}
     rec = canonical_profile_bindings(pinned_binding)
     if not (rec and rec[0]["pins_candidate_profile"]):
@@ -523,6 +611,19 @@ def digest_fields(schema: dict[str, Any]) -> list[dict[str, Any]]:
         scope = node.get("x-odeya-digest-scope")
         if not isinstance(scope, dict) and isinstance(resolved, dict):
             scope = resolved.get("x-odeya-digest-scope")
+        # presence is not a scope: independent review built {} and
+        # {"garbage": true} annotations that silenced the finding. The
+        # annotation must declare a known kind, a subject or domain or an
+        # explicit resolution rule, and a status.
+        if isinstance(scope, dict):
+            valid_kind = isinstance(scope.get("kind"), str) and scope.get("kind")
+            has_subject = any(
+                isinstance(scope.get(member), str) and scope.get(member)
+                for member in ("domain", "subject", "domain_resolution")
+            )
+            has_status = isinstance(scope.get("status"), str) and scope.get("status")
+            if not (valid_kind and has_subject and has_status):
+                scope = None
         results.append(
             {
                 "path": pointer(parts),
@@ -546,8 +647,20 @@ def canonical_profile_bindings(schema: dict[str, Any]) -> list[dict[str, Any]]:
             # whose (resolved) const is the candidate profile identity; a
             # wrong member const can never count, because the equality below
             # demands the exact profile URN
+            def required_names(container):
+                names = set(container.get("required") or [])
+                for sub in container.get("allOf", []) or []:
+                    sub = resolve_local(schema, sub)
+                    if isinstance(sub, dict):
+                        names |= set(sub.get("required") or [])
+                return names
+            requireds = required_names(resolved)
             def member_const(container):
-                for member_name in ("profile_id", "artifact_id", "object_id", "component_id", "id"):
+                # a const on an optional member pins nothing an instance
+                # must carry -- review proved the pin was ornamental
+                for member_name in ("profile_id", "artifact_id", "object_id", "component_id", "subject_id", "id"):
+                    if member_name not in requireds:
+                        continue
                     candidate = (container.get("properties") or {}).get(member_name)
                     candidate = resolve_local(schema, candidate) if isinstance(candidate, dict) else None
                     if isinstance(candidate, dict) and isinstance(candidate.get("const"), str):

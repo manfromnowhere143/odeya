@@ -37,7 +37,7 @@ EXPECTED_V2_PAYLOAD_TYPE_EVENTS = {
     "verification.completed",
     "verification.disputed",
 }
-CANONICAL_WORK_LEASE_ID = "urn:odeya:schema:canonical-work-lease:0.7.0"
+CANONICAL_WORK_LEASE_ID = "urn:odeya:schema:canonical-work-lease:0.8.0"
 
 
 def load_json(path: Path) -> Any:
@@ -108,7 +108,7 @@ def schema_contract_errors(
     # the exact identity pin: the URN below is repointed by the reissue
     # closure; the version const must equal that URN's version by derivation,
     # so a reissue can never split the two expectations
-    expected_event_id = "urn:odeya:schema:research-event:0.16.0"
+    expected_event_id = "urn:odeya:schema:research-event:0.17.0"
     expected_event_version = expected_event_id.rsplit(":", 1)[1]
     if schema.get("$id") != expected_event_id:
         errors.append(f"lifecycle closure is not carried by exact ResearchEvent {expected_event_version}")
@@ -238,6 +238,7 @@ def schema_contract_errors(
     expected_digest_scopes = {
         "canonical_digest": {
             "algorithm": "sha-256",
+            "kind": "canonical_object_digest",
             "subject": "canonical WorkLease record under its future admitted schema and canonicalization profile",
             "profile_source": "/canonicalization_profile_ref",
             "schema_source": CANONICAL_WORK_LEASE_ID,
@@ -245,6 +246,7 @@ def schema_contract_errors(
         },
         "work_lease_record_digest": {
             "algorithm": "sha-256",
+            "kind": "canonical_object_digest",
             "subject": "exact referenced canonical record bytes",
             "profile_source": "referenced record registry member",
             "schema_source": "schema_id sibling",
@@ -252,6 +254,7 @@ def schema_contract_errors(
         },
         "work_lease_event_digest": {
             "algorithm": "sha-256",
+            "kind": "canonical_object_digest",
             "subject": "exact referenced ResearchEvent canonical bytes",
             "profile_source": "referenced event contract member",
             "schema_source": "event_type and event_version siblings",
@@ -259,6 +262,7 @@ def schema_contract_errors(
         },
         "work_lease_artifact_digest": {
             "algorithm": "sha-256",
+            "kind": "byte_digest",
             "subject": "exact artifact bytes",
             "profile_source": "raw_bytes",
             "schema_source": "media_type sibling",

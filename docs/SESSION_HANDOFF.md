@@ -492,9 +492,13 @@ pinned against the final core bytes (site-level refinements after
 shared-def pins poisoned siblings and the gates caught it). THE AUDIT IS AT
 ZERO ACROSS ALL SIX CLASSES — 1,222 findings to none, every reissue
 ledgered, every gate migration recorded. The audit reports
-gate_a_disposition candidate_clear; the profile remains UNISSUED pending
-independent review of the executed wave and the operator's exact-byte
-decision, which no session can grant itself.**
+gate_a_disposition candidate_clear. REVIEW ROUND ONE EXECUTED (ADR 0051):
+four independent fresh-context refuters attacked the wave; ledger lineage
+and trap integrity survived byte-exact scrutiny; the detector's four
+exemption surfaces and the vocabulary unions were refuted and hardened
+with both-direction proofs — the audit holds zero under the strengthened
+gates. The profile remains UNISSUED: the operator's exact-byte decision is
+the only act that can freeze it.**
 Residue for the reissue wave is recorded in the candidate's
 decimal_closure_residue).
 

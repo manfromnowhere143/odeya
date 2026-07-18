@@ -33,7 +33,7 @@ CANONICAL_SUITE = ROOT / "tests/canonicalization"
 CANONICAL_AUDIT = CANONICAL_SUITE / "SCHEMA_AUDIT.json"
 GATE_INVENTORY = ROOT / "architecture/gate-a-prerequisite-closure.json"
 PROFILE_ID = "urn:odeya:canonicalization:odeya-jcs-0.1"
-CORE_SCHEMA_ID = "urn:odeya:schema:canonicalization-profile-core:0.4.0"
+CORE_SCHEMA_ID = "urn:odeya:schema:canonicalization-profile-core:0.5.0"
 
 EXPECTED_ARTIFACTS = {
     "docs/CANONICALIZATION_PROFILE.md": "profile_specification",

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:epistemic-graph-delta:0.4.0",
+  "$id": "urn:odeya:schema:epistemic-graph-delta:0.5.0",
   "title": "Odeya EpistemicGraphDelta",
   "description": "An immutable proposal to add node versions or superseding edge versions against either proven aggregate absence or an exact existing head. Admission controls are typed rule-derived outputs; correction supersession preserves non-resurrection and dependency fanout. Existing graph history cannot be deleted or mutated, and the proposal cannot append canonical events.",
   "type": "object",
@@ -28,7 +28,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.4.0"
+      "const": "0.5.0"
     },
     "record_status": {
       "const": "proposed_non_authoritative"
@@ -221,12 +221,12 @@
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "operation",
+          "graph_operation",
           "node_version_ref",
           "proposed_lineage"
         ],
         "properties": {
-          "operation": {
+          "graph_operation": {
             "const": "add_immutable_version"
           },
           "node_version_ref": {
@@ -319,7 +319,7 @@
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "operation",
+          "graph_operation",
           "edge_id",
           "edge_version",
           "edge_class",
@@ -331,7 +331,7 @@
           "compatibility_rule_ref"
         ],
         "properties": {
-          "operation": {
+          "graph_operation": {
             "enum": [
               "add_immutable_edge",
               "supersede_with_new_edge_version"
@@ -390,12 +390,12 @@
           {
             "if": {
               "properties": {
-                "operation": {
+                "graph_operation": {
                   "const": "add_immutable_edge"
                 }
               },
               "required": [
-                "operation"
+                "graph_operation"
               ]
             },
             "then": {
