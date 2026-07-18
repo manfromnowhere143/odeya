@@ -95,7 +95,7 @@ def main() -> int:
         for condition in conditions:
             if not isinstance(condition.get("condition"), str) or not condition["condition"]:
                 add(errors, f"{model.get('function')}: a condition is enumerated without its source")
-            if condition.get("role") not in {"disjunct", "conjunct"}:
+            if condition.get("role") not in {"disjunct", "conjunct", "comprehension_filter"}:
                 add(errors, f"{model.get('function')}: a condition lacks its boolean role")
             if condition.get("proved") is True and not condition.get("proved_by"):
                 add(
@@ -123,6 +123,7 @@ def main() -> int:
     if not isinstance(not_audited, dict) or not (
         isinstance(not_audited.get("single_condition_tests"), int)
         and isinstance(not_audited.get("nested_boolean_groups"), int)
+        and isinstance(not_audited.get("ternary_selectors"), int)
     ):
         add(errors, "record does not explicitly count its unaudited constructs")
 

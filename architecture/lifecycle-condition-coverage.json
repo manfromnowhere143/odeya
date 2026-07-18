@@ -6,7 +6,7 @@
   "status": "candidate_measurement_not_admitted",
   "method": "each top-level member of a guarded boolean chain in a declared lifecycle model or helper predicate is removed one at a time in an isolated copy; a condition is proved only when the suite fails without it",
   "subject": "tests/lifecycle-closure/check.py",
-  "subject_sha256": "sha256:dba5bd75c922c92ce4dd11e47cdc364b7e8148e7b2d15b21c7bf7231eece2663",
+  "subject_sha256": "sha256:405e62cc5fdb7ad828c622fdef7256c40f370c40dc0bceb04730abfc9067ddac",
   "models": [
     {
       "function": "branch_map",
@@ -16,8 +16,8 @@
     },
     {
       "function": "schema_contract_errors",
-      "condition_count": 8,
-      "proved_count": 8,
+      "condition_count": 11,
+      "proved_count": 10,
       "conditions": [
         {
           "guard": "first-slice required event count is not preserved at exactly 60",
@@ -82,6 +82,30 @@
           "proved": true,
           "proved_by": "schema-contract-bad-branch-lacks-logical-type",
           "detection": "case_attributed"
+        },
+        {
+          "guard": "comprehension at line 208",
+          "role": "comprehension_filter",
+          "condition": "isinstance(row, dict)",
+          "proved": true,
+          "proved_by": "AttributeError",
+          "detection": "crash"
+        },
+        {
+          "guard": "comprehension at line 417",
+          "role": "comprehension_filter",
+          "condition": "isinstance(item, dict) and item.get('schema_path') == 'schemas/canonical-work-lease.schema.json'",
+          "proved": true,
+          "proved_by": "canonical WorkLease candidate does not have exact work-module ownership",
+          "detection": "case_attributed"
+        },
+        {
+          "guard": "comprehension at line 446",
+          "role": "comprehension_filter",
+          "condition": "isinstance(layer, dict)",
+          "proved": false,
+          "proved_by": null,
+          "detection": null
         }
       ]
     },
@@ -134,7 +158,7 @@
           "role": "conjunct",
           "condition": "pending_exhaustion",
           "proved": true,
-          "proved_by": "grant-safe-issue-activate-use-exhaust",
+          "proved_by": "harness self-test",
           "detection": "case_attributed"
         },
         {
@@ -637,6 +661,95 @@
       ]
     },
     {
+      "function": "main",
+      "condition_count": 0,
+      "proved_count": 0,
+      "conditions": []
+    },
+    {
+      "function": "evaluate_cases",
+      "condition_count": 4,
+      "proved_count": 4,
+      "conditions": [
+        {
+          "guard": "{}: adversarial case lacks a tag",
+          "role": "disjunct",
+          "condition": "not isinstance(tag, str)",
+          "proved": true,
+          "proved_by": "harness self-test",
+          "detection": "case_attributed"
+        },
+        {
+          "guard": "{}: adversarial case lacks a tag",
+          "role": "disjunct",
+          "condition": "not tag",
+          "proved": true,
+          "proved_by": "harness self-test",
+          "detection": "case_attributed"
+        },
+        {
+          "guard": "{}: adversarial case does not declare the guard that must refuse it",
+          "role": "disjunct",
+          "condition": "not isinstance(expected_refusal, str)",
+          "proved": true,
+          "proved_by": "harness self-test",
+          "detection": "case_attributed"
+        },
+        {
+          "guard": "{}: adversarial case does not declare the guard that must refuse it",
+          "role": "disjunct",
+          "condition": "not expected_refusal",
+          "proved": true,
+          "proved_by": "harness self-test",
+          "detection": "case_attributed"
+        }
+      ]
+    },
+    {
+      "function": "coverage_failures",
+      "condition_count": 2,
+      "proved_count": 2,
+      "conditions": [
+        {
+          "guard": "lifecycle closure suite lost its minimum safe/adversarial coverage",
+          "role": "disjunct",
+          "condition": "safe_count < 10",
+          "proved": true,
+          "proved_by": "harness self-test",
+          "detection": "case_attributed"
+        },
+        {
+          "guard": "lifecycle closure suite lost its minimum safe/adversarial coverage",
+          "role": "disjunct",
+          "condition": "adversarial_count < 15",
+          "proved": true,
+          "proved_by": "harness self-test",
+          "detection": "case_attributed"
+        }
+      ]
+    },
+    {
+      "function": "harness_self_test",
+      "condition_count": 1,
+      "proved_count": 1,
+      "conditions": [
+        {
+          "guard": "comprehension at line 1164",
+          "role": "comprehension_filter",
+          "condition": "k != 'expected_refusal_contains'",
+          "proved": true,
+          "proved_by": "harness self-test",
+          "detection": "case_attributed"
+        }
+      ]
+    },
+    {
+      "function": "collect_case_failures",
+      "condition_count": 0,
+      "proved_count": 0,
+      "conditions": []
+    },
+    {
       "function": "valid_artifact_ref",
       "condition_count": 6,
       "proved_count": 6,
@@ -811,14 +924,15 @@
     }
   ],
   "not_audited": {
-    "single_condition_tests": 132,
-    "nested_boolean_groups": 0
+    "single_condition_tests": 145,
+    "nested_boolean_groups": 0,
+    "ternary_selectors": 4
   },
   "summary": {
-    "condition_count": 89,
-    "proved": 88,
-    "unproved": 1,
-    "crash_detected": 13
+    "condition_count": 99,
+    "proved": 97,
+    "unproved": 2,
+    "crash_detected": 14
   },
   "boundary": "condition-level architecture evidence about retained bytes only; single-condition tests and nested boolean groups are counted, not audited; structural comparisons are one condition regardless of field count; not a runtime, an admitted member, an independently reproduced verdict, or Gate A acceptance"
 }

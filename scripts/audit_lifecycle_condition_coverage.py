@@ -90,7 +90,18 @@ AUDITED_MODELS = (
     "work_lease_record_candidate_errors",
     "identity_map_mutation_errors",
     "data_fixture_mutation_errors",
+    # The suite harness refuses too, and independent review proved four of its
+    # boolean members silently removable while this tool reported near-complete
+    # coverage of everything else (ADR 0066).
+    "main",
+    # main() delegates to these; the audited set must follow the guards, not
+    # the function name they used to live in.
+    "evaluate_cases",
+    "coverage_failures",
+    "harness_self_test",
+    "collect_case_failures",
 )
+REFUSAL_NAMES = {"errors", "failures"}
 AUDITED_HELPERS = (
     "valid_artifact_ref",
     "valid_record_ref",
@@ -121,15 +132,15 @@ def holds_refusal(statements: list[ast.stmt]) -> str | None:
                 and isinstance(inner.func, ast.Attribute)
                 and inner.func.attr in {"append", "extend"}
                 and isinstance(inner.func.value, ast.Name)
-                and inner.func.value.id == "errors"
+                and inner.func.value.id in REFUSAL_NAMES
             ):
                 return message_template_from(inner.args[0])
             if (
                 isinstance(inner, ast.AugAssign)
                 and isinstance(inner.target, ast.Name)
-                and inner.target.id == "errors"
+                and inner.target.id in REFUSAL_NAMES
             ):
-                return f"errors += {ast.unparse(inner.value)}"
+                return f"{inner.target.id} += {ast.unparse(inner.value)}"
             if (
                 isinstance(inner, ast.Return)
                 and isinstance(inner.value, ast.List)
@@ -153,7 +164,14 @@ def discover_conditions(source: str) -> tuple[dict[str, list[dict[str, Any]]], d
     """
     tree = ast.parse(source)
     found: dict[str, list[dict[str, Any]]] = {}
-    not_audited = {"single_condition_tests": 0, "nested_boolean_groups": 0}
+    not_audited = {
+        "single_condition_tests": 0,
+        "nested_boolean_groups": 0,
+        # A ternary shapes a value a later refusal reads. Removing it has two
+        # non-equivalent forms (keep the true arm, keep the false arm), so it
+        # is counted here rather than audited under one arbitrary choice.
+        "ternary_selectors": 0,
+    }
     for node in ast.walk(tree):
         if not isinstance(node, ast.FunctionDef):
             continue
@@ -184,6 +202,25 @@ def discover_conditions(source: str) -> tuple[dict[str, list[dict[str, Any]]], d
                             "site": "if",
                         }
                     )
+            for inner in ast.walk(node):
+                if isinstance(inner, ast.IfExp):
+                    not_audited["ternary_selectors"] += 1
+                if not isinstance(inner, (ast.ListComp, ast.SetComp, ast.DictComp, ast.GeneratorExp)):
+                    continue
+                for gen_index, generator in enumerate(inner.generators):
+                    for if_index, condition in enumerate(generator.ifs):
+                        units.append(
+                            {
+                                "guard": f"comprehension at line {inner.lineno}",
+                                "role": "comprehension_filter",
+                                "index": if_index,
+                                "generator": gen_index,
+                                "condition": ast.unparse(condition),
+                                "lineno": inner.lineno,
+                                "col_offset": inner.col_offset,
+                                "site": "comprehension",
+                            }
+                        )
             found[node.name] = units
         elif node.name in AUDITED_HELPERS:
             units = []
@@ -215,6 +252,25 @@ def discover_conditions(source: str) -> tuple[dict[str, list[dict[str, Any]]], d
 def mutated_source(tree: ast.Module, unit: dict[str, Any]) -> str:
     """The whole module with one boolean member removed, re-serialized."""
     work = deepcopy(tree)
+    if unit["site"] == "comprehension":
+        for node in ast.walk(work):
+            if (
+                isinstance(node, (ast.ListComp, ast.SetComp, ast.DictComp, ast.GeneratorExp))
+                and node.lineno == unit["lineno"]
+                and node.col_offset == unit["col_offset"]
+            ):
+                generator = node.generators[unit["generator"]]
+                generator.ifs = [
+                    condition
+                    for index, condition in enumerate(generator.ifs)
+                    if index != unit["index"]
+                ]
+                ast.fix_missing_locations(work)
+                return ast.unparse(work)
+        raise SystemExit(
+            f"comprehension site not found at {unit['lineno']}:{unit['col_offset']}; "
+            "the checker bytes changed under the audit"
+        )
     for node in ast.walk(work):
         if unit["site"] == "if":
             match = (

@@ -487,9 +487,14 @@ readers (schema pins, bare-interpreter imports, TLA pin copies), four
 misbound and one ambiguous binding were rebound to intent, and ADR 0054's
 impossibility claim was half-retracted by a retained zero-use-grant
 counterexample — condition coverage now measures 88/89. Surviving
-weaknesses are enumerated in ADR 0063, not resolved: ≥22 denominator omissions including four removable
-harness guards, and subset-semantics rebindability in the expected_errors
-suites (the 8 compound-name under-bindings were dissolved by ADR 0064
+weaknesses are enumerated in ADR 0063, not resolved: subset-semantics rebindability in the expected_errors
+suites (ADR 0066 closed the denominator omissions by auditing the harness
+itself: both headline numbers retracted by measurement to statements
+172/181 and conditions 97/99, the harness hygiene guards closed by an
+in-harness self-test, and the residue structurally explained — six
+self-test refusals are the terminal turtle of the proof-of-proof
+regress, three are clean-tree assertions, two are semantically
+unprovable) (the 8 compound-name under-bindings were dissolved by ADR 0064
 with 18 ablation-controlled prong cases; the 13 crash-artifact proofs
 are now declared as `detection: crash` in the retained records by ADR
 0065, with the cheap gates refusing an undeclared proof kind). Any future frontier claim

@@ -1067,21 +1067,19 @@ MODEL_CHECKERS: dict[str, Callable[[dict[str, Any]], list[str]]] = {
 }
 
 
-def main() -> int:
-    cases = load_json(CASES_PATH)
-    schema = load_json(SCHEMA_PATH)
-    inventory = load_json(INVENTORY_PATH)
-    identity = load_json(IDENTITY_MAP_PATH)
-    data_fixture = load_json(DATA_USE_FIXTURE_PATH)
+def evaluate_cases(cases: list[Any]) -> tuple[list[str], int, int, set[str]]:
+    """Run every case and return (failures, safe, adversarial, observed tags).
 
+    Factored out of main() so the harness's own hygiene guards can be
+    exercised by a self-test: a malformed case cannot live in the retained
+    set (it would fail the suite), so before ADR 0066 these guards had no
+    proof and independent review showed four of them silently removable.
+    """
     failures: list[str] = []
-    failures.extend(schema_contract_errors(schema, inventory, identity))
-    failures.extend(data_fixture_errors(data_fixture))
-
     observed_tags: set[str] = set()
     safe_count = 0
     adversarial_count = 0
-    for case in cases.get("cases", []):
+    for case in cases:
         name = case.get("name", "<unnamed>")
         checker = MODEL_CHECKERS.get(case.get("model"))
         if checker is None:
@@ -1113,8 +1111,13 @@ def main() -> int:
                 )
         else:
             failures.append(f"{name}: invalid expectation {expect!r}")
+    return failures, safe_count, adversarial_count, observed_tags
 
-    required_tags = set(cases.get("required_adversarial_tags", []))
+
+def coverage_failures(
+    safe_count: int, adversarial_count: int, observed_tags: set[str], required_tags: set[str]
+) -> list[str]:
+    failures: list[str] = []
     if observed_tags != required_tags:
         failures.append(
             "adversarial coverage mismatch: "
@@ -1122,6 +1125,159 @@ def main() -> int:
         )
     if safe_count < 10 or adversarial_count < 15:
         failures.append("lifecycle closure suite lost its minimum safe/adversarial coverage")
+    return failures
+
+
+HARNESS_SELF_TEST_SUBJECT = {
+    "initial_state": "not_issued",
+    "max_uses": 1,
+    "steps": [{"event_type": "authority.grant_issued", "declared_from": "not_issued", "declared_to": "issued"}],
+}
+
+
+def harness_self_test() -> list[str]:
+    """Prove the harness's own hygiene guards fire (law 11).
+
+    Each synthetic case below is malformed in exactly one way and must be
+    refused by exactly one guard. Removing any single member of those
+    guards' conditions makes one of these assertions fail, which is what
+    gives the harness guards case-attributed proofs at all.
+    """
+    failures: list[str] = []
+
+    def refuses(case: dict[str, Any], expected: str, label: str) -> None:
+        observed, _, _, _ = evaluate_cases([case])
+        if not any(expected in failure for failure in observed):
+            failures.append(f"harness self-test: {label} was not refused; got {observed}")
+
+    base = {
+        "name": "odeya-harness-self-test",
+        "model": "authority_grant_trace",
+        "expect": "reject",
+        "subject": HARNESS_SELF_TEST_SUBJECT,
+        "expected_refusal_contains": "grant trace is not single-use",
+    }
+    refuses(dict(base, adversarial_tag=1), "adversarial case lacks a tag", "a non-string tag")
+    refuses(dict(base, adversarial_tag=""), "adversarial case lacks a tag", "an empty tag")
+    tagged = dict(base, adversarial_tag="odeya-harness-self-test")
+    refuses(
+        {k: v for k, v in tagged.items() if k != "expected_refusal_contains"},
+        "does not declare the guard that must refuse it",
+        "a missing declared guard",
+    )
+    refuses(
+        dict(tagged, expected_refusal_contains=1),
+        "does not declare the guard that must refuse it",
+        "a non-string declared guard",
+    )
+    refuses(
+        dict(tagged, expected_refusal_contains=""),
+        "does not declare the guard that must refuse it",
+        "an empty declared guard",
+    )
+    refuses(
+        dict(tagged, expected_refusal_contains="odeya-never-appears"),
+        "refused, but not by its declared guard",
+        "a misdeclared guard",
+    )
+    refuses(dict(tagged, expect="maybe"), "invalid expectation", "an invalid expectation")
+    refuses(dict(tagged, model="no-such-model"), "unknown model", "an unknown model")
+
+    # The two case-outcome guards: a safe reference that is rejected, and a
+    # known-bad case that is accepted. Neither can exist in the retained set.
+    clean_trace = {
+        "initial_state": "not_issued",
+        "max_uses": 1,
+        "steps": [
+            {"event_type": "authority.grant_issued", "declared_from": "not_issued", "declared_to": "issued"},
+        ],
+    }
+    refuses(
+        {
+            "name": "odeya-harness-self-test",
+            "model": "authority_grant_trace",
+            "expect": "accept",
+            "subject": dict(clean_trace, max_uses=0),
+        },
+        "safe reference rejected",
+        "a rejected safe reference",
+    )
+    refuses(
+        {
+            "name": "odeya-harness-self-test",
+            "model": "authority_grant_trace",
+            "expect": "reject",
+            "adversarial_tag": "odeya-harness-self-test",
+            "expected_refusal_contains": "anything",
+            "subject": clean_trace,
+        },
+        "known-bad trace was accepted",
+        "an accepted known-bad trace",
+    )
+
+    # The collection path itself: a document whose cases misbehave must
+    # produce failures through collect_case_failures, not only through the
+    # per-case guards it delegates to.
+    # Bound to the exact failure each path must carry: a non-empty result is
+    # not proof that the intended path produced it. This self-test first
+    # accepted the coverage failure as evidence for the case path, which is
+    # the same incidental-refusal defect ADR 0024 named, committed here.
+    collected, _, _ = collect_case_failures(
+        {"cases": [{"name": "odeya-harness-self-test", "model": "no-such-model", "expect": "reject"}]}
+    )
+    if not any("unknown model" in failure for failure in collected):
+        failures.append("harness self-test: the case-failure collection path is not load-bearing")
+    collected, _, _ = collect_case_failures({"cases": [], "required_adversarial_tags": []})
+    if not any("minimum safe/adversarial coverage" in failure for failure in collected):
+        failures.append("harness self-test: the coverage-failure collection path is not load-bearing")
+
+    # The floors: each disjunct must be independently load-bearing.
+    if not coverage_failures(0, 100, set(), set()):
+        failures.append("harness self-test: a safe-reference floor breach was not refused")
+    if not coverage_failures(100, 0, set(), set()):
+        failures.append("harness self-test: an adversarial floor breach was not refused")
+    if not coverage_failures(100, 100, {"extra"}, set()):
+        failures.append("harness self-test: a tag-coverage mismatch was not refused")
+    return failures
+
+
+def collect_case_failures(cases: dict[str, Any]) -> tuple[list[str], int, int]:
+    """Everything a case document can be refused for.
+
+    Separate from main so the self-test can drive the whole collection
+    path, not just the individual guards: without this, the statements
+    that gather case and coverage failures were themselves removable
+    with the suite green (ADR 0066).
+    """
+    failures: list[str] = []
+    case_failures, safe_count, adversarial_count, observed_tags = evaluate_cases(
+        cases.get("cases", [])
+    )
+    failures.extend(case_failures)
+    failures.extend(
+        coverage_failures(
+            safe_count,
+            adversarial_count,
+            observed_tags,
+            set(cases.get("required_adversarial_tags", [])),
+        )
+    )
+    return failures, safe_count, adversarial_count
+
+
+def main() -> int:
+    cases = load_json(CASES_PATH)
+    schema = load_json(SCHEMA_PATH)
+    inventory = load_json(INVENTORY_PATH)
+    identity = load_json(IDENTITY_MAP_PATH)
+    data_fixture = load_json(DATA_USE_FIXTURE_PATH)
+
+    failures: list[str] = harness_self_test()
+    failures.extend(schema_contract_errors(schema, inventory, identity))
+    failures.extend(data_fixture_errors(data_fixture))
+
+    case_failures, safe_count, adversarial_count = collect_case_failures(cases)
+    failures.extend(case_failures)
 
     if failures:
         print("Lifecycle closure validation failed:")

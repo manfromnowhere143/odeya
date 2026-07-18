@@ -96,7 +96,23 @@ AUDITED_MODELS = (
     "work_lease_record_candidate_errors",
     "identity_map_mutation_errors",
     "data_fixture_mutation_errors",
+    # The suite harness refuses too: main() holds eleven `failures` sites that
+    # decide whether a case is accepted, attributed, and counted. Independent
+    # review showed four of its guards silently removable while the audit
+    # reported full coverage of everything else (ADR 0066). A harness that can
+    # be weakened invisibly is exactly the blindness this tool exists to find.
+    "main",
+    # main() delegates to these; the audited set must follow the guards, not
+    # the function name they used to live in.
+    "evaluate_cases",
+    "coverage_failures",
+    "harness_self_test",
+    "collect_case_failures",
 )
+
+# Refusal accumulators. `errors` is the model convention; `failures` is the
+# harness convention, invisible to two prior versions of this tool.
+REFUSAL_NAMES = {"errors", "failures"}
 
 # Every refusal-bearing function in the checker is audited. Two prior versions
 # of this tuple made false exclusions, both caught by independent review:
@@ -153,7 +169,7 @@ def discover(source: str) -> dict[str, list[dict[str, Any]]]:
                 and isinstance(inner.func, ast.Attribute)
                 and inner.func.attr in {"append", "extend"}
                 and isinstance(inner.func.value, ast.Name)
-                and inner.func.value.id == "errors"
+                and inner.func.value.id in REFUSAL_NAMES
             ):
                 guard = message_template(inner)
                 replacement = "pass"
@@ -162,9 +178,9 @@ def discover(source: str) -> dict[str, list[dict[str, Any]]]:
             elif (
                 isinstance(inner, ast.AugAssign)
                 and isinstance(inner.target, ast.Name)
-                and inner.target.id == "errors"
+                and inner.target.id in REFUSAL_NAMES
             ):
-                guard = f"errors += {ast.unparse(inner.value)}"
+                guard = f"{inner.target.id} += {ast.unparse(inner.value)}"
                 replacement = "pass"
 
             # return ["..."] — an early refusal that never touches `errors`
