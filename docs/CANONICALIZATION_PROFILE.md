@@ -1,11 +1,12 @@
 # Canonical Identity and Serialization Profile
 
 Status: exact candidate parameter set `odeya-jcs-0.1` frozen for review,
-2026-07-16. A pinned architecture-only suite gives cross-runtime evidence for
-the bounded rules identified below. The canonical profile is still unissued:
-production-schema migration, package/reference profiles, fuzzing, measured
-limits, independent-host reproduction, and exact-byte operator acceptance
-remain blocking.
+updated 2026-07-19. A pinned architecture-only suite gives cross-runtime
+evidence for the bounded rules identified below, and the migration audit
+currently reports zero findings across 112 schemas and 204 fixtures. The
+canonical profile is still unissued: accountable review, package/reference
+profiles, fuzzing, measured limits, independent-host reproduction, and
+exact-byte operator acceptance remain blocking.
 
 The machine-readable
 [`CanonicalizationProfileCore` candidate](../architecture/canonicalization-profile-core-candidate.json)
@@ -102,14 +103,14 @@ that prose drift:
 | engine contract root | `odeya-engine-contract-root-v1` | `engine-contract-root:0.1.0` |
 | event-contract member | `odeya-event-contract-member-v1` | `event-contract-registry:0.1.0` |
 | event-contract registry | `odeya-event-contract-registry-v1` | `event-contract-registry:0.1.0` |
-| event payload | `odeya-event-payload-v1` | `research-event:0.7.0` |
+| event payload | `odeya-event-payload-v1` | `research-event:0.18.0` |
 | ledger checkpoint | `odeya-ledger-checkpoint-v1` | `ledger-checkpoint:0.2.0` |
 | P0 constitutional recovery admission | `odeya-p0-constitutional-recovery-admission-v1` | `registry-activation:0.1.0` |
 | policy decision | `odeya-policy-decision-v2` | `policy-decision:0.2.0` |
 | reducer member | `odeya-reducer-registry-member-v1` | `reducer-registry:0.1.0` |
 | reducer registry | `odeya-reducer-registry-v1` | `reducer-registry:0.1.0` |
 | registry activation | `odeya-registry-activation-v1` | `registry-activation:0.1.0` |
-| research event | `odeya-research-event-v1` | `research-event:0.7.0` |
+| research event | `odeya-research-event-v1` | `research-event:0.18.0` |
 | schema-registry member | `odeya-schema-registry-member-v1` | `schema-registry:0.1.0` |
 | schema registry | `odeya-schema-registry-v1` | `schema-registry:0.1.0` |
 
@@ -121,14 +122,18 @@ domain, domain-to-schema substitution, or undocumented domain constant.
 
 Signatures are external attestations: re-signing cannot alter subject identity. JSON Schema can require these fields and exact pointer arrays; it cannot construct the projection, recompute a digest, establish registry acceptance, perform constant-time comparison, or verify a signature. Those are independent semantic/conformance obligations.
 
-`ResearchEvent` 0.7.0 deliberately separates the logical
+`ResearchEvent` 0.18.0 deliberately separates the logical
 `payload_type_id` from the enclosing JSON Schema resource identity. Its
 per-payload contract is still `unresolved_blocking`, so
 `payload_contract_digest` is null and no event is admitted, dispatchable, or
 replay-authoritative. A resolved payload-contract digest may be constructed
 only after a new `ResearchEvent` resource identity freezes the exact branch
 extraction and canonicalization profile; it must not be inferred from the
-logical URN or the current branch pointer.
+logical URN or the current branch pointer. Version 0.18.0 corrects only the
+`work.lease_released` claim-preservation branch. Blocked WorkContract 0.19.0
+and the separately identified profile-bound wrapper 0.20.0 bind that exact
+resource transitively while keeping every canonical digest, member,
+admission, and authority boundary absent.
 
 ## Parser safety before JCS
 
@@ -311,10 +316,11 @@ reproducibility, package signatures, absence of shared conceptual lineage,
 formal correctness, or behavior outside the retained vectors.
 
 [`SCHEMA_AUDIT.json`](../tests/canonicalization/SCHEMA_AUDIT.json) is the
-machine-readable migration inventory. It deliberately keeps profile-freeze
-findings blocking while the underlying schema or fixture bytes remain
-nonconformant; refreshing the file without resolving those findings is not
-closure.
+machine-readable migration inventory. Its current six-class finding set is
+empty over 112 schemas and 204 fixtures. That is a working-byte measurement,
+not profile issuance: changing any schema or fixture requires regeneration
+and exact comparison, and refreshing the inventory to match weakened rules is
+not closure.
 
 ## Migration
 
@@ -327,6 +333,15 @@ Canonical identities are immutable within a profile. A new profile:
 5. preserves readers or exports for the accepted retention period;
 6. triggers dependent signature, reference, package, and publication review.
 
+The C5 compatibility correction follows the same identity law before profile
+issuance. ResearchEvent 0.17.0 is succeeded by 0.18.0; blocked WorkContract
+0.18.0 is succeeded by 0.19.0; and the profile-bound WorkContract wrapper is
+reidentified as 0.20.0 so it can bind the exact 0.19.0 bytes without colliding
+with them. The predecessor identities remain retained; none is redirected to
+successor bytes. Exact raw-byte bindings prove only which candidate bytes were
+reviewed. They do not compute a canonical object digest or make any candidate
+admitted.
+
 ## Acceptance blockers
 
 The timestamp, exact-decimal, missingness, one string-set normalizer, exact
@@ -334,8 +349,9 @@ reference shape, self-reference refusal, and envelope domain separation now
 have retained two-path evidence. The exact candidate parameters are frozen for
 review, but the profile remains unissued until:
 
-- every current architecture schema is migrated to or explicitly exempted from
-  the timestamp, scientific-number, reference, and digest-scope rules;
+- the zero-finding migration inventory remains reproducible from the exact
+  candidate schema and fixture bytes, including the 0.18/0.19/0.20 reissue
+  chain;
 - interval, ratio/probability, package/archive, graph-cycle, artifact
   transformation, profile migration, and old-reader vectors are complete;
 - differential/property fuzzing is independently reviewed and its minimized
@@ -347,5 +363,6 @@ review, but the profile remains unissued until:
 - the operator signs the exact profile, vector, schema-registry, runner, and
   result digests.
 
-Until then, draft `sha256:` fields establish intended shape but not an issued,
-admitted, or operator-accepted Odeya identity contract.
+Until then, candidate `sha256:` fields and exact raw-byte bindings establish
+intended shape and lineage but not an issued, admitted, or operator-accepted
+Odeya identity contract.

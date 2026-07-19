@@ -62,7 +62,8 @@
     "first_slice_inventory_mut_not_replace",
     "first_slice_inventory_mut_path_absent",
     "first_slice_inventory_mut_index_noninteger",
-    "first_slice_inventory_mut_unresolvable"
+    "first_slice_inventory_mut_unresolvable",
+    "first_slice_inventory_c5_release_claim_boundary"
   ],
   "cases": [
     {
@@ -1975,6 +1976,30 @@
       },
       "adversarial_tag": "first_slice_inventory_mut_unresolvable",
       "expected_refusal_contains": "inventory mutation path does not resolve"
+    },
+    {
+      "name": "inventory-bad-c5-release-claim-boundary",
+      "kind": "adversarial",
+      "model": "inventory_mutation",
+      "expect": "reject",
+      "conflict_ids": [
+        "C5"
+      ],
+      "subject": {
+        "mutation": {
+          "op": "replace",
+          "path": [
+            "unresolved_prerequisites",
+            0,
+            "corrected_compatibility_findings",
+            0,
+            "status"
+          ],
+          "value": "unresolved_blocking"
+        }
+      },
+      "adversarial_tag": "first_slice_inventory_c5_release_claim_boundary",
+      "expected_refusal_contains": "does not retain the exact corrected C5 release-claim boundary"
     }
   ]
 }

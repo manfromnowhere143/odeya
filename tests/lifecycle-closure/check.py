@@ -13,6 +13,7 @@ import re
 import sys
 from copy import deepcopy
 from datetime import datetime
+from decimal import Decimal, InvalidOperation
 from pathlib import Path
 from typing import Any, Callable
 
@@ -23,6 +24,30 @@ SCHEMA_PATH = ROOT / "schemas/research-event.schema.json"
 INVENTORY_PATH = ROOT / "architecture/first-slice-admission-resolution-candidate.json"
 IDENTITY_MAP_PATH = ROOT / "architecture/first-slice-event-identity-map.json"
 DATA_USE_FIXTURE_PATH = ROOT / "tests/architecture-schema/fixtures/data-use-decided-event.valid.json"
+ATTEMPT_STARTED_FIXTURE_PATH = (
+    ROOT / "tests/architecture-schema/fixtures/local-attempt-started-event.valid.json"
+)
+ATTEMPT_COMPLETED_FIXTURE_PATH = (
+    ROOT / "tests/architecture-schema/fixtures/local-attempt-completed-event.valid.json"
+)
+RESOURCE_RESERVATION_CLAIMED_FIXTURE_PATH = (
+    ROOT
+    / "tests/architecture-schema/fixtures/resource-reservation-claimed-local-start-event.valid.json"
+)
+WORK_LEASE_ACQUIRED_EVENT_FIXTURE_PATH = (
+    ROOT / "tests/architecture-schema/fixtures/work-lease-acquired-event.valid.json"
+)
+RESOURCE_USAGE_OBSERVED_FIXTURE_PATH = (
+    ROOT
+    / "tests/architecture-schema/fixtures/resource-usage-observed-local-report-event.valid.json"
+)
+WORK_LEASE_RELEASED_EVENT_FIXTURE_PATH = (
+    ROOT / "tests/architecture-schema/fixtures/work-lease-released-event.valid.json"
+)
+RESOURCE_RESERVATION_SETTLED_FIXTURE_PATH = (
+    ROOT
+    / "tests/architecture-schema/fixtures/resource-reservation-settled-local-after-report-event.valid.json"
+)
 WORK_LEASE_SCHEMA_PATH = ROOT / "schemas/canonical-work-lease.schema.json"
 MODULE_MANIFEST_PATH = ROOT / "architecture/module-dependency-manifest.json"
 WORK_LEASE_FIXTURES = {
@@ -140,6 +165,48 @@ def nested(value: dict[str, Any], *keys: str) -> Any:
     return current
 
 
+def retained_event_reference(event: dict[str, Any]) -> dict[str, Any]:
+    """Build the reference carried by retained fixtures.
+
+    The digest is read from the retained event. It is not recomputed.
+    """
+
+    return {
+        "event_id": event.get("event_id"),
+        "event_type": event.get("event_type"),
+        "event_version": event.get("event_version"),
+        "digest": nested(event, "integrity", "event_digest"),
+    }
+
+
+def resource_vector_values(vector: Any) -> dict[tuple[Any, ...], Decimal] | None:
+    """Return one exact dimension map, or None for an unusable vector."""
+
+    if not isinstance(vector, dict):
+        return None
+    dimensions = vector.get("dimensions")
+    if not isinstance(dimensions, list):
+        return None
+    result: dict[tuple[Any, ...], Decimal] = {}
+    try:
+        for dimension in dimensions:
+            if not isinstance(dimension, dict):
+                return None
+            key = (
+                dimension.get("resource_class"),
+                dimension.get("resource_kind"),
+                dimension.get("pool_id"),
+                dimension.get("unit"),
+                dimension.get("currency_code"),
+            )
+            if key in result:
+                return None
+            result[key] = Decimal(str(nested(dimension, "value", "decimal")))
+    except (InvalidOperation, ValueError):
+        return None
+    return result
+
+
 def schema_contract_errors(
     schema: dict[str, Any],
     inventory: dict[str, Any],
@@ -162,7 +229,7 @@ def schema_contract_errors(
     # the exact identity pin: the URN below is repointed by the reissue
     # closure; the version const must equal that URN's version by derivation,
     # so a reissue can never split the two expectations
-    expected_event_id = "urn:odeya:schema:research-event:0.17.0"
+    expected_event_id = "urn:odeya:schema:research-event:0.18.0"
     expected_event_version = expected_event_id.rsplit(":", 1)[1]
     if schema.get("$id") != expected_event_id:
         errors.append(f"lifecycle closure is not carried by exact ResearchEvent {expected_event_version}")
@@ -227,8 +294,8 @@ def schema_contract_errors(
     if source.get("required_event_inventory_version") != inventory.get("version"):
         errors.append("identity map points at the wrong version of the first-slice inventory")
 
-    if identity.get("version") != "0.2.0":
-        errors.append("event identity map did not advance to the WorkLease-aware 0.2.0 candidate")
+    if identity.get("version") != "0.3.0":
+        errors.append("event identity map did not advance to the release-claim-aware 0.3.0 candidate")
     if identity.get("missing_required_schema_resources") != []:
         errors.append("identity map still claims a required schema resource is absent")
 
@@ -260,15 +327,28 @@ def schema_contract_errors(
             "candidate_fixtures": [
                 "tests/architecture-schema/fixtures/canonical-work-lease-acquired.valid.json",
                 "tests/architecture-schema/fixtures/canonical-work-lease-released.valid.json",
+                "tests/architecture-schema/fixtures/work-lease-released-event.valid.json",
             ],
-            "compatibility_findings": [
+            "compatibility_findings": [],
+            "resolved_compatibility_findings": [
                 {
                     "finding_id": "C5-WORK-LEASE-RELEASE-CLAIM-001",
-                    "status": "unresolved_blocking",
+                    "status": "corrected",
+                    "correction_mechanism": "reissued_candidate",
                     "consumer": "schemas/research-event.schema.json#/oneOf/21/properties/payload",
-                    "current_consumer_contract": "work.lease_released requires reservation_claim_state=unclaimed and a null reservation_claim_event_ref",
-                    "required_first_slice_contract": "after attempt.start claims the reservation, lease release retains claimed plus the exact claim event and does not mutate ResourceLedger; settlement remains separate",
-                    "required_action": "reissue ResearchEvent and its EventContractRecord under PRQ-009 with exact release/claim/settlement vectors",
+                    "successor_schema_resource_id": "urn:odeya:schema:research-event:0.18.0",
+                    "corrected_consumer_contract": "work.lease_released requires reservation_claim_state=claimed, the exact resource.reservation_claimed event reference, crash_release_allowed=false, settlement_required_after_claim=true, and new_start_claims_allowed=false",
+                    "bounded_sequence_fixture_paths": [
+                        "tests/architecture-schema/fixtures/work-lease-acquired-event.valid.json",
+                        "tests/architecture-schema/fixtures/resource-reservation-claimed-local-start-event.valid.json",
+                        "tests/architecture-schema/fixtures/local-attempt-started-event.valid.json",
+                        "tests/architecture-schema/fixtures/local-attempt-completed-event.valid.json",
+                        "tests/architecture-schema/fixtures/resource-usage-observed-local-report-event.valid.json",
+                        "tests/architecture-schema/fixtures/work-lease-released-event.valid.json",
+                        "tests/architecture-schema/fixtures/resource-reservation-settled-local-after-report-event.valid.json",
+                    ],
+                    "bounded_sequence_evidence": "retained-fixture dereference without digest recomputation: a partial attempt.start cohort, the complete three-event attempt.report cohort, and later resource settlement preserve exact claim and usage references, retained adjacent digest links, and non-fungible per-dimension settlement equations",
+                    "authority_effect": "none; retained digest values are compared but not recomputed, verification.started and stream positions 15-19 are not dereferenced, and PRQ-009 plus member, reducer, replay, review, and first-slice activation evidence remain unresolved_blocking",
                 }
             ],
         },
@@ -384,33 +464,79 @@ def schema_contract_errors(
     if work_lease_schema.get("x-odeya-work-lease-state-machine") != expected_state_machine:
         errors.append("canonical WorkLease candidate state-machine annotation drifted")
 
+    acquired_branch = branches.get("work.lease_acquired")
+    acquired_layers = (
+        nested(acquired_branch[1], "properties", "payload", "allOf")
+        if acquired_branch is not None
+        else None
+    )
+    acquired_rule = (
+        acquired_layers[1].get("properties", {})
+        if isinstance(acquired_layers, list)
+        and len(acquired_layers) > 1
+        and isinstance(acquired_layers[1], dict)
+        else {}
+    )
+    acquired_reservation_rule = nested(
+        acquired_rule or {},
+        "binding",
+        "properties",
+        "reservation",
+        "properties",
+    )
+    if (
+        nested(acquired_rule or {}, "reservation_claim_state", "const") != "unclaimed"
+        or nested(acquired_reservation_rule or {}, "reservation_claim_event_ref")
+        != {"type": "null"}
+    ):
+        errors.append(
+            "work.lease_acquired must retain an unclaimed reservation with a null claim reference"
+        )
+    if nested(acquired_rule or {}, "new_start_claims_allowed", "const") is not True:
+        errors.append("work.lease_acquired must permit the one pre-claim start transition")
+
     release_branch = branches.get("work.lease_released")
     release_layers = (
         nested(release_branch[1], "properties", "payload", "allOf")
         if release_branch is not None
         else None
     )
-    current_release_claim_state = None
-    current_release_claim_ref_type = None
-    if isinstance(release_layers, list) and len(release_layers) > 1:
-        current_release_claim_state = nested(
-            release_layers[1],
-            "properties",
-            "reservation_claim_state",
+    release_rule = (
+        release_layers[1].get("properties", {})
+        if isinstance(release_layers, list)
+        and len(release_layers) > 1
+        and isinstance(release_layers[1], dict)
+        else {}
+    )
+    release_reservation_rule = nested(
+        release_rule or {},
+        "binding",
+        "properties",
+        "reservation",
+        "properties",
+    )
+    if (
+        nested(release_rule or {}, "reservation_claim_state", "const") != "claimed"
+        or nested(release_reservation_rule or {}, "reservation_claim_event_ref")
+        != {"$ref": "#/$defs/resource_reservation_claimed_event_reference"}
+    ):
+        errors.append(
+            "work.lease_released must retain a claimed reservation with the exact resource.reservation_claimed reference"
+        )
+    if (
+        nested(release_reservation_rule or {}, "crash_release_allowed", "const") is not False
+        or nested(
+            release_reservation_rule or {},
+            "settlement_required_after_claim",
             "const",
         )
-        current_release_claim_ref_type = nested(
-            release_layers[1],
-            "properties",
-            "binding",
-            "properties",
-            "reservation",
-            "properties",
-            "reservation_claim_event_ref",
-            "type",
+        is not True
+    ):
+        errors.append(
+            "work.lease_released must forbid crash release and require separate settlement"
         )
-    if current_release_claim_state != "unclaimed" or current_release_claim_ref_type != "null":
-        errors.append("recorded ResearchEvent release/claimed-reservation blocker no longer matches exact bytes")
+    if nested(release_rule or {}, "new_start_claims_allowed", "const") is not False:
+        errors.append("work.lease_released must forbid new start claims")
 
     if module_manifest is None:
         module_manifest = load_json(MODULE_MANIFEST_PATH)
@@ -817,6 +943,842 @@ def work_lease_trace_errors(subject: dict[str, Any]) -> list[str]:
     return errors
 
 
+def work_lease_claim_sequence_errors(subject: dict[str, Any]) -> list[str]:
+    """Check one retained claim/report/release/settlement cohort.
+
+    This is bounded architecture evidence over retained synthetic fixtures. It
+    dereferences exact event references to those fixtures and compares retained
+    digest values, but it does not recompute canonical event digests, execute a
+    reducer, prove a complete stream between positions 14 and 20, or establish
+    ResourceLedger/runtime authority. The attempt.start batch is deliberately
+    partial: the referenced verification.started member is not dereferenced
+    here.
+    """
+
+    lease_acquired = deepcopy(load_json(WORK_LEASE_ACQUIRED_EVENT_FIXTURE_PATH))
+    reservation_claimed = deepcopy(load_json(RESOURCE_RESERVATION_CLAIMED_FIXTURE_PATH))
+    attempt_started = deepcopy(load_json(ATTEMPT_STARTED_FIXTURE_PATH))
+    attempt_completed = deepcopy(load_json(ATTEMPT_COMPLETED_FIXTURE_PATH))
+    usage_observed = deepcopy(load_json(RESOURCE_USAGE_OBSERVED_FIXTURE_PATH))
+    lease_released = deepcopy(load_json(WORK_LEASE_RELEASED_EVENT_FIXTURE_PATH))
+    reservation_settled = deepcopy(load_json(RESOURCE_RESERVATION_SETTLED_FIXTURE_PATH))
+    mutation = subject.get("mutation")
+    if mutation is not None:
+        if not isinstance(mutation, dict) or mutation.get("op") != "replace":
+            return ["claim-sequence mutation is not one bounded replace operation"]
+        targets = {
+            "lease_acquired": lease_acquired,
+            "reservation_claimed": reservation_claimed,
+            "attempt_started": attempt_started,
+            "attempt_completed": attempt_completed,
+            "usage_observed": usage_observed,
+            "lease_released": lease_released,
+            "reservation_settled": reservation_settled,
+        }
+        target_name = mutation.get("target")
+        if target_name not in targets:
+            return [f"claim-sequence mutation names an unknown target {target_name!r}"]
+        path = mutation.get("path")
+        if not isinstance(path, list) or not path:
+            return ["claim-sequence mutation path is absent"]
+        current: Any = targets[target_name]
+        try:
+            for segment in path[:-1]:
+                current = current[segment]
+            final = path[-1]
+            if isinstance(current, list):
+                if not isinstance(final, int):
+                    return ["claim-sequence list mutation index is not an integer"]
+                if not -len(current) <= final < len(current):
+                    return ["claim-sequence mutation path does not resolve"]
+            elif isinstance(current, dict):
+                if final not in current:
+                    return ["claim-sequence mutation path does not resolve"]
+            else:
+                return ["claim-sequence mutation path does not resolve"]
+            current[final] = mutation.get("value")
+        except (KeyError, IndexError, TypeError):
+            return ["claim-sequence mutation path does not resolve"]
+
+    errors: list[str] = []
+    acquired_reference = retained_event_reference(lease_acquired)
+    claim_reference = retained_event_reference(reservation_claimed)
+    attempt_started_reference = retained_event_reference(attempt_started)
+    completion_reference = retained_event_reference(attempt_completed)
+    usage_reference = retained_event_reference(usage_observed)
+    expected_verification_start_reference = {
+        "event_id": "event.verification-started.local.001",
+        "event_type": "verification.started",
+        "event_version": "1.0.0",
+        "digest": "sha256:3600000000000000000000000000000000000000000000000000000000000000",
+    }
+    expected_reservation_created_reference = {
+        "event_id": "event.resource-reservation-created.local.001",
+        "event_type": "resource.reservation_created",
+        "event_version": "1.0.0",
+        "digest": "sha256:2000000000000000000000000000000000000000000000000000000000000000",
+    }
+
+    loaded_events = (
+        lease_acquired,
+        reservation_claimed,
+        attempt_started,
+        attempt_completed,
+        usage_observed,
+        lease_released,
+        reservation_settled,
+    )
+    loaded_event_ids = tuple(event.get("event_id") for event in loaded_events)
+    loaded_event_ids_are_strings = all(
+        isinstance(event_id, str) for event_id in loaded_event_ids
+    )
+    loaded_event_ids_are_unique = (
+        len(set(loaded_event_ids)) == len(loaded_events)
+        if loaded_event_ids_are_strings
+        else False
+    )
+    if (loaded_event_ids_are_strings, loaded_event_ids_are_unique) != (True, True):
+        errors.append("retained claim/report lifecycle events reuse an event identity")
+    loaded_event_digests = tuple(
+        nested(event, "integrity", "event_digest") for event in loaded_events
+    )
+    loaded_event_digests_are_strings = all(
+        isinstance(event_digest, str) for event_digest in loaded_event_digests
+    )
+    loaded_event_digests_are_unique = (
+        len(set(loaded_event_digests)) == len(loaded_events)
+        if loaded_event_digests_are_strings
+        else False
+    )
+    if (loaded_event_digests_are_strings, loaded_event_digests_are_unique) != (
+        True,
+        True,
+    ):
+        errors.append("retained claim/report lifecycle events reuse an event digest")
+
+    observed_verification_start_reference = nested(
+        attempt_started,
+        "payload",
+        "verification_start_event_ref",
+    )
+    if observed_verification_start_reference != expected_verification_start_reference:
+        errors.append(
+            "attempt.started does not retain the exact undereferenced verification.started member"
+        )
+    declared_start_cohort = nested(
+        reservation_claimed,
+        "payload",
+        "cohort_event_refs",
+    )
+    expected_start_cohort_references = [
+        attempt_started_reference,
+        expected_verification_start_reference,
+    ]
+    if declared_start_cohort != expected_start_cohort_references:
+        errors.append(
+            "resource.reservation_claimed does not retain the exact ordered attempt.start cohort references"
+        )
+    declared_start_cohort_ids_list: list[Any] = []
+    declared_start_cohort_digests_list: list[Any] = []
+    if isinstance(declared_start_cohort, list):
+        for reference in declared_start_cohort:
+            if isinstance(reference, dict):
+                declared_start_cohort_ids_list.append(reference.get("event_id"))
+                declared_start_cohort_digests_list.append(reference.get("digest"))
+            else:
+                declared_start_cohort_ids_list.append(None)
+                declared_start_cohort_digests_list.append(None)
+    declared_start_cohort_ids = tuple(declared_start_cohort_ids_list)
+    declared_start_cohort_digests = tuple(declared_start_cohort_digests_list)
+    start_cohort_ids_are_strings = all(
+        isinstance(event_id, str) for event_id in declared_start_cohort_ids
+    )
+    start_cohort_digests_are_strings = all(
+        isinstance(event_digest, str)
+        for event_digest in declared_start_cohort_digests
+    )
+    unique_start_cohort_ids = (
+        len(set(declared_start_cohort_ids))
+        if start_cohort_ids_are_strings
+        else -1
+    )
+    unique_start_cohort_digests = (
+        len(set(declared_start_cohort_digests))
+        if start_cohort_digests_are_strings
+        else -1
+    )
+    if (
+        len(declared_start_cohort_ids),
+        unique_start_cohort_ids,
+        len(declared_start_cohort_digests),
+        unique_start_cohort_digests,
+    ) != (2, 2, 2, 2):
+        errors.append("attempt.start cohort references reuse an event identity or digest")
+
+    observed_acquired_references = (
+        nested(attempt_started, "payload", "lease_state_event_ref"),
+        nested(attempt_completed, "payload", "lease_state_event_ref"),
+        nested(lease_released, "payload", "prior_lease_event_ref"),
+    )
+    if observed_acquired_references != (acquired_reference,) * 3:
+        errors.append(
+            "start/report/release lifecycle does not retain one exact work.lease_acquired reference"
+        )
+    if nested(attempt_completed, "payload", "attempt_start_event_ref") != attempt_started_reference:
+        errors.append(
+            "attempt.completed does not retain the exact attempt.started event reference"
+        )
+    observed_reservation_created_references = (
+        nested(
+            lease_acquired,
+            "payload",
+            "binding",
+            "reservation",
+            "reservation_created_event_ref",
+        ),
+        nested(
+            attempt_started,
+            "payload",
+            "binding",
+            "reservation",
+            "reservation_created_event_ref",
+        ),
+        nested(
+            attempt_completed,
+            "payload",
+            "binding",
+            "reservation",
+            "reservation_created_event_ref",
+        ),
+        nested(
+            lease_released,
+            "payload",
+            "binding",
+            "reservation",
+            "reservation_created_event_ref",
+        ),
+    )
+    if observed_reservation_created_references != (
+        expected_reservation_created_reference,
+    ) * 4:
+        errors.append(
+            "retained WorkLease event and attempt fixtures disagree on the undereferenced resource.reservation_created reference"
+        )
+
+    expected_operational_dimensions = [
+        "cpu_time:pool.local",
+        "memory_time:pool.local",
+    ]
+    observed_operational_dimensions = tuple(
+        nested(
+            event,
+            "payload",
+            "binding",
+            "reservation",
+            "operational_dimension_keys",
+        )
+        for event in (
+            lease_acquired,
+            attempt_started,
+            attempt_completed,
+            lease_released,
+        )
+    )
+    if observed_operational_dimensions != (expected_operational_dimensions,) * 4:
+        errors.append(
+            "retained WorkLease and attempt fixtures disagree on operational resource dimensions"
+        )
+    attempt_claim = nested(
+        attempt_started,
+        "payload",
+        "binding",
+        "reservation",
+        "reservation_claim_event_ref",
+    )
+    released_claim = nested(
+        lease_released,
+        "payload",
+        "binding",
+        "reservation",
+        "reservation_claim_event_ref",
+    )
+    usage_claim = nested(usage_observed, "payload", "claimed_event_ref")
+    settled_claim = nested(reservation_settled, "payload", "claimed_event_ref")
+    observed_claim_frontier = (
+        reservation_claimed.get("event_id"),
+        reservation_claimed.get("event_type"),
+        reservation_claimed.get("event_version"),
+        nested(reservation_claimed, "aggregate", "aggregate_type"),
+        nested(reservation_claimed, "payload", "lifecycle_axis"),
+        nested(reservation_claimed, "payload", "from"),
+        nested(reservation_claimed, "payload", "to"),
+        nested(reservation_claimed, "payload", "claim_point"),
+        nested(reservation_claimed, "payload", "reservation_id"),
+    )
+    expected_claim_frontier = (
+        "event.resource-reservation-claimed.local.001",
+        "resource.reservation_claimed",
+        "1.0.0",
+        "resource_budget",
+        "resource_reservation",
+        "active",
+        "claimed",
+        "work_start",
+        "resource-reservation.local.001",
+    )
+    if observed_claim_frontier != expected_claim_frontier:
+        errors.append(
+            "retained resource.reservation_claimed event is not the exact local work-start claim"
+        )
+
+    observed_start_frontier = {
+        "event_type": attempt_started.get("event_type"),
+        "dispatch_command_type": nested(
+            attempt_started,
+            "payload",
+            "dispatch_command_type",
+        ),
+        "reservation_claimed_in_same_commit": nested(
+            attempt_started,
+            "payload",
+            "reservation_claimed_in_same_commit",
+        ),
+        "claim_reference": attempt_claim,
+    }
+    expected_start_frontier = {
+        "event_type": "attempt.started",
+        "dispatch_command_type": "attempt.start",
+        "reservation_claimed_in_same_commit": True,
+        "claim_reference": claim_reference,
+    }
+    if observed_start_frontier != expected_start_frontier:
+        errors.append(
+            "attempt.started does not retain the exact same-commit resource.reservation_claimed frontier"
+        )
+    if released_claim != claim_reference:
+        errors.append(
+            "work.lease_released does not preserve the exact reservation claim reference"
+        )
+    if usage_claim != claim_reference:
+        errors.append(
+            "resource.usage_observed does not preserve the exact reservation claim reference"
+        )
+    if settled_claim != claim_reference:
+        errors.append(
+            "resource.reservation_settled does not consume the preserved reservation claim"
+        )
+    if nested(reservation_settled, "payload", "usage_observation_event_refs") != [
+        usage_reference
+    ]:
+        errors.append(
+            "resource.reservation_settled does not consume the retained usage observation"
+        )
+
+    observed_release_frontier = {
+        "event_type": lease_released.get("event_type"),
+        "reservation_claim_state": nested(
+            lease_released,
+            "payload",
+            "reservation_claim_state",
+        ),
+        "crash_release_allowed": nested(
+            lease_released,
+            "payload",
+            "binding",
+            "reservation",
+            "crash_release_allowed",
+        ),
+        "settlement_required_after_claim": nested(
+            lease_released,
+            "payload",
+            "binding",
+            "reservation",
+            "settlement_required_after_claim",
+        ),
+        "new_start_claims_allowed": nested(
+            lease_released,
+            "payload",
+            "new_start_claims_allowed",
+        ),
+    }
+    expected_release_frontier = {
+        "event_type": "work.lease_released",
+        "reservation_claim_state": "claimed",
+        "crash_release_allowed": False,
+        "settlement_required_after_claim": True,
+        "new_start_claims_allowed": False,
+    }
+    if observed_release_frontier != expected_release_frontier:
+        errors.append(
+            "work.lease_released does not retain the claimed fail-closed settlement frontier"
+        )
+
+    observed_transition_ownership = {
+        "claim": (
+            nested(reservation_claimed, "aggregate", "aggregate_type"),
+            nested(reservation_claimed, "payload", "lifecycle_axis"),
+            nested(reservation_claimed, "payload", "from"),
+            nested(reservation_claimed, "payload", "to"),
+        ),
+        "usage": (
+            nested(usage_observed, "aggregate", "aggregate_type"),
+            nested(usage_observed, "payload", "observation_axis"),
+            nested(usage_observed, "payload", "reservation_state_effect"),
+        ),
+        "lease_release": (
+            nested(lease_released, "aggregate", "aggregate_type"),
+            nested(lease_released, "payload", "axis"),
+            nested(lease_released, "payload", "from"),
+            nested(lease_released, "payload", "to"),
+        ),
+        "reservation_settlement": (
+            nested(reservation_settled, "aggregate", "aggregate_type"),
+            reservation_settled.get("event_type"),
+            nested(reservation_settled, "payload", "lifecycle_axis"),
+            nested(reservation_settled, "payload", "from"),
+            nested(reservation_settled, "payload", "to"),
+        ),
+    }
+    expected_transition_ownership = {
+        "claim": ("resource_budget", "resource_reservation", "active", "claimed"),
+        "usage": ("resource_budget", "actual_usage", "remains_claimed"),
+        "lease_release": ("work_item", "work_lease", "active", "released"),
+        "reservation_settlement": (
+            "resource_budget",
+            "resource.reservation_settled",
+            "resource_reservation",
+            "claimed",
+            "settled",
+        ),
+    }
+    if observed_transition_ownership != expected_transition_ownership:
+        errors.append(
+            "after the start claim, work.lease_released attempts a ResourceLedger mutation or resource.reservation_settled loses sole settlement ownership"
+        )
+
+    reservation_id = nested(
+        attempt_started,
+        "payload",
+        "binding",
+        "reservation",
+        "reservation_ref",
+        "object_id",
+    )
+    observed_reservation_ids = (
+        nested(reservation_claimed, "payload", "reservation_id"),
+        reservation_id,
+        nested(usage_observed, "payload", "reservation_id"),
+        nested(
+            lease_released,
+            "payload",
+            "binding",
+            "reservation",
+            "reservation_ref",
+            "object_id",
+        ),
+        nested(reservation_settled, "payload", "reservation_id"),
+    )
+    if observed_reservation_ids != (reservation_id,) * 5:
+        errors.append("claim/release/settlement sequence changes the reservation identity")
+
+    expected_start_command_binding = {
+        "command_id": "command.attempt-start.local.001",
+        "canonical_request_digest": (
+            "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        ),
+        "admission_evidence_bundle_ref": {
+            "record_id": "admission-evidence.attempt-start.local.001",
+            "version": 1,
+            "schema_id": "urn:odeya:schema:admission-evidence-bundle:0.9.0",
+            "digest": (
+                "sha256:9999999999999999999999999999999999999999999999999999999999999999"
+            ),
+        },
+        "receipt_id": "receipt.attempt-start.local.001",
+    }
+    observed_start_cohort = {
+        "commits": (
+            nested(reservation_claimed, "commit", "commit_id"),
+            nested(attempt_started, "commit", "commit_id"),
+        ),
+        "batches": (
+            (
+                nested(reservation_claimed, "commit", "batch_index"),
+                nested(reservation_claimed, "commit", "batch_size"),
+            ),
+            (
+                nested(attempt_started, "commit", "batch_index"),
+                nested(attempt_started, "commit", "batch_size"),
+            ),
+        ),
+        "command_bindings": (
+            nested(reservation_claimed, "command_binding"),
+            nested(attempt_started, "command_binding"),
+        ),
+        "declared_commit_ids": (
+            nested(reservation_claimed, "payload", "cohort_commit_id"),
+            nested(attempt_started, "payload", "atomic_start_commit_id"),
+        ),
+    }
+    expected_start_cohort = {
+        "commits": (
+            "commit.attempt-start.local.001",
+            "commit.attempt-start.local.001",
+        ),
+        "batches": ((0, 3), (1, 3)),
+        "command_bindings": (
+            expected_start_command_binding,
+            expected_start_command_binding,
+        ),
+        "declared_commit_ids": (
+            "commit.attempt-start.local.001",
+            "commit.attempt-start.local.001",
+        ),
+    }
+    if observed_start_cohort != expected_start_cohort:
+        errors.append(
+            "retained claim and attempt.started do not form the exact partial attempt.start cohort"
+        )
+
+    expected_report_command_binding = {
+        "command_id": "command.attempt-report.local.001",
+        "canonical_request_digest": (
+            "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        ),
+        "admission_evidence_bundle_ref": {
+            "record_id": "admission-evidence.attempt-report.local.001",
+            "version": 1,
+            "schema_id": "urn:odeya:schema:admission-evidence-bundle:0.9.0",
+            "digest": (
+                "sha256:9999999999999999999999999999999999999999999999999999999999999999"
+            ),
+        },
+        "receipt_id": "receipt.attempt-report.local.001",
+    }
+    observed_report_cohort = {
+        "event_types": (
+            attempt_completed.get("event_type"),
+            usage_observed.get("event_type"),
+            lease_released.get("event_type"),
+        ),
+        "commits": (
+            nested(attempt_completed, "commit", "commit_id"),
+            nested(usage_observed, "commit", "commit_id"),
+            nested(lease_released, "commit", "commit_id"),
+        ),
+        "batches": (
+            (
+                nested(attempt_completed, "commit", "batch_index"),
+                nested(attempt_completed, "commit", "batch_size"),
+            ),
+            (
+                nested(usage_observed, "commit", "batch_index"),
+                nested(usage_observed, "commit", "batch_size"),
+            ),
+            (
+                nested(lease_released, "commit", "batch_index"),
+                nested(lease_released, "commit", "batch_size"),
+            ),
+        ),
+        "command_bindings": (
+            nested(attempt_completed, "command_binding"),
+            nested(usage_observed, "command_binding"),
+            nested(lease_released, "command_binding"),
+        ),
+    }
+    expected_report_cohort = {
+        "event_types": (
+            "attempt.completed",
+            "resource.usage_observed",
+            "work.lease_released",
+        ),
+        "commits": (
+            "commit.attempt-report.local.001",
+            "commit.attempt-report.local.001",
+            "commit.attempt-report.local.001",
+        ),
+        "batches": ((0, 3), (1, 3), (2, 3)),
+        "command_bindings": (
+            expected_report_command_binding,
+            expected_report_command_binding,
+            expected_report_command_binding,
+        ),
+    }
+    if observed_report_cohort != expected_report_cohort:
+        errors.append(
+            "attempt.completed, resource.usage_observed, and work.lease_released do not form one exact attempt.report cohort"
+        )
+
+    stream_events = (
+        reservation_claimed,
+        attempt_started,
+        attempt_completed,
+        usage_observed,
+        lease_released,
+        reservation_settled,
+    )
+    observed_stream_frontier = {
+        "stream_ids": tuple(nested(event, "stream", "stream_id") for event in stream_events),
+        "positions": tuple(nested(event, "stream", "position") for event in stream_events),
+        "retained_adjacent_links": (
+            nested(attempt_started, "integrity", "previous_stream_event_digest")
+            == nested(reservation_claimed, "integrity", "event_digest"),
+            nested(usage_observed, "integrity", "previous_stream_event_digest")
+            == nested(attempt_completed, "integrity", "event_digest"),
+            nested(lease_released, "integrity", "previous_stream_event_digest")
+            == nested(usage_observed, "integrity", "event_digest"),
+            nested(reservation_settled, "integrity", "previous_stream_event_digest")
+            == nested(lease_released, "integrity", "event_digest"),
+        ),
+    }
+    expected_stream_frontier = {
+        "stream_ids": ("mission.local-execution.001",) * 6,
+        "positions": (13, 14, 20, 21, 22, 23),
+        "retained_adjacent_links": (True, True, True, True),
+    }
+    if observed_stream_frontier != expected_stream_frontier:
+        errors.append(
+            "attempt and lease-release stream positions are not strictly increasing or retained adjacent digest links differ"
+        )
+
+    # Positions 9, 12, and 19 are not retained here. Their predecessor
+    # digests are therefore opaque gap markers: this check rejects collision
+    # with any named event digest, but deliberately does not assert that a
+    # corresponding event exists or that the omitted stream segment is
+    # complete.
+    opaque_gap_predecessor_digests = (
+        nested(lease_acquired, "integrity", "previous_stream_event_digest"),
+        nested(reservation_claimed, "integrity", "previous_stream_event_digest"),
+        nested(attempt_completed, "integrity", "previous_stream_event_digest"),
+    )
+    declared_event_digests = loaded_event_digests + (
+        expected_verification_start_reference["digest"],
+        expected_reservation_created_reference["digest"],
+    )
+    opaque_gap_digests_are_strings = all(
+        isinstance(event_digest, str)
+        for event_digest in opaque_gap_predecessor_digests
+    )
+    opaque_gap_digests_are_unique = (
+        len(set(opaque_gap_predecessor_digests))
+        == len(opaque_gap_predecessor_digests)
+        if opaque_gap_digests_are_strings
+        else False
+    )
+    opaque_gap_digests_are_disjoint = (
+        set(opaque_gap_predecessor_digests).isdisjoint(declared_event_digests)
+        if opaque_gap_digests_are_strings
+        and loaded_event_digests_are_strings
+        else False
+    )
+    if (
+        opaque_gap_digests_are_strings,
+        opaque_gap_digests_are_unique,
+        opaque_gap_digests_are_disjoint,
+    ) != (True, True, True):
+        errors.append(
+            "opaque stream-gap predecessor digest collides with a retained or declared event digest; no gap-event existence is inferred"
+        )
+
+    try:
+        fact_times = tuple(
+            datetime.fromisoformat(
+                str(nested(event, "fact_time", "observed_at")).replace("Z", "+00:00")
+            )
+            for event in stream_events
+        )
+        recorded_times = tuple(
+            datetime.fromisoformat(
+                str(event.get("recorded_at", "")).replace("Z", "+00:00")
+            )
+            for event in stream_events
+        )
+        claim_payload_time = datetime.fromisoformat(
+            str(nested(reservation_claimed, "payload", "claimed_at")).replace(
+                "Z",
+                "+00:00",
+            )
+        )
+        settlement_payload_time = datetime.fromisoformat(
+            str(nested(reservation_settled, "payload", "settled_at")).replace(
+                "Z",
+                "+00:00",
+            )
+        )
+    except ValueError:
+        errors.append("claim/release/settlement sequence timestamps are not parseable")
+    else:
+        (
+            claim_fact_time,
+            attempt_fact_time,
+            completion_fact_time,
+            usage_fact_time,
+            release_fact_time,
+            settlement_fact_time,
+        ) = fact_times
+        observed_chronology = (
+            claim_fact_time == attempt_fact_time,
+            attempt_fact_time < completion_fact_time,
+            completion_fact_time == usage_fact_time,
+            usage_fact_time == release_fact_time,
+            release_fact_time < settlement_fact_time,
+        )
+        if observed_chronology != (True, True, True, True, True):
+            errors.append(
+                "claim/release/settlement chronology is not attempt.started then atomic attempt.report then resource.reservation_settled"
+            )
+        if tuple(
+            recorded >= observed
+            for recorded, observed in zip(recorded_times, fact_times)
+        ) != (True, True, True, True, True, True):
+            errors.append(
+                "claim/release/settlement recorded time precedes its observed fact time"
+            )
+        if (claim_payload_time, settlement_payload_time) != (
+            claim_fact_time,
+            settlement_fact_time,
+        ):
+            errors.append(
+                "resource claim/settlement payload time differs from its observed fact time"
+            )
+
+    observed_causal_links = {
+        "completion_after_start": attempt_started.get("event_id")
+        in attempt_completed.get("causation_refs", []),
+        "usage_after_completion": attempt_completed.get("event_id")
+        in usage_observed.get("causation_refs", []),
+        "usage_after_claim": reservation_claimed.get("event_id")
+        in usage_observed.get("causation_refs", []),
+        "release_after_completion": attempt_completed.get("event_id")
+        in lease_released.get("causation_refs", []),
+        "release_after_usage": usage_observed.get("event_id")
+        in lease_released.get("causation_refs", []),
+        "release_after_claim": reservation_claimed.get("event_id")
+        in lease_released.get("causation_refs", []),
+        "settlement_after_release": lease_released.get("event_id")
+        in reservation_settled.get("causation_refs", []),
+        "settlement_after_claim": reservation_claimed.get("event_id")
+        in reservation_settled.get("causation_refs", []),
+        "settlement_after_usage": usage_observed.get("event_id")
+        in reservation_settled.get("causation_refs", []),
+    }
+    if tuple(observed_causal_links.values()) != (True,) * 9:
+        errors.append(
+            "release/settlement causation does not bind start, completion, usage, release, and the preserved claim"
+        )
+
+    claim_ceiling = resource_vector_values(
+        nested(reservation_claimed, "payload", "reserved_ceiling_vector")
+    )
+    usage_actual = resource_vector_values(
+        nested(usage_observed, "payload", "observed_vector")
+    )
+    settlement_vectors = {
+        field: resource_vector_values(nested(reservation_settled, "payload", field))
+        for field in (
+            "reserved_ceiling_vector",
+            "actual_usage_vector",
+            "reserved_consumed_vector",
+            "unused_ceiling_released_vector",
+            "overage_vector",
+            "billed_vector",
+            "refunded_vector",
+            "net_consumed_vector",
+        )
+    }
+    observed_vector_shapes = (
+        claim_ceiling is not None,
+        usage_actual is not None,
+        *(vector is not None for vector in settlement_vectors.values()),
+    )
+    if observed_vector_shapes != (True,) * 10:
+        errors.append("claim/usage/settlement resource vector is not an exact dimension map")
+    else:
+        exact_claim_ceiling = claim_ceiling or {}
+        exact_usage_actual = usage_actual or {}
+        exact_settlement_vectors = {
+            field: vector or {}
+            for field, vector in settlement_vectors.items()
+        }
+        dimension_keys = frozenset(exact_claim_ceiling)
+        observed_dimension_sets = (
+            frozenset(exact_usage_actual),
+            *(frozenset(vector) for vector in exact_settlement_vectors.values()),
+        )
+        if observed_dimension_sets != (dimension_keys,) * 9:
+            errors.append(
+                "claim/usage/settlement resource vectors do not preserve one non-fungible dimension set"
+            )
+        if (
+            exact_settlement_vectors["reserved_ceiling_vector"],
+            exact_settlement_vectors["actual_usage_vector"],
+        ) != (exact_claim_ceiling, exact_usage_actual):
+            errors.append(
+                "resource settlement vectors do not bind the retained claim ceiling and usage observation"
+            )
+        expected_reserved_consumed = {
+            key: min(exact_claim_ceiling[key], exact_usage_actual[key])
+            for key in dimension_keys
+        }
+        expected_unused = {
+            key: max(
+                exact_claim_ceiling[key] - exact_usage_actual[key],
+                Decimal(0),
+            )
+            for key in dimension_keys
+        }
+        expected_overage = {
+            key: max(
+                exact_usage_actual[key] - exact_claim_ceiling[key],
+                Decimal(0),
+            )
+            for key in dimension_keys
+        }
+        expected_refunded = {key: Decimal(0) for key in dimension_keys}
+        expected_net = {
+            key: expected_reserved_consumed[key]
+            + expected_overage[key]
+            - expected_refunded[key]
+            for key in dimension_keys
+        }
+        observed_equations = (
+            exact_settlement_vectors["reserved_consumed_vector"],
+            exact_settlement_vectors["unused_ceiling_released_vector"],
+            exact_settlement_vectors["overage_vector"],
+            exact_settlement_vectors["billed_vector"],
+            exact_settlement_vectors["refunded_vector"],
+            exact_settlement_vectors["net_consumed_vector"],
+        )
+        expected_equations = (
+            expected_reserved_consumed,
+            expected_unused,
+            expected_overage,
+            exact_usage_actual,
+            expected_refunded,
+            expected_net,
+        )
+        if observed_equations != expected_equations:
+            errors.append(
+                "resource settlement does not satisfy exact per-dimension ceiling/usage equations"
+            )
+        observed_settlement_policy = (
+            nested(reservation_settled, "payload", "usage_unknown"),
+            nested(reservation_settled, "payload", "actual_usage_disposition"),
+            nested(reservation_settled, "payload", "settlement_authority"),
+            nested(reservation_settled, "payload", "held_after_settlement"),
+        )
+        if observed_settlement_policy != (
+            False,
+            "exactly_observed",
+            "exact_usage_observations_only",
+            "zero",
+        ):
+            errors.append(
+                "resource settlement policy does not preserve exact-observation authority"
+            )
+    return errors
+
+
 def work_lease_record_candidate_errors(subject: dict[str, Any]) -> list[str]:
     errors: list[str] = []
     fixture_name = subject.get("fixture")
@@ -1061,6 +2023,7 @@ MODEL_CHECKERS: dict[str, Callable[[dict[str, Any]], list[str]]] = {
     "protocol_origin": protocol_origin_errors,
     "data_use_cohort": data_use_cohort_errors,
     "work_lease_trace": work_lease_trace_errors,
+    "work_lease_claim_sequence": work_lease_claim_sequence_errors,
     "work_lease_record_candidate": work_lease_record_candidate_errors,
     "identity_map_mutation": identity_map_mutation_errors,
     "data_fixture_mutation": data_fixture_mutation_errors,

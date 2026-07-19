@@ -485,7 +485,7 @@
         {
           "op": "replace",
           "path": "/payload_type_id",
-          "value": "urn:odeya:schema:research-event:0.17.0"
+          "value": "urn:odeya:schema:research-event:0.18.0"
         }
       ],
       "expected_refusal": {
@@ -6609,6 +6609,12 @@
       "expect": "valid"
     },
     {
+      "name": "research-event-valid-resource-reservation-claimed-local-start",
+      "schema": "schemas/research-event.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/resource-reservation-claimed-local-start-event.valid.json",
+      "expect": "valid"
+    },
+    {
       "name": "research-event-valid-resource-reservation-released",
       "schema": "schemas/research-event.schema.json",
       "fixture": "tests/architecture-schema/fixtures/resource-reservation-released-event.valid.json",
@@ -6627,9 +6633,21 @@
       "expect": "valid"
     },
     {
+      "name": "research-event-valid-resource-usage-observed-local-report",
+      "schema": "schemas/research-event.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/resource-usage-observed-local-report-event.valid.json",
+      "expect": "valid"
+    },
+    {
       "name": "research-event-valid-resource-reservation-settled",
       "schema": "schemas/research-event.schema.json",
       "fixture": "tests/architecture-schema/fixtures/resource-reservation-settled-event.valid.json",
+      "expect": "valid"
+    },
+    {
+      "name": "research-event-valid-resource-reservation-settled-local-after-report",
+      "schema": "schemas/research-event.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/resource-reservation-settled-local-after-report-event.valid.json",
       "expect": "valid"
     },
     {
@@ -8289,6 +8307,161 @@
           "op": "replace",
           "path": "/payload/reservation_claim_state",
           "value": "claimed"
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "implication"
+    },
+    {
+      "name": "work-lease-acquired-rejects-reservation-claim-event",
+      "schema": "schemas/research-event.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/work-lease-acquired-event.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/payload/binding/reservation/reservation_claim_event_ref",
+          "value": {
+            "event_id": "event.resource-reservation-claimed.local.001",
+            "event_type": "resource.reservation_claimed",
+            "event_version": "1.0.0",
+            "digest": "sha256:2500000000000000000000000000000000000000000000000000000000000000"
+          }
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "implication"
+    },
+    {
+      "name": "work-lease-released-valid-retains-claimed-reservation",
+      "schema": "schemas/research-event.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/work-lease-released-event.valid.json",
+      "expect": "valid"
+    },
+    {
+      "name": "work-lease-released-rejects-unclaimed-reservation",
+      "schema": "schemas/research-event.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/work-lease-released-event.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/payload/reservation_claim_state",
+          "value": "unclaimed"
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "implication"
+    },
+    {
+      "name": "work-lease-released-rejects-null-claim-event",
+      "schema": "schemas/research-event.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/work-lease-released-event.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/payload/binding/reservation/reservation_claim_event_ref",
+          "value": null
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "implication"
+    },
+    {
+      "name": "work-lease-released-rejects-wrong-claim-event-type",
+      "schema": "schemas/research-event.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/work-lease-released-event.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/payload/binding/reservation/reservation_claim_event_ref/event_type",
+          "value": "resource.reservation_settled"
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "implication"
+    },
+    {
+      "name": "work-lease-released-rejects-implicit-settlement",
+      "schema": "schemas/research-event.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/work-lease-released-event.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/payload/binding/reservation/settlement_required_after_claim",
+          "value": false
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "implication"
+    },
+    {
+      "name": "work-lease-released-rejects-crash-release",
+      "schema": "schemas/research-event.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/work-lease-released-event.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/payload/binding/reservation/crash_release_allowed",
+          "value": true
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "implication"
+    },
+    {
+      "name": "work-lease-released-rejects-new-start-claim",
+      "schema": "schemas/research-event.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/work-lease-released-event.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/payload/new_start_claims_allowed",
+          "value": true
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/",
+        "keyword": "oneOf"
+      },
+      "refusal_class": "implication"
+    },
+    {
+      "name": "work-lease-released-rejects-resource-ledger-ownership",
+      "schema": "schemas/research-event.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/work-lease-released-event.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/aggregate/aggregate_type",
+          "value": "resource_budget"
         }
       ],
       "expected_refusal": {

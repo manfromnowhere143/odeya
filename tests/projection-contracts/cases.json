@@ -86,6 +86,21 @@
       "semantic_expect": "valid"
     },
     {
+      "name": "current-projection-rejects-stale-research-event-schema-identity",
+      "schema": "schemas/projection-snapshot.schema.json",
+      "fixture": "tests/projection-contracts/fixtures/private-cockpit.valid.json",
+      "expect": "valid",
+      "semantic_expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/governance_frontier/release/settlement_event_ref/schema_id",
+          "value": "urn:odeya:schema:research-event:0.17.0"
+        }
+      ],
+      "expected_semantic_refusal_contains": "current synthetic projection ResearchEvent reference does not use the live schema identity"
+    },
+    {
       "name": "vector-01-rejects-interval-crossing-zero-rendered-as-positive-equivalent",
       "vectors": [
         1

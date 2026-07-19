@@ -37,7 +37,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "architecture/lifecycle-guard-coverage.json"
-EXPECTED_SUMMARY = {"branch_count": 185, "proved": 178, "unproved": 7, "crash_detected": 0}
+EXPECTED_SUMMARY = {"branch_count": 229, "proved": 222, "unproved": 7, "crash_detected": 0}
 AUDIT_TOOL = ROOT / "scripts/audit_lifecycle_guard_coverage.py"
 
 

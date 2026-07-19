@@ -54,9 +54,9 @@ RESOURCE_EXPECTED = [
     {
         "resource_role": "work_contract",
         "predecessor_path": "schemas/work-contract.schema.json",
-        "predecessor_schema_id": "urn:odeya:schema:work-contract:0.18.0",
+        "predecessor_schema_id": "urn:odeya:schema:work-contract:0.19.0",
         "successor_path": "schemas/work-contract-profile-bound-candidate.schema.json",
-        "successor_schema_id": "urn:odeya:schema:work-contract:0.17.0",
+        "successor_schema_id": "urn:odeya:schema:work-contract:0.20.0",
         "candidate_path": "architecture/work-contract-profile-bound-candidate.json",
     },
 ]
@@ -72,7 +72,7 @@ EXPECTED_EDGES = [
         "binding": "exact_successor_schema_and_candidate_raw_bytes",
     },
     {
-        "consumer_schema_id": "urn:odeya:schema:work-contract:0.17.0",
+        "consumer_schema_id": "urn:odeya:schema:work-contract:0.20.0",
         "dependency_schema_id": "urn:odeya:schema:work-intent:0.19.0",
         "binding": "exact_successor_schema_and_candidate_raw_bytes",
     },
@@ -339,10 +339,12 @@ def evaluate(
                 != raw_binding(successor)
             ):
                 errors.add("resource_raw_binding_mismatch")
-            rendered_candidate = render(candidate_documents[index])
+            candidate_path = ROOT / expected["candidate_path"]
+            candidate_raw_digest, candidate_raw_bytes = raw_binding(candidate_path)
             if (
-                row.get("candidate_raw_digest") != digest(rendered_candidate)
-                or row.get("candidate_bytes") != len(rendered_candidate)
+                row.get("candidate_raw_digest") != candidate_raw_digest
+                or row.get("candidate_bytes") != candidate_raw_bytes
+                or candidate_documents[index] != load(candidate_path)
                 or row.get("transition")
                 != "side_by_side_immutable_successor_not_admitted"
             ):
@@ -414,8 +416,13 @@ def evaluate(
         != "urn:odeya:schema:work-intent:0.19.0"
         or lease_binding.get("successor_work_intent_schema_raw_digest")
         != raw_binding(WORK_INTENT_SCHEMA)[0]
+        or lease_binding.get("successor_work_intent_schema_bytes")
+        != raw_binding(WORK_INTENT_SCHEMA)[1]
         or lease_binding.get("successor_candidate_raw_digest")
-        != digest(render(work_intent))
+        != raw_binding(WORK_INTENT)[0]
+        or lease_binding.get("successor_candidate_bytes")
+        != raw_binding(WORK_INTENT)[1]
+        or work_intent != load(WORK_INTENT)
     ):
         errors.add("work_lease_successor_binding_mismatch")
     if (
@@ -447,8 +454,13 @@ def evaluate(
         != "urn:odeya:schema:work-intent:0.19.0"
         or contract_binding.get("successor_work_intent_schema_raw_digest")
         != raw_binding(WORK_INTENT_SCHEMA)[0]
+        or contract_binding.get("successor_work_intent_schema_bytes")
+        != raw_binding(WORK_INTENT_SCHEMA)[1]
         or contract_binding.get("successor_candidate_raw_digest")
-        != digest(render(work_intent))
+        != raw_binding(WORK_INTENT)[0]
+        or contract_binding.get("successor_candidate_bytes")
+        != raw_binding(WORK_INTENT)[1]
+        or work_intent != load(WORK_INTENT)
     ):
         errors.add("work_contract_successor_binding_mismatch")
     if (

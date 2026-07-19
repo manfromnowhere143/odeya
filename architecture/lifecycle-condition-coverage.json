@@ -6,7 +6,7 @@
   "status": "candidate_measurement_not_admitted",
   "method": "each top-level member of a guarded boolean chain in a declared lifecycle model or helper predicate is removed one at a time in an isolated copy; a condition is proved only when the suite fails without it",
   "subject": "tests/lifecycle-closure/check.py",
-  "subject_sha256": "sha256:3ac096c3b5d709c51660d05122be61fbfa0d70f34afd36f1ffc5e4edd81b8bc3",
+  "subject_sha256": "sha256:436496c3cdc2180c04d32d31560cef2ce97677041bce22d5b787e8ad82d044d1",
   "models": [
     {
       "function": "branch_map",
@@ -16,8 +16,8 @@
     },
     {
       "function": "schema_contract_errors",
-      "condition_count": 11,
-      "proved_count": 10,
+      "condition_count": 15,
+      "proved_count": 14,
       "conditions": [
         {
           "guard": "first-slice required event count is not preserved at exactly 60",
@@ -52,19 +52,51 @@
           "detection": "case_attributed"
         },
         {
-          "guard": "recorded ResearchEvent release/claimed-reservation blocker no longer matches exact bytes",
+          "guard": "work.lease_acquired must retain an unclaimed reservation with a null claim reference",
           "role": "disjunct",
-          "condition": "current_release_claim_state != 'unclaimed'",
+          "condition": "nested(acquired_rule or {}, 'reservation_claim_state', 'const') != 'unclaimed'",
           "proved": true,
-          "proved_by": "schema-contract-bad-release-claim-blocker-drift",
+          "proved_by": "schema-contract-acquired-claim-state-substitution",
           "detection": "case_attributed"
         },
         {
-          "guard": "recorded ResearchEvent release/claimed-reservation blocker no longer matches exact bytes",
+          "guard": "work.lease_acquired must retain an unclaimed reservation with a null claim reference",
           "role": "disjunct",
-          "condition": "current_release_claim_ref_type != 'null'",
+          "condition": "nested(acquired_reservation_rule or {}, 'reservation_claim_event_ref') != {'type': 'null'}",
           "proved": true,
-          "proved_by": "cond-schema-release-claim-ref-type-only",
+          "proved_by": "schema-contract-acquired-claim-ref-substitution",
+          "detection": "case_attributed"
+        },
+        {
+          "guard": "work.lease_released must retain a claimed reservation with the exact resource.reservation_claimed reference",
+          "role": "disjunct",
+          "condition": "nested(release_rule or {}, 'reservation_claim_state', 'const') != 'claimed'",
+          "proved": true,
+          "proved_by": "schema-contract-release-claim-state-substitution",
+          "detection": "case_attributed"
+        },
+        {
+          "guard": "work.lease_released must retain a claimed reservation with the exact resource.reservation_claimed reference",
+          "role": "disjunct",
+          "condition": "nested(release_reservation_rule or {}, 'reservation_claim_event_ref') != {'$ref': '#/$defs/resource_reservation_claimed_event_reference'}",
+          "proved": true,
+          "proved_by": "schema-contract-release-claim-ref-substitution",
+          "detection": "case_attributed"
+        },
+        {
+          "guard": "work.lease_released must forbid crash release and require separate settlement",
+          "role": "disjunct",
+          "condition": "nested(release_reservation_rule or {}, 'crash_release_allowed', 'const') is not False",
+          "proved": true,
+          "proved_by": "schema-contract-release-crash-release-substitution",
+          "detection": "case_attributed"
+        },
+        {
+          "guard": "work.lease_released must forbid crash release and require separate settlement",
+          "role": "disjunct",
+          "condition": "nested(release_reservation_rule or {}, 'settlement_required_after_claim', 'const') is not True",
+          "proved": true,
+          "proved_by": "schema-contract-release-settlement-substitution",
           "detection": "case_attributed"
         },
         {
@@ -84,7 +116,7 @@
           "detection": "case_attributed"
         },
         {
-          "guard": "comprehension at line 208",
+          "guard": "comprehension at line 275",
           "role": "comprehension_filter",
           "condition": "isinstance(row, dict)",
           "proved": true,
@@ -92,7 +124,7 @@
           "detection": "crash"
         },
         {
-          "guard": "comprehension at line 417",
+          "guard": "comprehension at line 543",
           "role": "comprehension_filter",
           "condition": "isinstance(item, dict) and item.get('schema_path') == 'schemas/canonical-work-lease.schema.json'",
           "proved": true,
@@ -100,7 +132,7 @@
           "detection": "case_attributed"
         },
         {
-          "guard": "comprehension at line 446",
+          "guard": "comprehension at line 572",
           "role": "comprehension_filter",
           "condition": "isinstance(layer, dict)",
           "proved": false,
@@ -366,6 +398,45 @@
       "condition_count": 0,
       "proved_count": 0,
       "conditions": []
+    },
+    {
+      "function": "work_lease_claim_sequence_errors",
+      "condition_count": 4,
+      "proved_count": 4,
+      "conditions": [
+        {
+          "guard": "claim-sequence mutation is not one bounded replace operation",
+          "role": "disjunct",
+          "condition": "not isinstance(mutation, dict)",
+          "proved": true,
+          "proved_by": "AttributeError",
+          "detection": "crash"
+        },
+        {
+          "guard": "claim-sequence mutation is not one bounded replace operation",
+          "role": "disjunct",
+          "condition": "mutation.get('op') != 'replace'",
+          "proved": true,
+          "proved_by": "work-lease-claim-sequence-mutation-op-not-replace",
+          "detection": "case_attributed"
+        },
+        {
+          "guard": "claim-sequence mutation path is absent",
+          "role": "disjunct",
+          "condition": "not isinstance(path, list)",
+          "proved": true,
+          "proved_by": "work-lease-claim-sequence-path-not-list",
+          "detection": "case_attributed"
+        },
+        {
+          "guard": "claim-sequence mutation path is absent",
+          "role": "disjunct",
+          "condition": "not path",
+          "proved": true,
+          "proved_by": "work-lease-claim-sequence-path-absent",
+          "detection": "case_attributed"
+        }
+      ]
     },
     {
       "function": "work_lease_record_candidate_errors",
@@ -734,7 +805,7 @@
       "proved_count": 1,
       "conditions": [
         {
-          "guard": "comprehension at line 1192",
+          "guard": "comprehension at line 2155",
           "role": "comprehension_filter",
           "condition": "k != 'expected_refusal_contains'",
           "proved": true,
@@ -994,15 +1065,15 @@
     }
   ],
   "not_audited": {
-    "single_condition_tests": 147,
+    "single_condition_tests": 187,
     "nested_boolean_groups": 0,
-    "ternary_selectors": 5
+    "ternary_selectors": 14
   },
   "summary": {
-    "condition_count": 103,
-    "proved": 100,
+    "condition_count": 111,
+    "proved": 108,
     "unproved": 3,
-    "crash_detected": 16
+    "crash_detected": 17
   },
   "boundary": "condition-level architecture evidence about retained bytes only; single-condition tests and nested boolean groups are counted, not audited; structural comparisons are one condition regardless of field count; not a runtime, an admitted member, an independently reproduced verdict, or Gate A acceptance"
 }

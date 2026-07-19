@@ -1160,22 +1160,32 @@
       ],
       "current_blockers": [
         "the retained WorkIntent candidate is unresolved_blocking with null canonicalization profile and null canonical digest and is not admitted or assignable",
-        "ResearchEvent 0.7.0 intentionally contains no fabricated resolved WorkIntent binding",
+        "ResearchEvent 0.18.0 intentionally contains no fabricated resolved WorkIntent binding and remains not admitted, not dispatchable, and not replay-authoritative",
         "the verification.assigned architecture fixture is a one-event sample batch and does not prove the exact 13-event cohort",
-        "the verification.assigned payload does not yet bind the exact WorkIntent WorkContract lease current data-use decisions sandbox policy and five-grant cohort",
-        "ResearchEvent 0.7.0 work.lease_released requires an unclaimed reservation even though the first-slice attempt.start claims it and lease termination must retain that claimed reservation for separate ResourceLedger settlement"
+        "the verification.assigned payload does not yet bind the exact WorkIntent WorkContract lease current data-use decisions sandbox policy and five-grant cohort"
+      ],
+      "corrected_compatibility_findings": [
+        {
+          "finding_id": "C5-WORK-LEASE-RELEASE-CLAIM-001",
+          "status": "corrected",
+          "successor_schema_resource_id": "urn:odeya:schema:research-event:0.18.0",
+          "correction": "work.lease_released retains reservation_claim_state=claimed and the exact resource.reservation_claimed reference while terminating only WorkLease; a later resource.reservation_settled event alone performs claimed-to-settled under ResourceLedger ownership",
+          "retained_evidence_ref": "architecture/first-slice-event-identity-map.json#/required_schema_resource_candidates/0/transitive_consumer_review/resolved_compatibility_findings/0",
+          "bounded_evidence": "retained synthetic fixture dereference and exact reference, cohort, adjacent-digest-value, non-fungible dimension, and settlement-equation checks without digest recomputation or reducer replay",
+          "authority_effect": "none; C5 and PRQ-009 remain unresolved_blocking"
+        }
       ],
       "required_future_reissues": [
         "a newly identified resolved WorkIntent contract resource",
         "a WorkContract resource binding that exact resolved WorkIntent and assignment commit",
-        "a newly identified ResearchEvent resource with the complete assignment bindings",
+        "a future newly identified ResearchEvent resource with the complete assignment bindings and resolved payload contracts",
         "an EventContractRecord binding the reissued ResearchEvent bytes and exact verification.assigned branch"
       ]
     }
   ],
   "construction_gaps": [
     "urn:odeya:schema:canonical-work-lease:0.8.0 is present only as an unissued fail-closed candidate; canonical profile, WorkIntent identity, exact assignment cohort, immutable member/reducer identity, transitive reissue, review, and activation remain blocking",
-    "C5-WORK-LEASE-RELEASE-CLAIM-001: ResearchEvent 0.7.0 release payload loses the claimed reservation frontier required after attempt.start; reissue and exact release/settlement vectors are blocking",
+    "C5-WORK-LEASE-RELEASE-CLAIM-001 is corrected only in unissued ResearchEvent 0.18.0 plus retained synthetic cohort evidence; immutable EventContractRecord and reducer members, complete stream replay, review, registry/root membership, and activation remain blocking",
     "42 exact command-payload schemas",
     "43 immutable CommandContractRecords",
     "60 immutable EventContractRecords with prospective exact member versions",

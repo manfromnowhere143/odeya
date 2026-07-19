@@ -20,6 +20,8 @@ from jsonschema import Draft202012Validator, FormatChecker
 
 ROOT = Path(__file__).resolve().parents[2]
 CASES = ROOT / "tests/projection-contracts/cases.json"
+CURRENT_RESEARCH_EVENT_SCHEMA = "schemas/research-event.schema.json"
+CURRENT_RESEARCH_EVENT_SCHEMA_ID = "urn:odeya:schema:research-event:0.18.0"
 SCHEMAS = (
     "schemas/projection-snapshot.schema.json",
     "schemas/projection-redaction-manifest.schema.json",
@@ -137,6 +139,18 @@ def snapshot_semantics(instance: dict[str, Any]) -> list[str]:
     dependency = instance["dependency_frontier"]
     generated_at = parse_time(instance["controlled_time"]["generated_at"])
     if freshness["state"] == "current":
+        # This is a bounded invariant for the suite's synthetic current
+        # snapshots. It does not require migration or reinterpretation of
+        # retained historical ResearchEvent records.
+        for record_ref in walk(instance):
+            if (
+                record_ref.get("record_type") == "research_event"
+                and record_ref.get("schema_id") != CURRENT_RESEARCH_EVENT_SCHEMA_ID
+            ):
+                errors.append(
+                    "current synthetic projection ResearchEvent reference does not use "
+                    f"the live schema identity: {record_ref.get('record_id')}"
+                )
         if projection_type != "static_architecture_fixture":
             required = dependency["required_position"]
             included = dependency["included_position"]
@@ -339,6 +353,12 @@ def walk(node: Any):
 
 def schema_audit() -> list[str]:
     errors: list[str] = []
+    research_event_schema = load_json(ROOT / CURRENT_RESEARCH_EVENT_SCHEMA)
+    if research_event_schema.get("$id") != CURRENT_RESEARCH_EVENT_SCHEMA_ID:
+        errors.append(
+            f"{CURRENT_RESEARCH_EVENT_SCHEMA}: current schema ID is not "
+            f"{CURRENT_RESEARCH_EVENT_SCHEMA_ID}"
+        )
     expected_ids = {
         "schemas/projection-snapshot.schema.json": "urn:odeya:schema:projection-snapshot:0.10.0",
         "schemas/projection-redaction-manifest.schema.json": "urn:odeya:schema:projection-redaction-manifest:0.9.0",

@@ -1,26 +1,26 @@
 {
   "schema_version": "0.18.0",
-  "event_id": "event.attempt-completed.local.001",
-  "event_type": "attempt.completed",
+  "event_id": "event.work-lease-released.local.001",
+  "event_type": "work.lease_released",
   "event_version": "1.0.0",
-  "payload_type_id": "urn:odeya:event-payload:attempt.completed:1.0.0",
+  "payload_type_id": "urn:odeya:event-payload:work.lease_released:1.0.0",
   "payload_contract_resolution_status": "unresolved_blocking",
   "payload_contract_digest": null,
   "event_contract_authority_status": "not_admitted_not_dispatchable_not_replay_authoritative",
   "stream": {
     "stream_id": "mission.local-execution.001",
     "stream_type": "mission",
-    "position": 20
+    "position": 22
   },
   "mission_scope": "mission.local-execution.001",
   "aggregate": {
-    "aggregate_type": "attempt",
-    "aggregate_id": "attempt.local.001",
+    "aggregate_type": "work_item",
+    "aggregate_id": "work-item.local.001",
     "aggregate_version": 2
   },
   "commit": {
     "commit_id": "commit.attempt-report.local.001",
-    "batch_index": 0,
+    "batch_index": 2,
     "batch_size": 3
   },
   "command_binding": {
@@ -56,14 +56,16 @@
     "policy_decision_refs": [],
     "constitutional_artifact_ref": null,
     "derivation_rule_ref": {
-      "name": "local-attempt-reducer",
+      "name": "local-work-lease-reducer",
       "version": "1.0.0",
       "digest": "sha256:4444444444444444444444444444444444444444444444444444444444444444"
     }
   },
   "correlation_id": "correlation.local-execution.001",
   "causation_refs": [
-    "event.attempt-started.local.001"
+    "event.attempt-completed.local.001",
+    "event.resource-usage-observed.local.001",
+    "event.resource-reservation-claimed.local.001"
   ],
   "inputs": [],
   "outputs": [],
@@ -83,10 +85,12 @@
     "tools": []
   },
   "payload": {
-    "axis": "attempt_execution",
-    "subject_ref": "attempt.local.001",
-    "from": "running",
-    "to": "completed",
+    "axis": "work_lease",
+    "subject_ref": "work-item.local.001",
+    "from": "active",
+    "to": "released",
+    "lease_id": "lease.local.001",
+    "lease_version": 2,
     "binding": {
       "work_item_id": "work-item.local.001",
       "attempt_id": "attempt.local.001",
@@ -220,100 +224,29 @@
         }
       ]
     },
-    "work_contract_ref": {
-      "object_id": "work-contract.local.001",
-      "version": 1,
-      "schema_id": "urn:odeya:schema:work-contract:0.19.0",
-      "digest": "sha256:2600000000000000000000000000000000000000000000000000000000000000",
-      "artifact_ref": {
-        "artifact_id": "work-contract.local.001",
-        "digest": "sha256:2600000000000000000000000000000000000000000000000000000000000000",
-        "media_type": "application/json"
-      }
+    "worker_principal_id": "worker.local.001",
+    "worker_execution_identity": "execution.worker.local.001",
+    "execution_slot_key": "slot.local.001",
+    "controlled_time_evidence_ref": {
+      "artifact_id": "controlled-time.local.001",
+      "digest": "sha256:2200000000000000000000000000000000000000000000000000000000000000",
+      "media_type": "application/json"
     },
-    "lease_record_ref": {
-      "object_id": "lease.local.001",
-      "version": 1,
-      "schema_id": "urn:odeya:schema:canonical-work-lease:0.8.0",
-      "digest": "sha256:2700000000000000000000000000000000000000000000000000000000000000",
-      "artifact_ref": {
-        "artifact_id": "lease.local.001",
-        "digest": "sha256:2700000000000000000000000000000000000000000000000000000000000000",
-        "media_type": "application/json"
-      }
-    },
-    "lease_state_event_ref": {
+    "not_before": "2026-07-16T10:00:00.000000Z",
+    "expires_at": "2026-07-16T10:10:00.000000Z",
+    "prior_lease_event_ref": {
       "event_id": "event.work-lease-acquired.local.001",
       "event_type": "work.lease_acquired",
       "event_version": "1.0.0",
       "digest": "sha256:0600000000000000000000000000000000000000000000000000000000000000"
     },
-    "attempt_start_event_ref": {
-      "event_id": "event.attempt-started.local.001",
-      "event_type": "attempt.started",
-      "event_version": "1.0.0",
-      "digest": "sha256:3800000000000000000000000000000000000000000000000000000000000000"
-    },
-    "current_frontier": {
-      "ledger_position": 19,
-      "checkpoint_ref": {
-        "artifact_id": "checkpoint.local.002",
-        "digest": "sha256:3900000000000000000000000000000000000000000000000000000000000000",
-        "media_type": "application/json"
-      },
-      "frontier_digest": "sha256:4000000000000000000000000000000000000000000000000000000000000000",
-      "legal_frontier_digest": "sha256:4100000000000000000000000000000000000000000000000000000000000000",
-      "authority_policy_set_digest": "sha256:4200000000000000000000000000000000000000000000000000000000000000",
-      "lease_state_root_digest": "sha256:4300000000000000000000000000000000000000000000000000000000000000",
-      "data_use_state_root_digest": "sha256:4400000000000000000000000000000000000000000000000000000000000000",
-      "resource_state_root_digest": "sha256:4500000000000000000000000000000000000000000000000000000000000000"
-    },
-    "attempt_report_command_type": "attempt.report",
-    "actual_input_manifest_ref": {
-      "artifact_id": "actual-inputs.local.001",
-      "digest": "sha256:4600000000000000000000000000000000000000000000000000000000000000",
-      "media_type": "application/json"
-    },
-    "environment_manifest_ref": {
-      "artifact_id": "environment.local.001",
-      "digest": "sha256:4700000000000000000000000000000000000000000000000000000000000000",
-      "media_type": "application/json"
-    },
-    "code_manifest_ref": {
-      "artifact_id": "code.local.001",
-      "digest": "sha256:4800000000000000000000000000000000000000000000000000000000000000",
-      "media_type": "application/json"
-    },
-    "run_manifest_ref": {
-      "artifact_id": "run.local.001",
-      "digest": "sha256:4900000000000000000000000000000000000000000000000000000000000000",
-      "media_type": "application/json"
-    },
-    "output_manifest_ref": {
-      "artifact_id": "outputs.local.001",
-      "digest": "sha256:5000000000000000000000000000000000000000000000000000000000000000",
-      "media_type": "application/json"
-    },
-    "input_visibility": "observed",
-    "sandbox_conformance": "pass",
-    "network_egress_observation": "none_observed",
-    "provider_or_model_use_observation": "none_observed",
-    "teardown_disposition": "verified_complete",
-    "actual_use_disposition": "observed",
-    "completion_observation_refs": [
-      {
-        "artifact_id": "completion-observation.local.001",
-        "digest": "sha256:5100000000000000000000000000000000000000000000000000000000000000",
-        "media_type": "application/json"
-      }
-    ],
-    "reservation_settlement_required": true,
-    "claimed_ceiling_release_before_settlement_allowed": false,
-    "reason_code": "local-execution-completed",
+    "reservation_claim_state": "claimed",
+    "new_start_claims_allowed": false,
+    "reason_code": "observed-clean-teardown-lease-termination",
     "evidence_refs": [
       {
-        "artifact_id": "attempt-report.local.001",
-        "digest": "sha256:5200000000000000000000000000000000000000000000000000000000000000",
+        "artifact_id": "lease-release-observation.local.001",
+        "digest": "sha256:2300000000000000000000000000000000000000000000000000000000000000",
         "media_type": "application/json"
       }
     ]
@@ -335,7 +268,7 @@
       "excluded_json_pointers": []
     },
     "payload_digest": "sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
-    "previous_stream_event_digest": "sha256:5300000000000000000000000000000000000000000000000000000000000000",
+    "previous_stream_event_digest": "sha256:5555555555555555555555555555555555555555555555555555555555555555",
     "event_digest_contract": {
       "algorithm": "sha-256",
       "domain_separator": "odeya-research-event-v1",
@@ -379,7 +312,7 @@
         "/integrity/signature_ref"
       ]
     },
-    "event_digest": "sha256:5400000000000000000000000000000000000000000000000000000000000000",
+    "event_digest": "sha256:0800000000000000000000000000000000000000000000000000000000000000",
     "signature_ref": null
   }
 }

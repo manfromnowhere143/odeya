@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:odeya:schema:research-event:0.17.0",
+  "$id": "urn:odeya:schema:research-event:0.18.0",
   "title": "Odeya ResearchEvent",
-  "description": "Architecture-only candidate event envelope for portfolio, pre-mission, mission, authority, incident, learning, data-governance, and recovery streams. Every branch owns exactly one aggregate and one orthogonal fact. The urn:odeya:event-payload logical type is distinct from this JSON Schema resource identity. ResearchEvent 0.7.0 has no frozen per-branch contract extraction/canonicalization profile, so its payload contract digest is necessarily null and every instance is not admitted, not dispatchable, and not replay-authoritative. A future resolved form requires a new ResearchEvent resource identity. Domain-separated digest shapes name exact JSON Pointer subjects; schema validation does not recompute or cryptographically verify them.",
+  "description": "Architecture-only candidate event envelope for portfolio, pre-mission, mission, authority, incident, learning, data-governance, and recovery streams. Every branch owns exactly one aggregate and one orthogonal fact. The urn:odeya:event-payload logical type is distinct from this JSON Schema resource identity. ResearchEvent 0.18.0 corrects the first-slice work.lease_released branch so lease termination retains the reservation claimed at attempt.start and its exact resource.reservation_claimed reference for separate ResourceLedger settlement. It still has no frozen per-branch contract extraction/canonicalization profile, so its payload contract digest is necessarily null and every instance is not admitted, not dispatchable, and not replay-authoritative. A future resolved form requires a new ResearchEvent resource identity. Domain-separated digest shapes name exact JSON Pointer subjects; schema validation does not recompute or cryptographically verify them.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -33,7 +33,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "0.17.0"
+      "const": "0.18.0"
     },
     "event_id": {
       "$ref": "#/$defs/research_event_identifier"
@@ -1956,7 +1956,7 @@
                   "$ref": "#/$defs/active_work_lease_event_reference"
                 },
                 "reservation_claim_state": {
-                  "const": "unclaimed"
+                  "const": "claimed"
                 },
                 "new_start_claims_allowed": {
                   "const": false
@@ -1966,7 +1966,13 @@
                     "reservation": {
                       "properties": {
                         "reservation_claim_event_ref": {
-                          "type": "null"
+                          "$ref": "#/$defs/resource_reservation_claimed_event_reference"
+                        },
+                        "crash_release_allowed": {
+                          "const": false
+                        },
+                        "settlement_required_after_claim": {
+                          "const": true
                         }
                       }
                     }
@@ -16602,7 +16608,7 @@
         {
           "properties": {
             "schema_id": {
-              "const": "urn:odeya:schema:work-contract:0.18.0"
+              "const": "urn:odeya:schema:work-contract:0.19.0"
             }
           },
           "required": [

@@ -211,12 +211,35 @@ def inventory_errors(inventory: dict[str, Any]) -> list[str]:
             errors.append("PRQ-009 event order is not the exact assignment cohort")
         if prq.get("required_exact_bindings") != VERIFICATION_ASSIGN_BINDINGS:
             errors.append("PRQ-009 exact binding obligations drifted")
-        blockers = prq.get("current_blockers", [])
-        required_blocker_terms = ("unresolved_blocking", "null canonical digest", "one-event sample batch")
-        joined_blockers = " ".join(blockers)
-        for term in required_blocker_terms:
-            if term not in joined_blockers:
-                errors.append(f"PRQ-009 current blockers omit {term!r}")
+        expected_c5_status = {
+            "current_blockers": [
+                "the retained WorkIntent candidate is unresolved_blocking with null canonicalization profile and null canonical digest and is not admitted or assignable",
+                "ResearchEvent 0.18.0 intentionally contains no fabricated resolved WorkIntent binding and remains not admitted, not dispatchable, and not replay-authoritative",
+                "the verification.assigned architecture fixture is a one-event sample batch and does not prove the exact 13-event cohort",
+                "the verification.assigned payload does not yet bind the exact WorkIntent WorkContract lease current data-use decisions sandbox policy and five-grant cohort",
+            ],
+            "corrected_compatibility_findings": [
+                {
+                    "finding_id": "C5-WORK-LEASE-RELEASE-CLAIM-001",
+                    "status": "corrected",
+                    "successor_schema_resource_id": "urn:odeya:schema:research-event:0.18.0",
+                    "correction": "work.lease_released retains reservation_claim_state=claimed and the exact resource.reservation_claimed reference while terminating only WorkLease; a later resource.reservation_settled event alone performs claimed-to-settled under ResourceLedger ownership",
+                    "retained_evidence_ref": "architecture/first-slice-event-identity-map.json#/required_schema_resource_candidates/0/transitive_consumer_review/resolved_compatibility_findings/0",
+                    "bounded_evidence": "retained synthetic fixture dereference and exact reference, cohort, adjacent-digest-value, non-fungible dimension, and settlement-equation checks without digest recomputation or reducer replay",
+                    "authority_effect": "none; C5 and PRQ-009 remain unresolved_blocking",
+                }
+            ],
+        }
+        observed_c5_status = {
+            "current_blockers": prq.get("current_blockers"),
+            "corrected_compatibility_findings": prq.get(
+                "corrected_compatibility_findings"
+            ),
+        }
+        if observed_c5_status != expected_c5_status:
+            errors.append(
+                "PRQ-009 does not retain the exact corrected C5 release-claim boundary"
+            )
 
     prerequisites = inventory.get("external_prerequisites", [])
     if len(prerequisites) != 1 or prerequisites[0].get("prerequisite_id") != EXPECTED_P0:

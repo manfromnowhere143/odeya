@@ -118,6 +118,17 @@ EXPECTED_NEXT_DEPENDENCY_CONTAINED_TRANCHE = {
     ],
     "may_bind_engine_contract_root": False,
 }
+EXPECTED_PRQ_009_CLOSURE_FRAGMENTS = {
+    "corrected_candidate":
+        "C5-WORK-LEASE-RELEASE-CLAIM-001 is corrected in unissued "
+        "ResearchEvent 0.18.0",
+    "aggregate_ownership":
+        "work.lease_released terminates only WorkLease",
+    "blocking_boundary":
+        "PRQ-009 remains unresolved_blocking",
+    "post_commit_derivation":
+        "then derive a post-commit non-dispatch WorkContract",
+}
 
 
 class DuplicateKey(ValueError):
@@ -143,6 +154,108 @@ def load(path: Path) -> dict[str, Any]:
 def require(condition: bool, message: str, errors: list[str]) -> None:
     if not condition:
         errors.append(message)
+
+
+def prq_009_boundary_errors(value: Any) -> list[str]:
+    """Keep the corrected C5 defect separate from PRQ-009 closure."""
+
+    if not isinstance(value, dict):
+        return ["PRQ-009 boundary must be an object"]
+    errors: list[str] = []
+    if value.get("finding_id") != "PRQ-009":
+        errors.append("PRQ-009 boundary has the wrong finding identity")
+    if value.get("status") != "unresolved_blocking":
+        errors.append("PRQ-009 boundary must remain unresolved_blocking")
+    closure = value.get("closure")
+    if not isinstance(closure, str):
+        return [*errors, "PRQ-009 boundary closure must be text"]
+    for label, fragment in EXPECTED_PRQ_009_CLOSURE_FRAGMENTS.items():
+        if fragment not in closure:
+            errors.append(f"PRQ-009 boundary lost {label}")
+    return errors
+
+
+def validate_prq_009_boundary_known_bads(errors: list[str]) -> int:
+    """Prove each corrected-versus-blocked boundary guard can fire."""
+
+    safe_closure = "; ".join(EXPECTED_PRQ_009_CLOSURE_FRAGMENTS.values())
+    safe = {
+        "finding_id": "PRQ-009",
+        "status": "unresolved_blocking",
+        "closure": safe_closure,
+    }
+    safe_errors = prq_009_boundary_errors(safe)
+    if safe_errors:
+        errors.append(
+            "PRQ-009 boundary safe self-test was rejected: "
+            + " | ".join(safe_errors)
+        )
+
+    mutations = (
+        (
+            "wrong-finding",
+            {"finding_id": "PRQ-008"},
+            "PRQ-009 boundary has the wrong finding identity",
+        ),
+        (
+            "premature-closure",
+            {"status": "corrected"},
+            "PRQ-009 boundary must remain unresolved_blocking",
+        ),
+        (
+            "stale-candidate",
+            {
+                "closure": safe_closure.replace(
+                    "ResearchEvent 0.18.0",
+                    "ResearchEvent 0.17.0",
+                )
+            },
+            "PRQ-009 boundary lost corrected_candidate",
+        ),
+        (
+            "lease-settles-resource",
+            {
+                "closure": safe_closure.replace(
+                    "work.lease_released terminates only WorkLease",
+                    "work.lease_released settles ResourceLedger",
+                )
+            },
+            "PRQ-009 boundary lost aggregate_ownership",
+        ),
+        (
+            "blocking-caveat-removed",
+            {
+                "closure": safe_closure.replace(
+                    "PRQ-009 remains unresolved_blocking",
+                    "PRQ-009 is resolved",
+                )
+            },
+            "PRQ-009 boundary lost blocking_boundary",
+        ),
+        (
+            "pre-commit-contract",
+            {
+                "closure": safe_closure.replace(
+                    "then derive a post-commit non-dispatch WorkContract",
+                    "then derive a pre-commit dispatch WorkContract",
+                )
+            },
+            "PRQ-009 boundary lost post_commit_derivation",
+        ),
+    )
+    passed = 0
+    for case_id, replacement, expected_reason in mutations:
+        candidate = json.loads(json.dumps(safe))
+        candidate.update(replacement)
+        observed = prq_009_boundary_errors(candidate)
+        if expected_reason in observed:
+            passed += 1
+        else:
+            errors.append(
+                f"PRQ-009 boundary known-bad {case_id} did not fire its "
+                f"intended reason; got {observed!r}"
+            )
+    return passed
 
 
 def repository_publication_errors(value: Any) -> list[str]:
@@ -756,13 +869,7 @@ def main() -> int:
             "PRQ-008 must expose the present-but-unadmitted canonical WorkLease resource as unresolved_blocking",
             errors,
         )
-        require(
-            prq009.get("finding_id") == "PRQ-009"
-            and prq009.get("status") == "unresolved_blocking"
-            and "preserve the claimed reservation" in prq009.get("closure", ""),
-            "PRQ-009 must remain unresolved_blocking while C5 is not constructible",
-            errors,
-        )
+        errors.extend(prq_009_boundary_errors(prq009))
         require(
             prq013.get("finding_id") == "PRQ-013"
             and prq013.get("status") == "unresolved_blocking"
@@ -965,6 +1072,7 @@ def main() -> int:
         )
     )
     next_tranche_known_bads = validate_next_tranche_known_bad(errors)
+    prq_009_boundary_known_bads = validate_prq_009_boundary_known_bads(errors)
 
     if errors:
         for error in errors:
@@ -984,6 +1092,7 @@ def main() -> int:
         f"and {refusal_boundary_known_bads} refusal-boundary known-bads "
         f"and {human_decision_assurance_known_bads} "
         "human-decision-assurance known-bads "
+        f"and {prq_009_boundary_known_bads} PRQ-009 boundary known-bads "
         f"and {next_tranche_known_bads} next-tranche known-bad "
         "rejected; candidate remains blocked and inactive"
     )

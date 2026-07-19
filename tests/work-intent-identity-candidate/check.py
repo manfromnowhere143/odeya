@@ -67,7 +67,7 @@ EXPECTED_REISSUES = [
     {
         "path": "schemas/work-contract.schema.json",
         "from_schema_id": "urn:odeya:schema:work-contract:0.2.0",
-        "to_schema_id": "urn:odeya:schema:work-contract:0.17.0"
+        "to_schema_id": "urn:odeya:schema:work-contract:0.20.0"
     }
 ]
 EXPECTED_CONSUMERS = [
@@ -78,8 +78,8 @@ EXPECTED_CONSUMERS = [
     },
     {
         "schema_path": "schemas/work-contract.schema.json",
-        "current_schema_id": "urn:odeya:schema:work-contract:0.18.0",
-        "prospective_schema_id": "urn:odeya:schema:work-contract:0.17.0",
+        "current_schema_id": "urn:odeya:schema:work-contract:0.19.0",
+        "prospective_schema_id": "urn:odeya:schema:work-contract:0.20.0",
     },
 ]
 

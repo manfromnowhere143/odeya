@@ -4,7 +4,9 @@ Status: canonical recovery entrypoint for the current Odeya architecture and
 repository-release mission. Last updated 2026-07-19, Asia/Jerusalem. This is a
 handoff contract, not Gate A acceptance, implementation authorization, or
 scientific evidence; repository-publication authority comes only from the
-named decisions and release contract.
+named decisions and release contract. The active C5 compatibility tranche is a
+dirty working-tree candidate based on the public checkpoint named below; it has
+not yet been committed, exactly rehearsed, or published.
 
 Read this file before changing repository bytes. Then read the detailed
 [Gate A working packet](GATE_A_HANDOFF_WORKING_PACKET_2026-07-15.md), the
@@ -126,13 +128,15 @@ design; the section below on the T0 descendant carries the exact history. The
 evidence-quality lane is the live work, and its shape is now known:
 
 - **Guard coverage has explicit denominators, not whole-repository coverage.**
-  The lifecycle checker has dedicated statement (178/185) and condition
-  (100/103) audits; the generalized `audit_suite_guard_coverage.py` measures
-  twelve declared isolated contract-checker subjects, at 247 of 635 refusal
-  statements proved. Central architecture/release gates—including the PRQ-009
+  The lifecycle checker has dedicated statement (222/229) and condition
+  (108/111) audits. The last retained generalized
+  `audit_suite_guard_coverage.py` record measured twelve declared isolated
+  contract-checker subjects at 249 of 637 refusal statements proved, with 388
+  explicitly unproved and zero crash-only detections. Central
+  architecture/release gates—including the PRQ-009
   assignment-order checker—are outside that denominator and must carry their
-  own pinned known-bad self-tests. The 388 open isolated-suite guards are
-  categorized by exact closure method in
+  own pinned known-bad self-tests. The prior record's 388 open isolated-suite
+  guards are categorized by exact closure method in
   `docs/GUARD_COVERAGE_CLOSURE_PLAN.md`. Three closure
   patterns are proven and mechanical: harness self-tests (ADR 0080/0081),
   meta-proofs for the attribution self-tests (ADR 0083, now complete across all
@@ -216,24 +220,29 @@ that deserves to carry the mission forward.
 - Active correction worktree:
   `/Users/danielwahnich/workspace/odeya-cross-program-evidence-extraction-20260719`
 - Active correction branch:
-  `agent/cross-program-evidence-extraction-20260719`
-- Active correction-tranche base and current published checkpoint:
-  `a363d535ef4371482e430935477258f1128d0960`
+  `agent/t0-work-lease-release-claim-20260719`
+- Active correction-tranche base and published checkpoint observed at recovery:
+  `3e5d61d2ccdcceebd5a9f23c91c8f9322da4680b`
 - Active correction-tranche base/published-checkpoint tree:
-  `e6543c357b707c67cbc7b7e4ad70fd3c46d28eb3`
+  `ebf3b4c5679337bb4a737d4fefed76672e89d547`
 - Canonical remote: `https://github.com/manfromnowhere143/odeya` (public;
   created 2026-07-17 under ADR 0047; default branch `main`)
-- Measured remote state on 2026-07-19: `main` resolved to
-  `a363d535ef4371482e430935477258f1128d0960`; all three workflow families and
-  all nine required jobs were green for that commit. Secret scanning and push
-  protection were enabled; Dependabot security updates were disabled; no
-  repository ruleset existed; and `main` was not protected.
+- Measured remote state at the 2026-07-19 recovery boundary: `main` resolved to
+  the exact public base
+  `3e5d61d2ccdcceebd5a9f23c91c8f9322da4680b`, and the C5 descendant had no
+  commit, exact-commit rehearsal, guarded push, or remote workflow observation.
+  This is a dated recovery fact, not the release status of the tree currently
+  being read. Resolve current status from `git rev-parse HEAD`, `origin/main`,
+  the exact rehearsal directory/manifest, and exact-SHA workflow observations.
+  Secret scanning and push protection were enabled at the last account-side
+  observation; Dependabot security updates were disabled, no repository
+  ruleset existed, and `main` was not protected.
 - Retained remote-main evidence:
-  `/Users/danielwahnich/workspace/odeya-release-evidence/remote-main-a363d535ef4371482e430935477258f1128d0960`;
+  `/Users/danielwahnich/workspace/odeya-release-evidence/remote-main-3e5d61d2ccdcceebd5a9f23c91c8f9322da4680b`;
   the local/remote invariant-profile comparison receipt is
-  `/Users/danielwahnich/workspace/odeya-release-evidence/remote-main-comparison-a363d535ef4371482e430935477258f1128d0960.json`
+  `/Users/danielwahnich/workspace/odeya-release-evidence/remote-main-comparison-3e5d61d2ccdcceebd5a9f23c91c8f9322da4680b.json`
   with SHA-256
-  `3d1e9567aef28b46c9b717e281bf2286fa67fc865a12e92d52e1c3deaaf802fd`.
+  `c0dad533c661e58f9578f0eb4638ce7da5c6bd1c74e3df21a79f2130a5dbb48b`.
 - Repository visibility, creation, and evidence-gated architecture-publication
   authority: granted under ADR 0045 and ADR 0047 and reconciled by ADR 0087.
 - Runtime, deployment, external-effect, and Gate A authority: not granted
@@ -259,12 +268,12 @@ git rev-parse origin/main
 git remote -v
 git log --oneline --decorate -5
 test "$(git symbolic-ref --short HEAD)" = \
-  agent/cross-program-evidence-extraction-20260719
+  agent/t0-work-lease-release-claim-20260719
 test "$(git remote)" = origin
 test "$(git remote get-url origin)" = \
   https://github.com/manfromnowhere143/odeya.git
 git merge-base --is-ancestor \
-  a363d535ef4371482e430935477258f1128d0960 origin/main
+  3e5d61d2ccdcceebd5a9f23c91c8f9322da4680b origin/main
 git merge-base --is-ancestor origin/main HEAD
 git diff --cached --name-only
 git diff --check
@@ -277,7 +286,7 @@ BASH
 Expected invariants:
 
 - the active correction branch is
-  `agent/cross-program-evidence-extraction-20260719`;
+  `agent/t0-work-lease-release-claim-20260719`;
 - the canonical worktree remains on `agent/repository-release` with Daniel's
   protected UI/UX changes untouched;
 - the exact published correction checkpoint remains an ancestor of public
@@ -307,6 +316,61 @@ Their appearance in `git status` is intentional and does not authorize another
 session to edit, stage, commit, normalize, discard, or describe them as Odeya's
 accepted design. Before every architecture commit, prove that these paths are
 absent from its diff.
+
+## Active C5 compatibility correction — resolve release status from Git
+
+[ADR 0090](decisions/0090-preserve-the-resource-claim-when-work-lease-ends.md)
+records the current correction. ResearchEvent 0.17.0 incorrectly required
+`work.lease_released` to carry an unclaimed reservation even though
+`attempt.start` had already committed the claim. The active tranche:
+
+- reissues the unissued event envelope as ResearchEvent 0.18.0, where
+  WorkLease release retains `reservation_claim_state=claimed`, the exact
+  `resource.reservation_claimed` reference, the no-crash-release boundary, and
+  the requirement for later separate settlement;
+- reissues the blocked base WorkContract as 0.19.0 so its prospective
+  assignment event binds ResearchEvent 0.18.0;
+- reidentifies the profile-bound WorkContract wrapper as 0.20.0 and binds its
+  exact 0.19.0 predecessor bytes without constructing or admitting either
+  resource; and
+- preserves every predecessor identity through the reissue ledger and exact
+  Git objects rather than redirecting an old ID to new bytes.
+
+The bounded sequence evidence is retained-fixture dereference without digest
+recomputation. It observes only the first two members of the three-event
+`attempt.start` commit—`resource.reservation_claimed` and `attempt.started`;
+`verification.started` is referenced but not dereferenced. It observes the
+complete three-event `attempt.report` commit—
+`attempt.completed`, `resource.usage_observed`, then
+`work.lease_released`—and a later, separate
+`resource.reservation_settled`. The checker preserves one exact claim and usage
+lineage, adjacent declared digest values, and identical non-fungible dimension
+keys. Per dimension it checks:
+
+```text
+reserved_consumed = min(ceiling, actual)
+unused            = max(ceiling - actual, 0)
+overage           = max(actual - ceiling, 0)
+billed            = actual
+refunded          = 0
+net               = reserved_consumed + overage - refunded
+```
+
+The candidate inventory is 112 schemas and 826 shared-manifest cases. Lifecycle
+coverage is 222/229 refusal statements and 108/111 top-level conditions;
+first-slice resolution retains 12 safe cases and 61 known-bads; projection
+retains 63 cases. These counts become release evidence only for an exact tree
+that passes validation and rehearsal; never infer that status from this prose.
+
+The compatibility finding `C5-WORK-LEASE-RELEASE-CLAIM-001` is corrected only
+for these unissued candidate bytes. C5 and PRQ-009 remain
+`unresolved_blocking`: the exact assignable WorkIntent, complete thirteen-event
+assignment cohort, immutable members and reducers, registry/root,
+checkpoint/witness/P0/activation chain, complete replay, accountable review,
+and operator decision do not exist. The canonical profile is unissued and Gate
+A remains blocked. Commit, rehearsal, and publication status must be resolved
+from exact Git and retained release evidence. None of those repository-release
+states implies admission, execution authority, Gate A acceptance, or runtime.
 
 ## Historical recovery log — retained chronology, not current state
 
@@ -558,9 +622,11 @@ stage. 132 single-condition tests and structural dict comparisons are
 counted, not audited; field-level blindness inside structural expectations
 remains unmeasured.
 
-**DECLARED ISOLATED-SUITE GUARD COVERAGE IS 247/635, WITH 388
-UNPROVED.** The physical-verification correction added eight measured guards
-and eight proofs, so the open residue stayed 388. ADR 0080 closed three former
+**DECLARED ISOLATED-SUITE GUARD COVERAGE IS 249/637, WITH 388
+UNPROVED.** The current C5 checker changes added two measured guards and two
+proofs to the preceding 247/635 record, so the open residue stayed 388. The
+physical-verification correction had previously added eight measured guards
+and eight proofs without increasing that residue. ADR 0080 closed three former
 zero-coverage suites by in-harness self-test:
 work-identity-successor-cohort 0→13/19, work-intent-identity-candidate
 0→12/20, and canonical-profile-candidate 0→9/18. ADR 0081 moved
@@ -984,24 +1050,25 @@ A mission.
 
 ## Next architecture mission, in dependency order
 
-1. Preserve the completed 2026-07-19 correction boundary before extending T0:
-   public-repository operational truth is reconciled; the PRQ-009 contract now
-   requires an atomic assignment to create the worker/grant/lease/reservation
-   cohort before a derived WorkContract and a separate attempt start; the
-   physical-verification semantic false positive is refused by typed known-bad
-   cases; undeclared executable surfaces fail closed; and exact rehearsals use
-   isolated mutable tool state with the formal checker bound to the jar that
-   rehearsal verified. These corrections remain architecture evidence and do
-   not resolve the underlying profile identities or accept Gate A.
+1. Finish the active ADR 0090 working-tree candidate without broadening it:
+   preserve the 0.18/0.19/0.20 side-by-side identities, claimed-reservation
+   ownership, partial-start/complete-report evidence boundary, and all null or
+   false authority fields. Recompute every changed coverage and manifest pin,
+   validate the exact scoped tree, commit intentionally, run a fresh-clone
+   rehearsal for that exact commit, and only then use the guarded publication
+   protocol and verify remote workflows. Until those acts occur, this tranche
+   is neither rehearsed nor published.
 2. Complete T0 by closing PRQ-001–PRQ-010 and PRQ-013. The
    canonical-profile migration audit is mechanically clear, but profile
    issuance, the HumanDecisionAssurance identity/wrapper and consumer
    migration, accountable independent review, exact member/reducer/root
    identities, and the remaining prerequisite determinations stay open. Keep
    admission, assignment, human-only approval, lease, dispatch, and runtime
-   blocked. Resolve `C5-WORK-LEASE-RELEASE-CLAIM-001`: release retains the
-   reservation claimed at attempt start for separate ResourceLedger
-   settlement; lease termination cannot erase or settle that claim.
+   blocked. Preserve the corrected `C5-WORK-LEASE-RELEASE-CLAIM-001`
+   semantics, but do not confuse that compatibility repair with C5 closure:
+   the assignable WorkIntent, exact thirteen-event assignment cohort, members,
+   reducers, replay, review, registry/root, and activation evidence remain
+   absent.
 3. Only after all T0 evidence, PRQ-013, and exact schema/registry identities
    pass, construct and prove the T1 AuthorityAssignment vertical contract.
 4. Complete the exact 42 payload schemas, 43 command records, 60 event records,

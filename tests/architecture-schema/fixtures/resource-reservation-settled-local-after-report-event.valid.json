@@ -1,6 +1,6 @@
 {
   "schema_version": "0.18.0",
-  "event_id": "event.resource-reservation-settled.001",
+  "event_id": "event.resource-reservation-settled.local.001",
   "event_type": "resource.reservation_settled",
   "event_version": "1.0.0",
   "payload_type_id": "urn:odeya:event-payload:resource.reservation_settled:1.0.0",
@@ -8,36 +8,36 @@
   "payload_contract_digest": null,
   "event_contract_authority_status": "not_admitted_not_dispatchable_not_replay_authoritative",
   "stream": {
-    "stream_id": "mission.resource-accounting.001",
+    "stream_id": "mission.local-execution.001",
     "stream_type": "mission",
-    "position": 6
+    "position": 23
   },
-  "mission_scope": "mission.resource-accounting.001",
+  "mission_scope": "mission.local-execution.001",
   "aggregate": {
     "aggregate_type": "resource_budget",
-    "aggregate_id": "resource-budget.mission.001",
-    "aggregate_version": 6
+    "aggregate_id": "resource-budget.local-execution.001",
+    "aggregate_version": 4
   },
   "commit": {
-    "commit_id": "commit.resource-reservation-settled.001",
+    "commit_id": "commit.resource-reservation-settled.local.001",
     "batch_index": 0,
     "batch_size": 1
   },
   "command_binding": {
-    "command_id": "kernel-command.resource-reservation-settled.001",
+    "command_id": "kernel-command.resource-reservation-settled.local.001",
     "canonical_request_digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-    "receipt_id": "receipt.resource-reservation-settled.001",
+    "receipt_id": "receipt.resource-reservation-settled.local.001",
     "admission_evidence_bundle_ref": {
-      "record_id": "admission-evidence.resource-reservation-settled.001",
+      "record_id": "admission-evidence.resource-reservation-settled.local.001",
       "version": 1,
       "schema_id": "urn:odeya:schema:admission-evidence-bundle:0.9.0",
       "digest": "sha256:9999999999999999999999999999999999999999999999999999999999999999"
     }
   },
-  "recorded_at": "2026-07-15T18:16:01.000000Z",
+  "recorded_at": "2026-07-16T10:07:01.000000Z",
   "fact_time": {
     "basis": "controlled_commit",
-    "observed_at": "2026-07-15T18:16:00.000000Z",
+    "observed_at": "2026-07-16T10:07:00.000000Z",
     "source_ref": null,
     "uncertainty_ms": 0
   },
@@ -61,10 +61,11 @@
       "digest": "sha256:4444444444444444444444444444444444444444444444444444444444444444"
     }
   },
-  "correlation_id": "correlation.resource-reservation.001",
+  "correlation_id": "correlation.local-execution.001",
   "causation_refs": [
-    "event.resource-reservation-claimed.001",
-    "event.resource-usage-observed.001"
+    "event.work-lease-released.local.001",
+    "event.resource-reservation-claimed.local.001",
+    "event.resource-usage-observed.local.001"
   ],
   "inputs": [],
   "outputs": [],
@@ -84,16 +85,16 @@
     "tools": []
   },
   "payload": {
-    "reservation_id": "resource-reservation.001",
+    "reservation_id": "resource-reservation.local.001",
     "claimed_event_ref": {
-      "event_id": "event.resource-reservation-claimed.001",
+      "event_id": "event.resource-reservation-claimed.local.001",
       "event_type": "resource.reservation_claimed",
       "event_version": "1.0.0",
-      "digest": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      "digest": "sha256:2500000000000000000000000000000000000000000000000000000000000000"
     },
     "usage_observation_event_refs": [
       {
-        "event_id": "event.resource-usage-observed.001",
+        "event_id": "event.resource-usage-observed.local.001",
         "event_type": "resource.usage_observed",
         "event_version": "1.0.0",
         "digest": "sha256:5555555555555555555555555555555555555555555555555555555555555555"
@@ -108,8 +109,8 @@
       "dimensions": [
         {
           "resource_class": "execution",
-          "resource_kind": "gpu_time",
-          "pool_id": "pool.gpu.frontier",
+          "resource_kind": "cpu_time",
+          "pool_id": "pool.local",
           "unit": "millisecond",
           "value": {
             "decimal": "120",
@@ -119,25 +120,24 @@
           }
         },
         {
-          "resource_class": "money",
-          "resource_kind": "monetary",
-          "pool_id": "pool.money.research",
-          "currency_code": "USD",
-          "unit": "minor_currency_unit",
+          "resource_class": "execution",
+          "resource_kind": "memory_time",
+          "pool_id": "pool.local",
+          "unit": "byte_millisecond",
           "value": {
-            "decimal": "12000",
-            "semantic_type": "monetary_amount",
-            "unit": "iso4217_minor_unit",
+            "decimal": "1048576",
+            "semantic_type": "resource_amount",
+            "unit": "byte_millisecond",
             "precision": "0"
           }
         },
         {
           "resource_class": "verification",
           "resource_kind": "safety_verification",
-          "pool_id": "pool.verification.safety",
+          "pool_id": "pool.safety",
           "unit": "capacity_slot",
           "value": {
-            "decimal": "2",
+            "decimal": "1",
             "semantic_type": "resource_amount",
             "unit": "capacity_slot",
             "precision": "0"
@@ -154,8 +154,8 @@
       "dimensions": [
         {
           "resource_class": "execution",
-          "resource_kind": "gpu_time",
-          "pool_id": "pool.gpu.frontier",
+          "resource_kind": "cpu_time",
+          "pool_id": "pool.local",
           "unit": "millisecond",
           "value": {
             "decimal": "80",
@@ -165,22 +165,21 @@
           }
         },
         {
-          "resource_class": "money",
-          "resource_kind": "monetary",
-          "pool_id": "pool.money.research",
-          "currency_code": "USD",
-          "unit": "minor_currency_unit",
+          "resource_class": "execution",
+          "resource_kind": "memory_time",
+          "pool_id": "pool.local",
+          "unit": "byte_millisecond",
           "value": {
-            "decimal": "9000",
-            "semantic_type": "monetary_amount",
-            "unit": "iso4217_minor_unit",
+            "decimal": "524288",
+            "semantic_type": "resource_amount",
+            "unit": "byte_millisecond",
             "precision": "0"
           }
         },
         {
           "resource_class": "verification",
           "resource_kind": "safety_verification",
-          "pool_id": "pool.verification.safety",
+          "pool_id": "pool.safety",
           "unit": "capacity_slot",
           "value": {
             "decimal": "1",
@@ -200,8 +199,8 @@
       "dimensions": [
         {
           "resource_class": "execution",
-          "resource_kind": "gpu_time",
-          "pool_id": "pool.gpu.frontier",
+          "resource_kind": "cpu_time",
+          "pool_id": "pool.local",
           "unit": "millisecond",
           "value": {
             "decimal": "80",
@@ -211,22 +210,21 @@
           }
         },
         {
-          "resource_class": "money",
-          "resource_kind": "monetary",
-          "pool_id": "pool.money.research",
-          "currency_code": "USD",
-          "unit": "minor_currency_unit",
+          "resource_class": "execution",
+          "resource_kind": "memory_time",
+          "pool_id": "pool.local",
+          "unit": "byte_millisecond",
           "value": {
-            "decimal": "9000",
-            "semantic_type": "monetary_amount",
-            "unit": "iso4217_minor_unit",
+            "decimal": "524288",
+            "semantic_type": "resource_amount",
+            "unit": "byte_millisecond",
             "precision": "0"
           }
         },
         {
           "resource_class": "verification",
           "resource_kind": "safety_verification",
-          "pool_id": "pool.verification.safety",
+          "pool_id": "pool.safety",
           "unit": "capacity_slot",
           "value": {
             "decimal": "1",
@@ -246,8 +244,8 @@
       "dimensions": [
         {
           "resource_class": "execution",
-          "resource_kind": "gpu_time",
-          "pool_id": "pool.gpu.frontier",
+          "resource_kind": "cpu_time",
+          "pool_id": "pool.local",
           "unit": "millisecond",
           "value": {
             "decimal": "0",
@@ -257,22 +255,21 @@
           }
         },
         {
-          "resource_class": "money",
-          "resource_kind": "monetary",
-          "pool_id": "pool.money.research",
-          "currency_code": "USD",
-          "unit": "minor_currency_unit",
+          "resource_class": "execution",
+          "resource_kind": "memory_time",
+          "pool_id": "pool.local",
+          "unit": "byte_millisecond",
           "value": {
             "decimal": "0",
-            "semantic_type": "monetary_amount",
-            "unit": "iso4217_minor_unit",
+            "semantic_type": "resource_amount",
+            "unit": "byte_millisecond",
             "precision": "0"
           }
         },
         {
           "resource_class": "verification",
           "resource_kind": "safety_verification",
-          "pool_id": "pool.verification.safety",
+          "pool_id": "pool.safety",
           "unit": "capacity_slot",
           "value": {
             "decimal": "0",
@@ -292,8 +289,8 @@
       "dimensions": [
         {
           "resource_class": "execution",
-          "resource_kind": "gpu_time",
-          "pool_id": "pool.gpu.frontier",
+          "resource_kind": "cpu_time",
+          "pool_id": "pool.local",
           "unit": "millisecond",
           "value": {
             "decimal": "80",
@@ -303,22 +300,21 @@
           }
         },
         {
-          "resource_class": "money",
-          "resource_kind": "monetary",
-          "pool_id": "pool.money.research",
-          "currency_code": "USD",
-          "unit": "minor_currency_unit",
+          "resource_class": "execution",
+          "resource_kind": "memory_time",
+          "pool_id": "pool.local",
+          "unit": "byte_millisecond",
           "value": {
-            "decimal": "9000",
-            "semantic_type": "monetary_amount",
-            "unit": "iso4217_minor_unit",
+            "decimal": "524288",
+            "semantic_type": "resource_amount",
+            "unit": "byte_millisecond",
             "precision": "0"
           }
         },
         {
           "resource_class": "verification",
           "resource_kind": "safety_verification",
-          "pool_id": "pool.verification.safety",
+          "pool_id": "pool.safety",
           "unit": "capacity_slot",
           "value": {
             "decimal": "1",
@@ -338,8 +334,8 @@
       "dimensions": [
         {
           "resource_class": "execution",
-          "resource_kind": "gpu_time",
-          "pool_id": "pool.gpu.frontier",
+          "resource_kind": "cpu_time",
+          "pool_id": "pool.local",
           "unit": "millisecond",
           "value": {
             "decimal": "80",
@@ -349,22 +345,21 @@
           }
         },
         {
-          "resource_class": "money",
-          "resource_kind": "monetary",
-          "pool_id": "pool.money.research",
-          "currency_code": "USD",
-          "unit": "minor_currency_unit",
+          "resource_class": "execution",
+          "resource_kind": "memory_time",
+          "pool_id": "pool.local",
+          "unit": "byte_millisecond",
           "value": {
-            "decimal": "9000",
-            "semantic_type": "monetary_amount",
-            "unit": "iso4217_minor_unit",
+            "decimal": "524288",
+            "semantic_type": "resource_amount",
+            "unit": "byte_millisecond",
             "precision": "0"
           }
         },
         {
           "resource_class": "verification",
           "resource_kind": "safety_verification",
-          "pool_id": "pool.verification.safety",
+          "pool_id": "pool.safety",
           "unit": "capacity_slot",
           "value": {
             "decimal": "1",
@@ -384,8 +379,8 @@
       "dimensions": [
         {
           "resource_class": "execution",
-          "resource_kind": "gpu_time",
-          "pool_id": "pool.gpu.frontier",
+          "resource_kind": "cpu_time",
+          "pool_id": "pool.local",
           "unit": "millisecond",
           "value": {
             "decimal": "0",
@@ -395,22 +390,21 @@
           }
         },
         {
-          "resource_class": "money",
-          "resource_kind": "monetary",
-          "pool_id": "pool.money.research",
-          "currency_code": "USD",
-          "unit": "minor_currency_unit",
+          "resource_class": "execution",
+          "resource_kind": "memory_time",
+          "pool_id": "pool.local",
+          "unit": "byte_millisecond",
           "value": {
             "decimal": "0",
-            "semantic_type": "monetary_amount",
-            "unit": "iso4217_minor_unit",
+            "semantic_type": "resource_amount",
+            "unit": "byte_millisecond",
             "precision": "0"
           }
         },
         {
           "resource_class": "verification",
           "resource_kind": "safety_verification",
-          "pool_id": "pool.verification.safety",
+          "pool_id": "pool.safety",
           "unit": "capacity_slot",
           "value": {
             "decimal": "0",
@@ -430,8 +424,8 @@
       "dimensions": [
         {
           "resource_class": "execution",
-          "resource_kind": "gpu_time",
-          "pool_id": "pool.gpu.frontier",
+          "resource_kind": "cpu_time",
+          "pool_id": "pool.local",
           "unit": "millisecond",
           "value": {
             "decimal": "40",
@@ -441,25 +435,24 @@
           }
         },
         {
-          "resource_class": "money",
-          "resource_kind": "monetary",
-          "pool_id": "pool.money.research",
-          "currency_code": "USD",
-          "unit": "minor_currency_unit",
+          "resource_class": "execution",
+          "resource_kind": "memory_time",
+          "pool_id": "pool.local",
+          "unit": "byte_millisecond",
           "value": {
-            "decimal": "3000",
-            "semantic_type": "monetary_amount",
-            "unit": "iso4217_minor_unit",
+            "decimal": "524288",
+            "semantic_type": "resource_amount",
+            "unit": "byte_millisecond",
             "precision": "0"
           }
         },
         {
           "resource_class": "verification",
           "resource_kind": "safety_verification",
-          "pool_id": "pool.verification.safety",
+          "pool_id": "pool.safety",
           "unit": "capacity_slot",
           "value": {
-            "decimal": "1",
+            "decimal": "0",
             "semantic_type": "resource_amount",
             "unit": "capacity_slot",
             "precision": "0"
@@ -479,11 +472,11 @@
       "version": "1.0.0",
       "digest": "sha256:4444444444444444444444444444444444444444444444444444444444444444"
     },
-    "settled_at": "2026-07-15T18:16:00.000000Z",
+    "settled_at": "2026-07-16T10:07:00.000000Z",
     "evidence_refs": [
       {
-        "artifact_id": "resource-settlement-evidence.001",
-        "digest": "sha256:6666666666666666666666666666666666666666666666666666666666666666",
+        "artifact_id": "resource-settlement.local.001",
+        "digest": "sha256:5600000000000000000000000000000000000000000000000000000000000000",
         "media_type": "application/json"
       }
     ]
@@ -505,7 +498,7 @@
       "excluded_json_pointers": []
     },
     "payload_digest": "sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
-    "previous_stream_event_digest": null,
+    "previous_stream_event_digest": "sha256:0800000000000000000000000000000000000000000000000000000000000000",
     "event_digest_contract": {
       "algorithm": "sha-256",
       "domain_separator": "odeya-research-event-v1",
@@ -549,7 +542,7 @@
         "/integrity/signature_ref"
       ]
     },
-    "event_digest": "sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "event_digest": "sha256:5600000000000000000000000000000000000000000000000000000000000000",
     "signature_ref": null
   }
 }

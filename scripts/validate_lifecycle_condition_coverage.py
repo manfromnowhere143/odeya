@@ -28,7 +28,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "architecture/lifecycle-condition-coverage.json"
-EXPECTED_SUMMARY = {"condition_count": 103, "proved": 100, "unproved": 3, "crash_detected": 16}
+EXPECTED_SUMMARY = {"condition_count": 111, "proved": 108, "unproved": 3, "crash_detected": 17}
 AUDIT_TOOL = ROOT / "scripts/audit_lifecycle_condition_coverage.py"
 
 

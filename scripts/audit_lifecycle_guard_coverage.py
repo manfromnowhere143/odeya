@@ -93,6 +93,7 @@ AUDITED_MODELS = (
     "protocol_origin_errors",
     "data_use_cohort_errors",
     "work_lease_trace_errors",
+    "work_lease_claim_sequence_errors",
     "work_lease_record_candidate_errors",
     "identity_map_mutation_errors",
     "data_fixture_mutation_errors",

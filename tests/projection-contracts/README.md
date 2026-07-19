@@ -14,10 +14,13 @@ Run:
 The checker validates four closed JSON Schemas and eight synthetic valid
 fixtures: private cockpit, thesis intake, public research, static architecture
 fixture, redaction manifest, live and static reducer-equivalence results, and a
-deletion fanout/impact record. Its 62 cases include all 25 required adversarial
-vectors, 37 schema-level rejections, 25 bounded local semantic cases, exact
+deletion fanout/impact record. Its 63 cases include all 25 required adversarial
+vectors, 37 schema-level rejections, 26 bounded local semantic cases, exact
 root/C0/checkpoint package-binding checks, and the isolated schema-reference
-closure audit.
+closure audit. The synthetic current projection fixtures bind ResearchEvent
+references to the live `0.18.0` schema identity and include an attributed
+known-bad proving that a stale identity is refused. This bounded fixture check
+does not migrate, invalidate, or reinterpret retained historical event records.
 
 ## Acyclic construction
 

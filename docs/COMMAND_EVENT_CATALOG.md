@@ -1,12 +1,12 @@
 # Command and Event Catalog
 
-Status: architecture-closure candidate, 2026-07-16. This contract is non-executable and does not authorize product implementation. It replaces the legacy single-status event draft with the orthogonal event algebra in `research-event` and adds language-neutral command/receipt envelopes. [ADR 0014](decisions/0014-resolve-first-slice-atomic-admission.md) fixes the bounded first-slice producer/reducer choices; [ADR 0017](decisions/0017-close-first-slice-lifecycle-origins.md) closes their prerequisite lifecycle algebra and exact event/payload branch mapping. Immutable member construction, admission, and activation remain blocked.
+Status: architecture-closure candidate, updated 2026-07-19. This contract is non-executable and does not authorize product implementation. It replaces the legacy single-status event draft with the orthogonal event algebra in `research-event` and adds language-neutral command/receipt envelopes. [ADR 0014](decisions/0014-resolve-first-slice-atomic-admission.md) fixes the bounded first-slice producer/reducer choices; [ADR 0017](decisions/0017-close-first-slice-lifecycle-origins.md) closes their prerequisite lifecycle algebra and exact event/payload branch mapping; and [ADR 0090](decisions/0090-preserve-the-resource-claim-when-work-lease-ends.md) corrects the lease-release/resource-claim ownership defect without closing C5. Immutable member construction, admission, and activation remain blocked.
 
 ## Canonical contracts
 
 - `schemas/command-envelope.schema.json` 0.5.0 retains the 121 explicit mappings from the exact historical 0.4.0 design vocabulary while adding a fail-closed structural-only boundary: identity is unresolved, construction is blocked, admission is false, and fixture digests are comparison probes. Its request, registry, activation, standalone member, logical payload, schema resource, canonical, and closure fields are separate typed identities. The hints are resolution inputs only: the caller cannot select an authority mode, derivation rule, or PolicyDecision. Under [ADR 0013](decisions/0013-admitted-only-command-ingress.md), it authorizes no handler and a future admitted resource must be generated from exact immutable registry members.
 - `schemas/command-receipt.schema.json` 0.4.0 is likewise a nonconstructible structural candidate. It shapes a future exact post-resolution settlement but cannot assert that member resolution, activation, policy evaluation, admission, execution, or settlement occurred. A future admitted reissue may begin only after exact registry/member/activation identity resolution and must bind the result to a closed admission-evidence bundle, exact policy/validation records, and non-recursive result/receipt digest contracts.
-- `schemas/research-event.schema.json` 0.7.0 currently defines 135 event discriminators after replacing generic `resource.observed` with typed `work.lease_expired` and closing the prerequisite lifecycle origins. Every discriminator fixes one logical `payload_type_id`, one stream family, one aggregate owner, one fact-time basis, and one closed embedded payload shape. The per-payload contracts remain `unresolved_blocking` with null digests, so every event is explicitly non-admitted, non-dispatchable, and non-replay-authoritative. Every command-bound event also carries an exact AdmissionEvidenceBundle reference. This is broad design vocabulary, not an admitted event registry; the superseded unissued 0.6.0 candidate is historical Git evidence only.
+- `schemas/research-event.schema.json` 0.18.0 currently defines 135 event discriminators. Every discriminator fixes one logical `payload_type_id`, one stream family, one aggregate owner, one fact-time basis, and one closed embedded payload shape. Version 0.18.0 reissues the unissued 0.17.0 resource to make `work.lease_released` retain the reservation already claimed at `attempt.start` and its exact claim-event reference for separate ResourceLedger settlement. The per-payload contracts remain `unresolved_blocking` with null digests, so every event is explicitly non-admitted, non-dispatchable, and non-replay-authoritative. Every command-bound event also carries an exact AdmissionEvidenceBundle reference. This is broad design vocabulary, not an admitted event registry; predecessor resources remain exact Git/reissue-ledger evidence and are not mutable aliases.
 - `schemas/research-event-trace.schema.json` 0.3.0 binds ordered event vectors and typed command-receipt observations to orthogonal scientific, authority, data-governance, governed-processing, recovery, and resource-accounting axes. It structurally forbids the founding invalid-run/null, disputed-verification/eligibility, grant-reservation/dispatch-claim, rejected-processing/cohort, deletion-resurrection, incomplete-frontier reopen, missing-artifact reopen, fork-selection, restore-report-as-authority, claimed-resource release, inferred usage, unknown-as-zero, and unobserved-settlement contradictions.
 - [The state model](STATE_MODEL.md) defines the reducer axes and transition laws. Schema validity is necessary but never sufficient for transition legality.
 
@@ -14,7 +14,7 @@ The architecture-only
 [`first-slice-event-identity-map`](../architecture/first-slice-event-identity-map.json)
 binds all 60 exact first-slice event types to their event semantic version,
 logical payload type ID/version, aggregate owner, and exact ResearchEvent
-0.7.0 resource ID/raw digest/byte count/branch pointer. Event and logical
+0.18.0 resource ID/raw digest/byte count/branch pointer. Event and logical
 payload-type versions are independent: all 60 candidate events currently
 use event version 1, while `verification.assigned`,
 `verification.completed`, `verification.disputed`, and
@@ -137,7 +137,12 @@ validation are pre-origin evidence, not hidden canonical states.
 For the first slice, WorkLease state is exactly `unleased | active | released
 | revoked | expired`: acquire is `unleased -> active`, and release, revoke,
 and expiry are terminal transitions from active. `stale` and `completed` are
-projection-only work descriptions, never WorkLease reducer states.
+projection-only work descriptions, never WorkLease reducer states. A
+post-start `work.lease_released` event terminates only WorkLease: it retains
+`reservation_claim_state=claimed` and the exact
+`resource.reservation_claimed` reference, forbids crash release and new starts,
+and requires later settlement. It never performs or implies the
+ResourceLedger `claimed -> settled` transition.
 
 ### Attempts, resources, blockers, evidence, and science
 
@@ -296,7 +301,7 @@ The two root-assignment producers share one event only because the payload and a
 4. Receipt, grant-use reservation/use/release facts, domain facts, heads, resource reservation facts, and causally required outbox records commit together or not at all.
 5. A reservation is one child of its `resource_budget`, keyed by `reservation_id`. Creation binds an exact budget head, non-fungible unit profile, estimate, ceiling, subject, and start cohort; it cannot fabricate a second aggregate or spend one dimension as another.
 6. Claim commits the entire ceiling at the exact work/effect/verification start cohort and does not infer attempted, actual, billed, or refunded use. Crash, recovery, lost callback, and `completion_unknown` retain the full claim hold.
-7. Release and expiry are pre-claim terminals only. A claimed reservation can reach only observation and settlement; it cannot be released as unused because a process died or a response was missing.
+7. Resource-reservation release and expiry are pre-claim terminals only. A claimed reservation can reach only observation and settlement; it cannot be released as unused because a process died or a response was missing. WorkLease may separately terminate after claim, but its release preserves the exact claim and leaves ResourceLedger unchanged until a later settlement event.
 8. Settlement requires exact retained observations. Componentwise, `net = reserved_consumed + overage` and `ceiling = reserved_consumed + unused`; holds fall to zero only at settlement. Unknown or missing usage remains unknown and retains the conservative hold.
 9. Execution, per-currency money, and the five verification-capacity dimensions are non-fungible. Cross-resource conversion and dimension compensation are forbidden; work/effect/verification creation and claim bind the complete exact cohort.
 10. `external_effect.authorize` commits exact active grant-use reservation fact(s), `resource.reservation_created`, and `external_effect.authorized`; it emits no grant-use or resource claim.
@@ -332,6 +337,17 @@ Publication is a separate aggregate. Provider application does not prove the app
 These traces are normative examples; their cross-event predicates still require the semantic validator named below.
 The first machine-readable vector is the [invalid-run/no-measurement refusal trace](../tests/architecture-schema/fixtures/research-event-trace-invalid-run.valid.json), backed by individually schema-valid run, measurement, and adjudication events.
 
+The C5 compatibility sequence is narrower than replay. Its checker
+dereferences retained synthetic fixtures and compares exact declared reference
+and digest values without recomputing any digest. The `attempt.start` evidence
+contains only batch members 0 and 1 of 3
+(`resource.reservation_claimed`, `attempt.started`);
+`verification.started` is referenced but not dereferenced. The later
+`attempt.report` evidence is complete:
+`attempt.completed`, `resource.usage_observed`, and `work.lease_released` at
+indexes 0, 1, and 2 of one three-event commit. A separate later commit carries
+`resource.reservation_settled`.
+
 | Trace | Ordered facts | Required projection | Forbidden inference |
 |---|---|---|---|
 | Pre-mission decline | `proposal.submitted`, `proposal.decided(declined)` | proposal declined; no mission aggregate | synthetic mission ID or scientific verdict |
@@ -358,6 +374,17 @@ The first machine-readable vector is the [invalid-run/no-measurement refusal tra
 | [Pre-claim expiry](../tests/architecture-schema/fixtures/research-event-trace-resource-preclaim-expiry.valid.json) | reservation create, controlled-time expiry wins before start | expired; zero hold; no claim | expiry races past a committed claim |
 | [Verification-capacity settlement](../tests/architecture-schema/fixtures/research-event-trace-verification-resource-settlement.valid.json) | verification assignment reserve + verification start claim + observed use + settlement | five-dimensional verification capacity reconciled without substitution | compute replaces absent expert/physical/safety capacity |
 | [Unavailable usage is not zero](../tests/architecture-schema/fixtures/research-event-trace-resource-unavailable-not-zero.valid.json) | claimed reservation + unavailable meter observation | claimed; full hold; actual usage unavailable | missing measurement becomes zero or permits settlement |
+| [WorkLease release preserves the claim](../tests/architecture-schema/fixtures/work-lease-released-event.valid.json) | partial retained start pair; complete `attempt.completed -> resource.usage_observed -> work.lease_released` report cohort; later `resource.reservation_settled` | WorkLease is released while the reservation remains claimed; only ResourceLedger later settles the exact claim and observation | lease release erases or settles the claim, crash proves zero, or one dimension compensates for another |
+
+For each exact non-fungible dimension `d`, that last bounded fixture sequence
+checks `reserved_consumed[d] = min(ceiling[d], actual[d])`,
+`unused[d] = max(ceiling[d] - actual[d], 0)`,
+`overage[d] = max(actual[d] - ceiling[d], 0)`,
+`billed[d] = actual[d]`, `refunded[d] = 0`, and
+`net[d] = reserved_consumed[d] + overage[d] - refunded[d]`. Identical
+dimension-key sets are mandatory; cross-resource conversion and compensation
+are forbidden. These equations are fixture semantics, not observed billing or
+runtime settlement.
 
 ## Compatibility policy
 
@@ -367,7 +394,7 @@ The first machine-readable vector is the [invalid-run/no-measurement refusal tra
 - Upcasters are pure, versioned, fixture-tested reader functions. Downcasting canonical state is forbidden.
 - Old bytes, digests, command receipt, registry entry, and reducer version remain retained for audit.
 - New-command admission uses only the server-activated admitted registry/envelope. Retired commands remain readable for exact historical receipt replay; reserved design vocabulary has no envelope/member/receipt semantics until prospectively activated.
-- The JCS profile string is still a draft. Cross-runtime number, timestamp, and digest vectors remain A-008 work; this catalog does not claim they are frozen.
+- The `odeya-jcs-0.1` candidate parameters and bounded cross-runtime vectors are frozen for review, but the profile is unissued. Accountable review, exact-byte operator acceptance, admitted identities, and broader conformance evidence remain A-008 work.
 
 ## Rejections and evidence-relevant attempts
 
@@ -380,9 +407,9 @@ Once an exact admitted member and all required envelope bindings resolve, payloa
 The isolated architecture audit currently finds:
 
 - 121 unique design discriminators in the current red-team envelope, each with one branch binding semantic version, payload-schema ID, stream family, and target aggregate; this count is not an admitted surface;
-- 135 unique event discriminators, each with one payload branch, one logical payload type ID, one stream-family rule, one aggregate owner, and one named reducer in this catalog; none has a resolved per-payload contract digest in ResearchEvent 0.7.0;
+- 135 unique event discriminators, each with one payload branch, one logical payload type ID, one stream-family rule, one aggregate owner, and one named reducer in this catalog; none has a resolved per-payload contract digest in ResearchEvent 0.18.0;
 - no command or event discriminator missing from this catalog;
-- 61 schema-valid event fixtures and 16 schema-valid replay traces, included within 166 direct `ResearchEvent`/`ResearchEventTrace` manifest cases and covering pre-mission, run-invalid, no-valid-measurement, adjudication-refusal, grant reservation/dispatch/cancel, verifier-dispute, publication, all 32 data/recovery branches, governed-processing refusal, and the typed local-attempt/resource lifecycle;
+- 66 schema-valid event fixtures and 16 schema-valid replay traces, included within 207 direct `ResearchEvent`/`ResearchEventTrace` manifest cases and covering pre-mission, run-invalid, no-valid-measurement, adjudication-refusal, grant reservation/dispatch/cancel, verifier-dispute, publication, all 32 data/recovery branches, governed-processing refusal, and the typed local-attempt/resource lifecycle;
 - adversarial rejection of rights assertion as permission, authorized use without exact scope, unknown-exposure laundering, completed deletion with residual copies, hold-as-access-authority, checkpoint seal without verification evidence, backup-axis aliasing, restore report as reopen authority, failed recovery quorum without limitation, wall-clock fork choice, new epoch without constitutional selection, and open recovery scope without a complete security frontier.
 
 This resolves the original structural envelope/vocabulary inventory defects behind A-001 and demonstrates a candidate shape for the missing envelope/receipt portion of A-002:
@@ -398,7 +425,7 @@ This resolves the original structural envelope/vocabulary inventory defects behi
 It does **not** close A-001 or A-002 as Gate A blockers yet. The remaining gaps are explicit:
 
 1. Thirteen separate closed payload-schema candidates now exist: the three external-effect candidates plus ten high-consequence data/recovery candidates for data-use decide/revoke, exposure intent, deletion closure, hold issue/release, checkpoint seal, recovery decision, epoch start, and recovery scope change. Envelope/receipt references now require exact snapshot, activation, and contract-record identities, but the immutable registry/activation/record and bounded selector/refusal schemas/bytes do not yet exist, none of the thirteen candidates is enrolled, and the exact dependency-closed Gate A admitted set is not named. The other 108 of 121 design payload contracts do not exist. ADR 0013 therefore requires an admitted-only generated envelope and keeps all non-enrolled names outside executable ingress rather than treating missing contracts as reserved members.
-2. Event payload shapes are embedded in the ResearchEvent candidate, but exact separately addressed payload-contract resources, extraction/canonicalization profiles, and accepted registry digests do not exist. ResearchEvent 0.7.0 therefore carries `unresolved_blocking` plus a null contract digest; its instance digest fields are format-checked, not recomputed or matched to an admitted registry. The referenced `urn:odeya:schema:canonical-work-lease:0.1.0` resource now exists only as an unissued, identity-unresolved, non-authoritative candidate; local-attempt admission still blocks on canonical profile, exact assignment, member/reducer, registry, and activation evidence. Its direct-consumer review also records `C5-WORK-LEASE-RELEASE-CLAIM-001`: the current release branch requires `unclaimed` even though `attempt.start` has claimed the reservation. A reissued branch must retain the claim for separate settlement; lease termination cannot mutate ResourceLedger by implication.
+2. Event payload shapes are embedded in the ResearchEvent candidate, but exact separately addressed payload-contract resources, extraction/canonicalization profiles, and accepted registry digests do not exist. ResearchEvent 0.18.0 therefore carries `unresolved_blocking` plus a null contract digest; its instance digest fields are format-checked and the bounded sequence compares retained digest values, but neither recomputes nor matches them to an admitted registry. The referenced `urn:odeya:schema:canonical-work-lease:0.8.0` resource exists only as an unissued, identity-unresolved, non-authoritative candidate. `C5-WORK-LEASE-RELEASE-CLAIM-001` is corrected by ResearchEvent 0.18.0, blocked WorkContract 0.19.0, and the separately identified profile-bound wrapper 0.20.0: lease release preserves the claim for later sole ResourceLedger settlement. Local-attempt admission still blocks on a resolved WorkIntent, the exact thirteen-event assignment cohort, canonical profile issuance, member/reducer identities, registry/root, complete replay, accountable review, and activation. The correction closes one compatibility defect, not C5 or PRQ-009.
 3. Reducer ownership is complete as a catalog mapping, but reducer input/output contracts, machine-readable transition tables, reducer versions/digests, and independent replay implementations remain absent.
 4. `authority.assignment_recorded` still has two deliberately disjoint producer branches—constitutional root and ordinary assignment. Gate A should split the event or freeze a machine-readable branch registry so “one producer” is literal, not prose.
 5. Data-governance and recovery vocabulary coverage is structurally complete for the founding lifecycles, but reference existence, rights-subset reasoning, lineage/deletion fanout, witness/signature verification, frontier completeness, branch selection, and service-scope legality remain semantic checks.

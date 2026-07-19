@@ -6,7 +6,7 @@
   "status": "candidate_measurement_not_admitted",
   "method": "each errors.append branch of a declared lifecycle model is disabled one at a time in an isolated copy; a guard is proved only when the suite fails without it",
   "subject": "tests/lifecycle-closure/check.py",
-  "subject_sha256": "sha256:3ac096c3b5d709c51660d05122be61fbfa0d70f34afd36f1ffc5e4edd81b8bc3",
+  "subject_sha256": "sha256:436496c3cdc2180c04d32d31560cef2ce97677041bce22d5b787e8ad82d044d1",
   "models": [
     {
       "function": "branch_map",
@@ -29,8 +29,8 @@
     },
     {
       "function": "schema_contract_errors",
-      "branch_count": 64,
-      "proved_count": 64,
+      "branch_count": 68,
+      "proved_count": 68,
       "branches": [
         {
           "guard": "branch_errors",
@@ -165,7 +165,7 @@
           "detection": "case_attributed"
         },
         {
-          "guard": "event identity map did not advance to the WorkLease-aware 0.2.0 candidate",
+          "guard": "event identity map did not advance to the release-claim-aware 0.3.0 candidate",
           "proved": true,
           "proved_by": "schema-contract-bad-identity-map-version-regressed",
           "detection": "case_attributed"
@@ -243,9 +243,33 @@
           "detection": "case_attributed"
         },
         {
-          "guard": "recorded ResearchEvent release/claimed-reservation blocker no longer matches exact bytes",
+          "guard": "work.lease_acquired must retain an unclaimed reservation with a null claim reference",
           "proved": true,
-          "proved_by": "schema-contract-bad-release-claim-blocker-drift",
+          "proved_by": "schema-contract-acquired-claim-state-substitution",
+          "detection": "case_attributed"
+        },
+        {
+          "guard": "work.lease_acquired must permit the one pre-claim start transition",
+          "proved": true,
+          "proved_by": "schema-contract-acquired-new-start-substitution",
+          "detection": "case_attributed"
+        },
+        {
+          "guard": "work.lease_released must retain a claimed reservation with the exact resource.reservation_claimed reference",
+          "proved": true,
+          "proved_by": "schema-contract-release-claim-state-substitution",
+          "detection": "case_attributed"
+        },
+        {
+          "guard": "work.lease_released must forbid crash release and require separate settlement",
+          "proved": true,
+          "proved_by": "schema-contract-release-crash-release-substitution",
+          "detection": "case_attributed"
+        },
+        {
+          "guard": "work.lease_released must forbid new start claims",
+          "proved": true,
+          "proved_by": "schema-contract-release-new-start-substitution",
           "detection": "case_attributed"
         },
         {
@@ -766,6 +790,253 @@
       ]
     },
     {
+      "function": "work_lease_claim_sequence_errors",
+      "branch_count": 40,
+      "proved_count": 40,
+      "branches": [
+        {
+          "guard": "claim-sequence mutation is not one bounded replace operation",
+          "proved": true,
+          "proved_by": "work-lease-claim-sequence-mutation-not-replace",
+          "detection": "case_attributed"
+        },
+        {
+          "guard": "claim-sequence mutation names an unknown target {}",
+          "proved": true,
+          "proved_by": "work-lease-claim-sequence-unknown-target",
+          "detection": "case_attributed"
+        },
+        {
+          "guard": "claim-sequence mutation path is absent",
+          "proved": true,
+          "proved_by": "work-lease-claim-sequence-path-absent",
+          "detection": "case_attributed"
+        },
+        {
+          "guard": "claim-sequence list mutation index is not an integer",
+          "proved": true,
+          "proved_by": "work-lease-claim-sequence-list-index-not-integer",
+          "detection": "case_attributed"
+        },
+        {
+          "guard": "claim-sequence mutation path does not resolve",
+          "proved": true,
+          "proved_by": "work-lease-claim-sequence-list-index-out-of-range",
+          "detection": "case_attributed"
+        },
+        {
+          "guard": "claim-sequence mutation path does not resolve",
+          "proved": true,
+          "proved_by": "work-lease-claim-sequence-path-unresolvable",
+          "detection": "case_attributed"
+        },
+        {
+          "guard": "claim-sequence mutation path does not resolve",
+          "proved": true,
+          "proved_by": "work-lease-claim-sequence-intermediate-scalar",
+          "detection": "case_attributed"
+        },
+        {
+          "guard": "claim-sequence mutation path does not resolve",
+          "proved": true,
+          "proved_by": "work-lease-claim-sequence-exception-path-unresolvable",
+          "detection": "case_attributed"
+        },
+        {
+          "guard": "retained claim/report lifecycle events reuse an event identity",
+          "proved": true,
+          "proved_by": "work-lease-claim-sequence-event-id-collision",
+          "detection": "case_attributed"
+        },
+        {
+          "guard": "retained claim/report lifecycle events reuse an event digest",
+          "proved": true,
+          "proved_by": "work-lease-claim-sequence-event-digest-collision",
+          "detection": "case_attributed"
+        },
+        {
+          "guard": "attempt.started does not retain the exact undereferenced verification.started member",
+          "proved": true,
+          "proved_by": "work-lease-claim-sequence-verification-ref-drift",
+          "detection": "case_attributed"
+        },
+        {
+          "guard": "resource.reservation_claimed does not retain the exact ordered attempt.start cohort references",
+          "proved": true,
+          "proved_by": "work-lease-claim-sequence-start-cohort-ref-id-drift",
+          "detection": "case_attributed"
+        },
+        {
+          "guard": "attempt.start cohort references reuse an event identity or digest",
+          "proved": true,
+          "proved_by": "work-lease-claim-sequence-start-cohort-duplicate-ref",
+          "detection": "case_attributed"
+        },
+        {
+          "guard": "start/report/release lifecycle does not retain one exact work.lease_acquired reference",
+          "proved": true,
+          "proved_by": "work-lease-claim-sequence-acquired-ref-drift",
+          "detection": "case_attributed"
+        },
+        {
+          "guard": "attempt.completed does not retain the exact attempt.started event reference",
+          "proved": true,
+          "proved_by": "work-lease-claim-sequence-attempt-start-ref-drift",
+          "detection": "case_attributed"
+        },
+        {
+          "guard": "retained WorkLease event and attempt fixtures disagree on the undereferenced resource.reservation_created reference",
+          "proved": true,
+          "proved_by": "work-lease-claim-sequence-reservation-created-ref-drift",
+          "detection": "case_attributed"
+        },
+        {
+          "guard": "retained WorkLease and attempt fixtures disagree on operational resource dimensions",
+          "proved": true,
+          "proved_by": "work-lease-claim-sequence-operational-dimension-drift",
+          "detection": "case_attributed"
+        },
+        {
+          "guard": "retained resource.reservation_claimed event is not the exact local work-start claim",
+          "proved": true,
+          "proved_by": "work-lease-claim-sequence-claim-event-identity-drift",
+          "detection": "case_attributed"
+        },
+        {
+          "guard": "attempt.started does not retain the exact same-commit resource.reservation_claimed frontier",
+          "proved": true,
+          "proved_by": "work-lease-claim-sequence-start-not-atomic",
+          "detection": "case_attributed"
+        },
+        {
+          "guard": "work.lease_released does not preserve the exact reservation claim reference",
+          "proved": true,
+          "proved_by": "work-lease-claim-sequence-changed-claim-id",
+          "detection": "case_attributed"
+        },
+        {
+          "guard": "resource.usage_observed does not preserve the exact reservation claim reference",
+          "proved": true,
+          "proved_by": "work-lease-claim-sequence-usage-claim-mismatch",
+          "detection": "case_attributed"
+        },
+        {
+          "guard": "resource.reservation_settled does not consume the preserved reservation claim",
+          "proved": true,
+          "proved_by": "work-lease-claim-sequence-settlement-claim-mismatch",
+          "detection": "case_attributed"
+        },
+        {
+          "guard": "resource.reservation_settled does not consume the retained usage observation",
+          "proved": true,
+          "proved_by": "work-lease-claim-sequence-settlement-usage-mismatch",
+          "detection": "case_attributed"
+        },
+        {
+          "guard": "work.lease_released does not retain the claimed fail-closed settlement frontier",
+          "proved": true,
+          "proved_by": "work-lease-claim-sequence-release-not-fail-closed",
+          "detection": "case_attributed"
+        },
+        {
+          "guard": "after the start claim, work.lease_released attempts a ResourceLedger mutation or resource.reservation_settled loses sole settlement ownership",
+          "proved": true,
+          "proved_by": "work-lease-claim-sequence-settlement-by-lease",
+          "detection": "case_attributed"
+        },
+        {
+          "guard": "claim/release/settlement sequence changes the reservation identity",
+          "proved": true,
+          "proved_by": "work-lease-claim-sequence-reservation-identity-drift",
+          "detection": "case_attributed"
+        },
+        {
+          "guard": "retained claim and attempt.started do not form the exact partial attempt.start cohort",
+          "proved": true,
+          "proved_by": "work-lease-claim-sequence-start-cohort-mismatch",
+          "detection": "case_attributed"
+        },
+        {
+          "guard": "attempt.completed, resource.usage_observed, and work.lease_released do not form one exact attempt.report cohort",
+          "proved": true,
+          "proved_by": "work-lease-claim-sequence-report-cohort-mismatch",
+          "detection": "case_attributed"
+        },
+        {
+          "guard": "attempt and lease-release stream positions are not strictly increasing or retained adjacent digest links differ",
+          "proved": true,
+          "proved_by": "work-lease-claim-sequence-stream-position-collision",
+          "detection": "case_attributed"
+        },
+        {
+          "guard": "opaque stream-gap predecessor digest collides with a retained or declared event digest; no gap-event existence is inferred",
+          "proved": true,
+          "proved_by": "work-lease-claim-sequence-opaque-gap-digest-collision",
+          "detection": "case_attributed"
+        },
+        {
+          "guard": "claim/release/settlement sequence timestamps are not parseable",
+          "proved": true,
+          "proved_by": "work-lease-claim-sequence-invalid-timestamp",
+          "detection": "case_attributed"
+        },
+        {
+          "guard": "claim/release/settlement chronology is not attempt.started then atomic attempt.report then resource.reservation_settled",
+          "proved": true,
+          "proved_by": "work-lease-claim-sequence-not-later",
+          "detection": "case_attributed"
+        },
+        {
+          "guard": "claim/release/settlement recorded time precedes its observed fact time",
+          "proved": true,
+          "proved_by": "work-lease-claim-sequence-recorded-before-fact",
+          "detection": "case_attributed"
+        },
+        {
+          "guard": "resource claim/settlement payload time differs from its observed fact time",
+          "proved": true,
+          "proved_by": "work-lease-claim-sequence-settled-at-mismatch",
+          "detection": "case_attributed"
+        },
+        {
+          "guard": "release/settlement causation does not bind start, completion, usage, release, and the preserved claim",
+          "proved": true,
+          "proved_by": "work-lease-claim-sequence-missing-causation",
+          "detection": "case_attributed"
+        },
+        {
+          "guard": "claim/usage/settlement resource vector is not an exact dimension map",
+          "proved": true,
+          "proved_by": "work-lease-claim-sequence-vector-not-map",
+          "detection": "case_attributed"
+        },
+        {
+          "guard": "claim/usage/settlement resource vectors do not preserve one non-fungible dimension set",
+          "proved": true,
+          "proved_by": "work-lease-claim-sequence-dimension-set-drift",
+          "detection": "case_attributed"
+        },
+        {
+          "guard": "resource settlement vectors do not bind the retained claim ceiling and usage observation",
+          "proved": true,
+          "proved_by": "work-lease-claim-sequence-source-vector-mismatch",
+          "detection": "case_attributed"
+        },
+        {
+          "guard": "resource settlement does not satisfy exact per-dimension ceiling/usage equations",
+          "proved": true,
+          "proved_by": "work-lease-claim-sequence-equation-mismatch",
+          "detection": "case_attributed"
+        },
+        {
+          "guard": "resource settlement policy does not preserve exact-observation authority",
+          "proved": true,
+          "proved_by": "work-lease-claim-sequence-settlement-policy-drift",
+          "detection": "case_attributed"
+        }
+      ]
+    },
+    {
       "function": "work_lease_record_candidate_errors",
       "branch_count": 34,
       "proved_count": 34,
@@ -1233,8 +1504,8 @@
   ],
   "not_auditable": [],
   "summary": {
-    "branch_count": 185,
-    "proved": 178,
+    "branch_count": 229,
+    "proved": 222,
     "unproved": 7,
     "crash_detected": 0
   },
