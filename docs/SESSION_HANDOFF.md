@@ -1,9 +1,10 @@
 # Odeya Session Handoff
 
 Status: canonical recovery entrypoint for the current Odeya architecture and
-repository-release mission. Last updated 2026-07-18, Asia/Jerusalem. This is a
-handoff contract, not Gate A acceptance, implementation authorization, remote
-authority, or scientific evidence.
+repository-release mission. Last updated 2026-07-19, Asia/Jerusalem. This is a
+handoff contract, not Gate A acceptance, implementation authorization, or
+scientific evidence; repository-publication authority comes only from the
+named decisions and release contract.
 
 Read this file before changing repository bytes. Then read the detailed
 [Gate A working packet](GATE_A_HANDOFF_WORKING_PACKET_2026-07-15.md), the
@@ -123,11 +124,15 @@ The migration wave is closed at audit zero and the profile is unissued by
 design; the section below on the T0 descendant carries the exact history. The
 evidence-quality lane is the live work, and its shape is now known:
 
-- **Guard coverage is measured across the whole repository.** The lifecycle
-  checker has dedicated statement (178/185) and condition (100/103) audits; the
-  generalized `audit_suite_guard_coverage.py` measures every other suite, at
-  239 of 627 refusal statements proved. The 388 open are categorized by exact
-  closure method in `docs/GUARD_COVERAGE_CLOSURE_PLAN.md`. Three closure
+- **Guard coverage has explicit denominators, not whole-repository coverage.**
+  The lifecycle checker has dedicated statement (178/185) and condition
+  (100/103) audits; the generalized `audit_suite_guard_coverage.py` measures
+  twelve declared isolated contract-checker subjects, at 239 of 627 refusal
+  statements proved. Central architecture/release gates—including the PRQ-009
+  assignment-order checker—are outside that denominator and must carry their
+  own pinned known-bad self-tests. The 388 open isolated-suite guards are
+  categorized by exact closure method in
+  `docs/GUARD_COVERAGE_CLOSURE_PLAN.md`. Three closure
   patterns are proven and mechanical: harness self-tests (ADR 0080/0081),
   meta-proofs for the attribution self-tests (ADR 0083, now complete across all
   six), and the artifact-mutation vocabulary for once-loaded records (ADR 0082,
@@ -205,47 +210,23 @@ that deserves to carry the mission forward.
 
 ## Current repository recovery identity
 
-- Canonical workspace: `/Users/danielwahnich/workspace/odeya`
-- Active release branch: `agent/repository-release`
-- Isolated architecture candidate worktree:
-  `/Users/danielwahnich/workspace/odeya-t0-work-lease`
-- Isolated architecture branch: `agent/t0-work-lease-20260716`
-- Validated immediate predecessor:
-  `f79ce3cc7c1dd300e6f3c2c54a85b200c8ca119c`
-- Validated immediate predecessor tree:
-  `c49ba1ba485c08f1f230da9fb3522d526acaf513`
-- Retained immediate-predecessor rehearsal evidence:
-  `/Users/danielwahnich/workspace/odeya-release-evidence/f79ce3cc7c1dd300e6f3c2c54a85b200c8ca119c/rehearsal-evidence-manifest.json`
-- Validated exact-reference predecessor:
-  `45c1fd769a123a9bf03e8de93c2ecf127b254199`
-- Validated exact-reference predecessor tree:
-  `39111bfa595c8b12e28b0d8de309e0b5e2f6fc99`
-- Retained exact-reference rehearsal evidence:
-  `/Users/danielwahnich/workspace/odeya-release-evidence/45c1fd769a123a9bf03e8de93c2ecf127b254199/rehearsal-evidence-manifest.json`
-- Validated WorkIntent-identity predecessor:
-  `6ec40b4635815c64ba9d8c5ec084d7f480e16db1`
-- Validated WorkIntent-identity predecessor tree:
-  `e7044da26ad273de8491a34705e87c8899173f29`
-- Retained WorkIntent-identity rehearsal evidence:
-  `/Users/danielwahnich/workspace/odeya-release-evidence/6ec40b4635815c64ba9d8c5ec084d7f480e16db1/rehearsal-evidence-manifest.json`
-- Validated canonical-profile predecessor:
-  `c9ce09d49fa38e11eed4ff40ee484e6e0ed9593f`
-- Validated canonical-profile predecessor tree:
-  `ec170fa22f03108b914fa8c204fb13bb26f4bbd1`
-- Retained predecessor rehearsal evidence:
-  `/Users/danielwahnich/workspace/odeya-release-evidence/c9ce09d49fa38e11eed4ff40ee484e6e0ed9593f/rehearsal-evidence-manifest.json`
-- Validated WorkLease predecessor:
-  `763e7d48889265835c76ef66878515467cdf09b6`
-- Unchanged local `main`: `f8c71c8e3174f07619e0bbd31cb3d6df5d848361`
-- Validated repository-release predecessor:
-  `ff512c5211f6ace0816e7991913234ce7cb72e25`
-- Validated repository-release predecessor tree:
-  `39c88d64a03c9227749d8aa045d57301e1f78997`
-- Canonical remote: `https://github.com/manfromnowhere143/odeya` (public,
-  created 2026-07-17 on the owner's explicit publication instruction,
-  ADR 0047; default branch `main` tracks the rehearsed architecture head)
-- Repository visibility, creation, push, and publication authority: granted
-  2026-07-17 for this architecture repository (ADR 0045, ADR 0047)
+- Canonical workspace: `/Users/danielwahnich/workspace/odeya`; it is currently
+  a protected concurrent-work lane on `agent/repository-release`.
+- Active correction worktree:
+  `/Users/danielwahnich/workspace/odeya-gate-a-repair-20260719`
+- Active correction branch: `agent/gate-a-repair-20260719`
+- Exact public-`main` correction base:
+  `50e4bc6bfd634c7d5fe11cf0114e1fee94b4e62d`
+- Exact public-`main` correction-base tree:
+  `2e8208e77796be405431eb3654ba51f5652b6eaa`
+- Canonical remote: `https://github.com/manfromnowhere143/odeya` (public;
+  created 2026-07-17 under ADR 0047; default branch `main`)
+- Measured remote state on 2026-07-19: all three workflow families were green
+  for the exact base; secret scanning and push protection were enabled;
+  Dependabot security updates were disabled; no repository ruleset existed;
+  and `main` was not protected.
+- Repository visibility, creation, and evidence-gated architecture-publication
+  authority: granted under ADR 0045 and ADR 0047 and reconciled by ADR 0087.
 - Runtime, deployment, external-effect, and Gate A authority: not granted
 
 This committed file cannot contain the hash of the commit that contains it
@@ -258,22 +239,23 @@ Run first:
 
 ```bash
 bash -euo pipefail <<'BASH'
-cd /Users/danielwahnich/workspace/odeya-t0-work-lease
+cd /Users/danielwahnich/workspace/odeya-gate-a-repair-20260719
 source scripts/ci/sanitize-git-environment.sh
 git status --short --branch
 git rev-parse HEAD
 git rev-parse 'HEAD^{tree}'
 git symbolic-ref --short HEAD
-git rev-parse main
+git rev-parse origin/main
 git remote -v
 git log --oneline --decorate -5
-test "$(git symbolic-ref --short HEAD)" = agent/t0-work-lease-20260716
-test "$(git rev-parse main)" = f8c71c8e3174f07619e0bbd31cb3d6df5d848361
+test "$(git symbolic-ref --short HEAD)" = agent/gate-a-repair-20260719
+test "$(git rev-parse origin/main)" = \
+  50e4bc6bfd634c7d5fe11cf0114e1fee94b4e62d
 test "$(git remote)" = origin
 test "$(git remote get-url origin)" = \
   https://github.com/manfromnowhere143/odeya.git
 git merge-base --is-ancestor \
-  f79ce3cc7c1dd300e6f3c2c54a85b200c8ca119c HEAD
+  50e4bc6bfd634c7d5fe11cf0114e1fee94b4e62d HEAD
 git diff --cached --name-only
 git diff --check
 test "$(git -C /Users/danielwahnich/workspace/odeya symbolic-ref --short HEAD)" = \
@@ -284,11 +266,12 @@ BASH
 
 Expected invariants:
 
-- the active architecture branch is `agent/t0-work-lease-20260716`;
+- the active correction branch is `agent/gate-a-repair-20260719`;
 - the canonical worktree remains on `agent/repository-release` with Daniel's
   protected UI/UX changes untouched;
-- `main` remains the exact commit recorded above;
-- the validated predecessor is an ancestor of `HEAD`;
+- public `origin/main` remains the exact correction base recorded above until
+  a separately rehearsed publication operation advances it;
+- the exact public-main correction base is an ancestor of `HEAD`;
 - the only remote is the canonical public `origin` created under ADR 0047;
 - no unexpected worktree path is dirty; and
 - Daniel's protected UI/UX lane remains outside architecture/release staging.
@@ -312,6 +295,14 @@ Their appearance in `git status` is intentional and does not authorize another
 session to edit, stage, commit, normalize, discard, or describe them as Odeya's
 accepted design. Before every architecture commit, prove that these paths are
 absent from its diff.
+
+## Historical recovery log — retained chronology, not current state
+
+The dated tranche records below preserve how the architecture evidence evolved.
+Their branch names, worktree paths, counts, blockers, and publication statements
+are historical observations for their named bytes. They do not override the
+current recovery identity, hard boundary, or next mission recorded above and
+below.
 
 ## What the repository-release tranche established
 
@@ -347,7 +338,7 @@ The predecessor evidence is retained at
 predecessor commit. A descendant never inherits it. Diagnostic evidence under
 `/private/tmp` may disappear; absence requires reproduction, never invention.
 
-## Current isolated T0 architecture descendant
+## Historical isolated T0 architecture descendant at its checkpoint
 
 The isolated architecture lane descends from the exact validated immediate
 predecessor named above. Its current candidate tree contains 112 schemas, 660
@@ -874,14 +865,14 @@ directory, outside both the Git worktree and temporary storage:
 
 ```bash
 bash -euo pipefail <<'BASH'
-cd /Users/danielwahnich/workspace/odeya-t0-work-lease
+cd /Users/danielwahnich/workspace/odeya-gate-a-repair-20260719
 source scripts/ci/sanitize-git-environment.sh
 commit="$(git rev-parse HEAD)"
 evidence="/Users/danielwahnich/workspace/odeya-release-evidence/$commit"
 test ! -e "$evidence"
 bash scripts/ci/rehearse-fresh-clone.sh \
   "$commit" \
-  /Users/danielwahnich/workspace/odeya-t0-work-lease \
+  /Users/danielwahnich/workspace/odeya-gate-a-repair-20260719 \
   "$evidence" \
   local
 python3 - "$evidence" "$commit" <<'PY'
@@ -909,8 +900,12 @@ proof.
 
 Gate A remains blocked. No executable research engine, production UI,
 infrastructure, deployment, DNS change, domain purchase, provider or MCP
-integration, paid compute, model admission, mission-data import, publication,
-public repository, remote creation, or remote push is authorized.
+integration, paid compute, model admission, mission-data import, or
+scientific-results publication is authorized. The public architecture
+repository already exists under ADR 0047. Its only authorized repository
+effect is an exact-commit, evidence-gated architecture publication performed
+under `docs/REPOSITORY_RELEASE.md`; that authority does not imply runtime,
+deployment, research-publication, external-service, or Gate A authority.
 
 The allowed work is architecture evidence: schemas, contracts, decisions,
 threat models, mathematical and physical specifications, adversarial fixtures,
@@ -943,57 +938,49 @@ A mission.
 
 ## Next architecture mission, in dependency order
 
-1. Complete T0 by closing PRQ-001–PRQ-010. ADR 0020 freezes the exact
-   nonrecursive canonical-profile candidate parameters, 21 current digest
-   domains, future profile-reference shape, and eight version axes for review,
-   while ADR 0021 freezes the first nonrecursive WorkIntent semantic-core and
-   external binding candidate. ADR 0022 retains the three immutable
-   predecessors and adds exact side-by-side WorkIntent 0.2, canonical WorkLease
-   0.2, and WorkContract 0.3 successor resources plus bounded lineage. None is
-   admitted. ADR 0023 adds WorkIntent 0.3 with exact raw source/planning
-   candidates and exact output-schema bytes while refusing to relabel raw
-   hashes as canonical identity. Disposition the retained migration findings,
-   obtain the required profile review/decision, and reissue profile-bound target
-   resources before any canonical digest. Keep admission, assignment, lease,
-   dispatch, and runtime blocked. Then resolve or explicitly version the retained
-   migration findings; close grant lifecycle, protocol origin, and data-use
-   authority contradictions; bind schema, payload, event, member, and snapshot
-   identities; separate core/evidence/seal/attestation subjects; and retain
-   typed blocked-construction receipts. The exact
-   `canonical-work-lease:0.1.0` resource and its 0.2 successor are present only
-   as unissued, identity-unresolved candidates; T0 must promote a later exact
-   identity through canonical profile, member/reducer, and accountable-review evidence, then
-   resolve C5/PRQ-009 through the prospective non-authoritative
-   WorkIntent/WorkContract and complete assignment-cohort prerequisites.
-   That reissue must also close `C5-WORK-LEASE-RELEASE-CLAIM-001`: release
-   retains the reservation claimed at attempt start for separate ResourceLedger
+1. Finish the 2026-07-19 correction tranche before extending T0: reconcile
+   public-repository operational truth; correct the PRQ-009 ordering so an
+   atomic assignment creates the worker/grant/lease/reservation cohort before a
+   derived WorkContract and a separate attempt start; eliminate the
+   physical-verification semantic false positive with typed known-bad cases;
+   and make the implementation lock fail closed for undeclared executable
+   surfaces. These corrections remain architecture evidence and do not resolve
+   the underlying profile identities or accept Gate A.
+2. Complete T0 by closing PRQ-001–PRQ-010. The canonical-profile migration
+   audit is mechanically clear, but profile issuance, accountable independent
+   review, exact member/reducer/root identities, and the remaining prerequisite
+   determinations stay open. Keep admission, assignment, lease, dispatch, and
+   runtime blocked. Resolve `C5-WORK-LEASE-RELEASE-CLAIM-001`: release retains
+   the reservation claimed at attempt start for separate ResourceLedger
    settlement; lease termination cannot erase or settle that claim.
-2. Only after all T0 evidence and exact schema/registry identities pass,
+3. Only after all T0 evidence and exact schema/registry identities pass,
    construct and prove the T1 AuthorityAssignment vertical contract.
-3. Complete the exact 42 payload schemas, 43 command records, 60 event records,
+4. Complete the exact 42 payload schemas, 43 command records, 60 event records,
    25 state/aggregate subjects, and 25 reducer records without changing the
    retained first-slice boundary by implication.
-4. Construct one digest-coherent registry/root/C0/checkpoint/witness/P0 and
+5. Construct one digest-coherent registry/root/C0/checkpoint/witness/P0 and
    inactive activation-candidate chain.
-5. Produce two non-sharing architecture-time reference reducer implementations,
+6. Produce two non-sharing architecture-time reference reducer implementations,
    fixture harnesses, and two independently isolated scientific verifier paths.
    They are design evidence, not engine runtime.
-6. Retain replay, interruption, recovery, correction fanout, resource and
+7. Retain replay, interruption, recovery, correction fanout, resource and
    authority race, proof-mission refusal, and rights-settled import evidence.
-7. Close canonical migration findings and obtain accountable statistical,
+8. Obtain accountable statistical,
    physical/metrology/VVUQ/safety, security/privacy, distributed-systems, and
    accessibility reviews.
-8. Produce one immutable candidate manifest and clean commit for Daniel's
+9. Produce one immutable candidate manifest and clean commit for Daniel's
    exact-byte accept, reject, or amend decision.
-9. Only after Gate A and separate authority: create the private canonical
-   remote, reproduce remote `main`, authorize any Gate B probes, and later ask
-   for one bounded Gate C implementation increment.
+10. Only after Gate A and separate authority: authorize any Gate B probes and
+    later ask for one bounded Gate C implementation increment. The existing
+    public architecture remote is not that authority.
 
-Remote activation additionally requires explicit operator-approved owner,
-repository name, private visibility, credential-free canonical URL, exact
-candidate commit, expected `main` ref, and canonical-source digest. Never infer
-those values from domain ownership, a local directory name, an investor plan,
-or an available GitHub account.
+Every architecture publication must bind the operator-approved public
+repository identity, exact candidate commit and tree, expected `main` ref,
+canonical-source digest, retained rehearsal evidence, and observed remote
+checks. The local pre-push hook is a workstation control, not server-side
+branch protection. As measured on 2026-07-19, the missing repository ruleset
+and disabled Dependabot security updates remain explicit account-side
+governance work; neither may be claimed complete without fresh observation.
 
 Do not skip forward because a model appears capable, a domain becomes
 available, an investor asks, or a deadline feels important. Pressure is handled
@@ -1041,7 +1028,8 @@ Before ending a future session:
 4. create a scoped local commit with an intentional message;
 5. rerun the exact-commit fresh-clone rehearsal when release bytes changed;
 6. record the branch, commit, tree, evidence location, checks, open blockers,
-   and absence of remote authority, and verify the pushed head's remote
+   exact public-repository publication authority, absence of runtime and Gate A
+   authority, and—if publication occurred—verify the pushed head's remote
    workflows are green;
 7. update this handoff when mission state or decisions materially change; and
 8. leave every unsupported claim and incomplete item explicit.

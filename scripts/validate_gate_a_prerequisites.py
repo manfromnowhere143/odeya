@@ -25,6 +25,29 @@ CANONICAL_PROFILE_CORE = (
 CANONICAL_PROFILE_EVIDENCE = (
     ROOT / "architecture/canonicalization-profile-candidate-evidence.json"
 )
+EXPECTED_REFUSAL_KEYS = frozenset(
+    {
+        "gate_a_complete",
+        "immutable_candidate_exists",
+        "runtime_authorized",
+        "deployment_authorized",
+        "external_registration_authorized",
+        "signature_or_witness_fabrication_authorized",
+    }
+)
+EXPECTED_REPOSITORY_PUBLICATION = {
+    "canonical_remote": "https://github.com/manfromnowhere143/odeya",
+    "visibility": "public",
+    "architecture_repository_authorized": True,
+    "authority_decision_ref":
+        "docs/decisions/0047-create-the-public-remote-and-publish.md",
+    "reconciliation_decision_ref":
+        "docs/decisions/0087-reconcile-public-repository-operational-contract.md",
+    "ongoing_contract_ref": "docs/REPOSITORY_RELEASE.md",
+    "runtime_authorized": False,
+    "deployment_authorized": False,
+    "gate_a_accepted": False,
+}
 
 
 class DuplicateKey(ValueError):
@@ -50,6 +73,126 @@ def load(path: Path) -> dict[str, Any]:
 def require(condition: bool, message: str, errors: list[str]) -> None:
     if not condition:
         errors.append(message)
+
+
+def repository_publication_errors(value: Any) -> list[str]:
+    if not isinstance(value, dict):
+        return ["repository_publication must be an object"]
+    errors: list[str] = []
+    if set(value) != set(EXPECTED_REPOSITORY_PUBLICATION):
+        errors.append("repository_publication members must be closed and exact")
+    for key, expected_value in EXPECTED_REPOSITORY_PUBLICATION.items():
+        if value.get(key) != expected_value:
+            errors.append(
+                f"repository_publication.{key} must equal {expected_value!r}"
+            )
+    for key in (
+        "authority_decision_ref",
+        "reconciliation_decision_ref",
+        "ongoing_contract_ref",
+    ):
+        relative = value.get(key)
+        if isinstance(relative, str) and not (ROOT / relative).is_file():
+            errors.append(
+                f"repository_publication.{key} does not resolve to a retained file"
+            )
+    return errors
+
+
+def validate_repository_publication_known_bads(errors: list[str]) -> int:
+    safe = dict(EXPECTED_REPOSITORY_PUBLICATION)
+    safe_errors = repository_publication_errors(safe)
+    if safe_errors:
+        errors.append(
+            "repository publication safe self-test was rejected: "
+            + " | ".join(safe_errors)
+        )
+    mutations = (
+        (
+            "private-remote-fiction",
+            "visibility",
+            "private",
+            "repository_publication.visibility must equal 'public'",
+        ),
+        (
+            "wrong-public-identity",
+            "canonical_remote",
+            "https://example.invalid/odeya",
+            "repository_publication.canonical_remote must equal "
+            "'https://github.com/manfromnowhere143/odeya'",
+        ),
+        (
+            "runtime-authority-escalation",
+            "runtime_authorized",
+            True,
+            "repository_publication.runtime_authorized must equal False",
+        ),
+        (
+            "gate-a-self-acceptance",
+            "gate_a_accepted",
+            True,
+            "repository_publication.gate_a_accepted must equal False",
+        ),
+    )
+    passed = 0
+    for case_id, key, replacement, expected_reason in mutations:
+        candidate = dict(safe)
+        candidate[key] = replacement
+        observed = repository_publication_errors(candidate)
+        if expected_reason in observed:
+            passed += 1
+        else:
+            errors.append(
+                f"repository publication known-bad {case_id} did not fire its "
+                f"intended reason; got {observed!r}"
+            )
+    return passed
+
+
+def refusal_boundary_errors(value: Any) -> list[str]:
+    if not isinstance(value, dict):
+        return ["refusal must be an object"]
+    errors: list[str] = []
+    if set(value) != EXPECTED_REFUSAL_KEYS:
+        errors.append("refusal members must be closed and exact")
+    for key in EXPECTED_REFUSAL_KEYS:
+        if value.get(key) is not False:
+            errors.append(f"refusal.{key} must be false")
+    return errors
+
+
+def validate_refusal_boundary_known_bads(errors: list[str]) -> int:
+    safe = {key: False for key in EXPECTED_REFUSAL_KEYS}
+    safe_errors = refusal_boundary_errors(safe)
+    if safe_errors:
+        errors.append(
+            "refusal boundary safe self-test was rejected: "
+            + " | ".join(safe_errors)
+        )
+    mutations = (
+        ("empty-refusal-object", {}, "refusal members must be closed and exact"),
+        (
+            "invented-refusal-member",
+            {"invented": False},
+            "refusal members must be closed and exact",
+        ),
+        (
+            "runtime-authority-escalation",
+            {**safe, "runtime_authorized": True},
+            "refusal.runtime_authorized must be false",
+        ),
+    )
+    passed = 0
+    for case_id, candidate, expected_reason in mutations:
+        observed = refusal_boundary_errors(candidate)
+        if expected_reason in observed:
+            passed += 1
+        else:
+            errors.append(
+                f"refusal boundary known-bad {case_id} did not fire its "
+                f"intended reason; got {observed!r}"
+            )
+    return passed
 
 
 def main() -> int:
@@ -519,12 +662,16 @@ def main() -> int:
         errors,
     )
 
-    refusal = inventory.get("refusal")
-    if not isinstance(refusal, dict):
-        errors.append("refusal must be an object")
-    else:
-        for key, value in refusal.items():
-            require(value is False, f"refusal.{key} must be false", errors)
+    publication_errors = repository_publication_errors(
+        inventory.get("repository_publication")
+    )
+    errors.extend(publication_errors)
+    repository_publication_known_bads = (
+        validate_repository_publication_known_bads(errors)
+    )
+
+    errors.extend(refusal_boundary_errors(inventory.get("refusal")))
+    refusal_boundary_known_bads = validate_refusal_boundary_known_bads(errors)
 
     if errors:
         for error in errors:
@@ -539,7 +686,10 @@ def main() -> int:
     print(
         "Gate A prerequisite closure: PASS; "
         "12 findings tracked; exact scope 43 commands / 60 events / "
-        "25 families / 11 owners; candidate remains blocked and inactive"
+        "25 families / 11 owners; "
+        f"{repository_publication_known_bads} repository-publication "
+        f"and {refusal_boundary_known_bads} refusal-boundary known-bads "
+        "rejected; candidate remains blocked and inactive"
     )
     return 0
 

@@ -64,22 +64,229 @@ FORBIDDEN_FRAGMENTS = [
     "WorkContract -> verification.assign -> WorkIntent",
     "pre-existing WorkContract -> verification.assign",
 ]
-REQUIRED_KNOWN_BADS = {
-    "legacy-preexisting-work-contract-prose-is-rejected",
-    "legacy-work-contract-as-prospective-input-is-rejected",
-    "legacy-preexisting-active-lease-is-rejected",
-    "legacy-preexisting-reservation-is-rejected",
-    "work-contract-inside-assignment-batch-is-rejected",
-    "assignment-dispatch-claim-is-rejected",
-    "incomplete-assignment-cohort-is-rejected",
-    "dispatch-before-derived-work-contract-is-rejected",
-    "premature-prq-009-closure-is-rejected",
-    "runtime-authority-from-order-contract-is-rejected",
+EXPECTED_KNOWN_BAD_SPECS = {
+    "legacy-preexisting-work-contract-prose-is-rejected": {
+        "mutation": {
+            "target": "consumer_text",
+            "path": "docs/TRANSACTION_MODEL.md",
+            "operation": "prepend",
+            "value": "`verification.assign` atomically binds one exact local WorkContract",
+        },
+        "expected_refusal_contains":
+            "docs/TRANSACTION_MODEL.md contains forbidden legacy assignment-order fragment",
+    },
+    "legacy-work-contract-as-prospective-input-is-rejected": {
+        "mutation": {
+            "target": "contract",
+            "operation": "replace",
+            "pointer": "/assignment_commit/prospective_work_input",
+            "value": "WorkContract",
+        },
+        "expected_refusal_contains":
+            "assignment prospective work input is not WorkIntent",
+    },
+    "legacy-preexisting-work-contract-flag-is-rejected": {
+        "mutation": {
+            "target": "contract",
+            "operation": "replace",
+            "pointer": "/assignment_commit/preexisting_work_contract_allowed",
+            "value": True,
+        },
+        "expected_refusal_contains":
+            "assignment permits a pre-existing WorkContract",
+    },
+    "legacy-preexisting-active-lease-is-rejected": {
+        "mutation": {
+            "target": "contract",
+            "operation": "replace",
+            "pointer": "/assignment_commit/preexisting_active_work_lease_allowed",
+            "value": True,
+        },
+        "expected_refusal_contains":
+            "assignment permits a pre-existing active WorkLease",
+    },
+    "legacy-preexisting-reservation-is-rejected": {
+        "mutation": {
+            "target": "contract",
+            "operation": "replace",
+            "pointer": "/assignment_commit/preexisting_resource_reservation_allowed",
+            "value": True,
+        },
+        "expected_refusal_contains":
+            "assignment permits a pre-existing resource reservation",
+    },
+    "work-contract-inside-assignment-batch-is-rejected": {
+        "mutation": {
+            "target": "contract",
+            "operation": "replace",
+            "pointer": "/work_contract_derivation/member_of_assignment_event_batch",
+            "value": True,
+        },
+        "expected_refusal_contains":
+            "WorkContract is not exclusively post-assignment",
+    },
+    "assignment-dispatch-claim-is-rejected": {
+        "mutation": {
+            "target": "contract",
+            "operation": "replace",
+            "pointer": "/assignment_commit/dispatch_claim_created",
+            "value": True,
+        },
+        "expected_refusal_contains": "assignment creates a dispatch claim",
+    },
+    "incomplete-assignment-cohort-is-rejected": {
+        "mutation": {
+            "target": "contract",
+            "operation": "remove",
+            "pointer": "/assignment_commit/event_order_exact/12",
+        },
+        "expected_refusal_contains":
+            "assignment event order is not the exact thirteen-event cohort",
+    },
+    "dispatch-before-derived-work-contract-is-rejected": {
+        "mutation": {
+            "target": "contract",
+            "operation": "replace",
+            "pointer": "/dispatch_claim/phase",
+            "value": "same_assignment_commit",
+        },
+        "expected_refusal_contains":
+            "attempt.start is not a separate post-WorkContract commit",
+    },
+    "premature-prq-009-closure-is-rejected": {
+        "mutation": {
+            "target": "contract",
+            "operation": "replace",
+            "pointer": "/current_evidence_boundary/status",
+            "value": "resolved",
+        },
+        "expected_refusal_contains":
+            "PRQ-009 evidence boundary is not unresolved_blocking",
+    },
+    "runtime-authority-from-order-contract-is-rejected": {
+        "mutation": {
+            "target": "contract",
+            "operation": "replace",
+            "pointer": "/current_evidence_boundary/runtime_authorized",
+            "value": True,
+        },
+        "expected_refusal_contains":
+            "assignment-order evidence claims runtime authority",
+    },
+    "unexpected-top-level-authority-member-is-rejected": {
+        "mutation": {
+            "target": "contract",
+            "operation": "add",
+            "pointer": "/runtime_authorized",
+            "value": True,
+        },
+        "expected_refusal_contains":
+            "assignment-order contract members are not closed and exact",
+    },
+    "unexpected-assignment-dispatch-member-is-rejected": {
+        "mutation": {
+            "target": "contract",
+            "operation": "add",
+            "pointer": "/assignment_commit/unrestricted_dispatch_authorized",
+            "value": True,
+        },
+        "expected_refusal_contains":
+            "assignment_commit members are not closed and exact",
+    },
+    "weakened-active-consumer-fragments-are-rejected": {
+        "mutation": {
+            "target": "contract",
+            "operation": "remove",
+            "pointer": "/active_consumer_audit/0/required_fragments/0",
+        },
+        "expected_refusal_contains":
+            "active consumer specifications drifted from the pinned exact "
+            "path/disposition/fragment matrix",
+    },
 }
+REQUIRED_KNOWN_BADS = frozenset(EXPECTED_KNOWN_BAD_SPECS)
+CONTRACT_KEYS = {
+    "contract_id",
+    "version",
+    "artifact_class",
+    "status",
+    "canonical_order",
+    "assignment_commit",
+    "work_contract_derivation",
+    "dispatch_claim",
+    "current_evidence_boundary",
+    "consumer_census_scope",
+    "active_consumer_audit",
+    "superseded_consumer_audit",
+    "forbidden_active_consumer_fragments",
+}
+ASSIGNMENT_COMMIT_KEYS = {
+    "command_type",
+    "prospective_work_input",
+    "preexisting_work_contract_allowed",
+    "preexisting_active_work_lease_allowed",
+    "preexisting_resource_reservation_allowed",
+    "atomic_commit",
+    "intermediate_visibility",
+    "role_slot_order",
+    "event_order_exact",
+    "creates_or_binds",
+    "source_bytes_visible",
+    "launch_outbox_created",
+    "dispatch_claim_created",
+}
+DISPATCH_CLAIM_KEYS = {
+    "command_type",
+    "phase",
+    "requires_derived_work_contract",
+    "rechecks_current_assignment_facts",
+    "claims_assignment_reservation",
+    "may_cross_execution_boundary_only_after_commit",
+}
+EVIDENCE_BOUNDARY_KEYS = {
+    "prerequisite_id",
+    "status",
+    "required_identities_and_members_exist",
+    "command_or_event_admitted",
+    "gate_a_accepted",
+    "runtime_authorized",
+}
+EXPECTED_ACTIVE_CONSUMER_AUDIT_SHA256 = (
+    "b009a66f82084a10e8ae4a10c80e1518ab8e69395c4ca7a09ac6a331d57a34c6"
+)
+EXPECTED_SUPERSEDED_CONSUMER_AUDIT_SHA256 = (
+    "2b64ef7d3a64c8f33483221d5bf8e7254d702a5f086470b8b6673db64021fd10"
+)
+
+
+class DuplicateKey(ValueError):
+    """Raised when JSON would otherwise silently replace an earlier member."""
+
+
+def strict_pairs(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+    value: dict[str, Any] = {}
+    for key, item in pairs:
+        if key in value:
+            raise DuplicateKey(key)
+        value[key] = item
+    return value
 
 
 def load_json(path: Path) -> Any:
-    return json.loads(path.read_text(encoding="utf-8"))
+    return json.loads(
+        path.read_text(encoding="utf-8"),
+        object_pairs_hook=strict_pairs,
+    )
+
+
+def canonical_json_sha256(value: Any) -> str:
+    payload = json.dumps(
+        value,
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=False,
+    ).encode("utf-8")
+    return hashlib.sha256(payload).hexdigest()
 
 
 def load_consumer_texts(contract: dict[str, Any]) -> tuple[dict[str, str], list[str]]:
@@ -111,11 +318,21 @@ def consumer_errors(contract: dict[str, Any], texts: dict[str, str]) -> list[str
     active = contract.get("active_consumer_audit")
     if not isinstance(active, list):
         return ["active_consumer_audit is not a list"]
+    if canonical_json_sha256(active) != EXPECTED_ACTIVE_CONSUMER_AUDIT_SHA256:
+        errors.append(
+            "active consumer specifications drifted from the pinned exact "
+            "path/disposition/fragment matrix"
+        )
 
     observed: dict[str, str] = {}
     for index, entry in enumerate(active):
         if not isinstance(entry, dict):
             errors.append(f"active_consumer_audit[{index}] is not an object")
+            continue
+        if set(entry) != {"path", "disposition", "required_fragments"}:
+            errors.append(
+                f"active_consumer_audit[{index}] members are not closed and exact"
+            )
             continue
         path = entry.get("path")
         disposition = entry.get("disposition")
@@ -169,10 +386,22 @@ def consumer_errors(contract: dict[str, Any], texts: dict[str, str]) -> list[str
     superseded = contract.get("superseded_consumer_audit")
     if not isinstance(superseded, list):
         return [*errors, "superseded_consumer_audit is not a list"]
+    if (
+        canonical_json_sha256(superseded)
+        != EXPECTED_SUPERSEDED_CONSUMER_AUDIT_SHA256
+    ):
+        errors.append(
+            "superseded consumer specifications drifted from the pinned exact matrix"
+        )
     observed_superseded: dict[str, str] = {}
     for index, entry in enumerate(superseded):
         if not isinstance(entry, dict):
             errors.append(f"superseded_consumer_audit[{index}] is not an object")
+            continue
+        if set(entry) != {"path", "required_status_fragment", "reason"}:
+            errors.append(
+                f"superseded_consumer_audit[{index}] members are not closed and exact"
+            )
             continue
         path = entry.get("path")
         status = entry.get("required_status_fragment")
@@ -274,6 +503,8 @@ def structural_consumer_errors() -> list[str]:
 
 def contract_errors(contract: dict[str, Any], texts: dict[str, str]) -> list[str]:
     errors: list[str] = []
+    if set(contract) != CONTRACT_KEYS:
+        errors.append("assignment-order contract members are not closed and exact")
     if contract.get("contract_id") != "odeya.prq-009-assignment-order-consistency":
         errors.append("assignment-order contract ID drifted")
     if contract.get("version") != "1.0.0":
@@ -291,7 +522,14 @@ def contract_errors(contract: dict[str, Any], texts: dict[str, str]) -> list[str
     ):
         errors.append("assignment-order consumer census scope drifted or overclaims completeness")
 
-    assignment = contract.get("assignment_commit", {})
+    assignment_value = contract.get("assignment_commit")
+    if not isinstance(assignment_value, dict):
+        errors.append("assignment_commit is not an object")
+        assignment: dict[str, Any] = {}
+    else:
+        assignment = assignment_value
+        if set(assignment) != ASSIGNMENT_COMMIT_KEYS:
+            errors.append("assignment_commit members are not closed and exact")
     if assignment.get("command_type") != "verification.assign":
         errors.append("assignment command is not verification.assign")
     if assignment.get("prospective_work_input") != "WorkIntent":
@@ -317,7 +555,12 @@ def contract_errors(contract: dict[str, Any], texts: dict[str, str]) -> list[str
     if assignment.get("dispatch_claim_created") is not False:
         errors.append("assignment creates a dispatch claim")
 
-    derivation = contract.get("work_contract_derivation", {})
+    derivation_value = contract.get("work_contract_derivation")
+    if not isinstance(derivation_value, dict):
+        errors.append("work_contract_derivation is not an object")
+        derivation: dict[str, Any] = {}
+    else:
+        derivation = derivation_value
     expected_derivation = {
         "artifact_type": "WorkContract",
         "phase": "after_exact_successful_assignment_commit",
@@ -330,7 +573,14 @@ def contract_errors(contract: dict[str, Any], texts: dict[str, str]) -> list[str
     if derivation != expected_derivation:
         errors.append("WorkContract is not exclusively post-assignment")
 
-    dispatch = contract.get("dispatch_claim", {})
+    dispatch_value = contract.get("dispatch_claim")
+    if not isinstance(dispatch_value, dict):
+        errors.append("dispatch_claim is not an object")
+        dispatch: dict[str, Any] = {}
+    else:
+        dispatch = dispatch_value
+        if set(dispatch) != DISPATCH_CLAIM_KEYS:
+            errors.append("dispatch_claim members are not closed and exact")
     if dispatch.get("command_type") != "attempt.start":
         errors.append("dispatch claim command is not attempt.start")
     if dispatch.get("phase") != "separate_post_work_contract_commit":
@@ -344,7 +594,16 @@ def contract_errors(contract: dict[str, Any], texts: dict[str, str]) -> list[str
     if dispatch.get("may_cross_execution_boundary_only_after_commit") is not True:
         errors.append("execution may cross before the attempt.start commit")
 
-    boundary = contract.get("current_evidence_boundary", {})
+    boundary_value = contract.get("current_evidence_boundary")
+    if not isinstance(boundary_value, dict):
+        errors.append("current_evidence_boundary is not an object")
+        boundary: dict[str, Any] = {}
+    else:
+        boundary = boundary_value
+        if set(boundary) != EVIDENCE_BOUNDARY_KEYS:
+            errors.append(
+                "current_evidence_boundary members are not closed and exact"
+            )
     if boundary.get("prerequisite_id") != "PRQ-009":
         errors.append("evidence boundary is not PRQ-009")
     if boundary.get("status") != "unresolved_blocking":
@@ -398,6 +657,12 @@ def mutate_contract(contract: dict[str, Any], mutation: dict[str, Any]) -> dict[
             del parent[token]
         else:
             raise ValueError("remove target does not exist")
+    elif operation == "add":
+        if not isinstance(parent, dict):
+            raise ValueError("add target parent is not an object")
+        if token in parent:
+            raise ValueError("add target already exists")
+        parent[token] = deepcopy(mutation.get("value"))
     else:
         raise ValueError(f"unsupported contract mutation operation {operation!r}")
     if candidate == contract:
@@ -411,6 +676,13 @@ def evaluate_known_bads(
     cases_document: dict[str, Any],
 ) -> list[str]:
     errors: list[str] = []
+    if set(cases_document) != {
+        "suite_id",
+        "version",
+        "evidence_class",
+        "cases",
+    }:
+        errors.append("known-bad suite members are not closed and exact")
     if cases_document.get("suite_id") != "odeya.prq-009-assignment-order-known-bads":
         errors.append("known-bad suite ID drifted")
     if cases_document.get("version") != "1.0.0":
@@ -438,6 +710,14 @@ def evaluate_known_bads(
             errors.append(f"known-bad case {index} is not an object")
             continue
         name = case.get("name", f"case[{index}]")
+        if set(case) != {
+            "name",
+            "kind",
+            "mutation",
+            "expected_refusal_contains",
+        }:
+            errors.append(f"{name}: known-bad case members are not closed and exact")
+            continue
         if case.get("kind") != "known_bad":
             errors.append(f"{name}: kind is not known_bad")
             continue
@@ -448,6 +728,17 @@ def evaluate_known_bads(
             continue
         if not isinstance(mutation, dict):
             errors.append(f"{name}: mutation is not an object")
+            continue
+        expected_spec = EXPECTED_KNOWN_BAD_SPECS.get(name)
+        observed_spec = {
+            "mutation": mutation,
+            "expected_refusal_contains": expected,
+        }
+        if expected_spec != observed_spec:
+            errors.append(
+                f"{name}: mutation/refusal specification drifted from the "
+                "pinned known-bad matrix"
+            )
             continue
 
         candidate = contract
@@ -489,7 +780,7 @@ def main() -> int:
     try:
         contract = load_json(CONTRACT_PATH)
         cases_document = load_json(CASES_PATH)
-    except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+    except (OSError, UnicodeError, json.JSONDecodeError, DuplicateKey) as exc:
         print(f"PRQ-009 assignment-order validation: FAIL — {exc}", file=sys.stderr)
         return 1
     if not isinstance(contract, dict) or not isinstance(cases_document, dict):

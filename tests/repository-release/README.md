@@ -6,4 +6,12 @@ The cases cover write permission expansion, trigger replacement and trigger inje
 
 The exact mutations are in [cases.json](cases.json).
 
+Five release-contract mutations separately prove that the checker refuses a
+return to the future-private-remote fiction, substitution of the exact public
+remote identity, publication to `main` without exact evidence, and a claim
+that the local hook is server-side protection. The fifth appends a contradictory
+private/no-remote claim without removing any required positive sentence, so
+positive-phrase stuffing cannot pass. They mutate the current contract in
+memory and must fail for the named boundary.
+
 `scripts/compare_rehearsal_manifests.py --self-test` rejects nine drift classes, including shared-invalid manifest contracts, duplicate/missing paths, and a retained-file hash mismatch, before any local/remote rehearsal comparison is trusted.

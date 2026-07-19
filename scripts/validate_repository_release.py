@@ -156,6 +156,61 @@ GIT_ENVIRONMENT_TO_REMOVE = (
     "GIT_TRANSPORT_HELPER_DEBUG",
     "GIT_WORK_TREE",
 )
+RELEASE_CONTRACT_REQUIRED = (
+    "The public canonical remote already exists at\n"
+    "`https://github.com/manfromnowhere143/odeya`; its default branch is `main`.",
+    "No architecture commit may be pushed to `main`",
+    "complete local fresh-clone rehearsal",
+    "Workers do not receive repository credentials",
+    "refs/heads/main",
+    "CANDIDATE_COMMIT",
+    "invariant-profile comparison receipt",
+    "approved-canonical-source-sha256",
+    "A local hook is not server-side branch protection",
+    "no repository ruleset",
+    "does not authorize runtime",
+)
+RELEASE_CONTRACT_FORBIDDEN = (
+    "canonical repository is private",
+    "canonical remote remains private",
+    "no remote exists",
+    "remote does not exist",
+    "local hook is server-side branch protection",
+    "architecture publication authorizes runtime",
+    "repository release authorizes runtime",
+)
+EXPECTED_RELEASE_CONTRACT_MUTATIONS = {
+    "future-private-remote-regression": (
+        "The public canonical remote already exists at\n"
+        "`https://github.com/manfromnowhere143/odeya`; its default branch is `main`.",
+        "The canonical remote remains private and may later be created at\n"
+        "`https://github.com/manfromnowhere143/odeya`; its default branch is `main`.",
+        "The public canonical remote already exists",
+    ),
+    "wrong-public-remote-identity": (
+        "The public canonical remote already exists at\n"
+        "`https://github.com/manfromnowhere143/odeya`; its default branch is `main`.",
+        "The public canonical remote already exists at\n"
+        "`https://github.com/example/other`; its default branch is `main`.",
+        "https://github.com/manfromnowhere143/odeya",
+    ),
+    "unbound-main-publication": (
+        "No architecture commit may be pushed to `main`",
+        "An architecture commit may be pushed to `main` without exact evidence",
+        "No architecture commit may be pushed to `main`",
+    ),
+    "local-hook-claimed-as-server-protection": (
+        "A local hook is not server-side branch protection.",
+        "A local hook is server-side branch protection.",
+        "A local hook is not server-side branch protection",
+    ),
+    "appended-private-remote-contradiction": (
+        "It is\nhistory, not a procedure to rerun.",
+        "It is\nhistory, not a procedure to rerun. The canonical repository is "
+        "private and no remote exists.",
+        "forbidden contradictory statement 'canonical repository is private'",
+    ),
+}
 GIT_ENVIRONMENT_TO_FIX = {
     "GIT_ATTR_NOSYSTEM": "1",
     "GIT_CONFIG_COUNT": "0",
@@ -590,6 +645,93 @@ def validate_policy_mutations(errors: list[str]) -> int:
     return passed
 
 
+def release_contract_errors(text: str) -> list[str]:
+    errors = [
+        f"missing release authority boundary {required!r}"
+        for required in RELEASE_CONTRACT_REQUIRED
+        if required not in text
+    ]
+    lowered = text.lower()
+    errors.extend(
+        f"forbidden contradictory statement {forbidden!r}"
+        for forbidden in RELEASE_CONTRACT_FORBIDDEN
+        if forbidden in lowered
+    )
+    return errors
+
+
+def validate_release_contract_mutations(errors: list[str]) -> int:
+    cases = load_json("tests/repository-release/cases.json", errors)
+    if not isinstance(cases, dict):
+        return 0
+    relative = cases.get("release_contract")
+    mutations = cases.get("release_contract_mutations")
+    if not isinstance(relative, str) or not isinstance(mutations, list):
+        errors.append("repository release contract mutations: inventory is absent")
+        return 0
+    if relative != "docs/REPOSITORY_RELEASE.md":
+        errors.append(
+            "repository release contract mutations: subject path is not exact"
+        )
+    observed_ids = [
+        case.get("id")
+        for case in mutations
+        if isinstance(case, dict)
+    ]
+    if (
+        len(observed_ids) != len(mutations)
+        or any(not isinstance(case_id, str) for case_id in observed_ids)
+        or len(set(observed_ids)) != len(observed_ids)
+        or set(observed_ids) != set(EXPECTED_RELEASE_CONTRACT_MUTATIONS)
+    ):
+        errors.append(
+            "repository release contract mutations: case census is not closed and exact"
+        )
+    base = read(relative, errors)
+    passed = 0
+    for case in mutations:
+        if not isinstance(case, dict):
+            errors.append("repository release contract mutations: case is not an object")
+            continue
+        if set(case) != {"id", "old", "new", "expected"}:
+            errors.append(
+                "repository release contract mutations: case members are not closed and exact"
+            )
+            continue
+        case_id = case.get("id")
+        old = case.get("old")
+        new = case.get("new")
+        expected = case.get("expected")
+        if not all(
+            isinstance(value, str) and value
+            for value in (case_id, old, new, expected)
+        ):
+            errors.append("repository release contract mutations: malformed case")
+            continue
+        expected_spec = EXPECTED_RELEASE_CONTRACT_MUTATIONS.get(case_id)
+        if expected_spec != (old, new, expected):
+            errors.append(
+                f"repository release contract mutation {case_id}: "
+                "specification drifted from the pinned matrix"
+            )
+            continue
+        if base.count(old) != 1:
+            errors.append(
+                f"repository release contract mutation {case_id}: "
+                f"expected one source occurrence, found {base.count(old)}"
+            )
+            continue
+        mutation_issues = release_contract_errors(base.replace(old, new, 1))
+        if not any(expected in issue for issue in mutation_issues):
+            errors.append(
+                f"repository release contract mutation {case_id}: expected "
+                f"{expected!r} refusal, got {mutation_issues}"
+            )
+            continue
+        passed += 1
+    return passed
+
+
 def validate_workflows(lock: dict[str, Any], errors: list[str]) -> tuple[int, int]:
     workflow_dir = ROOT / ".github/workflows"
     actual = {
@@ -823,18 +965,8 @@ def validate_supporting_files(errors: list[str]) -> None:
         if required not in security:
             errors.append(f".github/SECURITY.md: missing security boundary {required!r}")
     release_contract = read("docs/REPOSITORY_RELEASE.md", errors)
-    for required in (
-        "Gate A has an accepted immutable candidate manifest",
-        "No remote may be created and no byte may be pushed",
-        "complete local fresh-clone rehearsal",
-        "Workers do not receive repository credentials",
-        "refs/heads/main",
-        "CANDIDATE_COMMIT",
-        "invariant-profile comparison receipt",
-        "approved-canonical-source-sha256",
-    ):
-        if required not in release_contract:
-            errors.append(f"docs/REPOSITORY_RELEASE.md: missing release authority boundary {required!r}")
+    for issue in release_contract_errors(release_contract):
+        errors.append(f"docs/REPOSITORY_RELEASE.md: {issue}")
     gitleaks_ignore = [
         line.strip()
         for line in read(".gitleaksignore", errors).splitlines()
@@ -899,6 +1031,7 @@ BARE_INTERPRETER_SCRIPTS = (
     "tests/canonicalization/compare_results.py",
     "tests/canonicalization/audit_schemas.py",
     "scripts/validate_gate_a_prerequisites.py",
+    "scripts/validate_prq_009_assignment_order.py",
     "scripts/validate_schema_resource_reissues.py",
     "scripts/validate_lifecycle_guard_coverage.py",
     "scripts/validate_lifecycle_condition_coverage.py",
@@ -965,6 +1098,7 @@ def main() -> int:
     validate_git_environment_sanitizer(errors)
     python_lock_mutation_count = validate_python_lock(errors)
     action_count, policy_mutation_count = validate_workflows(lock, errors)
+    release_contract_mutation_count = validate_release_contract_mutations(errors)
     validate_release_scripts(lock, errors)
     validate_supporting_files(errors)
     validate_tla_pin_copies(errors)
@@ -984,10 +1118,14 @@ def main() -> int:
     print(f"- {len(WORKFLOWS)} least-privilege workflows")
     print(f"- {action_count} immutable GitHub Action references")
     print(f"- {policy_mutation_count} known-bad workflow policy mutations rejected")
+    print(
+        f"- {release_contract_mutation_count} known-bad release-contract "
+        "mutations rejected"
+    )
     print(f"- {python_lock_mutation_count} known-bad Python lock mutations rejected")
     print("- 1 exact README Mermaid architecture map")
     print("- Python, Node/npm, Java, ShellCheck, Actionlint, Zizmor, Gitleaks, Mermaid, Markdownlint, and TLA+ toolchains bounded")
-    print("- architecture-only static release policy; no remote, runtime, or Gate A authority")
+    print("- architecture-only public-repository policy; no runtime or Gate A authority")
     return 0
 
 

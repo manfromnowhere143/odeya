@@ -1,6 +1,6 @@
 # Architecture Working Checkpoint Status
 
-Status timestamp: 2026-07-17, Asia/Jerusalem. This is an evidence-backed working checkpoint, not a frozen Gate A candidate, operator acceptance, or implementation authorization. Product/runtime work remains prohibited.
+Status timestamp: 2026-07-19, Asia/Jerusalem. This is an evidence-backed working checkpoint, not a frozen Gate A candidate, operator acceptance, or implementation authorization. Product/runtime work remains prohibited.
 
 ## Locked operator constraints
 
@@ -29,7 +29,7 @@ This design fits the strongest retained lessons from the three proof missions. I
 | --- | --- | --- |
 | Foundation corpus | 112 Draft 2020-12 schemas; 660 valid/adversarial shared-manifest cases; 7 founding cross-field groups; 12 mandatory isolated contract suites; 3 bounded architecture-evidence checks; 1 repository release-surface check | The full architecture validator passes. Structural and bounded semantic evidence is not runtime or Gate A evidence |
 | Lifecycle guard evidence | Guard coverage is measured by mutation and gated: of 139 refusal statements across six checker functions, 89 are reachable by a retained known-bad case and 50 are not; every adversarial case is bound to the exact guard that must refuse it; the record is pinned to the checker digest and re-measured in the fresh-clone rehearsal (ADR 0024–0030) | Statement reachability only. The conditions inside all 139 guards are unmeasured, weakening a condition is not detected, the denominator has been corrected three times by independent review, and none of this proves a guard enforces the right rule |
-| Repository release surface | One exact README identity sentence and render-validated Mermaid source; architecture-only least-privilege workflows with full-SHA Action uses; exact-version Python/Node/Java inputs; hash-locked Python dependencies; integrity-locked npm dependencies; digest-verified fallback tool archives; Markdown, shell, workflow, bounded dependency-freshness, and fresh-clone harnesses | Local candidate only. No remote, required GitHub check, branch rule, visibility decision, push, runtime, or Gate A authority exists until the release gate is separately satisfied |
+| Repository release surface | One exact README identity sentence and render-validated Mermaid source; architecture-only least-privilege workflows with full-SHA Action uses; exact-version Python/Node/Java inputs; hash-locked Python dependencies; integrity-locked npm dependencies; digest-verified fallback tool archives; Markdown, shell, workflow, bounded dependency-freshness, and fresh-clone harnesses | The public architecture repository exists under ADR 0047 and exact-commit publication is evidence-gated. On 2026-07-19 its three workflow families were green and secret scanning plus push protection were enabled; no ruleset existed, `main` was unprotected, and Dependabot security updates were disabled. The local hook is not server protection. None of this grants runtime, deployment, scientific-publication, or Gate A authority |
 | Command/event surface | `CommandEnvelope` 0.5.0 and `CommandReceipt` 0.4.0 are explicitly nonconstructible structural candidates over the 121-selector design vocabulary retained from exact historical `CommandEnvelope` 0.4.0 bytes; `ResearchEvent` 0.7.0 has 135 closed branches; 62 schema-valid event fixtures and 16 schema-valid replay traces are retained within 186 direct event/trace manifest cases | Every design command/event remains non-admitted until exact immutable members, identities, and activation exist |
 | Registry/root graph | Six registry/root/activation schema subjects validate; the proposed logical manifest v2 covers 9 layers, 30 modules, 47 aggregate owners, 112 schema owners, 121 command owners, and 135 event owners | Ownership and acyclic subject shape are present; no real registry snapshot, root, checkpoint, activation, or handler-set equality exists |
 | Cognitive controls | 150 cases pass, including 18 bounded semantic checks over state views, graph deltas/transitions, WorkIntent/blocked WorkContract boundaries, model configuration, and routing plus retained local-dispatch refusals | Models remain proposal/evidence producers; routing is not dispatch or independence authority |
@@ -73,7 +73,7 @@ The bounded scope, cohorts, C5 refusal boundary, and construction gaps are in th
 | G1 scientific/mathematical | Partial | Registry enrollment, cross-record/unit/method resolution, independent implementations, broader property vectors, and statistical/physical-domain review |
 | G2 domain/lifecycle | Blocked | C5/PRQ-009 lacks a resolved assignable WorkIntent and complete assignment cohort; after closing it, construct the remaining exact payload, command, event, state, and reducer members and run composite atomicity/replay evidence |
 | G3 security/authority | Partial | Accepted root/assignment/grant/quorum contracts, real policy/member instances, race traces, independent security/privacy review, and operator decision |
-| G4 evidence/memory | Blocked | Canonical migration blockers, witnessed retained roots, exact provenance/export mappings, and deletion/legal-hold/recovery replay |
+| G4 evidence/memory | Blocked | Canonical-profile issuance and accountable review, witnessed retained roots, exact provenance/export mappings, and deletion/legal-hold/recovery replay |
 | G5 evaluation/learning | Partial | Pinned holdouts/known-bads, validated graders, matched-budget oracles, contamination process, and grounded promotion evidence |
 | G6 modules/interfaces | Partial | The logical manifest passes, but real registry records, source/package import enforcement, port conformance, and handler equality do not exist |
 | G7 reliability/operations | Partial | Deployment-profile isolation/locking, RPO/RTO, witness/key/trust profiles, restore/fork trials, and independent distributed-systems review |
@@ -94,7 +94,7 @@ No row is passed.
 | A-005 | Critical | C7/C8 are bounded, but C5/PRQ-009 remains unresolved: WorkIntent 0.3 has exact raw targets but no admitted canonical identity or complete assignment binding; exact local execution/reducer members, materialization/refinement replay, and a real witnessed P0 activation instance are also absent | Reissued admitted WorkIntent/WorkContract/ResearchEvent/EventContractRecord identities; exact 13-event assignment, lease/materialization/sandbox/attempt records; sole Verification reducer record; clear root/C0/checkpoint/witness/P0 chain; composite recovery traces; and independent review |
 | A-006 | Critical | Publication settlement is not independently proven replay-complete | Exact seal/grant/effect identities, both arrival orders, ambiguity/reconciliation, withdrawal/correction fanout, and projection equality |
 | A-007 | High | Semantic rules are specified but not admitted with two implementations | Frozen registry entries, exact inputs/outputs, known-bad vectors, cross-object traces, and discrepancy handling |
-| A-008 | Critical | Canonicalization migration audit remains blocked despite two-path vector agreement | Resolve or explicitly version every audit finding, then rerun the retained audit and cross-runtime conformance |
+| A-008 | Critical | The canonicalization migration audit is mechanically clear and both pinned implementations agree, but the profile is unissued and lacks accountable independent review | Retain the zero-blocker audit, issue exact profile/member identities only after accountable review and operator decision, then rerun cross-runtime conformance on the exact candidate |
 | A-009 | High | The composite proof slice is not rights-settled or sealed and has not been replayed through Odeya | Per-artifact decisions, immutable import manifest/root, two clean verifier paths, composite replay/recovery/fanout package |
 | A-010 | High | Threat and privacy assumptions lack accountable external review | Closed review of trust zones, prompt/data attacks, secrets, authority, witnesses, recovery, projections, and effects |
 | A-011 | High | Mathematical and physical contracts lack accountable expert review and real-world evidence | Named statistical/metrology/VVUQ/safety review, accepted limitations, admitted methods, and real/synthetic falsifiers |
@@ -125,8 +125,11 @@ Schema validation proves only the declared structural language and bounded local
 
 - no engine runtime, application services, or production UI;
 - no database, workflow, object-store, policy, sandbox, model, or laboratory provisioning;
-- no engine/runtime provider, MCP, repository, publication, payment, trading, or physical integration; architecture-only repository validation is the sole repository exception;
-- no DNS/domain/company/public-repository action;
+- no engine/runtime provider, MCP, mission-repository, research-publication,
+  payment, trading, or physical integration; evidence-gated architecture
+  publication is the sole repository-effect exception;
+- no DNS/domain/company action and no repository effect outside the
+  exact-commit architecture-publication contract;
 - no source import from Sentinel, Telos, Inbar, Maestro, or Aweb;
 - no training, fine-tuning, recursive self-modification, deployment, publication, or physical authority.
 
@@ -138,7 +141,9 @@ Architecture validators, schemas, fixtures, bounded models, and review plans are
 2. Build the 42 payload, 25 state, 25 reducer, 60 event, and 43 command records in dependency order with exact cohort/authority alternatives.
 3. Instantiate reviewed registry/root/C0/checkpoint/witness/P0/activation candidates and prove exact member/handler equality.
 4. Execute two independent reducers and two clean proof-mission verifier paths, including replay, recovery, correction fanout, and refusal cases.
-5. Close canonicalization migration blockers and obtain accountable domain/security/privacy/distributed/accessibility reviews.
+5. Preserve the zero-blocker canonicalization audit, obtain the profile
+   issuance decision, and obtain accountable
+   domain/security/privacy/distributed/accessibility reviews.
 6. Produce an exact candidate manifest and clean commit; rerun every suite against those bytes.
 7. Ask Daniel to accept, reject, or amend the candidate. Acceptance alone still does not authorize runtime product work.
 

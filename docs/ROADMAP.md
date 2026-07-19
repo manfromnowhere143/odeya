@@ -8,7 +8,8 @@ The roadmap is gated by retained evidence, not calendar optimism. Each phase ear
 
 Deliverables:
 
-- independent private repository and charter;
+- independent public architecture repository, private engine boundary, and
+  charter;
 - architecture, research protocol, authority, memory, evaluation, UI/UX, and thesis-intake specifications;
 - typed mission, event, and claim schemas;
 - bounded proof-layer snapshot for Sentinel, Telos, and Inbar;
@@ -140,22 +141,38 @@ Company building runs beside, not inside, the scientific kernel:
 
 The provisional address is `odeya.danielwahnich.dev`. `odeya.ai` was quoted by Vercel at USD 160 for two years on 2026-07-15 and was not purchased.
 
-No outreach, purchase, public repository, or legal filing is authorized merely by this roadmap.
+The public architecture repository was separately authorized and created under
+ADR 0047. No outreach, purchase, engine publication, visibility change, or
+legal filing is authorized merely by this roadmap.
 
-## Repository release gate — deferred
+## Public architecture publication — active and evidence-gated
 
-Creating or pushing the canonical Odeya remote is a separately authorized release operation, not a side effect of architecture work. The engine repository remains private by default. Release is eligible only after the operator approves the exact destination and visibility, the accepted architecture checkpoint is immutable, the implementation boundary is truthful, and the release candidate passes from a fresh clone.
+The canonical public architecture remote already exists at
+`https://github.com/manfromnowhere143/odeya`. It contains architecture evidence,
+not an implemented engine and not private mission data. Every later
+architecture publication remains an exact-commit external operation governed
+by [Repository Release Engineering](REPOSITORY_RELEASE.md): clean scope,
+fresh-clone rehearsal, retained evidence, guarded fast-forward publication,
+observed remote checks, and remote-main reproduction.
 
-The first remote-ready repository must include:
+The published architecture bytes must retain:
 
 - a short README whose opening sentence says exactly what Odeya is, followed by its current state, explicit non-claims, and the bounded proof relationship to Sentinel, Telos, and Inbar;
 - one memorable Mermaid architecture map derived from the accepted contracts and module manifest, with scientific state, authority, evidence, verification, and external-effect boundaries visible rather than decorative;
 - required fast pull-request checks plus separately visible exhaustive schema, semantic, adversarial, canonicalization, architecture-evidence, and formal-model checks;
-- GitHub Actions pinned to immutable revisions, least-privilege token permissions, explicit concurrency and timeout limits, protected required checks, retained failure evidence, and no secret-bearing untrusted execution;
+- GitHub Actions pinned to immutable revisions, least-privilege token
+  permissions, explicit concurrency and timeout limits, retained failure
+  evidence, and no secret-bearing untrusted execution; once separately
+  authorized and configured, a server-side ruleset must require the observed
+  check contexts before they may be called protected;
 - security and supply-chain checks appropriate to the implemented stack, enabled when their subject actually exists rather than claimed in advance;
 - a fresh-clone rehearsal proving that the README commands, Mermaid rendering, validation environment, and required checks reproduce without local hidden state.
 
-No remote creation, visibility change, branch-protection mutation, or push is authorized until these conditions and the separate publication/operations gates are reviewed. A successful repository release does not authorize product deployment, research publication, domain purchase, outreach, or runtime execution.
+The public remote currently has no server-side `main` ruleset, so the local
+pre-push hook cannot be described as branch protection. A ruleset is the next
+repository-governance operation and must be separately configured and observed.
+A successful architecture publication does not authorize product deployment,
+research publication, domain purchase, outreach, or runtime execution.
 
 ## What is deliberately deferred
 

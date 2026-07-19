@@ -26,6 +26,17 @@
       "expected_refusal_contains": "assignment prospective work input is not WorkIntent"
     },
     {
+      "name": "legacy-preexisting-work-contract-flag-is-rejected",
+      "kind": "known_bad",
+      "mutation": {
+        "target": "contract",
+        "operation": "replace",
+        "pointer": "/assignment_commit/preexisting_work_contract_allowed",
+        "value": true
+      },
+      "expected_refusal_contains": "assignment permits a pre-existing WorkContract"
+    },
+    {
       "name": "legacy-preexisting-active-lease-is-rejected",
       "kind": "known_bad",
       "mutation": {
@@ -111,6 +122,38 @@
         "value": true
       },
       "expected_refusal_contains": "assignment-order evidence claims runtime authority"
+    },
+    {
+      "name": "unexpected-top-level-authority-member-is-rejected",
+      "kind": "known_bad",
+      "mutation": {
+        "target": "contract",
+        "operation": "add",
+        "pointer": "/runtime_authorized",
+        "value": true
+      },
+      "expected_refusal_contains": "assignment-order contract members are not closed and exact"
+    },
+    {
+      "name": "unexpected-assignment-dispatch-member-is-rejected",
+      "kind": "known_bad",
+      "mutation": {
+        "target": "contract",
+        "operation": "add",
+        "pointer": "/assignment_commit/unrestricted_dispatch_authorized",
+        "value": true
+      },
+      "expected_refusal_contains": "assignment_commit members are not closed and exact"
+    },
+    {
+      "name": "weakened-active-consumer-fragments-are-rejected",
+      "kind": "known_bad",
+      "mutation": {
+        "target": "contract",
+        "operation": "remove",
+        "pointer": "/active_consumer_audit/0/required_fragments/0"
+      },
+      "expected_refusal_contains": "active consumer specifications drifted from the pinned exact path/disposition/fragment matrix"
     }
   ]
 }

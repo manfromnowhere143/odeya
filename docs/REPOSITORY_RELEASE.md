@@ -1,6 +1,13 @@
 # Repository Release Engineering
 
-Status: architecture-only release candidate. This document defines how the private Odeya repository is prepared and verified; it does not authorize remote creation, push, visibility change, product deployment, or Gate A acceptance.
+Status: active architecture-only publication contract for the existing public
+repository `https://github.com/manfromnowhere143/odeya`. ADR 0047 granted and
+exercised architecture-repository publication authority, and
+[ADR 0087](decisions/0087-reconcile-public-repository-operational-contract.md)
+reconciles that executed fact with this ongoing contract. This contract
+governs later architecture commits; it does not authorize engine runtime,
+product deployment, research publication, mission data, credentials, paid
+compute, or Gate A acceptance.
 
 ## Release objective
 
@@ -35,9 +42,21 @@ All checks run on pull requests, pushes to `main`, and manual dispatch. They use
 - Gitleaks scans the complete commit history and the diagnostic artifact set with both ambient config variables removed and one exact tracked profile that extends the built-in defaults. The sole retained ignore is one exact founding-commit fingerprint for a reviewed synthetic session identity; broad path/rule suppression is forbidden. Zizmor likewise runs explicitly offline with all ambient/repository configuration disabled.
 - CI artifacts are diagnostic evidence, not canonical scientific records. The repository commit and its retained architecture artifacts remain authoritative.
 
-Hash locking establishes admitted bytes, not vulnerability absence. Dependabot tracks the pip, npm, and GitHub Actions manifests. `npm audit` is retained as a mutable advisory-freshness check whose answer may change without a repository-byte change; it is not part of canonical scientific identity. A Python advisory scanner is not yet admitted into the deterministic check because no pinned advisory snapshot/profile exists. Any remote release must enable plan-supported Dependabot security alerts, and an advisory update is reviewed as new evidence rather than silently rewriting a passed checkpoint.
+Hash locking establishes admitted bytes, not vulnerability absence. Dependabot
+tracks the pip, npm, and GitHub Actions manifests. `npm audit` is retained as a
+mutable advisory-freshness check whose answer may change without a
+repository-byte change; it is not part of canonical scientific identity. A
+Python advisory scanner is not yet admitted into the deterministic check
+because no pinned advisory snapshot/profile exists. As observed on 2026-07-19,
+secret scanning and secret-scanning push protection are enabled on the public
+remote, while Dependabot security updates are disabled. That disabled state is
+an open repository-governance finding, not an inferred vulnerability or a
+property of the checked-in bytes.
 
-GitHub artifact attestations, CodeQL upload, dependency review enforcement, secret scanning, and push protection are enabled only when the selected private-repository owner and plan support them and the relevant subject exists. They are not silently granted broader token permissions or represented as active before remote verification.
+GitHub artifact attestations, CodeQL upload, dependency-review enforcement,
+rulesets, and other account-side controls are represented as active only after
+remote observation. They are never inferred from workflow files and are not
+silently granted broader token permissions.
 
 ## Local release check
 
@@ -97,36 +116,71 @@ python3 scripts/compare_rehearsal_manifests.py \
 
 Before comparison, the comparator independently validates both manifest contracts, rejects duplicate JSON members, extra top-level members, duplicate/unsafe/missing paths, and symlinks, requires the exact nineteen-file inventory and all-passed dispositions, rehashes every retained file, and recursively verifies the nested repository-release manifest against its fourteen diagnostics. It then requires equality of subject commit, schema/artifact class, canonical-evidence boundary, pinned profile-file digests, pass dispositions, and relative evidence-path inventory. It separately requires the local/remote source roles, `remote main == subject commit`, and the remote source identity to equal the approved canonical-source digest. The local source identity, environment-bearing log bytes, file sizes, and per-file diagnostic digests may legitimately differ only after each side has independently verified them; those fields are named as noncompared in the receipt.
 
-Passing locally does not predict every GitHub-hosted-runner or account-policy behavior. After the first authorized private push, the same commit must pass all remote checks before branch protection is treated as operational.
+Passing locally does not predict every GitHub-hosted-runner or account-policy
+behavior. The exact pushed commit must pass all remote checks before
+publication is complete. A local hook is not server-side branch protection.
 
-## Remote activation checklist
+## Ongoing public-architecture publication checklist
 
-The canonical remote remains private by default. Define `CANDIDATE_COMMIT` as one immutable forty-character commit. The accepted Gate A candidate-manifest commit, independently reviewed repository-release commit, local and remote rehearsal subject, and commit pushed to `refs/heads/main` MUST all equal `CANDIDATE_COMMIT`. No descendant, rebase, editorial follow-up, or reconstructed tree may inherit acceptance implicitly.
+The public canonical remote already exists at
+`https://github.com/manfromnowhere143/odeya`; its default branch is `main`.
+Define `CANDIDATE_COMMIT` as one immutable forty-character architecture commit.
+The local rehearsal subject, publication-history audit subject, pushed commit,
+remote `main`, remote rehearsal subject, and invariant-profile comparison
+subject MUST all equal `CANDIDATE_COMMIT`. No descendant, rebase, editorial
+follow-up, or reconstructed tree inherits evidence implicitly.
 
-No remote may be created and no byte may be pushed until every precondition below is retained:
+No architecture commit may be pushed to `main` until every precondition below
+is retained:
 
-1. Gate A has an accepted immutable candidate manifest, accountable review record, and Daniel’s exact-byte decision over `CANDIDATE_COMMIT`;
-2. Daniel has approved the exact GitHub owner, repository name, `private` visibility, credential-free canonical clone URL, and SHA-256 of that exact URL string;
-3. the repository-release surface is already part of `CANDIDATE_COMMIT`, has been independently reviewed in the applicable Gate A lanes, and contains no unrelated worktree bytes;
-4. the complete local fresh-clone rehearsal—including foundation, release, and formal checks—passes on `CANDIDATE_COMMIT` and retains its evidence manifest;
-5. a pinned full-history secret scan has no unresolved finding and produces only redacted evidence; and
-6. the separate publication/operations review confirms that creating the private remote discloses no research artifact or identity outside the approved scope.
+1. the exact candidate worktree is clean and contains no protected concurrent
+   lane or unrelated byte;
+2. the complete local fresh-clone rehearsal—including foundation, release,
+   formal, mutation, secret-scan, and output-audit stages—passes on
+   `CANDIDATE_COMMIT` and retains its evidence manifest;
+3. `scripts/ci/audit-publication-evidence.py` accepts the exact publication
+   range and the candidate carries rehearsal evidence bound to its own SHA;
+4. `core.hooksPath=.githooks` is configured in the publishing clone and
+   `scripts/ci/push-rehearsed-head.sh` is the only push path;
+5. the push is a reviewed fast-forward of the intended public branch and does
+   not rewrite, delete, rename, privatize, or transfer the repository;
+6. the observed remote contexts `Fast policy`, `Foundation`,
+   `Schema contracts`, `Semantic contracts`, `Adversarial controls`,
+   `Canonical identity`, `Architecture evidence`, `Release surface`, and
+   `Bounded formal models` all succeed on `CANDIDATE_COMMIT`; and
+7. a remote-main fresh-clone rehearsal requires
+   `refs/heads/main == CANDIDATE_COMMIT` and produces a passing
+   invariant-profile comparison receipt against the local rehearsal.
 
-Any byte change after acceptance creates a new candidate. It requires a new manifest and change-impact determination, every affected review lane to re-review or explicitly carry forward under the bounded rules in `ARCHITECTURE_REVIEW_PROTOCOL.md`, and Daniel to issue a new exact-byte decision. This includes README, workflow, validator, and rendered-content changes.
+Any byte change creates a new candidate and requires new exact-commit evidence.
+Architecture publication does not require pretending Gate A has passed; it is
+the separately authorized publication of architecture evidence. Gate A
+acceptance, a Gate C implementation increment, research publication, and every
+runtime or mission external effect remain separately operator-governed.
 
-Only then perform the one-time bootstrap:
+## Executed bootstrap and open remote controls
 
-1. verify the target does not already exist and record the authenticated account;
-2. create one empty private repository at that exact owner/name with no generated README, license, or `.gitignore` and record its immutable repository identity;
-3. configure available secret scanning, push protection, default workflow-token permissions, allowed-Action policy, and fork-run approval before accepting history;
-4. push `CANDIDATE_COMMIT` directly to `refs/heads/main`; this is the sole bootstrap exception to the later pull-request rule;
-5. require the observed job contexts `Fast policy`, `Foundation`, `Schema contracts`, `Semantic contracts`, `Adversarial controls`, `Canonical identity`, `Architecture evidence`, `Release surface`, and `Bounded formal models`, after confirming GitHub reports those exact contexts for `CANDIDATE_COMMIT`;
-6. configure the `main` ruleset to require those checks, resolved conversations, linear history, and to block force-push, deletion, and bypass except an explicitly retained break-glass role;
-7. enable Dependabot and all plan-supported security controls without granting workflow write authority;
-8. clone the credential-free canonical GitHub URL in `remote-main` mode, require remote `main == CANDIDATE_COMMIT`, retain the redacted rehearsal evidence outside the clone, and produce a passing invariant-profile comparison receipt against the local rehearsal; and
-9. require every later change to enter through a reviewed branch and pull request.
+ADR 0047 records the one-time public bootstrap executed on 2026-07-17. It is
+history, not a procedure to rerun. As observed on 2026-07-19, the remote has
+secret scanning and push protection, but no repository ruleset and no
+server-side protection on `main`; Dependabot security updates are disabled.
+Until those account-side controls are configured and independently observed:
 
-Repository release is not research publication. It does not authorize runtime implementation, domain purchase, investor outreach, external data disclosure, paid compute, or any mission-level external effect.
+- the local hook and guarded helper reduce accidental publication but cannot
+  prevent a caller or fresh clone from bypassing them;
+- no document may call `main` protected;
+- direct main publication remains a governance weakness even when the exact
+  commit is rehearsed; and
+- the next repository-governance operation is a server-side ruleset requiring
+  the observed checks, reviewed changes, linear history, and blocking
+  force-push/deletion without routine bypass.
+
+Configuring that ruleset changes external repository state. Its exact settings
+and post-change observation must be retained when separately authorized.
+
+Repository release is not research publication. It does not authorize runtime
+implementation, domain purchase, investor outreach, external data disclosure,
+paid compute, or any mission-level external effect.
 
 ## Future Odeya automation
 

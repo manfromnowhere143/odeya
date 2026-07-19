@@ -70,18 +70,24 @@ checks required and forbidden semantics across the enumerated consumers, and
 runs the retained mutations in
 [`tests/prq-009-assignment-order/cases.json`](../../tests/prq-009-assignment-order/cases.json).
 
-The legacy defect has two direct known-bads:
+The legacy defect has three direct known-bads:
 
 - prepend the old statement that `verification.assign` binds a pre-existing
   local `WorkContract` to an active consumer; and
 - replace the machine contract's prospective input `WorkIntent` with
-  `WorkContract`.
+  `WorkContract`; and
+- change the explicit pre-existing-WorkContract allowance from false to true.
 
-Both must fail for the exact intended reason. Further mutations refuse a
+All three must fail for the exact intended reason. Further mutations refuse a
 pre-existing active lease, a pre-existing reservation, a WorkContract inside
 the assignment batch, assignment-time dispatch, an incomplete thirteen-event
 cohort, dispatch before contract derivation, premature PRQ closure, and runtime
-authority.
+authority. Two closed-world mutations also prove that an unexpected top-level
+authority claim or assignment-level unrestricted-dispatch member cannot hide
+beside the required fields.
+The complete active-consumer path/disposition/fragment matrix is separately
+digest-pinned, and one mutation removes a required fragment to prove that the
+consumer census cannot weaken itself by keeping only trivially present text.
 
 This evidence is finite, author-correlated, and architecture-local. Text
 presence does not prove semantic correctness, and the checker can be weakened

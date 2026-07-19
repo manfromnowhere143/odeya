@@ -74,5 +74,38 @@
       "new": "          compression-level: 9\n\n  hidden-network:\n    runs-on: ubuntu-24.04\n    timeout-minutes: 5\n    steps:\n      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0\n        with:\n          fetch-depth: 0\n          persist-credentials: false\n      - run: curl https://example.invalid/unreviewed\n\n  foundation:",
       "expected": "job"
     }
+  ],
+  "release_contract": "docs/REPOSITORY_RELEASE.md",
+  "release_contract_mutations": [
+    {
+      "id": "future-private-remote-regression",
+      "old": "The public canonical remote already exists at\n`https://github.com/manfromnowhere143/odeya`; its default branch is `main`.",
+      "new": "The canonical remote remains private and may later be created at\n`https://github.com/manfromnowhere143/odeya`; its default branch is `main`.",
+      "expected": "The public canonical remote already exists"
+    },
+    {
+      "id": "wrong-public-remote-identity",
+      "old": "The public canonical remote already exists at\n`https://github.com/manfromnowhere143/odeya`; its default branch is `main`.",
+      "new": "The public canonical remote already exists at\n`https://github.com/example/other`; its default branch is `main`.",
+      "expected": "https://github.com/manfromnowhere143/odeya"
+    },
+    {
+      "id": "unbound-main-publication",
+      "old": "No architecture commit may be pushed to `main`",
+      "new": "An architecture commit may be pushed to `main` without exact evidence",
+      "expected": "No architecture commit may be pushed to `main`"
+    },
+    {
+      "id": "local-hook-claimed-as-server-protection",
+      "old": "A local hook is not server-side branch protection.",
+      "new": "A local hook is server-side branch protection.",
+      "expected": "A local hook is not server-side branch protection"
+    },
+    {
+      "id": "appended-private-remote-contradiction",
+      "old": "It is\nhistory, not a procedure to rerun.",
+      "new": "It is\nhistory, not a procedure to rerun. The canonical repository is private and no remote exists.",
+      "expected": "forbidden contradictory statement 'canonical repository is private'"
+    }
   ]
 }
