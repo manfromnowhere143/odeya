@@ -6,6 +6,12 @@ Status: proposed constitutional contract, 2026-07-16. This matrix resolves role 
 
 Authentication answers who a principal is. An assignment answers which authority role that principal may hold. A policy decision answers whether a requested action fits current rules. A grant authorizes one bounded action class. A grant-use record proves that a specific command reserved or consumed it. None substitutes for another.
 
+Successful signature verification proves only that exact bytes validate under
+the referenced public key, algorithm, and trust profile; it does not identify
+who caused the signing operation or controlled the private key. Successful
+authentication proves only the accepted authentication ceremony. Neither
+proves human review, understanding, or substantive decision intent.
+
 Odeya has nine founding authority roles:
 
 | Role | Owns | Does not own |
@@ -34,6 +40,38 @@ The deterministic adjudicator applies a frozen consequence rule; it is not a ten
 | Tool/workload | proposal/execution result only | execution identity under a grant, not authority assignment | never | candidate observation only | no |
 
 Service automation may narrow and instantiate a preauthorized low-risk grant. It cannot create new constitutional authority, widen scope, change risk, or convert a missing human decision into approval.
+
+## Human-decision assurance boundary
+
+Every `H` slot remains unsatisfied until a future
+`HumanDecisionAssurance` contract binds all of the following for one exact
+decision:
+
+- the exact candidate bytes, exact displayed material-set bytes, their digests,
+  the explicit decision value, basis, limitations, and an admitted rule proving
+  the displayed and decided subjects match;
+- a protected explicit ceremony with a verifier- or relying-party-generated
+  unpredictable challenge plus a separate human-initiated confirmation
+  gesture, controlled time, expiry, and single-use replay protection;
+- user presence and user verification results, principal identity-proofing and
+  principal-to-authenticator binding, plus authenticator, signing-key, and
+  session-custody evidence that excludes unattended agent, model, tool, or
+  worker control;
+- declared delegation source, scope, and depth; objections; conflicts;
+  effective-control group; and distinct-principal quorum result; and
+- sanitized ceremony evidence and independent verification that retain no
+  reusable secret, signing material, raw private reasoning, or unrestricted
+  prompt/model output.
+
+The bounded claim is only that the accepted ceremony evidence is attributable
+to the declared principal/authenticator under the named identity-proofing and
+binding profile and includes an observed human-initiated confirmation gesture
+over the exact bytes. It is never a claim about cognition, comprehension, or
+mental state. No current schema is claimed to satisfy this contract; PRQ-013
+remains blocking under
+[ADR 0089](decisions/0089-a-valid-human-signature-is-not-a-human-decision.md)
+and the
+[cross-program process-evidence packet](CROSS_PROGRAM_PROCESS_EVIDENCE_ABSORPTION_2026-07-19.md).
 
 ## Founding action matrix
 
@@ -189,6 +227,9 @@ Before a command consumes authority, the validator must prove:
 - every dependency grant and policy decision is exact and active;
 - quorum counts distinct effective principals where required;
 - forbidden role overlap and producer/verifier/publication separation pass;
+- every `H` slot resolves a nonexpired, nonreplayed PRQ-013 assurance record
+  over the exact displayed and candidate bytes; a signature or authentication
+  result alone is insufficient;
 - delegation is a strict subset at every edge;
 - command-request digest matches the grant’s authorization request;
 - reserve/use/release/revoke ordering and the grant's declared consumption point are compatible with the command/effect transition; effect intent and its reservation commit together, and dispatch claim plus use consumption commit together.
@@ -207,6 +248,12 @@ This matrix fails Gate A if any trace can:
 - revoke a grant while losing the retained fact that an effect was already in flight;
 - consume a dispatch-bound grant at intent time, dispatch from an unconsumed/unrevalidated reservation, or release a reservation after its dispatch claim won;
 - allow a service or model to widen a human-approved ceiling;
+- accept `PRQ-013-KB-001`: an unattended agent can invoke a human-labelled
+  signing key and produce a cryptographically valid signature over the exact
+  candidate while the verifier-generated challenge, human-initiated
+  confirmation gesture, identity/authenticator binding, user presence, and
+  user verification are absent or `unknown`; the result must be
+  `indeterminate` and cannot fill an `H` slot or quorum;
 - publish bytes not identical to the human-approved manifest;
 - apply a new policy or grant retroactively; or
 - close a mission with active grants that can still dispatch consequential effects.

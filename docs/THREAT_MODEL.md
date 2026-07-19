@@ -87,6 +87,9 @@ Founding architecture assumes the operator root may be compromised; recovery the
 12. Corrections, revocations, quarantines, and withdrawals append facts and invalidate projections; they never erase the triggering history.
 13. Logs, traces, context packs, and error messages disclose the minimum necessary data and never contain reusable secrets or hidden chain of thought.
 14. Policy unavailability, identity uncertainty, unknown independence, and stale projection state fail closed for consequential action.
+15. A human-only decision requires separate decision-assurance evidence over
+    the exact displayed and candidate bytes; a valid signature, authenticated
+    session, user presence, or user verification alone cannot satisfy it.
 
 ## Data and execution classes
 
@@ -146,8 +149,18 @@ A weaker tier cannot be selected because it is cheaper. The isolation claim must
 | T26 | Provider/model fallback silently changes a confirmatory attempt or its data behavior | Exact model/harness/provider/retention identity, fallback as new attempt, protocol comparability rule | Original attempt stops; new attempt is separately classified and adjudicated |
 | T27 | A contributor supplies a polished pseudoscientific or false premise and the engine optimizes for a persuasive compliant report | Premise/evidence-class challenge, rival and falsifier generation, admissibility rules, refusal benchmark, human/domain escalation | Mission is refused, reframed, or retained as an explicitly adversarial test; no eligible claim or publication |
 | T28 | A research benchmark appears strong because the agent retrieves the reference answer, evaluator artifact, derivative summary, or contaminated cache instead of synthesizing evidence | Exact contamination frontier, clean-room blocked-reference manifest, cache/index/embedding taint, ordinary-versus-clean-room comparison, atomic-fact audit | Evaluation is invalidated or reported as contaminated; no capability promotion |
+| T29 | An agent, compromised session, or shared credential turns a human-labelled key or authentication result into apparent human approval over unseen or changed bytes | PRQ-013 decision assurance binding exact displayed/candidate bytes, verifier-generated unpredictable challenge, separate human-initiated confirmation gesture, user presence/verification, principal identity-proofing and authenticator binding, authenticator/key/session custody and agent exclusion, delegation/conflict/effective-quorum declarations, replay/expiry controls, and sanitized independent evidence | Human decision remains `indeterminate`; no `H` slot, quorum, grant, release, or Gate A decision is satisfied |
 
 Every row needs at least one known-bad architecture fixture before Gate A and executable containment/fault evidence in its authorized implementation increment.
+
+`PRQ-013-KB-001` is the minimum exact falsifier for T29: an unattended
+agent can invoke a human-labelled signing key and produce a cryptographically
+valid signature over the exact candidate, but the verifier-generated
+unpredictable challenge, separate human-initiated confirmation gesture,
+principal/authenticator binding, user presence, and user verification are
+absent or `unknown`. The expected result is `indeterminate`, with the record
+excluded from every `H` slot and quorum. Acceptance of that record falsifies
+the architecture.
 
 The exact non-authoritative cognition records and invariants used to close T21–T26 are specified in [Cognitive Control Contracts](COGNITIVE_CONTROL_CONTRACTS.md).
 
@@ -182,7 +195,12 @@ Break glass is not an invisible administrator bypass. It requires:
 ## Cryptographic and identity assumptions
 
 - Digests protect byte identity only under the pinned algorithm/profile; they do not prove origin or meaning.
-- Signatures prove possession of a key under a trust root; they do not prove the signer was correct, independent, or uncompromised.
+- Successful signature verification proves only that exact bytes validate
+  under a referenced public key, algorithm, and trust profile; it does not
+  identify who caused the signing operation or controlled the private key.
+  Authentication proves only the accepted authentication ceremony; neither
+  proves human review, understanding, substantive decision intent,
+  correctness, independence, or lack of compromise.
 - Workload identity proves an admitted runtime identity, not that its code behaved as intended.
 - Timestamps require an accepted clock/source/uncertainty profile. External reported time is evidence, not automatically trusted time.
 - Encryption protects selected boundaries but not a compromised authorized endpoint.
@@ -209,6 +227,9 @@ Gate A cannot accept this threat model until:
 
 - every trust boundary maps to command, event, schema, data class, and authority contracts;
 - the authority bootstrap, human-only action matrix, dual-control rules, and break-glass path are frozen;
+- PRQ-013 closes with an exact `HumanDecisionAssurance` contract, consumer
+  census, semantic rules, and the T29 known-bad suite; no current schema is
+  claimed compliant;
 - the first-slice data/execution classes and provider-retention rules are selected;
 - each abuse case has a positive and known-bad non-executable trace with expected events and refusal;
 - ledger witness, key hierarchy, incident, deletion/legal-hold, and sealed-truth rotation designs are accepted;
@@ -217,3 +238,8 @@ Gate A cannot accept this threat model until:
 - the operator accepts the exact candidate commit.
 
 Runtime security testing belongs to the exit gate of the authorized increment. No prose-only threat model can establish sandbox or deployment security.
+
+The retained origin and bounded requirements for this open blocker are
+[ADR 0089](decisions/0089-a-valid-human-signature-is-not-a-human-decision.md)
+and the
+[cross-program process-evidence packet](CROSS_PROGRAM_PROCESS_EVIDENCE_ABSORPTION_2026-07-19.md).

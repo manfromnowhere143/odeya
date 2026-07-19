@@ -285,6 +285,42 @@ Structural validation does not yet reject all of these mutations:
 One pure cross-object verifier and a separate independent implementation must
 reject every mutation before any candidate can become immutable.
 
+### PRQ-013 — Human authentication is not human decision assurance
+
+Current decision schemas can carry a declared human principal and a valid
+signature without proving that the human controlled the decision act, reviewed
+the exact material set, or kept the signing session outside agent/model/tool
+reach. Successful signature verification establishes validity under a
+referenced public key, algorithm, and trust profile, not the actor who caused
+the signing operation. An authentication ceremony can establish
+authentication intent under a declared trust model; neither can by itself
+establish substantive decision intent, review, understanding, or approval.
+
+Before any policy-defined consequential human-only decision can satisfy an
+`H` slot, T0 must freeze a nonrecursive `HumanDecisionAssurance` candidate
+over one exact decision subject. The candidate requires an explicit decision
+value, bounded basis and limitations, reviewed-material digest, a verifier- or
+relying-party-generated unpredictable challenge, a separate human-initiated
+confirmation gesture, authentication-intent, user-presence and
+user-verification evidence, principal identity-proofing and authenticator
+binding, key/session custody observations, agent/model/tool signing exclusion,
+required effective-principal separation, conflicts, delegation, objections and
+quorum, controlled time, expiry, replay protection, and sanitized independently
+verified ceremony evidence. Raw private reasoning, reusable secrets, signing
+material, and unrestricted prompts or model output are forbidden evidence.
+
+The contract makes only a bounded claim that accepted ceremony evidence is
+attributable to the declared principal/authenticator under the named
+identity-proofing and binding profile and includes an observed human-initiated
+confirmation gesture over exact bytes. It does not claim access to cognition.
+Closure requires new schema identities or an external assurance wrapper, a
+complete transitive consumer census, and migration without mutating retained
+identities.
+[ADR 0089](decisions/0089-a-valid-human-signature-is-not-a-human-decision.md)
+records the decision. Until closure, a valid signature, a human-labeled
+principal, an unattended agent-accessible key, timeout, silence, or
+prose-only caveat cannot satisfy a human-only decision.
+
 ## Exact construction tranches
 
 ### T0 — Identity and prerequisite closure
@@ -297,13 +333,18 @@ reject every mutation before any candidate can become immutable.
 3. Split core/evidence/seal/attestation subjects and add typed blocked
    construction receipts.
 4. Close PRQ-005 through PRQ-010 without changing the 43/60/25/11 sets.
-5. Retain positive, negative, and metamorphic vectors for every correction.
+5. Close PRQ-013 by freezing the human-decision-assurance candidate, completing
+   its consumer census, selecting replacement identities or an external
+   wrapper, and retaining custody, replay, delegation, conflict, and
+   agent-accessible-key known-bads.
+6. Retain positive, negative, and metamorphic vectors for every correction.
 
 No immutable member is issued in T0.
 
 ### T1 — Smallest dependency-contained vertical contract
 
-After T0 and exact schema-registry identities, construct only:
+After T0, PRQ-013 closure, and exact schema-registry identities, construct
+only:
 
 ```text
 AuthorityAssignment state schema/member
@@ -358,6 +399,9 @@ This tranche closes only when:
 - independent scientific review, security review, recovery review, and
   architecture red-team findings are closed or explicitly accepted within the
   Gate A rule; and
+- every required human-only review or acceptance is bound to one exact
+  decision subject by retained human-decision-assurance evidence; a signature
+  or declared human principal alone is insufficient; and
 - Daniel accepts the exact candidate bytes. That acceptance still does not
   authorize runtime implementation; Gate C remains separate.
 

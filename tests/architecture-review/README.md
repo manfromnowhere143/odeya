@@ -36,3 +36,28 @@ truthful, a change-impact analysis is correct, or the operator is Daniel.
 Those properties require a deterministic review compiler over dereferenced
 artifacts plus accountable human verification. A passing test run is structural
 evidence only and never Gate A acceptance.
+
+The structural fixtures also cannot prove the future human-decision assurance
+required by [ADR
+0089](../../docs/decisions/0089-a-valid-human-signature-is-not-a-human-decision.md).
+A declared human principal, valid signature, or well-formed review/approval
+artifact remains insufficient while PRQ-013 is unresolved.
+
+## Required semantic known-bad refinements
+
+The [cross-program process-evidence
+packet](../../docs/CROSS_PROGRAM_PROCESS_EVIDENCE_ABSORPTION_2026-07-19.md)
+adds four provenance-bound cases for the future deterministic review compiler:
+
+- a sibling/source artifact validates while the exact reviewed or bundled
+  member omits a required boundary;
+- a historical ledger/pointer passes while the canonical current baton names a
+  later state;
+- a provider request is initiated and then interrupted, leaving completed
+  requests and actual spend unknown; and
+- session logs are offered as authorship, human intent, approval, independence,
+  or scientific-validity evidence instead of bounded operational chronology.
+
+Each case must remain non-accepted. These are refinements of existing identity,
+current-state, missingness, authority, and evidence boundaries; the present
+schema-only fixtures do not claim to execute them.

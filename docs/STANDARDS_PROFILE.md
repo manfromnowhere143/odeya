@@ -48,6 +48,8 @@ Every adopted standard receives a versioned record containing:
 | Operational telemetry | OpenTelemetry Specification 1.59, Semantic Conventions 1.43, exact GenAI repository commit | Operations only; stable Odeya attributes wrap unstable GenAI fields | G7 |
 | Trace propagation | [W3C Trace Context](https://www.w3.org/TR/trace-context/) | Correlation only, never evidence identity or authority | G7 |
 | Authentication | [OIDC Core Errata 2](https://openid.net/specs/openid-connect-core-1_0-errata2.html), [OAuth Security BCP RFC 9700](https://www.rfc-editor.org/rfc/rfc9700.html) | Human/service authentication boundary | G3 |
+| Human authenticator assurance | [NIST SP 800-63B-4](https://pages.nist.gov/800-63-4/sp800-63b/authenticators/) | Primary profile for authenticator assurance, claimant-controlled authentication intent, phishing resistance, and session binding; not application decision intent | G3 |
+| Protected human ceremony | [W3C WebAuthn Level 3](https://www.w3.org/TR/webauthn-3/) | Primary ceremony component for RP/origin-bound challenges, user presence, user verification, and authenticator evidence; not proof of review, understanding, or substantive decision intent | G3 |
 | Authorization exchange | [AuthZEN Authorization API 1.0](https://openid.net/specs/authorization-api-1_0.html) | Candidate policy decision interface | G3/G6 |
 | Workload identity | [SPIFFE specifications](https://spiffe.io/docs/latest/spiffe-specs/) | Candidate service/worker identity profile | G3 |
 | Accessibility | [WCAG 2.2 AA](https://www.w3.org/TR/WCAG22/), WAI-ARIA 1.2, ACT Rules Format 1.1 | Complete private and public workflows | G8 |
@@ -110,6 +112,21 @@ none is delegated authority over scientific meaning, admission, or recovery.
   and envelopes are portable evidence carriers. Their predicates remain typed
   claims by identified issuers; they do not collapse generation, review,
   replication, adjudication, and publication into one signature.
+- [NIST SP 800-63B-4](https://pages.nist.gov/800-63-4/sp800-63b/authenticators/)
+  uses explicit claimant action to establish authentication intent, while
+  [WebAuthn Level 3](https://www.w3.org/TR/webauthn-3/) supplies RP/origin-bound
+  challenge, user-presence, user-verification, and authenticator evidence.
+  Those are authentication-ceremony components, not proof that a person
+  reviewed, understood, or substantively intended an Odeya decision.
+  PRQ-013 therefore requires a separate protected decision ceremony over the
+  exact displayed and candidate bytes, with custody, delegation, conflict,
+  quorum, replay, expiry, and sanitized-evidence semantics owned by Odeya.
+
+No current schema is claimed to conform to this decision-assurance profile.
+PRQ-013 remains a Gate A blocker under
+[ADR 0089](decisions/0089-a-valid-human-signature-is-not-a-human-decision.md)
+and the
+[cross-program process-evidence packet](CROSS_PROGRAM_PROCESS_EVIDENCE_ABSORPTION_2026-07-19.md).
 
 These comparisons support one nonrecursive construction law:
 

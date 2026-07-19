@@ -75,6 +75,32 @@ At minimum, separately record:
 - truth and outcome settlement;
 - public release and claim wording.
 
+## Human decision assurance
+
+Successful signature verification establishes only that exact bytes validate
+under a referenced public key, algorithm, and trust profile; it does not
+establish who caused the signing operation or controlled the private key.
+Successful authentication establishes only the accepted authentication
+ceremony. Neither establishes that a human reviewed, understood, or
+substantively intended an application decision.
+
+For every human-only consequential action, the future PRQ-013
+`HumanDecisionAssurance` contract must bind a protected explicit ceremony to
+the exact displayed and candidate bytes. It must retain a verifier- or
+relying-party-generated unpredictable challenge, a separate human-initiated
+confirmation gesture, user-presence and user-verification results, principal
+identity-proofing and authenticator binding, authenticator/key/session custody
+with unattended agent/model/tool exclusion, declared delegation, objections,
+conflicts and effective quorum, replay and expiry controls, and sanitized
+independently verifiable evidence. The resulting claim is bounded to ceremony
+evidence attributable to the declared principal/authenticator under the named
+profile; it never claims cognition or comprehension.
+
+No current schema is claimed compliant. Gate A remains blocked on PRQ-013 as
+specified by [ADR 0089](decisions/0089-a-valid-human-signature-is-not-a-human-decision.md)
+and the
+[cross-program process-evidence packet](CROSS_PROGRAM_PROCESS_EVIDENCE_ABSORPTION_2026-07-19.md).
+
 ## Risk tiers
 
 | Tier | Typical scope | Default posture |

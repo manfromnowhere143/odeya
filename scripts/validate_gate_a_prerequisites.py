@@ -48,6 +48,76 @@ EXPECTED_REPOSITORY_PUBLICATION = {
     "deployment_authorized": False,
     "gate_a_accepted": False,
 }
+EXPECTED_HUMAN_DECISION_ASSURANCE = {
+    "status": "unresolved_blocking",
+    "applies_to": "every_policy_defined_consequential_human_only_decision",
+    "signature_assurance":
+        "signature_validity_under_declared_public_key_algorithm_and_trust_profile_only",
+    "signature_proves_human_decision_intent": False,
+    "authentication_intent_satisfies_substantive_decision_intent": False,
+    "protected_ceremony_proves_review_understanding_or_cognition": False,
+    "declared_human_principal_satisfies_human_decision": False,
+    "unattended_agent_accessible_signing_key_satisfies_human_decision": False,
+    "timeout_or_silence_satisfies_human_decision": False,
+    "missing_assurance_disposition": "blocked_or_indeterminate_never_approval",
+    "candidate_record_identity_assigned": False,
+    "complete_consumer_census": False,
+    "current_consumers_migrated": False,
+    "minimum_affected_source_schema_ids": [
+        "urn:odeya:schema:root-authority-manifest:0.4.0",
+        "urn:odeya:schema:authority-assignment:0.3.0",
+        "urn:odeya:schema:protocol-amendment:0.4.0",
+        "urn:odeya:schema:data-use-decision:0.3.0",
+        "urn:odeya:schema:review-determination:0.3.0",
+        "urn:odeya:schema:operator-architecture-decision:0.4.0",
+        "urn:odeya:schema:publication-decision:0.5.0",
+        "urn:odeya:schema:promotion-decision:0.6.0",
+        "urn:odeya:schema:recovery-decision:0.6.0",
+    ],
+    "required_evidence": [
+        "exact_decision_subject_and_candidate_digest",
+        "explicit_decision_value_basis_and_limitations",
+        "reviewed_material_set_digest",
+        "verifier_or_relying_party_generated_unpredictable_challenge_bound_to_session_and_subject",
+        "human_initiated_confirmation_gesture",
+        "authentication_intent_phishing_resistant_credential_user_presence_and_user_verification_evidence",
+        "principal_identity_proofing_and_authenticator_binding_evidence",
+        "signing_key_and_session_custody_observation",
+        "agent_model_and_tool_signing_exclusion",
+        "delegation_scope_depth_objections_and_effective_control_disclosure",
+        "required_distinct_principal_separation_conflict_and_quorum_evaluation",
+        "controlled_time_expiry_and_replay_protection",
+        "sanitized_ceremony_evidence_and_independent_verification",
+    ],
+    "forbidden_evidence": [
+        "raw_private_reasoning",
+        "reusable_secrets_or_signing_material",
+        "unrestricted_prompt_or_model_output",
+    ],
+    "source_evidence_ref":
+        "docs/CROSS_PROGRAM_PROCESS_EVIDENCE_ABSORPTION_2026-07-19.md",
+    "decision_ref":
+        "docs/decisions/0089-a-valid-human-signature-is-not-a-human-decision.md",
+    "closure_disposition":
+        "replacement_or_external_assurance_contract_and_complete_consumer_migration_required",
+}
+EXPECTED_NEXT_DEPENDENCY_CONTAINED_TRANCHE = {
+    "tranche_id": "T1.authority-assignment",
+    "may_start_after": [
+        "canonical_schema_identity_candidate_closure",
+        "standalone_member_record_contracts",
+        "prq_005_through_prq_010_candidate_corrections",
+        "prq_013_human_decision_assurance_candidate_closure",
+    ],
+    "ordered_subjects": [
+        "AuthorityAssignment state schema and member",
+        "AuthorityAssignment reducer member",
+        "authority.assignment_recorded event member",
+        "authority.record_root_assignment payload and command member",
+        "authority.record_assignment payload and command member",
+    ],
+    "may_bind_engine_contract_root": False,
+}
 
 
 class DuplicateKey(ValueError):
@@ -193,6 +263,205 @@ def validate_refusal_boundary_known_bads(errors: list[str]) -> int:
                 f"intended reason; got {observed!r}"
             )
     return passed
+
+
+def human_decision_assurance_errors(value: Any) -> list[str]:
+    if not isinstance(value, dict):
+        return ["human_decision_assurance must be an object"]
+    errors: list[str] = []
+    if set(value) != set(EXPECTED_HUMAN_DECISION_ASSURANCE):
+        errors.append("human_decision_assurance members must be closed and exact")
+    for key, expected_value in EXPECTED_HUMAN_DECISION_ASSURANCE.items():
+        if value.get(key) != expected_value:
+            errors.append(
+                f"human_decision_assurance.{key} must equal {expected_value!r}"
+            )
+    for key in ("source_evidence_ref", "decision_ref"):
+        relative = value.get(key)
+        if isinstance(relative, str) and not (ROOT / relative).is_file():
+            errors.append(
+                f"human_decision_assurance.{key} does not resolve to a retained file"
+            )
+    return errors
+
+
+def validate_human_decision_assurance_known_bads(errors: list[str]) -> int:
+    safe = json.loads(json.dumps(EXPECTED_HUMAN_DECISION_ASSURANCE))
+    safe_errors = human_decision_assurance_errors(safe)
+    if safe_errors:
+        errors.append(
+            "human decision-assurance safe self-test was rejected: "
+            + " | ".join(safe_errors)
+        )
+    mutations = (
+        (
+            "signature-validity-promoted-to-key-control",
+            "signature_assurance",
+            "key_possession_under_declared_trust_root_only",
+        ),
+        (
+            "signature-promoted-to-intent",
+            "signature_proves_human_decision_intent",
+            True,
+        ),
+        (
+            "authentication-intent-promoted-to-decision-intent",
+            "authentication_intent_satisfies_substantive_decision_intent",
+            True,
+        ),
+        (
+            "ceremony-promoted-to-cognition",
+            "protected_ceremony_proves_review_understanding_or_cognition",
+            True,
+        ),
+        (
+            "declared-human-type-promoted-to-decision",
+            "declared_human_principal_satisfies_human_decision",
+            True,
+        ),
+        (
+            "agent-accessible-key-promoted-to-human-decision",
+            "unattended_agent_accessible_signing_key_satisfies_human_decision",
+            True,
+        ),
+        (
+            "silence-promoted-to-human-decision",
+            "timeout_or_silence_satisfies_human_decision",
+            True,
+        ),
+        (
+            "missing-assurance-promoted-to-approval",
+            "missing_assurance_disposition",
+            "approved",
+        ),
+        (
+            "approval-basis-omitted",
+            "required_evidence",
+            [
+                item
+                for item in EXPECTED_HUMAN_DECISION_ASSURANCE["required_evidence"]
+                if item != "explicit_decision_value_basis_and_limitations"
+            ],
+        ),
+        (
+            "human-confirmation-gesture-omitted",
+            "required_evidence",
+            [
+                item
+                for item in EXPECTED_HUMAN_DECISION_ASSURANCE["required_evidence"]
+                if item != "human_initiated_confirmation_gesture"
+            ],
+        ),
+        (
+            "user-presence-and-verification-omitted",
+            "required_evidence",
+            [
+                item
+                for item in EXPECTED_HUMAN_DECISION_ASSURANCE["required_evidence"]
+                if item
+                != "authentication_intent_phishing_resistant_credential_user_presence_and_user_verification_evidence"
+            ],
+        ),
+        (
+            "principal-authenticator-binding-omitted",
+            "required_evidence",
+            [
+                item
+                for item in EXPECTED_HUMAN_DECISION_ASSURANCE["required_evidence"]
+                if item
+                != "principal_identity_proofing_and_authenticator_binding_evidence"
+            ],
+        ),
+        (
+            "delegation-and-objections-omitted",
+            "required_evidence",
+            [
+                item
+                for item in EXPECTED_HUMAN_DECISION_ASSURANCE["required_evidence"]
+                if item
+                != "delegation_scope_depth_objections_and_effective_control_disclosure"
+            ],
+        ),
+        (
+            "distinct-principal-quorum-omitted",
+            "required_evidence",
+            [
+                item
+                for item in EXPECTED_HUMAN_DECISION_ASSURANCE["required_evidence"]
+                if item
+                != "required_distinct_principal_separation_conflict_and_quorum_evaluation"
+            ],
+        ),
+        (
+            "private-reasoning-retained-as-evidence",
+            "forbidden_evidence",
+            [
+                item
+                for item in EXPECTED_HUMAN_DECISION_ASSURANCE["forbidden_evidence"]
+                if item != "raw_private_reasoning"
+            ],
+        ),
+        (
+            "prerequisite-self-closed",
+            "status",
+            "candidate_clear",
+        ),
+    )
+    passed = 0
+    for case_id, key, replacement in mutations:
+        candidate = json.loads(json.dumps(safe))
+        candidate[key] = replacement
+        expected_reason = (
+            f"human_decision_assurance.{key} must equal "
+            f"{EXPECTED_HUMAN_DECISION_ASSURANCE[key]!r}"
+        )
+        observed = human_decision_assurance_errors(candidate)
+        if expected_reason in observed:
+            passed += 1
+        else:
+            errors.append(
+                f"human decision-assurance known-bad {case_id} did not fire "
+                f"its intended reason; got {observed!r}"
+            )
+    return passed
+
+
+def next_dependency_contained_tranche_errors(value: Any) -> list[str]:
+    if not isinstance(value, dict):
+        return ["next_dependency_contained_tranche must be an object"]
+    errors: list[str] = []
+    if set(value) != set(EXPECTED_NEXT_DEPENDENCY_CONTAINED_TRANCHE):
+        errors.append(
+            "next_dependency_contained_tranche members must be closed and exact"
+        )
+    for key, expected_value in EXPECTED_NEXT_DEPENDENCY_CONTAINED_TRANCHE.items():
+        if value.get(key) != expected_value:
+            errors.append(
+                f"next_dependency_contained_tranche.{key} must equal "
+                f"{expected_value!r}"
+            )
+    return errors
+
+
+def validate_next_tranche_known_bad(errors: list[str]) -> int:
+    candidate = json.loads(
+        json.dumps(EXPECTED_NEXT_DEPENDENCY_CONTAINED_TRANCHE)
+    )
+    candidate["may_start_after"].remove(
+        "prq_013_human_decision_assurance_candidate_closure"
+    )
+    expected_reason = (
+        "next_dependency_contained_tranche.may_start_after must equal "
+        f"{EXPECTED_NEXT_DEPENDENCY_CONTAINED_TRANCHE['may_start_after']!r}"
+    )
+    observed = next_dependency_contained_tranche_errors(candidate)
+    if expected_reason not in observed:
+        errors.append(
+            "next-tranche known-bad removed PRQ-013 without firing its "
+            f"intended reason; got {observed!r}"
+        )
+        return 0
+    return 1
 
 
 def main() -> int:
@@ -439,7 +708,7 @@ def main() -> int:
     )
 
     findings = inventory.get("findings")
-    expected_ids = [f"PRQ-{index:03d}" for index in range(1, 13)]
+    expected_ids = [f"PRQ-{index:03d}" for index in range(1, 14)]
     if not isinstance(findings, list):
         errors.append("findings must be an array")
     else:
@@ -447,7 +716,7 @@ def main() -> int:
             item.get("finding_id") if isinstance(item, dict) else None
             for item in findings
         ]
-        require(finding_ids == expected_ids, "findings must be exactly PRQ-001..012", errors)
+        require(finding_ids == expected_ids, "findings must be exactly PRQ-001..013", errors)
         for item in findings:
             if isinstance(item, dict):
                 require(
@@ -470,6 +739,7 @@ def main() -> int:
         prq009 = findings[8] if len(findings) > 8 and isinstance(findings[8], dict) else {}
         prq008 = findings[7] if len(findings) > 7 and isinstance(findings[7], dict) else {}
         prq001 = findings[0] if findings and isinstance(findings[0], dict) else {}
+        prq013 = findings[12] if len(findings) > 12 and isinstance(findings[12], dict) else {}
         require(
             prq001.get("finding_id") == "PRQ-001"
             and prq001.get("status") == "candidate_correction_in_progress"
@@ -491,6 +761,14 @@ def main() -> int:
             and prq009.get("status") == "unresolved_blocking"
             and "preserve the claimed reservation" in prq009.get("closure", ""),
             "PRQ-009 must remain unresolved_blocking while C5 is not constructible",
+            errors,
+        )
+        require(
+            prq013.get("finding_id") == "PRQ-013"
+            and prq013.get("status") == "unresolved_blocking"
+            and "HumanDecisionAssurance" in prq013.get("closure", "")
+            and "transitive consumer census and migration" in prq013.get("closure", ""),
+            "PRQ-013 must retain the blocking human decision-assurance boundary",
             errors,
         )
         first_slice_unresolved = first_slice.get("unresolved_prerequisites", [])
@@ -673,6 +951,21 @@ def main() -> int:
     errors.extend(refusal_boundary_errors(inventory.get("refusal")))
     refusal_boundary_known_bads = validate_refusal_boundary_known_bads(errors)
 
+    errors.extend(
+        human_decision_assurance_errors(
+            inventory.get("human_decision_assurance")
+        )
+    )
+    human_decision_assurance_known_bads = (
+        validate_human_decision_assurance_known_bads(errors)
+    )
+    errors.extend(
+        next_dependency_contained_tranche_errors(
+            inventory.get("next_dependency_contained_tranche")
+        )
+    )
+    next_tranche_known_bads = validate_next_tranche_known_bad(errors)
+
     if errors:
         for error in errors:
             print(f"ERROR: {error}", file=sys.stderr)
@@ -685,10 +978,13 @@ def main() -> int:
 
     print(
         "Gate A prerequisite closure: PASS; "
-        "12 findings tracked; exact scope 43 commands / 60 events / "
+        "13 findings tracked; exact scope 43 commands / 60 events / "
         "25 families / 11 owners; "
         f"{repository_publication_known_bads} repository-publication "
         f"and {refusal_boundary_known_bads} refusal-boundary known-bads "
+        f"and {human_decision_assurance_known_bads} "
+        "human-decision-assurance known-bads "
+        f"and {next_tranche_known_bads} next-tranche known-bad "
         "rejected; candidate remains blocked and inactive"
     )
     return 0

@@ -19,6 +19,13 @@ The repository must make one promise and keep it: a reviewer can clone an exact 
 
 The release surface therefore optimizes for truth, reviewability, and failure evidence—not badges, workflow count, or the appearance of production maturity.
 
+The [cross-program process-evidence
+packet](CROSS_PROGRAM_PROCESS_EVIDENCE_ABSORPTION_2026-07-19.md) supplies
+provenance-bound process observations only. It does not extend release
+authority. In particular, a valid sibling/source file, local session record, or
+historical pointer cannot substitute for the exact member and current subject
+named by a release manifest.
+
 ## Required checks
 
 | Check | Purpose | Retained evidence | Explicit non-claim |
@@ -45,6 +52,10 @@ All checks run on pull requests, pushes to `main`, and manual dispatch. They use
 - Checkout fetches full history because the architecture evidence resolves predecessor Git objects. Workflow checkout credentials are not persisted.
 - Gitleaks scans the complete commit history and the diagnostic artifact set with both ambient config variables removed and one exact tracked profile that extends the built-in defaults. The sole retained ignore is one exact founding-commit fingerprint for a reviewed synthetic session identity; broad path/rule suppression is forbidden. Zizmor likewise runs explicitly offline with all ambient/repository configuration disabled.
 - CI artifacts are diagnostic evidence, not canonical scientific records. The repository commit and its retained architecture artifacts remain authoritative.
+- A check that validates a sibling/source artifact does not validate the shipped
+  member. The exact manifest member must be independently located, rehashed,
+  loaded, and checked; a bundled copy that omits a required refusal or boundary
+  fails even when its source sibling passes.
 
 Hash locking establishes admitted bytes, not vulnerability absence. Dependabot
 tracks the pip, npm, and GitHub Actions manifests. `npm audit` is retained as a
@@ -108,6 +119,13 @@ bash scripts/ci/rehearse-fresh-clone.sh \
 
 The rehearsal performs a non-local clone from outside every repository into an isolated temporary directory, with system/global Git configuration, injected config parameters, repository/object/index/shallow/attribute routing variables, replacement objects, custom SSH wrappers, and caller repository-discovery variables disabled for the complete process tree. Git/CURL trace destinations are removed so transport credentials and repository bytes cannot be emitted to an ambient file descriptor, file, or socket; ambient TLS overrides are removed and the clone command explicitly sets `http.sslVerify=true`; pagers are inert and terminal prompting is disabled. This prevents `url.*.insteadOf`, alternate object stores, an ambient worktree, or nested tools from substituting or leaking the approved source or history. Global HTTPS credential helpers are intentionally unavailable; private remote rehearsal uses an operator-controlled read-only SSH agent or explicit askpass transport. Each rehearsal allocates its mutable release-tool installations below its own temporary root, downloads the pinned TLA+ JAR into that root, and explicitly binds the formal checker to that verified file; concurrent rehearsals therefore do not delete or substitute one another's Node or formal-tool installation. A standalone release-surface check likewise allocates a unique cache unless its caller explicitly supplies an isolated `ODEYA_TOOL_CACHE`. It verifies the exact non-shallow checkout (and, in `remote-main` mode, requires `refs/heads/main` to equal it), creates a fresh Python environment, installs the hash-locked architecture dependencies, runs the foundation and release-surface checks, scans the exact subject ancestry, runs the formal suite, rejects undeclared tracked, untracked, or ignored outputs, scans the retained evidence, and atomically renames a complete digest-manifested evidence directory outside the disposable clone. An interrupted copy never occupies the declared evidence destination. `remote-main` mode additionally requires the SHA-256 of the exact credential-free source string retained in the owner/repository approval; it cannot self-assert an arbitrary remote. Source credentials, query strings, and fragments are rejected rather than retained. “Credential-free source” means no credential material is accepted in the command argument or written into retained evidence.
 
+The rehearsal must execute validators against the exact copied/bundled members
+named in its manifests, not against convenient source siblings. A required
+known-bad self-test must keep the source sibling valid while deleting a required
+boundary from the shipped member. That self-test remains pending; until it is
+retained and fires, no release evidence may claim this exact-member substitution
+class is closed.
+
 Local and remote evidence are compared by invariant profile, not raw bytes:
 
 ```bash
@@ -119,6 +137,14 @@ python3 scripts/compare_rehearsal_manifests.py \
 ```
 
 Before comparison, the comparator independently validates both manifest contracts, rejects duplicate JSON members, extra top-level members, duplicate/unsafe/missing paths, and symlinks, requires the exact nineteen-file inventory and all-passed dispositions, rehashes every retained file, and recursively verifies the nested repository-release manifest against its fourteen diagnostics. It then requires equality of subject commit, schema/artifact class, canonical-evidence boundary, pinned profile-file digests, pass dispositions, and relative evidence-path inventory. It separately requires the local/remote source roles, `remote main == subject commit`, and the remote source identity to equal the approved canonical-source digest. The local source identity, environment-bearing log bytes, file sizes, and per-file diagnostic digests may legitimately differ only after each side has independently verified them; those fields are named as noncompared in the receipt.
+
+Local session logs may corroborate a bounded chronology of observed commands
+and tool outcomes. They are mutable secondary evidence and never establish
+authorship, human intent, accountable approval, reviewer independence, or
+scientific validity. A structurally valid review or operator-decision artifact
+is likewise insufficient for a human-only Gate A decision while PRQ-013 in
+[ADR 0089](decisions/0089-a-valid-human-signature-is-not-a-human-decision.md)
+remains unresolved.
 
 Passing locally does not predict every GitHub-hosted-runner or account-policy
 behavior. The exact pushed commit must pass all remote checks before
@@ -155,6 +181,11 @@ is retained:
 7. a remote-main fresh-clone rehearsal requires
    `refs/heads/main == CANDIDATE_COMMIT` and produces a passing
    invariant-profile comparison receipt against the local rehearsal.
+
+A further required release known-bad remains pending: it must reject a passing
+historical ledger/pointer when the canonical current baton names a later
+candidate. Only the current canonical subject can satisfy the checklist;
+historical evidence remains attributable to its own exact bytes.
 
 Any byte change creates a new candidate and requires new exact-commit evidence.
 Architecture publication does not require pretending Gate A has passed; it is

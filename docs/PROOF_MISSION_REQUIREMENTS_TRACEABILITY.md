@@ -4,6 +4,14 @@ Status: proposed Gate A traceability ledger, 2026-07-15. This ledger answers one
 
 `specified` means the rule is explicit in architecture documents. `structural candidate` means a closed schema/fixture exists but semantic execution or review remains. `blocked` means Gate A evidence is not yet sufficient. None of these labels means runtime implementation, scientific validation, or operator acceptance.
 
+The provenance-bound observations in the
+[cross-program process-evidence packet](CROSS_PROGRAM_PROCESS_EVIDENCE_ABSORPTION_2026-07-19.md)
+refine the existing obligations below; they do not create a new constitutional
+invariant, import sibling-project authority, or prove Odeya's architecture.
+[ADR 0089](decisions/0089-a-valid-human-signature-is-not-a-human-decision.md)
+separately records why structurally valid review or approval artifacts remain
+insufficient while PRQ-013 is unresolved.
+
 ## Sentinel obligations
 
 | ID | Source lesson | Odeya contract | Required closure evidence | Current state |
@@ -47,6 +55,8 @@ Status: proposed Gate A traceability ledger, 2026-07-15. This ledger answers one
 | INB-008 | Physical causality requires calibrated measurement, frames, assets, mechanisms, identification, and safe prospective tests | Physical Science Constitution and admitted domain method profile | Missing any conjunct refuses causal adjudication; no model narrative override | Eight-schema machine family passes locally; algebra, method enrollment, real evidence, adapter, and expert review pending |
 | INB-009 | Parser, hash, signature, and join success prove only their own dimensions | Multidimensional verification with no axis collapse | `16/16` join plus valid signature still yields `BLOCKED_EVIDENCE` | Specified; trace pending |
 | INB-010 | No evidence can be the correct serious outcome | Blocker/refusal objects and next-legal-action compiler | 0/30 dossiers yields a useful refusal/testbed plan without fabricated diagnosis | Physical blocker/refusal fixtures exist; governed claim/reducer/composite trace pending |
+| INB-011 | A cryptographically valid signature made with an agent-accessible key does not establish that the named human reviewed or made the decision | PRQ-013 `HumanDecisionAssurance`; ADR 0089; separate human-controlled decision evidence and key/session custody observations | A valid signature from an unattended agent-accessible key cannot satisfy a human-only review, approval, quorum, or operator-decision slot | Specified by ADR 0089; PRQ-013 contract, consumer census/migration, semantic fixtures, and accountable review pending |
+| INB-012 | A measurement-blind match can expose a definitional, procedural, or implementation identity, but one rounded-value/label match does not prove entailment | Evidence-origin, exclusion/taint, and measurement contracts; claim compiler keeps screening failure, demonstrated analytic identity, and empirical outcome separate | Withhold measurements and all outcome descendants/proxies; a match blocks promotion, while only analytic or counterfactual/permutation dependency evidence may classify circularity and forbid empirical/null/diagnostic/causal/physical language | Specified; measurement-dependence fixture and composite reducer/claim trace pending |
 
 ## Maestro trial obligations
 
@@ -70,6 +80,18 @@ Status: proposed Gate A traceability ledger, 2026-07-15. This ledger answers one
 | XPM-006 | A correction or adverse result must reach memory, benchmark, UI, publication, and investor surfaces | Dependency fanout trace shows no stale current projection | Projection impact schema/vectors exist; real correction cohort, reducers, cache stores, and fanout trace pending |
 | XPM-007 | Exact source identity and usage permission precede “absorption” | No project bytes copied before per-artifact decision and immutable manifest | Enforced by policy; rights decisions absent |
 | XPM-008 | The proof missions are requirements sources, not training data or repositories to merge | Architecture candidate references pinned facts only; no runtime/source merge | Satisfied at current architecture boundary |
+
+## Provenance-bound evidence refinements
+
+These are known-bad refinements to the obligations above, not additional
+top-level invariants:
+
+| ID | Retained process observation | Existing obligation refined | Required known-bad closure | Current state |
+|---|---|---|---|---|
+| XPE-001 | A validator can pass against a sibling/source artifact while the exact shipped or bundled member omits the required boundary | SEN-001, TEL-006, XPM-007 | Keep the sibling/source valid, remove the boundary only from the exact manifest member, and require exact-member validation to reject the candidate | Specified refinement; fixture pending |
+| XPE-002 | A historical ledger or pointer can validate while the canonical current baton names a later mission state | TEL-005, MAE-003, XPM-006 | Retain a passing historical pointer beside a later canonical baton and require current-state resolution to reject the historical record as current authority | Specified refinement; fixture pending |
+| XPE-003 | A provider request can be initiated and then interrupted before completion and cost settlement | TEL-004, TEL-008, XPM-003 | Retain initiation, interruption, and unknown completion/spend; reject coercion to zero calls, zero cost, applied, not applied, or scientific null | Specified refinement; fixture pending |
+| XPE-004 | Local session logs can establish only a bounded chronology of observed operations and tool outcomes | TEL-007, TEL-009, INB-009 | Reject any attempt to use session metadata as authorship, human intent, approval, independence, or scientific-validity evidence | Specified refinement; semantic fixture pending; PRQ-013 remains blocked |
 
 ## Gate A verdict from this ledger
 

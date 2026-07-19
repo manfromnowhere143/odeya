@@ -61,6 +61,26 @@ No item passes because a document sounds complete. Gate A accepts meanings, cont
 - [ ] Capability grants, credentials, egress, sandbox, artifact promotion, and revocation semantics are defined.
 - [ ] Data classification, rights, residency, retention, deletion, sealed truth, and model-training policy are defined.
 - [ ] Pause, kill, revoke, incident, withdrawal, and correction paths have test plans.
+- [ ] PRQ-013 `HumanDecisionAssurance` is accepted: a protected explicit
+  ceremony binds the exact displayed and candidate bytes, decision basis and
+  limitations, verifier-generated unpredictable challenge, separate
+  human-initiated confirmation gesture, user presence and verification,
+  principal identity-proofing and authenticator binding,
+  authenticator/key/session custody and unattended-agent exclusion,
+  delegation, objections, conflicts, effective quorum, replay/expiry controls,
+  and sanitized independent evidence. Authentication intent or a valid
+  signature never substitutes for human review, understanding, or substantive
+  decision intent, and the bounded claim never asserts cognition.
+- [ ] `PRQ-013-KB-001` is retained and rejects an unattended agent that can
+  invoke a human-labelled signing key and produce a cryptographically valid
+  signature over the exact candidate while the verifier-generated challenge,
+  human-initiated confirmation gesture, identity/authenticator binding, user
+  presence, and user verification are absent or `unknown`.
+
+No current schema is claimed PRQ-013-compliant. Gate A remains blocked under
+[ADR 0089](decisions/0089-a-valid-human-signature-is-not-a-human-decision.md)
+and the
+[cross-program process-evidence packet](CROSS_PROGRAM_PROCESS_EVIDENCE_ABSORPTION_2026-07-19.md).
 
 ## G4 — Evidence, memory, and provenance
 

@@ -42,6 +42,7 @@ This design fits the strongest retained lessons from the three proof missions. I
 | Bounded formal models | 7 distinct safe TLA+ models, 8 safe executions, and 30 intended counterexamples pass in one integrated sequential harness; the alternate cognitive execution uses a second seed/fingerprint profile | This is bounded model evidence on one model/checker/host lineage. It is not an independent proof or runtime verification |
 | First-slice admission | Candidate 0.2 retains exact representational sets—43 required / 78 outside commands, 60 event types, 25 aggregate/state/reducer families, 11 owners, and one P0 prerequisite—while keeping C5/PRQ-009 blocking; 12 safe references and 60 known-bads pass the bounded adversarial checker | C5 lacks a constructible resolved WorkIntent and complete admitted assignment binding. Direct WorkLease review also found that ResearchEvent 0.7.0 release requires an unclaimed reservation after the flow has claimed it; reissue must preserve the claim for separate settlement. The remaining member/root/replay/review evidence is also missing. Nothing is admitted or executable |
 | PRQ-009 assignment order | One finite contract audits 14 active consumers and 2 explicitly superseded artifacts; 14 pinned known-bads freeze `WorkIntent → atomic 13-event verification.assign → derived WorkContract → separate attempt.start`, reject legacy cycles/extra authority, and pin the exact 54-fragment consumer matrix | The contradiction is corrected, but PRQ-009 remains `unresolved_blocking`: required profile/member/reducer/root identities, replay/refinement, independent review, and Gate A acceptance are absent |
+| PRQ-013 human-decision assurance | [ADR 0089](decisions/0089-a-valid-human-signature-is-not-a-human-decision.md) and the [cross-program process-evidence packet](CROSS_PROGRAM_PROCESS_EVIDENCE_ABSORPTION_2026-07-19.md) establish the refusal boundary: signature validity and authentication intent are not human decision intent | No current schema is claimed compliant. The exact assurance core/evidence/seal shape, consumer census, migration, semantic rules, ceremony verification, and accountable review remain blocking; the bounded future claim can establish only ceremony evidence attributable under a named principal/authenticator identity-proofing and binding profile, never cognition |
 
 The current 112-resource schema set intentionally does not pretend to be a
 complete offline resolver. The exact `canonical-work-lease:0.1.0` resource is
@@ -74,7 +75,7 @@ The bounded scope, cohorts, C5 refusal boundary, and construction gaps are in th
 | G0 mission/boundary | Partial | Per-artifact rights decisions, exact import root, final company/user language, and operator sign-off |
 | G1 scientific/mathematical | Partial | Registry enrollment, cross-record/unit/method resolution, independent implementations, broader property vectors, and statistical/physical-domain review |
 | G2 domain/lifecycle | Blocked | C5/PRQ-009 lacks a resolved assignable WorkIntent and complete assignment cohort; after closing it, construct the remaining exact payload, command, event, state, and reducer members and run composite atomicity/replay evidence |
-| G3 security/authority | Partial | Accepted root/assignment/grant/quorum contracts, real policy/member instances, race traces, independent security/privacy review, and operator decision |
+| G3 security/authority | Blocked | PRQ-013 lacks an exact `HumanDecisionAssurance` contract over displayed/candidate bytes, verifier-generated unpredictable challenge, separate human-initiated confirmation gesture, user presence/verification, principal/authenticator binding, custody/agent exclusion, delegation/objections/conflict/effective quorum, replay/expiry, and sanitized evidence; accepted root/assignment/grant/quorum contracts, real policy/member instances, race traces, independent security/privacy review, and operator decision are also absent |
 | G4 evidence/memory | Blocked | Canonical-profile issuance and accountable review, witnessed retained roots, exact provenance/export mappings, and deletion/legal-hold/recovery replay |
 | G5 evaluation/learning | Partial | Pinned holdouts/known-bads, validated graders, matched-budget oracles, contamination process, and grounded promotion evidence |
 | G6 modules/interfaces | Partial | The logical manifest passes, but real registry records, source/package import enforcement, port conformance, and handler equality do not exist |
@@ -104,6 +105,7 @@ No row is passed.
 | A-013 | Medium | Product/technology candidates are not proven | Only explicitly authorized reversible Gate B probes with named evidence and exit rules |
 | A-014 | Medium | Projection and UI semantics are not accepted or independently tested end to end | Daniel-approved surface contract; accessibility, leakage, cache, timing, stale-state, correction, and release fixtures |
 | A-015 | Critical | No immutable architecture candidate has been independently signed | Clean exact candidate commit/manifest, closed critical/high findings, review determinations, and Daniel’s accept/reject/amend decision |
+| A-016 | Critical | A cryptographically valid human-labelled signature or authentication result can satisfy current structural candidates without separate evidence of a protected human decision over the exact displayed and candidate bytes | Close PRQ-013 with a nonrecursive assurance core/evidence/seal contract, complete consumer census and migration, exact custody/delegation/conflict/quorum/freshness/replay rules, `PRQ-013-KB-001` plus changed-byte and stale/replay known-bads, independent ceremony verification, accountable review, and operator acceptance |
 
 ## Machine-family maturity
 
@@ -144,10 +146,13 @@ Architecture validators, schemas, fixtures, bounded models, and review plans are
 2. Build the 42 payload, 25 state, 25 reducer, 60 event, and 43 command records in dependency order with exact cohort/authority alternatives.
 3. Instantiate reviewed registry/root/C0/checkpoint/witness/P0/activation candidates and prove exact member/handler equality.
 4. Execute two independent reducers and two clean proof-mission verifier paths, including replay, recovery, correction fanout, and refusal cases.
-5. Preserve the zero-blocker canonicalization audit, obtain the profile
+5. Close PRQ-013 without claiming cognition: issue and migrate the exact
+   decision-assurance contract, prove its ceremony and consumer rules against
+   known-bads, and obtain accountable security/authority review.
+6. Preserve the zero-blocker canonicalization audit, obtain the profile
    issuance decision, and obtain accountable
    domain/security/privacy/distributed/accessibility reviews.
-6. Produce an exact candidate manifest and clean commit; rerun every suite against those bytes.
-7. Ask Daniel to accept, reject, or amend the candidate. Acceptance alone still does not authorize runtime product work.
+7. Produce an exact candidate manifest and clean commit; rerun every suite against those bytes.
+8. Ask Daniel to accept, reject, or amend the candidate. Acceptance alone still does not authorize runtime product work.
 
 The architecture is materially stronger and far more falsifiable than the starting foundation. The honest status remains: **working checkpoint, Gate A blocked**.

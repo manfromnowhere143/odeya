@@ -43,6 +43,13 @@ dispatch claim. These schemas prove shape, not candidate-digest recomputation,
 human identity or assignment validity, gate evidence truth, seal determinism,
 current revocation/expiry, or atomic reservation ordering.
 
+They also do not prove that a named human controlled or made the decision.
+[ADR 0089](decisions/0089-a-valid-human-signature-is-not-a-human-decision.md)
+keeps PRQ-013 blocking until a separate, nonrecursive human-decision-assurance
+contract and its consumer migration exist. A valid signature, declared human
+principal, session log, or structurally valid approval artifact cannot satisfy
+that missing evidence.
+
 ### PublicationCandidate
 
 An immutable proposed disclosure:
@@ -86,6 +93,11 @@ grant. Odeya does not require a separate operational grant for this human
 decision in the Gate A candidate; if policy later introduces one, it must use a
 different role, identity, domain-commit consumption point, and causal record
 from the manifest-bound dispatch grant.
+
+The current structural decision fields are therefore necessary but not
+sufficient for a consequential human-only publication decision. Until PRQ-013
+closes, their presence cannot compile to human decision assurance or Gate A
+acceptance.
 
 Any changed candidate byte, claim version, audience, channel, destination, redaction, wording, or decision input requires a new candidate and decision. “Authorized with silent edits” is forbidden.
 
@@ -212,6 +224,12 @@ The release adapter runs outside the canonical transaction. It cannot set public
 
 A timeout becomes `completion_unknown`. A provider response means only what the accepted channel evidence rule says. Automatic retry after a possibly crossed boundary is forbidden without proven idempotency and reconciliation. A provider may deduplicate writes while duplicating charges, so cost settlement stays separate.
 
+If request initiation is retained but the dispatcher or provider interaction
+is interrupted before completion and charge settlement, the exact number of
+completed requests and actual spend remain unknown unless independently
+settled. Neither value becomes zero, and the interruption proves neither
+application nor non-application.
+
 ## Correction, retraction, and withdrawal
 
 A scientific correction does not mutate a publication. It:
@@ -236,12 +254,23 @@ If a channel cannot correct or withdraw, this limitation is part of the pre-rele
 | Grant commits, effect intent fails | Active unused grant; retry same intent command if still valid | Release started |
 | Intent/reservation commits, before dispatch claim | Authorized intent, active exact reservation, pending outbox; no in-flight fact | Grant consumed, dispatch started, or channel changed |
 | Dispatch claim/use commits, dispatcher dies before known call outcome | In-flight fact and consumed single-use grant; crossing is uncertain, so reconcile/query with no blind retry | Process death proves the channel was or was not changed |
+| Provider request initiation is observed, then execution is interrupted before outcome/cost settlement | Initiation and interruption facts; completion count and actual spend remain unknown | Zero completed calls, zero cost, applied, not applied, or scientific null |
 | Channel applies, adapter dies | Completion unknown | Not released or safe to resend |
 | 2xx returned with wrong/missing bytes | Response evidence plus mismatch | Released |
 | Correction lands during dispatch | In-flight fact retained; revoke/cancel if possible; reconcile then correct/withdraw | Correction erased the call |
 | Withdrawal call times out | Withdrawal completion unknown | Content removed |
 
-Known-bad fixtures must include candidate byte mutation after authorization, wrong claim version, expired/changed rights, service pretending to be human decision maker, grant for a different manifest/destination, duplicate dispatch, forged receipt, redirect to wrong bytes, stale cached page, partial multi-channel success, and channel refusing correction.
+Known-bad fixtures must include candidate byte mutation after authorization,
+wrong claim version, expired/changed rights, service pretending to be human
+decision maker, grant for a different manifest/destination, duplicate dispatch,
+forged receipt, redirect to wrong bytes, stale cached page, partial
+multi-channel success, and channel refusing correction. The additional
+provenance-bound cases in the
+[cross-program process-evidence packet](CROSS_PROGRAM_PROCESS_EVIDENCE_ABSORPTION_2026-07-19.md)
+must also reject: validation of a sibling/source artifact while the exact
+release member omits a required boundary; a passing historical release pointer
+when the canonical baton names a later candidate; and session logs offered as
+authorship, human decision, or scientific-validity evidence.
 
 ## Acceptance criteria
 
@@ -253,7 +282,9 @@ Gate A publication architecture cannot pass until:
 - every channel class declares idempotency, read-back, cost, correction, and withdrawal evidence or is refused;
 - authority/rights/security reviewers close critical/high findings;
 - public/private projection fixtures prove no hidden data or claim widening;
-- the first proof fixture demonstrates supported, null, invalid/blocked, correction, and ambiguous-release handling offline; and
+- the first proof fixture demonstrates supported, null, invalid/blocked, correction, and ambiguous-release handling offline;
+- every human-only review or approval consumer either resolves the future
+  PRQ-013 assurance contract or remains blocked; and
 - Daniel accepts the exact protocol candidate.
 
 Passing these architecture criteria still does not authorize a real release or channel integration.

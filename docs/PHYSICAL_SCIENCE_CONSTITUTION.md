@@ -244,6 +244,7 @@ Closed-loop identification records controller and reference policies because inp
 PhysicalExperimentContract {
   hypothesis and rivals
   causal estimand or target quantity
+  measurement-dependence falsifier and entailed-effect rule
   intervention policy
   randomization, controls, and blinding
   sensors and calibration
@@ -260,7 +261,31 @@ PhysicalExperimentContract {
 }
 ```
 
-Reject before ranking when the target is unobservable/non-identifiable, sensor capability cannot resolve it, excitation is inadequate, the causal effect is unidentified, authority/safety cannot be met, or validation cannot remain independent.
+Before an effect may be classified as empirically measured, preregister a
+measurement-dependence falsifier. Its blinded input set may contain only
+prospectively frozen, pre-outcome design inputs whose dependency/taint graph
+shows they are not descendants or proxies of the measurement or outcome.
+Control metadata, labels, censoring indicators, and denominators are withheld
+when the measurement or intervention can affect them.
+
+An exact rounded-value or coarse-label match by the blinded computation is a
+screening failure: it blocks empirical promotion and requires adjudication, but
+one match alone does not prove definitional entailment. An empirical
+interpretation becomes `invalid` for circularity only after an analytic
+derivation or preregistered counterfactual/permutation dependency test shows
+that the reported effect is invariant to admissible changes in the withheld
+measurements or is computed from outcome descendants. Otherwise the result
+remains `blocked` or `inconclusive`. A demonstrated identity may support an
+implementation-correctness or analytic-identity claim, but it cannot count as
+an independent physical measurement or empirical effect. The
+measurement-dependent residual information and its provenance must be
+reported.
+
+Reject before ranking when the target is unobservable/non-identifiable, sensor
+capability cannot resolve it, a measurement-blind match is unresolved or
+circularity is demonstrated, excitation is inadequate, the causal effect is
+unidentified, authority/safety cannot be met, or validation cannot remain
+independent.
 
 For interventions, distinguish:
 
@@ -277,13 +302,13 @@ Model credibility is context- and decision-dependent. [NASA-STD-7009B](https://s
 | Gate | Evidence | Hard rejection example |
 |---|---|---|
 | P0 decision/context | decision, QoI, configuration, ODD/context, horizon, consequence, model influence | “generally accurate” |
-| P1 measurement | units, frames, traceable instruments, bandwidth, resolution, uncertainty | bare value or expired calibration |
+| P1 measurement | units, frames, traceable instruments, bandwidth, resolution, uncertainty, measurement-dependence falsifier | bare value, expired calibration, or effect entailed without observations |
 | P2 conceptual adequacy | governing assumptions, omitted effects, discrepancy, conservation, boundaries | dominant mechanism absent |
 | P3 observability/identifiability | structural and practical analysis, excitation | unidentifiable requested parameter |
 | P4 code verification | analytic/manufactured solutions, regression, independent implementation where warranted | only training-data comparison |
 | P5 solution verification | mesh/time-step/tolerance convergence and numerical-error estimate | one grid/solver setting |
 | P6 calibration | declared fit data, priors, residuals, parameter/discrepancy diagnostics | fit called validation |
-| P7 physical validation | independent measurements, uncertainty-aware metrics, intended regime/QoI | simulation compared with simulation |
+| P7 physical validation | independent measurements, measurement-dependent residual information, uncertainty-aware metrics, intended regime/QoI | simulation compared with simulation or a definitionally entailed effect relabeled measured |
 | P8 uncertainty/sensitivity | measurement, input, parameter, numerical, model-form, scenario, implementation | independence assumed for convenience |
 | P9 applicability | domain distance, interpolation/extrapolation, robustness, abstention | claim outside envelope |
 | P10 causal | identified intervention effect or controlled experiment | prediction called mechanism |
@@ -409,6 +434,8 @@ Road-autonomy references include [ISO 26262](https://www.iso.org/publication/PUB
 - Unit/frame/time mismatch survives schema or preflight.
 - Shared systematic covariance is dropped.
 - Calibration evidence is reused as independent validation without disclosure.
+- An unresolved measurement-blind match is promoted, or a demonstrated
+  analytic/dependency identity is still labeled an empirical measurement.
 - Structural non-identifiability reaches parameter optimization.
 - Code verification or one-grid output is labeled physical validation.
 - A parameter absorbs model discrepancy without diagnosis.

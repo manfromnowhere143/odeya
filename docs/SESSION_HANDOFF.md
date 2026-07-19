@@ -12,6 +12,7 @@ Read this file before changing repository bytes. Then read the detailed
 [current architecture status](ARCHITECTURE_STATUS.md), the
 [pre-implementation gate](PRE_IMPLEMENTATION_GATE.md), the
 [prerequisite closure plan](GATE_A_PREREQUISITE_CLOSURE_PLAN_2026-07-16.md),
+the [cross-program process-evidence packet](CROSS_PROGRAM_PROCESS_EVIDENCE_ABSORPTION_2026-07-19.md),
 the committed [implementation order](IMPLEMENTATION_ORDER.md), the
 [standards profile](STANDARDS_PROFILE.md),
 and the [repository release contract](REPOSITORY_RELEASE.md). Revalidate every
@@ -213,29 +214,26 @@ that deserves to carry the mission forward.
 - Canonical workspace: `/Users/danielwahnich/workspace/odeya`; it is currently
   a protected concurrent-work lane on `agent/repository-release`.
 - Active correction worktree:
-  `/Users/danielwahnich/workspace/odeya-gate-a-repair-release-v2-20260719`
-- Active correction branch: `agent/gate-a-repair-release-v2-20260719`
-- Original correction-tranche base:
-  `50e4bc6bfd634c7d5fe11cf0114e1fee94b4e62d`
-- Original correction-tranche base tree:
-  `2e8208e77796be405431eb3654ba51f5652b6eaa`
-- Published correction checkpoint:
-  `73ab5a6e05b90e1ca2919ef84874f5f5935f7299`
-- Published correction-checkpoint tree:
-  `b6990d3a521c30fd196fd67fb3ea2676bca27308`
+  `/Users/danielwahnich/workspace/odeya-cross-program-evidence-extraction-20260719`
+- Active correction branch:
+  `agent/cross-program-evidence-extraction-20260719`
+- Active correction-tranche base and current published checkpoint:
+  `a363d535ef4371482e430935477258f1128d0960`
+- Active correction-tranche base/published-checkpoint tree:
+  `e6543c357b707c67cbc7b7e4ad70fd3c46d28eb3`
 - Canonical remote: `https://github.com/manfromnowhere143/odeya` (public;
   created 2026-07-17 under ADR 0047; default branch `main`)
-- Measured remote state on 2026-07-19: the guarded publication advanced
-  `main` to the exact published correction checkpoint; all three workflow
-  families and all nine required jobs were green for that commit. Secret
-  scanning and push protection were enabled; Dependabot security updates were
-  disabled; no repository ruleset existed; and `main` was not protected.
+- Measured remote state on 2026-07-19: `main` resolved to
+  `a363d535ef4371482e430935477258f1128d0960`; all three workflow families and
+  all nine required jobs were green for that commit. Secret scanning and push
+  protection were enabled; Dependabot security updates were disabled; no
+  repository ruleset existed; and `main` was not protected.
 - Retained remote-main evidence:
-  `/Users/danielwahnich/workspace/odeya-release-evidence/remote-main-73ab5a6e05b90e1ca2919ef84874f5f5935f7299`;
+  `/Users/danielwahnich/workspace/odeya-release-evidence/remote-main-a363d535ef4371482e430935477258f1128d0960`;
   the local/remote invariant-profile comparison receipt is
-  `/Users/danielwahnich/workspace/odeya-release-evidence/remote-main-comparison-73ab5a6e05b90e1ca2919ef84874f5f5935f7299.json`
+  `/Users/danielwahnich/workspace/odeya-release-evidence/remote-main-comparison-a363d535ef4371482e430935477258f1128d0960.json`
   with SHA-256
-  `7e9c5295572e2835fd7c96f52e2738049df22d24dce61804db16c6517b16dd45`.
+  `3d1e9567aef28b46c9b717e281bf2286fa67fc865a12e92d52e1c3deaaf802fd`.
 - Repository visibility, creation, and evidence-gated architecture-publication
   authority: granted under ADR 0045 and ADR 0047 and reconciled by ADR 0087.
 - Runtime, deployment, external-effect, and Gate A authority: not granted
@@ -250,7 +248,7 @@ Run first:
 
 ```bash
 bash -euo pipefail <<'BASH'
-cd /Users/danielwahnich/workspace/odeya-gate-a-repair-release-v2-20260719
+cd /Users/danielwahnich/workspace/odeya-cross-program-evidence-extraction-20260719
 source scripts/ci/sanitize-git-environment.sh
 git status --short --branch
 git rev-parse HEAD
@@ -261,12 +259,12 @@ git rev-parse origin/main
 git remote -v
 git log --oneline --decorate -5
 test "$(git symbolic-ref --short HEAD)" = \
-  agent/gate-a-repair-release-v2-20260719
+  agent/cross-program-evidence-extraction-20260719
 test "$(git remote)" = origin
 test "$(git remote get-url origin)" = \
   https://github.com/manfromnowhere143/odeya.git
 git merge-base --is-ancestor \
-  73ab5a6e05b90e1ca2919ef84874f5f5935f7299 origin/main
+  a363d535ef4371482e430935477258f1128d0960 origin/main
 git merge-base --is-ancestor origin/main HEAD
 git diff --cached --name-only
 git diff --check
@@ -279,7 +277,7 @@ BASH
 Expected invariants:
 
 - the active correction branch is
-  `agent/gate-a-repair-release-v2-20260719`;
+  `agent/cross-program-evidence-extraction-20260719`;
 - the canonical worktree remains on `agent/repository-release` with Daniel's
   protected UI/UX changes untouched;
 - the exact published correction checkpoint remains an ancestor of public
@@ -743,8 +741,9 @@ Read the tranche's convergence honestly. Across this tranche the canonical
 profile audit moved from 675 to 668 unscoped digest fields, 118 to 122
 unprofiled date-time paths, 233 to 236 nonconformant fixture timestamps, 62 to
 61 number findings, and left 56 divergent common definitions and 11 unpinned
-profile bindings unchanged. Zero of the twelve PRQ findings are closed and
-`profile_status` remains `blocked`, while the schema count grew from 100 to 112.
+profile bindings unchanged. At that checkpoint, zero of the then-twelve PRQ
+findings were closed and `profile_status` remained `blocked`, while the schema
+count grew from 100 to 112. PRQ-013 was discovered later and is recorded below.
 The added candidates are correctly evidenced and T0 issues no immutable member
 by design, so this is not a discipline failure. It does mean the tranche is
 additive and that PRQ-001 terminates in Daniel's profile decision, which no
@@ -881,14 +880,14 @@ directory, outside both the Git worktree and temporary storage:
 
 ```bash
 bash -euo pipefail <<'BASH'
-cd /Users/danielwahnich/workspace/odeya-gate-a-repair-release-v2-20260719
+cd /Users/danielwahnich/workspace/odeya-cross-program-evidence-extraction-20260719
 source scripts/ci/sanitize-git-environment.sh
 commit="$(git rev-parse HEAD)"
 evidence="/Users/danielwahnich/workspace/odeya-release-evidence/$commit"
 test ! -e "$evidence"
 bash scripts/ci/rehearse-fresh-clone.sh \
   "$commit" \
-  /Users/danielwahnich/workspace/odeya-gate-a-repair-release-v2-20260719 \
+  /Users/danielwahnich/workspace/odeya-cross-program-evidence-extraction-20260719 \
   "$evidence" \
   local
 python3 - "$evidence" "$commit" <<'PY'
@@ -930,6 +929,37 @@ records, and repository-release validation. Gate B permits only separately
 authorized disposable probes after Gate A. Gate C is required before one
 bounded runtime increment.
 
+## Cross-program evidence absorbed on 2026-07-19
+
+The retained
+[cross-program packet](CROSS_PROGRAM_PROCESS_EVIDENCE_ABSORPTION_2026-07-19.md)
+audits exact committed Sentinel, Telos, and Inbar snapshots as untrusted,
+read-only requirements evidence. Dirty descendants and concurrent work are
+excluded. Bounded session-log inspection corroborates command chronology and
+exit status only; it does not establish authorship, human intent, scientific
+validity, or authority, and raw session records are not imported into Odeya.
+
+The audit does not establish that Odeya or any sibling programme is state of
+the art. It sharpens five architecture obligations:
+
+- PRQ-013 blocks every consequential human-only decision until a valid
+  signature is separated from retained human-decision-assurance evidence over
+  exact bytes;
+- publication validation must inspect the exact shipped bundle and member,
+  not a correct sibling source file;
+- baton validation must reject a historical ledger or pointer that passes
+  while the canonical current mission is later;
+- interrupted provider contact preserves exact completion and spend as
+  unknown when they cannot be reconstructed; and
+- a measurement-blind match blocks empirical promotion pending adjudication;
+  a demonstrated analytic/dependency identity is an analytic or implementation
+  check, not an empirical measurement.
+
+These are bounded corrections, not imported runtime, scientific results, or
+sibling authority. The proposed Abstention Frontier (`AFT-001`) remains a
+later preregistered research candidate only. It cannot begin before Gate A and
+separate authorization, and it creates no fifth active mission.
+
 ## External-model decision: Inkling is frozen
 
 Thinking Machines' Inkling model is watch-only. Do not download weights, call a
@@ -963,15 +993,17 @@ A mission.
    isolated mutable tool state with the formal checker bound to the jar that
    rehearsal verified. These corrections remain architecture evidence and do
    not resolve the underlying profile identities or accept Gate A.
-2. Complete T0 by closing PRQ-001–PRQ-010. The canonical-profile migration
-   audit is mechanically clear, but profile issuance, accountable independent
-   review, exact member/reducer/root identities, and the remaining prerequisite
-   determinations stay open. Keep admission, assignment, lease, dispatch, and
-   runtime blocked. Resolve `C5-WORK-LEASE-RELEASE-CLAIM-001`: release retains
-   the reservation claimed at attempt start for separate ResourceLedger
+2. Complete T0 by closing PRQ-001–PRQ-010 and PRQ-013. The
+   canonical-profile migration audit is mechanically clear, but profile
+   issuance, the HumanDecisionAssurance identity/wrapper and consumer
+   migration, accountable independent review, exact member/reducer/root
+   identities, and the remaining prerequisite determinations stay open. Keep
+   admission, assignment, human-only approval, lease, dispatch, and runtime
+   blocked. Resolve `C5-WORK-LEASE-RELEASE-CLAIM-001`: release retains the
+   reservation claimed at attempt start for separate ResourceLedger
    settlement; lease termination cannot erase or settle that claim.
-3. Only after all T0 evidence and exact schema/registry identities pass,
-   construct and prove the T1 AuthorityAssignment vertical contract.
+3. Only after all T0 evidence, PRQ-013, and exact schema/registry identities
+   pass, construct and prove the T1 AuthorityAssignment vertical contract.
 4. Complete the exact 42 payload schemas, 43 command records, 60 event records,
    25 state/aggregate subjects, and 25 reducer records without changing the
    retained first-slice boundary by implication.

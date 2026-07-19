@@ -37,6 +37,10 @@ The `ArchitectureCandidateManifest` binds:
 
 A directory listing, branch name, mutable URL, or commit alone is insufficient. The source commit establishes authoring identity; the manifest establishes review scope. Generated diagrams and rendered documents are included when reviewers relied on them.
 
+Every relied-on member is checked at its exact manifest path and digest. A
+validator pass over a sibling/source artifact cannot cover a shipped or bundled
+member that omits a required boundary.
+
 ## Review lanes
 
 | Lane | Minimum accountable competence | Core questions |
@@ -68,6 +72,14 @@ Each reviewer record states:
 
 Independence is multidimensional. A different model name or employer is not automatically independent; shared data, evaluator, code, prompts, operator, incentives, or hidden context can correlate failure.
 
+A declared human principal and valid signature are also insufficient to prove a
+human-controlled determination. [ADR
+0089](decisions/0089-a-valid-human-signature-is-not-a-human-decision.md) keeps
+PRQ-013 unresolved until separate decision-assurance evidence and the affected
+consumer migration exist. Session logs may corroborate bounded operational
+chronology only; they cannot establish authorship, human intent, accountable
+approval, independence, or scientific validity.
+
 ## Reviewer packet
 
 Every lane receives the same candidate manifest plus a role-specific packet compiled at one ledger/repository position:
@@ -80,7 +92,9 @@ Every lane receives the same candidate manifest plus a role-specific packet comp
 6. current blockers and prior findings, including rejected architecture alternatives;
 7. proposed deployment-neutral assumptions and unresolved product probes;
 8. claim-language boundary—what Gate A acceptance may and may not say; and
-9. a reproducible local/offline verification procedure.
+9. a reproducible local/offline verification procedure; and
+10. the canonical current baton plus any retained historical pointers needed to
+    prove that no older passing ledger is being presented as current.
 
 Reviewers may request additional evidence. Any new candidate artifact is added through a new manifest version; it cannot be passed privately to one reviewer and omitted from scope.
 
@@ -198,6 +212,14 @@ This protocol fails if Odeya can:
 - carry a sign-off across a semantic change without reviewer impact acceptance;
 - let one universal score average away a security or scientific failure;
 - infer acceptance from silence or schedule pressure;
+- validate a sibling/source artifact while omitting a required boundary from
+  the exact reviewed or bundled member;
+- accept a passing historical ledger/pointer as current when the canonical
+  baton names a later state;
+- convert an initiated then interrupted provider request into zero completed
+  requests, zero spend, applied, or not applied;
+- infer authorship, human intent, approval, independence, or scientific
+  validity from session logs;
 - accept architecture while exact source rights or fixture identity is unsettled; or
 - describe Gate A as product conformance or scientific superiority.
 
@@ -212,8 +234,20 @@ Before review begins, retain at least:
 - reviewer conflict hidden behind a second identity;
 - missing proof correction from a reviewer packet;
 - validator pass with semantic known-bad failure;
+- valid sibling/source file with the required boundary removed only from the
+  exact reviewed/bundled member;
+- passing historical ledger/pointer beside a later canonical current baton;
+- initiated provider request interrupted before completion and cost settlement,
+  with both values retained as unknown;
+- session-log chronology offered as authorship, human decision, approval,
+  independence, or scientific-validity evidence;
 - product-dependent claim disguised as accepted architecture;
 - timeout/missing reviewer; and
 - accepted manifest with one publication byte changed.
 
 Every known-bad case must prevent the Gate A compiler from producing `accepted`.
+These refinements are provenance-bound in the
+[cross-program process-evidence
+packet](CROSS_PROGRAM_PROCESS_EVIDENCE_ABSORPTION_2026-07-19.md); they exercise
+existing exact-identity, current-state, missingness, authority, and evidence
+boundaries rather than adding a new top-level invariant.

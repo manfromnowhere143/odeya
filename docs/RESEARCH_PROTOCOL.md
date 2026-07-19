@@ -136,6 +136,23 @@ Multi-agent architecture must beat a comparable single-agent baseline under repo
 
 For every consequential gate, the mission includes at least one deliberately broken artifact that should fail. A gate that cannot demonstrate this behavior is only an assertion.
 
+Before a reported effect is eligible as empirical evidence, the protocol
+preregisters a measurement-dependence falsifier and an exclusion/taint graph.
+The blinded input may retain only prospectively frozen pre-outcome design
+inputs proven not to be descendants or proxies of the measurement or outcome;
+outcome-dependent labels, control metadata, censoring indicators, and
+denominators are withheld.
+
+An exact rounded-value or coarse-label match is a screening failure that blocks
+empirical promotion pending adjudication; one match alone does not prove
+entailment. Circularity requires an analytic derivation or preregistered
+counterfactual/permutation dependency evidence showing invariance to admissible
+measurement changes or dependence on outcome descendants. A demonstrated
+identity is classified as a definitional, procedural, or implementation
+check—not as an independently measured effect. Without that demonstration the
+result remains `blocked` or `inconclusive`. The claim package records what
+residual information came only from measurement.
+
 ## World contact
 
 Internal consistency is a floor. Depending on the domain, world contact can mean:
@@ -154,7 +171,10 @@ The contract asks: **could this gate pass while the object it guards is actually
 
 Evidence is admitted only when its role, origin, rights, capture method, integrity, and relation to a claim are explicit. Source roles include orientation, hypothesis generation, protocol design, evaluation, sealed truth, transfer, and publication support.
 
-Model-generated summaries, inferred metadata, screenshots without recoverable context, and signatures without semantic recomputation cannot independently settle a claim.
+Model-generated summaries, inferred metadata, screenshots without recoverable
+context, signatures without semantic recomputation, and effects reproducible
+without the claimed measurement payload cannot independently settle an
+empirical claim.
 
 ## Claim compiler
 
