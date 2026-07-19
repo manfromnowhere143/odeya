@@ -62,9 +62,12 @@ mkdir -p -- "$EVIDENCE_PARENT"
 REHEARSAL_ROOT="$(mktemp -d "${TMPDIR:-/tmp}/odeya-release-rehearsal.XXXXXX")"
 readonly REHEARSAL_ROOT
 readonly CLONE="$REHEARSAL_ROOT/odeya"
+ODEYA_TOOL_CACHE="$REHEARSAL_ROOT/tool-cache"
+readonly ODEYA_TOOL_CACHE
+export ODEYA_TOOL_CACHE
 EVIDENCE_STAGING="$(mktemp -d "${TMPDIR:-/tmp}/odeya-rehearsal-evidence.XXXXXX")"
 readonly EVIDENCE_STAGING
-readonly TLA_ROOT="${TMPDIR:-/tmp}/odeya-tla/v1.7.4"
+readonly TLA_ROOT="$REHEARSAL_ROOT/tla/v1.7.4"
 readonly TLA_JAR="$TLA_ROOT/tla2tools.jar"
 readonly TLA_SHA256="936a262061c914694dfd669a543be24573c45d5aa0ff20a8b96b23d01e050e88"
 STAGE_LEDGER="$REHEARSAL_ROOT/stage-outcomes.txt"
@@ -264,6 +267,9 @@ if [[ ! -f "$TLA_JAR" ]] || [[ "$(sha256_file "$TLA_JAR")" != "$TLA_SHA256" ]]; 
 fi
 
 CURRENT_STAGE="formal-models"
+TLA2TOOLS_JAR="$TLA_JAR"
+readonly TLA2TOOLS_JAR
+export TLA2TOOLS_JAR
 bash formal/tla/check.sh 2>&1 | tee artifacts/rehearsal/formal.log
 record_stage bounded_formal_models passed
 

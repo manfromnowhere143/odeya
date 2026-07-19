@@ -113,5 +113,28 @@
       "new": "It is\nhistory, not a procedure to rerun. The canonical repository is private and no remote exists.",
       "expected": "forbidden contradictory statement 'canonical repository is private'"
     }
+  ],
+  "release_script_mutations": [
+    {
+      "id": "shared-rehearsal-tool-cache",
+      "subject": "scripts/ci/rehearse-fresh-clone.sh",
+      "old": "ODEYA_TOOL_CACHE=\"$REHEARSAL_ROOT/tool-cache\"\nreadonly ODEYA_TOOL_CACHE\nexport ODEYA_TOOL_CACHE\n",
+      "new": "ODEYA_TOOL_CACHE=\"${TMPDIR:-/tmp}/odeya-release-tools\"\nreadonly ODEYA_TOOL_CACHE\nexport ODEYA_TOOL_CACHE\n",
+      "expected": "fresh-clone rehearsal must allocate one per-rehearsal tool cache"
+    },
+    {
+      "id": "unbound-rehearsal-tla-jar",
+      "subject": "scripts/ci/rehearse-fresh-clone.sh",
+      "old": "TLA2TOOLS_JAR=\"$TLA_JAR\"\nreadonly TLA2TOOLS_JAR\nexport TLA2TOOLS_JAR\nbash formal/tla/check.sh",
+      "new": "bash formal/tla/check.sh",
+      "expected": "fresh-clone rehearsal must bind TLA2TOOLS_JAR to its verified jar"
+    },
+    {
+      "id": "shared-standalone-tool-cache",
+      "subject": "scripts/ci/check-repository-release.sh",
+      "old": "OWN_TOOL_CACHE=0\nif [[ -z \"${ODEYA_TOOL_CACHE:-}\" ]]; then\n  ODEYA_TOOL_CACHE=\"$(mktemp -d \"${TMPDIR:-/tmp}/odeya-release-tools.XXXXXX\")\"\n  OWN_TOOL_CACHE=1\nfi\nreadonly ODEYA_TOOL_CACHE\nreadonly OWN_TOOL_CACHE\nexport ODEYA_TOOL_CACHE\n",
+      "new": "ODEYA_TOOL_CACHE=\"${TMPDIR:-/tmp}/odeya-release-tools\"\nreadonly ODEYA_TOOL_CACHE\nexport ODEYA_TOOL_CACHE\n",
+      "expected": "standalone release check must allocate a unique tool cache"
+    }
   ]
 }

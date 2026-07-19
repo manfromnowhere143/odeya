@@ -213,8 +213,8 @@ that deserves to carry the mission forward.
 - Canonical workspace: `/Users/danielwahnich/workspace/odeya`; it is currently
   a protected concurrent-work lane on `agent/repository-release`.
 - Active correction worktree:
-  `/Users/danielwahnich/workspace/odeya-gate-a-repair-20260719`
-- Active correction branch: `agent/gate-a-repair-20260719`
+  `/Users/danielwahnich/workspace/odeya-gate-a-repair-release-v2-20260719`
+- Active correction branch: `agent/gate-a-repair-release-v2-20260719`
 - Exact public-`main` correction base:
   `50e4bc6bfd634c7d5fe11cf0114e1fee94b4e62d`
 - Exact public-`main` correction-base tree:
@@ -239,7 +239,7 @@ Run first:
 
 ```bash
 bash -euo pipefail <<'BASH'
-cd /Users/danielwahnich/workspace/odeya-gate-a-repair-20260719
+cd /Users/danielwahnich/workspace/odeya-gate-a-repair-release-v2-20260719
 source scripts/ci/sanitize-git-environment.sh
 git status --short --branch
 git rev-parse HEAD
@@ -248,7 +248,8 @@ git symbolic-ref --short HEAD
 git rev-parse origin/main
 git remote -v
 git log --oneline --decorate -5
-test "$(git symbolic-ref --short HEAD)" = agent/gate-a-repair-20260719
+test "$(git symbolic-ref --short HEAD)" = \
+  agent/gate-a-repair-release-v2-20260719
 test "$(git rev-parse origin/main)" = \
   50e4bc6bfd634c7d5fe11cf0114e1fee94b4e62d
 test "$(git remote)" = origin
@@ -266,7 +267,8 @@ BASH
 
 Expected invariants:
 
-- the active correction branch is `agent/gate-a-repair-20260719`;
+- the active correction branch is
+  `agent/gate-a-repair-release-v2-20260719`;
 - the canonical worktree remains on `agent/repository-release` with Daniel's
   protected UI/UX changes untouched;
 - public `origin/main` remains the exact correction base recorded above until
@@ -867,14 +869,14 @@ directory, outside both the Git worktree and temporary storage:
 
 ```bash
 bash -euo pipefail <<'BASH'
-cd /Users/danielwahnich/workspace/odeya-gate-a-repair-20260719
+cd /Users/danielwahnich/workspace/odeya-gate-a-repair-release-v2-20260719
 source scripts/ci/sanitize-git-environment.sh
 commit="$(git rev-parse HEAD)"
 evidence="/Users/danielwahnich/workspace/odeya-release-evidence/$commit"
 test ! -e "$evidence"
 bash scripts/ci/rehearse-fresh-clone.sh \
   "$commit" \
-  /Users/danielwahnich/workspace/odeya-gate-a-repair-20260719 \
+  /Users/danielwahnich/workspace/odeya-gate-a-repair-release-v2-20260719 \
   "$evidence" \
   local
 python3 - "$evidence" "$commit" <<'PY'
@@ -945,9 +947,10 @@ A mission.
    requires an atomic assignment to create the worker/grant/lease/reservation
    cohort before a derived WorkContract and a separate attempt start; the
    physical-verification semantic false positive is refused by typed known-bad
-   cases; and undeclared executable surfaces fail closed. These corrections
-   remain architecture evidence and do not resolve the underlying profile
-   identities or accept Gate A.
+   cases; undeclared executable surfaces fail closed; and exact rehearsals use
+   isolated mutable tool state with the formal checker bound to the jar that
+   rehearsal verified. These corrections remain architecture evidence and do
+   not resolve the underlying profile identities or accept Gate A.
 2. Complete T0 by closing PRQ-001–PRQ-010. The canonical-profile migration
    audit is mechanically clear, but profile issuance, accountable independent
    review, exact member/reducer/root identities, and the remaining prerequisite

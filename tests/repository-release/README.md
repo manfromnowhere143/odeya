@@ -21,4 +21,11 @@ private/no-remote claim without removing any required positive sentence, so
 positive-phrase stuffing cannot pass. They mutate the current contract in
 memory and must fail for the named boundary.
 
+Three release-script isolation mutations prove that a rehearsal cannot return
+to one shared mutable tool cache, cannot run the formal suite without binding
+`TLA2TOOLS_JAR` to the jar it just digest-verified, and cannot make a standalone
+release check use a shared default tool directory. Their census and full
+mutation specifications are pinned. These are structural controls over exact
+scripts; the fresh-clone rehearsal remains the execution proof.
+
 `scripts/compare_rehearsal_manifests.py --self-test` rejects nine drift classes, including shared-invalid manifest contracts, duplicate/missing paths, and a retained-file hash mismatch, before any local/remote rehearsal comparison is trusted.

@@ -203,6 +203,51 @@ EXPECTED_FAST_SURFACE_MUTATION = (
     "",
     "fast policy architecture-surface/release validation",
 )
+REHEARSAL_TOOL_CACHE_BLOCK = (
+    'ODEYA_TOOL_CACHE="$REHEARSAL_ROOT/tool-cache"\n'
+    "readonly ODEYA_TOOL_CACHE\n"
+    "export ODEYA_TOOL_CACHE\n"
+)
+REHEARSAL_TLA_BINDING_BLOCK = (
+    'TLA2TOOLS_JAR="$TLA_JAR"\n'
+    "readonly TLA2TOOLS_JAR\n"
+    "export TLA2TOOLS_JAR\n"
+    "bash formal/tla/check.sh"
+)
+STANDALONE_TOOL_CACHE_BLOCK = (
+    "OWN_TOOL_CACHE=0\n"
+    'if [[ -z "${ODEYA_TOOL_CACHE:-}" ]]; then\n'
+    '  ODEYA_TOOL_CACHE="$(mktemp -d "${TMPDIR:-/tmp}/odeya-release-tools.XXXXXX")"\n'
+    "  OWN_TOOL_CACHE=1\n"
+    "fi\n"
+    "readonly ODEYA_TOOL_CACHE\n"
+    "readonly OWN_TOOL_CACHE\n"
+    "export ODEYA_TOOL_CACHE\n"
+)
+EXPECTED_RELEASE_SCRIPT_MUTATIONS = {
+    "shared-rehearsal-tool-cache": (
+        "scripts/ci/rehearse-fresh-clone.sh",
+        REHEARSAL_TOOL_CACHE_BLOCK,
+        'ODEYA_TOOL_CACHE="${TMPDIR:-/tmp}/odeya-release-tools"\n'
+        "readonly ODEYA_TOOL_CACHE\n"
+        "export ODEYA_TOOL_CACHE\n",
+        "fresh-clone rehearsal must allocate one per-rehearsal tool cache",
+    ),
+    "unbound-rehearsal-tla-jar": (
+        "scripts/ci/rehearse-fresh-clone.sh",
+        REHEARSAL_TLA_BINDING_BLOCK,
+        "bash formal/tla/check.sh",
+        "fresh-clone rehearsal must bind TLA2TOOLS_JAR to its verified jar",
+    ),
+    "shared-standalone-tool-cache": (
+        "scripts/ci/check-repository-release.sh",
+        STANDALONE_TOOL_CACHE_BLOCK,
+        'ODEYA_TOOL_CACHE="${TMPDIR:-/tmp}/odeya-release-tools"\n'
+        "readonly ODEYA_TOOL_CACHE\n"
+        "export ODEYA_TOOL_CACHE\n",
+        "standalone release check must allocate a unique tool cache",
+    ),
+}
 EXPECTED_RELEASE_CONTRACT_MUTATIONS = {
     "future-private-remote-regression": (
         "The public canonical remote already exists at\n"
@@ -660,6 +705,7 @@ def validate_policy_mutations(errors: list[str]) -> int:
         "mutations",
         "release_contract",
         "release_contract_mutations",
+        "release_script_mutations",
     }:
         errors.append("repository release mutations: top-level members are not exact")
     if cases.get("schema_version") != "0.1.0":
@@ -740,6 +786,114 @@ def release_contract_errors(text: str) -> list[str]:
         if forbidden in lowered
     )
     return errors
+
+
+def release_script_isolation_errors(rehearsal: str, release_check: str) -> list[str]:
+    errors: list[str] = []
+    if rehearsal.count(REHEARSAL_TOOL_CACHE_BLOCK) != 1:
+        errors.append(
+            "fresh-clone rehearsal must allocate one per-rehearsal tool cache"
+        )
+    if rehearsal.count(REHEARSAL_TLA_BINDING_BLOCK) != 1:
+        errors.append(
+            "fresh-clone rehearsal must bind TLA2TOOLS_JAR to its verified jar"
+        )
+    if release_check.count(STANDALONE_TOOL_CACHE_BLOCK) != 1:
+        errors.append("standalone release check must allocate a unique tool cache")
+    return errors
+
+
+def validate_release_script_mutations(errors: list[str]) -> int:
+    cases = load_json("tests/repository-release/cases.json", errors)
+    if not isinstance(cases, dict):
+        return 0
+    mutations = cases.get("release_script_mutations")
+    if not isinstance(mutations, list):
+        errors.append("repository release script mutations: inventory is absent")
+        return 0
+    observed_ids = [
+        case.get("id")
+        for case in mutations
+        if isinstance(case, dict)
+    ]
+    if (
+        len(observed_ids) != len(mutations)
+        or any(not isinstance(case_id, str) for case_id in observed_ids)
+        or len(set(observed_ids)) != len(observed_ids)
+        or set(observed_ids) != set(EXPECTED_RELEASE_SCRIPT_MUTATIONS)
+    ):
+        errors.append(
+            "repository release script mutations: case census is not closed and exact"
+        )
+    base_documents = {
+        relative: read(relative, errors)
+        for relative in {
+            "scripts/ci/rehearse-fresh-clone.sh",
+            "scripts/ci/check-repository-release.sh",
+        }
+    }
+    errors.extend(
+        release_script_isolation_errors(
+            base_documents["scripts/ci/rehearse-fresh-clone.sh"],
+            base_documents["scripts/ci/check-repository-release.sh"],
+        )
+    )
+    passed = 0
+    for case in mutations:
+        if not isinstance(case, dict):
+            errors.append(
+                "repository release script mutations: case is not an object"
+            )
+            continue
+        if set(case) != {"id", "subject", "old", "new", "expected"}:
+            errors.append(
+                "repository release script mutations: case members are not closed and exact"
+            )
+            continue
+        case_id = case.get("id")
+        subject = case.get("subject")
+        old = case.get("old")
+        new = case.get("new")
+        expected = case.get("expected")
+        if not all(
+            isinstance(value, str) and value
+            for value in (case_id, subject, old, new, expected)
+        ):
+            errors.append("repository release script mutations: malformed case")
+            continue
+        expected_spec = EXPECTED_RELEASE_SCRIPT_MUTATIONS.get(case_id)
+        if expected_spec != (subject, old, new, expected):
+            errors.append(
+                f"repository release script mutation {case_id}: "
+                "specification drifted from the pinned matrix"
+            )
+            continue
+        base = base_documents.get(subject)
+        if base is None:
+            errors.append(
+                f"repository release script mutation {case_id}: subject is not admitted"
+            )
+            continue
+        if base.count(old) != 1:
+            errors.append(
+                f"repository release script mutation {case_id}: "
+                f"expected one source occurrence, found {base.count(old)}"
+            )
+            continue
+        mutated_documents = dict(base_documents)
+        mutated_documents[subject] = base.replace(old, new, 1)
+        mutation_issues = release_script_isolation_errors(
+            mutated_documents["scripts/ci/rehearse-fresh-clone.sh"],
+            mutated_documents["scripts/ci/check-repository-release.sh"],
+        )
+        if not any(expected in issue for issue in mutation_issues):
+            errors.append(
+                f"repository release script mutation {case_id}: expected "
+                f"{expected!r} refusal, got {mutation_issues}"
+            )
+            continue
+        passed += 1
+    return passed
 
 
 def validate_release_contract_mutations(errors: list[str]) -> int:
@@ -1182,6 +1336,7 @@ def main() -> int:
     python_lock_mutation_count = validate_python_lock(errors)
     action_count, policy_mutation_count = validate_workflows(lock, errors)
     release_contract_mutation_count = validate_release_contract_mutations(errors)
+    release_script_mutation_count = validate_release_script_mutations(errors)
     validate_release_scripts(lock, errors)
     validate_supporting_files(errors)
     validate_tla_pin_copies(errors)
@@ -1203,6 +1358,10 @@ def main() -> int:
     print(f"- {policy_mutation_count} known-bad workflow policy mutations rejected")
     print(
         f"- {release_contract_mutation_count} known-bad release-contract "
+        "mutations rejected"
+    )
+    print(
+        f"- {release_script_mutation_count} known-bad release-script isolation "
         "mutations rejected"
     )
     print(f"- {python_lock_mutation_count} known-bad Python lock mutations rejected")

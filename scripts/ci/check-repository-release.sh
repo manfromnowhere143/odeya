@@ -13,6 +13,14 @@ EXPECTED_PYTHON="$(tr -d '[:space:]' < "$ROOT/.python-version")"
 readonly EXPECTED_PYTHON
 readonly EVIDENCE_ROOT="$ROOT/artifacts/repository-release"
 readonly EVIDENCE_PARENT="$ROOT/artifacts"
+OWN_TOOL_CACHE=0
+if [[ -z "${ODEYA_TOOL_CACHE:-}" ]]; then
+  ODEYA_TOOL_CACHE="$(mktemp -d "${TMPDIR:-/tmp}/odeya-release-tools.XXXXXX")"
+  OWN_TOOL_CACHE=1
+fi
+readonly ODEYA_TOOL_CACHE
+readonly OWN_TOOL_CACHE
+export ODEYA_TOOL_CACHE
 WORK_EVIDENCE_ROOT="$(mktemp -d "${TMPDIR:-/tmp}/odeya-release-evidence.XXXXXX")"
 readonly WORK_EVIDENCE_ROOT
 SUBJECT_COMMIT="$(git -C "$ROOT" rev-parse HEAD)"
@@ -31,6 +39,9 @@ finalize() {
   trap - EXIT
   rm -f -- "$GITLEAKS_ARTIFACT_LOG"
   rm -rf -- "$WORK_EVIDENCE_ROOT"
+  if [[ "$OWN_TOOL_CACHE" -eq 1 ]]; then
+    rm -rf -- "$ODEYA_TOOL_CACHE"
+  fi
   if [[ -n "$EVIDENCE_PUBLISH" ]]; then
     rm -rf -- "$EVIDENCE_PUBLISH"
   fi
