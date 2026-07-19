@@ -1,50 +1,160 @@
 #!/usr/bin/env bash
-# Refuse to publish a commit that has no rehearsal evidence bound to its SHA.
+# Enforce Odeya's one-candidate, two-ref, exact-SHA publication sequence.
 #
-# ADR 0072 claimed the sequencing law had been made mechanical by a helper
-# script. Independent review refuted that in one line: plain `git push`
-# ignored the helper entirely, so the "gate" was convention wearing a
-# gate's name (ADR 0075). This hook is the mechanism that claim needed.
-# It is still local configuration -- a clone without `core.hooksPath` set
-# has no protection -- and that residue is stated rather than implied away.
+# This hook is a local accidental-misuse barrier.  The no-bypass GitHub
+# ruleset is the server-side barrier for main, while the push-only
+# Publication sequence context distinguishes a real candidate push from PR
+# checks attached to the same head SHA.  Neither boundary is an independent
+# verifier against a repository administrator who can rewrite both.
 set -euo pipefail
 
-EVIDENCE_ROOT="${ODEYA_EVIDENCE_ROOT:-/Users/danielwahnich/workspace/odeya-release-evidence}"
-readonly EVIDENCE_ROOT
+SCRIPT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+readonly SCRIPT_ROOT
+readonly EVIDENCE_ROOT="${ODEYA_EVIDENCE_ROOT:-/Users/danielwahnich/workspace/odeya-release-evidence}"
+readonly CANONICAL_REMOTE_NAME="origin"
+readonly CANONICAL_REMOTE_URL="https://github.com/manfromnowhere143/odeya.git"
+readonly CANONICAL_SOURCE_SHA256="2d03b3f64ff40b9d376b227d8d67dc13c549c14b526ffb735f78f013d98f4924"
+readonly MAIN_REF="refs/heads/main"
+readonly RELEASE_PREFIX="refs/heads/release/"
+readonly ZERO_SHA="0000000000000000000000000000000000000000"
+readonly REMOTE_NAME="${1:-}"
+readonly REMOTE_LOCATION="${2:-}"
 
-status=0
-while read -r _local_ref local_sha remote_ref _remote_sha; do
-  [[ "$local_sha" =~ ^0+$ ]] && continue          # branch deletion
-  [[ "$remote_ref" == refs/heads/main ]] || continue
+canonical_git_read() (
+  # Do not mutate the outer push environment: it may need the operator's
+  # credential helper.  Public observations need no credentials and must not
+  # inherit routing, trace, TLS, object, or replacement overrides.
+  # shellcheck source=scripts/ci/sanitize-git-environment.sh
+  source "$SCRIPT_ROOT/scripts/ci/sanitize-git-environment.sh"
+  git -c http.sslVerify=true "$@"
+)
 
-  manifest="$EVIDENCE_ROOT/$local_sha/rehearsal-evidence-manifest.json"
-  if [[ ! -f "$manifest" ]]; then
-    printf 'pre-push: refusing %s -> %s\n' "${local_sha:0:9}" "$remote_ref" >&2
-    printf 'pre-push: no rehearsal evidence at %s\n' "$manifest" >&2
-    status=1
-    continue
-  fi
-  if ! python3 - "$manifest" "$local_sha" <<'PY'
-import json, sys
-document = json.loads(open(sys.argv[1], encoding="utf-8").read())
-if document.get("subject_commit") != sys.argv[2]:
-    print(f"pre-push: evidence binds {document.get('subject_commit')}, not the pushed commit",
-          file=sys.stderr)
-    raise SystemExit(1)
-if document.get("canonical_scientific_evidence") is not False:
-    print("pre-push: evidence claims canonical scientific status", file=sys.stderr)
-    raise SystemExit(1)
-files = document.get("files")
-if not isinstance(files, list) or len(files) < 10:
-    print("pre-push: evidence manifest carries no plausible file inventory", file=sys.stderr)
-    raise SystemExit(1)
-PY
-  then
-    status=1
-  fi
+local_refs=()
+local_shas=()
+remote_refs=()
+remote_shas=()
+while read -r local_ref local_sha remote_ref remote_sha; do
+  local_refs+=("$local_ref")
+  local_shas+=("$local_sha")
+  remote_refs+=("$remote_ref")
+  remote_shas+=("$remote_sha")
 done
 
-if [[ "$status" -ne 0 ]]; then
-  printf 'pre-push: rehearse the exact commit first (scripts/ci/rehearse-fresh-clone.sh).\n' >&2
+governed_indexes=()
+for index in "${!remote_refs[@]}"; do
+  remote_ref="${remote_refs[$index]}"
+  if [[ "$remote_ref" == "$MAIN_REF" || "$remote_ref" == "$RELEASE_PREFIX"* ]]; then
+    governed_indexes+=("$index")
+  fi
+done
+if [[ "${#governed_indexes[@]}" -eq 0 ]]; then
+  exit 0
 fi
-exit "$status"
+
+refuse() {
+  printf 'pre-push: %s\n' "$*" >&2
+  exit 1
+}
+
+if [[ "${#local_refs[@]}" -ne 1 || "${#governed_indexes[@]}" -ne 1 ]]; then
+  refuse "a governed publication push must update exactly one ref"
+fi
+if [[ "$REMOTE_NAME" != "$CANONICAL_REMOTE_NAME" ]]; then
+  refuse "governed publication requires remote name origin"
+fi
+configured_url="$(git -C "$SCRIPT_ROOT" remote get-url "$CANONICAL_REMOTE_NAME")"
+push_url="$(git -C "$SCRIPT_ROOT" remote get-url --push "$CANONICAL_REMOTE_NAME")"
+if [[ "$configured_url" != "$CANONICAL_REMOTE_URL" ||
+      "$push_url" != "$CANONICAL_REMOTE_URL" ||
+      "$REMOTE_LOCATION" != "$CANONICAL_REMOTE_URL" ]]; then
+  refuse "canonical remote identity differs from $CANONICAL_REMOTE_URL"
+fi
+if git config --show-origin --get-regexp '^url\..*\.insteadof$' >/dev/null 2>&1; then
+  refuse "url.*.insteadOf can redirect the canonical publication transport"
+fi
+if [[ "$(git -C "$SCRIPT_ROOT" config --get core.hooksPath || true)" != ".githooks" ]]; then
+  refuse "core.hooksPath is not the governed .githooks directory"
+fi
+if [[ -n "$(git -C "$SCRIPT_ROOT" status --porcelain --untracked-files=all)" ]]; then
+  refuse "the publishing worktree is not clean"
+fi
+
+index="${governed_indexes[0]}"
+local_ref="${local_refs[$index]}"
+local_sha="${local_shas[$index]}"
+remote_ref="${remote_refs[$index]}"
+remote_sha="${remote_shas[$index]}"
+
+main_advertisement="$(
+  canonical_git_read ls-remote --refs "$CANONICAL_REMOTE_URL" "$MAIN_REF"
+)"
+main_sha="$(awk -v ref="$MAIN_REF" '$2 == ref {print $1}' <<<"$main_advertisement")"
+if [[ ! "$main_sha" =~ ^[0-9a-f]{40}$ ]]; then
+  refuse "canonical remote main did not resolve to one exact commit"
+fi
+canonical_git_read -C "$SCRIPT_ROOT" fetch --quiet --no-tags "$CANONICAL_REMOTE_NAME" \
+  "$MAIN_REF:refs/remotes/origin/main"
+if [[ "$(git -C "$SCRIPT_ROOT" rev-parse refs/remotes/origin/main)" != "$main_sha" ]]; then
+  refuse "remote main moved while the publication boundary was observed"
+fi
+
+if [[ "$local_sha" != "$ZERO_SHA" ]]; then
+  if [[ "$local_ref" != refs/heads/* ]]; then
+    refuse "publication source must be one local branch"
+  fi
+  if [[ "$(git -C "$SCRIPT_ROOT" rev-parse HEAD)" != "$local_sha" ]]; then
+    refuse "publication source must be the clean worktree HEAD"
+  fi
+fi
+
+python3 "$SCRIPT_ROOT/scripts/ci/validate_publication_sequence.py" \
+  --repo "$SCRIPT_ROOT" \
+  --remote-ref "$remote_ref" \
+  --remote-sha "$remote_sha" \
+  --local-sha "$local_sha" \
+  --main-sha "$main_sha" \
+  --evidence-root "$EVIDENCE_ROOT"
+
+if [[ "$remote_ref" == "$RELEASE_PREFIX"* && "$local_sha" != "$ZERO_SHA" ]]; then
+  # Serialize the controlled lane: the current main must already have a
+  # revalidated local/remote comparison receipt before its child candidate is
+  # allowed to exist.  A passing historical receipt for another SHA is inert.
+  python3 "$SCRIPT_ROOT/scripts/compare_rehearsal_manifests.py" \
+    --verify-existing \
+    --local "$EVIDENCE_ROOT/$main_sha" \
+    --remote "$EVIDENCE_ROOT/remote-main-$main_sha" \
+    --expected-remote-source-sha256 "$CANONICAL_SOURCE_SHA256" \
+    --expected-subject-commit "$main_sha" \
+    --output "$EVIDENCE_ROOT/remote-main-comparison-$main_sha.json"
+  prior_release_refs="$(
+    canonical_git_read ls-remote --refs \
+      "$CANONICAL_REMOTE_URL" "${RELEASE_PREFIX}*"
+  )"
+  if [[ -z "$prior_release_refs" ]]; then
+    python3 "$SCRIPT_ROOT/scripts/ci/verify_github_release.py" \
+      candidate-governance
+  else
+    python3 "$SCRIPT_ROOT/scripts/ci/verify_github_release.py" governance
+  fi
+fi
+
+if [[ "$remote_ref" == "$MAIN_REF" && "$local_sha" != "$ZERO_SHA" ]]; then
+  release_branch="release/$local_sha"
+  release_ref="refs/heads/$release_branch"
+  release_advertisement="$(
+    canonical_git_read ls-remote --refs "$CANONICAL_REMOTE_URL" "$release_ref"
+  )"
+  release_sha="$(awk -v ref="$release_ref" '$2 == ref {print $1}' <<<"$release_advertisement")"
+  if [[ "$release_sha" != "$local_sha" ]]; then
+    refuse "exact release candidate ref is absent or moved"
+  fi
+  python3 "$SCRIPT_ROOT/scripts/ci/verify_github_release.py" governance
+  python3 "$SCRIPT_ROOT/scripts/ci/verify_github_release.py" checks \
+    --sha "$local_sha" \
+    --branch "$release_branch" \
+    --timeout-seconds 1 \
+    --poll-seconds 1
+fi
+
+printf 'pre-push: exact publication update accepted: %s -> %s\n' \
+  "$local_sha" "$remote_ref"

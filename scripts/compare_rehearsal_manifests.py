@@ -7,7 +7,9 @@ import argparse
 import copy
 import hashlib
 import json
+import os
 import re
+import stat
 import tempfile
 from pathlib import Path, PurePosixPath
 from typing import Any
@@ -15,6 +17,7 @@ from typing import Any
 from write_rehearsal_evidence_manifest import (
     PASS_DISPOSITIONS,
     PROFILE_PATHS,
+    PROFILE_PATHS_V0_1,
     ROOT_FILES,
 )
 from write_release_evidence_manifest import EXPECTED_FILES as RELEASE_FILES
@@ -54,6 +57,10 @@ EXACT_FIELDS = (
 )
 SHA256 = re.compile(r"[0-9a-f]{64}")
 COMMIT = re.compile(r"[0-9a-f]{40}")
+PROFILE_PATHS_BY_SCHEMA = {
+    "0.1.0": PROFILE_PATHS_V0_1,
+    "0.2.0": PROFILE_PATHS,
+}
 
 
 class EvidenceError(ValueError):
@@ -62,6 +69,27 @@ class EvidenceError(ValueError):
 
 class DuplicateKeyError(ValueError):
     """A JSON object contains a repeated member name."""
+
+
+def absolute_without_symlink_resolution(path: Path) -> Path:
+    """Make a path absolute while preserving every lexical symlink component."""
+
+    return Path(os.path.abspath(os.fspath(path)))
+
+
+def reject_symlink_components(path: Path, description: str) -> None:
+    """Reject any existing symlink in one absolute retained-evidence path."""
+
+    absolute = absolute_without_symlink_resolution(path)
+    cursor = Path(absolute.anchor)
+    for component in absolute.parts[1:]:
+        cursor /= component
+        try:
+            mode = cursor.lstat().st_mode
+        except FileNotFoundError:
+            continue
+        if stat.S_ISLNK(mode):
+            raise EvidenceError(f"{description} path contains a symlink: {cursor}")
 
 
 def unique_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
@@ -138,8 +166,12 @@ def rehearsal_document_errors(document: dict[str, Any]) -> list[str]:
     errors = digest_entry_errors(document, EXPECTED_EVIDENCE_PATHS)
     if set(document) != REHEARSAL_FIELDS:
         errors.append("rehearsal manifest does not contain the exact top-level members")
-    if document.get("schema_version") != "0.1.0":
-        errors.append("schema_version is not 0.1.0")
+    schema_version = document.get("schema_version")
+    expected_profile_paths = PROFILE_PATHS_BY_SCHEMA.get(schema_version)
+    if expected_profile_paths is None:
+        errors.append(
+            "schema_version is not one supported rehearsal manifest version"
+        )
     if document.get("artifact_class") != "fresh_clone_rehearsal_evidence_manifest":
         errors.append("artifact_class is not fresh-clone rehearsal evidence")
     if not isinstance(document.get("subject_commit"), str) or not COMMIT.fullmatch(
@@ -149,7 +181,11 @@ def rehearsal_document_errors(document: dict[str, Any]) -> list[str]:
     if document.get("canonical_scientific_evidence") is not False:
         errors.append("rehearsal evidence must remain noncanonical diagnostic evidence")
     profile = document.get("profile_files")
-    if not isinstance(profile, dict) or set(profile) != set(PROFILE_PATHS):
+    if (
+        not isinstance(profile, dict)
+        or expected_profile_paths is None
+        or set(profile) != set(expected_profile_paths)
+    ):
         errors.append("profile_files does not contain the exact pinned profile inventory")
     elif any(not isinstance(value, str) or not SHA256.fullmatch(value) for value in profile.values()):
         errors.append("profile_files contains a non-SHA-256 identity")
@@ -256,6 +292,8 @@ def verify_files(
 
 
 def load_manifest(root: Path) -> tuple[dict[str, Any], bytes]:
+    root = absolute_without_symlink_resolution(root)
+    reject_symlink_components(root, "evidence root")
     root = root.resolve()
     manifest_path = root / MANIFEST_NAME
     try:
@@ -314,18 +352,153 @@ def comparison_errors(
     return errors
 
 
-def safe_document(source_class: str) -> dict[str, Any]:
-    subject = "a" * 40
-    source_identity = "b" * 64 if source_class == "local" else "e" * 64
+def build_comparison_receipt(
+    local: dict[str, Any],
+    local_payload: bytes,
+    remote_payload: bytes,
+    expected_remote_source_sha256: str,
+) -> dict[str, Any]:
+    """Build the one canonical receipt for already verified comparison inputs."""
+
     return {
         "schema_version": "0.1.0",
+        "artifact_class": "fresh_clone_rehearsal_comparison_receipt",
+        "subject_commit": local["subject_commit"],
+        "status": "verified_evidence_and_invariant_profile_equal",
+        "local_manifest_sha256": hashlib.sha256(local_payload).hexdigest(),
+        "remote_manifest_sha256": hashlib.sha256(remote_payload).hexdigest(),
+        "approved_remote_source_sha256": expected_remote_source_sha256,
+        "verified_evidence_file_count_per_rehearsal": len(EXPECTED_EVIDENCE_PATHS),
+        "compared_exactly": list(EXACT_FIELDS),
+        "compared_as_set": "files[].path",
+        "intentionally_not_compared": [
+            "local source_identity_sha256",
+            "files[].bytes after independent verification",
+            "files[].sha256 after independent verification",
+        ],
+        "canonical_scientific_evidence": False,
+    }
+
+
+def expected_comparison_receipt(
+    local_root: Path,
+    remote_root: Path,
+    expected_remote_source_sha256: str,
+    expected_subject_commit: str | None = None,
+) -> dict[str, Any]:
+    """Revalidate both evidence trees and derive their exact expected receipt."""
+
+    if not SHA256.fullmatch(expected_remote_source_sha256):
+        raise EvidenceError(
+            "approved remote source identity is not one lowercase SHA-256"
+        )
+    if expected_subject_commit is not None and not COMMIT.fullmatch(
+        expected_subject_commit
+    ):
+        raise EvidenceError(
+            "expected comparison subject is not one lowercase commit SHA"
+        )
+
+    local, local_payload = load_manifest(local_root)
+    remote, remote_payload = load_manifest(remote_root)
+    errors = comparison_errors(local, remote, expected_remote_source_sha256)
+    if (
+        expected_subject_commit is not None
+        and local.get("subject_commit") != expected_subject_commit
+    ):
+        errors.append(
+            "comparison evidence names a historical subject instead of the "
+            "expected current commit"
+        )
+    if errors:
+        raise EvidenceError("; ".join(errors))
+    return build_comparison_receipt(
+        local,
+        local_payload,
+        remote_payload,
+        expected_remote_source_sha256,
+    )
+
+
+def load_comparison_receipt(path: Path) -> dict[str, Any]:
+    """Load one real, non-symlinked retained comparison receipt."""
+
+    path = absolute_without_symlink_resolution(path)
+    reject_symlink_components(path, "comparison receipt")
+    if not path.is_file():
+        raise EvidenceError(
+            f"comparison receipt is not one real regular file: {path}"
+        )
+    try:
+        payload = path.read_bytes()
+    except OSError as exc:
+        raise EvidenceError(f"cannot read comparison receipt at {path}: {exc}") from exc
+    return decode_manifest(payload, f"comparison receipt at {path}")
+
+
+def verify_comparison_receipt(
+    receipt_path: Path,
+    local_root: Path,
+    remote_root: Path,
+    expected_remote_source_sha256: str,
+    expected_subject_commit: str,
+) -> dict[str, Any]:
+    """Require a retained receipt to equal a fresh canonical recomputation."""
+
+    receipt = load_comparison_receipt(receipt_path)
+    expected = expected_comparison_receipt(
+        local_root,
+        remote_root,
+        expected_remote_source_sha256,
+        expected_subject_commit,
+    )
+    if receipt != expected:
+        raise EvidenceError(
+            "existing comparison receipt is not the exact recomputed receipt"
+        )
+    return receipt
+
+
+def retain_comparison_receipt(path: Path, receipt: dict[str, Any]) -> None:
+    """Atomically retain an immutable receipt without following symlinks."""
+
+    path = absolute_without_symlink_resolution(path)
+    reject_symlink_components(path, "comparison receipt")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    reject_symlink_components(path, "comparison receipt")
+    payload = (json.dumps(receipt, indent=2, sort_keys=True) + "\n").encode()
+    if path.exists():
+        if not path.is_file() or path.read_bytes() != payload:
+            raise EvidenceError(
+                f"existing comparison receipt differs from recomputation: {path}"
+            )
+        return
+    partial = path.with_suffix(path.suffix + ".partial")
+    reject_symlink_components(partial, "comparison receipt partial")
+    if partial.exists():
+        raise EvidenceError(
+            f"comparison receipt partial path already exists: {partial}"
+        )
+    with partial.open("xb") as stream:
+        stream.write(payload)
+    partial.replace(path)
+
+
+def safe_document(
+    source_class: str, schema_version: str = "0.2.0"
+) -> dict[str, Any]:
+    subject = "a" * 40
+    source_identity = "b" * 64 if source_class == "local" else "e" * 64
+    profile_paths = PROFILE_PATHS_BY_SCHEMA[schema_version]
+    return {
+        "schema_version": schema_version,
         "artifact_class": "fresh_clone_rehearsal_evidence_manifest",
         "subject_commit": subject,
         "source_class": source_class,
         "source_identity_sha256": source_identity,
         "remote_main_commit": subject if source_class == "remote-main" else None,
         "canonical_scientific_evidence": False,
-        "profile_files": {relative: "c" * 64 for relative in PROFILE_PATHS},
+        "profile_files": {relative: "c" * 64 for relative in profile_paths},
         "pass_dispositions": dict(PASS_DISPOSITIONS),
         "files": [
             {"path": relative, "bytes": 1, "sha256": "d" * 64}
@@ -348,7 +521,11 @@ def digest_entries(root: Path, paths: set[str]) -> list[dict[str, object]]:
     return entries
 
 
-def materialize_self_test_evidence(root: Path) -> None:
+def materialize_self_test_evidence(
+    root: Path,
+    schema_version: str = "0.2.0",
+    source_class: str = "local",
+) -> None:
     release_root = root / "repository-release"
     release_root.mkdir(parents=True)
     for relative in sorted(RELEASE_FILES):
@@ -367,7 +544,7 @@ def materialize_self_test_evidence(root: Path) -> None:
     )
     for relative in sorted(ROOT_FILES):
         (root / relative).write_text(f"{relative}\n", encoding="utf-8")
-    document = safe_document("local")
+    document = safe_document(source_class, schema_version)
     document["files"] = digest_entries(root, EXPECTED_EVIDENCE_PATHS)
     (root / MANIFEST_NAME).write_text(
         json.dumps(document, indent=2, sort_keys=True) + "\n",
@@ -412,9 +589,17 @@ def self_test() -> int:
         document["canonical_scientific_evidence"] = True
     if comparison_errors(invalid_local, invalid_remote, expected_source):
         rejected += 1
+    legacy_remote = safe_document("remote-main", "0.1.0")
+    if comparison_errors(local, legacy_remote, expected_source):
+        rejected += 1
 
     with tempfile.TemporaryDirectory(prefix="odeya-rehearsal-comparator-") as temporary:
-        root = Path(temporary)
+        root = Path(temporary).resolve()
+        legacy_root = root / "legacy-v0.1"
+        legacy_root.mkdir()
+        materialize_self_test_evidence(legacy_root, "0.1.0")
+        load_manifest(legacy_root)
+
         tamper_root = root / "retained-tamper"
         tamper_root.mkdir()
         materialize_self_test_evidence(tamper_root)
@@ -427,6 +612,34 @@ def self_test() -> int:
         else:
             raise SystemExit("rehearsal comparator accepted tampered retained evidence")
 
+        symlink_target_root = root / "root-symlink-target"
+        symlink_target_root.mkdir()
+        materialize_self_test_evidence(symlink_target_root)
+        symlink_root = root / "root-symlink"
+        symlink_root.symlink_to(symlink_target_root, target_is_directory=True)
+        try:
+            load_manifest(symlink_root)
+        except EvidenceError:
+            rejected += 1
+        else:
+            raise SystemExit("rehearsal comparator accepted a symlinked evidence root")
+
+        parent_target = root / "evidence-parent-target"
+        parent_target.mkdir()
+        parent_evidence = parent_target / "evidence"
+        parent_evidence.mkdir()
+        materialize_self_test_evidence(parent_evidence)
+        parent_symlink = root / "evidence-parent-symlink"
+        parent_symlink.symlink_to(parent_target, target_is_directory=True)
+        try:
+            load_manifest(parent_symlink / "evidence")
+        except EvidenceError:
+            rejected += 1
+        else:
+            raise SystemExit(
+                "rehearsal comparator accepted a symlinked evidence-root parent"
+            )
+
         top_duplicate_root = root / "top-duplicate-member"
         top_duplicate_root.mkdir()
         materialize_self_test_evidence(top_duplicate_root)
@@ -434,8 +647,8 @@ def self_test() -> int:
         top_payload = top_manifest.read_text(encoding="utf-8")
         top_manifest.write_text(
             top_payload.replace(
-                '  "schema_version": "0.1.0",',
-                '  "schema_version": "0.1.0",\n  "schema_version": "0.1.0",',
+                '  "schema_version": "0.2.0",',
+                '  "schema_version": "0.2.0",\n  "schema_version": "0.2.0",',
                 1,
             ),
             encoding="utf-8",
@@ -507,9 +720,95 @@ def self_test() -> int:
         else:
             raise SystemExit("rehearsal comparator accepted an extra nested member")
 
-    if rejected != 13:
-        raise SystemExit(f"rehearsal comparison self-test rejected {rejected}/13 mutations")
-    print("Fresh-clone rehearsal comparison self-test PASSED — 13 mutations rejected")
+        completion_local = root / "completion-local"
+        completion_remote = root / "completion-remote"
+        completion_local.mkdir()
+        completion_remote.mkdir()
+        materialize_self_test_evidence(completion_local)
+        materialize_self_test_evidence(
+            completion_remote,
+            source_class="remote-main",
+        )
+        subject_commit = "a" * 40
+        completion_receipt = expected_comparison_receipt(
+            completion_local,
+            completion_remote,
+            expected_source,
+            subject_commit,
+        )
+        completion_receipt_path = root / "completion-receipt.json"
+        retain_comparison_receipt(completion_receipt_path, completion_receipt)
+        verify_comparison_receipt(
+            completion_receipt_path,
+            completion_local,
+            completion_remote,
+            expected_source,
+            subject_commit,
+        )
+
+        receipt_symlink = root / "completion-receipt-symlink.json"
+        receipt_symlink.symlink_to(completion_receipt_path)
+        try:
+            verify_comparison_receipt(
+                receipt_symlink,
+                completion_local,
+                completion_remote,
+                expected_source,
+                subject_commit,
+            )
+        except EvidenceError:
+            rejected += 1
+        else:
+            raise SystemExit(
+                "rehearsal comparator accepted a symlinked comparison receipt"
+            )
+
+        receipt_parent_target = root / "receipt-parent-target"
+        receipt_parent_target.mkdir()
+        parent_receipt = receipt_parent_target / "completion-receipt.json"
+        retain_comparison_receipt(parent_receipt, completion_receipt)
+        receipt_parent_symlink = root / "receipt-parent-symlink"
+        receipt_parent_symlink.symlink_to(
+            receipt_parent_target,
+            target_is_directory=True,
+        )
+        try:
+            verify_comparison_receipt(
+                receipt_parent_symlink / "completion-receipt.json",
+                completion_local,
+                completion_remote,
+                expected_source,
+                subject_commit,
+            )
+        except EvidenceError:
+            rejected += 1
+        else:
+            raise SystemExit(
+                "rehearsal comparator accepted a symlinked comparison-receipt parent"
+            )
+
+        try:
+            verify_comparison_receipt(
+                completion_receipt_path,
+                completion_local,
+                completion_remote,
+                expected_source,
+                "f" * 40,
+            )
+        except EvidenceError:
+            rejected += 1
+        else:
+            raise SystemExit(
+                "rehearsal comparator accepted a historical completion triplet "
+                "for a later current subject"
+            )
+
+    if rejected != 19:
+        raise SystemExit(f"rehearsal comparison self-test rejected {rejected}/19 mutations")
+    print(
+        "Fresh-clone rehearsal comparison self-test PASSED — "
+        "19 mutations rejected; v0.1 evidence retained"
+    )
     return 0
 
 
@@ -520,6 +819,8 @@ def main() -> int:
     parser.add_argument("--remote", type=Path)
     parser.add_argument("--output", type=Path)
     parser.add_argument("--expected-remote-source-sha256")
+    parser.add_argument("--expected-subject-commit")
+    parser.add_argument("--verify-existing", action="store_true")
     args = parser.parse_args()
     if args.self_test:
         if any(
@@ -528,6 +829,8 @@ def main() -> int:
                 args.remote,
                 args.output,
                 args.expected_remote_source_sha256,
+                args.expected_subject_commit,
+                args.verify_existing,
             )
         ):
             parser.error("--self-test cannot be combined with evidence arguments")
@@ -543,46 +846,34 @@ def main() -> int:
         parser.error(
             "--local, --remote, --output, and --expected-remote-source-sha256 are required"
         )
-    if not SHA256.fullmatch(args.expected_remote_source_sha256):
-        parser.error("approved remote source identity must be one lowercase SHA-256")
-
+    if args.verify_existing and args.expected_subject_commit is None:
+        parser.error("--expected-subject-commit is required with --verify-existing")
     try:
-        local, local_payload = load_manifest(args.local)
-        remote, remote_payload = load_manifest(args.remote)
+        if args.verify_existing:
+            receipt = verify_comparison_receipt(
+                args.output,
+                args.local,
+                args.remote,
+                args.expected_remote_source_sha256,
+                args.expected_subject_commit,
+            )
+        else:
+            receipt = expected_comparison_receipt(
+                args.local,
+                args.remote,
+                args.expected_remote_source_sha256,
+                args.expected_subject_commit,
+            )
+            retain_comparison_receipt(args.output, receipt)
     except EvidenceError as exc:
         print("Fresh-clone rehearsal comparison FAILED")
         print(f"- {exc}")
         return 1
-    errors = comparison_errors(local, remote, args.expected_remote_source_sha256)
-    if errors:
-        print("Fresh-clone rehearsal comparison FAILED")
-        for error in errors:
-            print(f"- {error}")
-        return 1
-
-    receipt = {
-        "schema_version": "0.1.0",
-        "artifact_class": "fresh_clone_rehearsal_comparison_receipt",
-        "subject_commit": local["subject_commit"],
-        "status": "verified_evidence_and_invariant_profile_equal",
-        "local_manifest_sha256": hashlib.sha256(local_payload).hexdigest(),
-        "remote_manifest_sha256": hashlib.sha256(remote_payload).hexdigest(),
-        "approved_remote_source_sha256": args.expected_remote_source_sha256,
-        "verified_evidence_file_count_per_rehearsal": len(EXPECTED_EVIDENCE_PATHS),
-        "compared_exactly": list(EXACT_FIELDS),
-        "compared_as_set": "files[].path",
-        "intentionally_not_compared": [
-            "local source_identity_sha256",
-            "files[].bytes after independent verification",
-            "files[].sha256 after independent verification",
-        ],
-        "canonical_scientific_evidence": False,
-    }
-    args.output.parent.mkdir(parents=True, exist_ok=True)
-    partial = args.output.with_suffix(args.output.suffix + ".partial")
-    partial.write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    partial.replace(args.output)
-    print(f"Fresh-clone rehearsal comparison PASSED for {local['subject_commit']}")
+    action = "revalidated" if args.verify_existing else "PASSED"
+    print(
+        f"Fresh-clone rehearsal comparison {action} for "
+        f"{receipt['subject_commit']}"
+    )
     return 0
 
 

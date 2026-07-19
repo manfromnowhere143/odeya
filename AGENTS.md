@@ -89,6 +89,47 @@ The current architectural target is a modular private engine with:
 - Keep canonical state reconstructible; search and vector indexes are disposable projections.
 - Validate before handing off. Record what remains unimplemented or unverified.
 
+## Repository publication sequence
+
+Read
+[`docs/decisions/0091-exact-sha-two-ref-publication-sequence.md`](docs/decisions/0091-exact-sha-two-ref-publication-sequence.md)
+and [`docs/REPOSITORY_RELEASE.md`](docs/REPOSITORY_RELEASE.md) before any
+architecture-repository publication. The owner authorized the bounded
+hardening operation, but its fourth workflow, ten-job inventory, no-bypass
+rulesets, and account policies remain `authorized, not active` until exact
+live read-back and one complete cycle are retained.
+
+After activation, publish only one clean single-parent direct child of freshly
+observed `main`: complete its local rehearsal, observe the active immutable-ref
+ruleset—which requires linear history, restricts updates, and blocks
+deletion/non-fast-forward changes—disabled pull requests, the exact inert merge
+configuration, and exact Actions policy, then create immutable
+`release/<full-sha>` once. Require all four push workflows and ten jobs green on
+that exact SHA, observe the active strict-status and linear-history `main`
+ruleset, re-observe the base, same-SHA fast-forward `main`, require the newly
+created post-main runs green, then complete remote-main rehearsal and
+invariant-profile comparison. The first activation additionally requires an
+immutable journal of the eleven exact account mutations and a final read-only
+`github_repository_activation_receipt` that binds the journal, bootstrap and
+final candidate checks, final promotion governance, final `main` checks, the
+revalidated remote-main comparison, zero open pull requests, both ruleset IDs,
+protected exact refs, and their effective branch rules. Live settlement uses
+REST GETs plus one fixed repository-policy GraphQL query transported by POST;
+the verifier admits no GraphQL mutation or alternate query.
+
+Pull requests are disabled (`has_pull_requests=false`), and every pre-existing
+open pull request must be closed before activation. Merge commits and squash
+merges are disabled. Rebase merge remains enabled only because GitHub requires
+at least one compatible merge method before it will enable server linear
+history; it is inert while pull requests are disabled, and the live verifier
+refuses any `has_pull_requests` drift. Neither a pull request nor `gh pr merge`
+is a publication path. The server linear-history rules refuse merge commits;
+the push-only verifier, hook, and helper additionally enforce the exact
+single-parent direct-child boundary. A timeout, missing run, skipped job, or
+stale green is a refusal. Every release ref remains permanent candidate
+evidence, including failed candidates; it is never rewritten, deleted, or
+recreated.
+
 ## Naming and release
 
 Use **Odeya**. The provisional address is `odeya.danielwahnich.dev`.

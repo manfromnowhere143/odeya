@@ -131,7 +131,7 @@ CURRENT_STAGE="zizmor"
   2>&1 | tee "$WORK_EVIDENCE_ROOT/zizmor.log"
 
 CURRENT_STAGE="shellcheck"
-"$SHELLCHECK_BIN" "$ROOT"/scripts/ci/*.sh \
+"$SHELLCHECK_BIN" "$ROOT"/scripts/ci/*.sh "$ROOT/.githooks/pre-push" \
   2>&1 | tee "$WORK_EVIDENCE_ROOT/shellcheck.log"
 
 CURRENT_STAGE="gitleaks-install"
@@ -174,6 +174,16 @@ CURRENT_STAGE="tool-identity"
 CURRENT_STAGE="final-release-contract"
 python3 "$ROOT/scripts/validate_repository_release.py" \
   2>&1 | tee "$WORK_EVIDENCE_ROOT/final-release-contract.log"
+
+CURRENT_STAGE="publication-sequence-self-test"
+{
+  python3 "$ROOT/scripts/ci/validate_publication_sequence.py" --self-test
+  bash "$ROOT/scripts/ci/push-rehearsed-head.sh" --self-test
+} 2>&1 | tee -a "$WORK_EVIDENCE_ROOT/final-release-contract.log"
+
+CURRENT_STAGE="github-release-verifier-self-test"
+python3 "$ROOT/scripts/ci/verify_github_release.py" --self-test \
+  2>&1 | tee -a "$WORK_EVIDENCE_ROOT/final-release-contract.log"
 
 CURRENT_STAGE="rehearsal-comparator-self-test"
 python3 "$ROOT/scripts/compare_rehearsal_manifests.py" --self-test \
