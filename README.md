@@ -27,7 +27,7 @@ flowchart TB
     subgraph X["RELEASE PATH · adjudicated candidate only · one governed external effect · separate from scientific truth"]
         direction LR
         RC["Release candidate"]
-        H{"Human release decision"}
+        H{"Human release decision<br/>assurance wrapper required<br/>PRQ-013 migration blocked"}
         G["Exact single-use grant"]
         O["Bounded external effect"]
         S["Independent observation<br/>applied · not applied · unknown"]
@@ -81,9 +81,9 @@ They are requirements sources and bounded proof missions—not runtime dependenc
 
 ## Architecture checkpoint
 
-The current retained foundation contains 112 Draft 2020-12 schemas, 826 valid/adversarial cases, 12 isolated contract suites, 10 architecture-evidence checks, and 7 bounded safe TLA+ models with 30 mutation controls. These counts are bound to the validator run that measures them; the README previously stated four of them as fact while all four had drifted.
+The current retained foundation contains 115 Draft 2020-12 schemas, 848 valid/adversarial cases, 14 isolated contract suites, 10 architecture-evidence checks, and 7 bounded safe TLA+ models with 30 mutation controls. These counts are bound to the validator run that measures them; the README previously stated four of them as fact while all four had drifted.
 
-Those results establish structural and bounded semantic evidence only, and their strength is measured by mutation rather than assumed. The lifecycle checker is audited explicitly: 222 of 229 refusal statements are proved reachable by disabling each in turn, and 108 of 111 removable guard conditions are proved load-bearing (ADR 0052–0054, 0065–0066, 0090); the named residue is retained rather than converted into a flattering completeness claim. That discipline was then generalized to every suite: across the twelve isolated suites, 249 of 637 refusal statements are proved to fire, the remaining 388 categorized by exact closure method in the [guard-coverage closure plan](docs/GUARD_COVERAGE_CLOSURE_PLAN.md) (ADR 0079–0085). Every refusal-attribution claim is checked by a census that fails closed on any unattributed corpus (ADR 0062), and each of the 152 cross-field schema rules with a case is proven to notice its own deletion by two-sided ablation (ADR 0071–0073). Coverage is still not correctness: a proved guard is exercised, not shown to enforce the right rule, structural comparisons count as one condition regardless of field count, and [ADR 0030](docs/decisions/0030-statement-coverage-is-not-condition-coverage.md)'s caution stands — every coverage figure this repository ever published was wrong in the flattering direction until independent review corrected it, and the corrections are retained. [Gate A remains blocked](docs/ARCHITECTURE_STATUS.md), and its accountable review and operator decision have not occurred.
+Those results establish structural and bounded semantic evidence only, and their strength is measured by mutation rather than assumed. The lifecycle checker is audited explicitly: 222 of 229 refusal statements are proved reachable by disabling each in turn, and 108 of 111 removable guard conditions are proved load-bearing (ADR 0052–0054, 0065–0066, 0090); the named residue is retained rather than converted into a flattering completeness claim. That discipline was then generalized to every suite: across 14 declared isolated checker subjects, 458 of 927 refusal statements are proved to fire, with 469 retained explicitly as unproved and zero crash-only detections (ADR 0079–0085). The earlier 431/820 result is retracted: mutation of the self-bound assurance checker invalidated its outer evidence binding, so the audit credited that binding failure rather than the intended guard; the corrected harness refreshes the declared binding only inside each isolated mutation copy and proves its own unrefreshed/refreshed behavior before measuring. Every refusal-attribution claim is checked by a census that fails closed on any unattributed corpus (ADR 0062), and each of the 158 cross-field schema rules with a case is proven to notice its own deletion by two-sided ablation (ADR 0071–0073). Coverage is still not correctness: a proved guard is exercised, not shown to enforce the right rule, structural comparisons count as one condition regardless of field count, and [ADR 0030](docs/decisions/0030-statement-coverage-is-not-condition-coverage.md)'s caution stands — every coverage figure this repository ever published was wrong in the flattering direction until context-isolated adversarial review corrected it, and the corrections are retained. The PRQ-013 candidate now includes three unissued schemas, an exact unissued singleton-eligibility ruleset, exact cryptographic-input versus sanitized-derived evidence roles, direct lifecycle and presentation/confirmation provenance, a deterministic challenge vector, and a frozen-source census. [ADR 0093](docs/decisions/0093-co-bind-the-confirmation-gesture-through-a-two-phase-challenge.md) closes the co-binding blocker in design: an unissued v2 profile splits the ceremony into an ordered presentation phase, a confirmation receipt over the exact displayed bytes, and an authentication phase whose frame commits to that receipt digest, so the dependency graph stays acyclic and the signed challenge covers what was shown. That construction is re-derived independently by the `challenge-frame` suite, which reproduces the frozen v1 vector exactly before trusting its own encoder, and is exercised by 17 one-mutation known-bads across 10 intent-bound refusal rules. It remains deliberately non-issuable: the co-binding is a property of the design, not measured ceremony evidence; backing bytes are undereferenced; no independent ruleset implementation exists; a compromised presentation surface that misreports its own displayed bytes is detected only if its receipt disagrees, never prevented; and the transaction-confirmation trusted path is deferred to Gate C. No current consumer is migrated and no assurance record or wrapper is admitted. [Gate A remains blocked](docs/ARCHITECTURE_STATUS.md), and its accountable review and operator decision have not occurred.
 
 The architecture is a modular scientific kernel with isolated cognitive workers around it:
 
@@ -110,6 +110,7 @@ This architecture repository is licensed under the [Apache License 2.0](LICENSE)
 - [Mathematical constitution](docs/MATHEMATICAL_CONSTITUTION.md)
 - [Physical-science constitution](docs/PHYSICAL_SCIENCE_CONSTITUTION.md)
 - [Security and authority](docs/SECURITY_AND_AUTHORITY.md)
+- [Human decision assurance](docs/HUMAN_DECISION_ASSURANCE.md)
 - [Canonical identity and serialization profile](docs/CANONICALIZATION_PROFILE.md)
 - [Module ownership and dependency manifest](docs/MODULE_DEPENDENCY_MANIFEST.md)
 - [Architecture review protocol](docs/ARCHITECTURE_REVIEW_PROTOCOL.md)
@@ -145,28 +146,30 @@ Which guards have a known-bad proof is measured rather than assumed. The lifecyc
 
 ```bash
 python3 scripts/audit_lifecycle_guard_coverage.py       # lifecycle statements, ~90s
-python3 scripts/audit_suite_guard_coverage.py           # every other suite, ~7min
+python3 scripts/audit_suite_guard_coverage.py           # every other suite; duration is machine- and corpus-dependent
 ```
 
 See [repository release engineering](docs/REPOSITORY_RELEASE.md) for the exact CI jobs, threat boundary, toolchain pins, and fresh-clone rehearsal. A green check is evidence about this repository snapshot; it is never scientific truth or Gate A acceptance.
 
-Repository-governance bootstrap was observed on 2026-07-19. Public `main`
-remained at `56e8062334fb81bba955ba137be690e085d4c88e`, while its sole-child
-bootstrap candidate `a25d026bd7233dfc452accc6087ded0bf015d7b4` became the
-permanent `release/a25d026bd7233dfc452accc6087ded0bf015d7b4` ref and passed
-all four push workflows and ten jobs on attempt 1. GitHub read-back observed
-active no-bypass release and `main` rulesets (IDs `19178198` and `19178503`),
-disabled pull requests, the inert rebase-only merge configuration, full-SHA
-Action admission, and read-only workflow tokens. That checkpoint establishes
-the account controls and bootstrap census only. Completion of the distinct
-post-account-state candidate, same-SHA `main` promotion, post-main checks,
-remote replay/comparison, and final activation receipt must be resolved from
-Git and the external subject-bound receipts; none grants Gate A or runtime
-authority.
+Repository-governance bootstrap and the first exact-SHA activation were
+observed on 2026-07-19. Bootstrap candidate
+`a25d026bd7233dfc452accc6087ded0bf015d7b4` remains at its permanent release
+ref. Distinct post-account-state candidate
+`f1f25fd336daa1dd2707ba36b832e8d5c5e41d3e` then passed all four workflows
+and ten jobs at its permanent release ref, was same-SHA promoted to `main`,
+passed four new post-main workflows and ten jobs, reproduced from remote
+`main`, compared equal by the admitted invariant profile, and settled the
+read-only activation receipt. GitHub read-back observed active no-bypass
+release and `main` rulesets (IDs `19178198` and `19178503`), disabled pull
+requests, the inert rebase-only merge configuration, full-SHA Action admission,
+and read-only workflow tokens. The controls remain active but must be freshly
+read back for every publication; no descendant inherits `f1f25fd`'s
+subject-bound checks, replay, comparison, or activation receipt. None grants
+Gate A or runtime authority.
 
 ## Next
 
-The canonical-migration wave is closed at audit zero (ADRs 0032–0050): all six blocking finding classes — 1,222 findings in total — now measure zero, every reissue ledgered so each reissued schema's predecessor verifies against its recorded checkpoint commit, and the audit reports `gate_a_disposition: candidate_clear`. The profile nevertheless remains **unissued**: freezing it requires independent review of the executed wave and the operator's exact-byte decision, which no session can grant itself. That executed wave was then attacked across four rounds of independent adversarial review (ADRs 0051, 0063, 0069, 0077), each briefed to refute; each round found real defects — a fabricated disposition field in the evidence writer, a publication path a plain `git push` bypassed, coverage audits that could regenerate their own records — and each is retracted in place with corrected, re-measured figures. Those reviewers were context-isolated but not independent: they shared the producer's provider, model family, and prompt family, five of the twelve correlation axes `ModelConfigurationRecord` already enumerates, and that is recorded rather than glossed (see the [reviewer-agent proposal](docs/REVIEWER_AGENT_PROPOSAL.md)). T1 AuthorityAssignment, the command/event/state/reducer graph, the constitutional root/checkpoint/activation chain, independent reducers and verifiers, replay/recovery/correction-fanout evidence, rights-settled proof import, accountable human reviews, an exact candidate manifest, and the owner's exact-byte decision all remain mandatory before Gate A. The [closure plan](docs/GATE_A_PREREQUISITE_CLOSURE_PLAN_2026-07-16.md) and [current handoff](docs/SESSION_HANDOFF.md) retain the dependency order and every open limitation.
+The canonical-migration wave is closed at audit zero (ADRs 0032–0050): all six blocking finding classes — 1,222 findings in total — now measure zero, every reissue ledgered so each reissued schema's predecessor verifies against its recorded checkpoint commit, and the audit reports `gate_a_disposition: candidate_clear`. The profile nevertheless remains **unissued**: freezing it requires independent review of the executed wave and the operator's exact-byte decision, which no session can grant itself. That executed wave was then attacked across four rounds of context-isolated adversarial review (ADRs 0051, 0063, 0069, 0077), each briefed to refute; each round found real defects — a fabricated disposition field in the evidence writer, a publication path a plain `git push` bypassed, coverage audits that could regenerate their own records — and each is retracted in place with corrected, re-measured figures. Those reviewers were context-isolated but not independent: they shared the producer's provider, model family, and prompt family, five of the twelve correlation axes `ModelConfigurationRecord` already enumerates, and that is recorded rather than glossed (see the [reviewer-agent proposal](docs/REVIEWER_AGENT_PROPOSAL.md)). T1 AuthorityAssignment, the command/event/state/reducer graph, the constitutional root/checkpoint/activation chain, independent reducers and verifiers, replay/recovery/correction-fanout evidence, rights-settled proof import, accountable human reviews, an exact candidate manifest, and the owner's exact-byte decision all remain mandatory before Gate A. The [closure plan](docs/GATE_A_PREREQUISITE_CLOSURE_PLAN_2026-07-16.md) and [current handoff](docs/SESSION_HANDOFF.md) retain the dependency order and every open limitation.
 
 Only an accepted Gate A candidate can authorize disposable Gate B probes; one bounded replayable engine slice begins only after a separate Gate C decision.
 

@@ -101,10 +101,12 @@ workflow tokens, and active no-bypass rulesets `19178198` for permanent
 release candidates and `19178503` for strict same-SHA `main` promotion.
 Bootstrap candidate `a25d026bd7233dfc452accc6087ded0bf015d7b4` is the permanent
 `release/a25d026bd7233dfc452accc6087ded0bf015d7b4` ref and passed four
-workflows/ten jobs on attempt 1. Those facts establish account controls and the
-bootstrap census, not the complete first activation cycle; resolve the final
-candidate, promotion, post-main checks, remote replay, and activation receipt
-from Git and the external subject-bound evidence.
+workflows/ten jobs on attempt 1. Distinct final candidate
+`f1f25fd336daa1dd2707ba36b832e8d5c5e41d3e` then completed the first
+candidate-to-main activation, including its permanent release checks, same-SHA
+promotion, new post-main checks, remote replay/comparison, and final read-only
+activation receipt. Resolve every later candidate from Git and its own external
+subject-bound evidence; no descendant inherits this activation.
 
 Publish only one clean single-parent direct child of freshly observed `main`:
 complete its local rehearsal, observe the active immutable-ref
@@ -115,14 +117,17 @@ configuration, and exact Actions policy, then create immutable
 that exact SHA, observe the active strict-status and linear-history `main`
 ruleset, re-observe the base, same-SHA fast-forward `main`, require the newly
 created post-main runs green, then complete remote-main rehearsal and
-invariant-profile comparison. The first activation additionally requires an
-immutable journal of the eleven exact account mutations and a final read-only
-`github_repository_activation_receipt` that binds the journal, bootstrap and
-final candidate checks, final promotion governance, final `main` checks, the
-revalidated remote-main comparison, zero open pull requests, both ruleset IDs,
+invariant-profile comparison. The completed first activation additionally
+retained an immutable journal of the eleven exact account mutations and a
+final read-only `github_repository_activation_receipt` that binds the journal,
+bootstrap and final candidate checks, final promotion governance, final
+`main` checks, the revalidated remote-main comparison, zero open pull requests,
+both ruleset IDs,
 protected exact refs, and their effective branch rules. Live settlement uses
 REST GETs plus one fixed repository-policy GraphQL query transported by POST;
-the verifier admits no GraphQL mutation or alternate query.
+the verifier admits no GraphQL mutation or alternate query. Ordinary
+descendants must leave `ODEYA_ACTIVATION_BOOTSTRAP_SHA` unset and must not emit
+a new one-time activation receipt.
 
 Pull requests are disabled (`has_pull_requests=false`), and every pre-existing
 open pull request must be closed before activation. Merge commits and squash

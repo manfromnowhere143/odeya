@@ -14,10 +14,13 @@ Each refusal construct is disabled one at a time in an isolated copy of
 the tree and that suite is re-run; a guard is proved only when disabling
 it makes the suite fail.
 
-Why a proved verdict cannot be a false positive: the mutation replaces
-only the refusal itself, leaving every surrounding statement intact. It
-can only shrink what a suite reports, so a suite that begins failing does
-so because the removed refusal was load-bearing.
+The mutation replaces only the refusal itself, leaving surrounding statements
+intact. Suite-declared bindings to the checker bytes are refreshed inside the
+isolated copy before execution; otherwise the changed checker digest would make
+every removal look detected. A startup self-test proves that this normalization
+is necessary and sufficient for the current self-binding suite. A proved
+verdict still establishes only that the suite failed after the isolated
+removal; masking and discovery limitations remain possible.
 
 What a proved verdict does NOT mean, carried forward from ADR 0030: this
 is statement reachability, not condition coverage, and never correctness.
@@ -63,10 +66,12 @@ RECORD = ROOT / "architecture/suite-guard-coverage.json"
 AUDITED_SUITES = (
     "architecture-review",
     "canonical-profile-candidate",
+    "challenge-frame",
     "cognitive-contracts",
     "command-identity-contracts",
     "constitutional-construction",
     "first-slice-resolution",
+    "human-decision-assurance",
     "mathematical-contracts",
     "physical-contracts",
     "projection-contracts",
@@ -159,6 +164,72 @@ def run_suite(tree: Path, relative: str, python: str) -> tuple[bool, bool]:
     return passed, reported
 
 
+def refresh_declared_subject_binding(tree: Path, relative: str) -> None:
+    """Keep an isolated mutation from failing on its own checker digest.
+
+    HumanDecisionAssurance deliberately binds its checker bytes in candidate
+    evidence. A guard-ablation copy must update only that binding after changing
+    the checker; otherwise every mutation fails at the outer byte-binding gate
+    and is falsely counted as evidence that the removed guard was exercised.
+    The canonical tree and retained evidence are never changed.
+    """
+    if relative != "tests/human-decision-assurance/check.py":
+        return
+    evidence_path = (
+        tree / "architecture/human-decision-assurance-candidate-evidence.json"
+    )
+    evidence = json.loads(evidence_path.read_text(encoding="utf-8"))
+    bindings = evidence.get("ordered_artifact_bindings", [])
+    matches = [
+        binding
+        for binding in bindings
+        if binding.get("path") == relative
+        and binding.get("role") == "semantic_checker"
+    ]
+    if len(matches) != 1:
+        raise ValueError(
+            "HumanDecisionAssurance candidate evidence must bind exactly one "
+            "semantic checker"
+        )
+    raw = (tree / relative).read_bytes()
+    matches[0]["raw_sha256"] = "sha256:" + hashlib.sha256(raw).hexdigest()
+    matches[0]["byte_count"] = len(raw)
+    evidence_path.write_text(
+        json.dumps(evidence, indent=2, ensure_ascii=False) + "\n",
+        encoding="utf-8",
+    )
+
+
+def subject_binding_refresh_self_test(python: str) -> bool:
+    """Prove the audit isolates semantic mutation from declared byte binding."""
+    relative = "tests/human-decision-assurance/check.py"
+    with tempfile.TemporaryDirectory(prefix="odeya-guard-binding-self-test-") as tmp:
+        work = Path(tmp) / "tree"
+        shutil.copytree(
+            ROOT,
+            work,
+            ignore=shutil.ignore_patterns(
+                "__pycache__",
+                "node_modules",
+                ".venv-architecture",
+                "artifacts",
+            ),
+        )
+        control_passed, _ = run_suite(work, relative, python)
+        if not control_passed:
+            return False
+        target = work / relative
+        target.write_text(
+            target.read_text(encoding="utf-8")
+            + "\n# guard-audit subject-binding self-test\n",
+            encoding="utf-8",
+        )
+        unrefreshed_passed, _ = run_suite(work, relative, python)
+        refresh_declared_subject_binding(work, relative)
+        refreshed_passed, _ = run_suite(work, relative, python)
+        return not unrefreshed_passed and refreshed_passed
+
+
 def audit_suite(suite: str, python: str) -> dict[str, Any]:
     relative = f"tests/{suite}/check.py"
     checker = ROOT / relative
@@ -194,6 +265,7 @@ def audit_suite(suite: str, python: str) -> dict[str, Any]:
                 " " * indent + guard["replacement"] + "\n"
             ]
             target.write_text("".join(mutated))
+            refresh_declared_subject_binding(work, relative)
             suite_passed, reported = run_suite(work, relative, python)
             target.write_text(source)
             results.append(
@@ -236,8 +308,10 @@ def measure(python: str) -> dict[str, Any]:
         "status": "candidate_measurement_not_admitted",
         "method": (
             "each refusal construct of a declared suite is disabled one at a time "
-            "in an isolated copy of the tree and that suite is re-run; a guard is "
-            "proved only when disabling it makes the suite fail"
+            "in an isolated copy of the tree, any suite-declared checker-byte "
+            "binding is refreshed only inside that copy, and that suite is re-run; "
+            "a guard is proved only when disabling it makes the suite fail after "
+            "that isolation"
         ),
         "suites": results,
         "summary": {
@@ -278,6 +352,13 @@ def main() -> int:
     # a relative path, which is how this was found -- by the rehearsal failing,
     # not by the local runs that had always used an absolute one.
     python = str(Path(args.python).resolve()) if Path(args.python).exists() else args.python
+    if not subject_binding_refresh_self_test(python):
+        print(
+            "subject-binding refresh self-test failed: the guard audit cannot "
+            "separate a checker mutation from its declared raw-byte binding",
+            file=sys.stderr,
+        )
+        return 1
     document = measure(python)
     report(document)
     serialized = json.dumps(document, indent=2, ensure_ascii=False) + "\n"

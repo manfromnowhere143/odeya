@@ -3,7 +3,7 @@
 Status: exact candidate parameter set `odeya-jcs-0.1` frozen for review,
 updated 2026-07-19. A pinned architecture-only suite gives cross-runtime
 evidence for the bounded rules identified below, and the migration audit
-currently reports zero findings across 112 schemas and 204 fixtures. The
+currently reports zero findings across 115 schemas and 209 fixtures. The
 canonical profile is still unissued: accountable review, package/reference
 profiles, fuzzing, measured limits, independent-host reproduction, and
 exact-byte operator acceptance remain blocking.
@@ -317,7 +317,7 @@ formal correctness, or behavior outside the retained vectors.
 
 [`SCHEMA_AUDIT.json`](../tests/canonicalization/SCHEMA_AUDIT.json) is the
 machine-readable migration inventory. Its current six-class finding set is
-empty over 112 schemas and 204 fixtures. That is a working-byte measurement,
+empty over 115 schemas and 209 fixtures. That is a working-byte measurement,
 not profile issuance: changing any schema or fixture requires regeneration
 and exact comparison, and refreshing the inventory to match weakened rules is
 not closure.

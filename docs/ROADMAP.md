@@ -155,7 +155,7 @@ by [Repository Release Engineering](REPOSITORY_RELEASE.md): clean scope,
 one single-parent direct-child candidate, fresh-clone rehearsal, retained
 evidence, an immutable `release/<sha>` push, exact candidate checks, guarded
 same-SHA fast-forward publication, new post-main checks, and remote-main
-reproduction. The first activation additionally retains the exact
+reproduction. The completed first activation additionally retained the exact
 eleven-operation account-mutation journal and a final read-only receipt binding
 the bootstrap and final candidate checks, promotion governance, final `main`
 checks, remote comparison, protected refs, and effective rules. Its live
@@ -163,6 +163,8 @@ observations are REST GETs plus one fixed repository-policy GraphQL query
 transported by POST; no GraphQL mutation or alternate query is admitted. Every
 release ref remains permanent candidate evidence, including failed candidates;
 it is never rewritten, deleted, or recreated.
+Ordinary descendants must leave `ODEYA_ACTIVATION_BOOTSTRAP_SHA` unset and
+must not emit a new one-time activation receipt.
 
 The published architecture bytes must retain:
 
@@ -196,10 +198,14 @@ inert merge and Actions policies, and read back active no-bypass rulesets
 promotion. Sole-child bootstrap candidate
 `a25d026bd7233dfc452accc6087ded0bf015d7b4` is retained at its permanent
 release ref; all four workflows and ten jobs succeeded on attempt 1, and the
-eleven-operation journal is closed. These observations establish active
-account controls and the bootstrap census only. The distinct final candidate,
-promotion, post-main checks, remote replay/comparison, and final activation
-receipt remain required before the first candidate-to-main cycle is complete.
+eleven-operation journal is closed. Those observations established active
+account controls and the bootstrap census. Distinct final candidate
+`f1f25fd336daa1dd2707ba36b832e8d5c5e41d3e` then completed the first
+candidate-to-main cycle: permanent release-ref checks, same-SHA promotion, new
+post-main checks, remote replay/comparison, and the final read-only activation
+receipt all settled for that exact subject. Later candidates must repeat the
+ordinary two-ref sequence with new evidence; they do not repeat bootstrap and
+inherit nothing from `f1f25fd`.
 GitHub merge, squash, and rebase methods are not publication paths. Rebase
 remains true only as the inert linear-history prerequisite while
 `has_pull_requests=false`; the live verifier refuses drift from the exact

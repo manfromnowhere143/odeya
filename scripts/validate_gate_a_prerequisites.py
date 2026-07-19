@@ -60,9 +60,63 @@ EXPECTED_HUMAN_DECISION_ASSURANCE = {
     "unattended_agent_accessible_signing_key_satisfies_human_decision": False,
     "timeout_or_silence_satisfies_human_decision": False,
     "missing_assurance_disposition": "blocked_or_indeterminate_never_approval",
-    "candidate_record_identity_assigned": False,
-    "complete_consumer_census": False,
+    "candidate_schema_resource_identities_assigned": True,
+    "candidate_schema_refs": [
+        {
+            "path": "schemas/human-decision-assurance-core.schema.json",
+            "schema_id":
+                "urn:odeya:schema:human-decision-assurance-core:0.1.0",
+        },
+        {
+            "path": "schemas/human-decision-assurance-evidence.schema.json",
+            "schema_id":
+                "urn:odeya:schema:human-decision-assurance-evidence:0.1.0",
+        },
+        {
+            "path": "schemas/human-decision-assurance-seal.schema.json",
+            "schema_id":
+                "urn:odeya:schema:human-decision-assurance-seal:0.1.0",
+        },
+    ],
+    "candidate_schemas_issued": False,
+    "admitted_assurance_record_identity_issued": False,
+    "assured_decision_wrapper_identity_assigned": False,
+    "individual_assurance_foundation_closes_prq_013": False,
+    "assured_decision_dependency_stage":
+        "after_t1_authority_assignment_and_t2_authority_currentness_quorum_"
+        "consumer_contracts",
+    "individual_eligibility_ruleset_ref":
+        "architecture/human-decision-assurance-individual-eligibility-ruleset-v1-candidate.json",
+    "individual_eligibility_ruleset_issued": False,
+    "independent_eligibility_recomputation_retained": False,
+    "material_presentation_receipt_verified_in_real_ceremony": False,
+    "confirmation_gesture_and_authenticator_actor_cryptographically_co_bound":
+        False,
+    "exact_cryptographic_input_bytes_dereferenced_and_verified": False,
+    "complete_consumer_census_for_frozen_source_corpus": True,
+    "consumer_census_ref":
+        "architecture/human-decision-assurance-consumer-census.json",
+    "consumer_census_binding": {
+        "raw_sha256":
+            "sha256:88d2e0b0cc265e72bc44306472991c6c09c2450f279bf08c9a290d359e2b2d14",
+        "byte_count": 147613,
+        "baseline_git_commit": "56e8062334fb81bba955ba137be690e085d4c88e",
+        "baseline_git_tree": "d90ed6dd8c54b91a1e503358f98ecaa08c766fa3",
+        "baseline_schema_count": 112,
+        "candidate_mechanism_schema_count": 3,
+        "current_union_schema_count": 115,
+        "direct_or_policy_conditional_schema_count": 19,
+        "pending_operator_acceptance_schema_count": 9,
+    },
     "current_consumers_migrated": False,
+    "migrated_consumer_count": 0,
+    "end_to_end_consumer_refusal_proved": False,
+    "real_human_ceremony_verified": False,
+    "gate_a_requires_live_protected_ceremony": False,
+    "real_protected_ceremony_stage":
+        "gate_b_after_gate_a_only_with_separate_operator_authorization",
+    "runtime_conformance_stage": "gate_c_exit_evidence",
+    "accountable_review_complete": False,
     "minimum_affected_source_schema_ids": [
         "urn:odeya:schema:root-authority-manifest:0.4.0",
         "urn:odeya:schema:authority-assignment:0.3.0",
@@ -75,31 +129,66 @@ EXPECTED_HUMAN_DECISION_ASSURANCE = {
         "urn:odeya:schema:recovery-decision:0.6.0",
     ],
     "required_evidence": [
-        "exact_decision_subject_and_candidate_digest",
-        "explicit_decision_value_basis_and_limitations",
-        "reviewed_material_set_digest",
-        "verifier_or_relying_party_generated_unpredictable_challenge_bound_to_session_and_subject",
-        "human_initiated_confirmation_gesture",
+        "exact_decision_and_candidate_internal_identity_version_and_raw_digest_relationship",
+        "exact_preceremony_required_review_and_display_decision_and_candidate_raw_bindings_plus_later_evidence_observations",
+        "explicit_later_ratification_not_original_authorship_or_source_timestamp_relation",
+        "source_decision_schema_and_policy_remain_semantic_authority",
+        "verifier_or_relying_party_generated_content_addressed_unpredictable_challenge_bound_to_subject_session_time_and_candidate_rp_origin_algorithm_policy",
+        "content_addressed_material_presentation_and_human_confirmation_receipt_bound_to_exact_core_and_full_ceremony_context",
+        "cycle_free_cryptographic_or_trusted_path_cobinding_of_confirmation_gesture_and_authenticator_actor",
         "authentication_intent_phishing_resistant_credential_user_presence_and_user_verification_evidence",
         "principal_identity_proofing_and_authenticator_binding_evidence",
         "signing_key_and_session_custody_observation",
         "agent_model_and_tool_signing_exclusion",
         "delegation_scope_depth_objections_and_effective_control_disclosure",
-        "required_distinct_principal_separation_conflict_and_quorum_evaluation",
-        "controlled_time_expiry_and_replay_protection",
-        "sanitized_ceremony_evidence_and_independent_verification",
+        "singleton_confirming_principal_and_independent_verifier_observation",
+        "controlled_time_half_open_expiry_atomic_consumption_and_replay_protection",
+        "exact_unmodified_cryptographic_inputs_and_sanitized_derived_observation_records_with_verified_byte_fidelity",
+        "exact_byte_bound_total_individual_eligibility_ruleset_and_independent_recomputation",
+        "later_assured_decision_aggregate_quorum_currentness_revocation_and_authority_evaluation",
     ],
     "forbidden_evidence": [
         "raw_private_reasoning",
         "reusable_secrets_or_signing_material",
         "unrestricted_prompt_or_model_output",
     ],
+    "standards_comparisons": [
+        {
+            "publication": "NIST SP 800-63B-4",
+            "official_url": "https://csrc.nist.gov/pubs/sp/800/63/b/4/final",
+            "publication_status": "final",
+            "comparison_scope":
+                "authentication_intent_authenticator_binding_and_phishing_resistance_only",
+        },
+        {
+            "publication":
+                "Web Authentication: An API for accessing Public Key "
+                "Credentials Level 3",
+            "official_url":
+                "https://www.w3.org/TR/2026/CR-webauthn-3-20260526/",
+            "publication_status": "candidate_recommendation_snapshot",
+            "comparison_scope":
+                "challenge_origin_rp_user_presence_user_verification_and_signature_ceremony_only",
+        },
+    ],
+    "candidate_evidence_ref":
+        "architecture/human-decision-assurance-candidate-evidence.json",
+    "challenge_frame_profile_ref":
+        "architecture/human-decision-challenge-frame-v1-candidate.json",
+    "challenge_frame_vector_evidence_ref":
+        "architecture/human-decision-challenge-frame-v1-candidate-evidence.json",
     "source_evidence_ref":
         "docs/CROSS_PROGRAM_PROCESS_EVIDENCE_ABSORPTION_2026-07-19.md",
-    "decision_ref":
+    "antecedent_decision_ref":
         "docs/decisions/0089-a-valid-human-signature-is-not-a-human-decision.md",
+    "decision_ref":
+        "docs/decisions/0092-bind-human-decisions-through-an-external-assurance-wrapper.md",
     "closure_disposition":
-        "replacement_or_external_assurance_contract_and_complete_consumer_migration_required",
+        "freeze_unissued_individual_assurance_foundation_then_construct_t1_t2_"
+        "dependencies_and_unissued_wrapper_successors_prove_transitive_"
+        "migration_exact_backing_bytes_confirmation_actor_cobinding_"
+        "independent_recomputation_end_to_end_refusal_and_accountable_gate_a_"
+        "review_real_ceremony_deferred_to_separately_authorized_gate_b_probe",
 }
 EXPECTED_NEXT_DEPENDENCY_CONTAINED_TRANCHE = {
     "tranche_id": "T1.authority-assignment",
@@ -107,7 +196,7 @@ EXPECTED_NEXT_DEPENDENCY_CONTAINED_TRANCHE = {
         "canonical_schema_identity_candidate_closure",
         "standalone_member_record_contracts",
         "prq_005_through_prq_010_candidate_corrections",
-        "prq_013_human_decision_assurance_candidate_closure",
+        "prq_013_individual_assurance_foundation_candidate_closure",
     ],
     "ordered_subjects": [
         "AuthorityAssignment state schema and member",
@@ -389,12 +478,149 @@ def human_decision_assurance_errors(value: Any) -> list[str]:
             errors.append(
                 f"human_decision_assurance.{key} must equal {expected_value!r}"
             )
-    for key in ("source_evidence_ref", "decision_ref"):
+    for key in (
+        "consumer_census_ref",
+        "individual_eligibility_ruleset_ref",
+        "candidate_evidence_ref",
+        "challenge_frame_profile_ref",
+        "challenge_frame_vector_evidence_ref",
+        "source_evidence_ref",
+        "antecedent_decision_ref",
+        "decision_ref",
+    ):
         relative = value.get(key)
         if isinstance(relative, str) and not (ROOT / relative).is_file():
             errors.append(
                 f"human_decision_assurance.{key} does not resolve to a retained file"
             )
+
+    schema_refs = value.get("candidate_schema_refs")
+    if isinstance(schema_refs, list):
+        for index, schema_ref in enumerate(schema_refs):
+            if not isinstance(schema_ref, dict):
+                errors.append(
+                    "human_decision_assurance.candidate_schema_refs"
+                    f"[{index}] must be an object"
+                )
+                continue
+            path = schema_ref.get("path")
+            schema_id = schema_ref.get("schema_id")
+            if not isinstance(path, str) or not isinstance(schema_id, str):
+                errors.append(
+                    "human_decision_assurance.candidate_schema_refs"
+                    f"[{index}] must bind path and schema_id strings"
+                )
+                continue
+            try:
+                schema = load(ROOT / path)
+            except (
+                OSError,
+                json.JSONDecodeError,
+                DuplicateKey,
+                ValueError,
+            ) as exc:
+                errors.append(
+                    "human_decision_assurance.candidate_schema_refs"
+                    f"[{index}] does not resolve to strict schema bytes: {exc}"
+                )
+                continue
+            if schema.get("$id") != schema_id:
+                errors.append(
+                    "human_decision_assurance.candidate_schema_refs"
+                    f"[{index}] schema_id does not equal the retained $id"
+                )
+
+    census_ref = value.get("consumer_census_ref")
+    census_binding = value.get("consumer_census_binding")
+    if isinstance(census_ref, str) and isinstance(census_binding, dict):
+        census_path = ROOT / census_ref
+        try:
+            census_raw = census_path.read_bytes()
+            census = load(census_path)
+        except (
+            OSError,
+            json.JSONDecodeError,
+            DuplicateKey,
+            ValueError,
+        ) as exc:
+            errors.append(
+                "human_decision_assurance consumer census is not strict "
+                f"retained evidence: {exc}"
+            )
+        else:
+            observed_digest = "sha256:" + hashlib.sha256(census_raw).hexdigest()
+            if census_binding.get("raw_sha256") != observed_digest:
+                errors.append(
+                    "human_decision_assurance.consumer_census_binding.raw_sha256 "
+                    "does not match retained census bytes"
+                )
+            if census_binding.get("byte_count") != len(census_raw):
+                errors.append(
+                    "human_decision_assurance.consumer_census_binding.byte_count "
+                    "does not match retained census bytes"
+                )
+            subject = census.get("subject")
+            partition = census.get("baseline_schema_partition")
+            coverage = census.get("coverage")
+            migration = census.get("migration")
+            if not all(
+                isinstance(item, dict)
+                for item in (subject, partition, coverage, migration)
+            ):
+                errors.append(
+                    "human_decision_assurance consumer census lacks required "
+                    "subject, partition, coverage, or migration objects"
+                )
+            else:
+                census_facts = {
+                    "baseline_git_commit": subject.get("baseline_git_commit"),
+                    "baseline_git_tree": subject.get("baseline_git_tree"),
+                    "baseline_schema_count": subject.get(
+                        "baseline_schema_count"
+                    ),
+                    "candidate_mechanism_schema_count": subject.get(
+                        "candidate_mechanism_schema_count"
+                    ),
+                    "current_union_schema_count": subject.get(
+                        "current_union_schema_count"
+                    ),
+                    "direct_or_policy_conditional_schema_count":
+                        partition.get("partition_counts", {}).get(
+                            "direct_or_policy_conditional_assurance_subject"
+                        ),
+                    "pending_operator_acceptance_schema_count":
+                        partition.get("partition_counts", {}).get(
+                            "pending_operator_acceptance_consumer"
+                        ),
+                }
+                for key, observed in census_facts.items():
+                    if census_binding.get(key) != observed:
+                        errors.append(
+                            "human_decision_assurance.consumer_census_binding."
+                            f"{key} does not match the retained census"
+                        )
+                if (
+                    coverage.get("complete_only_for_frozen_source_corpus")
+                    is not True
+                    or migration.get(
+                        "complete_consumer_census_for_frozen_source_corpus"
+                    )
+                    is not True
+                ):
+                    errors.append(
+                        "human_decision_assurance census does not prove "
+                        "completeness for its exact frozen source corpus"
+                    )
+                if (
+                    coverage.get("all_baseline_consumers_migrated_false")
+                    is not True
+                    or coverage.get("consumer_migration_complete") is not False
+                    or migration.get("current_consumers_migrated") is not False
+                ):
+                    errors.append(
+                        "human_decision_assurance census does not retain the "
+                        "zero-migration boundary"
+                    )
     return errors
 
 
@@ -453,7 +679,8 @@ def validate_human_decision_assurance_known_bads(errors: list[str]) -> int:
             [
                 item
                 for item in EXPECTED_HUMAN_DECISION_ASSURANCE["required_evidence"]
-                if item != "explicit_decision_value_basis_and_limitations"
+                if item
+                != "source_decision_schema_and_policy_remain_semantic_authority"
             ],
         ),
         (
@@ -462,7 +689,28 @@ def validate_human_decision_assurance_known_bads(errors: list[str]) -> int:
             [
                 item
                 for item in EXPECTED_HUMAN_DECISION_ASSURANCE["required_evidence"]
-                if item != "human_initiated_confirmation_gesture"
+                if item
+                != "content_addressed_material_presentation_and_human_confirmation_receipt_bound_to_exact_core_and_full_ceremony_context"
+            ],
+        ),
+        (
+            "confirmation-authenticator-cobinding-omitted",
+            "required_evidence",
+            [
+                item
+                for item in EXPECTED_HUMAN_DECISION_ASSURANCE["required_evidence"]
+                if item
+                != "cycle_free_cryptographic_or_trusted_path_cobinding_of_confirmation_gesture_and_authenticator_actor"
+            ],
+        ),
+        (
+            "eligibility-ruleset-and-independent-recomputation-omitted",
+            "required_evidence",
+            [
+                item
+                for item in EXPECTED_HUMAN_DECISION_ASSURANCE["required_evidence"]
+                if item
+                != "exact_byte_bound_total_individual_eligibility_ruleset_and_independent_recomputation"
             ],
         ),
         (
@@ -496,13 +744,13 @@ def validate_human_decision_assurance_known_bads(errors: list[str]) -> int:
             ],
         ),
         (
-            "distinct-principal-quorum-omitted",
+            "singleton-principal-and-verifier-separation-omitted",
             "required_evidence",
             [
                 item
                 for item in EXPECTED_HUMAN_DECISION_ASSURANCE["required_evidence"]
                 if item
-                != "required_distinct_principal_separation_conflict_and_quorum_evaluation"
+                != "singleton_confirming_principal_and_independent_verifier_observation"
             ],
         ),
         (
@@ -518,6 +766,106 @@ def validate_human_decision_assurance_known_bads(errors: list[str]) -> int:
             "prerequisite-self-closed",
             "status",
             "candidate_clear",
+        ),
+        (
+            "candidate-schema-identities-erased",
+            "candidate_schema_resource_identities_assigned",
+            False,
+        ),
+        (
+            "unissued-schemas-promoted-to-issued",
+            "candidate_schemas_issued",
+            True,
+        ),
+        (
+            "admitted-record-identity-fabricated",
+            "admitted_assurance_record_identity_issued",
+            True,
+        ),
+        (
+            "wrapper-identity-fabricated",
+            "assured_decision_wrapper_identity_assigned",
+            True,
+        ),
+        (
+            "unissued-eligibility-ruleset-promoted-to-issued",
+            "individual_eligibility_ruleset_issued",
+            True,
+        ),
+        (
+            "independent-eligibility-recomputation-fabricated",
+            "independent_eligibility_recomputation_retained",
+            True,
+        ),
+        (
+            "same-actor-cryptographic-cobinding-fabricated",
+            "confirmation_gesture_and_authenticator_actor_cryptographically_co_bound",
+            True,
+        ),
+        (
+            "exact-crypto-input-dereference-fabricated",
+            "exact_cryptographic_input_bytes_dereferenced_and_verified",
+            True,
+        ),
+        (
+            "frozen-corpus-census-erased",
+            "complete_consumer_census_for_frozen_source_corpus",
+            False,
+        ),
+        (
+            "consumer-migration-promoted-to-complete",
+            "current_consumers_migrated",
+            True,
+        ),
+        (
+            "migrated-consumer-count-fabricated",
+            "migrated_consumer_count",
+            1,
+        ),
+        (
+            "end-to-end-refusal-fabricated",
+            "end_to_end_consumer_refusal_proved",
+            True,
+        ),
+        (
+            "foundation-promoted-to-full-prq-013-closure",
+            "individual_assurance_foundation_closes_prq_013",
+            True,
+        ),
+        (
+            "real-ceremony-fabricated",
+            "real_human_ceremony_verified",
+            True,
+        ),
+        (
+            "live-ceremony-moved-into-gate-a",
+            "gate_a_requires_live_protected_ceremony",
+            True,
+        ),
+        (
+            "live-ceremony-moved-outside-separate-gate-b-authorization",
+            "real_protected_ceremony_stage",
+            "gate_a_prerequisite",
+        ),
+        (
+            "runtime-conformance-moved-out-of-gate-c",
+            "runtime_conformance_stage",
+            "gate_a_architecture_evidence",
+        ),
+        (
+            "accountable-review-fabricated",
+            "accountable_review_complete",
+            True,
+        ),
+        (
+            "consumer-census-binding-swapped",
+            "consumer_census_binding",
+            {
+                **EXPECTED_HUMAN_DECISION_ASSURANCE[
+                    "consumer_census_binding"
+                ],
+                "raw_sha256": "sha256:" + ("0" * 64),
+            },
         ),
     )
     passed = 0
@@ -561,7 +909,7 @@ def validate_next_tranche_known_bad(errors: list[str]) -> int:
         json.dumps(EXPECTED_NEXT_DEPENDENCY_CONTAINED_TRANCHE)
     )
     candidate["may_start_after"].remove(
-        "prq_013_human_decision_assurance_candidate_closure"
+        "prq_013_individual_assurance_foundation_candidate_closure"
     )
     expected_reason = (
         "next_dependency_contained_tranche.may_start_after must equal "
@@ -873,8 +1221,23 @@ def main() -> int:
         require(
             prq013.get("finding_id") == "PRQ-013"
             and prq013.get("status") == "unresolved_blocking"
-            and "HumanDecisionAssurance" in prq013.get("closure", "")
-            and "transitive consumer census and migration" in prq013.get("closure", ""),
+            and "three unissued HumanDecisionAssurance" in prq013.get(
+                "closure", ""
+            )
+            and "zero current consumers are migrated" in prq013.get(
+                "closure", ""
+            )
+            and "T0 individual-assurance foundation candidate"
+            in prq013.get("closure", "")
+            and "T1 AuthorityAssignment" in prq013.get("closure", "")
+            and "required T2 command, event, state, reducer, currentness, quorum"
+            in prq013.get("closure", "")
+            and "same-actor confirmation/authenticator cryptographic co-binding"
+            in prq013.get("closure", "")
+            and "Gate A neither requires nor authorizes a live protected ceremony"
+            in prq013.get("closure", "")
+            and "separately authorized bounded Gate B probe"
+            in prq013.get("closure", ""),
             "PRQ-013 must retain the blocking human decision-assurance boundary",
             errors,
         )

@@ -122,10 +122,11 @@ none is delegated authority over scientific meaning, admission, or recovery.
   exact displayed and candidate bytes, with custody, delegation, conflict,
   quorum, replay, expiry, and sanitized-evidence semantics owned by Odeya.
 
-No current schema is claimed to conform to this decision-assurance profile.
-PRQ-013 remains a Gate A blocker under
-[ADR 0089](decisions/0089-a-valid-human-signature-is-not-a-human-decision.md)
-and the
+Three Core/Evidence/Seal schemas are unissued foundation candidates; no
+consumer or `AssuredDecision` is claimed to conform to this
+decision-assurance profile. PRQ-013 remains a Gate A blocker under
+[ADR 0092](decisions/0092-bind-human-decisions-through-an-external-assurance-wrapper.md),
+which extends [ADR 0089](decisions/0089-a-valid-human-signature-is-not-a-human-decision.md), and the
 [cross-program process-evidence packet](CROSS_PROGRAM_PROCESS_EVIDENCE_ABSORPTION_2026-07-19.md).
 
 These comparisons support one nonrecursive construction law:

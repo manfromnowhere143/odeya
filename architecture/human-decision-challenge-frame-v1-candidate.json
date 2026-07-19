@@ -1,0 +1,73 @@
+{
+  "schema_version": "0.1.0",
+  "artifact_class": "human_decision_challenge_frame_candidate",
+  "profile_id": "odeya-human-decision-challenge-frame-v1-candidate",
+  "profile_version": "0.1.0",
+  "candidate_status": "unissued_architecture_candidate_not_a_real_ceremony",
+  "issuance_disposition": "blocked_pending_cycle_free_confirmation_receipt_commitment_or_accepted_transaction_confirmation_trusted_path",
+  "purpose": "nonrecursive_exact_byte_commitment_for_a_webauthn_authentication_challenge",
+  "binary_frame": {
+    "magic_ascii": "ODEYA-HDA-CHALLENGE-FRAME-V1",
+    "field_count_encoding": "unsigned_16_bit_big_endian",
+    "field_entry_encoding": "name_length_u16be_then_ascii_name_then_value_length_u32be_then_value",
+    "text_value_encoding": "ascii_exact_bytes_no_normalization",
+    "digest_value_encoding": "32_raw_octets_decoded_from_lowercase_sha256_colon_hex",
+    "nonce_value_encoding": "32_raw_octets_decoded_from_lowercase_hex",
+    "ordered_fields": [
+      "core_schema_resource_id",
+      "core_raw_sha256",
+      "decision_schema_resource_id",
+      "decision_raw_sha256",
+      "candidate_schema_resource_id",
+      "candidate_raw_sha256",
+      "session_id",
+      "issued_at",
+      "expires_at",
+      "relying_party_id",
+      "expected_origin",
+      "nonce"
+    ]
+  },
+  "challenge_construction": {
+    "minimum_fresh_random_bits": 256,
+    "nonce_bytes": 32,
+    "commitment_algorithm": "sha-256",
+    "commitment_input": "exact_binary_frame",
+    "challenge_octets": "nonce_32_octets_then_commitment_32_octets",
+    "challenge_bytes": 64,
+    "challenge_id": "sha256_colon_lowercase_hex_of_exact_challenge_octets",
+    "webauthn_encoding": "base64url_without_padding",
+    "webauthn_encoded_length": 86,
+    "generator": "independent_verifier_or_relying_party",
+    "single_use_required": true,
+    "maximum_lifetime_seconds": 300,
+    "validity_interval": "half_open_issued_at_inclusive_expires_at_exclusive",
+    "client_generated_challenge_allowed": false
+  },
+  "relying_party_origin_policy": {
+    "policy_status": "candidate_unissued",
+    "allowed_relying_party_id": "odeya.danielwahnich.dev",
+    "allowed_origin": "https://odeya.danielwahnich.dev",
+    "origin_host_must_equal_relying_party_id": true,
+    "nondefault_port_allowed": false,
+    "alternate_relying_party_or_origin_allowed": false
+  },
+  "webauthn_algorithm_policy": {
+    "policy_status": "candidate_unissued",
+    "credential_public_key_algorithm": -7,
+    "cose_algorithm_name": "ES256",
+    "algorithm_substitution_allowed": false,
+    "algorithm_match_must_be_independently_verified": true
+  },
+  "proof_boundary": {
+    "profile_issued": false,
+    "relying_party_origin_policy_issued": false,
+    "webauthn_algorithm_policy_issued": false,
+    "confirmation_receipt_digest_committed": false,
+    "confirmation_gesture_and_authenticator_actor_cryptographically_co_bound": false,
+    "challenge_proves_review_or_comprehension": false,
+    "challenge_grants_authority": false,
+    "gate_a_accepted": false,
+    "runtime_authorized": false
+  }
+}

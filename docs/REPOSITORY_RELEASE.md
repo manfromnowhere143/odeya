@@ -18,18 +18,19 @@ exact-SHA two-ref hardening: one locally rehearsed direct-child commit must
 first pass the complete push check set at `release/<sha>`, then fast-forward
 `main` without changing SHA, pass a new post-main check set, and reproduce from
 remote `main`. The repository owner authorized the bounded hardening operation
-on 2026-07-19. The account bootstrap is now observed: pull requests are
-disabled, the exact inert merge and Actions policies are active, and the
-no-bypass release and `main` rulesets are IDs `19178198` and `19178503`.
-Bootstrap candidate `a25d026bd7233dfc452accc6087ded0bf015d7b4`, whose sole
-parent is public `main` checkpoint
-`56e8062334fb81bba955ba137be690e085d4c88e`, is retained at its permanent
-release ref with four workflows and ten jobs successful on attempt 1. This
-establishes the account controls and bootstrap census, not the complete first
-candidate-to-main activation. This document cannot recursively name the
-commit that contains it; resolve final-candidate checks, same-SHA promotion,
-post-main checks, remote replay/comparison, and the final activation receipt
-from Git plus the external subject-bound receipts.
+on 2026-07-19. The account bootstrap is observed: pull requests are disabled,
+the exact inert merge and Actions policies are active, and the no-bypass
+release and `main` rulesets are IDs `19178198` and `19178503`. Bootstrap
+candidate `a25d026bd7233dfc452accc6087ded0bf015d7b4`, whose sole parent is
+historical public `main` checkpoint
+`56e8062334fb81bba955ba137be690e085d4c88e`, remains at its permanent release
+ref with four workflows and ten jobs successful on attempt 1. Distinct sibling
+candidate `f1f25fd336daa1dd2707ba36b832e8d5c5e41d3e` subsequently completed
+the first candidate-to-main activation: permanent release checks, same-SHA
+promotion, new post-main checks, remote replay/comparison, and the final
+read-only activation receipt all settled for that exact subject. Every later
+candidate must execute the ordinary two-ref sequence with new subject-bound
+evidence.
 
 ## Release objective
 
@@ -59,11 +60,13 @@ named by a release manifest.
 | `Architecture / Bounded Formal Models` | Reproduce seven safe TLA+ models, the alternate cognitive fingerprint run, and all thirty intended counterexamples | Full TLC log and pinned toolchain manifest | Bounded safety evidence only; not liveness, implementation conformance, or a physical safety case |
 | `Publication sequence` | On a governed push, verify the exact checked-out SHA, ref, single-parent/direct-child range, and event before/after boundary | Exact push log and remote run identity | Not a summary of the other checks, an independent verifier, or publication authority by itself |
 
-Public `main` remains at the historical three-workflow/nine-job checkpoint
-until the first final candidate is promoted. The permanent bootstrap release
-candidate has the accepted four-workflow/ten-job inventory: the existing nine
-contexts plus the push-only `Publication sequence` context. Pull requests are
-disabled at repository level, so retained `pull_request` triggers are dormant;
+At the completed first-activation checkpoint, public `main` carried the
+four-workflow/ten-job inventory at
+`f1f25fd336daa1dd2707ba36b832e8d5c5e41d3e`: the existing nine contexts plus
+the push-only `Publication sequence` context. Resolve the current `main` tip
+from Git; every later promoted SHA must pass the same fresh inventory. Pull
+requests are disabled at repository level, so retained `pull_request` triggers
+are dormant;
 no pull-request run is release evidence. Every workflow uses explicit
 timeouts, cancels superseded work within its declared concurrency boundary,
 retains logs even on failure, and runs with `contents: read` as the complete
@@ -299,14 +302,15 @@ HTTP exchange; that outcome remains `applied_outcome_unknown` and blocks
 activation. The journal and activation receipt are noncanonical diagnostic
 evidence, not scientific evidence or self-approval.
 
-For the one-time activation promotion, set
+The completed one-time activation promotion set
 `ODEYA_ACTIVATION_BOOTSTRAP_SHA=C1` when invoking
-`scripts/ci/push-rehearsed-head.sh promote`. The helper derives every exact
-receipt/evidence path, runs `activation-evidence` after remote comparison and
-final ref settlement, and prints the combined completion statement only if the
-fifth receipt is retained. Without that explicit binding, it completes an
-ordinary publication but states that no one-time GitHub activation claim was
-requested.
+`scripts/ci/push-rehearsed-head.sh promote`. The helper derived every exact
+receipt/evidence path, ran `activation-evidence` after remote comparison and
+final ref settlement, and printed the combined completion statement only after
+the fifth receipt was retained. This is historical recovery information, not a
+procedure to repeat. Every ordinary descendant must leave
+`ODEYA_ACTIVATION_BOOTSTRAP_SHA` unset; the helper then completes ordinary
+publication and states that no one-time GitHub activation claim was requested.
 
 Local session logs may corroborate a bounded chronology of observed commands
 and tool outcomes. They are mutable secondary evidence and never establish
@@ -416,13 +420,12 @@ ADR 0091 and this checklist are requirements plus the bounded observations
 recorded above. At the pre-change observation the fourth workflow did not exist
 and no repository ruleset existed; the account/bootstrap checkpoint later
 established both rulesets and retained the exact account journal plus
-bootstrap candidate checks. The first activation cycle must still retain the
-distinct final implementation bytes, final candidate-ref checks, same-SHA
-`main`, post-main checks, remote replay, and final
-`github_repository_activation_receipt` before the end-to-end sequence may be
-called complete. Completion of the exact commit that contains this statement
-is resolved from its external receipts rather than a recursively embedded
-self-hash.
+bootstrap candidate checks. Distinct final candidate
+`f1f25fd336daa1dd2707ba36b832e8d5c5e41d3e` later retained its candidate-ref
+checks, same-SHA `main`, new post-main checks, remote replay, and final
+`github_repository_activation_receipt`, completing the first activation
+cycle. Those receipts bind only that exact subject; every descendant must
+execute the ordinary sequence again.
 
 The comparator's retained known-bad now presents a valid historical completion
 triplet while the caller names a later current subject and requires rejection.
@@ -435,7 +438,7 @@ the separately authorized publication of architecture evidence. Gate A
 acceptance, a Gate C implementation increment, research publication, and every
 runtime or mission external effect remain separately operator-governed.
 
-## Executed account bootstrap and remaining activation boundary
+## Executed account bootstrap and completed first activation boundary
 
 ADR 0047 records the one-time public repository bootstrap executed on
 2026-07-17. It is
@@ -460,14 +463,18 @@ Bootstrap candidate `a25d026…` is permanently retained and its four
 workflows/ten jobs are green on attempt 1. The eleven settled operations are
 retained in
 `github-governance-mutations-a25d026bd7233dfc452accc6087ded0bf015d7b4.json`.
-This is active account-side control and bootstrap evidence. It is not yet the
-complete first publication activation: the distinct final sibling candidate
-must still pass release checks under both rulesets, fast-forward the same SHA
-to `main`, pass new post-main checks, reproduce from remote `main`, compare
-equal by the admitted profile, and emit the final read-only activation
-receipt. A local hook remains a workstation control, not server-side branch
-protection; the server rulesets are the independently observed remote
-barriers.
+This is active account-side control and bootstrap evidence. Distinct final
+sibling candidate `f1f25fd336daa1dd2707ba36b832e8d5c5e41d3e` then passed
+release checks under both rulesets, fast-forwarded the same SHA to `main`,
+passed four new post-main workflows and ten jobs, reproduced from remote
+`main`, compared equal by the admitted profile, and emitted the final read-only
+activation receipt. The comparison-receipt SHA-256 is
+`442ab446a1fad1a62ec6049b978b2af53fa1b67ccbd6acebf34619ff540ea625`;
+the activation-receipt SHA-256 is
+`2f9564a23bf3bde851244224eb5f69b5cfe881e39eec46b1387d5a34b85a1ab2`.
+A local hook remains a workstation control, not server-side branch protection;
+the server rulesets are the independently observed remote barriers. This
+completion does not transfer evidence to a descendant.
 
 Repository release is not research publication. It does not authorize runtime
 implementation, domain purchase, investor outreach, external data disclosure,

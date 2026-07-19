@@ -13150,6 +13150,365 @@
       },
       "refusal_class": "implication",
       "ablation_verified_rule": "/allOf/3"
+    },
+    {
+      "name": "human-decision-assurance-decision-subject-valid",
+      "schema": "schemas/operator-architecture-decision.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/human-decision-assurance-decision-subject.valid.json",
+      "expect": "valid"
+    },
+    {
+      "name": "human-decision-assurance-core-candidate-valid",
+      "schema": "schemas/human-decision-assurance-core.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/human-decision-assurance-core.valid.json",
+      "expect": "valid"
+    },
+    {
+      "name": "human-decision-assurance-core-cannot-claim-issued-profile",
+      "schema": "schemas/human-decision-assurance-core.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/human-decision-assurance-core.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/profile_binding/profile_status",
+          "value": "issued"
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/profile_binding/profile_status",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
+    },
+    {
+      "name": "human-decision-assurance-core-binds-exact-challenge-frame-profile",
+      "schema": "schemas/human-decision-assurance-core.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/human-decision-assurance-core.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/ceremony_request/challenge_framing_profile/raw_sha256",
+          "value": "sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/ceremony_request/challenge_framing_profile/raw_sha256",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
+    },
+    {
+      "name": "human-decision-assurance-core-rule-0-is-enforced",
+      "schema": "schemas/human-decision-assurance-core.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/human-decision-assurance-core.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/authority_context/decision_principals/0/delegation/delegation_source_ref",
+          "value": "delegation-source.synthetic.0001"
+        },
+        {
+          "op": "replace",
+          "path": "/authority_context/decision_principals/0/delegation/depth",
+          "value": 1
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/authority_context/decision_principals/0/delegation/delegation_source_ref",
+        "keyword": "type"
+      },
+      "refusal_class": "at_mutation",
+      "ablation_verified_rule": "/allOf/0"
+    },
+    {
+      "name": "human-decision-assurance-core-rule-1-is-enforced",
+      "schema": "schemas/human-decision-assurance-core.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/human-decision-assurance-core.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/authority_context/decision_principals/0/delegation/delegated",
+          "value": true
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/authority_context/decision_principals/0/delegation/delegation_source_ref",
+        "keyword": "type"
+      },
+      "refusal_class": "implication",
+      "ablation_verified_rule": "/allOf/1"
+    },
+    {
+      "name": "human-decision-assurance-evidence-candidate-valid",
+      "schema": "schemas/human-decision-assurance-evidence.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/human-decision-assurance-evidence.valid.json",
+      "expect": "valid"
+    },
+    {
+      "name": "human-decision-assurance-evidence-rejects-private-reasoning",
+      "schema": "schemas/human-decision-assurance-evidence.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/human-decision-assurance-evidence.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/forbidden_content/raw_private_reasoning_retained",
+          "value": true
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/forbidden_content/raw_private_reasoning_retained",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
+    },
+    {
+      "name": "human-decision-assurance-seal-candidate-valid",
+      "schema": "schemas/human-decision-assurance-seal.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/human-decision-assurance-seal.valid.json",
+      "expect": "valid"
+    },
+    {
+      "name": "human-decision-assurance-seal-cannot-enable-consumer-authority",
+      "schema": "schemas/human-decision-assurance-seal.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/human-decision-assurance-seal.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/decision_entry/consumer_authority_effective",
+          "value": true
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/decision_entry/consumer_authority_effective",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
+    },
+    {
+      "name": "human-decision-assurance-seal-rejects-deferred-source-currentness-disposition",
+      "schema": "schemas/human-decision-assurance-seal.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/human-decision-assurance-seal.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/participant_determinations/0/disposition",
+          "value": "expired"
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/participant_determinations/0/disposition",
+        "keyword": "enum"
+      },
+      "refusal_class": "at_mutation"
+    },
+    {
+      "name": "human-decision-assurance-seal-rule-0-is-enforced",
+      "schema": "schemas/human-decision-assurance-seal.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/human-decision-assurance-seal.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/participant_determinations/0/custody",
+          "value": "unknown"
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/participant_determinations/0/custody",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation",
+      "ablation_verified_rule": "/allOf/0"
+    },
+    {
+      "name": "human-decision-assurance-seal-rule-1-is-enforced",
+      "schema": "schemas/human-decision-assurance-seal.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/human-decision-assurance-seal.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/quorum_evaluation/distinct_effective_control_evaluation",
+          "value": "unknown"
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/quorum_evaluation/distinct_effective_control_evaluation",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation",
+      "ablation_verified_rule": "/allOf/1"
+    },
+    {
+      "name": "human-decision-assurance-seal-rule-2-is-enforced",
+      "schema": "schemas/human-decision-assurance-seal.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/human-decision-assurance-seal.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/quorum_evaluation/result",
+          "value": "indeterminate"
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/quorum_evaluation/result",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation",
+      "ablation_verified_rule": "/allOf/2"
+    },
+    {
+      "name": "human-decision-assurance-seal-rule-3-is-enforced",
+      "schema": "schemas/human-decision-assurance-seal.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/human-decision-assurance-seal.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/decision_entry/assurance_disposition",
+          "value": "invalid"
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/decision_entry/policy_entry",
+        "keyword": "const"
+      },
+      "refusal_class": "implication",
+      "ablation_verified_rule": "/allOf/3"
+    },
+    {
+      "name": "human-decision-assurance-core-rejects-second-principal",
+      "schema": "schemas/human-decision-assurance-core.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/human-decision-assurance-core.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "add",
+          "path": "/authority_context/decision_principals/1",
+          "value": {}
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/authority_context/decision_principals",
+        "keyword": "maxItems"
+      },
+      "refusal_class": "container_of_mutation"
+    },
+    {
+      "name": "human-decision-assurance-core-rejects-second-verifier",
+      "schema": "schemas/human-decision-assurance-core.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/human-decision-assurance-core.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "add",
+          "path": "/authority_context/verifier_principal_ids/1",
+          "value": "verifier.synthetic.security.0002"
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/authority_context/verifier_principal_ids",
+        "keyword": "maxItems"
+      },
+      "refusal_class": "container_of_mutation"
+    },
+    {
+      "name": "human-decision-assurance-evidence-rejects-second-observation",
+      "schema": "schemas/human-decision-assurance-evidence.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/human-decision-assurance-evidence.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "add",
+          "path": "/participant_observations/1",
+          "value": {}
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/participant_observations",
+        "keyword": "maxItems"
+      },
+      "refusal_class": "container_of_mutation"
+    },
+    {
+      "name": "human-decision-assurance-evidence-rejects-thirteenth-artifact",
+      "schema": "schemas/human-decision-assurance-evidence.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/human-decision-assurance-evidence.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "add",
+          "path": "/ordered_evidence_set/12",
+          "value": {}
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/ordered_evidence_set",
+        "keyword": "maxItems"
+      },
+      "refusal_class": "container_of_mutation"
+    },
+    {
+      "name": "human-decision-assurance-seal-rejects-second-evidence-binding",
+      "schema": "schemas/human-decision-assurance-seal.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/human-decision-assurance-seal.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "add",
+          "path": "/ordered_evidence_bindings/1",
+          "value": {}
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/ordered_evidence_bindings",
+        "keyword": "maxItems"
+      },
+      "refusal_class": "container_of_mutation"
+    },
+    {
+      "name": "human-decision-assurance-seal-rejects-second-determination",
+      "schema": "schemas/human-decision-assurance-seal.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/human-decision-assurance-seal.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "add",
+          "path": "/participant_determinations/1",
+          "value": {}
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/participant_determinations",
+        "keyword": "maxItems"
+      },
+      "refusal_class": "container_of_mutation"
+    },
+    {
+      "name": "human-decision-assurance-seal-cannot-assert-aggregate-quorum",
+      "schema": "schemas/human-decision-assurance-seal.schema.json",
+      "fixture": "tests/architecture-schema/fixtures/human-decision-assurance-seal.valid.json",
+      "expect": "invalid",
+      "mutations": [
+        {
+          "op": "replace",
+          "path": "/claim_boundary/aggregate_quorum_evaluated",
+          "value": true
+        }
+      ],
+      "expected_refusal": {
+        "pointer": "/claim_boundary/aggregate_quorum_evaluated",
+        "keyword": "const"
+      },
+      "refusal_class": "at_mutation"
     }
   ]
 }

@@ -149,18 +149,32 @@ A weaker tier cannot be selected because it is cheaper. The isolation claim must
 | T26 | Provider/model fallback silently changes a confirmatory attempt or its data behavior | Exact model/harness/provider/retention identity, fallback as new attempt, protocol comparability rule | Original attempt stops; new attempt is separately classified and adjudicated |
 | T27 | A contributor supplies a polished pseudoscientific or false premise and the engine optimizes for a persuasive compliant report | Premise/evidence-class challenge, rival and falsifier generation, admissibility rules, refusal benchmark, human/domain escalation | Mission is refused, reframed, or retained as an explicitly adversarial test; no eligible claim or publication |
 | T28 | A research benchmark appears strong because the agent retrieves the reference answer, evaluator artifact, derivative summary, or contaminated cache instead of synthesizing evidence | Exact contamination frontier, clean-room blocked-reference manifest, cache/index/embedding taint, ordinary-versus-clean-room comparison, atomic-fact audit | Evaluation is invalidated or reported as contaminated; no capability promotion |
-| T29 | An agent, compromised session, or shared credential turns a human-labelled key or authentication result into apparent human approval over unseen or changed bytes | PRQ-013 decision assurance binding exact displayed/candidate bytes, verifier-generated unpredictable challenge, separate human-initiated confirmation gesture, user presence/verification, principal identity-proofing and authenticator binding, authenticator/key/session custody and agent exclusion, delegation/conflict/effective-quorum declarations, replay/expiry controls, and sanitized independent evidence | Human decision remains `indeterminate`; no `H` slot, quorum, grant, release, or Gate A decision is satisfied |
+| T29 | An agent, compromised session, or shared credential turns a human-labelled key or authentication result into apparent human approval over unseen or changed bytes | PRQ-013 singleton later-ratification candidate binds the exact source decision and candidate bytes, source relationship, candidate RP/origin/algorithm policy, verifier-generated unpredictable content-addressed challenge, separate content-addressed presentation/confirmation receipt, full ceremony context, half-open single-consumption chronology, user presence/verification, identity/authenticator/custody observations, exact cryptographic inputs, and sanitized derived evidence. The current receipt names the challenge, but the signed challenge does not commit to the receipt digest; profile issuance is blocked pending a cycle-free two-phase commitment or accepted transaction-confirmation trusted path. Aggregate quorum, currentness, revocation, and authority remain deferred to a later controlled-time `AssuredDecision` evaluation | Individual assurance remains `indeterminate` or `invalid` when required observations fail; no same-actor cryptographic co-binding, original authorship, source timestamp, `H` slot, aggregate quorum, grant, release, or Gate A decision is satisfied |
 
-Every row needs at least one known-bad architecture fixture before Gate A and executable containment/fault evidence in its authorized implementation increment.
+Every row needs at least one known-bad architecture fixture before Gate A.
+Gate A additionally requires accepted protocol semantics, bounded
+architecture-time reference verifiers, and conformance vectors where the
+control depends on computation. A live protected ceremony is a separately
+authorized Gate B probe; executable containment/fault and runtime-conformance
+evidence belong to the authorized Gate C implementation increment.
 
 `PRQ-013-KB-001` is the minimum exact falsifier for T29: an unattended
 agent can invoke a human-labelled signing key and produce a cryptographically
-valid signature over the exact candidate, but the verifier-generated
-unpredictable challenge, separate human-initiated confirmation gesture,
+valid signature over the exact candidate, but the claimed
+`human_initiated_remote_operation` is `contradicted`; the verifier-generated
+unpredictable challenge, separate human-decision gesture,
 principal/authenticator binding, user presence, and user verification are
-absent or `unknown`. The expected result is `indeterminate`, with the record
+absent or `unknown`. Contradiction-first precedence makes the retained
+fixture's expected result `invalid`, with the record
 excluded from every `H` slot and quorum. Acceptance of that record falsifies
 the architecture.
+
+The positive synthetic chain is not a counterexample to session compromise.
+Its content-addressed receipt protects exact receipt identity, but does not
+prove that the authenticator actor caused the separate application gesture.
+Until a two-phase receipt commitment or accepted trusted transaction display
+is retained, the profile remains unissued and the same-actor claim remains
+false.
 
 The exact non-authoritative cognition records and invariants used to close T21–T26 are specified in [Cognitive Control Contracts](COGNITIVE_CONTROL_CONTRACTS.md).
 
@@ -227,13 +241,16 @@ Gate A cannot accept this threat model until:
 
 - every trust boundary maps to command, event, schema, data class, and authority contracts;
 - the authority bootstrap, human-only action matrix, dual-control rules, and break-glass path are frozen;
-- PRQ-013 closes with an exact `HumanDecisionAssurance` contract, consumer
-  census, semantic rules, and the T29 known-bad suite; no current schema is
-  claimed compliant;
+- PRQ-013 closes only after the unissued individual-assurance foundation,
+  T1/T2 dependencies, separately identified `AssuredDecision` and successor
+  candidates, exact transitive migration, semantic rules, and the T29
+  end-to-end known-bad suite are accepted on exact bytes;
 - the first-slice data/execution classes and provider-retention rules are selected;
 - each abuse case has a positive and known-bad non-executable trace with expected events and refusal;
 - ledger witness, key hierarchy, incident, deletion/legal-hold, and sealed-truth rotation designs are accepted;
 - selected isolation and external-effect claims are marked provisional pending authorized Gate B evidence;
+- a real protected ceremony remains a separately authorized Gate B probe, not
+  evidence required to accept the Gate A threat-model architecture;
 - an independent security reviewer closes critical/high findings; and
 - the operator accepts the exact candidate commit.
 

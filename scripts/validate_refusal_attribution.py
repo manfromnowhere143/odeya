@@ -125,6 +125,11 @@ REGISTRY: dict[str, tuple[str, Any, Any]] = {
     "physical-contracts": ("cases.json", pointer_keyword, substring("expected_semantic_refusal_contains")),
     "lifecycle-closure": ("cases.json", substring("expected_refusal_contains"), None),
     "first-slice-resolution": ("cases.json", substring("expected_refusal_contains"), None),
+    "human-decision-assurance": (
+        "cases.json",
+        intent_and_inventory("expected_errors"),
+        None,
+    ),
     "constitutional-construction": ("cases.json", substring("expected_refusal_contains"), None),
     "work-identity-successor-cohort": ("cases.json", intent_and_inventory("expected_errors"), None),
     "work-intent-identity-candidate": ("cases.json", intent_and_inventory("expected_errors"), None),
@@ -134,6 +139,7 @@ REGISTRY: dict[str, tuple[str, Any, Any]] = {
         None,
     ),
     "canonical-profile-candidate": ("cases.json", intent_and_inventory("required_errors"), None),
+    "challenge-frame": ("cases.json", intent_and_inventory("expected_errors"), None),
     "command-identity-contracts": ("cases.json", exact_reason_set, None),
     # The repository's largest adversarial corpus, attributed by ADR 0068.
     "architecture-schema": ("manifest.json", pointer_keyword, None),

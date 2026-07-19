@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Gate the retained suite guard-coverage record.
 
-The measurement disables every refusal construct of twelve suites in turn
+The measurement disables every refusal construct of thirteen suites in turn
 and lives in `scripts/audit_suite_guard_coverage.py`. This is the cheap
 half: the record must describe the exact checker bytes it claims, cover
 every declared suite, keep unproved guards enumerated by name, and agree
@@ -17,13 +17,29 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "architecture/suite-guard-coverage.json"
 AUDIT_TOOL = ROOT / "scripts/audit_suite_guard_coverage.py"
-EXPECTED_SUMMARY = {"guard_count": 637, "proved": 249, "unproved": 388, "crash_detected": 0}
+VALIDATOR = ROOT / "scripts/validate.py"
+EXPECTED_SUMMARY = {"guard_count": 927, "proved": 458, "unproved": 469, "crash_detected": 0}
+
+# Suites registered in scripts/validate.py that the generalized audit does not
+# measure, each with the reason it is out of that denominator. This is not a
+# convenience list: an entry here must be justified by a dedicated audit that
+# covers the same guards more precisely, and the gate refuses a stale entry as
+# well as a silently dropped suite. The generalized record may also measure
+# subjects that are not isolated contract suites, which is why the comparison
+# is one-directional.
+GENERALIZED_AUDIT_EXCLUSIONS = {
+    "lifecycle-closure": (
+        "covered by dedicated statement (222/229) and top-level condition "
+        "(108/111) audits, per docs/GUARD_COVERAGE_CLOSURE_PLAN.md"
+    ),
+}
 
 
 def main() -> int:
@@ -35,6 +51,32 @@ def main() -> int:
         return 1
 
     document = json.loads(RECORD.read_text(encoding="utf-8"))
+
+    # The suite list lives in two places: the validator that runs the suites
+    # and the audit tool that mutates them. They drifted silently once -- a
+    # newly registered suite was validated on every run while never being
+    # mutation-tested, and the coverage total did not move, so nothing
+    # complained. Compare the registries directly and fail closed on either
+    # direction of drift.
+    declared = set(re.findall(r'"tests/([^/"]+)/check\.py"', VALIDATOR.read_text(encoding="utf-8")))
+    measured = {suite.get("suite") for suite in document.get("suites", [])}
+    for missing in sorted(declared - measured - GENERALIZED_AUDIT_EXCLUSIONS.keys()):
+        errors.append(
+            f"{missing}: registered as an isolated contract suite but absent from the "
+            "guard-coverage record; re-run scripts/audit_suite_guard_coverage.py --write"
+        )
+    for excluded, reason in sorted(GENERALIZED_AUDIT_EXCLUSIONS.items()):
+        if excluded in measured:
+            errors.append(
+                f"{excluded}: excluded from the generalized audit as {reason}, but the record "
+                "measures it anyway; the exclusion and the denominator disagree"
+            )
+        elif excluded not in declared:
+            errors.append(
+                f"{excluded}: carried as a generalized-audit exclusion but no longer registered "
+                "as an isolated contract suite; the exclusion is stale"
+            )
+
     if document.get("status") != "candidate_measurement_not_admitted":
         errors.append("record status must remain candidate_measurement_not_admitted")
     if document.get("artifact_class") != "architecture_evidence":

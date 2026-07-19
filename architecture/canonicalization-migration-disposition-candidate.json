@@ -1,193 +1,193 @@
 {
- "schema_version": "0.1.0",
- "artifact_class": "architecture_evidence",
- "inventory_id": "odeya.canonicalization-migration-disposition",
- "version": "0.1.0",
- "status": "candidate_partition_not_accepted",
- "plan_ref": "docs/GATE_A_PREREQUISITE_CLOSURE_PLAN_2026-07-16.md",
- "decision_ref": "docs/decisions/0032-partition-the-canonical-migration-findings.md",
- "partition_basis": {
-  "audit_ref": "tests/canonicalization/SCHEMA_AUDIT.json",
-  "audit_version": "0.2.0",
-  "schema_corpus_sha256": "4bef93224493d8ce4f71ef6e21c3bfa7aeff4202a81d46e0be1becc1569da2c8",
-  "fixture_corpus_sha256": "842977a893c960ad2a4c81c247681cf35665a6e5094c91f1cb8002f7b22e18a4",
-  "schema_count": 112,
-  "fixture_count": 204
- },
- "partition_law": "every finding of the six audit classes is assigned to exactly one disposition class by the selectors below; the validator recomputes this partition from the audit bytes on every run and refuses drift",
- "total_findings": 0,
- "touched_schema_union_count": 0,
- "touched_schema_union": [],
- "single_wave_consequence": "under the no-same-ID-mutation law the blast radius is one coordinated reissue wave over the touched-schema union; accepting or rejecting classes changes reissued content, never the wave size",
- "sequencing": [
-  "any D5 new-domain registration and any profile-core edit first, because they re-freeze the core bytes",
-  "the D2-D8 schema reissue wave",
-  "D9 profile-binding pins against the final core bytes",
-  "the D1 fixture wave plus fixture URN repins",
-  "audit regeneration must then show all six blocking findings at zero; refreshing the audit without resolving findings is not closure"
- ],
- "defs_comparator": {
-  "prose_stripped_keys": [
-   "$comment",
-   "description",
-   "examples",
-   "title"
+  "schema_version": "0.1.0",
+  "artifact_class": "architecture_evidence",
+  "inventory_id": "odeya.canonicalization-migration-disposition",
+  "version": "0.1.0",
+  "status": "candidate_partition_not_accepted",
+  "plan_ref": "docs/GATE_A_PREREQUISITE_CLOSURE_PLAN_2026-07-16.md",
+  "decision_ref": "docs/decisions/0032-partition-the-canonical-migration-findings.md",
+  "partition_basis": {
+    "audit_ref": "tests/canonicalization/SCHEMA_AUDIT.json",
+    "audit_version": "0.2.0",
+    "schema_corpus_sha256": "309e7625fc270a0ce4d6fe61897912a4663111ad746aa9b6633c1e2cbc427c20",
+    "fixture_corpus_sha256": "1be929c060e49de7af8fbf5e2a99d5846fa9e1fa5afcdba5c0af1b2cc5cf1a28",
+    "schema_count": 115,
+    "fixture_count": 209
+  },
+  "partition_law": "every finding of the six audit classes is assigned to exactly one disposition class by the selectors below; the validator recomputes this partition from the audit bytes on every run and refuses drift",
+  "total_findings": 0,
+  "touched_schema_union_count": 0,
+  "touched_schema_union": [],
+  "single_wave_consequence": "under the no-same-ID-mutation law the blast radius is one coordinated reissue wave over the touched-schema union; accepting or rejecting classes changes reissued content, never the wave size",
+  "sequencing": [
+    "any D5 new-domain registration and any profile-core edit first, because they re-freeze the core bytes",
+    "the D2-D8 schema reissue wave",
+    "D9 profile-binding pins against the final core bytes",
+    "the D1 fixture wave plus fixture URN repins",
+    "audit regeneration must then show all six blocking findings at zero; refreshing the audit without resolving findings is not closure"
   ],
-  "scalar_constraint_keys_blanked": [
-   "exclusiveMaximum",
-   "exclusiveMinimum",
-   "format",
-   "maxItems",
-   "maxLength",
-   "maxProperties",
-   "maximum",
-   "minItems",
-   "minLength",
-   "minProperties",
-   "minimum",
-   "multipleOf",
-   "pattern"
+  "defs_comparator": {
+    "prose_stripped_keys": [
+      "$comment",
+      "description",
+      "examples",
+      "title"
+    ],
+    "scalar_constraint_keys_blanked": [
+      "exclusiveMaximum",
+      "exclusiveMinimum",
+      "format",
+      "maxItems",
+      "maxLength",
+      "maxProperties",
+      "maximum",
+      "minItems",
+      "minLength",
+      "minProperties",
+      "minimum",
+      "multipleOf",
+      "pattern"
+    ],
+    "set_semantic_keys_sorted": [
+      "allOf",
+      "anyOf",
+      "oneOf",
+      "required",
+      "type"
+    ],
+    "vocabulary_keys": [
+      "enum",
+      "const"
+    ],
+    "rule": "skeletons mask scalar constraint values, enum contents, and const values; enum lists and const values form the vocabulary. One shared skeleton and one vocabulary is D6; one skeleton with differing vocabularies is D8; differing skeletons is D7. Constraint-keyword presence is treated as structure, the conservative reading; the presence-insensitive triage is recorded so the sensitivity is visible rather than silent",
+    "presence_insensitive_triage": null
+  },
+  "classes": [
+    {
+      "class_id": "D1",
+      "title": "Fixture timestamp normalization",
+      "finding_id": "CANON-FIXTURE-TIME-001",
+      "selector": "every entry of fixtures[].nonconformant_timestamp_values",
+      "count": 0,
+      "kind": "mechanical",
+      "recommendation": "normalize every value to the frozen UTC microsecond lexical form and regenerate the audit corpus digests; zero schema reissues"
+    },
+    {
+      "class_id": "D2",
+      "title": "Datetime profile pinning",
+      "finding_id": "CANON-SCHEMA-TIME-001",
+      "selector": "every entry of schemas[].unprofiled_datetime_paths",
+      "count": 0,
+      "kind": "mechanical_after_exemption_pass",
+      "recommendation": "pin each path to one shared profiled timestamp definition and reissue; one enumeration pass first for any source-reported external-time exemption"
+    },
+    {
+      "class_id": "D3",
+      "title": "Scientific-decimal typed-object migration",
+      "finding_id": "CANON-SCHEMA-NUMBER-001",
+      "selector": "every entry of schemas[].generic_scientific_decimal_paths",
+      "count": 0,
+      "kind": "table_driven",
+      "recommendation": "migrate each field to the frozen typed scientific-decimal object; the semantic type, unit, and precision per row require operator approval of the embedded table"
+    },
+    {
+      "class_id": "D4",
+      "title": "Binary-number domain declaration",
+      "finding_id": "CANON-SCHEMA-NUMBER-001",
+      "selector": "every entry of schemas[].generic_json_number_paths",
+      "count": 0,
+      "kind": "single_judgment",
+      "recommendation": "declare a frozen bounded-integer domain or migrate to decimal strings; both findings are in research-mission.schema.json"
+    },
+    {
+      "class_id": "D5",
+      "title": "Digest scope annotation",
+      "finding_id": "CANON-SCHEMA-DIGEST-001",
+      "selector": "every schemas[].digest_fields[] entry with scope_annotation_present false",
+      "count": 0,
+      "kind": "table_driven",
+      "recommendation": "annotate each field via shared scoped-digest definitions distinguishing byte digests from canonical object digests; rows proposing a domain beyond the frozen 21 require separate operator judgment and re-freeze the profile core"
+    },
+    {
+      "class_id": "D6",
+      "title": "Divergent definitions: constraint-only, converge",
+      "finding_id": "CANON-SCHEMA-DEFS-001",
+      "selector": "divergent_common_definitions entries whose variants share one structural skeleton and one enum vocabulary under the comparator in defs_comparator",
+      "count": 0,
+      "kind": "semi_mechanical",
+      "recommendation": "converge to one canonical shared definition per name; every narrowing carries a known-bad vector proving the stricter form refuses what the profile intends to refuse"
+    },
+    {
+      "class_id": "D7",
+      "title": "Divergent definitions: structural",
+      "finding_id": "CANON-SCHEMA-DEFS-001",
+      "selector": "divergent_common_definitions entries whose variants differ structurally under the comparator in defs_comparator",
+      "count": 0,
+      "kind": "per_name_decision",
+      "recommendation": "rename-distinct by default; converge-to-superset only where provably safe, decided per name over the retained variant diffs"
+    },
+    {
+      "class_id": "D8",
+      "title": "Divergent definitions: enum vocabulary policy",
+      "finding_id": "CANON-SCHEMA-DEFS-001",
+      "selector": "divergent_common_definitions entries whose variants share one skeleton but differ in enum vocabularies under the comparator in defs_comparator",
+      "count": 0,
+      "kind": "operator_judgment",
+      "recommendation": "closed central vocabularies with declared per-context subsets"
+    },
+    {
+      "class_id": "D9",
+      "title": "Profile-binding pinning",
+      "finding_id": "CANON-SCHEMA-PROFILE-001",
+      "selector": "every schemas[].canonical_profile_bindings entry not pinned",
+      "count": 0,
+      "kind": "mechanical_strictly_last",
+      "recommendation": "pin the exact prospective profile reference members only after the profile core bytes are final; any later core edit invalidates every pin"
+    }
   ],
-  "set_semantic_keys_sorted": [
-   "allOf",
-   "anyOf",
-   "oneOf",
-   "required",
-   "type"
-  ],
-  "vocabulary_keys": [
-   "enum",
-   "const"
-  ],
-  "rule": "skeletons mask scalar constraint values, enum contents, and const values; enum lists and const values form the vocabulary. One shared skeleton and one vocabulary is D6; one skeleton with differing vocabularies is D8; differing skeletons is D7. Constraint-keyword presence is treated as structure, the conservative reading; the presence-insensitive triage is recorded so the sensitivity is visible rather than silent",
-  "presence_insensitive_triage": null
- },
- "classes": [
-  {
-   "class_id": "D1",
-   "title": "Fixture timestamp normalization",
-   "finding_id": "CANON-FIXTURE-TIME-001",
-   "selector": "every entry of fixtures[].nonconformant_timestamp_values",
-   "count": 0,
-   "kind": "mechanical",
-   "recommendation": "normalize every value to the frozen UTC microsecond lexical form and regenerate the audit corpus digests; zero schema reissues"
+  "defs_assignments": [],
+  "d3_decimal_table": [],
+  "d5_field_table": [],
+  "operator_acceptance": {
+    "D1": null,
+    "D2": null,
+    "D3": null,
+    "D4": null,
+    "D5": null,
+    "D6": null,
+    "D7": null,
+    "D8": null,
+    "D9": null
   },
-  {
-   "class_id": "D2",
-   "title": "Datetime profile pinning",
-   "finding_id": "CANON-SCHEMA-TIME-001",
-   "selector": "every entry of schemas[].unprofiled_datetime_paths",
-   "count": 0,
-   "kind": "mechanical_after_exemption_pass",
-   "recommendation": "pin each path to one shared profiled timestamp definition and reissue; one enumeration pass first for any source-reported external-time exemption"
-  },
-  {
-   "class_id": "D3",
-   "title": "Scientific-decimal typed-object migration",
-   "finding_id": "CANON-SCHEMA-NUMBER-001",
-   "selector": "every entry of schemas[].generic_scientific_decimal_paths",
-   "count": 0,
-   "kind": "table_driven",
-   "recommendation": "migrate each field to the frozen typed scientific-decimal object; the semantic type, unit, and precision per row require operator approval of the embedded table"
-  },
-  {
-   "class_id": "D4",
-   "title": "Binary-number domain declaration",
-   "finding_id": "CANON-SCHEMA-NUMBER-001",
-   "selector": "every entry of schemas[].generic_json_number_paths",
-   "count": 0,
-   "kind": "single_judgment",
-   "recommendation": "declare a frozen bounded-integer domain or migrate to decimal strings; both findings are in research-mission.schema.json"
-  },
-  {
-   "class_id": "D5",
-   "title": "Digest scope annotation",
-   "finding_id": "CANON-SCHEMA-DIGEST-001",
-   "selector": "every schemas[].digest_fields[] entry with scope_annotation_present false",
-   "count": 0,
-   "kind": "table_driven",
-   "recommendation": "annotate each field via shared scoped-digest definitions distinguishing byte digests from canonical object digests; rows proposing a domain beyond the frozen 21 require separate operator judgment and re-freeze the profile core"
-  },
-  {
-   "class_id": "D6",
-   "title": "Divergent definitions: constraint-only, converge",
-   "finding_id": "CANON-SCHEMA-DEFS-001",
-   "selector": "divergent_common_definitions entries whose variants share one structural skeleton and one enum vocabulary under the comparator in defs_comparator",
-   "count": 0,
-   "kind": "semi_mechanical",
-   "recommendation": "converge to one canonical shared definition per name; every narrowing carries a known-bad vector proving the stricter form refuses what the profile intends to refuse"
-  },
-  {
-   "class_id": "D7",
-   "title": "Divergent definitions: structural",
-   "finding_id": "CANON-SCHEMA-DEFS-001",
-   "selector": "divergent_common_definitions entries whose variants differ structurally under the comparator in defs_comparator",
-   "count": 0,
-   "kind": "per_name_decision",
-   "recommendation": "rename-distinct by default; converge-to-superset only where provably safe, decided per name over the retained variant diffs"
-  },
-  {
-   "class_id": "D8",
-   "title": "Divergent definitions: enum vocabulary policy",
-   "finding_id": "CANON-SCHEMA-DEFS-001",
-   "selector": "divergent_common_definitions entries whose variants share one skeleton but differ in enum vocabularies under the comparator in defs_comparator",
-   "count": 0,
-   "kind": "operator_judgment",
-   "recommendation": "closed central vocabularies with declared per-context subsets"
-  },
-  {
-   "class_id": "D9",
-   "title": "Profile-binding pinning",
-   "finding_id": "CANON-SCHEMA-PROFILE-001",
-   "selector": "every schemas[].canonical_profile_bindings entry not pinned",
-   "count": 0,
-   "kind": "mechanical_strictly_last",
-   "recommendation": "pin the exact prospective profile reference members only after the profile core bytes are final; any later core edit invalidates every pin"
+  "boundary": "architecture evidence only; accepting any class authorizes candidate reissue work, never admission, canonical digests, runtime, or Gate A",
+  "proposal_provenance": {
+    "proposed_at": "2026-07-17",
+    "method": "every D3 pointer and D5 field name was read in its schema context by a proposing pass; nothing was inferred from the field name alone. The same pass exposed the audit's decimal-detector defect corrected by ADR 0033.",
+    "d3_semantic_type_vocabulary": [
+      "byte_count",
+      "correlation_coefficient",
+      "covariance_element",
+      "coverage_factor",
+      "duration_seconds",
+      "human_effort_hours",
+      "interval_confidence_level",
+      "measured_quantity",
+      "memory_gib_seconds",
+      "monetary_amount",
+      "monetary_amount_usd",
+      "proportion",
+      "registered_quantity",
+      "resource_amount",
+      "statistical_evidence_measure",
+      "unit_conversion_factor",
+      "unit_conversion_offset"
+    ],
+    "d5_kind_counts": {
+      "canonical_object_digest": 109,
+      "byte_digest": 21,
+      "needs_operator": 18,
+      "mixed_needs_split": 3
+    },
+    "boundary": "proposals only; nothing here is accepted, and the operator decides every class, every table row marked needs_operator, and every new domain"
   }
- ],
- "defs_assignments": [],
- "d3_decimal_table": [],
- "d5_field_table": [],
- "operator_acceptance": {
-  "D1": null,
-  "D2": null,
-  "D3": null,
-  "D4": null,
-  "D5": null,
-  "D6": null,
-  "D7": null,
-  "D8": null,
-  "D9": null
- },
- "boundary": "architecture evidence only; accepting any class authorizes candidate reissue work, never admission, canonical digests, runtime, or Gate A",
- "proposal_provenance": {
-  "proposed_at": "2026-07-17",
-  "method": "every D3 pointer and D5 field name was read in its schema context by a proposing pass; nothing was inferred from the field name alone. The same pass exposed the audit's decimal-detector defect corrected by ADR 0033.",
-  "d3_semantic_type_vocabulary": [
-   "byte_count",
-   "correlation_coefficient",
-   "covariance_element",
-   "coverage_factor",
-   "duration_seconds",
-   "human_effort_hours",
-   "interval_confidence_level",
-   "measured_quantity",
-   "memory_gib_seconds",
-   "monetary_amount",
-   "monetary_amount_usd",
-   "proportion",
-   "registered_quantity",
-   "resource_amount",
-   "statistical_evidence_measure",
-   "unit_conversion_factor",
-   "unit_conversion_offset"
-  ],
-  "d5_kind_counts": {
-   "canonical_object_digest": 109,
-   "byte_digest": 21,
-   "needs_operator": 18,
-   "mixed_needs_split": 3
-  },
-  "boundary": "proposals only; nothing here is accepted, and the operator decides every class, every table row marked needs_operator, and every new domain"
- }
 }

@@ -93,6 +93,7 @@ REQUIRED_FILES = (
     "docs/ARCHITECTURE_REVIEW_PROTOCOL.md",
     "docs/CONSTITUTIONAL_CONSTRUCTION_AND_SEALING.md",
     "docs/CROSS_PROGRAM_PROCESS_EVIDENCE_ABSORPTION_2026-07-19.md",
+    "docs/HUMAN_DECISION_ASSURANCE.md",
     "docs/GATE_A_PREREQUISITE_CLOSURE_PLAN_2026-07-16.md",
     "docs/SCHEMA_RESOURCE_REISSUE_AND_RETENTION.md",
     "docs/decisions/0015-nonrecursive-constitutional-construction.md",
@@ -105,10 +106,16 @@ REQUIRED_FILES = (
     "docs/decisions/0022-materialize-side-by-side-work-identity-successors.md",
     "docs/decisions/0023-separate-raw-reference-lineage-from-canonical-identity.md",
     "docs/decisions/0089-a-valid-human-signature-is-not-a-human-decision.md",
+    "docs/decisions/0092-bind-human-decisions-through-an-external-assurance-wrapper.md",
     "architecture/module-dependency-manifest.json",
     "architecture/first-slice-admission-resolution-candidate.json",
     "architecture/first-slice-event-identity-map.json",
     "architecture/gate-a-prerequisite-closure.json",
+    "architecture/human-decision-assurance-candidate-evidence.json",
+    "architecture/human-decision-assurance-consumer-census.json",
+    "architecture/human-decision-assurance-individual-eligibility-ruleset-v1-candidate.json",
+    "architecture/human-decision-challenge-frame-v1-candidate.json",
+    "architecture/human-decision-challenge-frame-v1-candidate-evidence.json",
     "architecture/schema-resource-reissue-ledger.json",
     "architecture/canonicalization-profile-core-candidate.json",
     "architecture/canonicalization-migration-disposition-candidate.json",
@@ -184,6 +191,9 @@ REQUIRED_FILES = (
     "schemas/validation-rule-registry.schema.json",
     "schemas/validation-result.schema.json",
     "schemas/handoff.schema.json",
+    "schemas/human-decision-assurance-core.schema.json",
+    "schemas/human-decision-assurance-evidence.schema.json",
+    "schemas/human-decision-assurance-seal.schema.json",
     "schemas/grounded-outcome.schema.json",
     "schemas/strategy-candidate.schema.json",
     "schemas/promotion-decision.schema.json",
@@ -205,6 +215,14 @@ REQUIRED_FILES = (
     "tests/architecture-schema/manifest.json",
     "tests/architecture-schema/fixtures/canonical-work-lease-acquired.valid.json",
     "tests/architecture-schema/fixtures/canonical-work-lease-released.valid.json",
+    "tests/architecture-schema/fixtures/human-decision-assurance-core.valid.json",
+    "tests/architecture-schema/fixtures/human-decision-assurance-evidence.valid.json",
+    "tests/architecture-schema/fixtures/human-decision-assurance-seal.valid.json",
+    "tests/architecture-schema/fixtures/prq-013-kb-001.agent-accessible-key.known-bad.json",
+    "tests/architecture-schema/fixtures/human-decision-assurance-decision-subject.valid.json",
+    "tests/human-decision-assurance/check.py",
+    "tests/human-decision-assurance/cases.json",
+    "tests/human-decision-assurance/README.md",
     "tests/cognitive-contracts/check.py",
     "tests/cognitive-contracts/cases.json",
     "tests/projection-contracts/check.py",
@@ -293,6 +311,7 @@ ISOLATED_CONTRACT_SUITES = (
     "tests/physical-contracts/check.py",
     "tests/mathematical-contracts/check.py",
     "tests/first-slice-resolution/check.py",
+    "tests/human-decision-assurance/check.py",
     "tests/lifecycle-closure/check.py",
     "tests/constitutional-construction/check.py",
     "tests/command-identity-contracts/check.py",
@@ -300,6 +319,7 @@ ISOLATED_CONTRACT_SUITES = (
     "tests/work-intent-identity-candidate/check.py",
     "tests/work-identity-successor-cohort/check.py",
     "tests/work-intent-reference-resolution/check.py",
+    "tests/challenge-frame/check.py",
 )
 ARCHITECTURE_EVIDENCE_CHECKS = (
     "scripts/validate_gate_a_prerequisites.py",
@@ -1619,10 +1639,10 @@ def main() -> int:
     decision_count = validate_decisions(errors)
 
     # The README publishes an architecture checkpoint as fact. Nothing checked it,
-    # so it drifted: it advertised 103 schemas, 620 cases, nine suites and two
-    # evidence checks against an actual 112/660/12/3. A count asserted on the
-    # front door and proved nowhere is the same defect as a gate with no
-    # known-bad proof, one layer up. Bind it to what this run measured.
+    # so it drifted: its schema, case, suite, and evidence-check counts disagreed
+    # with the measured corpus. A count asserted on the front door and proved
+    # nowhere is the same defect as a gate with no known-bad proof, one layer
+    # up. Bind it to what this run measured.
     errors.extend(
         readme_checkpoint_errors(
             schema_count,

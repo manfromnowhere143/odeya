@@ -84,7 +84,7 @@ Successful authentication establishes only the accepted authentication
 ceremony. Neither establishes that a human reviewed, understood, or
 substantively intended an application decision.
 
-For every human-only consequential action, the future PRQ-013
+For every human-only consequential action, the PRQ-013
 `HumanDecisionAssurance` contract must bind a protected explicit ceremony to
 the exact displayed and candidate bytes. It must retain a verifier- or
 relying-party-generated unpredictable challenge, a separate human-initiated
@@ -96,10 +96,16 @@ independently verifiable evidence. The resulting claim is bounded to ceremony
 evidence attributable to the declared principal/authenticator under the named
 profile; it never claims cognition or comprehension.
 
-No current schema is claimed compliant. Gate A remains blocked on PRQ-013 as
-specified by [ADR 0089](decisions/0089-a-valid-human-signature-is-not-a-human-decision.md)
-and the
+Three Core/Evidence/Seal schemas now exist only as unissued T0 foundation
+candidates. No current consumer, `AssuredDecision`, `H` slot, or quorum is
+claimed compliant. T1/T2 authority, currentness, quorum, and consumer
+dependencies must precede wrapper construction and migration. Gate A remains
+blocked on PRQ-013 as specified by
+[ADR 0092](decisions/0092-bind-human-decisions-through-an-external-assurance-wrapper.md),
+which extends [ADR 0089](decisions/0089-a-valid-human-signature-is-not-a-human-decision.md), and the
 [cross-program process-evidence packet](CROSS_PROGRAM_PROCESS_EVIDENCE_ABSORPTION_2026-07-19.md).
+A real protected ceremony is a separately authorized Gate B probe; runtime
+conformance is Gate C evidence.
 
 ## Risk tiers
 

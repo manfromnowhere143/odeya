@@ -2,8 +2,9 @@
 
 - Status: Executed as an architecture/release truth correction; its remote
   protection finding was subsequently closed at the account-control layer by
-  ADR 0091 rulesets `19178198` and `19178503`. The first complete
-  candidate-to-main activation remains separately pending
+  ADR 0091 rulesets `19178198` and `19178503`, and the first complete
+  candidate-to-main activation subsequently settled at exact commit
+  `f1f25fd336daa1dd2707ba36b832e8d5c5e41d3e`
 - Date: 2026-07-19
 - Decision owners: repository owner (publication authority), architecture
   review (release truth)
@@ -82,7 +83,9 @@ confidence in a local hook. On 2026-07-19 ADR 0091 later closed that
 account-control finding: both no-bypass rulesets were applied and read back,
 pull requests were disabled, and the exact merge/Actions policies were
 observed. Bootstrap candidate `a25d026bd7233dfc452accc6087ded0bf015d7b4`
-then passed four workflows and ten jobs on attempt 1. Those later facts do not
-rewrite this ADR's historical observation and do not, without the final
-candidate cycle and activation receipt, establish complete publication
-activation.
+then passed four workflows and ten jobs on attempt 1. Distinct final candidate
+`f1f25fd336daa1dd2707ba36b832e8d5c5e41d3e` later completed the release-ref
+checks, same-SHA promotion, new post-main checks, remote replay/comparison, and
+read-only activation receipt. Those later facts do not rewrite this ADR's
+historical observation and establish complete publication activation only for
+that exact subject.

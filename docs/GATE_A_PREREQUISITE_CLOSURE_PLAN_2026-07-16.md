@@ -313,13 +313,18 @@ The contract makes only a bounded claim that accepted ceremony evidence is
 attributable to the declared principal/authenticator under the named
 identity-proofing and binding profile and includes an observed human-initiated
 confirmation gesture over exact bytes. It does not claim access to cognition.
-Closure requires new schema identities or an external assurance wrapper, a
-complete transitive consumer census, and migration without mutating retained
-identities.
-[ADR 0089](decisions/0089-a-valid-human-signature-is-not-a-human-decision.md)
-records the decision. Until closure, a valid signature, a human-labeled
-principal, an unattended agent-accessible key, timeout, silence, or
-prose-only caveat cannot satisfy a human-only decision.
+ADR 0092 now retains unissued Core/Evidence/Seal candidates, the singleton
+ruleset/profile boundary, an exact census, and synthetic refusals. That closes
+neither PRQ-013 nor a consumer. T0 can freeze only this individual-assurance
+foundation candidate. The T1 `AuthorityAssignment` contract and T2
+command/event/state/reducer/currentness/quorum dependencies must exist before a
+future `AssuredDecision` wrapper and transitive consumer migration can be
+completed without mutating retained identities.
+[ADR 0092](decisions/0092-bind-human-decisions-through-an-external-assurance-wrapper.md)
+extends [ADR 0089](decisions/0089-a-valid-human-signature-is-not-a-human-decision.md).
+Until final closure, a valid signature, a human-labeled principal, an
+unattended agent-accessible key, timeout, silence, or prose-only caveat cannot
+satisfy a human-only decision.
 
 ## Exact construction tranches
 
@@ -333,18 +338,19 @@ prose-only caveat cannot satisfy a human-only decision.
 3. Split core/evidence/seal/attestation subjects and add typed blocked
    construction receipts.
 4. Close PRQ-005 through PRQ-010 without changing the 43/60/25/11 sets.
-5. Close PRQ-013 by freezing the human-decision-assurance candidate, completing
-   its consumer census, selecting replacement identities or an external
-   wrapper, and retaining custody, replay, delegation, conflict, and
-   agent-accessible-key known-bads.
+5. Freeze the PRQ-013 individual-assurance foundation candidate and complete
+   its exact consumer census, profile/evidence-store/backing-byte contracts,
+   independent singleton-verifier designs, and custody, replay, delegation,
+   conflict, and agent-accessible-key known-bads. Do not call this final
+   PRQ-013 closure or consumer migration.
 6. Retain positive, negative, and metamorphic vectors for every correction.
 
 No immutable member is issued in T0.
 
 ### T1 — Smallest dependency-contained vertical contract
 
-After T0, PRQ-013 closure, and exact schema-registry identities, construct
-only:
+After T0, the PRQ-013 individual-assurance foundation candidate, and exact
+schema-registry identities, construct only:
 
 ```text
 AuthorityAssignment state schema/member
@@ -368,6 +374,10 @@ origin. This partial registry remains outside EngineContractRoot and C0.
 4. Complete 42 missing command payload schemas and all 43 command records.
 5. Build pure registries and prove map key, ordering, count, commitment,
    ownership, version, schema, and cross-edge equality.
+6. Only after the required authority/currentness/quorum and consumer nodes
+   exist, construct the separately identified `AssuredDecision` wrapper,
+   successor consumer candidates, transitive migration map, and end-to-end
+   refusal evidence needed for final PRQ-013 closure.
 
 Every tranche is reviewable and reversible before a parent root is created.
 

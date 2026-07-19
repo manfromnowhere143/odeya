@@ -1,0 +1,345 @@
+{
+  "suite_version": "0.1.0",
+  "description": "One-mutation known-bads for the ADR 0093 two-phase challenge construction. Each adversarial case changes exactly one thing and names the exact refusal it must produce, so a case refused for an incidental reason cannot be credited to the rule it claims to test.",
+  "boundary": "deterministic recomputation of frame and receipt construction; not a ceremony, not a signature, not issuance, not Gate A acceptance",
+  "cases": [
+    {
+      "name": "unmutated-two-phase-vector-is-accepted",
+      "kind": "safe",
+      "expected_errors": []
+    },
+    {
+      "name": "authentication-frame-omitting-the-receipt-digest-is-rejected",
+      "kind": "adversarial",
+      "adversarial_tag": "appended_field_omission",
+      "mutations": [
+        {
+          "path": "/omit_authentication_fields",
+          "value": [
+            "confirmation_receipt_raw_sha256"
+          ],
+          "op": "add"
+        }
+      ],
+      "expected_errors": [
+        "authentication_frame_missing_appended_field"
+      ],
+      "intent_errors": [
+        "authentication_frame_missing_appended_field"
+      ]
+    },
+    {
+      "name": "authentication-frame-omitting-the-presentation-challenge-id-is-rejected",
+      "kind": "adversarial",
+      "adversarial_tag": "appended_field_omission",
+      "mutations": [
+        {
+          "path": "/omit_authentication_fields",
+          "value": [
+            "presentation_challenge_id"
+          ],
+          "op": "add"
+        }
+      ],
+      "expected_errors": [
+        "authentication_frame_missing_appended_field"
+      ],
+      "intent_errors": [
+        "authentication_frame_missing_appended_field"
+      ]
+    },
+    {
+      "name": "authentication-frame-omitting-the-receipt-profile-id-is-rejected",
+      "kind": "adversarial",
+      "adversarial_tag": "appended_field_omission",
+      "mutations": [
+        {
+          "path": "/omit_authentication_fields",
+          "value": [
+            "confirmation_receipt_profile_id"
+          ],
+          "op": "add"
+        }
+      ],
+      "expected_errors": [
+        "authentication_frame_missing_appended_field"
+      ],
+      "intent_errors": [
+        "authentication_frame_missing_appended_field"
+      ]
+    },
+    {
+      "name": "receipt-bound-to-a-different-presentation-challenge-is-rejected",
+      "kind": "adversarial",
+      "adversarial_tag": "receipt_challenge_binding",
+      "mutations": [
+        {
+          "path": "/confirmation_receipt/bound_presentation_challenge_id",
+          "value": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+          "op": "add"
+        }
+      ],
+      "expected_errors": [
+        "receipt_presentation_challenge_id_mismatch"
+      ],
+      "intent_errors": [
+        "receipt_presentation_challenge_id_mismatch"
+      ]
+    },
+    {
+      "name": "receipt-displayed-bytes-digest-drift-is-rejected",
+      "kind": "adversarial",
+      "adversarial_tag": "displayed_bytes_binding",
+      "mutations": [
+        {
+          "path": "/confirmation_receipt/displayed_bytes_sha256",
+          "value": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+        }
+      ],
+      "expected_errors": [
+        "receipt_digest_mismatch"
+      ],
+      "intent_errors": [
+        "receipt_digest_mismatch"
+      ]
+    },
+    {
+      "name": "receipt-displayed-byte-count-drift-is-rejected",
+      "kind": "adversarial",
+      "adversarial_tag": "displayed_bytes_binding",
+      "mutations": [
+        {
+          "path": "/confirmation_receipt/displayed_byte_count",
+          "value": 204
+        }
+      ],
+      "expected_errors": [
+        "receipt_digest_mismatch"
+      ],
+      "intent_errors": [
+        "receipt_digest_mismatch"
+      ]
+    },
+    {
+      "name": "a-reserialized-object-digest-cannot-stand-in-for-displayed-bytes",
+      "kind": "adversarial",
+      "adversarial_tag": "displayed_bytes_source",
+      "mutations": [
+        {
+          "path": "/confirmation_receipt/displayed_bytes_source",
+          "value": "reserialized_decision_object",
+          "op": "add"
+        }
+      ],
+      "expected_errors": [
+        "reserialized_object_digest_used_instead_of_displayed_bytes"
+      ],
+      "intent_errors": [
+        "reserialized_object_digest_used_instead_of_displayed_bytes"
+      ]
+    },
+    {
+      "name": "authentication-window-outliving-the-presentation-window-is-rejected",
+      "kind": "adversarial",
+      "adversarial_tag": "interval_containment",
+      "mutations": [
+        {
+          "path": "/authentication_phase/expires_at",
+          "value": "2026-07-20T06:09:00.000000Z"
+        }
+      ],
+      "expected_errors": [
+        "authentication_challenge_encoding_mismatch",
+        "authentication_challenge_id_mismatch",
+        "authentication_frame_digest_mismatch",
+        "authentication_interval_not_contained_in_presentation_interval"
+      ],
+      "intent_errors": [
+        "authentication_interval_not_contained_in_presentation_interval"
+      ]
+    },
+    {
+      "name": "a-gesture-recorded-before-the-presentation-challenge-is-rejected",
+      "kind": "adversarial",
+      "adversarial_tag": "phase_ordering",
+      "mutations": [
+        {
+          "path": "/confirmation_receipt/confirmation_gesture_at",
+          "value": "2026-07-20T05:59:00.000000Z"
+        }
+      ],
+      "expected_errors": [
+        "receipt_digest_mismatch",
+        "receipt_gesture_outside_phase_order"
+      ],
+      "intent_errors": [
+        "receipt_gesture_outside_phase_order"
+      ]
+    },
+    {
+      "name": "a-gesture-recorded-after-the-authentication-challenge-is-rejected",
+      "kind": "adversarial",
+      "adversarial_tag": "phase_ordering",
+      "mutations": [
+        {
+          "path": "/confirmation_receipt/confirmation_gesture_at",
+          "value": "2026-07-20T06:03:00.000000Z"
+        }
+      ],
+      "expected_errors": [
+        "receipt_digest_mismatch",
+        "receipt_gesture_outside_phase_order"
+      ],
+      "intent_errors": [
+        "receipt_gesture_outside_phase_order"
+      ]
+    },
+    {
+      "name": "reusing-the-presentation-nonce-in-the-authentication-phase-is-rejected",
+      "kind": "adversarial",
+      "adversarial_tag": "nonce_separation",
+      "mutations": [
+        {
+          "path": "/authentication_phase/nonce_hex",
+          "value": "4d2f1a6c9b3e58f07a14c6d2e9b85f3061c7a4d8e2f95b0c3a6d9e1f4b7c2085"
+        }
+      ],
+      "expected_errors": [
+        "authentication_challenge_encoding_mismatch",
+        "authentication_challenge_id_mismatch",
+        "authentication_frame_digest_mismatch",
+        "phase_nonce_reused"
+      ],
+      "intent_errors": [
+        "phase_nonce_reused"
+      ]
+    },
+    {
+      "name": "a-receipt-that-references-the-authentication-challenge-reintroduces-the-cycle",
+      "kind": "adversarial",
+      "adversarial_tag": "acyclicity",
+      "mutations": [
+        {
+          "path": "/confirmation_receipt/authentication_challenge_id",
+          "value": "sha256:ea207f5f8921076d95040750f982e20598a30c5126853dd30de5aa867edd94ea",
+          "op": "add"
+        }
+      ],
+      "expected_errors": [
+        "receipt_references_authentication_challenge"
+      ],
+      "intent_errors": [
+        "receipt_references_authentication_challenge"
+      ]
+    },
+    {
+      "name": "a-presentation-frame-that-references-the-receipt-reintroduces-the-cycle",
+      "kind": "adversarial",
+      "adversarial_tag": "acyclicity",
+      "mutations": [
+        {
+          "path": "/presentation_phase/confirmation_receipt_raw_sha256",
+          "value": "sha256:9472aabe6aecd8e4ffa9eb8a84dbec4b77b7843cb8ce6f37a42a3b139c02b9dd",
+          "op": "add"
+        }
+      ],
+      "expected_errors": [
+        "presentation_frame_references_receipt"
+      ],
+      "intent_errors": [
+        "presentation_frame_references_receipt"
+      ]
+    },
+    {
+      "name": "presentation-challenge-id-drift-is-rejected",
+      "kind": "adversarial",
+      "adversarial_tag": "challenge_identity",
+      "mutations": [
+        {
+          "path": "/presentation_phase/presentation_challenge_id",
+          "value": "sha256:2222222222222222222222222222222222222222222222222222222222222222"
+        }
+      ],
+      "expected_errors": [
+        "authentication_challenge_encoding_mismatch",
+        "authentication_challenge_id_mismatch",
+        "authentication_frame_digest_mismatch",
+        "presentation_challenge_id_mismatch"
+      ],
+      "intent_errors": [
+        "presentation_challenge_id_mismatch"
+      ]
+    },
+    {
+      "name": "session-substitution-between-phases-is-rejected",
+      "kind": "adversarial",
+      "adversarial_tag": "shared_input_binding",
+      "mutations": [
+        {
+          "path": "/shared_inputs/session_id",
+          "value": "hda-session.synthetic.9999"
+        }
+      ],
+      "expected_errors": [
+        "authentication_challenge_encoding_mismatch",
+        "authentication_challenge_id_mismatch",
+        "authentication_frame_digest_mismatch",
+        "presentation_challenge_encoding_mismatch",
+        "presentation_challenge_id_mismatch",
+        "presentation_frame_digest_mismatch",
+        "receipt_digest_mismatch"
+      ],
+      "intent_errors": [
+        "receipt_digest_mismatch"
+      ]
+    },
+    {
+      "name": "origin-substitution-is-rejected",
+      "kind": "adversarial",
+      "adversarial_tag": "shared_input_binding",
+      "mutations": [
+        {
+          "path": "/shared_inputs/expected_origin",
+          "value": "https://odeya.example.test"
+        }
+      ],
+      "expected_errors": [
+        "authentication_challenge_encoding_mismatch",
+        "authentication_challenge_id_mismatch",
+        "authentication_frame_byte_count_mismatch",
+        "authentication_frame_digest_mismatch",
+        "presentation_challenge_encoding_mismatch",
+        "presentation_challenge_id_mismatch",
+        "presentation_frame_byte_count_mismatch",
+        "presentation_frame_digest_mismatch",
+        "receipt_digest_mismatch"
+      ],
+      "intent_errors": [
+        "receipt_digest_mismatch"
+      ]
+    },
+    {
+      "name": "decision-subject-substitution-is-rejected",
+      "kind": "adversarial",
+      "adversarial_tag": "shared_input_binding",
+      "mutations": [
+        {
+          "path": "/shared_inputs/decision_raw_sha256",
+          "value": "sha256:3333333333333333333333333333333333333333333333333333333333333333"
+        }
+      ],
+      "expected_errors": [
+        "authentication_challenge_encoding_mismatch",
+        "authentication_challenge_id_mismatch",
+        "authentication_frame_digest_mismatch",
+        "presentation_challenge_encoding_mismatch",
+        "presentation_challenge_id_mismatch",
+        "presentation_frame_digest_mismatch",
+        "receipt_digest_mismatch"
+      ],
+      "intent_errors": [
+        "receipt_digest_mismatch"
+      ]
+    }
+  ]
+}

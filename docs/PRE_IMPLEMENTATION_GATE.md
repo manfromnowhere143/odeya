@@ -61,25 +61,34 @@ No item passes because a document sounds complete. Gate A accepts meanings, cont
 - [ ] Capability grants, credentials, egress, sandbox, artifact promotion, and revocation semantics are defined.
 - [ ] Data classification, rights, residency, retention, deletion, sealed truth, and model-training policy are defined.
 - [ ] Pause, kill, revoke, incident, withdrawal, and correction paths have test plans.
-- [ ] PRQ-013 `HumanDecisionAssurance` is accepted: a protected explicit
-  ceremony binds the exact displayed and candidate bytes, decision basis and
-  limitations, verifier-generated unpredictable challenge, separate
-  human-initiated confirmation gesture, user presence and verification,
-  principal identity-proofing and authenticator binding,
-  authenticator/key/session custody and unattended-agent exclusion,
-  delegation, objections, conflicts, effective quorum, replay/expiry controls,
-  and sanitized independent evidence. Authentication intent or a valid
+- [ ] PRQ-013 `HumanDecisionAssurance` architecture is accepted: an exact
+  protected-ceremony protocol and evidence contract require the pre-ceremony
+  Core bytes for display and review, decision basis and limitations,
+  verifier-generated unpredictable challenge, exact
+  material-presentation/confirmation receipt, cycle-free cryptographic or
+  accepted trusted-path co-binding of the confirmation gesture and
+  authenticator actor, user presence and verification, principal
+  identity-proofing and authenticator binding, authenticator/key/session
+  custody and unattended-agent exclusion, delegation, objections, conflicts,
+  effective quorum, replay/expiry controls, exact unmodified cryptographic
+  inputs, sanitized derived observations, and independently recomputed
+  eligibility under an exact issued ruleset. Gate A requires independent
+  architecture-time verifier implementations and conformance vectors, not a
+  live ceremony or product integration.
+  Authentication intent or a valid
   signature never substitutes for human review, understanding, or substantive
   decision intent, and the bounded claim never asserts cognition.
 - [ ] `PRQ-013-KB-001` is retained and rejects an unattended agent that can
   invoke a human-labelled signing key and produce a cryptographically valid
   signature over the exact candidate while the verifier-generated challenge,
   human-initiated confirmation gesture, identity/authenticator binding, user
-  presence, and user verification are absent or `unknown`.
+  presence, and user verification are absent or `unknown`, and the claimed
+  human initiation is `contradicted`; the expected disposition is `invalid`.
 
-No current schema is claimed PRQ-013-compliant. Gate A remains blocked under
-[ADR 0089](decisions/0089-a-valid-human-signature-is-not-a-human-decision.md)
-and the
+The three Core/Evidence/Seal 0.1.0 schemas are unissued candidates; no admitted
+PRQ-013 record or `AssuredDecision` wrapper exists. Gate A remains blocked under
+[ADR 0092](decisions/0092-bind-human-decisions-through-an-external-assurance-wrapper.md),
+which extends [ADR 0089](decisions/0089-a-valid-human-signature-is-not-a-human-decision.md), and the
 [cross-program process-evidence packet](CROSS_PROGRAM_PROCESS_EVIDENCE_ABSORPTION_2026-07-19.md).
 
 ## G4 — Evidence, memory, and provenance
@@ -155,7 +164,11 @@ and the
 
 ## Gate B — Disposable architecture probes
 
-Some product choices cannot honestly be accepted from prose alone. After Gate A, the operator may authorize narrowly scoped, disposable, non-product probes for questions such as workflow replay, cross-store crash recovery, canonicalization across languages, sandbox escape assumptions, or accessibility behavior.
+Some product choices cannot honestly be accepted from prose alone. After Gate
+A, the operator may authorize narrowly scoped, disposable, non-product probes
+for questions such as one real protected ceremony under the accepted PRQ-013
+profile, workflow replay, cross-store crash recovery, canonicalization across
+languages, sandbox escape assumptions, or accessibility behavior.
 
 Each probe must have:
 
@@ -176,6 +189,9 @@ Only after Gate A decisions and authorized Gate B findings are integrated:
 - [ ] every critical/high finding is closed on that exact commit;
 - [ ] medium findings have a non-impact argument, owner, expiry, and rollback;
 - [ ] one offline, rights-cleared composite fixture pack is pinned with expected supported, interval-crossing-zero/inconclusive, invalid, discrepancy, correction, blocked, and refusal consequences;
+- [ ] any authorized Gate B protected-ceremony probe is settled and its
+  evidence limitations are integrated without treating one ceremony as runtime
+  conformance;
 - [ ] the operator explicitly authorizes exactly one implementation increment;
 - [ ] the increment's executable tests, fault injection, UI tests, and recovery evidence become its exit gate—not a reason to bypass architecture.
 
@@ -183,7 +199,7 @@ Only after Gate A decisions and authorized Gate B findings are integrated:
 
 Until Gate A passes:
 
-- permitted: research, architecture, specifications, schemas, adversarial schema fixtures, decision records, threat models, mathematical definitions, paper plans, non-executable interface diagrams, and validation of those artifacts;
+- permitted: research, architecture, specifications, schemas, adversarial schema fixtures, decision records, threat models, mathematical definitions, paper plans, non-executable interface diagrams, independent architecture-time reference verifiers, and validation of those artifacts;
 - prohibited: engine runtime code, production UI code, infrastructure provisioning, deployment, external integrations, DNS changes, data migration, autonomous execution, or public release.
 
 After Gate A, only explicitly authorized Gate B probes are additionally permitted. Product implementation remains prohibited until Gate C.

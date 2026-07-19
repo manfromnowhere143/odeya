@@ -16,14 +16,15 @@ that existed at architecture checkpoint
 has changed. It inventories schema paths absent at that checkpoint separately;
 those are new candidates, not reissues and not proof of a predecessor.
 
-The current bounded comparison contains seven reissued existing paths and five
-new candidates. `canonical-work-lease:0.1.0` remains one of those new
-candidates: its raw-byte lineage and path classification are checked, but its
-canonical record identity, admission, reducer, and authority remain blocked.
-The two canonical-profile schemas are also new, unissued candidates. Their raw
-schema bytes are inventoried here while the separate nonrecursive profile
-evidence binds the exact profile-core record; neither path creates a canonical
-content identity or profile admission.
+The current bounded comparison contains 98 reissued existing paths and 17 new
+candidates. `canonical-work-lease:0.1.0` remains one of those new candidates:
+its raw-byte lineage and path classification are checked, but its canonical
+record identity, admission, reducer, and authority remain blocked. The two
+canonical-profile schemas and the three human-decision-assurance schemas are
+also new, unissued candidates. Their raw schema bytes are inventoried here
+while separate nonrecursive evidence binds their exact candidate records;
+none creates a canonical content identity, admission, human-only authority, or
+profile acceptance.
 
 ## Required reissue edge
 

@@ -67,10 +67,10 @@ The bounded claim is only that the accepted ceremony evidence is attributable
 to the declared principal/authenticator under the named identity-proofing and
 binding profile and includes an observed human-initiated confirmation gesture
 over the exact bytes. It is never a claim about cognition, comprehension, or
-mental state. No current schema is claimed to satisfy this contract; PRQ-013
-remains blocking under
-[ADR 0089](decisions/0089-a-valid-human-signature-is-not-a-human-decision.md)
-and the
+mental state. The Core/Evidence/Seal 0.1.0 schemas are unissued candidates, not
+admitted PRQ-013 compliance; no `AssuredDecision` wrapper exists. PRQ-013
+remains blocking under [ADR 0092](decisions/0092-bind-human-decisions-through-an-external-assurance-wrapper.md),
+which extends [ADR 0089](decisions/0089-a-valid-human-signature-is-not-a-human-decision.md), and the
 [cross-program process-evidence packet](CROSS_PROGRAM_PROCESS_EVIDENCE_ABSORPTION_2026-07-19.md).
 
 ## Founding action matrix
@@ -227,9 +227,10 @@ Before a command consumes authority, the validator must prove:
 - every dependency grant and policy decision is exact and active;
 - quorum counts distinct effective principals where required;
 - forbidden role overlap and producer/verifier/publication separation pass;
-- every `H` slot resolves a nonexpired, nonreplayed PRQ-013 assurance record
-  over the exact displayed and candidate bytes; a signature or authentication
-  result alone is insufficient;
+- every `H` slot resolves an admitted, nonexpired, nonreplayed `AssuredDecision`
+  wrapper over the exact displayed and candidate bytes with same-frontier
+  currentness, authority, and distinct-effective-principal quorum evaluation;
+- a signature, authentication result, Core, Evidence, or individual Seal is insufficient;
 - delegation is a strict subset at every edge;
 - command-request digest matches the grant’s authorization request;
 - reserve/use/release/revoke ordering and the grant's declared consumption point are compatible with the command/effect transition; effect intent and its reservation commit together, and dispatch claim plus use consumption commit together.
@@ -250,12 +251,18 @@ This matrix fails Gate A if any trace can:
 - allow a service or model to widen a human-approved ceiling;
 - accept `PRQ-013-KB-001`: an unattended agent can invoke a human-labelled
   signing key and produce a cryptographically valid signature over the exact
-  candidate while the verifier-generated challenge, human-initiated
-  confirmation gesture, identity/authenticator binding, user presence, and
-  user verification are absent or `unknown`; the result must be
-  `indeterminate` and cannot fill an `H` slot or quorum;
+  candidate while challenge, gesture, identity binding, presence, and
+  verification remain absent or `unknown` and human initiation is
+  `contradicted`; contradiction-first precedence makes the result `invalid`,
+  and it cannot fill an `H` slot or quorum;
 - publish bytes not identical to the human-approved manifest;
 - apply a new policy or grant retroactively; or
 - close a mission with active grants that can still dispatch consequential effects.
 
-Acceptance requires non-executable adversarial traces for these cases, bounded model checking of reserve/use/revoke/quorum races, independent security review, and explicit operator approval. Runtime identity/policy conformance remains an implementation exit gate.
+Gate A acceptance requires non-executable adversarial traces for these cases,
+bounded model checking of reserve/use/revoke/quorum races, an exact ceremony
+protocol and evidence contract, independent architecture-time verifier
+implementations, independent security review, and explicit operator approval.
+It does not require or authorize a live ceremony. A real protected ceremony is
+a separately authorized, bounded Gate B probe after Gate A; runtime
+identity/policy conformance remains a Gate C implementation exit condition.

@@ -74,9 +74,12 @@ Independence is multidimensional. A different model name or employer is not auto
 
 A declared human principal and valid signature are also insufficient to prove a
 human-controlled determination. [ADR
-0089](decisions/0089-a-valid-human-signature-is-not-a-human-decision.md) keeps
-PRQ-013 unresolved until separate decision-assurance evidence and the affected
-consumer migration exist. Session logs may corroborate bounded operational
+0092](decisions/0092-bind-human-decisions-through-an-external-assurance-wrapper.md),
+extending [ADR
+0089](decisions/0089-a-valid-human-signature-is-not-a-human-decision.md), keeps
+PRQ-013 unresolved until the staged individual-assurance foundation, T1/T2
+dependencies, `AssuredDecision`/successor candidates, exact migration,
+end-to-end refusals, and accountable review exist. Session logs may corroborate bounded operational
 chronology only; they cannot establish authorship, human intent, accountable
 approval, independence, or scientific validity.
 

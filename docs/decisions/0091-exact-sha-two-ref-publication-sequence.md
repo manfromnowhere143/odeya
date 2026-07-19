@@ -1,9 +1,10 @@
 # ADR 0091: Promote one exact SHA through a two-ref publication sequence
 
-- Status: Accepted and account bootstrap executed. Both no-bypass rulesets and
-  exact account policies are active, and bootstrap candidate checks are
-  retained. The first complete candidate-to-main activation remains pending
-  until the distinct final candidate and read-only activation receipt settle
+- Status: Accepted and executed for the first complete candidate-to-main
+  activation. Both no-bypass rulesets and exact account policies are active;
+  bootstrap and final candidate checks, same-SHA promotion, post-main checks,
+  remote replay/comparison, and the read-only activation receipt are retained
+  for the exact subjects named below
 - Date: 2026-07-19
 - Decision owners: repository owner (explicit hardening authority), repository
   release, architecture review
@@ -103,6 +104,29 @@ census only. It does not establish the distinct final-candidate checks,
 same-SHA promotion, new post-main checks, remote replay/comparison, or final
 activation receipt. It grants no Gate A, runtime, deployment, or scientific
 authority.
+
+## Subsequent completed activation checkpoint
+
+Later on 2026-07-19, distinct post-account-state candidate
+`f1f25fd336daa1dd2707ba36b832e8d5c5e41d3e`, tree
+`a04586fd39c3a378b342f457a2fb105faf9de9b4`, completed the first
+candidate-to-main activation. It is a sole-child sibling of bootstrap
+`a25d026…` with the same historical base `56e8062`; at settlement its
+permanent release ref and public `main` both resolved to the exact final
+candidate, and the release ref remains permanent. Four candidate
+workflows and ten jobs, then four separately created post-main workflows and
+ten jobs, all completed successfully on attempt 1. The candidate-check,
+promotion-governance, main-check, remote-comparison, and final-activation
+receipt SHA-256 values are respectively
+`590d8869a3129699584b1ab48254dd556d741ddc7d3d7b8073ff6e4049d7925d`,
+`ba779a51f0afcb8e45ff901035b55fa1805bebcaca2c25cf578f0413b6c794c0`,
+`ffd70fe980a10127397f1cfecccbb7a078536647518fe493c9fb8755b47666cc`,
+`442ab446a1fad1a62ec6049b978b2af53fa1b67ccbd6acebf34619ff540ea625`,
+and
+`2f9564a23bf3bde851244224eb5f69b5cfe881e39eec46b1387d5a34b85a1ab2`.
+These external diagnostic receipts establish the bounded publication sequence
+for that exact subject only. They are not scientific evidence, Gate A
+acceptance, runtime authority, or inherited evidence for a descendant.
 
 ## Decision
 
@@ -266,9 +290,9 @@ response metadata; it never retains authorization headers. A fifth
 and final candidate checks, final promotion governance, final `main` checks,
 and the independently revalidated remote comparison. It records the two
 candidate-to-base parent bindings, fresh configured and effective rule
-observations, and the final settled run censuses. Until all are retained, the
-truthful status is: account controls active and bootstrap retained; the first
-end-to-end candidate-to-main activation incomplete.
+observations, and the final settled run censuses. All are now retained for
+exact final candidate `f1f25fd…`; every later candidate must produce a new
+ordinary-publication evidence set and inherits none of that completion.
 
 The read-only settlement verifier does not submit or repair account changes.
 It uses REST GETs and one identity-bound repository-policy GraphQL query

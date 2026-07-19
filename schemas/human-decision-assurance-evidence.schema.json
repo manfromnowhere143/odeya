@@ -1,0 +1,899 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:odeya:schema:human-decision-assurance-evidence:0.1.0",
+  "title": "Odeya Human Decision Assurance Evidence Candidate",
+  "description": "Sanitized, unissued architecture candidate evidence over one exact HumanDecisionAssuranceCore raw-byte identity and exactly one declared principal act. It represents observations explicitly and permits unknown values so missing evidence cannot be laundered into false or approval. Aggregate quorum is deferred to a later AssuredDecision wrapper. It grants no human-only slot, quorum, or authority.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "artifact_class",
+    "artifact_id",
+    "assurance_id",
+    "version",
+    "candidate_status",
+    "evidence_class",
+    "assurance_scope",
+    "core_binding",
+    "participant_observations",
+    "ordered_evidence_set",
+    "forbidden_content",
+    "proof_boundary",
+    "collected_at"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.1.0"
+    },
+    "artifact_class": {
+      "const": "human_decision_assurance_evidence_candidate"
+    },
+    "artifact_id": {
+      "$ref": "#/$defs/hda_evidence_identifier"
+    },
+    "assurance_id": {
+      "$ref": "#/$defs/hda_evidence_identifier"
+    },
+    "version": {
+      "const": 1
+    },
+    "candidate_status": {
+      "const": "unissued_candidate_not_human_authority"
+    },
+    "evidence_class": {
+      "enum": [
+        "synthetic_architecture_fixture",
+        "candidate_ceremony_evidence_not_admitted"
+      ]
+    },
+    "assurance_scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "principal_act_cardinality",
+        "aggregate_quorum_evaluation",
+        "assured_decision_wrapper_identity_assigned"
+      ],
+      "properties": {
+        "principal_act_cardinality": {
+          "const": "exactly_one"
+        },
+        "aggregate_quorum_evaluation": {
+          "const": "deferred_to_assured_decision_wrapper"
+        },
+        "assured_decision_wrapper_identity_assigned": {
+          "const": false
+        }
+      }
+    },
+    "core_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "schema_resource_id",
+        "raw_sha256",
+        "byte_count",
+        "canonical_digest",
+        "binding_is_external_to_core"
+      ],
+      "properties": {
+        "artifact_id": {
+          "$ref": "#/$defs/hda_evidence_identifier"
+        },
+        "schema_resource_id": {
+          "const": "urn:odeya:schema:human-decision-assurance-core:0.1.0"
+        },
+        "raw_sha256": {
+          "$ref": "#/$defs/hda_evidence_raw_sha256"
+        },
+        "byte_count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10485760
+        },
+        "canonical_digest": {
+          "type": "null",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "subject": "human decision assurance core under an unissued canonical profile",
+            "algorithm": "sha-256",
+            "profile": "unissued",
+            "status": "blocked_null_not_identity"
+          }
+        },
+        "binding_is_external_to_core": {
+          "const": true
+        }
+      }
+    },
+    "participant_observations": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 1,
+      "items": {
+        "$ref": "#/$defs/hda_evidence_participant_observation"
+      }
+    },
+    "ordered_evidence_set": {
+      "type": "array",
+      "minItems": 12,
+      "maxItems": 12,
+      "items": {
+        "$ref": "#/$defs/hda_evidence_artifact_observation"
+      }
+    },
+    "forbidden_content": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "raw_private_reasoning_retained",
+        "reusable_secret_retained",
+        "private_or_signing_key_material_retained",
+        "pin_or_biometric_sample_retained",
+        "unrestricted_prompt_or_model_output_retained",
+        "sanitization_verification"
+      ],
+      "properties": {
+        "raw_private_reasoning_retained": {
+          "const": false
+        },
+        "reusable_secret_retained": {
+          "const": false
+        },
+        "private_or_signing_key_material_retained": {
+          "const": false
+        },
+        "pin_or_biometric_sample_retained": {
+          "const": false
+        },
+        "unrestricted_prompt_or_model_output_retained": {
+          "const": false
+        },
+        "sanitization_verification": {
+          "$ref": "#/$defs/hda_evidence_observation_status"
+        }
+      }
+    },
+    "proof_boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "signature_alone_proves_human_control",
+        "authentication_intent_is_decision_intent",
+        "user_presence_proves_review",
+        "user_verification_proves_natural_person_identity",
+        "ceremony_proves_cognition",
+        "confirmation_gesture_and_authenticator_actor_cryptographically_co_bound",
+        "backing_evidence_artifact_bytes_dereferenced",
+        "assignment_effective_control_or_verifier_independence_mechanically_established",
+        "original_decision_authorship_proven",
+        "source_decided_at_proven",
+        "evidence_grants_authority"
+      ],
+      "properties": {
+        "signature_alone_proves_human_control": {
+          "const": false
+        },
+        "authentication_intent_is_decision_intent": {
+          "const": false
+        },
+        "user_presence_proves_review": {
+          "const": false
+        },
+        "user_verification_proves_natural_person_identity": {
+          "const": false
+        },
+        "ceremony_proves_cognition": {
+          "const": false
+        },
+        "confirmation_gesture_and_authenticator_actor_cryptographically_co_bound": {
+          "const": false
+        },
+        "backing_evidence_artifact_bytes_dereferenced": {
+          "const": false
+        },
+        "assignment_effective_control_or_verifier_independence_mechanically_established": {
+          "const": false
+        },
+        "original_decision_authorship_proven": {
+          "const": false
+        },
+        "source_decided_at_proven": {
+          "const": false
+        },
+        "evidence_grants_authority": {
+          "const": false
+        }
+      }
+    },
+    "collected_at": {
+      "$ref": "#/$defs/hda_evidence_timestamp"
+    }
+  },
+  "$defs": {
+    "hda_evidence_identifier": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,255}$"
+    },
+    "hda_evidence_raw_sha256": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "x-odeya-digest-scope": {
+        "kind": "byte_digest",
+        "subject": "exact raw bytes named by the adjacent human decision assurance evidence binding",
+        "algorithm": "sha-256",
+        "profile": "not_a_canonical_object_digest",
+        "status": "accepted_disposition_annotation"
+      }
+    },
+    "hda_evidence_timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
+    },
+    "hda_evidence_observation_status": {
+      "enum": [
+        "supported",
+        "contradicted",
+        "unknown",
+        "not_applicable"
+      ]
+    },
+    "hda_evidence_unique_strings": {
+      "type": "array",
+      "maxItems": 64,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 512
+      }
+    },
+    "hda_evidence_nonempty_unique_strings": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 64,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 512
+      }
+    },
+    "hda_evidence_artifact_observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "role",
+        "raw_sha256",
+        "byte_count",
+        "media_type",
+        "byte_fidelity",
+        "sanitization_status"
+      ],
+      "properties": {
+        "artifact_id": {
+          "$ref": "#/$defs/hda_evidence_identifier"
+        },
+        "role": {
+          "$ref": "#/$defs/hda_evidence_identifier"
+        },
+        "raw_sha256": {
+          "$ref": "#/$defs/hda_evidence_raw_sha256"
+        },
+        "byte_count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10485760
+        },
+        "media_type": {
+          "type": "string",
+          "pattern": "^[a-z0-9!#$&^_.+-]+/[a-z0-9!#$&^_.+-]+$",
+          "maxLength": 128
+        },
+        "byte_fidelity": {
+          "enum": [
+            "exact_unmodified_cryptographic_input",
+            "sanitized_derived_observation_record",
+            "unknown"
+          ]
+        },
+        "sanitization_status": {
+          "$ref": "#/$defs/hda_evidence_observation_status"
+        }
+      }
+    },
+    "hda_evidence_participant_observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "principal_id",
+        "challenge",
+        "decision_confirmation",
+        "authentication",
+        "identity_and_authenticator_binding",
+        "custody",
+        "delegation_and_effective_control",
+        "controlled_time",
+        "verification_observer"
+      ],
+      "properties": {
+        "principal_id": {
+          "$ref": "#/$defs/hda_evidence_identifier"
+        },
+        "challenge": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "challenge_request_id",
+            "challenge_id",
+            "challenge_value",
+            "challenge_lifecycle_artifact_id",
+            "material_presentation_artifact_id",
+            "generator_principal_id",
+            "generator_role",
+            "framing_profile",
+            "minimum_fresh_random_bits",
+            "session_id",
+            "relying_party_id",
+            "expected_origin",
+            "issued_at",
+            "expires_at",
+            "assertion_received_at",
+            "consumed_at",
+            "consumption_time_observation",
+            "bound_core_schema_resource_id",
+            "bound_core_raw_sha256",
+            "bound_decision_schema_resource_id",
+            "bound_decision_raw_sha256",
+            "bound_candidate_schema_resource_id",
+            "bound_candidate_raw_sha256",
+            "generation",
+            "fresh_randomness",
+            "framing",
+            "core_binding",
+            "decision_binding",
+            "candidate_binding",
+            "decision_artifact_presentation",
+            "candidate_artifact_presentation",
+            "assertion_match",
+            "consumption_state",
+            "prior_consumption_count",
+            "result_consumption_count",
+            "atomic_assertion_acceptance_and_consumption"
+          ],
+          "properties": {
+            "challenge_request_id": {
+              "$ref": "#/$defs/hda_evidence_identifier"
+            },
+            "challenge_id": {
+              "$ref": "#/$defs/hda_evidence_raw_sha256"
+            },
+            "challenge_value": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_-]{86}$"
+            },
+            "challenge_lifecycle_artifact_id": {
+              "$ref": "#/$defs/hda_evidence_identifier"
+            },
+            "material_presentation_artifact_id": {
+              "$ref": "#/$defs/hda_evidence_identifier"
+            },
+            "generator_principal_id": {
+              "$ref": "#/$defs/hda_evidence_identifier"
+            },
+            "generator_role": {
+              "const": "independent_verifier_or_relying_party"
+            },
+            "framing_profile": {
+              "const": "odeya-human-decision-challenge-frame-v1-candidate"
+            },
+            "minimum_fresh_random_bits": {
+              "const": 256
+            },
+            "session_id": {
+              "$ref": "#/$defs/hda_evidence_identifier"
+            },
+            "relying_party_id": {
+              "type": "string",
+              "pattern": "^[a-z0-9](?:[a-z0-9.-]{0,251}[a-z0-9])?$",
+              "maxLength": 253
+            },
+            "expected_origin": {
+              "type": "string",
+              "pattern": "^https://[a-z0-9](?:[a-z0-9.-]{0,251}[a-z0-9])?(?::[0-9]{1,5})?$",
+              "maxLength": 300
+            },
+            "issued_at": {
+              "$ref": "#/$defs/hda_evidence_timestamp"
+            },
+            "expires_at": {
+              "$ref": "#/$defs/hda_evidence_timestamp"
+            },
+            "assertion_received_at": {
+              "$ref": "#/$defs/hda_evidence_timestamp"
+            },
+            "consumed_at": {
+              "$ref": "#/$defs/hda_evidence_timestamp"
+            },
+            "consumption_time_observation": {
+              "$ref": "#/$defs/hda_evidence_observation_status"
+            },
+            "bound_core_schema_resource_id": {
+              "const": "urn:odeya:schema:human-decision-assurance-core:0.1.0"
+            },
+            "bound_core_raw_sha256": {
+              "$ref": "#/$defs/hda_evidence_raw_sha256"
+            },
+            "bound_decision_schema_resource_id": {
+              "type": "string",
+              "pattern": "^urn:odeya:schema:[a-z0-9][a-z0-9-]*:[0-9]+\\x2e[0-9]+\\x2e[0-9]+$",
+              "maxLength": 256
+            },
+            "bound_decision_raw_sha256": {
+              "$ref": "#/$defs/hda_evidence_raw_sha256"
+            },
+            "bound_candidate_schema_resource_id": {
+              "type": "string",
+              "pattern": "^urn:odeya:schema:[a-z0-9][a-z0-9-]*:[0-9]+\\x2e[0-9]+\\x2e[0-9]+$",
+              "maxLength": 256
+            },
+            "bound_candidate_raw_sha256": {
+              "$ref": "#/$defs/hda_evidence_raw_sha256"
+            },
+            "generation": {
+              "$ref": "#/$defs/hda_evidence_observation_status"
+            },
+            "fresh_randomness": {
+              "$ref": "#/$defs/hda_evidence_observation_status"
+            },
+            "framing": {
+              "$ref": "#/$defs/hda_evidence_observation_status"
+            },
+            "core_binding": {
+              "$ref": "#/$defs/hda_evidence_observation_status"
+            },
+            "decision_binding": {
+              "$ref": "#/$defs/hda_evidence_observation_status"
+            },
+            "candidate_binding": {
+              "$ref": "#/$defs/hda_evidence_observation_status"
+            },
+            "decision_artifact_presentation": {
+              "$ref": "#/$defs/hda_evidence_observation_status"
+            },
+            "candidate_artifact_presentation": {
+              "$ref": "#/$defs/hda_evidence_observation_status"
+            },
+            "assertion_match": {
+              "$ref": "#/$defs/hda_evidence_observation_status"
+            },
+            "consumption_state": {
+              "enum": [
+                "fresh_consumed_once",
+                "unconsumed",
+                "replayed",
+                "unknown"
+              ]
+            },
+            "prior_consumption_count": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 1000000
+            },
+            "result_consumption_count": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 1000000
+            },
+            "atomic_assertion_acceptance_and_consumption": {
+              "$ref": "#/$defs/hda_evidence_observation_status"
+            }
+          }
+        },
+        "decision_confirmation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "gesture_id",
+            "gesture_status",
+            "assurance_id",
+            "bound_core_raw_sha256",
+            "session_id",
+            "challenge_request_id",
+            "bound_challenge_id",
+            "relying_party_id",
+            "expected_origin",
+            "confirmation_relation",
+            "exact_core_bytes_confirmed",
+            "exact_decision_and_candidate_bindings_presented",
+            "initiated_by_principal_id",
+            "initiator_class",
+            "separate_from_authenticator_gesture",
+            "bound_decision_raw_sha256",
+            "bound_candidate_raw_sha256",
+            "confirmed_at",
+            "evidence_refs"
+          ],
+          "properties": {
+            "gesture_id": {
+              "$ref": "#/$defs/hda_evidence_raw_sha256"
+            },
+            "gesture_status": {
+              "$ref": "#/$defs/hda_evidence_observation_status"
+            },
+            "assurance_id": {
+              "$ref": "#/$defs/hda_evidence_identifier"
+            },
+            "bound_core_raw_sha256": {
+              "$ref": "#/$defs/hda_evidence_raw_sha256"
+            },
+            "session_id": {
+              "$ref": "#/$defs/hda_evidence_identifier"
+            },
+            "challenge_request_id": {
+              "$ref": "#/$defs/hda_evidence_identifier"
+            },
+            "bound_challenge_id": {
+              "$ref": "#/$defs/hda_evidence_raw_sha256"
+            },
+            "relying_party_id": {
+              "type": "string",
+              "pattern": "^[a-z0-9](?:[a-z0-9.-]{0,251}[a-z0-9])?$",
+              "maxLength": 253
+            },
+            "expected_origin": {
+              "type": "string",
+              "pattern": "^https://[a-z0-9](?:[a-z0-9.-]{0,251}[a-z0-9])?(?::[0-9]{1,5})?$",
+              "maxLength": 300
+            },
+            "confirmation_relation": {
+              "const": "later_ratification_of_exact_artifacts_not_original_authorship"
+            },
+            "exact_core_bytes_confirmed": {
+              "const": true
+            },
+            "exact_decision_and_candidate_bindings_presented": {
+              "$ref": "#/$defs/hda_evidence_observation_status"
+            },
+            "initiated_by_principal_id": {
+              "$ref": "#/$defs/hda_evidence_identifier"
+            },
+            "initiator_class": {
+              "enum": [
+                "human_initiated",
+                "agent_model_or_tool_initiated",
+                "unknown"
+              ]
+            },
+            "separate_from_authenticator_gesture": {
+              "type": "boolean"
+            },
+            "bound_decision_raw_sha256": {
+              "$ref": "#/$defs/hda_evidence_raw_sha256"
+            },
+            "bound_candidate_raw_sha256": {
+              "$ref": "#/$defs/hda_evidence_raw_sha256"
+            },
+            "confirmed_at": {
+              "$ref": "#/$defs/hda_evidence_timestamp"
+            },
+            "evidence_refs": {
+              "$ref": "#/$defs/hda_evidence_nonempty_unique_strings"
+            }
+          }
+        },
+        "authentication": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "webauthn_operation",
+            "credential_binding_ref",
+            "client_data_json_artifact_id",
+            "authenticator_data_artifact_id",
+            "signature_artifact_id",
+            "credential_public_key_artifact_id",
+            "credential_public_key_algorithm",
+            "algorithm_policy_profile_id",
+            "client_data_type_match",
+            "credential_public_key_binding",
+            "algorithm_profile_match",
+            "signature_verification",
+            "authentication_intent",
+            "phishing_resistance",
+            "user_presence",
+            "user_verification",
+            "challenge_match",
+            "origin_match",
+            "relying_party_id_hash_match",
+            "top_origin_match",
+            "cross_origin_disposition",
+            "backup_eligibility",
+            "backup_state",
+            "signature_counter_disposition"
+          ],
+          "properties": {
+            "webauthn_operation": {
+              "const": "navigator.credentials.get"
+            },
+            "credential_binding_ref": {
+              "$ref": "#/$defs/hda_evidence_identifier"
+            },
+            "client_data_json_artifact_id": {
+              "$ref": "#/$defs/hda_evidence_identifier"
+            },
+            "authenticator_data_artifact_id": {
+              "$ref": "#/$defs/hda_evidence_identifier"
+            },
+            "signature_artifact_id": {
+              "$ref": "#/$defs/hda_evidence_identifier"
+            },
+            "credential_public_key_artifact_id": {
+              "$ref": "#/$defs/hda_evidence_identifier"
+            },
+            "credential_public_key_algorithm": {
+              "const": -7
+            },
+            "algorithm_policy_profile_id": {
+              "const": "odeya-human-decision-challenge-frame-v1-candidate"
+            },
+            "client_data_type_match": {
+              "$ref": "#/$defs/hda_evidence_observation_status"
+            },
+            "credential_public_key_binding": {
+              "$ref": "#/$defs/hda_evidence_observation_status"
+            },
+            "algorithm_profile_match": {
+              "$ref": "#/$defs/hda_evidence_observation_status"
+            },
+            "signature_verification": {
+              "$ref": "#/$defs/hda_evidence_observation_status"
+            },
+            "authentication_intent": {
+              "$ref": "#/$defs/hda_evidence_observation_status"
+            },
+            "phishing_resistance": {
+              "$ref": "#/$defs/hda_evidence_observation_status"
+            },
+            "user_presence": {
+              "$ref": "#/$defs/hda_evidence_observation_status"
+            },
+            "user_verification": {
+              "$ref": "#/$defs/hda_evidence_observation_status"
+            },
+            "challenge_match": {
+              "$ref": "#/$defs/hda_evidence_observation_status"
+            },
+            "origin_match": {
+              "$ref": "#/$defs/hda_evidence_observation_status"
+            },
+            "relying_party_id_hash_match": {
+              "$ref": "#/$defs/hda_evidence_observation_status"
+            },
+            "top_origin_match": {
+              "$ref": "#/$defs/hda_evidence_observation_status"
+            },
+            "cross_origin_disposition": {
+              "enum": [
+                "same_origin_supported",
+                "approved_cross_origin_profile_supported",
+                "contradicted",
+                "unknown"
+              ]
+            },
+            "backup_eligibility": {
+              "enum": [
+                "true",
+                "false",
+                "unknown"
+              ]
+            },
+            "backup_state": {
+              "enum": [
+                "true",
+                "false",
+                "unknown"
+              ]
+            },
+            "signature_counter_disposition": {
+              "enum": [
+                "observed_no_clone_conclusion",
+                "clone_risk_signal",
+                "unsupported",
+                "unknown"
+              ]
+            }
+          }
+        },
+        "identity_and_authenticator_binding": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "identity_proofing_profile_ref",
+            "identity_proofing",
+            "principal_authenticator_binding_ref",
+            "principal_authenticator_binding",
+            "account_identifier_equals_natural_person"
+          ],
+          "properties": {
+            "identity_proofing_profile_ref": {
+              "$ref": "#/$defs/hda_evidence_identifier"
+            },
+            "identity_proofing": {
+              "$ref": "#/$defs/hda_evidence_observation_status"
+            },
+            "principal_authenticator_binding_ref": {
+              "$ref": "#/$defs/hda_evidence_identifier"
+            },
+            "principal_authenticator_binding": {
+              "$ref": "#/$defs/hda_evidence_observation_status"
+            },
+            "account_identifier_equals_natural_person": {
+              "const": false
+            }
+          }
+        },
+        "custody": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "authenticator_custody",
+            "private_key_nonexportability",
+            "agent_model_tool_signing_exclusion",
+            "unattended_invocation_exclusion",
+            "human_initiated_remote_operation",
+            "exclusive_session_control",
+            "shared_authenticator_absence",
+            "sync_and_recovery_exposure_accounted",
+            "observation_refs"
+          ],
+          "properties": {
+            "authenticator_custody": {
+              "$ref": "#/$defs/hda_evidence_observation_status"
+            },
+            "private_key_nonexportability": {
+              "$ref": "#/$defs/hda_evidence_observation_status"
+            },
+            "agent_model_tool_signing_exclusion": {
+              "$ref": "#/$defs/hda_evidence_observation_status"
+            },
+            "unattended_invocation_exclusion": {
+              "$ref": "#/$defs/hda_evidence_observation_status"
+            },
+            "human_initiated_remote_operation": {
+              "$ref": "#/$defs/hda_evidence_observation_status"
+            },
+            "exclusive_session_control": {
+              "$ref": "#/$defs/hda_evidence_observation_status"
+            },
+            "shared_authenticator_absence": {
+              "$ref": "#/$defs/hda_evidence_observation_status"
+            },
+            "sync_and_recovery_exposure_accounted": {
+              "$ref": "#/$defs/hda_evidence_observation_status"
+            },
+            "observation_refs": {
+              "$ref": "#/$defs/hda_evidence_nonempty_unique_strings"
+            }
+          }
+        },
+        "delegation_and_effective_control": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "delegation_source_ref",
+            "delegation_depth_observed",
+            "delegation_scope_codes_observed",
+            "objections_observed",
+            "conflicts_observed",
+            "effective_control_group_id",
+            "shared_control_principal_ids",
+            "observation_status",
+            "evidence_refs"
+          ],
+          "properties": {
+            "delegation_source_ref": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/hda_evidence_identifier"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "delegation_depth_observed": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 8
+            },
+            "delegation_scope_codes_observed": {
+              "$ref": "#/$defs/hda_evidence_nonempty_unique_strings"
+            },
+            "objections_observed": {
+              "$ref": "#/$defs/hda_evidence_unique_strings"
+            },
+            "conflicts_observed": {
+              "$ref": "#/$defs/hda_evidence_unique_strings"
+            },
+            "effective_control_group_id": {
+              "$ref": "#/$defs/hda_evidence_identifier"
+            },
+            "shared_control_principal_ids": {
+              "$ref": "#/$defs/hda_evidence_unique_strings"
+            },
+            "observation_status": {
+              "$ref": "#/$defs/hda_evidence_observation_status"
+            },
+            "evidence_refs": {
+              "$ref": "#/$defs/hda_evidence_nonempty_unique_strings"
+            }
+          }
+        },
+        "controlled_time": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "controlled_time_source_ref",
+            "time_observation",
+            "bound_challenge_id",
+            "observed_challenge_consumed_at",
+            "challenge_consumption_time_observation",
+            "observed_at"
+          ],
+          "properties": {
+            "controlled_time_source_ref": {
+              "$ref": "#/$defs/hda_evidence_identifier"
+            },
+            "time_observation": {
+              "$ref": "#/$defs/hda_evidence_observation_status"
+            },
+            "bound_challenge_id": {
+              "$ref": "#/$defs/hda_evidence_raw_sha256"
+            },
+            "observed_challenge_consumed_at": {
+              "$ref": "#/$defs/hda_evidence_timestamp"
+            },
+            "challenge_consumption_time_observation": {
+              "$ref": "#/$defs/hda_evidence_observation_status"
+            },
+            "observed_at": {
+              "$ref": "#/$defs/hda_evidence_timestamp"
+            }
+          }
+        },
+        "verification_observer": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "principal_id",
+            "relation_to_decision_principal",
+            "observation_status",
+            "evidence_refs"
+          ],
+          "properties": {
+            "principal_id": {
+              "$ref": "#/$defs/hda_evidence_identifier"
+            },
+            "relation_to_decision_principal": {
+              "enum": [
+                "distinct_principal_and_effective_control",
+                "author_correlated",
+                "same_principal",
+                "unknown"
+              ]
+            },
+            "observation_status": {
+              "$ref": "#/$defs/hda_evidence_observation_status"
+            },
+            "evidence_refs": {
+              "$ref": "#/$defs/hda_evidence_nonempty_unique_strings"
+            }
+          }
+        }
+      }
+    }
+  }
+}

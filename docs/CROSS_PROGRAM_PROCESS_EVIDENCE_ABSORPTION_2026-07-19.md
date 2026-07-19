@@ -280,9 +280,12 @@ Known-bad fixtures must reject an agent-held or agent-reachable key, stale or
 replayed challenge, changed decision/display bytes, hidden delegation,
 objection mismatch, shared-credential quorum, omitted user-presence or
 user-verification evidence, timeout/silence, raw private reasoning, and
-self-closure. T1 `AuthorityAssignment` remains blocked until PRQ-013's candidate
-boundary, transitive consumer census, identity migration, and accountable
-review are complete.
+self-closure. T1 `AuthorityAssignment` remains blocked until the T0
+individual-assurance foundation candidate, exact census, profile/evidence
+contracts, singleton-verifier design, and synthetic known-bads are complete.
+The `AssuredDecision` wrapper, successor consumers, transitive migration,
+end-to-end refusals, and accountable review follow their T1/T2 dependencies;
+they are not a circular prerequisite for constructing those dependencies.
 
 ### Exact bundled-artifact fixture
 
@@ -376,37 +379,43 @@ dependency order.
 
 ## Exact next mission order
 
-1. Preserve this extraction as architecture evidence together with ADR 0089
-   and the machine-visible PRQ-013 inventory/checker; validate their exact
-   scoped tree and obtain a non-self-certifying review. Do not represent the
-   retained mutations as PRQ-013 closure.
-2. Advance T0 by closing PRQ-001–PRQ-010 and PRQ-013, including
-   `C5-WORK-LEASE-RELEASE-CLAIM-001`, exact profile/member/reducer identities,
-   PRQ-013 ceremony/authority known-bads, and accountable review. Retain
-   PRQ-011/012 for their ordered coherent-chain and integrated-verifier closure
-   before any immutable parent subject. Admission, assignment, lease, dispatch,
-   and runtime remain blocked.
-3. Only after every T0 prerequisite and exact schema/registry identity passes,
-   construct and prove the T1 `AuthorityAssignment` vertical contract.
-4. Complete the exact 42 payload schemas, 43 command records, 60 event records,
+1. Preserve this extraction as architecture evidence together with ADRs 0089
+   and 0092 and the machine-visible PRQ-013 inventory/checker; validate their
+   exact scoped tree and obtain context-isolated adversarial review. Do not
+   represent retained mutations or model review as PRQ-013 closure.
+2. Freeze only the T0 PRQ-013 individual-assurance foundation as unissued
+   candidates: exact profile/evidence-store/backing-byte contracts, census,
+   singleton-verifier designs, and synthetic conformance/refusal vectors.
+3. Complete the remaining T0 prerequisite corrections, including
+   `C5-WORK-LEASE-RELEASE-CLAIM-001` and exact profile/member/reducer identity
+   work. Admission, assignment, lease, dispatch, and runtime remain blocked.
+4. Construct and prove the T1 `AuthorityAssignment` vertical contract.
+5. Complete the exact 42 payload schemas, 43 command records, 60 event records,
    25 state/aggregate subjects, and 25 reducer records without widening the
    retained first-slice boundary by implication.
-5. Construct one digest-coherent registry/root/C0/checkpoint/witness/P0 and
+6. Only after the required T1/T2 authority, currentness, quorum, and consumer
+   dependencies exist, construct unissued `AssuredDecision` and
+   successor-consumer candidates; prove the exact transitive migration and
+   end-to-end refusal corpus without mutating retained identities.
+7. Construct one digest-coherent registry/root/C0/checkpoint/witness/P0 and
    inactive activation-candidate chain.
-6. Produce two non-sharing architecture-time reference reducer
+8. Produce two non-sharing architecture-time reference reducer
    implementations, fixture harnesses, and two independently isolated
    scientific verifier paths. They remain design evidence, not runtime.
-7. Retain replay, interruption, provider-unknown settlement, recovery,
+9. Retain replay, interruption, provider-unknown settlement, recovery,
    correction fanout, resource/authority race, bundled-artifact, stale-baton,
    measurement-dependence, proof-mission refusal, and rights-settled import
    evidence.
-8. Obtain accountable statistical, physical/metrology/VVUQ/safety,
+10. Obtain accountable statistical, physical/metrology/VVUQ/safety,
    security/privacy, distributed-systems, and accessibility reviews.
-9. Produce one immutable candidate manifest and clean commit for Daniel's
-   exact-byte accept, reject, or amend decision.
-10. Only after Gate A and separate authority may an authorized Gate B probe be
-    considered. AFT-001 requires its own later preregistration and authority.
-    Gate C remains required before one bounded runtime increment.
+11. Produce one immutable candidate manifest and clean commit for Daniel's
+    exact-byte Gate A accept, reject, or amend decision. Gate A evaluates
+    ceremony architecture and independent/synthetic conformance evidence; it
+    neither requires nor authorizes a live ceremony.
+12. Only after Gate A and separate authority may a bounded Gate B protected
+    ceremony or other probe be run. AFT-001 requires its own later
+    preregistration and authority. Gate C remains required before one bounded
+    runtime increment and owns runtime-conformance exit evidence.
 
 The other four cross-program fixture refinements do not become T0 identity
 prerequisites by implication. The exact-bundle fixture belongs to the

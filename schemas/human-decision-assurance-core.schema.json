@@ -1,0 +1,861 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:odeya:schema:human-decision-assurance-core:0.1.0",
+  "title": "Odeya Human Decision Assurance Core Candidate",
+  "description": "An unissued, nonrecursive pre-ceremony architecture candidate binding one exact consequential decision artifact, its exact candidate, the exact bytes that a later ceremony must display and review, the source-to-candidate relationship, the requested confirmation relationship, challenge request, delegation, and separation law. It records requirements, not observations that display, review, or confirmation already occurred. It never relabels source-decision semantics or claims original authorship. Aggregate quorum and currentness are deferred to a later AssuredDecision policy wrapper. It contains no self-digest, assurance evidence, signature, attestation, admission, or authority.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "artifact_class",
+    "artifact_id",
+    "assurance_id",
+    "version",
+    "candidate_status",
+    "profile_binding",
+    "decision_subject",
+    "candidate_subject",
+    "subject_relationship",
+    "material_bindings",
+    "assurance_relation",
+    "ceremony_request",
+    "authority_context",
+    "claim_boundary",
+    "created_at"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.1.0"
+    },
+    "artifact_class": {
+      "const": "human_decision_assurance_core_candidate"
+    },
+    "artifact_id": {
+      "$ref": "#/$defs/hda_core_identifier"
+    },
+    "assurance_id": {
+      "$ref": "#/$defs/hda_core_identifier"
+    },
+    "version": {
+      "const": 1
+    },
+    "candidate_status": {
+      "const": "unissued_candidate_not_human_authority"
+    },
+    "profile_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profile_id",
+        "profile_version",
+        "profile_status",
+        "nist_authentication_profile",
+        "webauthn_snapshot",
+        "canonical_profile_issued",
+        "raw_byte_bootstrap_only"
+      ],
+      "properties": {
+        "profile_id": {
+          "const": "urn:odeya:human-decision-assurance-profile:0.1.0-candidate"
+        },
+        "profile_version": {
+          "const": "0.1.0"
+        },
+        "profile_status": {
+          "const": "candidate_unissued"
+        },
+        "nist_authentication_profile": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "publication",
+            "official_url",
+            "scope"
+          ],
+          "properties": {
+            "publication": {
+              "const": "NIST SP 800-63B-4"
+            },
+            "official_url": {
+              "const": "https://csrc.nist.gov/pubs/sp/800/63/b/4/final"
+            },
+            "scope": {
+              "const": "authentication_and_authenticator_assurance_only_not_odeya_decision_meaning"
+            }
+          }
+        },
+        "webauthn_snapshot": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "publication",
+            "snapshot_date",
+            "official_url",
+            "status",
+            "scope"
+          ],
+          "properties": {
+            "publication": {
+              "const": "Web Authentication Level 3"
+            },
+            "snapshot_date": {
+              "const": "2026-05-26"
+            },
+            "official_url": {
+              "const": "https://www.w3.org/TR/2026/CR-webauthn-3-20260526/"
+            },
+            "status": {
+              "const": "candidate_recommendation_snapshot_not_w3c_recommendation"
+            },
+            "scope": {
+              "const": "authentication_ceremony_component_not_proof_of_review_understanding_or_substantive_approval"
+            }
+          }
+        },
+        "canonical_profile_issued": {
+          "const": false
+        },
+        "raw_byte_bootstrap_only": {
+          "const": true
+        }
+      }
+    },
+    "decision_subject": {
+      "$ref": "#/$defs/hda_core_decision_subject"
+    },
+    "candidate_subject": {
+      "$ref": "#/$defs/hda_core_byte_bound_subject"
+    },
+    "subject_relationship": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "decision_candidate_manifest_id",
+        "decision_candidate_version",
+        "decision_candidate_manifest_raw_sha256",
+        "candidate_manifest_id",
+        "candidate_version",
+        "candidate_raw_sha256",
+        "exact_id_version_and_raw_digest_match_required",
+        "source_decision_schema_remains_semantic_authority"
+      ],
+      "properties": {
+        "decision_candidate_manifest_id": {
+          "$ref": "#/$defs/hda_core_identifier"
+        },
+        "decision_candidate_version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "decision_candidate_manifest_raw_sha256": {
+          "$ref": "#/$defs/hda_core_raw_sha256"
+        },
+        "candidate_manifest_id": {
+          "$ref": "#/$defs/hda_core_identifier"
+        },
+        "candidate_version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "candidate_raw_sha256": {
+          "$ref": "#/$defs/hda_core_raw_sha256"
+        },
+        "exact_id_version_and_raw_digest_match_required": {
+          "const": true
+        },
+        "source_decision_schema_remains_semantic_authority": {
+          "const": true
+        }
+      }
+    },
+    "material_bindings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "binding_kind",
+        "required_review_decision_artifact",
+        "required_display_decision_artifact",
+        "required_review_candidate_artifact",
+        "required_display_candidate_artifact",
+        "required_display_and_review_exact_bindings_must_match"
+      ],
+      "properties": {
+        "binding_kind": {
+          "const": "ceremony_material_requirement_not_observation"
+        },
+        "required_review_decision_artifact": {
+          "$ref": "#/$defs/hda_core_decision_subject"
+        },
+        "required_display_decision_artifact": {
+          "$ref": "#/$defs/hda_core_decision_subject"
+        },
+        "required_review_candidate_artifact": {
+          "$ref": "#/$defs/hda_core_byte_bound_subject"
+        },
+        "required_display_candidate_artifact": {
+          "$ref": "#/$defs/hda_core_byte_bound_subject"
+        },
+        "required_display_and_review_exact_bindings_must_match": {
+          "const": true
+        }
+      }
+    },
+    "assurance_relation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requested_relation_kind",
+        "source_operator_principal_id",
+        "confirming_principal_id",
+        "source_and_confirming_principal_relationship",
+        "source_declared_decided_at",
+        "exact_decision_artifact_confirmation_required",
+        "exact_candidate_artifact_confirmation_required",
+        "source_decision_semantic_authority_transferred_to_core",
+        "original_decision_authorship_assured",
+        "original_decision_timestamp_assured",
+        "confirmation_timestamp_must_be_assurance_timestamp",
+        "consumer_currentness_must_be_recomputed"
+      ],
+      "properties": {
+        "requested_relation_kind": {
+          "const": "later_ratification_of_exact_artifacts_not_original_authorship"
+        },
+        "source_operator_principal_id": {
+          "$ref": "#/$defs/hda_core_identifier"
+        },
+        "confirming_principal_id": {
+          "$ref": "#/$defs/hda_core_identifier"
+        },
+        "source_and_confirming_principal_relationship": {
+          "enum": [
+            "same_declared_principal",
+            "distinct_declared_principals",
+            "unknown"
+          ]
+        },
+        "source_declared_decided_at": {
+          "$ref": "#/$defs/hda_core_timestamp"
+        },
+        "exact_decision_artifact_confirmation_required": {
+          "const": true
+        },
+        "exact_candidate_artifact_confirmation_required": {
+          "const": true
+        },
+        "source_decision_semantic_authority_transferred_to_core": {
+          "const": false
+        },
+        "original_decision_authorship_assured": {
+          "const": false
+        },
+        "original_decision_timestamp_assured": {
+          "const": false
+        },
+        "confirmation_timestamp_must_be_assurance_timestamp": {
+          "const": true
+        },
+        "consumer_currentness_must_be_recomputed": {
+          "const": true
+        }
+      }
+    },
+    "ceremony_request": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "session_id",
+        "relying_party_id",
+        "expected_origin",
+        "webauthn_operation",
+        "challenge_request_id",
+        "challenge_generator_role",
+        "challenge_framing_profile",
+        "webauthn_algorithm_policy",
+        "minimum_fresh_random_bits",
+        "maximum_challenge_lifetime_seconds",
+        "challenge_validity_interval",
+        "challenge_commitment_fields",
+        "single_use_required",
+        "authentication_intent_required",
+        "phishing_resistance_required",
+        "user_presence_required",
+        "user_verification_required",
+        "separate_human_decision_gesture_required",
+        "client_generated_challenge_allowed"
+      ],
+      "properties": {
+        "session_id": {
+          "$ref": "#/$defs/hda_core_identifier"
+        },
+        "relying_party_id": {
+          "const": "odeya.danielwahnich.dev"
+        },
+        "expected_origin": {
+          "const": "https://odeya.danielwahnich.dev"
+        },
+        "webauthn_operation": {
+          "const": "navigator.credentials.get"
+        },
+        "challenge_request_id": {
+          "$ref": "#/$defs/hda_core_identifier"
+        },
+        "challenge_generator_role": {
+          "const": "independent_verifier_or_relying_party"
+        },
+        "challenge_framing_profile": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "profile_id",
+            "profile_version",
+            "raw_sha256",
+            "byte_count",
+            "candidate_status"
+          ],
+          "properties": {
+            "profile_id": {
+              "const": "odeya-human-decision-challenge-frame-v1-candidate"
+            },
+            "profile_version": {
+              "const": "0.1.0"
+            },
+            "raw_sha256": {
+              "const": "sha256:3f97329cb88be3720d28efd8ae880150c861dc9be9faaecec479e83ea31f73b4",
+              "x-odeya-digest-scope": {
+                "kind": "byte_digest",
+                "subject": "exact raw bytes of architecture/human-decision-challenge-frame-v1-candidate.json",
+                "algorithm": "sha-256",
+                "profile": "not_a_canonical_object_digest",
+                "status": "accepted_disposition_annotation"
+              }
+            },
+            "byte_count": {
+              "const": 3058
+            },
+            "candidate_status": {
+              "const": "unissued_architecture_candidate_not_a_real_ceremony"
+            }
+          }
+        },
+        "webauthn_algorithm_policy": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "credential_public_key_algorithm",
+            "cose_algorithm_name",
+            "algorithm_substitution_allowed"
+          ],
+          "properties": {
+            "credential_public_key_algorithm": {
+              "const": -7
+            },
+            "cose_algorithm_name": {
+              "const": "ES256"
+            },
+            "algorithm_substitution_allowed": {
+              "const": false
+            }
+          }
+        },
+        "minimum_fresh_random_bits": {
+          "const": 256
+        },
+        "maximum_challenge_lifetime_seconds": {
+          "const": 300
+        },
+        "challenge_validity_interval": {
+          "const": "half_open_issued_at_inclusive_expires_at_exclusive"
+        },
+        "challenge_commitment_fields": {
+          "const": [
+            "core_schema_resource_id",
+            "core_raw_sha256",
+            "decision_schema_resource_id",
+            "decision_raw_sha256",
+            "candidate_schema_resource_id",
+            "candidate_raw_sha256",
+            "session_id",
+            "issued_at",
+            "expires_at",
+            "relying_party_id",
+            "expected_origin",
+            "nonce"
+          ]
+        },
+        "single_use_required": {
+          "const": true
+        },
+        "authentication_intent_required": {
+          "const": true
+        },
+        "phishing_resistance_required": {
+          "const": true
+        },
+        "user_presence_required": {
+          "const": true
+        },
+        "user_verification_required": {
+          "const": true
+        },
+        "separate_human_decision_gesture_required": {
+          "const": true
+        },
+        "client_generated_challenge_allowed": {
+          "const": false
+        }
+      }
+    },
+    "authority_context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "assurance_scope",
+        "proposer_principal_id",
+        "decision_principals",
+        "verifier_principal_ids",
+        "separation_policy",
+        "quorum_rule"
+      ],
+      "properties": {
+        "assurance_scope": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "principal_act_cardinality",
+            "aggregate_quorum_evaluation",
+            "assured_decision_wrapper_identity_assigned"
+          ],
+          "properties": {
+            "principal_act_cardinality": {
+              "const": "exactly_one"
+            },
+            "aggregate_quorum_evaluation": {
+              "const": "deferred_to_assured_decision_wrapper"
+            },
+            "assured_decision_wrapper_identity_assigned": {
+              "const": false
+            }
+          }
+        },
+        "proposer_principal_id": {
+          "$ref": "#/$defs/hda_core_identifier"
+        },
+        "decision_principals": {
+          "description": "Exactly one principal whose later confirmation act this Core requests. This field does not identify or prove the author of the source decision.",
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": {
+            "$ref": "#/$defs/hda_core_decision_principal"
+          }
+        },
+        "verifier_principal_ids": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/hda_core_identifier"
+          }
+        },
+        "separation_policy": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "proposer_may_satisfy_decision_slot",
+            "decision_principal_may_verify_own_assurance",
+            "shared_effective_control_may_count_as_distinct",
+            "shared_authenticator_may_count_as_distinct",
+            "missing_observation_disposition"
+          ],
+          "properties": {
+            "proposer_may_satisfy_decision_slot": {
+              "const": false
+            },
+            "decision_principal_may_verify_own_assurance": {
+              "const": false
+            },
+            "shared_effective_control_may_count_as_distinct": {
+              "const": false
+            },
+            "shared_authenticator_may_count_as_distinct": {
+              "const": false
+            },
+            "missing_observation_disposition": {
+              "const": "indeterminate_never_approval"
+            }
+          }
+        },
+        "quorum_rule": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "required_principal_count",
+            "eligible_principal_ids",
+            "distinct_principals_required",
+            "distinct_effective_control_groups_required",
+            "objections_must_be_resolved",
+            "conflicts_must_be_disposed"
+          ],
+          "properties": {
+            "required_principal_count": {
+              "const": 1
+            },
+            "eligible_principal_ids": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 1,
+              "uniqueItems": true,
+              "items": {
+                "$ref": "#/$defs/hda_core_identifier"
+              }
+            },
+            "distinct_principals_required": {
+              "const": true
+            },
+            "distinct_effective_control_groups_required": {
+              "const": true
+            },
+            "objections_must_be_resolved": {
+              "const": true
+            },
+            "conflicts_must_be_disposed": {
+              "const": true
+            }
+          }
+        }
+      }
+    },
+    "claim_boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "permitted_claim",
+        "proves_cognition",
+        "proves_comprehension",
+        "proves_substantive_consent",
+        "proves_natural_person_identity_by_webauthn_alone",
+        "proves_exclusive_custody_by_signature_alone",
+        "proves_exact_artifact_display_by_schema_alone",
+        "proves_original_decision_authorship",
+        "proves_source_decided_at",
+        "grants_authority"
+      ],
+      "properties": {
+        "permitted_claim": {
+          "const": "accepted ceremony evidence may support attribution to a declared principal and authenticator under the named candidate profile; policy meaning remains separate"
+        },
+        "proves_cognition": {
+          "const": false
+        },
+        "proves_comprehension": {
+          "const": false
+        },
+        "proves_substantive_consent": {
+          "const": false
+        },
+        "proves_natural_person_identity_by_webauthn_alone": {
+          "const": false
+        },
+        "proves_exclusive_custody_by_signature_alone": {
+          "const": false
+        },
+        "proves_exact_artifact_display_by_schema_alone": {
+          "const": false
+        },
+        "proves_original_decision_authorship": {
+          "const": false
+        },
+        "proves_source_decided_at": {
+          "const": false
+        },
+        "grants_authority": {
+          "const": false
+        }
+      }
+    },
+    "created_at": {
+      "$ref": "#/$defs/hda_core_timestamp"
+    }
+  },
+  "allOf": [
+    {
+      "properties": {
+        "authority_context": {
+          "properties": {
+            "decision_principals": {
+              "items": {
+                "properties": {
+                  "delegation": {
+                    "if": {
+                      "properties": {
+                        "delegated": {
+                          "const": false
+                        }
+                      },
+                      "required": [
+                        "delegated"
+                      ]
+                    },
+                    "then": {
+                      "properties": {
+                        "delegation_source_ref": {
+                          "type": "null"
+                        },
+                        "depth": {
+                          "const": 0
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "authority_context": {
+          "properties": {
+            "decision_principals": {
+              "items": {
+                "properties": {
+                  "delegation": {
+                    "if": {
+                      "properties": {
+                        "delegated": {
+                          "const": true
+                        }
+                      },
+                      "required": [
+                        "delegated"
+                      ]
+                    },
+                    "then": {
+                      "properties": {
+                        "delegation_source_ref": {
+                          "$ref": "#/$defs/hda_core_identifier"
+                        },
+                        "depth": {
+                          "minimum": 1
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "hda_core_identifier": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,255}$"
+    },
+    "hda_core_schema_resource_id": {
+      "type": "string",
+      "pattern": "^urn:odeya:schema:[a-z0-9-]+:[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "hda_core_raw_sha256": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "x-odeya-digest-scope": {
+        "kind": "byte_digest",
+        "subject": "exact raw bytes named by the adjacent human decision assurance binding",
+        "algorithm": "sha-256",
+        "profile": "not_a_canonical_object_digest",
+        "status": "accepted_disposition_annotation"
+      }
+    },
+    "hda_core_timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
+    },
+    "hda_core_json_pointer": {
+      "type": "string",
+      "pattern": "^(?:/(?:[^~/]|~0|~1)*)+$",
+      "maxLength": 1024
+    },
+    "hda_core_unique_strings": {
+      "type": "array",
+      "maxItems": 64,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 512
+      }
+    },
+    "hda_core_nonempty_unique_strings": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 64,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 512
+      }
+    },
+    "hda_core_byte_bound_subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "schema_resource_id",
+        "raw_sha256",
+        "byte_count",
+        "media_type"
+      ],
+      "properties": {
+        "artifact_id": {
+          "$ref": "#/$defs/hda_core_identifier"
+        },
+        "schema_resource_id": {
+          "$ref": "#/$defs/hda_core_schema_resource_id"
+        },
+        "raw_sha256": {
+          "$ref": "#/$defs/hda_core_raw_sha256"
+        },
+        "byte_count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10485760
+        },
+        "media_type": {
+          "const": "application/json"
+        }
+      }
+    },
+    "hda_core_decision_subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "schema_resource_id",
+        "raw_sha256",
+        "byte_count",
+        "media_type",
+        "decision_value_pointer",
+        "canonical_digest"
+      ],
+      "properties": {
+        "artifact_id": {
+          "$ref": "#/$defs/hda_core_identifier"
+        },
+        "schema_resource_id": {
+          "$ref": "#/$defs/hda_core_schema_resource_id"
+        },
+        "raw_sha256": {
+          "$ref": "#/$defs/hda_core_raw_sha256"
+        },
+        "byte_count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10485760
+        },
+        "media_type": {
+          "const": "application/json"
+        },
+        "decision_value_pointer": {
+          "$ref": "#/$defs/hda_core_json_pointer"
+        },
+        "canonical_digest": {
+          "type": "null",
+          "x-odeya-digest-scope": {
+            "kind": "canonical_object_digest",
+            "subject": "human decision subject under an unissued canonical profile",
+            "algorithm": "sha-256",
+            "profile": "unissued",
+            "status": "blocked_null_not_identity"
+          }
+        }
+      }
+    },
+    "hda_core_decision_principal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "principal_id",
+        "principal_type",
+        "role_code",
+        "assignment_ref",
+        "identity_proofing_profile_ref",
+        "authenticator_binding_ref",
+        "effective_control_group_id",
+        "delegation",
+        "objections",
+        "conflicts"
+      ],
+      "properties": {
+        "principal_id": {
+          "$ref": "#/$defs/hda_core_identifier"
+        },
+        "principal_type": {
+          "const": "human"
+        },
+        "role_code": {
+          "$ref": "#/$defs/hda_core_identifier"
+        },
+        "assignment_ref": {
+          "$ref": "#/$defs/hda_core_identifier"
+        },
+        "identity_proofing_profile_ref": {
+          "$ref": "#/$defs/hda_core_identifier"
+        },
+        "authenticator_binding_ref": {
+          "$ref": "#/$defs/hda_core_identifier"
+        },
+        "effective_control_group_id": {
+          "$ref": "#/$defs/hda_core_identifier"
+        },
+        "delegation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "delegated",
+            "delegation_source_ref",
+            "depth",
+            "scope_codes"
+          ],
+          "properties": {
+            "delegated": {
+              "type": "boolean"
+            },
+            "delegation_source_ref": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/hda_core_identifier"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "depth": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 8
+            },
+            "scope_codes": {
+              "$ref": "#/$defs/hda_core_nonempty_unique_strings"
+            }
+          }
+        },
+        "objections": {
+          "$ref": "#/$defs/hda_core_unique_strings"
+        },
+        "conflicts": {
+          "$ref": "#/$defs/hda_core_unique_strings"
+        }
+      }
+    }
+  }
+}

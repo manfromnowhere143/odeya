@@ -9,6 +9,15 @@
   decision-assurance evidence; grants no assignment, approval, publication,
   external effect, runtime, or Gate A authority
 
+Staging refinement: [ADR
+0092](0092-bind-human-decisions-through-an-external-assurance-wrapper.md)
+supersedes this decision's original closure order. T0 freezes only an unissued
+individual-assurance foundation candidate; T1 `AuthorityAssignment` and the
+required T2 authority/currentness/quorum/consumer dependencies precede
+`AssuredDecision` construction and transitive migration. Gate A governs
+issuance/admission without requiring a live ceremony; any real ceremony is a
+separately authorized Gate B probe.
+
 ## The observed defect
 
 Inbar retained a concrete failure at commit
@@ -71,11 +80,12 @@ therefore makes a bounded evidentiary claim under one profile; it does not
 claim access to mental state. Raw private reasoning, reusable secrets, signing
 material, and unrestricted prompts/model output are forbidden evidence.
 
-No current schema identity is mutated by this decision. The exact assurance
-core/evidence/seal shape, complete affected-consumer census, replacement
-identities or external wrapper, transitive migration, semantic equalities, and
-accountable review remain open. T1 `AuthorityAssignment` cannot start until the
-PRQ-013 candidate boundary is closed.
+No current schema identity was mutated by this decision. ADR 0092 later
+retained unissued Core/Evidence/Seal candidates and the exact frozen-source
+census. T1 `AuthorityAssignment` cannot start until that bounded T0 foundation
+candidate is complete; replacement wrapper/consumer candidates, transitive
+migration, semantic equalities, and accountable review follow their T1/T2
+dependencies and remain open.
 
 ## Standards comparison
 
@@ -90,7 +100,8 @@ Odeya's scientific, constitutional, approval, or publication meaning.
 
 ## Retained known-bad obligations
 
-The Gate A prerequisite checker now rejects sixteen direct mutations:
+At this decision's introduction, the Gate A prerequisite checker rejected
+sixteen direct mutations:
 
 - promote signature validity to proof of private-key or actor control;
 - promote a valid signature to proof of human decision intent;
@@ -109,9 +120,12 @@ The Gate A prerequisite checker now rejects sixteen direct mutations:
 - retain raw private reasoning as ceremony evidence; or
 - self-close the prerequisite.
 
-The checker separately rejects a T1 dependency mutation that removes PRQ-013
-from `next_dependency_contained_tranche.may_start_after`; documenting the
-prerequisite without binding its consumer would leave the gate decorative.
+The current checker retains those laws and separately rejects removing the
+T0 individual-assurance foundation candidate from
+`next_dependency_contained_tranche.may_start_after`; documenting the
+prerequisite without binding its dependency would leave the gate decorative.
+Use the validator's live output—not this historical count—for the current
+known-bad census.
 
 Later semantic suites must additionally reject a correct signature over the
 wrong decision digest, stale or replayed confirmation, a human who declined or
@@ -125,8 +139,9 @@ decision evidence exists. That is intentional. A missing human remains
 `blocked` or `indeterminate`; an agent cannot repair the absence by using a
 human-labeled key or writing stronger prose.
 
-The retained checker is finite and author-correlated. It proves only that this
-candidate inventory carries the refusal boundary and that its sixteen pinned
-mutations fire. It does not produce the future assurance schema, verify a real
-human ceremony, establish key custody, close PRQ-013, accept Gate A, or
-authorize implementation.
+The retained checker is finite and author-correlated. At this decision's
+introduction it proved only that the candidate inventory carried the refusal
+boundary and that sixteen pinned mutations fired. ADR 0092 adds unissued
+foundation schemas and a larger semantic corpus; neither record verifies a real
+human ceremony, establishes key custody, closes PRQ-013, accepts Gate A, or
+authorizes implementation.
