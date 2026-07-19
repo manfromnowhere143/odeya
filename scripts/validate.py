@@ -277,13 +277,7 @@ REQUIRED_FILES = (
     "tools/repository-release/requirements-architecture.lock",
     "tools/repository-release/toolchain.lock.json",
 )
-FORBIDDEN_IMPLEMENTATION_DIRS = (
-    "apps",
-    "packages",
-    "services",
-    "infrastructure",
-    "deploy",
-)
+ARCHITECTURE_SURFACE_CHECK = "scripts/validate_architecture_surface.py"
 ISOLATED_CONTRACT_SUITES = (
     "tests/cognitive-contracts/check.py",
     "tests/projection-contracts/check.py",
@@ -906,9 +900,36 @@ def validate_foundation_invariants(errors: list[str]) -> None:
     if "odeya.danielwahnich.ai" in corpus:
         add(errors, "obsolete provisional domain found: odeya.danielwahnich.ai")
 
-    for directory in FORBIDDEN_IMPLEMENTATION_DIRS:
-        if (ROOT / directory).exists():
-            add(errors, f"implementation lock violation: top-level {directory}/ exists")
+
+
+def validate_architecture_surface(errors: list[str]) -> None:
+    checker = ROOT / ARCHITECTURE_SURFACE_CHECK
+    if not checker.is_file():
+        add(errors, f"missing implementation-lock checker: {ARCHITECTURE_SURFACE_CHECK}")
+        return
+    try:
+        result = subprocess.run(
+            [sys.executable, str(checker)],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            timeout=30,
+            check=False,
+        )
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        add(errors, f"implementation-lock checker could not run: {exc}")
+        return
+    if result.returncode:
+        detail = "\n".join(
+            line.removeprefix("- ")
+            for line in (result.stderr or result.stdout).splitlines()
+            if line.startswith("- ")
+        )
+        add(
+            errors,
+            "implementation-lock checker failed"
+            + (f": {detail}" if detail else ""),
+        )
 
 
 def load_fixture_object(relative: str, errors: list[str]) -> dict | None:
@@ -1572,6 +1593,7 @@ def main() -> int:
     validate_schema_contract_pins(errors, schema_count)
     document_count, local_link_count = validate_markdown_links(errors)
     validate_foundation_invariants(errors)
+    validate_architecture_surface(errors)
     semantic_fixture_check_count = validate_architecture_semantic_fixtures(errors)
     isolated_contract_suite_count = validate_isolated_contract_suites(errors)
     architecture_evidence_check_count = validate_architecture_evidence_checks(errors)

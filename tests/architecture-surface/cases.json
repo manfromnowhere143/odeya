@@ -1,0 +1,180 @@
+{
+  "policy_id": "odeya-architecture-surface-policy",
+  "version": "0.1.0",
+  "safe_cases": [
+    {
+      "id": "architecture-document",
+      "entry": {
+        "path": "docs/ARCHITECTURE.md",
+        "kind": "file",
+        "mode": "100644"
+      }
+    },
+    {
+      "id": "nonexecutable-validator",
+      "entry": {
+        "path": "scripts/validate.py",
+        "kind": "file",
+        "mode": "100644",
+        "content_prefix": "#!/usr/bin/env python3"
+      }
+    },
+    {
+      "id": "approved-release-executable",
+      "entry": {
+        "path": "scripts/ci/rehearse-fresh-clone.sh",
+        "kind": "file",
+        "mode": "100755",
+        "content_prefix": "#!/usr/bin/env bash"
+      }
+    },
+    {
+      "id": "bounded-formal-model",
+      "entry": {
+        "path": "formal/tla/ResourceReservation.tla",
+        "kind": "file",
+        "mode": "100644"
+      }
+    },
+    {
+      "id": "retained-extensionless-license",
+      "entry": {
+        "path": "tests/canonicalization/official/cyberphone/LICENSE",
+        "kind": "file",
+        "mode": "100644"
+      }
+    }
+  ],
+  "known_bad_cases": [
+    {
+      "id": "runtime-under-src",
+      "entry": {
+        "path": "src/runtime.py",
+        "kind": "file",
+        "mode": "100644"
+      },
+      "expected_error": "implementation lock violation [forbidden-top-level]: src/ is outside the architecture surface"
+    },
+    {
+      "id": "runtime-under-engine",
+      "entry": {
+        "path": "engine/main.py",
+        "kind": "file",
+        "mode": "100644"
+      },
+      "expected_error": "implementation lock violation [forbidden-top-level]: engine/ is outside the architecture surface"
+    },
+    {
+      "id": "runtime-under-lib",
+      "entry": {
+        "path": "lib/kernel.py",
+        "kind": "file",
+        "mode": "100644"
+      },
+      "expected_error": "implementation lock violation [forbidden-top-level]: lib/ is outside the architecture surface"
+    },
+    {
+      "id": "arbitrary-top-level-file",
+      "entry": {
+        "path": "rogue.py",
+        "kind": "file",
+        "mode": "100644"
+      },
+      "expected_error": "implementation lock violation [unauthorized-top-level-file]: rogue.py is not an approved top-level architecture file"
+    },
+    {
+      "id": "code-under-document-root",
+      "entry": {
+        "path": "docs/runtime.py",
+        "kind": "file",
+        "mode": "100644"
+      },
+      "expected_error": "implementation lock violation [unauthorized-code-path]: docs/runtime.py is executable-capable code not named by the architecture policy"
+    },
+    {
+      "id": "unapproved-code-under-script-root",
+      "entry": {
+        "path": "scripts/runtime.py",
+        "kind": "file",
+        "mode": "100644"
+      },
+      "expected_error": "implementation lock violation [unauthorized-code-path]: scripts/runtime.py is executable-capable code not named by the architecture policy"
+    },
+    {
+      "id": "disguised-script-extension",
+      "entry": {
+        "path": "docs/worker.py.txt",
+        "kind": "file",
+        "mode": "100644"
+      },
+      "expected_error": "implementation lock violation [disguised-executable-name]: docs/worker.py.txt embeds executable suffix .py"
+    },
+    {
+      "id": "unknown-archive-type",
+      "entry": {
+        "path": "docs/runtime.zip",
+        "kind": "file",
+        "mode": "100644"
+      },
+      "expected_error": "implementation lock violation [unauthorized-file-type]: docs/runtime.zip has no architecture-authorized file type"
+    },
+    {
+      "id": "staged-content-differs-from-benign-worktree",
+      "entry": {
+        "path": "architecture/staged-content-probe.json",
+        "kind": "file",
+        "mode": "100644",
+        "content_prefix": "{\"safe\": true}",
+        "additional_content_prefix": "#!/usr/bin/env python3"
+      },
+      "expected_error": "implementation lock violation [disguised-executable-content]: architecture/staged-content-probe.json begins with a shebang but is not an approved code path"
+    },
+    {
+      "id": "submodule-gitlink",
+      "entry": {
+        "path": "tools/vendor",
+        "kind": "gitlink",
+        "mode": "160000"
+      },
+      "expected_error": "implementation lock violation [gitlink]: tools/vendor uses Git mode 160000; submodules are outside the architecture surface"
+    },
+    {
+      "id": "unauthorized-executable-mode",
+      "entry": {
+        "path": "docs/architecture-notes.md",
+        "kind": "file",
+        "mode": "100755"
+      },
+      "expected_error": "implementation lock violation [unauthorized-executable-bit]: docs/architecture-notes.md has an executable bit but is not an approved executable"
+    },
+    {
+      "id": "repository-symlink",
+      "entry": {
+        "path": "docs/linked.md",
+        "kind": "symlink",
+        "mode": "120000"
+      },
+      "expected_error": "implementation lock violation [symlink]: docs/linked.md is a symlink; repository symlinks are forbidden"
+    },
+    {
+      "id": "disguised-shebang-content",
+      "entry": {
+        "path": "docs/architecture-notes.md",
+        "kind": "file",
+        "mode": "100644",
+        "content_prefix": "#!/usr/bin/env python3"
+      },
+      "expected_error": "implementation lock violation [disguised-executable-content]: docs/architecture-notes.md begins with a shebang but is not an approved code path"
+    },
+    {
+      "id": "disguised-binary-content",
+      "entry": {
+        "path": "architecture/candidate.json",
+        "kind": "file",
+        "mode": "100644",
+        "content_prefix_hex": "7f454c4602010100"
+      },
+      "expected_error": "implementation lock violation [disguised-executable-content]: architecture/candidate.json begins with ELF magic but is not an approved code path"
+    }
+  ]
+}
