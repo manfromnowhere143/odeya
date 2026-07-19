@@ -2,7 +2,14 @@
 
 These fixtures mutate one known-good architecture workflow in memory. Every mutation must be refused by the standard-library release checker before Actionlint or Zizmor runs.
 
-The cases cover write permission expansion, trigger replacement and trigger injection, explicit token plumbing, deployment environments, missing job timeouts, persisted checkout credentials, shallow history, self-hosted runners, and undeclared job insertion. They are bounded regression controls, not a complete GitHub Actions security proof.
+The cases cover write permission expansion, trigger replacement and trigger
+injection, explicit token plumbing, deployment environments, missing job
+timeouts, persisted checkout credentials, shallow history, self-hosted
+runners, undeclared job insertion, and removal of the default-deny
+architecture-surface checker from the early Fast policy job. The exact
+thirteen-case census and order are pinned by the standard-library release
+checker. They are bounded regression controls, not a complete GitHub Actions
+security proof.
 
 The exact mutations are in [cases.json](cases.json).
 

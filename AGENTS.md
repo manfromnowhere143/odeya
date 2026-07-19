@@ -52,7 +52,7 @@ This repository is an architecture foundation. Do not describe a documented comp
 
 **Hard gate:** do not add runtime, application, infrastructure, or deployment implementation until every blocking item in `docs/PRE_IMPLEMENTATION_GATE.md` has retained evidence and the operator has explicitly accepted the architecture baseline. Schemas, decision records, threat models, mathematical specifications, interface contracts, evaluation fixtures, and paper designs are architecture work; executable product code is not yet authorized.
 
-Architecture-validation CI and private repository-release tooling are permitted when explicitly scoped. They may validate and retain evidence about repository bytes; they may not deploy a product, receive mission credentials, invoke runtime providers, publish research, or turn a green workflow into Gate A authority.
+Architecture-validation CI and architecture-only repository-release tooling are permitted when explicitly scoped. They may validate and retain evidence about repository bytes; they may not deploy a product, receive mission credentials, invoke runtime providers, publish research, or turn a green workflow into Gate A authority.
 
 The current architectural target is a modular private engine with:
 
@@ -91,4 +91,10 @@ The current architectural target is a modular private engine with:
 
 ## Naming and release
 
-Use **Odeya**. The provisional address is `odeya.danielwahnich.dev`. `odeya.ai`, trademark, company, package, and public-repository availability are separate and not assumed. This repository remains private unless the operator explicitly authorizes a visibility change.
+Use **Odeya**. The provisional address is `odeya.danielwahnich.dev`.
+`odeya.ai`, trademark, company, and package availability are separate and not
+assumed. The canonical architecture repository is public under ADR 0047 and
+the ongoing exact-commit contract in `docs/REPOSITORY_RELEASE.md`; that
+executed publication authority does not authorize runtime, deployment,
+scientific publication, mission data, or a later visibility or ownership
+change.

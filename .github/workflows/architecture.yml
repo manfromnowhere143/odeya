@@ -41,8 +41,10 @@ jobs:
       - name: Validate static repository policy
         run: |
           mkdir -p artifacts/ci
-          python scripts/validate_repository_release.py \
-            2>&1 | tee artifacts/ci/fast-policy.log
+          {
+            python scripts/validate_architecture_surface.py
+            python scripts/validate_repository_release.py
+          } 2>&1 | tee artifacts/ci/fast-policy.log
 
       - name: Prove policy validation did not mutate tracked evidence
         run: git diff --exit-code

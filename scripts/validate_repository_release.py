@@ -75,6 +75,7 @@ REQUIRED_PATHS = (
     ".github/SECURITY.md",
     ".github/dependabot.yml",
     "docs/REPOSITORY_RELEASE.md",
+    "architecture/architecture-surface-policy.json",
     "tools/repository-release/.node-version",
     "tools/repository-release/package.json",
     "tools/repository-release/package-lock.json",
@@ -83,8 +84,11 @@ REQUIRED_PATHS = (
     "scripts/write_release_evidence_manifest.py",
     "scripts/write_rehearsal_evidence_manifest.py",
     "scripts/compare_rehearsal_manifests.py",
+    "scripts/validate_architecture_surface.py",
     "scripts/validate_schema_contracts.py",
     "scripts/validate_contract_profiles.py",
+    "tests/architecture-surface/README.md",
+    "tests/architecture-surface/cases.json",
     "tests/repository-release/README.md",
     "tests/repository-release/cases.json",
     *WORKFLOWS,
@@ -178,6 +182,26 @@ RELEASE_CONTRACT_FORBIDDEN = (
     "local hook is server-side branch protection",
     "architecture publication authorizes runtime",
     "repository release authorizes runtime",
+)
+EXPECTED_WORKFLOW_MUTATION_IDS = (
+    "permission-expansion",
+    "pull-request-target",
+    "explicit-github-token",
+    "deployment-environment",
+    "missing-timeout",
+    "persisted-checkout-credentials",
+    "shallow-history",
+    "self-hosted-runner",
+    "scheduled-trigger",
+    "repository-dispatch-trigger",
+    "workflow-run-trigger",
+    "unexpected-job",
+    "missing-fast-architecture-surface-lock",
+)
+EXPECTED_FAST_SURFACE_MUTATION = (
+    "            python scripts/validate_architecture_surface.py\n",
+    "",
+    "fast policy architecture-surface/release validation",
 )
 EXPECTED_RELEASE_CONTRACT_MUTATIONS = {
     "future-private-remote-regression": (
@@ -604,6 +628,25 @@ def workflow_policy_errors(
                 f"job inventory must be exact: expected {expected_job_ids}, "
                 f"got {observed_job_ids}"
             )
+    if expected_job_ids == REQUIRED_JOB_IDS[".github/workflows/architecture.yml"]:
+        fast_policy_marker = "  fast-policy:\n"
+        foundation_marker = "\n  foundation:\n"
+        if fast_policy_marker not in text or foundation_marker not in text:
+            issues.append("fast policy job boundary is absent")
+        else:
+            fast_policy = text.split(fast_policy_marker, 1)[1].split(
+                foundation_marker, 1
+            )[0]
+            required_fast_commands = (
+                "python scripts/validate_architecture_surface.py",
+                "python scripts/validate_repository_release.py",
+            )
+            for command in required_fast_commands:
+                if fast_policy.count(command) != 1:
+                    issues.append(
+                        "fast policy architecture-surface/release validation "
+                        f"must run exactly once: {command}"
+                    )
     return issues
 
 
@@ -611,15 +654,45 @@ def validate_policy_mutations(errors: list[str]) -> int:
     cases = load_json("tests/repository-release/cases.json", errors)
     if not isinstance(cases, dict) or not isinstance(cases.get("mutations"), list):
         return 0
+    if set(cases) != {
+        "schema_version",
+        "base_workflow",
+        "mutations",
+        "release_contract",
+        "release_contract_mutations",
+    }:
+        errors.append("repository release mutations: top-level members are not exact")
+    if cases.get("schema_version") != "0.1.0":
+        errors.append("repository release mutations: schema_version is not exact")
     base_relative = cases.get("base_workflow")
-    if not isinstance(base_relative, str):
-        errors.append("repository release mutations: base_workflow is absent")
+    if base_relative != ".github/workflows/architecture.yml":
+        errors.append("repository release mutations: base_workflow is not exact")
         return 0
+    mutations = cases["mutations"]
+    observed_ids = [
+        case.get("id")
+        for case in mutations
+        if isinstance(case, dict)
+    ]
+    if (
+        len(observed_ids) != len(mutations)
+        or any(not isinstance(case_id, str) for case_id in observed_ids)
+        or len(set(observed_ids)) != len(observed_ids)
+        or tuple(observed_ids) != EXPECTED_WORKFLOW_MUTATION_IDS
+    ):
+        errors.append(
+            "repository release mutations: workflow case census/order is not closed and exact"
+        )
     base = read(base_relative, errors)
     passed = 0
-    for case in cases["mutations"]:
+    for case in mutations:
         if not isinstance(case, dict):
             errors.append("repository release mutations: case is not an object")
+            continue
+        if set(case) != {"id", "old", "new", "expected"}:
+            errors.append(
+                "repository release mutations: case members are not closed and exact"
+            )
             continue
         case_id = case.get("id")
         old = case.get("old")
@@ -627,6 +700,15 @@ def validate_policy_mutations(errors: list[str]) -> int:
         expected = case.get("expected")
         if not all(isinstance(value, str) and value for value in (case_id, old, expected)) or not isinstance(new, str):
             errors.append("repository release mutations: malformed case")
+            continue
+        if (
+            case_id == "missing-fast-architecture-surface-lock"
+            and (old, new, expected) != EXPECTED_FAST_SURFACE_MUTATION
+        ):
+            errors.append(
+                "repository release mutation missing-fast-architecture-surface-lock: "
+                "specification drifted from the pinned matrix"
+            )
             continue
         if base.count(old) < 1:
             errors.append(f"repository release mutation {case_id}: source bytes are absent")
@@ -1027,6 +1109,7 @@ def validate_tla_pin_copies(errors: list[str]) -> None:
 # runner — the incident's mechanism one layer down (environment pin instead
 # of count pin; independent review, ADR 0063).
 BARE_INTERPRETER_SCRIPTS = (
+    "scripts/validate_architecture_surface.py",
     "scripts/validate_repository_release.py",
     "tests/canonicalization/compare_results.py",
     "tests/canonicalization/audit_schemas.py",

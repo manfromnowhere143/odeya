@@ -254,6 +254,10 @@ REQUIRED_FILES = (
     "scripts/validate_module_manifest.py",
     "scripts/validate_first_slice_resolution.py",
     "scripts/validate_gate_a_prerequisites.py",
+    "architecture/prq-009-assignment-order-contract.json",
+    "scripts/validate_prq_009_assignment_order.py",
+    "tests/prq-009-assignment-order/README.md",
+    "tests/prq-009-assignment-order/cases.json",
     "scripts/validate_schema_resource_reissues.py",
     "scripts/validate_repository_release.py",
     "scripts/ci/install-node.sh",
@@ -294,6 +298,7 @@ ISOLATED_CONTRACT_SUITES = (
 )
 ARCHITECTURE_EVIDENCE_CHECKS = (
     "scripts/validate_gate_a_prerequisites.py",
+    "scripts/validate_prq_009_assignment_order.py",
     "scripts/validate_schema_resource_reissues.py",
     "scripts/validate_lifecycle_guard_coverage.py",
     "scripts/validate_lifecycle_condition_coverage.py",
@@ -1640,7 +1645,8 @@ def main() -> int:
     )
     print(
         f"- {repository_release_check_count} static repository release-contract check passed; "
-        "no remote or release authority implied"
+        "architecture publication authority remains separately evidence-gated; "
+        "no runtime, deployment, research-publication, or Gate A authority implied"
     )
     print(
         f"- {canonical_case_count} canonical identity cases reconciled across "
@@ -1665,7 +1671,7 @@ def main() -> int:
     )
     print(f"- {decision_count} architecture decisions")
     print(f"- {local_link_count} local Markdown links checked")
-    print("- implementation lock intact")
+    print("- default-deny architecture-only repository surface intact")
     print("- structural architecture validation only; Gate A acceptance remains separate")
     return 0
 

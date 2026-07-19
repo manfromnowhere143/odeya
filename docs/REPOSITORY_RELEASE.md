@@ -19,13 +19,13 @@ The release surface therefore optimizes for truth, reviewability, and failure ev
 
 | Check | Purpose | Retained evidence | Explicit non-claim |
 | --- | --- | --- | --- |
-| `Fast policy` | Run the standard-library repository policy and release-contract checks before expensive suites | Policy log and exact workflow inventory | Not a substitute for exhaustive validation |
+| `Fast policy` | Run the default-deny architecture-surface policy and release-contract checks before expensive suites | Policy log, exact workflow inventory, and retained implementation-surface known-bads | Not a substitute for exhaustive validation |
 | `Foundation` | Run the complete integrated structural and bounded-semantic validator | Validator log and exact commit identity | Not Gate A acceptance or runtime evidence |
 | `Schema contracts` | Validate all admitted schemas and every valid/adversarial schema fixture through the network-disabled registry | Exact schema and fixture counts | Not semantic or implementation conformance |
 | `Semantic contracts` | Admit the safe semantic partition, then execute all eight complete paired contract harnesses | Profile inventory and per-suite output | Not proof beyond the retained bounded subjects |
 | `Adversarial controls` | Admit the known-bad partition, then execute the same paired harnesses so negative controls cannot drift from their baselines | Profile inventory and expected-rejection output | Not an exhaustive threat proof |
 | `Canonical identity` | Reconcile the two retained canonicalization implementations and verify the migration audit is current | Comparison receipt and audit check output | Not a frozen canonical profile; its blockers remain explicit |
-| `Architecture evidence` | Reproduce Gate A prerequisite, schema-reissue, module-manifest, and first-slice evidence checks | Evidence-check logs | Not registry admission, activation, or an acceptance decision |
+| `Architecture evidence` | Reproduce five dedicated prerequisite/member checks: Gate A prerequisites, PRQ-009 order, schema reissue, module manifest, and first-slice scope. `Foundation` separately runs the complete integrated ten-check census, including lifecycle/suite guard and condition audits, schema-rule ablation, and refusal attribution | Dedicated evidence log plus the integrated Foundation log and pinned safe/known-bad inventories | Not registry admission, activation, or an acceptance decision |
 | `Repository / Release Surface` | Validate the README contract, action pins, least-privilege workflow shape, Dependabot scope, Markdown, Action syntax, and Mermaid rendering | Release-check log and rendered SVG | Not UI acceptance, deployment evidence, or a publication decision |
 | `Architecture / Bounded Formal Models` | Reproduce seven safe TLA+ models, the alternate cognitive fingerprint run, and all thirty intended counterexamples | Full TLC log and pinned toolchain manifest | Bounded safety evidence only; not liveness, implementation conformance, or a physical safety case |
 

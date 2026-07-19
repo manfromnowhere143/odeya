@@ -127,7 +127,7 @@ evidence-quality lane is the live work, and its shape is now known:
 - **Guard coverage has explicit denominators, not whole-repository coverage.**
   The lifecycle checker has dedicated statement (178/185) and condition
   (100/103) audits; the generalized `audit_suite_guard_coverage.py` measures
-  twelve declared isolated contract-checker subjects, at 239 of 627 refusal
+  twelve declared isolated contract-checker subjects, at 247 of 635 refusal
   statements proved. Central architecture/release gates—including the PRQ-009
   assignment-order checker—are outside that denominator and must carry their
   own pinned known-bad self-tests. The 388 open isolated-suite guards are
@@ -546,15 +546,17 @@ stage. 132 single-condition tests and structural dict comparisons are
 counted, not audited; field-level blindness inside structural expectations
 remains unmeasured.
 
-**GUARD COVERAGE IS 239/627 WITH A DESIGNED CLOSURE PLAN (ADR 0079/0080).** The 418
-unproved guards split into 116 harness-hygiene (closable by ~12
-self-tests, ADR 0066 pattern) and 302 domain (need retained cases). ADR
-0080 closed three zero-coverage suites by in-harness self-test:
+**DECLARED ISOLATED-SUITE GUARD COVERAGE IS 247/635, WITH 388
+UNPROVED.** The physical-verification correction added eight measured guards
+and eight proofs, so the open residue stayed 388. ADR 0080 closed three former
+zero-coverage suites by in-harness self-test:
 work-identity-successor-cohort 0→13/19, work-intent-identity-candidate
-0→12/20, canonical-profile-candidate 0→9/18. All four zero-coverage suites now prove guards (ADR 0080/0081):
-command-identity got its careful pass too (0->8/20), with its deep
-residue named as terminal turtles per ADR 0069 rather than faked. After the harness guards, the 302 domain guards are case-writing
-at scale.
+0→12/20, and canonical-profile-candidate 0→9/18. ADR 0081 moved
+command-identity to 8/20; ADR 0082 proved the artifact-mutation vocabulary;
+ADR 0083 made the six attribution meta-proofs load-bearing. The exact current
+per-suite inventory is in `architecture/suite-guard-coverage.json`, and the
+388-open closure strategy is in `docs/GUARD_COVERAGE_CLOSURE_PLAN.md`.
+Central evidence/release checkers are not in this denominator.
 
 **THE GENERALIZED AUDIT MEASURED 161/579 AT FIRST (ADR 0079).**
 The suite-agnostic mutation audit now measures twelve suites in under
@@ -938,14 +940,14 @@ A mission.
 
 ## Next architecture mission, in dependency order
 
-1. Finish the 2026-07-19 correction tranche before extending T0: reconcile
-   public-repository operational truth; correct the PRQ-009 ordering so an
-   atomic assignment creates the worker/grant/lease/reservation cohort before a
-   derived WorkContract and a separate attempt start; eliminate the
-   physical-verification semantic false positive with typed known-bad cases;
-   and make the implementation lock fail closed for undeclared executable
-   surfaces. These corrections remain architecture evidence and do not resolve
-   the underlying profile identities or accept Gate A.
+1. Preserve the completed 2026-07-19 correction boundary before extending T0:
+   public-repository operational truth is reconciled; the PRQ-009 contract now
+   requires an atomic assignment to create the worker/grant/lease/reservation
+   cohort before a derived WorkContract and a separate attempt start; the
+   physical-verification semantic false positive is refused by typed known-bad
+   cases; and undeclared executable surfaces fail closed. These corrections
+   remain architecture evidence and do not resolve the underlying profile
+   identities or accept Gate A.
 2. Complete T0 by closing PRQ-001–PRQ-010. The canonical-profile migration
    audit is mechanically clear, but profile issuance, accountable independent
    review, exact member/reducer/root identities, and the remaining prerequisite
