@@ -213,10 +213,16 @@ The IDs below are candidate stable meanings. Gate A freezes their exact predicat
 
 | Rule | Predicate |
 |---|---|
-| EXEC-001 | `verification.assign` binds exact active DataUseDecisions, promoted input manifests, local WorkContract, LocalMaterializationIntent, sandbox capability, active lease, combined reservation, activation/frontier, and five ordered role grants; it creates no byte visibility or launch |
-| EXEC-002 | `attempt.start` is the sole local start command and atomically claims the lease/reservation, emits attempt plus verification start, and writes the stable launch outbox before any mount/process; all network/provider/model/credential/external-write/cloud/GPU/spend capabilities equal zero |
+| EXEC-001 | `verification.assign` accepts the exact admitted WorkIntent—not a pre-existing WorkContract, active WorkLease, or reservation—and rechecks promoted inputs, current DataUseDecisions, LocalMaterializationIntent, the zero-external-capability sandbox, activation/frontier, worker eligibility, budget, and five distinct assignment grants. One atomic thirteen-event commit records the five ordered grant uses, creates the reservation, acquires the active lease, records `verification.assigned`, and records the five matching grant exhaustions; it binds the selected worker but creates no byte visibility, launch outbox, or launch |
+| EXEC-002 | Only after that exact successful assignment commit may a deterministic WorkContract be derived from the same WorkIntent and commit. `attempt.start` requires and rechecks that derived WorkContract plus every current assignment fact; it is the separate sole local dispatch-claim command and atomically consumes five separate start grants, claims the reservation under the active lease, emits attempt plus verification start, and writes the stable launch outbox before any mount/process. All network/provider/model/credential/external-write/cloud/GPU/spend capabilities equal zero |
 | EXEC-003 | `attempt.report` retains actual input/code/environment, byte-visibility, sandbox negative-flow, teardown/residual, and raw resource-observation evidence without settling resources or scientific validity; unknown cannot become none/clean/zero |
 | EXEC-004 | Start/invalidation/deadline is serializable: preclaim invalidation may revoke/release, preclaim deadline may expire, start-first preserves the claimed hold through crash/revoke/restore, and completion-unknown forbids blind retry |
+
+EXEC-001/002 are mechanically cross-checked against the architecture-only
+[`PRQ-009 assignment-order contract`](../architecture/prq-009-assignment-order-contract.json).
+The check rejects the legacy order in which `verification.assign` consumes a
+pre-existing `WorkContract`, active lease, or reservation. It does not close
+PRQ-009, admit a command or event member, or authorize runtime.
 
 ### Scientific validity and claims
 

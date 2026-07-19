@@ -1,0 +1,116 @@
+{
+  "suite_id": "odeya.prq-009-assignment-order-known-bads",
+  "version": "1.0.0",
+  "evidence_class": "architecture_consistency_known_bad_only",
+  "cases": [
+    {
+      "name": "legacy-preexisting-work-contract-prose-is-rejected",
+      "kind": "known_bad",
+      "mutation": {
+        "target": "consumer_text",
+        "path": "docs/TRANSACTION_MODEL.md",
+        "operation": "prepend",
+        "value": "`verification.assign` atomically binds one exact local WorkContract"
+      },
+      "expected_refusal_contains": "docs/TRANSACTION_MODEL.md contains forbidden legacy assignment-order fragment"
+    },
+    {
+      "name": "legacy-work-contract-as-prospective-input-is-rejected",
+      "kind": "known_bad",
+      "mutation": {
+        "target": "contract",
+        "operation": "replace",
+        "pointer": "/assignment_commit/prospective_work_input",
+        "value": "WorkContract"
+      },
+      "expected_refusal_contains": "assignment prospective work input is not WorkIntent"
+    },
+    {
+      "name": "legacy-preexisting-active-lease-is-rejected",
+      "kind": "known_bad",
+      "mutation": {
+        "target": "contract",
+        "operation": "replace",
+        "pointer": "/assignment_commit/preexisting_active_work_lease_allowed",
+        "value": true
+      },
+      "expected_refusal_contains": "assignment permits a pre-existing active WorkLease"
+    },
+    {
+      "name": "legacy-preexisting-reservation-is-rejected",
+      "kind": "known_bad",
+      "mutation": {
+        "target": "contract",
+        "operation": "replace",
+        "pointer": "/assignment_commit/preexisting_resource_reservation_allowed",
+        "value": true
+      },
+      "expected_refusal_contains": "assignment permits a pre-existing resource reservation"
+    },
+    {
+      "name": "work-contract-inside-assignment-batch-is-rejected",
+      "kind": "known_bad",
+      "mutation": {
+        "target": "contract",
+        "operation": "replace",
+        "pointer": "/work_contract_derivation/member_of_assignment_event_batch",
+        "value": true
+      },
+      "expected_refusal_contains": "WorkContract is not exclusively post-assignment"
+    },
+    {
+      "name": "assignment-dispatch-claim-is-rejected",
+      "kind": "known_bad",
+      "mutation": {
+        "target": "contract",
+        "operation": "replace",
+        "pointer": "/assignment_commit/dispatch_claim_created",
+        "value": true
+      },
+      "expected_refusal_contains": "assignment creates a dispatch claim"
+    },
+    {
+      "name": "incomplete-assignment-cohort-is-rejected",
+      "kind": "known_bad",
+      "mutation": {
+        "target": "contract",
+        "operation": "remove",
+        "pointer": "/assignment_commit/event_order_exact/12"
+      },
+      "expected_refusal_contains": "assignment event order is not the exact thirteen-event cohort"
+    },
+    {
+      "name": "dispatch-before-derived-work-contract-is-rejected",
+      "kind": "known_bad",
+      "mutation": {
+        "target": "contract",
+        "operation": "replace",
+        "pointer": "/dispatch_claim/phase",
+        "value": "same_assignment_commit"
+      },
+      "expected_refusal_contains": "attempt.start is not a separate post-WorkContract commit"
+    },
+    {
+      "name": "premature-prq-009-closure-is-rejected",
+      "kind": "known_bad",
+      "mutation": {
+        "target": "contract",
+        "operation": "replace",
+        "pointer": "/current_evidence_boundary/status",
+        "value": "resolved"
+      },
+      "expected_refusal_contains": "PRQ-009 evidence boundary is not unresolved_blocking"
+    },
+    {
+      "name": "runtime-authority-from-order-contract-is-rejected",
+      "kind": "known_bad",
+      "mutation": {
+        "target": "contract",
+        "operation": "replace",
+        "pointer": "/current_evidence_boundary/runtime_authorized",
+        "value": true
+      },
+      "expected_refusal_contains": "assignment-order evidence claims runtime authority"
+    }
+  ]
+}

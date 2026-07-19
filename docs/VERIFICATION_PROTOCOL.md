@@ -52,6 +52,14 @@ The subject set is not a loose run ID. It carries a complete subject manifest, m
 
 No later package may silently select `latest`, replace an input, or move a reservation. Cross-record equality and currentness are admission rules, not caller assertions.
 
+For the bounded local profile, these frozen facts come from the successful
+assignment commit; they are not pre-existing assignment authority. The order
+is exact admitted `WorkIntent` -> atomic `verification.assign` creation of the
+worker/lease/reservation and five-role grant-use/exhaustion cohort ->
+deterministically derived `WorkContract` -> separate `attempt.start` dispatch
+claim. No currently retained candidate proves that sequence constructible, so
+PRQ-009 remains unresolved and no assignment or execution is authorized.
+
 ## Independence and correlation
 
 Independence is an observed vector, not a label inferred from role names, model consensus, or a different prompt. Every package records principal, organization, incentive, provider, model family, training lineage, tools, source corpus, implementation, data, context, and selection relations with retained evidence or an explicit unknown/not-applicable value. The package separately records the required verification class, observed class, required independence disposition, and rule/evidence-backed satisfaction result.

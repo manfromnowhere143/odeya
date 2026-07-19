@@ -195,15 +195,35 @@ The scheduler's internal retry policy may retry only activity classes that the O
 ### Bounded local verification profile
 
 The first proof slice does not import the general scheduler as scientific
-authority. `verification.assign` atomically binds one exact local WorkContract,
-LocalMaterializationIntent, active WorkLease, sandbox capability, current
-DataUseDecisions, and one combined non-fungible reservation; it does not mount
-bytes or launch work. `attempt.start` is the sole local dispatch-claim command.
-It rechecks all exact identities, consumes the five ordered safety/data-rights/
-resource/execution/verification grants, claims the reservation, records
-`attempt.started + verification.started`, and writes the stable local-launch
-outbox in one commit. Only after that commit may the launcher mount read-only
-inputs or spawn the sandbox.
+authority. `verification.assign` accepts the exact admitted `WorkIntent`—not a
+pre-existing `WorkContract`, active `WorkLease`, or resource reservation—as
+its prospective work input. It rechecks the promoted input manifests, current
+`DataUseDecision` set, `LocalMaterializationIntent`, zero-external-capability
+sandbox policy and capability, candidate worker eligibility,
+activation/frontier, budget, and five distinct assignment grants. Its one
+atomic thirteen-event commit records, in order, the five
+`authority.grant_used` events for safety/data-rights/resource/execution/
+verification, `resource.reservation_created`, `work.lease_acquired`,
+`verification.assigned`, and the matching five
+`authority.grant_exhausted` events. That commit binds the selected worker and
+establishes the active lease and reservation; it does not mount bytes, create
+a launch outbox, or launch work.
+
+Only after that exact assignment commit may deterministic derivation
+materialize a `WorkContract` bound to the same `WorkIntent` and assignment
+commit. The derived contract remains a non-authoritative control artifact.
+`attempt.start` is the separate and sole local dispatch-claim command. It
+rechecks the derived `WorkContract` and every current assignment fact,
+consumes the five separate ordered start grants, claims the reservation,
+records `attempt.started + verification.started`, and writes the stable
+local-launch outbox in one commit. Only after that commit may the launcher
+mount read-only inputs or spawn the sandbox.
+
+The exact architecture-only order and its retained legacy-order known-bad are
+machine-checked by the
+[`PRQ-009 assignment-order contract`](../architecture/prq-009-assignment-order-contract.json).
+PRQ-009 remains unresolved until the required exact identities and immutable
+members exist; this text does not authorize assignment, dispatch, or runtime.
 
 `attempt.report` records one terminal or completion-unknown execution fact plus
 actual input/code/environment, visibility, negative-flow, teardown, and raw

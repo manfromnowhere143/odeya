@@ -1,0 +1,237 @@
+{
+  "contract_id": "odeya.prq-009-assignment-order-consistency",
+  "version": "1.0.0",
+  "artifact_class": "architecture_consistency_evidence_only",
+  "status": "unresolved_blocking",
+  "canonical_order": [
+    "WorkIntent",
+    "verification.assign",
+    "WorkContract",
+    "attempt.start"
+  ],
+  "assignment_commit": {
+    "command_type": "verification.assign",
+    "prospective_work_input": "WorkIntent",
+    "preexisting_work_contract_allowed": false,
+    "preexisting_active_work_lease_allowed": false,
+    "preexisting_resource_reservation_allowed": false,
+    "atomic_commit": true,
+    "intermediate_visibility": false,
+    "role_slot_order": [
+      "safety",
+      "data_rights",
+      "resource",
+      "execution",
+      "verification"
+    ],
+    "event_order_exact": [
+      "authority.grant_used(safety)",
+      "authority.grant_used(data_rights)",
+      "authority.grant_used(resource)",
+      "authority.grant_used(execution)",
+      "authority.grant_used(verification)",
+      "resource.reservation_created",
+      "work.lease_acquired",
+      "verification.assigned",
+      "authority.grant_exhausted(safety)",
+      "authority.grant_exhausted(data_rights)",
+      "authority.grant_exhausted(resource)",
+      "authority.grant_exhausted(execution)",
+      "authority.grant_exhausted(verification)"
+    ],
+    "creates_or_binds": [
+      "selected_worker_principal",
+      "five_ordered_assignment_grant_uses_and_exhaustions",
+      "active_work_lease",
+      "resource_reservation",
+      "verification_assignment"
+    ],
+    "source_bytes_visible": false,
+    "launch_outbox_created": false,
+    "dispatch_claim_created": false
+  },
+  "work_contract_derivation": {
+    "artifact_type": "WorkContract",
+    "phase": "after_exact_successful_assignment_commit",
+    "deterministic": true,
+    "binds_exact_work_intent": true,
+    "binds_exact_assignment_commit": true,
+    "member_of_assignment_event_batch": false,
+    "authorizes_dispatch": false
+  },
+  "dispatch_claim": {
+    "command_type": "attempt.start",
+    "phase": "separate_post_work_contract_commit",
+    "requires_derived_work_contract": true,
+    "rechecks_current_assignment_facts": true,
+    "claims_assignment_reservation": true,
+    "may_cross_execution_boundary_only_after_commit": true
+  },
+  "current_evidence_boundary": {
+    "prerequisite_id": "PRQ-009",
+    "status": "unresolved_blocking",
+    "required_identities_and_members_exist": false,
+    "command_or_event_admitted": false,
+    "gate_a_accepted": false,
+    "runtime_authorized": false
+  },
+  "consumer_census_scope": "active sources that directly assert the bounded local-assignment construction order, its event producers, or its fail-closed structural boundaries; enumeration-only fixtures and external-dispatch-only semantics are outside this census",
+  "active_consumer_audit": [
+    {
+      "path": "docs/TRANSACTION_MODEL.md",
+      "disposition": "corrected",
+      "required_fragments": [
+        "`verification.assign` accepts the exact admitted `WorkIntent`",
+        "pre-existing `WorkContract`, active `WorkLease`, or resource reservation",
+        "Only after that exact assignment commit may deterministic derivation",
+        "`attempt.start` is the separate and sole local dispatch-claim command",
+        "PRQ-009 remains unresolved"
+      ]
+    },
+    {
+      "path": "docs/SEMANTIC_VALIDATION.md",
+      "disposition": "corrected",
+      "required_fragments": [
+        "`verification.assign` accepts the exact admitted WorkIntent",
+        "not a pre-existing WorkContract, active WorkLease, or reservation",
+        "Only after that exact successful assignment commit may a deterministic WorkContract be derived",
+        "`attempt.start` requires and rechecks that derived WorkContract",
+        "It does not close"
+      ]
+    },
+    {
+      "path": "docs/VERIFICATION_PROTOCOL.md",
+      "disposition": "clarified",
+      "required_fragments": [
+        "exact admitted `WorkIntent` -> atomic `verification.assign` creation",
+        "deterministically derived `WorkContract` -> separate `attempt.start` dispatch",
+        "PRQ-009 remains unresolved"
+      ]
+    },
+    {
+      "path": "docs/GATE_A_PREREQUISITE_CLOSURE_PLAN_2026-07-16.md",
+      "disposition": "consistent",
+      "required_fragments": [
+        "cannot also be the prospective input from which `verification.assign` creates",
+        "deterministic post-assignment artifact derived from the committed events",
+        "Neither WorkIntent nor WorkContract authorizes dispatch",
+        "PRQ-009 remains `unresolved_blocking`"
+      ]
+    },
+    {
+      "path": "docs/COGNITIVE_CONTROL_CONTRACTS.md",
+      "disposition": "consistent",
+      "required_fragments": [
+        "The required order is `WorkIntent -> admitted verification.assign atomic",
+        "A future `WorkContract` is a post-assignment deterministic control artifact",
+        "derived from one exact successful `verification.assign` commit",
+        "WorkContract construction alone never starts work"
+      ]
+    },
+    {
+      "path": "docs/FIRST_SLICE_ADMISSION_RESOLUTION_2026-07-16.md",
+      "disposition": "consistent",
+      "required_fragments": [
+        "The WorkContract is a post-assignment artifact and cannot be used",
+        "The resulting WorkContract must bind the",
+        "`attempt.start` locks and rechecks",
+        "C5/PRQ-009 is unresolved and Gate A is not closeable"
+      ]
+    },
+    {
+      "path": "docs/decisions/0016-separate-work-intent-from-assigned-work-contract.md",
+      "disposition": "consistent",
+      "required_fragments": [
+        "### WorkIntent precedes assignment",
+        "post-assignment derived WorkContract",
+        "must bind that exact committed assignment and is derived only afterward",
+        "work crosses an execution boundary from assignment or WorkContract alone"
+      ]
+    },
+    {
+      "path": "architecture/first-slice-admission-resolution-candidate.json",
+      "disposition": "consistent",
+      "required_fragments": [
+        "\"status\": \"unresolved_blocking\"",
+        "\"command_type\": \"verification.assign\"",
+        "one post-assignment WorkContract whose source WorkIntent identity and assignment commit identity equal the command result",
+        "the exact resource reservation created in this commit",
+        "the exact active WorkLease acquired in this commit"
+      ]
+    },
+    {
+      "path": "architecture/gate-a-prerequisite-closure.json",
+      "disposition": "consistent",
+      "required_fragments": [
+        "\"finding_id\": \"PRQ-009\"",
+        "\"status\": \"unresolved_blocking\"",
+        "then derive a post-commit non-dispatch WorkContract"
+      ]
+    },
+    {
+      "path": "schemas/work-intent.schema.json",
+      "disposition": "consistent",
+      "required_fragments": [
+        "It is created before verification.assign",
+        "carries no active lease, grant, reservation",
+        "a WorkContract is derived after that commit"
+      ]
+    },
+    {
+      "path": "schemas/work-contract.schema.json",
+      "disposition": "consistent",
+      "required_fragments": [
+        "future post-assignment WorkContract boundary",
+        "WorkIntent -> verification.assign commit -> derived WorkContract order",
+        "\"post_assignment_derivation_contract\"",
+        "\"separate_dispatch_claim_required\""
+      ]
+    },
+    {
+      "path": "schemas/canonical-work-lease.schema.json",
+      "disposition": "consistent",
+      "required_fragments": [
+        "\"assignment_command_type\"",
+        "\"source_bytes_visible_at_assignment_commit\"",
+        "\"launch_outbox_created_at_assignment_commit\"",
+        "\"exact_assignment_cohort_not_admitted\""
+      ]
+    },
+    {
+      "path": "docs/COMMAND_EVENT_CATALOG.md",
+      "disposition": "consistent",
+      "required_fragments": [
+        "`work.lease_acquired` | `work.acquire_lease`; first-slice exact member: `verification.assign`",
+        "`resource.reservation_created` | resource-accounting kernel in the exact admission/authorization cohort; first-slice caller command `verification.assign`",
+        "`resource.reservation_claimed` | resource-accounting kernel in the exact work/effect/verification start cohort; first-slice caller command `attempt.start`",
+        "`verification.started` | broad vocabulary: `verification.start`; first-slice exact member: `attempt.start`"
+      ]
+    },
+    {
+      "path": "docs/MATHEMATICAL_CONSTITUTION.md",
+      "disposition": "consistent",
+      "required_fragments": [
+        "Verification assignment atomically creates the exact five-dimensional reservation",
+        "`verification.started` claims the same vector with the complete start cohort"
+      ]
+    }
+  ],
+  "superseded_consumer_audit": [
+    {
+      "path": "docs/FIRST_SLICE_ADMISSION_CLOSURE_PLAN.md",
+      "required_status_fragment": "Status: superseded pre-resolution architecture-evidence hypothesis",
+      "reason": "retained disputed 44/77/52/23 hypothesis; not a current normative assignment contract"
+    },
+    {
+      "path": "architecture/first-slice-admission-gap-inventory.json",
+      "required_status_fragment": "\"status\": \"non_authoritative_non_freezable_gap_hypothesis\"",
+      "reason": "retained non-freezable pre-resolution machine hypothesis; not a current normative assignment contract"
+    }
+  ],
+  "forbidden_active_consumer_fragments": [
+    "`verification.assign` atomically binds one exact local WorkContract",
+    "`verification.assign` binds exact active DataUseDecisions, promoted input manifests, local WorkContract",
+    "WorkContract -> verification.assign -> WorkIntent",
+    "pre-existing WorkContract -> verification.assign"
+  ]
+}

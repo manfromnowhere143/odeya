@@ -103,7 +103,7 @@ def is_structural_negative(case: dict[str, Any]) -> bool:
     return (
         case.get("expect") in {"invalid", "reject"}
         or case.get("structural_expect") == "invalid"
-        or case.get("kind") == "adversarial"
+        or case.get("kind") in {"adversarial", "known_bad"}
         or (isinstance(case.get("expected_status"), str) and case["expected_status"].startswith("invalid_"))
     )
 
@@ -128,6 +128,11 @@ REGISTRY: dict[str, tuple[str, Any, Any]] = {
     "constitutional-construction": ("cases.json", substring("expected_refusal_contains"), None),
     "work-identity-successor-cohort": ("cases.json", intent_and_inventory("expected_errors"), None),
     "work-intent-identity-candidate": ("cases.json", intent_and_inventory("expected_errors"), None),
+    "prq-009-assignment-order": (
+        "cases.json",
+        substring("expected_refusal_contains"),
+        None,
+    ),
     "canonical-profile-candidate": ("cases.json", intent_and_inventory("required_errors"), None),
     "command-identity-contracts": ("cases.json", exact_reason_set, None),
     # The repository's largest adversarial corpus, attributed by ADR 0068.
