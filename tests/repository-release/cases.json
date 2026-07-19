@@ -79,6 +79,53 @@
       "old": "            python scripts/validate_architecture_surface.py\n",
       "new": "",
       "expected": "fast policy architecture-surface/release validation"
+    },
+    {
+      "id": "missing-release-branch-trigger",
+      "old": "      - main\n      - \"release/**\"\n  workflow_dispatch:",
+      "new": "      - main\n  workflow_dispatch:",
+      "expected": "trigger"
+    },
+    {
+      "id": "missing-exact-checkout-ref",
+      "old": "          ref: ${{ github.event.pull_request.head.sha || github.sha }}\n",
+      "new": "",
+      "expected": "checkout"
+    },
+    {
+      "id": "publication-pull-request-trigger",
+      "workflow": ".github/workflows/publication-sequence.yml",
+      "old": "on:\n  push:\n",
+      "new": "on:\n  pull_request:\n  push:\n",
+      "expected": "trigger"
+    },
+    {
+      "id": "publication-workflow-dispatch-trigger",
+      "workflow": ".github/workflows/publication-sequence.yml",
+      "old": "      - \"release/**\"\n\npermissions:",
+      "new": "      - \"release/**\"\n  workflow_dispatch:\n\npermissions:",
+      "expected": "trigger"
+    },
+    {
+      "id": "publication-job-skip",
+      "workflow": ".github/workflows/publication-sequence.yml",
+      "old": "  publication-sequence:\n    name: Publication sequence\n    runs-on: ubuntu-24.04\n",
+      "new": "  publication-sequence:\n    name: Publication sequence\n    if: ${{ false }}\n    runs-on: ubuntu-24.04\n",
+      "expected": "may not be conditional"
+    },
+    {
+      "id": "publication-continue-on-error",
+      "workflow": ".github/workflows/publication-sequence.yml",
+      "old": "    timeout-minutes: 5\n",
+      "new": "    timeout-minutes: 5\n    continue-on-error: true\n",
+      "expected": "may not continue on error"
+    },
+    {
+      "id": "publication-validator-no-op",
+      "workflow": ".github/workflows/publication-sequence.yml",
+      "old": "          python scripts/ci/validate_publication_sequence.py --ci-event \"$GITHUB_EVENT_PATH\" --repo . \\\n            2>&1 | tee artifacts/ci/publication-sequence.log\n",
+      "new": "          true 2>&1 | tee artifacts/ci/publication-sequence.log\n",
+      "expected": "exact validator"
     }
   ],
   "release_contract": "docs/REPOSITORY_RELEASE.md",

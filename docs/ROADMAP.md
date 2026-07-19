@@ -152,25 +152,58 @@ The canonical public architecture remote already exists at
 not an implemented engine and not private mission data. Every later
 architecture publication remains an exact-commit external operation governed
 by [Repository Release Engineering](REPOSITORY_RELEASE.md): clean scope,
-fresh-clone rehearsal, retained evidence, guarded fast-forward publication,
-observed remote checks, and remote-main reproduction.
+one single-parent direct-child candidate, fresh-clone rehearsal, retained
+evidence, an immutable `release/<sha>` push, exact candidate checks, guarded
+same-SHA fast-forward publication, new post-main checks, and remote-main
+reproduction. The first activation additionally retains the exact
+eleven-operation account-mutation journal and a final read-only receipt binding
+the bootstrap and final candidate checks, promotion governance, final `main`
+checks, remote comparison, protected refs, and effective rules. Its live
+observations are REST GETs plus one fixed repository-policy GraphQL query
+transported by POST; no GraphQL mutation or alternate query is admitted. Every
+release ref remains permanent candidate evidence, including failed candidates;
+it is never rewritten, deleted, or recreated.
 
 The published architecture bytes must retain:
 
 - a short README whose opening sentence says exactly what Odeya is, followed by its current state, explicit non-claims, and the bounded proof relationship to Sentinel, Telos, and Inbar;
 - one memorable Mermaid architecture map derived from the accepted contracts and module manifest, with scientific state, authority, evidence, verification, and external-effect boundaries visible rather than decorative;
-- required fast pull-request checks plus separately visible exhaustive schema, semantic, adversarial, canonicalization, architecture-evidence, and formal-model checks;
+- pull requests disabled at repository level, every pre-existing open pull
+  request closed before activation, and separately visible exact push checks
+  for policy, foundation, schema, semantic, adversarial, canonicalization,
+  architecture evidence, release surface, bounded formal models, and the
+  publication sequence;
 - GitHub Actions pinned to immutable revisions, least-privilege token
   permissions, explicit concurrency and timeout limits, retained failure
-  evidence, and no secret-bearing untrusted execution; once separately
-  authorized and configured, a server-side ruleset must require the observed
-  check contexts before they may be called protected;
+  evidence, and no secret-bearing untrusted execution; the accepted target has
+  one no-bypass `main` ruleset requiring the ten exact push contexts with
+  strict current-base enforcement and
+  deletion/non-fast-forward and linear-history blocking, plus one no-bypass
+  `refs/heads/release/*` ruleset that permits creation, then restricts every
+  update and blocks deletion/non-fast-forward and nonlinear changes without
+  status checks; merge commits and squash merges are disabled, rebase merge is
+  enabled only as GitHub's prerequisite for server linear history and remains
+  inert because `has_pull_requests=false`, and the push-only verifier carries
+  the exact one-single-parent/direct-child proof;
 - security and supply-chain checks appropriate to the implemented stack, enabled when their subject actually exists rather than claimed in advance;
 - a fresh-clone rehearsal proving that the README commands, Mermaid rendering, validation environment, and required checks reproduce without local hidden state.
 
-The public remote currently has no server-side `main` ruleset, so the local
-pre-push hook cannot be described as branch protection. A ruleset is the next
-repository-governance operation and must be separately configured and observed.
+The 2026-07-19 pre-hardening observation found no server-side ruleset; that is
+retained as history, not current state. Account bootstrap subsequently closed
+pull requests 1 and 2, disabled the pull-request surface, applied the exact
+inert merge and Actions policies, and read back active no-bypass rulesets
+`19178198` for permanent candidates and `19178503` for strict same-SHA `main`
+promotion. Sole-child bootstrap candidate
+`a25d026bd7233dfc452accc6087ded0bf015d7b4` is retained at its permanent
+release ref; all four workflows and ten jobs succeeded on attempt 1, and the
+eleven-operation journal is closed. These observations establish active
+account controls and the bootstrap census only. The distinct final candidate,
+promotion, post-main checks, remote replay/comparison, and final activation
+receipt remain required before the first candidate-to-main cycle is complete.
+GitHub merge, squash, and rebase methods are not publication paths. Rebase
+remains true only as the inert linear-history prerequisite while
+`has_pull_requests=false`; the live verifier refuses drift from the exact
+configuration.
 A successful architecture publication does not authorize product deployment,
 research publication, domain purchase, outreach, or runtime execution.
 

@@ -150,6 +150,20 @@ python3 scripts/audit_suite_guard_coverage.py           # every other suite, ~7m
 
 See [repository release engineering](docs/REPOSITORY_RELEASE.md) for the exact CI jobs, threat boundary, toolchain pins, and fresh-clone rehearsal. A green check is evidence about this repository snapshot; it is never scientific truth or Gate A acceptance.
 
+Repository-governance bootstrap was observed on 2026-07-19. Public `main`
+remained at `56e8062334fb81bba955ba137be690e085d4c88e`, while its sole-child
+bootstrap candidate `a25d026bd7233dfc452accc6087ded0bf015d7b4` became the
+permanent `release/a25d026bd7233dfc452accc6087ded0bf015d7b4` ref and passed
+all four push workflows and ten jobs on attempt 1. GitHub read-back observed
+active no-bypass release and `main` rulesets (IDs `19178198` and `19178503`),
+disabled pull requests, the inert rebase-only merge configuration, full-SHA
+Action admission, and read-only workflow tokens. That checkpoint establishes
+the account controls and bootstrap census only. Completion of the distinct
+post-account-state candidate, same-SHA `main` promotion, post-main checks,
+remote replay/comparison, and final activation receipt must be resolved from
+Git and the external subject-bound receipts; none grants Gate A or runtime
+authority.
+
 ## Next
 
 The canonical-migration wave is closed at audit zero (ADRs 0032–0050): all six blocking finding classes — 1,222 findings in total — now measure zero, every reissue ledgered so each reissued schema's predecessor verifies against its recorded checkpoint commit, and the audit reports `gate_a_disposition: candidate_clear`. The profile nevertheless remains **unissued**: freezing it requires independent review of the executed wave and the operator's exact-byte decision, which no session can grant itself. That executed wave was then attacked across four rounds of independent adversarial review (ADRs 0051, 0063, 0069, 0077), each briefed to refute; each round found real defects — a fabricated disposition field in the evidence writer, a publication path a plain `git push` bypassed, coverage audits that could regenerate their own records — and each is retracted in place with corrected, re-measured figures. Those reviewers were context-isolated but not independent: they shared the producer's provider, model family, and prompt family, five of the twelve correlation axes `ModelConfigurationRecord` already enumerates, and that is recorded rather than glossed (see the [reviewer-agent proposal](docs/REVIEWER_AGENT_PROPOSAL.md)). T1 AuthorityAssignment, the command/event/state/reducer graph, the constitutional root/checkpoint/activation chain, independent reducers and verifiers, replay/recovery/correction-fanout evidence, rights-settled proof import, accountable human reviews, an exact candidate manifest, and the owner's exact-byte decision all remain mandatory before Gate A. The [closure plan](docs/GATE_A_PREREQUISITE_CLOSURE_PLAN_2026-07-16.md) and [current handoff](docs/SESSION_HANDOFF.md) retain the dependency order and every open limitation.

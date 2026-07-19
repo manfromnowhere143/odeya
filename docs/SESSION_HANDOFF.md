@@ -4,9 +4,14 @@ Status: canonical recovery entrypoint for the current Odeya architecture and
 repository-release mission. Last updated 2026-07-19, Asia/Jerusalem. This is a
 handoff contract, not Gate A acceptance, implementation authorization, or
 scientific evidence; repository-publication authority comes only from the
-named decisions and release contract. The active C5 compatibility tranche is a
-dirty working-tree candidate based on the public checkpoint named below; it has
-not yet been committed, exactly rehearsed, or published.
+named decisions and release contract. The C5 compatibility correction is
+published at the exact checkpoint named below and has completed remote-main
+replay/comparison. Repository account hardening and the bootstrap candidate
+census are now executed and read back; the distinct final candidate and its
+end-to-end activation receipt remain the current publication boundary. This
+file cannot recursively name its own containing commit; resolve exact commit,
+rehearsal, publication, and activation state from Git plus the external
+subject-bound receipts.
 
 Read this file before changing repository bytes. Then read the detailed
 [Gate A working packet](GATE_A_HANDOFF_WORKING_PACKET_2026-07-15.md), the
@@ -26,6 +31,68 @@ machine-readable manifests; current architecture status and gate contracts;
 this operational handoff; then dated historical packets and chat. A newer
 document does not silently overrule an accepted decision, and an older count or
 hash does not silently describe a descendant commit.
+
+## Live GitHub activation checkpoint
+
+The exact 2026-07-19 bootstrap boundary is:
+
+- base/public `main`:
+  `56e8062334fb81bba955ba137be690e085d4c88e`;
+- permanent bootstrap candidate:
+  `a25d026bd7233dfc452accc6087ded0bf015d7b4`, tree
+  `8bfb4859a29bb1a9606dae59c168c64438cb6660`, whose sole parent is the
+  base and whose exact ref is
+  `refs/heads/release/a25d026bd7233dfc452accc6087ded0bf015d7b4`;
+- active no-bypass candidate ruleset:
+  `immutable publication candidates`, ID `19178198`;
+- active no-bypass strict-status `main` ruleset:
+  `main exact-SHA fast-forward`, ID `19178503`;
+- pull requests 1 and 2 closed, `has_pull_requests=false`, merge/squash false,
+  rebase true only as the inert linear-history prerequisite, auto-merge,
+  delete-on-merge, and update-branch false;
+- selected Actions with full-SHA pins required, GitHub-owned allowed,
+  verified-creator admission false, no patterns, and read-only workflow tokens
+  without pull-request approval; and
+- four bootstrap push workflows and ten jobs all completed successfully on
+  attempt 1 under GitHub Actions app ID `15368`.
+
+Retained bootstrap evidence under
+`/Users/danielwahnich/workspace/odeya-release-evidence/`:
+
+- `a25d026bd7233dfc452accc6087ded0bf015d7b4/rehearsal-evidence-manifest.json`,
+  SHA-256
+  `722905919a9ca895152a941494e8c48b395f15fa5ff13046203eed5786fd7439`;
+- `github-candidate-governance-a25d026bd7233dfc452accc6087ded0bf015d7b4.json`,
+  SHA-256
+  `518dd562d0a9be561e9d732d66778f2f034914980625a891e612e83ee2f49060`;
+- `github-candidate-checks-a25d026bd7233dfc452accc6087ded0bf015d7b4.json`,
+  SHA-256
+  `e60cadf4823ef4a7f07123d47f68434f247ec53dab5dc89bf58d9fe1fac93652`;
+  and
+- `github-governance-mutations-a25d026bd7233dfc452accc6087ded0bf015d7b4.json`,
+  the closed eleven-operation mutation journal, SHA-256
+  `00b9661b0e4a316099c56432b99df6a3526382539ee01d15fe9ebe43e2d55827`.
+
+Those observations establish live account controls and the bootstrap census.
+They do not establish the first complete publication activation. The commit
+containing this handoff is the distinct post-account-state candidate only if
+Git proves it is one sole-child sibling of the bootstrap candidate with the
+same base. It fixes two helper refusals discovered before the bootstrap
+transport: a Bash dynamically scoped readonly `main_sha` collision and a
+`HEAD:<destination>` refspec that the strict pre-push hook correctly rejected.
+The bootstrap release ref was then created through the exact validator and
+pre-push hook using the attached full local branch ref; no guard was bypassed.
+Before the final candidate was formed, adversarial review also found a
+source-ref time-of-check/time-of-use window. The helper now passes its frozen
+source ref and SHA into `git push`; the hook requires that exact tuple and the
+attached branch before any governed transport. Its real-hook regression
+refuses missing, ref-mismatched, and SHA-mismatched bindings.
+Both helper and hook now also refuse a failed cleanliness observation rather
+than interpreting empty stdout as a clean worktree.
+The final candidate still needs its own local rehearsal, permanent release
+ref/check census, promotion-governance receipt, same-SHA `main` fast-forward,
+new main census, remote replay/comparison, and final activation receipt unless
+those exact external artifacts already verify for the containing commit.
 
 ## Public repository boundary
 
@@ -107,12 +174,17 @@ The bar, stated concretely so it cannot be softened by fatigue or ambition:
   and never let a model signature stand where the schema demands a human one
   (`review-determination` fixes `reviewer.principal_type` to `human`).
 - **The published surface is evidence.** A push is not finished when the bytes
-  leave the machine; it is finished when every remote workflow on the pushed
-  commit is green, verified. Publish only through
-  `scripts/ci/push-rehearsed-head.sh`, guarded by the `.githooks/pre-push`
-  hook, and never with a plain `git push`. This rule was written, then broken
-  the same day by its author reading a formal model's "Finished" line as the
-  rehearsal's — so it is now a gate, not a memory (ADR 0072, 0075).
+  leave the machine; it is finished when every exact remote workflow on the
+  pushed commit is green and remote-main replay agrees. ADR 0091 accepts the
+  stronger two-ref law: the freshly observed current-main completion triplet
+  first revalidates, one rehearsed direct-child commit then passes four push
+  workflows and ten jobs at `release/<sha>`, and the same SHA fast-forwards
+  `main`, passes the new post-main runs, reproduces remotely, and survives a
+  final exact-main/candidate-ref read-back.
+  Its account barriers and bootstrap census are now active and observed; the
+  first full candidate-to-main settlement remains incomplete until the final
+  receipt exists. This rule was written because earlier publication controls
+  were repeatedly weaker than their prose (ADRs 0072, 0075, 0091).
 
 If a decision optimizes the number at the cost of the truth of the number,
 you have already failed, no matter how green the check. Slow is smooth and
@@ -217,34 +289,40 @@ that deserves to carry the mission forward.
 
 - Canonical workspace: `/Users/danielwahnich/workspace/odeya`; it is currently
   a protected concurrent-work lane on `agent/repository-release`.
-- Active correction worktree:
-  `/Users/danielwahnich/workspace/odeya-cross-program-evidence-extraction-20260719`
-- Active correction branch:
-  `agent/t0-work-lease-release-claim-20260719`
-- Active correction-tranche base and published checkpoint observed at recovery:
-  `3e5d61d2ccdcceebd5a9f23c91c8f9322da4680b`
-- Active correction-tranche base/published-checkpoint tree:
-  `ebf3b4c5679337bb4a737d4fefed76672e89d547`
+- Active repository-release hardening worktree:
+  `/Users/danielwahnich/workspace/odeya-github-sequence-control`
+- Active repository-release hardening branch:
+  `agent/github-sequence-control-20260719`
+- Published checkpoint and active hardening base observed at recovery:
+  `56e8062334fb81bba955ba137be690e085d4c88e`
+- Published-checkpoint tree:
+  `d90ed6dd8c54b91a1e503358f98ecaa08c766fa3`
 - Canonical remote: `https://github.com/manfromnowhere143/odeya` (public;
   created 2026-07-17 under ADR 0047; default branch `main`)
-- Measured remote state at the 2026-07-19 recovery boundary: `main` resolved to
-  the exact public base
-  `3e5d61d2ccdcceebd5a9f23c91c8f9322da4680b`, and the C5 descendant had no
-  commit, exact-commit rehearsal, guarded push, or remote workflow observation.
-  This is a dated recovery fact, not the release status of the tree currently
-  being read. Resolve current status from `git rev-parse HEAD`, `origin/main`,
-  the exact rehearsal directory/manifest, and exact-SHA workflow observations.
-  Secret scanning and push protection were enabled at the last account-side
-  observation; Dependabot security updates were disabled, no repository
-  ruleset existed, and `main` was not protected.
+- Measured remote state after the 2026-07-19 bootstrap: `main` still resolved
+  to `56e8062334fb81bba955ba137be690e085d4c88e`; permanent
+  `release/a25d026bd7233dfc452accc6087ded0bf015d7b4` resolved to that exact
+  sole-child bootstrap candidate. Its four workflow runs and ten jobs were
+  green on attempt 1. Pull requests were disabled after PRs 1 and 2 were
+  closed; the exact inert merge configuration, Actions policy, workflow-token
+  policy, no-bypass candidate ruleset `19178198`, and no-bypass strict-status
+  `main` ruleset `19178503` were all read back. Resolve any later promotion
+  and final activation only from Git and the external subject-bound receipts.
 - Retained remote-main evidence:
-  `/Users/danielwahnich/workspace/odeya-release-evidence/remote-main-3e5d61d2ccdcceebd5a9f23c91c8f9322da4680b`;
-  the local/remote invariant-profile comparison receipt is
-  `/Users/danielwahnich/workspace/odeya-release-evidence/remote-main-comparison-3e5d61d2ccdcceebd5a9f23c91c8f9322da4680b.json`
+  `/Users/danielwahnich/workspace/odeya-release-evidence/remote-main-56e8062334fb81bba955ba137be690e085d4c88e`;
+  its manifest SHA-256 is
+  `0f8b80572c2761436c0afe06660ce47a357bf17e718aa781328a8ffeacb5a47b`.
+  The local/remote invariant-profile comparison receipt is
+  `/Users/danielwahnich/workspace/odeya-release-evidence/remote-main-comparison-56e8062334fb81bba955ba137be690e085d4c88e.json`
   with SHA-256
-  `c0dad533c661e58f9578f0eb4638ce7da5c6bd1c74e3df21a79f2130a5dbb48b`.
+  `36046ac0bd2793f036024ac27b692b6e0884ca14a514e67dba879904abbd5cf2`
+  and status `verified_evidence_and_invariant_profile_equal`.
 - Repository visibility, creation, and evidence-gated architecture-publication
   authority: granted under ADR 0045 and ADR 0047 and reconciled by ADR 0087.
+- Exact-SHA two-ref repository hardening authority: explicitly granted by the
+  owner and bounded by ADR 0091. Account controls and bootstrap evidence are
+  active; the first end-to-end publication activation remains incomplete until
+  the distinct final candidate and final receipt verify.
 - Runtime, deployment, external-effect, and Gate A authority: not granted
 
 This committed file cannot contain the hash of the commit that contains it
@@ -257,24 +335,34 @@ Run first:
 
 ```bash
 bash -euo pipefail <<'BASH'
-cd /Users/danielwahnich/workspace/odeya-cross-program-evidence-extraction-20260719
+cd /Users/danielwahnich/workspace/odeya-github-sequence-control
 source scripts/ci/sanitize-git-environment.sh
 git status --short --branch
 git rev-parse HEAD
 git rev-parse 'HEAD^{tree}'
 git symbolic-ref --short HEAD
 git fetch --quiet origin main
-git rev-parse origin/main
 git remote -v
 git log --oneline --decorate -5
+BASE_COMMIT=56e8062334fb81bba955ba137be690e085d4c88e
+BOOTSTRAP_COMMIT=a25d026bd7233dfc452accc6087ded0bf015d7b4
+HEAD_COMMIT="$(git rev-parse HEAD)"
+REMOTE_MAIN="$(git rev-parse origin/main)"
+BOOTSTRAP_RELEASE="$(
+  git ls-remote --refs origin \
+    "refs/heads/release/$BOOTSTRAP_COMMIT" |
+    awk '{print $1}'
+)"
 test "$(git symbolic-ref --short HEAD)" = \
-  agent/t0-work-lease-release-claim-20260719
+  agent/github-sequence-control-20260719
 test "$(git remote)" = origin
 test "$(git remote get-url origin)" = \
   https://github.com/manfromnowhere143/odeya.git
-git merge-base --is-ancestor \
-  3e5d61d2ccdcceebd5a9f23c91c8f9322da4680b origin/main
-git merge-base --is-ancestor origin/main HEAD
+test "$(git rev-parse HEAD^)" = "$BASE_COMMIT"
+test "$HEAD_COMMIT" != "$BOOTSTRAP_COMMIT"
+test "$BOOTSTRAP_RELEASE" = "$BOOTSTRAP_COMMIT"
+test "$REMOTE_MAIN" = "$BASE_COMMIT" || test "$REMOTE_MAIN" = "$HEAD_COMMIT"
+python3 scripts/ci/verify_github_release.py governance
 git diff --cached --name-only
 git diff --check
 test "$(git -C /Users/danielwahnich/workspace/odeya symbolic-ref --short HEAD)" = \
@@ -285,14 +373,18 @@ BASH
 
 Expected invariants:
 
-- the active correction branch is
-  `agent/t0-work-lease-release-claim-20260719`;
+- the active hardening branch is
+  `agent/github-sequence-control-20260719`;
 - the canonical worktree remains on `agent/repository-release` with Daniel's
   protected UI/UX changes untouched;
-- the exact published correction checkpoint remains an ancestor of public
-  `origin/main`; an unexpected rewind or replacement fails recovery;
-- public `origin/main` remains an ancestor of the active `HEAD`, so any local
-  candidate is a fast-forward rather than a divergent history;
+- the containing commit is a distinct sibling of bootstrap candidate
+  `a25d026…`, with the same exact sole parent `56e806…`;
+- the bootstrap release ref remains exact and permanent;
+- `origin/main` is either the base while final publication is incomplete or
+  the exact containing commit after same-SHA promotion; any third identity,
+  rewind, or replacement fails recovery;
+- both no-bypass rulesets and the exact account policy pass live governance
+  verification;
 - the only remote is the canonical public `origin` created under ADR 0047;
 - no unexpected worktree path is dirty; and
 - Daniel's protected UI/UX lane remains outside architecture/release staging.
@@ -317,12 +409,12 @@ session to edit, stage, commit, normalize, discard, or describe them as Odeya's
 accepted design. Before every architecture commit, prove that these paths are
 absent from its diff.
 
-## Active C5 compatibility correction — resolve release status from Git
+## Published C5 compatibility correction
 
 [ADR 0090](decisions/0090-preserve-the-resource-claim-when-work-lease-ends.md)
-records the current correction. ResearchEvent 0.17.0 incorrectly required
+records the published correction at `56e8062`. ResearchEvent 0.17.0 incorrectly required
 `work.lease_released` to carry an unclaimed reservation even though
-`attempt.start` had already committed the claim. The active tranche:
+`attempt.start` had already committed the claim. The published tranche:
 
 - reissues the unissued event envelope as ResearchEvent 0.18.0, where
   WorkLease release retains `reservation_claim_state=claimed`, the exact
@@ -356,11 +448,12 @@ refunded          = 0
 net               = reserved_consumed + overage - refunded
 ```
 
-The candidate inventory is 112 schemas and 826 shared-manifest cases. Lifecycle
+The exact published inventory is 112 schemas and 826 shared-manifest cases. Lifecycle
 coverage is 222/229 refusal statements and 108/111 top-level conditions;
 first-slice resolution retains 12 safe cases and 61 known-bads; projection
-retains 63 cases. These counts become release evidence only for an exact tree
-that passes validation and rehearsal; never infer that status from this prose.
+retains 63 cases. The local and remote rehearsals independently verified the
+named checkpoint and compared equal by the retained invariant profile. Never
+transfer those counts or evidence to a descendant from this prose.
 
 The compatibility finding `C5-WORK-LEASE-RELEASE-CLAIM-001` is corrected only
 for these unissued candidate bytes. C5 and PRQ-009 remain
@@ -368,9 +461,8 @@ for these unissued candidate bytes. C5 and PRQ-009 remain
 assignment cohort, immutable members and reducers, registry/root,
 checkpoint/witness/P0/activation chain, complete replay, accountable review,
 and operator decision do not exist. The canonical profile is unissued and Gate
-A remains blocked. Commit, rehearsal, and publication status must be resolved
-from exact Git and retained release evidence. None of those repository-release
-states implies admission, execution authority, Gate A acceptance, or runtime.
+A remains blocked. The correction's publication and remote replay do not imply
+admission, execution authority, Gate A acceptance, or runtime.
 
 ## Historical recovery log — retained chronology, not current state
 
@@ -946,14 +1038,14 @@ directory, outside both the Git worktree and temporary storage:
 
 ```bash
 bash -euo pipefail <<'BASH'
-cd /Users/danielwahnich/workspace/odeya-cross-program-evidence-extraction-20260719
+cd /Users/danielwahnich/workspace/odeya-github-sequence-control
 source scripts/ci/sanitize-git-environment.sh
 commit="$(git rev-parse HEAD)"
 evidence="/Users/danielwahnich/workspace/odeya-release-evidence/$commit"
 test ! -e "$evidence"
 bash scripts/ci/rehearse-fresh-clone.sh \
   "$commit" \
-  /Users/danielwahnich/workspace/odeya-cross-program-evidence-extraction-20260719 \
+  /Users/danielwahnich/workspace/odeya-github-sequence-control \
   "$evidence" \
   local
 python3 - "$evidence" "$commit" <<'PY'
@@ -972,10 +1064,13 @@ PY
 BASH
 ```
 
-The rehearsal must end with a nineteen-file manifest bound to the exact
-`subject_commit`. Inspect the nested manifest and Gitleaks logs. Never reuse an
-earlier commit's evidence or treat a local source rehearsal as remote-main
-proof.
+The rehearsal must end with a schema-`0.2.0`, nineteen-file manifest bound to
+the exact `subject_commit`, with the twelve-file profile including the fourth
+workflow. The nested repository-release manifest remains fourteen diagnostics;
+the two new publication self-tests append to
+`final-release-contract.log`. Inspect the nested manifest and Gitleaks logs.
+Never reuse an earlier commit's evidence or treat a local source rehearsal as
+remote-main proof.
 
 ## Current hard boundary
 
@@ -1050,14 +1145,26 @@ A mission.
 
 ## Next architecture mission, in dependency order
 
-1. Finish the active ADR 0090 working-tree candidate without broadening it:
-   preserve the 0.18/0.19/0.20 side-by-side identities, claimed-reservation
-   ownership, partial-start/complete-report evidence boundary, and all null or
-   false authority fields. Recompute every changed coverage and manifest pin,
-   validate the exact scoped tree, commit intentionally, run a fresh-clone
-   rehearsal for that exact commit, and only then use the guarded publication
-   protocol and verify remote workflows. Until those acts occur, this tranche
-   is neither rehearsed nor published.
+1. Resolve the containing commit from Git. If public `main` still equals base
+   `56e8062`, finish the bounded ADR 0091 sequence without changing
+   architecture or Gate A state: prove this commit is the distinct sole-child
+   sibling of bootstrap `a25d026…`; run and retain its full fresh-clone
+   rehearsal; revalidate current-main replay/comparison; create its permanent
+   `release/<sha>` through the guarded helper; require four candidate runs and
+   ten jobs green; retain full promotion-governance read-back; same-SHA
+   fast-forward `main`; require four newly created main runs and ten jobs
+   green; complete remote-main replay/comparison; then emit and revalidate the
+   final read-only activation receipt over the closed eleven-operation journal,
+   all three check censuses, zero open pull requests, both ruleset IDs, both
+   permanent release refs, and exact effective rules. Invoke the first
+   promotion with
+   `ODEYA_ACTIVATION_BOOTSTRAP_SHA=a25d026bd7233dfc452accc6087ded0bf015d7b4`.
+   If public `main` already equals the containing commit, do not push again:
+   verify its candidate, promotion, main, comparison, and activation receipts
+   byte-for-field and confirm no queued or in-progress Actions. Preserve every
+   release ref permanently. The REST/fixed-GraphQL dual-surface verifier admits
+   no mutation or alternate GraphQL query. Account controls are already
+   active; only the end-to-end publication settlement may remain incomplete.
 2. Complete T0 by closing PRQ-001–PRQ-010 and PRQ-013. The
    canonical-profile migration audit is mechanically clear, but profile
    issuance, the HumanDecisionAssurance identity/wrapper and consumer
@@ -1091,12 +1198,16 @@ A mission.
     public architecture remote is not that authority.
 
 Every architecture publication must bind the operator-approved public
-repository identity, exact candidate commit and tree, expected `main` ref,
-canonical-source digest, retained rehearsal evidence, and observed remote
-checks. The local pre-push hook is a workstation control, not server-side
-branch protection. As measured on 2026-07-19, the missing repository ruleset
-and disabled Dependabot security updates remain explicit account-side
-governance work; neither may be claimed complete without fresh observation.
+repository identity, exact base/candidate commit and tree, immutable
+`release/<sha>` ref, expected `main` ref, canonical-source digest, retained
+rehearsal evidence, and exact remote runs. The local pre-push hook is a
+workstation control, not server-side branch protection. As measured at the
+ADR 0091 pre-change boundary on 2026-07-19, the repository ruleset was absent
+and Dependabot security updates were disabled. That ruleset finding is
+historical: the two no-bypass rulesets and exact account configuration were
+subsequently applied and read back under the owner's bounded authority.
+Dependabot security updates remain disabled and visible as a separate
+repository-governance finding.
 
 Do not skip forward because a model appears capable, a domain becomes
 available, an investor asks, or a deadline feels important. Pressure is handled
@@ -1105,33 +1216,104 @@ the gate.
 
 ## The published surface is part of the evidence
 
-**A `.githooks/pre-push` hook refuses any push to `main` lacking evidence
-bound to the pushed SHA; run `git config core.hooksPath .githooks` in
-every clone, since the hook is local configuration and a fresh clone has
-no protection without it (ADR 0075). Publish through
-`scripts/ci/push-rehearsed-head.sh`**, and audit
-history with `scripts/ci/audit-publication-evidence.py <range>`: this
-session's 24 published commits all carry evidence bound to their exact
-SHA, while nine older commits on the branch carry none (ADR 0074). It refuses
-to push a commit that has no rehearsal evidence bound to its exact SHA, a
-dirty worktree, or a non-fast-forward head. This exists because the law
-below was broken the same day it was written: a session pushed while the
-rehearsal was still running, mistaking a formal model's completion line
-for the rehearsal's. That rehearsal passed, which is luck, not process
-(ADR 0072).
+Bootstrap `a25d026…` carries the ADR 0091 hook, verifier, fourth workflow, and
+two-ref helper; both no-bypass rulesets are observed. The hook and helper remain
+local workstation controls alongside—not substitutes for—the server rulesets.
+Run `git config core.hooksPath .githooks` in every clone, but never call that
+local setting branch protection. Audit history with
+`scripts/ci/audit-publication-evidence.py <range>`: the session measured by ADR
+0074 retained exact-SHA evidence for its 24 published commits while nine older
+commits lacked the current evidence form.
 
-A push is not complete when the bytes leave this machine. It is complete
-when every remote workflow on the canonical repository reports green for
-the pushed head. After every push, verify with `gh run list` (or watch
-the head commit's checks) and treat a red remote check exactly like a
-failed local gate: stop, diagnose from the workflow log, fix or re-pin
-lawfully, and push the correction before any further work. This law
-exists because seven commits were once published with the remote
-Foundation workflow red while every local rehearsal was green — the
-CI-only contract-profile pins had no local reader. The partition gate now
-runs in the default validator and in the rehearsal, but tooling can only
-cover known gaps: the operator's public surface shows the truth of the
-head commit, and no session may leave it red, or unverified, at handoff.
+ADR 0091 publication is one closed sequence: revalidation of
+the current-main local/remote/comparison completion triplet; local rehearsal on
+a single direct child; immutable `release/<sha>` push; four exact workflows and
+ten successful jobs on that SHA; live no-bypass ruleset read-backs; same-SHA
+fast-forward to `main`; ten newly created successful post-main jobs;
+remote-main replay/comparison; and a final exact-main/candidate-ref read-back.
+Every release ref is permanent candidate
+evidence, including a failed candidate; it is never rewritten, deleted, or
+recreated. The candidate ruleset permits the initial creation, then restricts
+every update and blocks deletion/non-fast-forward and nonlinear changes. The
+`main` ruleset also requires server linear history. Pull requests are disabled
+after every pre-existing open PR is closed. Merge commits and squash merges are
+disabled; rebase merge is enabled only as GitHub's required linear-history
+prerequisite and is inert while `has_pull_requests=false`. The live verifier
+refuses drift from that exact configuration. The push-only context, hook, and
+helper enforce the stronger exact one-single-parent/direct-child transition
+and remain a self-modifiable verification boundary.
+
+For candidate `C`, retain `github-candidate-governance-C.json`,
+`github-candidate-checks-C.json`, `github-promotion-governance-C.json`, and
+`github-main-checks-C.json` outside the repository. They respectively bind the
+pre-candidate repository/Actions/candidate-ruleset read-back, the exact
+release-ref four-run/ten-job census, the full pre-promotion two-ruleset
+read-back, and the separate post-main four-run/ten-job census to
+`subject_commit=C`. They are normalized noncanonical diagnostic receipts, not
+authority; an existing byte drift or symlinked path/parent refuses settlement.
+The first activation also retains
+`github-governance-mutations-C1.json` and `github-activation-C2.json`.
+The former records the eleven exact REST exchanges without credentials. The
+latter is read-only and binds that journal, bootstrap and final candidate
+checks, final promotion governance, final `main` checks, the independently
+revalidated remote-main comparison, zero open pull requests, both permanent
+release refs, branch protection, and exact effective rules. REST supplies the
+GET observations; one fixed GraphQL repository-policy query is transported by
+POST because REST hides merge fields once pull requests are disabled. The
+verifier rejects every GraphQL mutation or alternate query. A lost ruleset
+`201` is `applied_outcome_unknown` and must never be reconstructed by retry.
+For the initial promotion, invoke the helper with
+`ODEYA_ACTIVATION_BOOTSTRAP_SHA="$BOOTSTRAP_COMMIT"`; it runs the exact
+settlement form below after the final remote comparison. The expanded form is
+retained here for recovery and independent inspection:
+
+```bash
+python3 scripts/ci/verify_github_release.py activation-evidence \
+  --base-sha "$BASE_COMMIT" \
+  --bootstrap-sha "$BOOTSTRAP_COMMIT" \
+  --sha "$FINAL_COMMIT" \
+  --mutation-journal "$EVIDENCE_ROOT/github-governance-mutations-$BOOTSTRAP_COMMIT.json" \
+  --bootstrap-checks-receipt "$EVIDENCE_ROOT/github-candidate-checks-$BOOTSTRAP_COMMIT.json" \
+  --candidate-checks-receipt "$EVIDENCE_ROOT/github-candidate-checks-$FINAL_COMMIT.json" \
+  --promotion-governance-receipt "$EVIDENCE_ROOT/github-promotion-governance-$FINAL_COMMIT.json" \
+  --main-checks-receipt "$EVIDENCE_ROOT/github-main-checks-$FINAL_COMMIT.json" \
+  --comparison-receipt "$EVIDENCE_ROOT/remote-main-comparison-$FINAL_COMMIT.json" \
+  --local-evidence "$EVIDENCE_ROOT/$FINAL_COMMIT" \
+  --remote-evidence "$EVIDENCE_ROOT/remote-main-$FINAL_COMMIT" \
+  --output "$EVIDENCE_ROOT/github-activation-$FINAL_COMMIT.json"
+```
+
+The retained release-surface self-tests currently pin sixteen publication
+update/event/environment refusals; all four helper governance-scope states; one
+real readonly-caller validator invocation; four attached/detached/renamed/
+wrong-SHA source-ref states; three clean-worktree observation states; five
+real-hook frozen-binding/status protocol states; ten check-census mutations;
+sixteen governance mutations; six GitHub receipt mutations; six
+API-identity/query mutations; five disabled-PR-census mutations; six
+CLI-boundary mutations; five mutation-journal mutations; nine final
+activation-observation mutations; and nineteen rehearsal-comparison/evidence
+mutations. The disabled-PR census reads the Issues endpoint and refuses a
+saturated page because GitHub returns 404 from the pulls endpoint after
+`has_pull_requests=false`.
+
+The current completed public-main replay checkpoint at the source boundary is
+`56e8062334fb81bba955ba137be690e085d4c88e`. Its remote-main manifest SHA-256 is
+`0f8b80572c2761436c0afe06660ce47a357bf17e718aa781328a8ffeacb5a47b`;
+its comparison receipt SHA-256 is
+`36046ac0bd2793f036024ac27b692b6e0884ca14a514e67dba879904abbd5cf2`
+with status `verified_evidence_and_invariant_profile_equal`. Bootstrap
+`a25d026…` separately has exact local rehearsal, permanent candidate-ref,
+candidate-governance, candidate-check, and mutation-journal evidence listed at
+the top of this handoff. Resolve whether the containing final candidate has
+completed the sequence from its own exact external receipts; never infer that
+from either historical checkpoint.
+
+Treat any red, missing, skipped, canceled, timed-out, stale, or unverified
+remote job exactly like a failed local gate: stop, diagnose, and do not promote.
+This law exists because seven commits were once published with the remote
+Foundation workflow red while every local rehearsal was green. The partition
+gate now runs locally too, but the broader lesson remains: no session may
+leave public `main` red or unverified at handoff.
 
 ## Definition of a proper continuation handoff
 

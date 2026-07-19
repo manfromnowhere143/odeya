@@ -1,7 +1,9 @@
 # ADR 0087: Reconcile the public-repository operational contract
 
-- Status: Executed as an architecture/release truth correction; remote
-  protection remains open
+- Status: Executed as an architecture/release truth correction; its remote
+  protection finding was subsequently closed at the account-control layer by
+  ADR 0091 rulesets `19178198` and `19178503`. The first complete
+  candidate-to-main activation remains separately pending
 - Date: 2026-07-19
 - Decision owners: repository owner (publication authority), architecture
   review (release truth)
@@ -75,5 +77,12 @@ configuration; that evidence requires independent remote observation.
 Operational recovery now starts from the public repository fact and current
 remote head. The release contract becomes an ongoing publication protocol
 instead of an unexecuted activation plan. The absence of a server-side ruleset
-is visible as an open blocker rather than silently replaced by confidence in a
-local hook.
+was recorded here as an open blocker rather than silently replaced by
+confidence in a local hook. On 2026-07-19 ADR 0091 later closed that
+account-control finding: both no-bypass rulesets were applied and read back,
+pull requests were disabled, and the exact merge/Actions policies were
+observed. Bootstrap candidate `a25d026bd7233dfc452accc6087ded0bf015d7b4`
+then passed four workflows and ten jobs on attempt 1. Those later facts do not
+rewrite this ADR's historical observation and do not, without the final
+candidate cycle and activation receipt, establish complete publication
+activation.

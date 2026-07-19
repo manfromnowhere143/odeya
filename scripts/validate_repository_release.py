@@ -28,6 +28,7 @@ WORKFLOWS = {
     ".github/workflows/architecture.yml": "Architecture / Foundation",
     ".github/workflows/release-surface.yml": "Repository / Release Surface",
     ".github/workflows/formal.yml": "Architecture / Bounded Formal Models",
+    ".github/workflows/publication-sequence.yml": "Repository / Publication Sequence",
 }
 REQUIRED_JOB_NAMES = {
     ".github/workflows/architecture.yml": (
@@ -41,6 +42,7 @@ REQUIRED_JOB_NAMES = {
     ),
     ".github/workflows/release-surface.yml": ("Release surface",),
     ".github/workflows/formal.yml": ("Bounded formal models",),
+    ".github/workflows/publication-sequence.yml": ("Publication sequence",),
 }
 REQUIRED_JOB_IDS = {
     ".github/workflows/architecture.yml": (
@@ -54,8 +56,31 @@ REQUIRED_JOB_IDS = {
     ),
     ".github/workflows/release-surface.yml": ("release-surface",),
     ".github/workflows/formal.yml": ("bounded-models",),
+    ".github/workflows/publication-sequence.yml": ("publication-sequence",),
 }
+PUBLICATION_WORKFLOW = ".github/workflows/publication-sequence.yml"
+STANDARD_TRIGGER_BLOCK = (
+    "on:\n"
+    "  pull_request:\n"
+    "  push:\n"
+    "    branches:\n"
+    "      - main\n"
+    '      - "release/**"\n'
+    "  workflow_dispatch:\n\n"
+)
+PUBLICATION_TRIGGER_BLOCK = (
+    "on:\n"
+    "  push:\n"
+    "    branches:\n"
+    "      - main\n"
+    '      - "release/**"\n\n'
+)
+STANDARD_CHECKOUT_REF = (
+    "ref: ${{ github.event.pull_request.head.sha || github.sha }}"
+)
+PUBLICATION_CHECKOUT_REF = "ref: ${{ github.sha }}"
 SHELL_SCRIPTS = (
+    ".githooks/pre-push",
     "scripts/ci/install-node.sh",
     "scripts/ci/install-actionlint.sh",
     "scripts/ci/install-zizmor.sh",
@@ -64,7 +89,12 @@ SHELL_SCRIPTS = (
     "scripts/ci/sanitize-git-environment.sh",
     "scripts/ci/render-readme-architecture.sh",
     "scripts/ci/check-repository-release.sh",
+    "scripts/ci/push-rehearsed-head.sh",
     "scripts/ci/rehearse-fresh-clone.sh",
+)
+EXECUTABLE_SCRIPTS = (
+    *SHELL_SCRIPTS,
+    "scripts/ci/verify_github_release.py",
 )
 REQUIRED_PATHS = (
     ".python-version",
@@ -87,6 +117,8 @@ REQUIRED_PATHS = (
     "scripts/validate_architecture_surface.py",
     "scripts/validate_schema_contracts.py",
     "scripts/validate_contract_profiles.py",
+    "scripts/ci/validate_publication_sequence.py",
+    "scripts/ci/verify_github_release.py",
     "tests/architecture-surface/README.md",
     "tests/architecture-surface/cases.json",
     "tests/repository-release/README.md",
@@ -172,6 +204,15 @@ RELEASE_CONTRACT_REQUIRED = (
     "approved-canonical-source-sha256",
     "A local hook is not server-side branch protection",
     "no repository ruleset",
+    "github-candidate-governance-C.json",
+    "github-candidate-checks-C.json",
+    "github-promotion-governance-C.json",
+    "github-main-checks-C.json",
+    "github-governance-mutations-C1.json",
+    "github-activation-C2.json",
+    "github_repository_activation_receipt",
+    "applied_outcome_unknown",
+    "update_allows_fetch_and_merge=false",
     "does not authorize runtime",
 )
 RELEASE_CONTRACT_FORBIDDEN = (
@@ -197,6 +238,22 @@ EXPECTED_WORKFLOW_MUTATION_IDS = (
     "workflow-run-trigger",
     "unexpected-job",
     "missing-fast-architecture-surface-lock",
+    "missing-release-branch-trigger",
+    "missing-exact-checkout-ref",
+    "publication-pull-request-trigger",
+    "publication-workflow-dispatch-trigger",
+    "publication-job-skip",
+    "publication-continue-on-error",
+    "publication-validator-no-op",
+)
+PUBLICATION_WORKFLOW_MUTATION_IDS = frozenset(
+    {
+        "publication-pull-request-trigger",
+        "publication-workflow-dispatch-trigger",
+        "publication-job-skip",
+        "publication-continue-on-error",
+        "publication-validator-no-op",
+    }
 )
 EXPECTED_FAST_SURFACE_MUTATION = (
     "            python scripts/validate_architecture_surface.py\n",
@@ -618,20 +675,24 @@ def validate_python_lock(errors: list[str]) -> int:
 
 
 def workflow_policy_errors(
-    text: str, expected_job_ids: tuple[str, ...] | None = None
+    text: str,
+    relative: str,
+    expected_job_ids: tuple[str, ...] | None = None,
 ) -> list[str]:
     issues: list[str] = []
-    trigger_block = (
-        "on:\n"
-        "  pull_request:\n"
-        "  push:\n"
-        "    branches:\n"
-        "      - main\n"
-        "  workflow_dispatch:\n\n"
-    )
+    publication = relative == PUBLICATION_WORKFLOW
+    trigger_block = PUBLICATION_TRIGGER_BLOCK if publication else STANDARD_TRIGGER_BLOCK
     trigger_match = re.search(r"(?ms)^on:\n.*?(?=^permissions:\n)", text)
     if trigger_match is None or trigger_match.group(0) != trigger_block:
-        issues.append("trigger block must be exactly pull_request, push main, workflow_dispatch")
+        if publication:
+            issues.append(
+                "trigger block must be exactly push main and release/** only"
+            )
+        else:
+            issues.append(
+                "trigger block must be exactly pull_request, push main and "
+                "release/**, workflow_dispatch"
+            )
     if re.search(r"(?m)^(?:schedule|repository_dispatch|workflow_run):\s*$", text):
         issues.append("trigger inventory contains a forbidden top-level event")
     permission_block = "permissions:\n  contents: read\n\nconcurrency:"
@@ -646,18 +707,33 @@ def workflow_policy_errors(
         issues.append("explicit token or secret context is forbidden")
 
     runner_count = len(re.findall(r"(?m)^\s+runs-on:\s*", text))
-    hosted_runner_count = len(re.findall(r"(?m)^\s+runs-on:\s*ubuntu-24\.04\s*$", text))
+    hosted_runner_count = len(
+        re.findall(r"(?m)^\s+runs-on:\s*ubuntu-24\.04\s*$", text)
+    )
     if runner_count < 1 or runner_count != hosted_runner_count:
         issues.append("runner must be the exact GitHub-hosted ubuntu-24.04 label")
-    timeout_count = len(re.findall(r"(?m)^\s+timeout-minutes:\s*[0-9]+\s*$", text))
+    timeout_count = len(
+        re.findall(r"(?m)^\s+timeout-minutes:\s*[0-9]+\s*$", text)
+    )
     if timeout_count != runner_count:
         issues.append("timeout must exist for every job")
 
     checkout_count = text.count("uses: actions/checkout@")
     persisted_false = text.count("persist-credentials: false")
     full_history = text.count("fetch-depth: 0")
-    if checkout_count < 1 or persisted_false != checkout_count or full_history != checkout_count:
+    if (
+        checkout_count < 1
+        or persisted_false != checkout_count
+        or full_history != checkout_count
+    ):
         issues.append("checkout must fetch full history without persisted credentials")
+    expected_checkout_ref = (
+        PUBLICATION_CHECKOUT_REF if publication else STANDARD_CHECKOUT_REF
+    )
+    if text.count(expected_checkout_ref) != checkout_count:
+        issues.append(
+            f"checkout must pin the exact ref expression {expected_checkout_ref!r}"
+        )
     if "concurrency:" not in text or "cancel-in-progress: true" not in text:
         issues.append("concurrency cancellation is required")
     if "shell: bash" not in text:
@@ -667,13 +743,15 @@ def workflow_policy_errors(
         issues.append("job inventory is absent")
     elif expected_job_ids is not None:
         jobs_text = text.split(jobs_marker, 1)[1]
-        observed_job_ids = tuple(re.findall(r"(?m)^  ([A-Za-z0-9_-]+):\s*$", jobs_text))
+        observed_job_ids = tuple(
+            re.findall(r"(?m)^  ([A-Za-z0-9_-]+):\s*$", jobs_text)
+        )
         if observed_job_ids != expected_job_ids:
             issues.append(
                 f"job inventory must be exact: expected {expected_job_ids}, "
                 f"got {observed_job_ids}"
             )
-    if expected_job_ids == REQUIRED_JOB_IDS[".github/workflows/architecture.yml"]:
+    if relative == ".github/workflows/architecture.yml":
         fast_policy_marker = "  fast-policy:\n"
         foundation_marker = "\n  foundation:\n"
         if fast_policy_marker not in text or foundation_marker not in text:
@@ -692,6 +770,33 @@ def workflow_policy_errors(
                         "fast policy architecture-surface/release validation "
                         f"must run exactly once: {command}"
                     )
+    if publication:
+        if runner_count != 1 or text.count("    timeout-minutes: 5\n") != 1:
+            issues.append("publication job must use exactly one five-minute timeout")
+        conditionals = re.findall(r"(?m)^\s+if:\s*(.+?)\s*$", text)
+        if conditionals != ["${{ always() }}"]:
+            issues.append(
+                "publication validation and clean-tree steps may not be "
+                "conditional or skipped"
+            )
+        if "continue-on-error:" in text:
+            issues.append("publication job may not continue on error")
+        if "|| true" in text or re.search(r";\s*true\s*$", text, re.MULTILINE):
+            issues.append("publication job may not suppress command failure")
+        required_publication_steps = (
+            'python scripts/ci/validate_publication_sequence.py --ci-event "$GITHUB_EVENT_PATH" --repo .',
+            "2>&1 | tee artifacts/ci/publication-sequence.log",
+            "run: git diff --exit-code",
+            "if: ${{ always() }}",
+            "path: artifacts/ci/publication-sequence.log",
+            "if-no-files-found: error",
+        )
+        for required in required_publication_steps:
+            if text.count(required) != 1:
+                issues.append(
+                    "publication job must retain the exact validator, clean-tree, "
+                    f"and evidence steps; expected one {required!r}"
+                )
     return issues
 
 
@@ -729,22 +834,41 @@ def validate_policy_mutations(errors: list[str]) -> int:
         errors.append(
             "repository release mutations: workflow case census/order is not closed and exact"
         )
-    base = read(base_relative, errors)
+    workflow_texts = {
+        base_relative: read(base_relative, errors),
+        PUBLICATION_WORKFLOW: read(PUBLICATION_WORKFLOW, errors),
+    }
     passed = 0
     for case in mutations:
         if not isinstance(case, dict):
             errors.append("repository release mutations: case is not an object")
             continue
-        if set(case) != {"id", "old", "new", "expected"}:
+        case_id = case.get("id")
+        publication_case = case_id in PUBLICATION_WORKFLOW_MUTATION_IDS
+        expected_members = {"id", "old", "new", "expected"}
+        if publication_case:
+            expected_members.add("workflow")
+        if set(case) != expected_members:
             errors.append(
                 "repository release mutations: case members are not closed and exact"
             )
             continue
-        case_id = case.get("id")
+        relative = case.get("workflow", base_relative)
+        if publication_case and relative != PUBLICATION_WORKFLOW:
+            errors.append(
+                f"repository release mutation {case_id}: publication workflow is not exact"
+            )
+            continue
         old = case.get("old")
         new = case.get("new")
         expected = case.get("expected")
-        if not all(isinstance(value, str) and value for value in (case_id, old, expected)) or not isinstance(new, str):
+        if (
+            not all(
+                isinstance(value, str) and value
+                for value in (case_id, relative, old, expected)
+            )
+            or not isinstance(new, str)
+        ):
             errors.append("repository release mutations: malformed case")
             continue
         if (
@@ -756,12 +880,13 @@ def validate_policy_mutations(errors: list[str]) -> int:
                 "specification drifted from the pinned matrix"
             )
             continue
+        base = workflow_texts[relative]
         if base.count(old) < 1:
             errors.append(f"repository release mutation {case_id}: source bytes are absent")
             continue
         mutated = base.replace(old, new, 1)
         mutation_issues = workflow_policy_errors(
-            mutated, REQUIRED_JOB_IDS.get(base_relative)
+            mutated, relative, REQUIRED_JOB_IDS.get(relative)
         )
         if not any(expected in issue for issue in mutation_issues):
             errors.append(
@@ -994,7 +1119,7 @@ def validate_workflows(lock: dict[str, Any], errors: list[str]) -> tuple[int, in
                 f"{relative}: job context inventory mismatch: expected "
                 f"{REQUIRED_JOB_NAMES[relative]}, got {observed_job_names}"
             )
-        for issue in workflow_policy_errors(text, REQUIRED_JOB_IDS[relative]):
+        for issue in workflow_policy_errors(text, relative, REQUIRED_JOB_IDS[relative]):
             errors.append(f"{relative}: {issue}")
         for forbidden in (
             "pull_request_target",
@@ -1110,6 +1235,12 @@ def validate_release_scripts(lock: dict[str, Any], errors: list[str]) -> None:
         "clean tracked tree",
         "failure-receipt.txt",
         "compare_rehearsal_manifests.py",
+        'validate_publication_sequence.py" --self-test',
+        'push-rehearsed-head.sh" --self-test',
+        'verify_github_release.py" --self-test',
+        'tee -a "$WORK_EVIDENCE_ROOT/final-release-contract.log"',
+        'CURRENT_STAGE="publication-sequence-self-test"',
+        'CURRENT_STAGE="github-release-verifier-self-test"',
         ".repository-release.publish.",
         "GITLEAKS_CONFIG_TOML",
         ".gitleaks.toml",
@@ -1120,9 +1251,128 @@ def validate_release_scripts(lock: dict[str, Any], errors: list[str]) -> None:
         "--log-opts=\"$SUBJECT_COMMIT\"",
         "rev-parse --is-shallow-repository",
         "Gitleaks did not attest the exact subject ancestry commit count",
+        ".githooks/pre-push",
     ):
         if required not in release_check:
             errors.append(f"check-repository-release.sh: missing step {required!r}")
+    retained_self_test_target = (
+        'tee -a "$WORK_EVIDENCE_ROOT/final-release-contract.log"'
+    )
+    if release_check.count(retained_self_test_target) != 2:
+        errors.append(
+            "check-repository-release.sh: both publication self-tests must append "
+            "to the existing final-release-contract log"
+        )
+
+    pre_push = read(".githooks/pre-push", errors)
+    for required in (
+        "a governed publication push must update exactly one ref",
+        "validate_publication_sequence.py",
+        "candidate-governance",
+        "verify_github_release.py\" governance",
+        'checks \\\n    --sha "$local_sha"',
+        "exact release candidate ref is absent or moved",
+        "compare_rehearsal_manifests.py",
+        '--expected-subject-commit "$main_sha"',
+        "url.*.insteadOf can redirect",
+        "ODEYA_EXPECTED_PUBLICATION_SOURCE_REF",
+        "ODEYA_EXPECTED_PUBLICATION_SOURCE_SHA",
+        "governed publication tuple does not match frozen helper source",
+        "publication source must remain the attached worktree branch",
+        "publishing worktree status could not be observed",
+    ):
+        if required not in pre_push:
+            errors.append(f".githooks/pre-push: missing publication gate {required!r}")
+
+    publication_helper = read("scripts/ci/push-rehearsed-head.sh", errors)
+    for required in (
+        "candidate|promote|status",
+        "candidate-governance",
+        "verify_github_release.py governance",
+        'ls-remote --refs \\\n      "$CANONICAL_REMOTE_URL" "${RELEASE_PREFIX}*"',
+        "Resuming immutable candidate",
+        "Resuming post-main verification",
+        "rehearse-fresh-clone.sh",
+        "compare_rehearsal_manifests.py",
+        "verify_completed_main",
+        "--verify-existing",
+        "first-create||||candidate-bootstrap",
+        "first-resume|a|${current_row}||candidate-bootstrap",
+        "later-create||${other_row}|${other_row}|full",
+        "later-resume|a|${combined_rows}|${other_row}|full",
+        "Publication helper state self-test PASSED",
+        "Publication helper validator-scope self-test PASSED",
+        "Publication helper source-ref self-test PASSED",
+        "Publication helper clean-worktree self-test PASSED",
+        "Publication helper pre-push binding self-test PASSED",
+        "symbolic-ref --quiet HEAD",
+        'git push "$REMOTE" "$SOURCE_REF:$destination_ref"',
+        'ODEYA_EXPECTED_PUBLICATION_SOURCE_REF="$SOURCE_REF"',
+        'ODEYA_EXPECTED_PUBLICATION_SOURCE_SHA="$COMMIT"',
+        'push_governed_ref "$RELEASE_REF"',
+        'push_governed_ref "$MAIN_REF"',
+        "github-candidate-governance-$COMMIT.json",
+        "github-candidate-checks-$COMMIT.json",
+        "github-promotion-governance-$COMMIT.json",
+        "github-main-checks-$COMMIT.json",
+        "ODEYA_ACTIVATION_BOOTSTRAP_SHA",
+        "github-governance-mutations-$ACTIVATION_BOOTSTRAP_SHA.json",
+        "verify_github_release.py activation-evidence",
+        "--candidate-checks-receipt \"$CANDIDATE_CHECKS_RECEIPT\"",
+        "--promotion-governance-receipt \"$PROMOTION_GOVERNANCE_RECEIPT\"",
+        "--comparison-receipt \"$COMPARISON_RECEIPT\"",
+        "No one-time GitHub activation claim was requested",
+        "--receipt-phase candidate",
+        "--receipt-phase promotion",
+        'candidate-governance \\\n'
+        '      --sha "$COMMIT" \\\n'
+        '      --output "$CANDIDATE_GOVERNANCE_RECEIPT"',
+        'verify_github_release.py governance \\\n'
+        '      --sha "$COMMIT" \\\n'
+        '      --receipt-phase candidate \\\n'
+        '      --output "$CANDIDATE_GOVERNANCE_RECEIPT"',
+        'verify_github_release.py governance \\\n'
+        '  --sha "$COMMIT" \\\n'
+        '  --receipt-phase promotion \\\n'
+        '  --output "$PROMOTION_GOVERNANCE_RECEIPT"',
+        '--output "$CANDIDATE_CHECKS_RECEIPT"',
+        '--output "$MAIN_CHECKS_RECEIPT"',
+        "Existing comparison receipt revalidated for resume",
+        "immutable candidate provenance moved",
+        "canonical main moved before final settlement",
+    ):
+        if required not in publication_helper:
+            errors.append(
+                "push-rehearsed-head.sh: missing exact publication state "
+                f"{required!r}"
+            )
+
+    github_verifier = read("scripts/ci/verify_github_release.py", errors)
+    for required in (
+        "activation-evidence",
+        "--bootstrap-checks-receipt",
+        "--candidate-checks-receipt",
+        "--promotion-governance-receipt",
+        "--main-checks-receipt",
+        "--comparison-receipt",
+        "--local-evidence",
+        "--remote-evidence",
+        "github_governance_mutation_journal",
+        "github_repository_activation_receipt",
+        "candidate_checks_sha256",
+        "promotion_governance_sha256",
+        "comparison_receipt_sha256",
+        "parent_bindings",
+        "final_check_censuses",
+        "revalidate_comparison_receipt",
+        "activation commit observation census is not exact",
+        "The critical mutable main ref is intentionally the final GitHub request",
+    ):
+        if required not in github_verifier:
+            errors.append(
+                "verify_github_release.py: missing final activation contract "
+                f"{required!r}"
+            )
 
     architecture_workflow = read(".github/workflows/architecture.yml", errors)
     if "--only-binary=:all:" not in architecture_workflow:
@@ -1154,7 +1404,7 @@ def validate_release_scripts(lock: dict[str, Any], errors: list[str]) -> None:
         if required not in rehearsal:
             errors.append(f"rehearse-fresh-clone.sh: missing step {required!r}")
 
-    for relative in SHELL_SCRIPTS:
+    for relative in EXECUTABLE_SCRIPTS:
         path = ROOT / relative
         try:
             mode = path.stat().st_mode
@@ -1175,6 +1425,12 @@ def validate_release_scripts(lock: dict[str, Any], errors: list[str]) -> None:
         "DuplicateKeyError",
         "REHEARSAL_FIELDS",
         "RELEASE_FIELDS",
+        "build_comparison_receipt",
+        "verify_comparison_receipt",
+        "reject_symlink_components",
+        "path contains a symlink",
+        "comparison receipt is not one real regular file",
+        "comparison evidence names a historical subject",
     ):
         if required not in comparator:
             errors.append(f"compare_rehearsal_manifests.py: missing {required!r}")
@@ -1265,6 +1521,8 @@ def validate_tla_pin_copies(errors: list[str]) -> None:
 BARE_INTERPRETER_SCRIPTS = (
     "scripts/validate_architecture_surface.py",
     "scripts/validate_repository_release.py",
+    "scripts/ci/validate_publication_sequence.py",
+    "scripts/ci/verify_github_release.py",
     "tests/canonicalization/compare_results.py",
     "tests/canonicalization/audit_schemas.py",
     "scripts/validate_gate_a_prerequisites.py",
@@ -1310,9 +1568,16 @@ def validate_bare_interpreter_imports(errors: list[str]) -> None:
             elif isinstance(node, ast.ImportFrom) and node.level == 0 and node.module:
                 names = [node.module.split(".")[0]]
             for name in names:
-                sibling = path.parent / f"{name}.py"
-                if sibling.is_file():
-                    queue.append(str(sibling.relative_to(ROOT)))
+                local_candidates = (
+                    path.parent / f"{name}.py",
+                    ROOT / "scripts" / f"{name}.py",
+                )
+                local_module = next(
+                    (candidate for candidate in local_candidates if candidate.is_file()),
+                    None,
+                )
+                if local_module is not None:
+                    queue.append(str(local_module.relative_to(ROOT)))
                 elif name not in stdlib:
                     errors.append(
                         f"{relative}: imports non-stdlib module {name!r} but runs on a "

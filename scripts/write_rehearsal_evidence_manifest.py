@@ -20,7 +20,7 @@ ROOT_FILES = {
     "pip-install-report.json",
 }
 MANIFEST_NAME = "rehearsal-evidence-manifest.json"
-PROFILE_PATHS = (
+PROFILE_PATHS_V0_1 = (
     ".python-version",
     ".java-version",
     ".gitleaks.toml",
@@ -33,6 +33,11 @@ PROFILE_PATHS = (
     ".github/workflows/formal.yml",
     "formal/tla/results-manifest.json",
 )
+PROFILE_PATHS_V0_2 = (
+    *PROFILE_PATHS_V0_1,
+    ".github/workflows/publication-sequence.yml",
+)
+PROFILE_PATHS = PROFILE_PATHS_V0_2
 # The stages a complete rehearsal must report. Their dispositions are DERIVED
 # from the ledger the rehearsal appends to as each stage completes; a stage
 # that did not run is reported as not_run, never as passed. Until ADR 0076
@@ -120,7 +125,7 @@ def main() -> int:
         )
 
     manifest = {
-        "schema_version": "0.1.0",
+        "schema_version": "0.2.0",
         "artifact_class": "fresh_clone_rehearsal_evidence_manifest",
         "subject_commit": args.subject_commit,
         "source_class": args.source_class,
