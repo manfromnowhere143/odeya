@@ -24,7 +24,7 @@ SUITES = {
     "first-slice-resolution": (72, 12, 60),
     "lifecycle-closure": (231, 14, 217),
     "mathematical-contracts": (57, 20, 37),
-    "physical-contracts": (85, 14, 71),
+    "physical-contracts": (95, 15, 80),
     "projection-contracts": (62, 8, 54),
 }
 

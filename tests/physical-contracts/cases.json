@@ -1,7 +1,7 @@
 {
   "manifest_version": "0.1.0",
   "description": "Isolated candidate physical-contract cases. The catalog exercises structural schemas and bounded local semantic checkers; passing grants no runtime, publication, execution, actuator, metrology, VVUQ, or Gate A authority.",
-  "expected_case_count": 85,
+  "expected_case_count": 95,
   "cases": [
     {
       "name": "quantity-valid-exact-decimal",
@@ -774,6 +774,85 @@
         "pointer": "/preflight/causal_identification/disposition",
         "keyword": "enum"
       }
+    },
+    {
+      "name": "verification-valid-resolved-physical-iv4-scope",
+      "schema": "schemas/verification-run.schema.json",
+      "base": "bounded_factory:verification",
+      "structural_expect": "valid",
+      "semantic_expect": "valid"
+    },
+    {
+      "name": "verification-detects-unresolved-physical-subject",
+      "schema": "schemas/verification-run.schema.json",
+      "base": "bounded_factory:verification",
+      "structural_expect": "valid",
+      "semantic_expect": "invalid",
+      "expected_semantic_refusal_contains": "subject must resolve to the exact typed physical evidence vector"
+    },
+    {
+      "name": "verification-detects-subject-mission-mismatch",
+      "schema": "schemas/verification-run.schema.json",
+      "base": "bounded_factory:verification",
+      "structural_expect": "valid",
+      "semantic_expect": "invalid",
+      "expected_semantic_refusal_contains": "must equal the resolved physical subject mission"
+    },
+    {
+      "name": "verification-detects-untyped-selection-rule",
+      "schema": "schemas/verification-run.schema.json",
+      "base": "bounded_factory:verification",
+      "structural_expect": "valid",
+      "semantic_expect": "invalid",
+      "expected_semantic_refusal_contains": "must select the physical-validity and safety predicates"
+    },
+    {
+      "name": "verification-rejects-physical-scope-below-iv4",
+      "schema": "schemas/verification-run.schema.json",
+      "base": "bounded_factory:verification",
+      "structural_expect": "valid",
+      "semantic_expect": "invalid",
+      "expected_semantic_refusal_contains": "resolved physical replication scope requires IV4"
+    },
+    {
+      "name": "verification-rejects-iv4-paired-with-no-physical-assertion",
+      "schema": "schemas/verification-run.schema.json",
+      "base": "bounded_factory:verification",
+      "structural_expect": "valid",
+      "semantic_expect": "invalid",
+      "expected_semantic_refusal_contains": "must be required/pass for the resolved physical predicate"
+    },
+    {
+      "name": "verification-rejects-physical-validity-not-required",
+      "schema": "schemas/verification-run.schema.json",
+      "base": "bounded_factory:verification",
+      "structural_expect": "valid",
+      "semantic_expect": "invalid",
+      "expected_semantic_refusal_contains": "must be required/pass for the resolved physical predicate"
+    },
+    {
+      "name": "verification-rejects-safety-bound-scope-as-not-required",
+      "schema": "schemas/verification-run.schema.json",
+      "base": "bounded_factory:verification",
+      "structural_expect": "valid",
+      "semantic_expect": "invalid",
+      "expected_semantic_refusal_contains": "selected safety-bound recommendation requires an applicable passing safety dimension"
+    },
+    {
+      "name": "verification-rejects-overclaiming-terminal-language",
+      "schema": "schemas/verification-run.schema.json",
+      "base": "bounded_factory:verification",
+      "structural_expect": "valid",
+      "semantic_expect": "invalid",
+      "expected_semantic_refusal_contains": "confirmation language must equal the resolver-derived bounded statement"
+    },
+    {
+      "name": "verification-requires-synthetic-evidence-boundary",
+      "schema": "schemas/verification-run.schema.json",
+      "base": "bounded_factory:verification",
+      "structural_expect": "valid",
+      "semantic_expect": "invalid",
+      "expected_semantic_refusal_contains": "synthetic evidence boundary must remain explicit"
     }
   ]
 }

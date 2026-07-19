@@ -4,12 +4,12 @@
   "verification_package_id": "verification-package.physical.001",
   "verification_run_id": "verification.physical.001",
   "version": 1,
-  "mission_id": "mission.001",
+  "mission_id": "mission.inbar",
   "protocol_branch_id": "protocol-branch.001",
   "subject_set": {
-    "subject_set_id": "subject-set.001",
+    "subject_set_id": "subject-set.physical-evidence.inbar",
     "subject_manifest_ref": {
-      "artifact_id": "subject-manifest.001",
+      "artifact_id": "subject-manifest.physical-evidence.inbar",
       "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
       "media_type": "application/json"
     },
@@ -21,7 +21,7 @@
       "digest": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
     },
     "selection_rule_ref": {
-      "record_id": "subject-selection-rule.001",
+      "record_id": "subject-selection-rule.physical-validity-and-safety",
       "version": 1,
       "schema_id": "urn:odeya:schema:verification-subject-selection-rule:0.1.0",
       "digest": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
@@ -29,11 +29,11 @@
     "complete_manifest": true,
     "subjects": [
       {
-        "subject_type": "claim",
-        "subject_id": "claim-version.001",
+        "subject_type": "result",
+        "subject_id": "physical-evidence.inbar",
         "version": 1,
-        "schema_id": "urn:odeya:schema:claim-version:0.9.0",
-        "digest": "sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+        "schema_id": "urn:odeya:schema:physical-evidence-vector:0.7.0",
+        "digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
       }
     ]
   },
@@ -553,11 +553,11 @@
         "schema_id": "urn:odeya:schema:verification-criterion:0.1.0",
         "digest": "sha256:4545454545454545454545454545454545454545454545454545454545454545"
       },
-      "scope": "No physical-world assertion",
+      "scope": "physically_validated_under_scope",
       "evidence_refs": [
         {
-          "artifact_id": "physical-validity-evidence.001",
-          "digest": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+          "artifact_id": "component-evidence.physical-validation",
+          "digest": "sha256:6666666666666666666666666666666666666666666666666666666666666666",
           "media_type": "application/json"
         }
       ],
@@ -618,20 +618,24 @@
       "requirement": "required"
     },
     "safety": {
-      "verdict": "not_applicable",
+      "verdict": "pass",
       "criterion_ref": {
         "record_id": "criterion.safety",
         "version": 1,
         "schema_id": "urn:odeya:schema:verification-criterion:0.1.0",
         "digest": "sha256:5151515151515151515151515151515151515151515151515151515151515151"
       },
-      "scope": "Architecture-only subject with no consequential action",
-      "evidence_refs": [],
-      "limitation_codes": [
-        "not_required_by_physical_replication_profile"
+      "scope": "recommendation_inside_safety_envelope",
+      "evidence_refs": [
+        {
+          "artifact_id": "component-evidence.safety_case",
+          "digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+          "media_type": "application/json"
+        }
       ],
+      "limitation_codes": [],
       "not_run_reason_codes": [],
-      "requirement": "not_required"
+      "requirement": "required"
     }
   },
   "verification_evidence_refs": [
@@ -667,9 +671,10 @@
   },
   "terminal_assessment": {
     "status": "confirmed",
-    "scope_statement": "The exact physical claim passed the assigned independent-replication profile; computational code and statistical dimensions were explicitly not required.",
+    "scope_statement": "Synthetic architecture example confirms physically_validated_under_scope and recommendation_inside_safety_envelope for physical-evidence.inbar under IV4_independent_replication; advisory only, with no action, dispatch, publication, or Gate A authority.",
     "reason_codes": [
-      "required_dimensions_passed"
+      "required_dimensions_passed",
+      "synthetic_architecture_fixture_not_real_physical_evidence"
     ]
   },
   "eligible_next_actions": {

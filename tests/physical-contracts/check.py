@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """Isolated structural and local-semantic checks for Odeya physical contracts.
 
-This is deliberately not enrolled in the architecture validator.  It validates
-the candidate schema family, bounded fixtures, local algebraic invariants, and
-the acyclic physical-contract dependency order without claiming runtime,
-registry, reducer, metrology, VVUQ, domain, or safety approval.
+This is deliberately architecture evidence rather than runtime. It validates
+the candidate schema family, bounded fixtures, local algebraic invariants, the
+acyclic physical-contract dependency order, and one resolver-backed physical
+verification scope without claiming registry, reducer, metrology, VVUQ,
+domain, or safety approval.
 """
 
 from __future__ import annotations
@@ -25,6 +26,9 @@ from jsonschema import Draft202012Validator, FormatChecker
 ROOT = Path(__file__).resolve().parents[2]
 FIXTURES = ROOT / "tests/physical-contracts/fixtures"
 CASE_MANIFEST = ROOT / "tests/physical-contracts/cases.json"
+VERIFICATION_FIXTURE = (
+    ROOT / "tests/architecture-schema/fixtures/verification-run-physical.valid.json"
+)
 SCHEMAS = {
     "quantity": "schemas/physical-quantity.schema.json",
     "uncertainty": "schemas/uncertainty-budget.schema.json",
@@ -34,6 +38,7 @@ SCHEMAS = {
     "evidence": "schemas/physical-evidence-vector.schema.json",
     "safety": "schemas/safety-envelope.schema.json",
     "experiment": "schemas/physical-experiment-contract.schema.json",
+    "verification": "schemas/verification-run.schema.json",
 }
 DEPENDENCY_ORDER = list(SCHEMAS)
 # identities follow the live schema bytes: a reissue wave bumps versions and
@@ -793,6 +798,19 @@ def experiment() -> dict[str, object]:
     }
 
 
+def verification() -> dict[str, object]:
+    """Load the shared physical VerificationPackage architecture fixture.
+
+    Its selected subject resolves below to the exact bounded
+    PhysicalEvidenceVector constructor. This is a synthetic contract example,
+    never retained real-world verification evidence.
+    """
+    value = load(VERIFICATION_FIXTURE)
+    if not isinstance(value, dict):
+        raise TypeError("physical verification fixture must be an object")
+    return value
+
+
 FACTORIES: dict[str, Callable[[], dict[str, object]]] = {
     "quantity": quantity,
     "uncertainty": uncertainty,
@@ -802,6 +820,7 @@ FACTORIES: dict[str, Callable[[], dict[str, object]]] = {
     "evidence": evidence,
     "safety": safety,
     "experiment": experiment,
+    "verification": verification,
 }
 
 
@@ -987,6 +1006,98 @@ def experiment_semantics(value: dict[str, object]) -> list[str]:
     return errors
 
 
+def verification_semantics(value: dict[str, object]) -> list[str]:
+    """Resolve a physical verification scope to its exact typed subject.
+
+    VerificationRun intentionally keeps generic subject references. This
+    bounded architecture-time resolver joins the retained package to the exact
+    PhysicalEvidenceVector fixture and derives class, dimension applicability,
+    and terminal language from that typed subject. It does not validate the
+    physical world or confer any authority.
+    """
+    errors: list[str] = []
+    target = evidence()
+    expected_subject = {
+        "subject_type": "result",
+        "subject_id": target["physical_evidence_vector_id"],
+        "version": target["version"],
+        "schema_id": SCHEMA_URNS["evidence"],
+        "digest": target["evidence_vector_digest"],
+    }
+    if value["subject_set"]["subjects"] != [expected_subject]:
+        errors.append(
+            "verification.subject_set: subject must resolve to the exact typed physical evidence vector"
+        )
+    if value["mission_id"] != target["mission_id"]:
+        errors.append("verification.mission_id: must equal the resolved physical subject mission")
+    selection_rule = value["subject_set"]["selection_rule_ref"]
+    if selection_rule["record_id"] != "subject-selection-rule.physical-validity-and-safety":
+        errors.append(
+            "verification.selection_rule: must select the physical-validity and safety predicates"
+        )
+    if value["frozen_assignment"]["required_verification_class"] != "IV4_independent_replication":
+        errors.append(
+            "verification.required_verification_class: resolved physical replication scope requires IV4"
+        )
+
+    physical = value["dimensions"]["physical_validity"]
+    physical_component = target["credibility_vector"]["physical_validation"]
+    physical_signature = (
+        physical["requirement"],
+        physical["verdict"],
+        physical["scope"],
+        physical["evidence_refs"],
+    )
+    expected_physical_signature = (
+        "required",
+        "pass",
+        "physically_validated_under_scope",
+        physical_component["evidence_refs"],
+    )
+    if physical_signature != expected_physical_signature:
+        errors.append(
+            "verification.physical_validity: must be required/pass for the resolved physical predicate"
+        )
+
+    safety = value["dimensions"]["safety"]
+    safety_component = target["credibility_vector"]["safety_case"]
+    safety_signature = (
+        safety["requirement"],
+        safety["verdict"],
+        safety["scope"],
+        safety["evidence_refs"],
+    )
+    expected_safety_signature = (
+        "required",
+        "pass",
+        "recommendation_inside_safety_envelope",
+        safety_component["evidence_refs"],
+    )
+    if safety_signature != expected_safety_signature:
+        errors.append(
+            "verification.safety: selected safety-bound recommendation requires an applicable passing safety dimension"
+        )
+
+    expected_scope_statement = (
+        "Synthetic architecture example confirms physically_validated_under_scope and "
+        "recommendation_inside_safety_envelope for physical-evidence.inbar under "
+        "IV4_independent_replication; advisory only, with no action, dispatch, "
+        "publication, or Gate A authority."
+    )
+    if value["terminal_assessment"]["scope_statement"] != expected_scope_statement:
+        errors.append(
+            "verification.terminal_assessment: confirmation language must equal the resolver-derived bounded statement"
+        )
+    if (
+        "synthetic_architecture_fixture_not_real_physical_evidence"
+        not in value["terminal_assessment"]["reason_codes"]
+    ):
+        errors.append(
+            "verification.terminal_assessment: synthetic evidence boundary must remain explicit"
+        )
+    return errors
+
+
 SEMANTIC_CHECKERS = {
     "quantity": quantity_semantics,
     "uncertainty": uncertainty_semantics,
@@ -996,6 +1107,7 @@ SEMANTIC_CHECKERS = {
     "evidence": evidence_semantics,
     "safety": safety_semantics,
     "experiment": experiment_semantics,
+    "verification": verification_semantics,
 }
 
 
@@ -1244,6 +1356,17 @@ CASES = [
     Case("experiment-rejects-self-issued-authority", "experiment", structural="invalid", mutate=set_path("authority_boundary.authority_self_issued", True), expected_refusal=("/authority_boundary/authority_self_issued", "const")),
     Case("experiment-rejects-inline-execution-authority", "experiment", structural="invalid", mutate=set_path("authority_boundary.execution_authority_ref", record("authority.inline", "urn:odeya:schema:authority-grant:0.7.0", "5")), expected_refusal=("/authority_boundary/execution_authority_ref", "type")),
     Case("experiment-rejects-required-causal-check-marked-na", "experiment", structural="invalid", mutate=set_path("preflight.causal_identification.disposition", "not_applicable"), expected_refusal=("/preflight/causal_identification/disposition", "enum")),
+
+    Case("verification-valid-resolved-physical-iv4-scope", "verification", semantic="valid"),
+    Case("verification-detects-unresolved-physical-subject", "verification", semantic="invalid", mutate=set_path("subject_set.subjects.0.subject_id", "physical-evidence.unresolved"), expected_semantic="subject must resolve to the exact typed physical evidence vector"),
+    Case("verification-detects-subject-mission-mismatch", "verification", semantic="invalid", mutate=set_path("mission_id", "mission.other"), expected_semantic="must equal the resolved physical subject mission"),
+    Case("verification-detects-untyped-selection-rule", "verification", semantic="invalid", mutate=set_path("subject_set.selection_rule_ref.record_id", "subject-selection-rule.generic"), expected_semantic="must select the physical-validity and safety predicates"),
+    Case("verification-rejects-physical-scope-below-iv4", "verification", semantic="invalid", mutate=set_path("frozen_assignment.required_verification_class", "IV3_independent_reimplementation"), expected_semantic="resolved physical replication scope requires IV4"),
+    Case("verification-rejects-iv4-paired-with-no-physical-assertion", "verification", semantic="invalid", mutate=set_path("dimensions.physical_validity.scope", "No physical-world assertion"), expected_semantic="must be required/pass for the resolved physical predicate"),
+    Case("verification-rejects-physical-validity-not-required", "verification", semantic="invalid", mutate=compose(set_path("dimensions.physical_validity.requirement", "not_required"), set_path("dimensions.physical_validity.verdict", "not_applicable"), set_path("dimensions.physical_validity.evidence_refs", []), set_path("dimensions.physical_validity.limitation_codes", ["physical-validity-not-required"])), expected_semantic="must be required/pass for the resolved physical predicate"),
+    Case("verification-rejects-safety-bound-scope-as-not-required", "verification", semantic="invalid", mutate=compose(set_path("dimensions.safety.requirement", "not_required"), set_path("dimensions.safety.verdict", "not_applicable"), set_path("dimensions.safety.evidence_refs", []), set_path("dimensions.safety.limitation_codes", ["safety-not-required"])), expected_semantic="selected safety-bound recommendation requires an applicable passing safety dimension"),
+    Case("verification-rejects-overclaiming-terminal-language", "verification", semantic="invalid", mutate=set_path("terminal_assessment.scope_statement", "The synthetic fixture authorizes a physical action."), expected_semantic="confirmation language must equal the resolver-derived bounded statement"),
+    Case("verification-requires-synthetic-evidence-boundary", "verification", semantic="invalid", mutate=set_path("terminal_assessment.reason_codes", ["required_dimensions_passed"]), expected_semantic="synthetic evidence boundary must remain explicit"),
 ]
 
 
@@ -1492,7 +1615,7 @@ def main() -> int:
         return 1
     print(
         f"physical-contract checks passed: {len(CASES)} structural expectations, "
-        f"{semantic_expectations} local-semantic expectations, 8-schema DAG"
+        f"{semantic_expectations} local-semantic expectations, {len(SCHEMAS)}-schema DAG"
     )
     return 0
 
