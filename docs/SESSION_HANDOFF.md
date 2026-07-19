@@ -215,16 +215,27 @@ that deserves to carry the mission forward.
 - Active correction worktree:
   `/Users/danielwahnich/workspace/odeya-gate-a-repair-release-v2-20260719`
 - Active correction branch: `agent/gate-a-repair-release-v2-20260719`
-- Exact public-`main` correction base:
+- Original correction-tranche base:
   `50e4bc6bfd634c7d5fe11cf0114e1fee94b4e62d`
-- Exact public-`main` correction-base tree:
+- Original correction-tranche base tree:
   `2e8208e77796be405431eb3654ba51f5652b6eaa`
+- Published correction checkpoint:
+  `73ab5a6e05b90e1ca2919ef84874f5f5935f7299`
+- Published correction-checkpoint tree:
+  `b6990d3a521c30fd196fd67fb3ea2676bca27308`
 - Canonical remote: `https://github.com/manfromnowhere143/odeya` (public;
   created 2026-07-17 under ADR 0047; default branch `main`)
-- Measured remote state on 2026-07-19: all three workflow families were green
-  for the exact base; secret scanning and push protection were enabled;
-  Dependabot security updates were disabled; no repository ruleset existed;
-  and `main` was not protected.
+- Measured remote state on 2026-07-19: the guarded publication advanced
+  `main` to the exact published correction checkpoint; all three workflow
+  families and all nine required jobs were green for that commit. Secret
+  scanning and push protection were enabled; Dependabot security updates were
+  disabled; no repository ruleset existed; and `main` was not protected.
+- Retained remote-main evidence:
+  `/Users/danielwahnich/workspace/odeya-release-evidence/remote-main-73ab5a6e05b90e1ca2919ef84874f5f5935f7299`;
+  the local/remote invariant-profile comparison receipt is
+  `/Users/danielwahnich/workspace/odeya-release-evidence/remote-main-comparison-73ab5a6e05b90e1ca2919ef84874f5f5935f7299.json`
+  with SHA-256
+  `7e9c5295572e2835fd7c96f52e2738049df22d24dce61804db16c6517b16dd45`.
 - Repository visibility, creation, and evidence-gated architecture-publication
   authority: granted under ADR 0045 and ADR 0047 and reconciled by ADR 0087.
 - Runtime, deployment, external-effect, and Gate A authority: not granted
@@ -245,18 +256,18 @@ git status --short --branch
 git rev-parse HEAD
 git rev-parse 'HEAD^{tree}'
 git symbolic-ref --short HEAD
+git fetch --quiet origin main
 git rev-parse origin/main
 git remote -v
 git log --oneline --decorate -5
 test "$(git symbolic-ref --short HEAD)" = \
   agent/gate-a-repair-release-v2-20260719
-test "$(git rev-parse origin/main)" = \
-  50e4bc6bfd634c7d5fe11cf0114e1fee94b4e62d
 test "$(git remote)" = origin
 test "$(git remote get-url origin)" = \
   https://github.com/manfromnowhere143/odeya.git
 git merge-base --is-ancestor \
-  50e4bc6bfd634c7d5fe11cf0114e1fee94b4e62d HEAD
+  73ab5a6e05b90e1ca2919ef84874f5f5935f7299 origin/main
+git merge-base --is-ancestor origin/main HEAD
 git diff --cached --name-only
 git diff --check
 test "$(git -C /Users/danielwahnich/workspace/odeya symbolic-ref --short HEAD)" = \
@@ -271,9 +282,10 @@ Expected invariants:
   `agent/gate-a-repair-release-v2-20260719`;
 - the canonical worktree remains on `agent/repository-release` with Daniel's
   protected UI/UX changes untouched;
-- public `origin/main` remains the exact correction base recorded above until
-  a separately rehearsed publication operation advances it;
-- the exact public-main correction base is an ancestor of `HEAD`;
+- the exact published correction checkpoint remains an ancestor of public
+  `origin/main`; an unexpected rewind or replacement fails recovery;
+- public `origin/main` remains an ancestor of the active `HEAD`, so any local
+  candidate is a fast-forward rather than a divergent history;
 - the only remote is the canonical public `origin` created under ADR 0047;
 - no unexpected worktree path is dirty; and
 - Daniel's protected UI/UX lane remains outside architecture/release staging.
