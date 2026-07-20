@@ -31,8 +31,8 @@
     "census_dynamic_boundary",
     "census_event_partition_contract",
     "census_identity_status",
-    "census_missing_node_inventory",
     "census_migration",
+    "census_missing_node_inventory",
     "census_nonclaim_boundary",
     "census_operator_acceptance_inventory",
     "census_pointer_discovery",
@@ -41,24 +41,31 @@
     "census_subject_binding",
     "census_transitive_family_inventory",
     "census_validator_inventory",
-    "challenge_decision_binding",
-    "challenge_frame_claim_boundary",
-    "challenge_frame_binding",
-    "challenge_frame_contract",
-    "challenge_frame_evidence_status",
-    "challenge_frame_profile",
-    "challenge_frame_material_exclusion",
-    "challenge_frame_policy",
-    "challenge_frame_vector",
-    "challenge_frame_vector_classification",
-    "challenge_replay",
     "challenge_assertion_time",
     "challenge_consumption_time",
+    "challenge_decision_binding",
+    "challenge_frame_binding",
+    "challenge_frame_claim_boundary",
+    "challenge_frame_contract",
+    "challenge_frame_evidence_status",
+    "challenge_frame_material_exclusion",
+    "challenge_frame_policy",
+    "challenge_frame_profile",
+    "challenge_frame_vector",
+    "challenge_frame_vector_classification",
     "challenge_identifier",
     "challenge_lifecycle_provenance",
+    "challenge_replay",
     "challenge_time",
     "challenge_value",
     "confirmation_actor_co_binding",
+    "confirmation_receipt_acyclicity",
+    "confirmation_receipt_digest",
+    "confirmation_receipt_displayed_bytes",
+    "confirmation_receipt_gesture_instant",
+    "confirmation_receipt_phase_order",
+    "confirmation_receipt_presentation_binding",
+    "confirmation_receipt_source",
     "conflict",
     "consumer_bypass",
     "controlled_time",
@@ -68,45 +75,50 @@
     "core_raw_binding",
     "core_recursion",
     "cryptographic_byte_fidelity",
-    "decision_confirmation_provenance",
-    "decision_confirmation_context",
     "decision_candidate_relationship",
+    "decision_confirmation_context",
+    "decision_confirmation_provenance",
     "decision_gesture",
     "decision_leaf_binding",
     "decision_observation",
     "decision_source_pointer",
-    "source_time_order",
     "delegation",
     "delegation_provenance",
     "delegation_scope",
+    "determination_cardinality",
     "duplicate_evidence",
     "duplicate_json_key",
-    "evidence_raw_binding",
-    "evidence_binding_cardinality",
-    "evidence_role_cardinality",
-    "eligibility_ruleset_binding",
     "eligibility_not_applicable",
     "eligibility_precedence",
+    "eligibility_ruleset_binding",
+    "evidence_binding_cardinality",
+    "evidence_raw_binding",
     "evidence_role_binding",
+    "evidence_role_cardinality",
     "expected_origin",
     "forbidden_content",
-    "gesture_reuse",
+    "fully_rebound_cross_candidate",
     "gesture_artifact_binding",
+    "gesture_reuse",
     "harness_exact_errors",
     "human_only_slot",
     "identity_binding",
     "identity_proofing",
     "indeterminate_promotion",
+    "later_ratification",
     "material_leaf_binding",
     "material_mismatch",
     "material_presentation",
     "material_presentation_receipt",
     "objection",
+    "observation_cardinality",
+    "phase_interval_containment",
     "phishing_resistance",
+    "presentation_challenge_identity",
+    "principal_cardinality",
     "proposer_collapse",
     "quorum_cardinality",
     "quorum_membership",
-    "principal_cardinality",
     "relying_party",
     "sanitation",
     "seal_annotation_boundary",
@@ -119,19 +131,16 @@
     "shared_authenticator",
     "shared_effective_control",
     "signature_verification",
+    "source_time_order",
     "stale_confirmation",
     "sync_recovery",
     "timeout",
     "unattended_invocation",
     "user_presence",
     "user_verification",
-    "verifier_collapse",
     "verifier_cardinality",
+    "verifier_collapse",
     "verifier_independence",
-    "observation_cardinality",
-    "determination_cardinality",
-    "later_ratification",
-    "fully_rebound_cross_candidate",
     "whitespace_raw_binding"
   ],
   "cases": [
@@ -688,8 +697,11 @@
       "expected_errors": [
         "challenge_core_binding_mismatch",
         "challenge_frame_commitment_mismatch",
+        "confirmation_receipt_digest_mismatch",
+        "confirmation_receipt_presentation_binding_mismatch",
         "core_raw_byte_binding_mismatch",
-        "decision_confirmation_context_binding_mismatch"
+        "decision_confirmation_context_binding_mismatch",
+        "presentation_challenge_identifier_mismatch"
       ],
       "intent_errors": [
         "core_raw_byte_binding_mismatch"
@@ -773,7 +785,10 @@
       "expected_errors": [
         "challenge_frame_commitment_mismatch",
         "challenge_request_or_session_mismatch",
-        "decision_confirmation_context_binding_mismatch"
+        "confirmation_receipt_digest_mismatch",
+        "confirmation_receipt_presentation_binding_mismatch",
+        "decision_confirmation_context_binding_mismatch",
+        "presentation_challenge_identifier_mismatch"
       ],
       "intent_errors": [
         "challenge_request_or_session_mismatch"
@@ -794,7 +809,10 @@
       },
       "expected_errors": [
         "challenge_frame_commitment_mismatch",
+        "confirmation_receipt_digest_mismatch",
+        "confirmation_receipt_presentation_binding_mismatch",
         "decision_confirmation_context_binding_mismatch",
+        "presentation_challenge_identifier_mismatch",
         "relying_party_id_mismatch"
       ],
       "intent_errors": [
@@ -816,8 +834,11 @@
       },
       "expected_errors": [
         "challenge_frame_commitment_mismatch",
+        "confirmation_receipt_digest_mismatch",
+        "confirmation_receipt_presentation_binding_mismatch",
         "decision_confirmation_context_binding_mismatch",
-        "expected_origin_mismatch"
+        "expected_origin_mismatch",
+        "presentation_challenge_identifier_mismatch"
       ],
       "intent_errors": [
         "expected_origin_mismatch"
@@ -855,9 +876,10 @@
         "target": "evidence",
         "op": "replace",
         "path": "/participant_observations/0/challenge/expires_at",
-        "value": "2026-07-19T06:06:00.000000Z"
+        "value": "2026-07-19T06:08:00.000000Z"
       },
       "expected_errors": [
+        "authentication_interval_not_contained_in_presentation",
         "challenge_frame_commitment_mismatch",
         "challenge_time_window_invalid"
       ],
@@ -1000,6 +1022,7 @@
       },
       "expected_errors": [
         "challenge_assertion_or_consumption_time_invalid",
+        "confirmation_receipt_gesture_instant_mismatch",
         "decision_confirmation_stale_or_out_of_window"
       ],
       "intent_errors": [
@@ -2110,14 +2133,14 @@
       "mutation": {
         "target": "frame_evidence",
         "op": "replace",
-        "path": "/synthetic_test_vector/frame_byte_count",
+        "path": "/synthetic_test_vector/presentation_phase/frame_byte_count",
         "value": 860
       },
       "expected_errors": [
-        "challenge_frame_vector_mismatch"
+        "challenge_frame_presentation_vector_mismatch"
       ],
       "intent_errors": [
-        "challenge_frame_vector_mismatch"
+        "challenge_frame_presentation_vector_mismatch"
       ]
     },
     {
@@ -2150,7 +2173,7 @@
         "target": "evidence",
         "op": "replace",
         "path": "/participant_observations/0/decision_confirmation/confirmed_at",
-        "value": "2026-07-19T06:00:00.000000Z"
+        "value": "2026-07-19T06:02:00.000000Z"
       },
       "expected_errors": []
     },
@@ -2287,6 +2310,7 @@
         "account_identifier_promoted_to_natural_person",
         "agent_model_tool_signing_not_excluded",
         "authentication_intent_not_supported",
+        "authentication_interval_not_contained_in_presentation",
         "authenticator_custody_not_supported",
         "authenticator_gesture_reused_as_decision_gesture",
         "challenge_assertion_or_consumption_time_invalid",
@@ -2300,6 +2324,12 @@
         "challenge_request_or_session_mismatch",
         "challenge_required_evidence_not_supported",
         "challenge_time_window_invalid",
+        "confirmation_gesture_outside_phase_order",
+        "confirmation_receipt_digest_mismatch",
+        "confirmation_receipt_displayed_bytes_unbacked",
+        "confirmation_receipt_gesture_instant_mismatch",
+        "confirmation_receipt_presentation_binding_mismatch",
+        "confirmation_receipt_profile_or_source_invalid",
         "controlled_time_challenge_binding_mismatch",
         "controlled_time_not_supported",
         "controlled_time_order_invalid",
@@ -2325,6 +2355,9 @@
         "participant_determination_set_mismatch",
         "participant_observation_set_mismatch",
         "phishing_resistance_not_supported",
+        "presentation_challenge_identifier_mismatch",
+        "presentation_challenge_time_window_invalid",
+        "presentation_challenge_unrecomputable",
         "principal_authenticator_binding_not_supported",
         "private_key_nonexportability_not_supported",
         "referenced_evidence_artifact_missing",
@@ -2859,7 +2892,7 @@
         "target": "core",
         "op": "replace",
         "path": "/created_at",
-        "value": "2026-07-19T06:00:00.000001Z"
+        "value": "2026-07-19T06:02:00.000001Z"
       },
       "expected_errors": [
         "core_created_after_challenge_issue",
@@ -2977,7 +3010,7 @@
       ]
     },
     {
-      "name": "challenge-profile-cannot-claim-a-confirmation-receipt-digest-commitment",
+      "name": "challenge-profile-cannot-drop-the-confirmation-receipt-digest-commitment",
       "kind": "adversarial",
       "model": "chain",
       "adversarial_tag": "challenge_frame_claim_boundary",
@@ -2987,7 +3020,7 @@
         "target": "frame",
         "op": "replace",
         "path": "/proof_boundary/confirmation_receipt_digest_committed",
-        "value": true
+        "value": false
       },
       "expected_errors": [
         "challenge_frame_claim_boundary_escalated",
@@ -2998,7 +3031,7 @@
       ]
     },
     {
-      "name": "challenge-profile-cannot-claim-cryptographic-co-binding-of-the-two-actors",
+      "name": "challenge-profile-cannot-drop-the-cryptographic-co-binding-of-the-two-actors",
       "kind": "adversarial",
       "model": "chain",
       "adversarial_tag": "confirmation_actor_co_binding",
@@ -3008,7 +3041,7 @@
         "target": "frame",
         "op": "replace",
         "path": "/proof_boundary/confirmation_gesture_and_authenticator_actor_cryptographically_co_bound",
-        "value": true
+        "value": false
       },
       "expected_errors": [
         "challenge_frame_claim_boundary_escalated",
@@ -3028,7 +3061,7 @@
       "mutation": {
         "target": "frame",
         "op": "replace",
-        "path": "/binary_frame/ordered_fields/6",
+        "path": "/binary_frame/presentation_phase_ordered_fields/6",
         "value": "reviewed_material_set_raw_sha256"
       },
       "expected_errors": [
@@ -3037,7 +3070,11 @@
         "challenge_frame_encoding_contract_mismatch",
         "challenge_frame_material_digest_forbidden",
         "challenge_frame_profile_document_bytes_mismatch",
-        "challenge_frame_vector_unrecomputable"
+        "challenge_frame_vector_unrecomputable",
+        "confirmation_receipt_digest_mismatch",
+        "confirmation_receipt_presentation_binding_mismatch",
+        "presentation_challenge_identifier_mismatch",
+        "presentation_challenge_unrecomputable"
       ],
       "intent_errors": [
         "challenge_frame_material_digest_forbidden"
@@ -4548,6 +4585,201 @@
       ],
       "intent_errors": [
         "harness_exact_error_inventory_guard_fired"
+      ]
+    },
+    {
+      "name": "receipt-cannot-bind-a-foreign-presentation-challenge",
+      "adversarial_tag": "confirmation_receipt_presentation_binding",
+      "mutation": {
+        "target": "evidence",
+        "op": "replace",
+        "path": "/participant_observations/0/challenge/confirmation_receipt/presentation_challenge_id",
+        "value": "sha256:1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a"
+      },
+      "intent_errors": [
+        "confirmation_receipt_presentation_binding_mismatch"
+      ],
+      "kind": "adversarial",
+      "model": "chain",
+      "rebind": "evidence_to_seal",
+      "sync": "none",
+      "expected_errors": [
+        "confirmation_receipt_presentation_binding_mismatch"
+      ]
+    },
+    {
+      "name": "receipt-digest-must-recompute-from-the-receipt-frame",
+      "adversarial_tag": "confirmation_receipt_digest",
+      "mutation": {
+        "target": "evidence",
+        "op": "replace",
+        "path": "/participant_observations/0/challenge/confirmation_receipt/receipt_raw_sha256",
+        "value": "sha256:2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b"
+      },
+      "intent_errors": [
+        "confirmation_receipt_digest_mismatch"
+      ],
+      "kind": "adversarial",
+      "model": "chain",
+      "rebind": "evidence_to_seal",
+      "sync": "none",
+      "expected_errors": [
+        "confirmation_receipt_digest_mismatch"
+      ]
+    },
+    {
+      "name": "receipt-cannot-name-the-authentication-challenge",
+      "adversarial_tag": "confirmation_receipt_acyclicity",
+      "mutation": {
+        "target": "evidence",
+        "op": "add",
+        "path": "/participant_observations/0/challenge/confirmation_receipt/authentication_challenge_id",
+        "value": "sha256:3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c"
+      },
+      "intent_errors": [
+        "confirmation_receipt_references_authentication"
+      ],
+      "kind": "adversarial",
+      "model": "chain",
+      "rebind": "evidence_to_seal",
+      "sync": "none",
+      "expected_errors": [
+        "confirmation_receipt_references_authentication",
+        "evidence_schema_invalid"
+      ]
+    },
+    {
+      "name": "receipt-displayed-bytes-must-match-the-retained-artifact",
+      "adversarial_tag": "confirmation_receipt_displayed_bytes",
+      "mutation": {
+        "target": "evidence",
+        "op": "replace",
+        "path": "/participant_observations/0/challenge/confirmation_receipt/displayed_bytes_sha256",
+        "value": "sha256:4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d"
+      },
+      "intent_errors": [
+        "confirmation_receipt_displayed_bytes_unbacked"
+      ],
+      "kind": "adversarial",
+      "model": "chain",
+      "rebind": "evidence_to_seal",
+      "sync": "none",
+      "expected_errors": [
+        "challenge_frame_commitment_mismatch",
+        "confirmation_receipt_digest_mismatch",
+        "confirmation_receipt_displayed_bytes_unbacked"
+      ]
+    },
+    {
+      "name": "receipt-cannot-be-backed-by-a-reserialized-decision-object",
+      "adversarial_tag": "confirmation_receipt_source",
+      "mutation": {
+        "target": "evidence",
+        "op": "replace",
+        "path": "/participant_observations/0/challenge/confirmation_receipt/displayed_bytes_source",
+        "value": "reserialized_decision_object"
+      },
+      "intent_errors": [
+        "confirmation_receipt_profile_or_source_invalid"
+      ],
+      "kind": "adversarial",
+      "model": "chain",
+      "rebind": "evidence_to_seal",
+      "sync": "none",
+      "expected_errors": [
+        "confirmation_receipt_profile_or_source_invalid",
+        "evidence_schema_invalid"
+      ]
+    },
+    {
+      "name": "receipt-gesture-instant-must-equal-the-confirmation-instant",
+      "adversarial_tag": "confirmation_receipt_gesture_instant",
+      "mutation": {
+        "target": "evidence",
+        "op": "replace",
+        "path": "/participant_observations/0/challenge/confirmation_receipt/confirmation_gesture_at",
+        "value": "2026-07-19T06:01:45.000000Z"
+      },
+      "intent_errors": [
+        "confirmation_receipt_gesture_instant_mismatch"
+      ],
+      "kind": "adversarial",
+      "model": "chain",
+      "rebind": "evidence_to_seal",
+      "sync": "none",
+      "expected_errors": [
+        "challenge_frame_commitment_mismatch",
+        "confirmation_receipt_digest_mismatch",
+        "confirmation_receipt_gesture_instant_mismatch"
+      ]
+    },
+    {
+      "name": "receipt-gesture-cannot-precede-the-presentation-challenge",
+      "adversarial_tag": "confirmation_receipt_phase_order",
+      "mutation": {
+        "target": "evidence",
+        "op": "replace",
+        "path": "/participant_observations/0/challenge/presentation_challenge/issued_at",
+        "value": "2026-07-19T06:03:00.000000Z"
+      },
+      "intent_errors": [
+        "confirmation_gesture_outside_phase_order"
+      ],
+      "kind": "adversarial",
+      "model": "chain",
+      "rebind": "evidence_to_seal",
+      "sync": "none",
+      "expected_errors": [
+        "authentication_interval_not_contained_in_presentation",
+        "challenge_frame_commitment_mismatch",
+        "confirmation_gesture_outside_phase_order",
+        "confirmation_receipt_digest_mismatch",
+        "confirmation_receipt_presentation_binding_mismatch",
+        "presentation_challenge_identifier_mismatch"
+      ]
+    },
+    {
+      "name": "authentication-interval-must-stay-inside-the-presentation-interval",
+      "adversarial_tag": "phase_interval_containment",
+      "mutation": {
+        "target": "evidence",
+        "op": "replace",
+        "path": "/participant_observations/0/challenge/presentation_challenge/expires_at",
+        "value": "2026-07-19T06:03:00.000000Z"
+      },
+      "intent_errors": [
+        "authentication_interval_not_contained_in_presentation"
+      ],
+      "kind": "adversarial",
+      "model": "chain",
+      "rebind": "evidence_to_seal",
+      "sync": "none",
+      "expected_errors": [
+        "authentication_interval_not_contained_in_presentation",
+        "challenge_frame_commitment_mismatch",
+        "confirmation_receipt_digest_mismatch",
+        "confirmation_receipt_presentation_binding_mismatch",
+        "presentation_challenge_identifier_mismatch"
+      ]
+    },
+    {
+      "name": "presentation-challenge-identifier-must-recompute",
+      "adversarial_tag": "presentation_challenge_identity",
+      "mutation": {
+        "target": "evidence",
+        "op": "replace",
+        "path": "/participant_observations/0/challenge/presentation_challenge/challenge_id",
+        "value": "sha256:5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e"
+      },
+      "intent_errors": [
+        "presentation_challenge_identifier_mismatch"
+      ],
+      "kind": "adversarial",
+      "model": "chain",
+      "rebind": "evidence_to_seal",
+      "sync": "none",
+      "expected_errors": [
+        "presentation_challenge_identifier_mismatch"
       ]
     }
   ]

@@ -25,7 +25,7 @@ ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "architecture/suite-guard-coverage.json"
 AUDIT_TOOL = ROOT / "scripts/audit_suite_guard_coverage.py"
 VALIDATOR = ROOT / "scripts/validate.py"
-EXPECTED_SUMMARY = {"guard_count": 927, "proved": 458, "unproved": 469, "crash_detected": 0}
+EXPECTED_SUMMARY = {"guard_count": 958, "proved": 469, "unproved": 489, "crash_detected": 0}
 
 # Suites registered in scripts/validate.py that the generalized audit does not
 # measure, each with the reason it is out of that denominator. This is not a

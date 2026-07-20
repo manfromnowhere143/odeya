@@ -90,16 +90,23 @@ EXPECTED_HUMAN_DECISION_ASSURANCE = {
     "individual_eligibility_ruleset_issued": False,
     "independent_eligibility_recomputation_retained": False,
     "material_presentation_receipt_verified_in_real_ceremony": False,
+    # ADR 0093, adopted. True as a property of the two-phase frame
+    # construction: the authentication challenge commits to the confirmation
+    # receipt digest, so a signature covers what was displayed and confirmed.
+    # It is not a claim that any ceremony occurred -- see
+    # material_presentation_receipt_verified_in_real_ceremony, still False --
+    # and it does not prevent a presentation surface that lies about its own
+    # displayed bytes, only detect the disagreement.
     "confirmation_gesture_and_authenticator_actor_cryptographically_co_bound":
-        False,
+        True,
     "exact_cryptographic_input_bytes_dereferenced_and_verified": False,
     "complete_consumer_census_for_frozen_source_corpus": True,
     "consumer_census_ref":
         "architecture/human-decision-assurance-consumer-census.json",
     "consumer_census_binding": {
         "raw_sha256":
-            "sha256:88d2e0b0cc265e72bc44306472991c6c09c2450f279bf08c9a290d359e2b2d14",
-        "byte_count": 147613,
+            "sha256:d761cdb4ebd8776935a90bc7c877da805f3e07bb17ce1333f24c01619b4f9a3a",
+        "byte_count": 147738,
         "baseline_git_commit": "56e8062334fb81bba955ba137be690e085d4c88e",
         "baseline_git_tree": "d90ed6dd8c54b91a1e503358f98ecaa08c766fa3",
         "baseline_schema_count": 112,
@@ -174,9 +181,9 @@ EXPECTED_HUMAN_DECISION_ASSURANCE = {
     "candidate_evidence_ref":
         "architecture/human-decision-assurance-candidate-evidence.json",
     "challenge_frame_profile_ref":
-        "architecture/human-decision-challenge-frame-v1-candidate.json",
+        "architecture/human-decision-challenge-frame-v2-candidate.json",
     "challenge_frame_vector_evidence_ref":
-        "architecture/human-decision-challenge-frame-v1-candidate-evidence.json",
+        "architecture/human-decision-challenge-frame-v2-candidate-evidence.json",
     "source_evidence_ref":
         "docs/CROSS_PROGRAM_PROCESS_EVIDENCE_ABSORPTION_2026-07-19.md",
     "antecedent_decision_ref":
@@ -478,6 +485,57 @@ def human_decision_assurance_errors(value: Any) -> list[str]:
             errors.append(
                 f"human_decision_assurance.{key} must equal {expected_value!r}"
             )
+    # The co-binding claim is only true while the construction is actually
+    # adopted. Pinning it as a constant would let the Core revert to the v1
+    # frame while this record kept asserting a property the bytes no longer
+    # provide, so it is re-derived from the Core and the Evidence fixture on
+    # every run rather than trusted.
+    if value.get(
+        "confirmation_gesture_and_authenticator_actor_cryptographically_co_bound"
+    ) is True:
+        try:
+            core = json.loads(
+                (
+                    ROOT
+                    / "tests/architecture-schema/fixtures/"
+                    "human-decision-assurance-core.valid.json"
+                ).read_text(encoding="utf-8")
+            )
+            evidence = json.loads(
+                (
+                    ROOT
+                    / "tests/architecture-schema/fixtures/"
+                    "human-decision-assurance-evidence.valid.json"
+                ).read_text(encoding="utf-8")
+            )
+        except (OSError, ValueError, UnicodeError):
+            errors.append(
+                "co-binding is claimed but the Core or Evidence fixture is unreadable"
+            )
+        else:
+            request = core.get("ceremony_request", {})
+            if (
+                request.get("challenge_framing_profile", {}).get("profile_id")
+                != "odeya-human-decision-challenge-frame-v2-candidate"
+                or request.get("two_phase_challenge_required") is not True
+            ):
+                errors.append(
+                    "co-binding is claimed but the Core does not pin the "
+                    "two-phase v2 challenge-framing profile"
+                )
+            observations = evidence.get("participant_observations", [])
+            if not observations or any(
+                not isinstance(observation, dict)
+                or "confirmation_receipt"
+                not in observation.get("challenge", {})
+                or "presentation_challenge"
+                not in observation.get("challenge", {})
+                for observation in observations
+            ):
+                errors.append(
+                    "co-binding is claimed but a participant observation "
+                    "carries no presentation challenge and confirmation receipt"
+                )
     for key in (
         "consumer_census_ref",
         "individual_eligibility_ruleset_ref",
@@ -797,10 +855,13 @@ def validate_human_decision_assurance_known_bads(errors: list[str]) -> int:
             "independent_eligibility_recomputation_retained",
             True,
         ),
+        # The construction now exists, so the escalation to refuse is no longer
+        # claiming it -- it is silently dropping it while the profile still
+        # carries it.
         (
-            "same-actor-cryptographic-cobinding-fabricated",
+            "same-actor-cryptographic-cobinding-dropped",
             "confirmation_gesture_and_authenticator_actor_cryptographically_co_bound",
-            True,
+            False,
         ),
         (
             "exact-crypto-input-dereference-fabricated",

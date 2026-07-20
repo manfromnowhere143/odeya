@@ -1,8 +1,10 @@
 # ADR 0093: Co-bind the confirmation gesture and authenticator actor through a two-phase challenge
 
-- Status: Accepted as an unissued architecture-time design candidate; profile
-  issuance, independent implementation, real ceremony, accountable security
-  review, and Gate A remain blocked
+- Status: Accepted as an unissued architecture-time design candidate, and
+  adopted: the Core pins the v2 framing profile and the Evidence record carries
+  the presentation challenge and confirmation receipt. Profile issuance,
+  independent implementation, real ceremony, accountable security review, and
+  Gate A remain blocked
 - Date: 2026-07-20
 - Decision owners: constitutional authority, security, architecture review
 - Gate effect: closes the ADR 0092 issuance blocker in design only; grants no
@@ -162,6 +164,30 @@ displayed bytes. A presentation surface inside the trust boundary that
 fabricates its receipt is refused by Option A and only detected, not
 prevented, by Option B. That residue is the explicit cost of declining the
 trusted path at Gate A, and it is retained rather than argued away.
+
+## Adoption
+
+Adopted on 2026-07-20. `schemas/human-decision-assurance-core.schema.json` and
+its fixture pin the v2 profile
+(`sha256:585952ace1c4e804c0443532ecb9fcc7eda6e7ce2cd1c18bfd459c0a14255273`,
+5701 bytes) and carry `two_phase_challenge_required`, the exact fifteen-field
+`authentication_commitment_fields` list, and an exact mirror of the receipt
+profile. `schemas/human-decision-assurance-evidence.schema.json` and its
+fixture carry `presentation_challenge` and `confirmation_receipt` on each
+participant observation; the receipt object refuses an
+`authentication_challenge_id` member, and that refusal is the acyclicity.
+
+The receipt's displayed bytes bind a retained
+`exact_unmodified_displayed_decision_bytes` evidence artifact rather than a
+digest that exists only inside the receipt, and the receipt's
+`confirmation_gesture_at` must equal the confirmation record's `confirmed_at`,
+so one human act cannot be recorded at two instants.
+
+Both implementations recompute the chain from the subject bytes and refuse to
+trust a recorded identity. The assurance checker binds the receipt to the
+*recomputed* presentation challenge id, so a session, origin, or
+decision-subject substitution moves the real challenge instead of validating
+against a stale one.
 
 ## Known-bad proof obligation
 

@@ -117,8 +117,8 @@
     },
     "ordered_evidence_set": {
       "type": "array",
-      "minItems": 12,
-      "maxItems": 12,
+      "minItems": 13,
+      "maxItems": 13,
       "items": {
         "$ref": "#/$defs/hda_evidence_artifact_observation"
       }
@@ -362,7 +362,9 @@
             "consumption_state",
             "prior_consumption_count",
             "result_consumption_count",
-            "atomic_assertion_acceptance_and_consumption"
+            "atomic_assertion_acceptance_and_consumption",
+            "presentation_challenge",
+            "confirmation_receipt"
           ],
           "properties": {
             "challenge_request_id": {
@@ -388,7 +390,7 @@
               "const": "independent_verifier_or_relying_party"
             },
             "framing_profile": {
-              "const": "odeya-human-decision-challenge-frame-v1-candidate"
+              "const": "odeya-human-decision-challenge-frame-v2-candidate"
             },
             "minimum_fresh_random_bits": {
               "const": 256
@@ -490,6 +492,84 @@
             },
             "atomic_assertion_acceptance_and_consumption": {
               "$ref": "#/$defs/hda_evidence_observation_status"
+            },
+            "presentation_challenge": {
+              "description": "ADR 0093 phase one. The challenge under which the decision subject was rendered to the principal. The sibling challenge_id/challenge_value fields carry the phase-two authentication challenge, which commits to this one.",
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "challenge_id",
+                "challenge_value",
+                "issued_at",
+                "expires_at"
+              ],
+              "properties": {
+                "challenge_id": {
+                  "$ref": "#/$defs/hda_evidence_raw_sha256"
+                },
+                "challenge_value": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9_-]{86}$"
+                },
+                "issued_at": {
+                  "$ref": "#/$defs/hda_evidence_timestamp"
+                },
+                "expires_at": {
+                  "$ref": "#/$defs/hda_evidence_timestamp"
+                }
+              }
+            },
+            "confirmation_receipt": {
+              "description": "ADR 0093 receipt over the exact displayed bytes. It commits backward to the presentation challenge only. It must never carry an authentication_challenge_id: that omission is the acyclicity, and additionalProperties false enforces it.",
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "receipt_profile_id",
+                "receipt_raw_sha256",
+                "presentation_challenge_id",
+                "displayed_bytes_artifact_id",
+                "displayed_bytes_sha256",
+                "displayed_byte_count",
+                "rendering_profile_id",
+                "confirmation_gesture_kind",
+                "confirmation_gesture_at",
+                "displayed_bytes_source"
+              ],
+              "properties": {
+                "receipt_profile_id": {
+                  "const": "odeya-human-decision-confirmation-receipt-v1-candidate"
+                },
+                "receipt_raw_sha256": {
+                  "$ref": "#/$defs/hda_evidence_raw_sha256"
+                },
+                "presentation_challenge_id": {
+                  "$ref": "#/$defs/hda_evidence_raw_sha256"
+                },
+                "displayed_bytes_artifact_id": {
+                  "$ref": "#/$defs/hda_evidence_identifier"
+                },
+                "displayed_bytes_sha256": {
+                  "$ref": "#/$defs/hda_evidence_raw_sha256"
+                },
+                "displayed_byte_count": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 10485760
+                },
+                "rendering_profile_id": {
+                  "$ref": "#/$defs/hda_evidence_identifier"
+                },
+                "confirmation_gesture_kind": {
+                  "$ref": "#/$defs/hda_evidence_identifier"
+                },
+                "confirmation_gesture_at": {
+                  "$ref": "#/$defs/hda_evidence_timestamp"
+                },
+                "displayed_bytes_source": {
+                  "description": "A reserialized decision object is refused. Only the exact rendered bytes may back the receipt digest.",
+                  "const": "exact_rendered_bytes"
+                }
+              }
             }
           }
         },
@@ -637,7 +717,7 @@
               "const": -7
             },
             "algorithm_policy_profile_id": {
-              "const": "odeya-human-decision-challenge-frame-v1-candidate"
+              "const": "odeya-human-decision-challenge-frame-v2-candidate"
             },
             "client_data_type_match": {
               "$ref": "#/$defs/hda_evidence_observation_status"

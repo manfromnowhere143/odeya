@@ -186,17 +186,34 @@ exact candidate digest. Because it binds the whole Core, changing any Core
 relationship or policy-request field requires a fresh confirmation; a checker
 cannot silently rewrite the human act while rebinding test bytes.
 
-This candidate's binding is still one-way: the receipt names the authenticated
-challenge, but the authenticator-signed challenge does not commit to the
-receipt digest. Content addressing protects receipt identity; it does not
-cryptographically prove that the authenticator actor produced the separate
-application gesture. The structured evidence, Seal, and candidate envelope
-therefore retain
-`confirmation_gesture_and_authenticator_actor_cryptographically_co_bound: false`.
-Profile issuance remains blocked until an accepted two-phase
-construction commits the final verifier challenge to an exact
-pre-confirmation/presentation receipt without a digest cycle, or an accepted
-transaction-confirmation trusted path supplies equivalent retained evidence.
+This binding is no longer one-way. Under the
+[ADR 0093](decisions/0093-co-bind-the-confirmation-gesture-through-a-two-phase-challenge.md)
+two-phase construction, now adopted, the Core pins the v2 framing profile and
+each participant observation carries a presentation challenge and a
+confirmation receipt. The receipt commits backward to the presentation
+challenge; the authentication challenge commits forward to the receipt digest
+through three appended frame fields. The signature therefore covers the digest
+of what was displayed and confirmed, and no artifact commits to a digest of
+anything that commits to it.
+
+The Gate A prerequisite
+`confirmation_gesture_and_authenticator_actor_cryptographically_co_bound` is
+therefore `true` — strictly as a property of the frame construction, re-derived
+independently by the `challenge-frame` suite and re-checked against the Core
+and Evidence bytes on every prerequisite run. It is not a measurement. No
+ceremony occurred, so `material_presentation_receipt_verified_in_real_ceremony`
+remains `false`, and the structured evidence, Seal, and candidate envelope
+still retain
+`confirmation_gesture_and_authenticator_actor_cryptographically_co_bound: false`
+because those records state what an *observed* ceremony established, and this
+fixture's ceremony is synthetic.
+
+A presentation surface inside the trust boundary that fabricates its own
+receipt is detected only when its receipt disagrees, never prevented. That
+residue is the retained cost of declining the transaction-confirmation trusted
+path at Gate A. Profile issuance remains blocked pending an independent
+implementation, backing-byte dereference, end-to-end consumer refusal proof,
+accountable review, and operator acceptance.
 
 The retained vector proves only deterministic framing and recomputation. A
 metamorphic second-nonce expected-pass control proves that the checker is not

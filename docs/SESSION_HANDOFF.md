@@ -1274,89 +1274,72 @@ The refusal added in `8ed5d42` is a `raise` and is therefore outside the
 audit's discovery grammar, so it is guarded by a direct resolution check and
 not by the mutation audit.
 
-What is deliberately still false, and must not be flipped without the work:
-`confirmation_gesture_and_authenticator_actor_cryptographically_co_bound`.
-ADR 0093 supplies the construction and the `challenge-frame` suite re-derives
-it independently, but the Core still pins the v1 profile and the Evidence
-record carries no receipt. Adoption was attempted, hit a wall of coupled
-binding errors, and was reverted rather than left half-applied. The route is
-recorded above under the v2 adoption section.
+That co-binding prerequisite was subsequently closed. A later increment on
+2026-07-20 adopted ADR 0093 v2 in one atomic change; see the adoption section
+below for exactly what moved and what deliberately did not.
 
-## ADR 0093 v2 adoption — exact remaining increment
+## ADR 0093 v2 adoption — completed
 
-ADR 0093 closed the co-binding blocker in design and published at `08dbad6`.
-`8ed5d42` then made the assurance encoder phase-aware. Neither adopted v2: the
-Core still pins the v1 profile, the Evidence record carries no presentation
-challenge or confirmation receipt, and
-`confirmation_gesture_and_authenticator_actor_cryptographically_co_bound`
-remains false. Adoption was attempted once and reverted deliberately rather
-than left half-applied; what follows is the measured route, not a proposal.
-
-Core adoption and the Evidence receipt must land as one atomic change. The
-Core's raw digest is an input to the phase-one frame, so changing Core moves
-the presentation challenge, which moves the receipt digest, which moves the
-authentication challenge and its identity. Editing the fixtures first and
-reconciling afterwards produces recorded digests describing a Core that no
-longer exists.
-
-Derive the chain in this order, once, after the Core bytes are final:
+Adopted on 2026-07-20. The Core pins the v2 framing profile
+(`sha256:585952ace1c4e804c0443532ecb9fcc7eda6e7ce2cd1c18bfd459c0a14255273`,
+5701 bytes) and the Evidence record carries the presentation challenge and the
+confirmation receipt. Core adoption and the receipt landed as one change, with
+the digest chain derived once after the Core bytes were final:
 
 ```text
-Core bytes -> core_raw_sha256
-           -> phase-one frame (12 fields, V2 magic) -> presentation_challenge_id
-           -> confirmation receipt frame -> confirmation_receipt_raw_sha256
-           -> phase-two frame (15 fields, 3 appended last) -> challenge_id
+core 10483 bytes sha256:4bf9b068...
+  -> phase-one frame 720 bytes -> presentation sha256:153df300...
+  -> receipt frame 368 bytes   -> receipt      sha256:ac13f8dd...
+  -> phase-two frame 943 bytes -> challenge    sha256:0331d91a...
 ```
 
-Exact edit points:
+Those three frame byte counts equal the ones the isolated `challenge-frame`
+suite derives independently, and the frozen v1 predecessor vector still
+reproduces exactly. Two implementations agree without sharing code, and the
+encoder is validated against history rather than against itself.
 
-1. `schemas/human-decision-assurance-core.schema.json` —
-   `ceremony_request.challenge_framing_profile` consts move to
-   `odeya-human-decision-challenge-frame-v2-candidate`, `0.2.0`,
-   `sha256:585952ace1c4e804c0443532ecb9fcc7eda6e7ce2cd1c18bfd459c0a14255273`,
-   `5701`. Add `authentication_commitment_fields` (the exact 15-field list
-   from the v2 profile), `two_phase_challenge_required`, and
-   `confirmation_receipt_profile`. Keep `challenge_commitment_fields`
-   unchanged; it is the presentation phase and its bytes do not move.
-2. The matching Core fixture.
-3. `schemas/human-decision-assurance-evidence.schema.json` — the participant
-   observation's `challenge` gains `presentation_challenge` and
-   `confirmation_receipt`. The receipt must not admit an
-   `authentication_challenge_id` field; that omission is the acyclicity.
-4. The Evidence fixture takes the derived values. Its `challenge_value`,
-   `challenge_id`, `issued_at`, and `expires_at` become the phase-two values.
-5. `tests/human-decision-assurance/check.py` — repoint the frame profile and
-   frame evidence paths, move `evaluate_challenge_frame`'s pinned
-   `profile_id`, `profile_version`, `issuance_disposition`, and `purpose` to
-   the v2 strings, extend `chain_challenge_inputs` with the three appended
-   fields sourced from the observation receipt, and verify the receipt against
-   the **recomputed** presentation challenge id.
+Beyond the five recorded edit points, three things were added deliberately and
+should not be read as accidental scope:
 
-Two errors were made and corrected during the attempt; both are cheap to
-repeat:
+- the receipt's displayed bytes bind a retained
+  `exact_unmodified_displayed_decision_bytes` evidence artifact instead of a
+  digest that exists only inside the receipt, so the evidence set is 13 rows;
+- the receipt's `confirmation_gesture_at` must equal the confirmation record's
+  `confirmed_at`, because one human act must not be recorded at two instants;
+  the retained gesture instant is therefore `06:02:00`, not the `06:01:15`
+  recorded in the earlier attempt, with phase two `06:02:00`-`06:04:00`; and
+- the Gate A prerequisite validator re-derives the co-binding claim from the
+  Core and Evidence bytes on every run instead of pinning it as a constant, so
+  a Core that reverted to v1 would refuse the claim rather than keep asserting
+  it. Both arms of that guard were negative-tested.
 
-- Phase timestamps must sit inside the fixture's existing ceremony window
-  (`2026-07-19T06:00:00Z`–`06:05:00Z`, assertion at `06:02:00.250000Z`).
-  Inventing a fresh day produces
-  `decision_confirmation_stale_or_out_of_window`. Retained values that work:
-  phase one `06:00:00`–`06:05:00`, gesture `06:01:15`, phase two
-  `06:01:30`–`06:04:00`.
-- The receipt must bind the recomputed phase-one identity, never the recorded
-  one. Building it from the recorded id lets a session, origin, or
-  decision-subject substitution validate against a stale identity — the exact
-  presentation substitution this construction exists to refuse. That defect
-  was found and fixed in the `challenge-frame` suite and is easy to reproduce
-  in the larger checker.
+Three rebind paths had to be corrected: `rebind_chain`, the raw-chain probe,
+and the observation-level checks all now re-derive phase one and the receipt.
+This was not incidental. Once the Core digest feeds phase one, any moved
+subject byte invalidates the receipt — which is precisely the substitution
+refusal the construction exists to provide, surfacing as test failures until
+the rebind paths were made honest.
 
-Do not repoint the frozen predecessor values. `tests/challenge-frame/check.py`
+`confirmation_gesture_and_authenticator_actor_cryptographically_co_bound` is
+now `true` in `architecture/gate-a-prerequisite-closure.json` and its
+validator, strictly as a construction property. It stays `false` in the
+Evidence, Seal, and candidate-envelope proof boundaries, which state what an
+*observed* ceremony established; this ceremony is synthetic.
+`material_presentation_receipt_verified_in_real_ceremony` remains `false`. A
+presentation surface that fabricates its own receipt is still only detected,
+never prevented.
+
+The frozen v1 predecessor was not repointed. `tests/challenge-frame/check.py`
 and `architecture/human-decision-challenge-frame-v1-candidate-evidence.json`
-retain the v1 vector, and reproducing it exactly is what validates the encoder
-against history rather than against itself.
+retain the v1 vector, and the PRQ-013 candidate evidence now binds the v1 pair
+under `superseded_challenge_frame_profile` and
+`superseded_challenge_frame_vector_evidence` so the predecessor stays retained
+rather than dropped.
 
-After adoption: receipt-binding known-bads, refresh every record binding the
-changed bytes, one generalized guard re-audit, exact-commit rehearsal, and the
-ADR 0091 publication sequence. Only then may the co-binding prerequisite flip,
-and only as a construction property — never as measured ceremony evidence.
+Suite movement, all deliberately re-pinned: the assurance suite went 206 to 215
+one-mutation known-bads and 146 to 155 refusal rules; generalized guard
+coverage went 458/927 to 469/958, so 31 new guards exist and 11 of them are
+proved. The other 20 are explicitly unproved, not silently covered.
 
 ## Next architecture mission, in dependency order
 

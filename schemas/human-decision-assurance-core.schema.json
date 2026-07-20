@@ -276,6 +276,9 @@
         "maximum_challenge_lifetime_seconds",
         "challenge_validity_interval",
         "challenge_commitment_fields",
+        "two_phase_challenge_required",
+        "authentication_commitment_fields",
+        "confirmation_receipt_profile",
         "single_use_required",
         "authentication_intent_required",
         "phishing_resistance_required",
@@ -315,23 +318,23 @@
           ],
           "properties": {
             "profile_id": {
-              "const": "odeya-human-decision-challenge-frame-v1-candidate"
+              "const": "odeya-human-decision-challenge-frame-v2-candidate"
             },
             "profile_version": {
-              "const": "0.1.0"
+              "const": "0.2.0"
             },
             "raw_sha256": {
-              "const": "sha256:3f97329cb88be3720d28efd8ae880150c861dc9be9faaecec479e83ea31f73b4",
+              "const": "sha256:585952ace1c4e804c0443532ecb9fcc7eda6e7ce2cd1c18bfd459c0a14255273",
               "x-odeya-digest-scope": {
                 "kind": "byte_digest",
-                "subject": "exact raw bytes of architecture/human-decision-challenge-frame-v1-candidate.json",
+                "subject": "exact raw bytes of architecture/human-decision-challenge-frame-v2-candidate.json",
                 "algorithm": "sha-256",
                 "profile": "not_a_canonical_object_digest",
                 "status": "accepted_disposition_annotation"
               }
             },
             "byte_count": {
-              "const": 3058
+              "const": 5701
             },
             "candidate_status": {
               "const": "unissued_architecture_candidate_not_a_real_ceremony"
@@ -382,6 +385,83 @@
             "expected_origin",
             "nonce"
           ]
+        },
+        "two_phase_challenge_required": {
+          "description": "ADR 0093. The ceremony is two ordered phases: a presentation challenge over the fields above, then an authentication challenge over those fields plus the three appended bindings. This field does not assert that any ceremony occurred.",
+          "const": true
+        },
+        "authentication_commitment_fields": {
+          "description": "Exact ordered phase-two frame field list. The three appended fields must remain last and in this order; reordering or omitting one changes what the authenticator signs.",
+          "const": [
+            "core_schema_resource_id",
+            "core_raw_sha256",
+            "decision_schema_resource_id",
+            "decision_raw_sha256",
+            "candidate_schema_resource_id",
+            "candidate_raw_sha256",
+            "session_id",
+            "issued_at",
+            "expires_at",
+            "relying_party_id",
+            "expected_origin",
+            "nonce",
+            "presentation_challenge_id",
+            "confirmation_receipt_raw_sha256",
+            "confirmation_receipt_profile_id"
+          ]
+        },
+        "confirmation_receipt_profile": {
+          "description": "Exact mirror of the v2 framing profile's confirmation_receipt block. It is restated here so a Core that pins the profile cannot silently disagree with it about what the receipt commits to.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "receipt_profile_id",
+            "receipt_profile_version",
+            "digest_algorithm",
+            "displayed_bytes_digest_source",
+            "reserialized_object_digest_allowed",
+            "ordered_fields",
+            "may_reference_authentication_challenge",
+            "single_use_required",
+            "surface_must_produce_exact_displayed_bytes"
+          ],
+          "properties": {
+            "receipt_profile_id": {
+              "const": "odeya-human-decision-confirmation-receipt-v1-candidate"
+            },
+            "receipt_profile_version": {
+              "const": "0.1.0"
+            },
+            "digest_algorithm": {
+              "const": "sha-256"
+            },
+            "displayed_bytes_digest_source": {
+              "const": "exact_rendered_bytes_not_a_reserialized_decision_object"
+            },
+            "reserialized_object_digest_allowed": {
+              "const": false
+            },
+            "ordered_fields": {
+              "const": [
+                "presentation_challenge_id",
+                "displayed_bytes_sha256",
+                "displayed_byte_count",
+                "rendering_profile_id",
+                "confirmation_gesture_kind",
+                "confirmation_gesture_at"
+              ]
+            },
+            "may_reference_authentication_challenge": {
+              "description": "False is the acyclicity. A receipt that named the authentication challenge would close the dependency cycle ADR 0093 exists to break.",
+              "const": false
+            },
+            "single_use_required": {
+              "const": true
+            },
+            "surface_must_produce_exact_displayed_bytes": {
+              "const": true
+            }
+          }
         },
         "single_use_required": {
           "const": true

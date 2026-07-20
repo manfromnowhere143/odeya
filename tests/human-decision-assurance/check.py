@@ -52,11 +52,11 @@ KB001_FIXTURE = (
     "prq-013-kb-001.agent-accessible-key.known-bad.json"
 )
 CHALLENGE_FRAME = (
-    ROOT / "architecture/human-decision-challenge-frame-v1-candidate.json"
+    ROOT / "architecture/human-decision-challenge-frame-v2-candidate.json"
 )
 CHALLENGE_FRAME_EVIDENCE = (
     ROOT
-    / "architecture/human-decision-challenge-frame-v1-candidate-evidence.json"
+    / "architecture/human-decision-challenge-frame-v2-candidate-evidence.json"
 )
 INDIVIDUAL_ELIGIBILITY_RULESET = (
     ROOT
@@ -80,6 +80,10 @@ CANDIDATE_EVIDENCE = (
     ROOT / "architecture/human-decision-assurance-candidate-evidence.json"
 )
 
+CONFIRMATION_RECEIPT_MAGIC = "ODEYA-HDA-CONFIRMATION-RECEIPT-V1"
+CONFIRMATION_RECEIPT_PROFILE_ID = (
+    "odeya-human-decision-confirmation-receipt-v1-candidate"
+)
 CORE_SCHEMA_ID = "urn:odeya:schema:human-decision-assurance-core:0.1.0"
 EVIDENCE_SCHEMA_ID = (
     "urn:odeya:schema:human-decision-assurance-evidence:0.1.0"
@@ -178,13 +182,25 @@ EXPECTED_CANDIDATE_EVIDENCE_BINDINGS = [
         "agent_accessible_key_known_bad",
     ),
     (
-        "architecture/human-decision-challenge-frame-v1-candidate.json",
+        "architecture/human-decision-challenge-frame-v2-candidate.json",
         "challenge_frame_profile",
     ),
     (
         "architecture/"
-        "human-decision-challenge-frame-v1-candidate-evidence.json",
+        "human-decision-challenge-frame-v2-candidate-evidence.json",
         "challenge_frame_vector_evidence",
+    ),
+    # The superseded pair stays bound. It is the frozen predecessor the v2
+    # encoder reproduces, and dropping it would delete the only evidence that
+    # the construction did not silently change under itself.
+    (
+        "architecture/human-decision-challenge-frame-v1-candidate.json",
+        "superseded_challenge_frame_profile",
+    ),
+    (
+        "architecture/"
+        "human-decision-challenge-frame-v1-candidate-evidence.json",
+        "superseded_challenge_frame_vector_evidence",
     ),
     (
         "architecture/human-decision-assurance-consumer-census.json",
@@ -254,6 +270,7 @@ EXPECTED_EVIDENCE_ROLES = [
     "exact_unmodified_authenticator_data",
     "exact_unmodified_webauthn_signature",
     "exact_unmodified_credential_public_key",
+    "exact_unmodified_displayed_decision_bytes",
     "sanitized_exact_material_presentation_and_decision_confirmation_receipt",
     "sanitized_custody_observation",
     "sanitized_identity_proofing_profile",
@@ -267,6 +284,7 @@ EXACT_CRYPTOGRAPHIC_INPUT_ROLES = {
     "exact_unmodified_authenticator_data",
     "exact_unmodified_webauthn_signature",
     "exact_unmodified_credential_public_key",
+    "exact_unmodified_displayed_decision_bytes",
 }
 EXPECTED_OPERATOR_ACCEPTANCE_CONSUMERS = [
     (
@@ -660,15 +678,70 @@ def all_false(value: Any) -> bool:
     )
 
 
+DIGEST_VALUED_FRAME_FIELDS = {"presentation_challenge_id"}
+
+
 def frame_value_bytes(name: str, value: str) -> bytes:
     if name == "nonce":
         return bytes.fromhex(value)
-    if name.endswith("sha256"):
+    if name.endswith("sha256") or name in DIGEST_VALUED_FRAME_FIELDS:
+        # `presentation_challenge_id` is a challenge identity, not a `*sha256`
+        # name, but the v2 profile encodes it as 32 raw octets like every other
+        # digest. Keying purely off the name suffix would silently ASCII-encode
+        # it here while the isolated suite encoded octets, and the two
+        # implementations would disagree about what the authenticator signed.
         prefix = "sha256:"
         if not value.startswith(prefix):
             raise ValueError(f"{name} is not a raw SHA-256 value")
         return bytes.fromhex(value[len(prefix) :])
     return value.encode("ascii")
+
+
+def encode_confirmation_receipt_frame(
+    receipt: dict[str, Any], presentation_challenge_id: str
+) -> bytes:
+    """Encode the ADR 0093 receipt frame under a caller-supplied phase-one id.
+
+    The identity is a parameter rather than a field read out of `receipt` so a
+    caller cannot accidentally bind the receipt to the identity the record
+    claims. Callers must pass the recomputed phase-one id.
+    """
+    fields = [
+        (
+            "presentation_challenge_id",
+            frame_value_bytes(
+                "presentation_challenge_id", presentation_challenge_id
+            ),
+        ),
+        (
+            "displayed_bytes_sha256",
+            frame_value_bytes(
+                "displayed_bytes_sha256", receipt["displayed_bytes_sha256"]
+            ),
+        ),
+        (
+            "displayed_byte_count",
+            struct.pack(">I", receipt["displayed_byte_count"]),
+        ),
+        ("rendering_profile_id", receipt["rendering_profile_id"].encode("ascii")),
+        (
+            "confirmation_gesture_kind",
+            receipt["confirmation_gesture_kind"].encode("ascii"),
+        ),
+        (
+            "confirmation_gesture_at",
+            receipt["confirmation_gesture_at"].encode("ascii"),
+        ),
+    ]
+    result = bytearray(CONFIRMATION_RECEIPT_MAGIC.encode("ascii"))
+    result.extend(struct.pack(">H", len(fields)))
+    for name, value in fields:
+        name_raw = name.encode("ascii")
+        result.extend(struct.pack(">H", len(name_raw)))
+        result.extend(name_raw)
+        result.extend(struct.pack(">I", len(value)))
+        result.extend(value)
+    return bytes(result)
 
 
 def challenge_frame_fields(
@@ -748,18 +821,12 @@ def challenge_identifier(challenge_value: str) -> str:
     return raw_sha256(challenge_octets(challenge_value))
 
 
-def chain_challenge_inputs(
+def shared_chain_inputs(
     core: dict[str, Any],
-    evidence: dict[str, Any],
-    frame_profile: dict[str, Any],
-    frame_evidence: dict[str, Any],
-    observation: dict[str, Any],
+    challenge: dict[str, Any],
     core_raw_sha256: str,
-    nonce_hex: str | None = None,
 ) -> dict[str, str]:
-    challenge = observation["challenge"]
-    if nonce_hex is None:
-        nonce_hex = challenge_nonce_hex(challenge["challenge_value"])
+    """The seven subject fields both phases commit to, identically."""
     return {
         "core_schema_resource_id": CORE_SCHEMA_ID,
         "core_raw_sha256": core_raw_sha256,
@@ -772,12 +839,89 @@ def chain_challenge_inputs(
         ],
         "candidate_raw_sha256": core["candidate_subject"]["raw_sha256"],
         "session_id": challenge["session_id"],
-        "issued_at": challenge["issued_at"],
-        "expires_at": challenge["expires_at"],
-        "relying_party_id": challenge["relying_party_id"],
-        "expected_origin": challenge["expected_origin"],
-        "nonce_hex": nonce_hex,
     }
+
+
+def presentation_challenge_inputs(
+    core: dict[str, Any],
+    observation: dict[str, Any],
+    core_raw_sha256: str,
+) -> dict[str, str]:
+    """Phase-one inputs. The v1 frame field list, unchanged, under V2 magic."""
+    challenge = observation["challenge"]
+    presentation = challenge["presentation_challenge"]
+    inputs = shared_chain_inputs(core, challenge, core_raw_sha256)
+    inputs.update(
+        {
+            "issued_at": presentation["issued_at"],
+            "expires_at": presentation["expires_at"],
+            "relying_party_id": challenge["relying_party_id"],
+            "expected_origin": challenge["expected_origin"],
+            "nonce_hex": challenge_nonce_hex(presentation["challenge_value"]),
+        }
+    )
+    return inputs
+
+
+def recomputed_presentation_challenge_id(
+    frame_profile: dict[str, Any],
+    core: dict[str, Any],
+    observation: dict[str, Any],
+    core_raw_sha256: str,
+) -> str:
+    """Recompute phase one from the subject bytes, never trust the record.
+
+    Everything downstream binds this value. Reading the recorded
+    `presentation_challenge.challenge_id` instead would let a session, origin,
+    or decision-subject substitution move the real phase-one challenge while
+    the receipt and the phase-two frame kept validating against a stale
+    identity -- the exact presentation substitution ADR 0093 exists to refuse.
+    """
+    value, _ = challenge_from_inputs(
+        frame_profile,
+        presentation_challenge_inputs(core, observation, core_raw_sha256),
+        "presentation",
+    )
+    return challenge_identifier(value)
+
+
+def chain_challenge_inputs(
+    core: dict[str, Any],
+    evidence: dict[str, Any],
+    frame_profile: dict[str, Any],
+    frame_evidence: dict[str, Any],
+    observation: dict[str, Any],
+    core_raw_sha256: str,
+    nonce_hex: str | None = None,
+) -> dict[str, str]:
+    """Phase-two inputs: the phase-one field list plus three appended bindings.
+
+    The appended fields come last and in this exact order. They are derived
+    here rather than read from the record so that the commitment check upstream
+    compares a recorded challenge against an independently rebuilt one.
+    """
+    challenge = observation["challenge"]
+    if nonce_hex is None:
+        nonce_hex = challenge_nonce_hex(challenge["challenge_value"])
+    receipt = challenge["confirmation_receipt"]
+    presentation_id = recomputed_presentation_challenge_id(
+        frame_profile, core, observation, core_raw_sha256
+    )
+    receipt_frame = encode_confirmation_receipt_frame(receipt, presentation_id)
+    inputs = shared_chain_inputs(core, challenge, core_raw_sha256)
+    inputs.update(
+        {
+            "issued_at": challenge["issued_at"],
+            "expires_at": challenge["expires_at"],
+            "relying_party_id": challenge["relying_party_id"],
+            "expected_origin": challenge["expected_origin"],
+            "nonce_hex": nonce_hex,
+            "presentation_challenge_id": presentation_id,
+            "confirmation_receipt_raw_sha256": raw_sha256(receipt_frame),
+            "confirmation_receipt_profile_id": receipt["receipt_profile_id"],
+        }
+    )
+    return inputs
 
 
 def evaluate_challenge_frame(
@@ -789,32 +933,43 @@ def evaluate_challenge_frame(
     errors: list[str] = []
     binary = frame_profile.get("binary_frame", {})
     construction = frame_profile.get("challenge_construction", {})
-    relying_party_policy = frame_profile.get(
-        "relying_party_origin_policy", {}
-    )
+    receipt_profile = frame_profile.get("confirmation_receipt", {})
+    acyclicity = frame_profile.get("acyclicity_law", {})
+    relying_party_policy = frame_profile.get("relying_party_origin_policy", {})
     algorithm_policy = frame_profile.get("webauthn_algorithm_policy", {})
     vector = frame_evidence.get("synthetic_test_vector", {})
     proof = frame_profile.get("proof_boundary", {})
     evidence_proof = frame_evidence.get("proof_boundary", {})
-    expected_fields = base_core.get("ceremony_request", {}).get(
-        "challenge_commitment_fields"
-    )
+    request = base_core.get("ceremony_request", {})
+    presentation_fields = request.get("challenge_commitment_fields")
+    authentication_fields = request.get("authentication_commitment_fields")
     if (
         frame_profile.get("schema_version") != "0.1.0"
         or frame_profile.get("artifact_class")
         != "human_decision_challenge_frame_candidate"
         or frame_profile.get("profile_id")
+        != "odeya-human-decision-challenge-frame-v2-candidate"
+        or frame_profile.get("profile_version") != "0.2.0"
+        or frame_profile.get("supersedes_profile_id")
         != "odeya-human-decision-challenge-frame-v1-candidate"
-        or frame_profile.get("profile_version") != "0.1.0"
         or frame_profile.get("candidate_status")
         != "unissued_architecture_candidate_not_a_real_ceremony"
         or frame_profile.get("issuance_disposition")
         != (
-            "blocked_pending_cycle_free_confirmation_receipt_commitment_"
-            "or_accepted_transaction_confirmation_trusted_path"
+            "blocked_pending_independent_implementation_backing_byte_"
+            "verification_end_to_end_consumer_refusal_accountable_review_"
+            "and_operator_acceptance"
         )
         or frame_profile.get("purpose")
-        != "nonrecursive_exact_byte_commitment_for_a_webauthn_authentication_challenge"
+        != (
+            "acyclic_two_phase_exact_byte_commitment_co_binding_the_"
+            "confirmation_gesture_and_the_authenticator_actor"
+        )
+        or frame_profile.get("decision_ref")
+        != (
+            "docs/decisions/0093-co-bind-the-confirmation-gesture-"
+            "through-a-two-phase-challenge.md"
+        )
     ):
         errors.append("challenge_frame_profile_mismatch")
     if frame_evidence.get("schema_version") != "0.1.0" or (
@@ -822,8 +977,8 @@ def evaluate_challenge_frame(
         != "human_decision_challenge_frame_candidate_evidence"
     ) or (
         frame_evidence.get("evidence_id")
-        != "odeya.human-decision-challenge-frame-v1."
-        "candidate-evidence.2026-07-19"
+        != "odeya.human-decision-challenge-frame-v2."
+        "candidate-evidence.2026-07-20"
     ) or frame_evidence.get("version") != "0.1.0" or (
         frame_evidence.get("evidence_status")
         != "candidate_measurement_not_admitted"
@@ -834,8 +989,24 @@ def evaluate_challenge_frame(
         != "deterministic_recomputation_vector_not_randomness_or_human_evidence"
     ):
         errors.append("challenge_frame_vector_classification_mismatch")
+    if frame_profile.get("phase_order") != [
+        "presentation_challenge",
+        "confirmation_receipt",
+        "authentication_challenge",
+    ]:
+        errors.append("challenge_frame_phase_order_mismatch")
+    if acyclicity != {
+        "statement": (
+            "no_artifact_commits_to_a_digest_of_anything_that_commits_to_it"
+        ),
+        "forward_edges_only": True,
+        "receipt_may_reference_presentation_challenge": True,
+        "receipt_may_reference_authentication_challenge": False,
+        "presentation_frame_may_reference_receipt": False,
+    }:
+        errors.append("challenge_frame_acyclicity_law_mismatch")
     if binary != {
-        "magic_ascii": "ODEYA-HDA-CHALLENGE-FRAME-V1",
+        "magic_ascii": "ODEYA-HDA-CHALLENGE-FRAME-V2",
         "field_count_encoding": "unsigned_16_bit_big_endian",
         "field_entry_encoding": (
             "name_length_u16be_then_ascii_name_then_"
@@ -846,7 +1017,10 @@ def evaluate_challenge_frame(
             "32_raw_octets_decoded_from_lowercase_sha256_colon_hex"
         ),
         "nonce_value_encoding": "32_raw_octets_decoded_from_lowercase_hex",
-        "ordered_fields": expected_fields,
+        "presentation_phase_ordered_fields": presentation_fields,
+        "authentication_phase_ordered_fields": authentication_fields,
+        "appended_authentication_fields_must_be_last": True,
+        "field_reordering_allowed": False,
     } or construction != {
         "minimum_fresh_random_bits": 256,
         "nonce_bytes": 32,
@@ -865,9 +1039,50 @@ def evaluate_challenge_frame(
         "validity_interval": (
             "half_open_issued_at_inclusive_expires_at_exclusive"
         ),
+        "authentication_interval_must_be_contained_in_presentation_interval": (
+            True
+        ),
         "client_generated_challenge_allowed": False,
+        "distinct_nonce_required_per_phase": True,
     }:
         errors.append("challenge_frame_encoding_contract_mismatch")
+    # The Core restates the receipt profile. If the two ever disagree, a Core
+    # that pins this profile would still describe a different receipt.
+    if receipt_profile != request.get("confirmation_receipt_profile"):
+        errors.append("challenge_frame_receipt_profile_core_disagreement")
+    if (
+        receipt_profile.get("receipt_profile_id")
+        != CONFIRMATION_RECEIPT_PROFILE_ID
+        or receipt_profile.get("reserialized_object_digest_allowed") is not False
+        or receipt_profile.get("may_reference_authentication_challenge")
+        is not False
+        or receipt_profile.get("ordered_fields")
+        != [
+            "presentation_challenge_id",
+            "displayed_bytes_sha256",
+            "displayed_byte_count",
+            "rendering_profile_id",
+            "confirmation_gesture_kind",
+            "confirmation_gesture_at",
+        ]
+    ):
+        errors.append("challenge_frame_receipt_profile_mismatch")
+    # The three appended fields are the whole point of v2: they must be exactly
+    # the phase-one list plus the three bindings, in order, appended last.
+    if (
+        not isinstance(presentation_fields, list)
+        or not isinstance(authentication_fields, list)
+        or authentication_fields
+        != presentation_fields
+        + [
+            "presentation_challenge_id",
+            "confirmation_receipt_raw_sha256",
+            "confirmation_receipt_profile_id",
+        ]
+    ):
+        errors.append("challenge_frame_appended_field_contract_mismatch")
+    if request.get("two_phase_challenge_required") is not True:
+        errors.append("challenge_frame_two_phase_not_required_by_core")
     if relying_party_policy != {
         "policy_status": "candidate_unissued",
         "allowed_relying_party_id": "odeya.danielwahnich.dev",
@@ -875,6 +1090,7 @@ def evaluate_challenge_frame(
         "origin_host_must_equal_relying_party_id": True,
         "nondefault_port_allowed": False,
         "alternate_relying_party_or_origin_allowed": False,
+        "both_phases_must_share_identical_relying_party_and_origin": True,
     }:
         errors.append("challenge_frame_relying_party_origin_policy_mismatch")
     if algorithm_policy != {
@@ -885,9 +1101,17 @@ def evaluate_challenge_frame(
         "algorithm_match_must_be_independently_verified": True,
     }:
         errors.append("challenge_frame_algorithm_policy_mismatch")
+    # Checked over the profile's own declared lists as well as the Core's, so a
+    # material digest smuggled into either side is refused on its own terms
+    # rather than only as a disagreement between the two.
     if any(
         "material" in field
-        for field in binary.get("ordered_fields", [])
+        for field in (
+            (presentation_fields or [])
+            + (authentication_fields or [])
+            + list(binary.get("presentation_phase_ordered_fields") or [])
+            + list(binary.get("authentication_phase_ordered_fields") or [])
+        )
         if isinstance(field, str)
     ):
         errors.append("challenge_frame_material_digest_forbidden")
@@ -901,7 +1125,7 @@ def evaluate_challenge_frame(
     )
     if (
         profile_binding.get("path")
-        != "architecture/human-decision-challenge-frame-v1-candidate.json"
+        != "architecture/human-decision-challenge-frame-v2-candidate.json"
         or profile_binding.get("profile_id") != frame_profile.get("profile_id")
         or profile_binding.get("profile_version")
         != frame_profile.get("profile_version")
@@ -927,80 +1151,172 @@ def evaluate_challenge_frame(
         or core_binding.get("byte_count") != len(disk_core_raw)
     ):
         errors.append("challenge_frame_core_raw_binding_mismatch")
+
+    # The retained v1 vector is frozen history. Reproducing it proves this
+    # encoder still agrees with the predecessor rather than only with itself.
+    predecessor = frame_evidence.get("predecessor_vector_reproduction", {})
+    if (
+        predecessor.get("predecessor_profile_id")
+        != "odeya-human-decision-challenge-frame-v1-candidate"
+        or predecessor.get("reproduced_frame_byte_count") != 720
+        or predecessor.get("reproduced_commitment_hex")
+        != "0885968caa3ea2e1b83ae77023d77e7189655e710e41f67416201a0907eb9493"
+        or predecessor.get("reproduced_challenge_id")
+        != "sha256:9cda614e474dd1cc6e644a557c22596467f51d2e711092d7853d6bda"
+        "32d0f5f6"
+        or predecessor.get("all_four_values_matched_the_retained_v1_vector")
+        is not True
+    ):
+        errors.append("challenge_frame_predecessor_reproduction_mismatch")
+
+    shared = vector.get("shared_inputs", {})
+    presentation = vector.get("presentation_phase", {})
+    receipt = vector.get("confirmation_receipt", {})
+    authentication = vector.get("authentication_phase", {})
+    if shared.get("core_raw_sha256") != raw_sha256(disk_core_raw):
+        errors.append("challenge_frame_vector_subject_mismatch")
     try:
-        encoded, raw_frame = challenge_from_inputs(
-            frame_profile, vector["inputs"]
+        p1_inputs = dict(shared)
+        p1_inputs.update(
+            {
+                "issued_at": presentation["issued_at"],
+                "expires_at": presentation["expires_at"],
+                "nonce_hex": presentation["nonce_hex"],
+            }
+        )
+        p1_value, p1_frame = challenge_from_inputs(
+            frame_profile, p1_inputs, "presentation"
+        )
+        recomputed_p1_id = challenge_identifier(p1_value)
+        receipt_frame = encode_confirmation_receipt_frame(
+            receipt, recomputed_p1_id
+        )
+        receipt_digest = raw_sha256(receipt_frame)
+        p2_inputs = dict(shared)
+        p2_inputs.update(
+            {
+                "issued_at": authentication["issued_at"],
+                "expires_at": authentication["expires_at"],
+                "nonce_hex": authentication["nonce_hex"],
+                "presentation_challenge_id": recomputed_p1_id,
+                "confirmation_receipt_raw_sha256": receipt_digest,
+                "confirmation_receipt_profile_id": receipt[
+                    "confirmation_receipt_profile_id"
+                ],
+            }
+        )
+        p2_value, p2_frame = challenge_from_inputs(
+            frame_profile, p2_inputs, "authentication"
         )
     except (KeyError, TypeError, ValueError, UnicodeError, struct.error):
         errors.append("challenge_frame_vector_unrecomputable")
     else:
         if (
-            vector.get("frame_byte_count") != len(raw_frame)
-            or vector.get("frame_raw_sha256") != raw_sha256(raw_frame)
-            or vector.get("commitment_hex")
-            != hashlib.sha256(raw_frame).hexdigest()
-            or vector.get("challenge_base64url") != encoded
-            or vector.get("challenge_id") != challenge_identifier(encoded)
+            presentation.get("frame_byte_count") != len(p1_frame)
+            or presentation.get("frame_raw_sha256") != raw_sha256(p1_frame)
+            or presentation.get("challenge_base64url") != p1_value
+            or presentation.get("presentation_challenge_id")
+            != recomputed_p1_id
         ):
-            errors.append("challenge_frame_vector_mismatch")
-        inputs = vector.get("inputs", {})
-        challenge = get(base_evidence, "participant_observations")
-        challenge = (
-            challenge[0].get("challenge", {})
-            if isinstance(challenge, list) and challenge
-            else {}
-        )
-        expected_inputs = {
-            "core_schema_resource_id": CORE_SCHEMA_ID,
-            "core_raw_sha256": raw_sha256(disk_core_raw),
-            "decision_schema_resource_id": get(
-                base_core, "decision_subject", "schema_resource_id"
-            ),
-            "decision_raw_sha256": get(
-                base_core, "decision_subject", "raw_sha256"
-            ),
-            "candidate_schema_resource_id": get(
-                base_core, "candidate_subject", "schema_resource_id"
-            ),
-            "candidate_raw_sha256": get(
-                base_core, "candidate_subject", "raw_sha256"
-            ),
-            "session_id": get(base_core, "ceremony_request", "session_id"),
-            "issued_at": challenge.get("issued_at"),
-            "expires_at": challenge.get("expires_at"),
-            "relying_party_id": get(
-                base_core, "ceremony_request", "relying_party_id"
-            ),
-            "expected_origin": get(
-                base_core, "ceremony_request", "expected_origin"
-            ),
-            "nonce_hex": inputs.get("nonce_hex"),
-        }
-        if inputs != expected_inputs:
-            errors.append("challenge_frame_vector_subject_mismatch")
-        try:
-            nonce = bytes.fromhex(inputs.get("nonce_hex", ""))
-        except (TypeError, ValueError):
-            nonce = b""
-        issued = parse_time(inputs.get("issued_at"))
-        expires = parse_time(inputs.get("expires_at"))
+            errors.append("challenge_frame_presentation_vector_mismatch")
         if (
-            len(nonce) != 32
-            or issued is None
-            or expires is None
-            or expires <= issued
-            or (expires - issued).total_seconds() > 300
+            receipt.get("receipt_frame_byte_count") != len(receipt_frame)
+            or receipt.get("confirmation_receipt_raw_sha256")
+            != receipt_digest
+            or receipt.get("receipt_magic_ascii")
+            != CONFIRMATION_RECEIPT_MAGIC
         ):
-            errors.append("challenge_frame_nonce_or_lifetime_invalid")
+            errors.append("challenge_frame_receipt_vector_mismatch")
+        if (
+            authentication.get("frame_byte_count") != len(p2_frame)
+            or authentication.get("frame_raw_sha256") != raw_sha256(p2_frame)
+            or authentication.get("challenge_base64url") != p2_value
+            or authentication.get("authentication_challenge_id")
+            != challenge_identifier(p2_value)
+        ):
+            errors.append("challenge_frame_authentication_vector_mismatch")
+        if presentation.get("nonce_hex") == authentication.get("nonce_hex"):
+            errors.append("challenge_frame_phase_nonce_reused")
+        p1_issued = parse_time(presentation.get("issued_at"))
+        p1_expires = parse_time(presentation.get("expires_at"))
+        p2_issued = parse_time(authentication.get("issued_at"))
+        p2_expires = parse_time(authentication.get("expires_at"))
+        gesture = parse_time(receipt.get("confirmation_gesture_at"))
+        if (
+            p1_issued is None
+            or p1_expires is None
+            or p2_issued is None
+            or p2_expires is None
+            or not (p1_issued <= p2_issued and p2_expires <= p1_expires)
+        ):
+            errors.append("challenge_frame_authentication_interval_not_contained")
+        if (
+            gesture is None
+            or p1_issued is None
+            or p2_issued is None
+            or not (p1_issued <= gesture <= p2_issued)
+        ):
+            errors.append("challenge_frame_gesture_outside_phase_order")
+        for phase_name, issued, expires in (
+            ("presentation", p1_issued, p1_expires),
+            ("authentication", p2_issued, p2_expires),
+        ):
+            if (
+                issued is None
+                or expires is None
+                or expires <= issued
+                or (expires - issued).total_seconds() > 300
+            ):
+                errors.append("challenge_frame_nonce_or_lifetime_invalid")
+        for phase in (presentation, authentication):
+            try:
+                if len(bytes.fromhex(phase.get("nonce_hex", ""))) != 32:
+                    errors.append("challenge_frame_nonce_or_lifetime_invalid")
+            except (TypeError, ValueError):
+                errors.append("challenge_frame_nonce_or_lifetime_invalid")
+        # Acyclicity, structurally: the receipt must not name the challenge
+        # that commits to it.
+        if "authentication_challenge_id" in receipt:
+            errors.append("challenge_frame_receipt_references_authentication")
+        if any(key.startswith("confirmation_receipt") for key in presentation):
+            errors.append("challenge_frame_presentation_references_receipt")
+        if (
+            receipt.get(
+                "displayed_bytes_are_synthetic_rendered_bytes_not_a_"
+                "reserialized_object"
+            )
+            is not True
+        ):
+            errors.append("challenge_frame_receipt_displayed_bytes_source_invalid")
+
+    observations = frame_evidence.get("acyclicity_observations", {})
+    if set(observations) != {
+        "receipt_commits_to_presentation_challenge_id",
+        "authentication_frame_commits_to_receipt_digest",
+        "receipt_contains_no_authentication_challenge_field",
+        "presentation_frame_contains_no_receipt_field",
+        "dependency_edges_are_forward_only",
+        "distinct_nonce_per_phase",
+        "authentication_interval_contained_in_presentation_interval",
+        "gesture_instant_after_presentation_issuance_and_before_"
+        "authentication_issuance",
+    } or not all(value is True for value in observations.values()):
+        errors.append("challenge_frame_acyclicity_observations_mismatch")
+
     if set(frame_profile) != {
         "schema_version",
         "artifact_class",
         "profile_id",
         "profile_version",
+        "supersedes_profile_id",
+        "decision_ref",
         "candidate_status",
         "issuance_disposition",
         "purpose",
+        "phase_order",
+        "acyclicity_law",
         "binary_frame",
+        "confirmation_receipt",
         "challenge_construction",
         "relying_party_origin_policy",
         "webauthn_algorithm_policy",
@@ -1011,43 +1327,70 @@ def evaluate_challenge_frame(
         "evidence_id",
         "version",
         "evidence_status",
+        "decision_ref",
         "profile_binding",
         "core_fixture_binding",
+        "predecessor_vector_reproduction",
         "synthetic_test_vector",
+        "acyclicity_observations",
         "proof_boundary",
     }:
         errors.append("challenge_frame_artifact_shape_mismatch")
+    # Exactly three profile flags may be true, and only as design properties of
+    # the construction. Everything else -- issuance, independent
+    # implementation, real ceremony, review, Gate A, runtime -- stays false.
+    expected_true = {
+        "confirmation_receipt_digest_committed",
+        (
+            "confirmation_gesture_and_authenticator_actor_"
+            "cryptographically_co_bound"
+        ),
+        "co_binding_is_design_construction_not_measured_ceremony_evidence",
+    }
+    expected_false = {
+        "profile_issued",
+        "relying_party_origin_policy_issued",
+        "webauthn_algorithm_policy_issued",
+        "independent_implementation_retained",
+        "backing_evidence_bytes_dereferenced_and_verified",
+        "end_to_end_consumer_refusal_proved",
+        "compromised_presentation_surface_refuted",
+        "challenge_proves_review_or_comprehension",
+        "challenge_proves_exclusive_credential_custody",
+        "challenge_grants_authority",
+        "real_protected_ceremony_performed",
+        "accountable_security_and_authority_review_completed",
+        "gate_a_accepted",
+        "runtime_authorized",
+    }
+    expected_evidence_true = {
+        "vector_is_deterministic_recomputation_only",
+        "no_real_authenticator_participated",
+        "no_real_person_confirmed_anything",
+        "no_signature_was_produced_or_verified",
+        "displayed_bytes_are_synthetic",
+    }
+    expected_evidence_false = {
+        "independent_implementation_retained",
+        "profile_issued",
+        "compromised_presentation_surface_refuted",
+        "gate_a_accepted",
+        "runtime_authorized",
+    }
     if (
-        set(proof)
-        != {
-            "profile_issued",
-            "relying_party_origin_policy_issued",
-            "webauthn_algorithm_policy_issued",
-            "confirmation_receipt_digest_committed",
-            (
-                "confirmation_gesture_and_authenticator_actor_"
-                "cryptographically_co_bound"
-            ),
-            "challenge_proves_review_or_comprehension",
-            "challenge_grants_authority",
-            "gate_a_accepted",
-            "runtime_authorized",
-        }
+        set(proof) != expected_true | expected_false
+        or any(proof.get(key) is not True for key in expected_true)
+        or any(proof.get(key) is not False for key in expected_false)
         or set(evidence_proof)
-        != {
-            "profile_issued",
-            "relying_party_origin_policy_issued",
-            "webauthn_algorithm_policy_issued",
-            "test_vector_proves_fresh_randomness",
-            "test_vector_is_authentication_evidence",
-            "test_vector_is_human_decision_evidence",
-            "challenge_proves_review_or_comprehension",
-            "challenge_grants_authority",
-            "gate_a_accepted",
-            "runtime_authorized",
-        }
-        or not all_false(proof)
-        or not all_false(evidence_proof)
+        != expected_evidence_true | expected_evidence_false
+        or any(
+            evidence_proof.get(key) is not True
+            for key in expected_evidence_true
+        )
+        or any(
+            evidence_proof.get(key) is not False
+            for key in expected_evidence_false
+        )
     ):
         errors.append("challenge_frame_claim_boundary_escalated")
     return unique_errors(errors)
@@ -1098,6 +1441,27 @@ def rebind_chain(
             challenge["bound_candidate_raw_sha256"] = core[
                 "candidate_subject"
             ]["raw_sha256"]
+            # Phase one moves whenever the subject bytes move, and the receipt
+            # is bound to it, so both must be re-derived before phase two.
+            # Rebinding only phase two would leave a receipt committing to a
+            # presentation challenge that no longer exists.
+            presentation = challenge["presentation_challenge"]
+            presentation_value = challenge_from_inputs(
+                frame_profile,
+                presentation_challenge_inputs(core, observation, core_digest),
+                "presentation",
+            )[0]
+            presentation["challenge_value"] = presentation_value
+            presentation["challenge_id"] = challenge_identifier(
+                presentation_value
+            )
+            receipt = challenge["confirmation_receipt"]
+            receipt["presentation_challenge_id"] = presentation["challenge_id"]
+            receipt["receipt_raw_sha256"] = raw_sha256(
+                encode_confirmation_receipt_frame(
+                    receipt, presentation["challenge_id"]
+                )
+            )
             challenge_value = challenge_from_inputs(
                 frame_profile,
                 chain_challenge_inputs(
@@ -1831,12 +2195,22 @@ def evaluate_chain(
     }:
         errors.append("ceremony_request_algorithm_policy_mismatch")
     request_fields = request.get("challenge_commitment_fields", [])
+    request_authentication_fields = request.get(
+        "authentication_commitment_fields", []
+    )
     if (
         request_fields
-        != get(frame_profile, "binary_frame", "ordered_fields")
+        != get(frame_profile, "binary_frame", "presentation_phase_ordered_fields")
+        or request_authentication_fields
+        != get(
+            frame_profile, "binary_frame", "authentication_phase_ordered_fields"
+        )
+        or request.get("two_phase_challenge_required") is not True
+        or request.get("confirmation_receipt_profile")
+        != frame_profile.get("confirmation_receipt")
         or any(
             "material" in field
-            for field in request_fields
+            for field in request_fields + request_authentication_fields
             if isinstance(field, str)
         )
     ):
@@ -2293,6 +2667,127 @@ def evaluate_chain(
             or (expires - issued).total_seconds() > max_lifetime
         ):
             errors.append("challenge_time_window_invalid")
+
+        # ADR 0093 phase structure, on the observation itself rather than only
+        # on the profile's synthetic vector.
+        presentation_record = challenge.get("presentation_challenge", {})
+        receipt_record = challenge.get("confirmation_receipt", {})
+        p1_issued = parse_time(presentation_record.get("issued_at"))
+        p1_expires = parse_time(presentation_record.get("expires_at"))
+        gesture_at = parse_time(receipt_record.get("confirmation_gesture_at"))
+        if (
+            p1_issued is None
+            or p1_expires is None
+            or issued is None
+            or expires is None
+            or not (p1_issued <= issued and expires <= p1_expires)
+        ):
+            # An expired presentation must not be revivable by a fresh
+            # authentication challenge.
+            errors.append(
+                "authentication_interval_not_contained_in_presentation"
+            )
+        if (
+            p1_issued is None
+            or p1_expires is None
+            or not isinstance(max_lifetime, int)
+            or p1_expires <= p1_issued
+            or (p1_expires - p1_issued).total_seconds() > max_lifetime
+        ):
+            errors.append("presentation_challenge_time_window_invalid")
+        if (
+            gesture_at is None
+            or p1_issued is None
+            or issued is None
+            or not (p1_issued <= gesture_at <= issued)
+        ):
+            errors.append("confirmation_gesture_outside_phase_order")
+        # One human act, one instant. A receipt that records a different
+        # moment than the confirmation record describes a different gesture.
+        if gesture_at is None or gesture_at != confirmed:
+            errors.append("confirmation_receipt_gesture_instant_mismatch")
+        try:
+            p1_nonce = challenge_nonce_hex(
+                presentation_record.get("challenge_value")
+            )
+            p2_nonce = challenge_nonce_hex(challenge.get("challenge_value"))
+        except (TypeError, ValueError, UnicodeError):
+            p1_nonce = p2_nonce = None
+            errors.append("presentation_challenge_unrecomputable")
+        if p1_nonce is not None and p1_nonce == p2_nonce:
+            errors.append("phase_nonce_reused")
+        # The recorded phase-one identity must equal the one the subject bytes
+        # actually produce, and the receipt must bind that recomputed identity.
+        try:
+            expected_p1_id = recomputed_presentation_challenge_id(
+                frame_profile, core, observation, core_digest
+            )
+        except (KeyError, TypeError, ValueError, UnicodeError, struct.error):
+            expected_p1_id = None
+            errors.append("presentation_challenge_unrecomputable")
+        if (
+            expected_p1_id is None
+            or presentation_record.get("challenge_id") != expected_p1_id
+            or challenge_identifier(
+                presentation_record.get("challenge_value")
+            )
+            != expected_p1_id
+        ):
+            errors.append("presentation_challenge_identifier_mismatch")
+        if (
+            expected_p1_id is None
+            or receipt_record.get("presentation_challenge_id")
+            != expected_p1_id
+        ):
+            errors.append("confirmation_receipt_presentation_binding_mismatch")
+        try:
+            if expected_p1_id is None:
+                raise ValueError("no recomputed presentation identity")
+            expected_receipt_digest = raw_sha256(
+                encode_confirmation_receipt_frame(
+                    receipt_record, expected_p1_id
+                )
+            )
+        except (
+            AttributeError,
+            KeyError,
+            TypeError,
+            ValueError,
+            UnicodeError,
+            struct.error,
+        ):
+            expected_receipt_digest = None
+        if (
+            expected_receipt_digest is None
+            or receipt_record.get("receipt_raw_sha256")
+            != expected_receipt_digest
+        ):
+            errors.append("confirmation_receipt_digest_mismatch")
+        if (
+            receipt_record.get("receipt_profile_id")
+            != CONFIRMATION_RECEIPT_PROFILE_ID
+            or receipt_record.get("displayed_bytes_source")
+            != "exact_rendered_bytes"
+        ):
+            errors.append("confirmation_receipt_profile_or_source_invalid")
+        # Acyclicity, on the record: the receipt must never name the challenge
+        # that commits to it.
+        if "authentication_challenge_id" in receipt_record:
+            errors.append("confirmation_receipt_references_authentication")
+        # The displayed bytes must be a retained exact artifact, not a number
+        # that exists only inside the receipt.
+        displayed_artifact = artifact_by_id.get(
+            receipt_record.get("displayed_bytes_artifact_id"), {}
+        )
+        if (
+            displayed_artifact.get("role")
+            != "exact_unmodified_displayed_decision_bytes"
+            or displayed_artifact.get("raw_sha256")
+            != receipt_record.get("displayed_bytes_sha256")
+            or displayed_artifact.get("byte_count")
+            != receipt_record.get("displayed_byte_count")
+        ):
+            errors.append("confirmation_receipt_displayed_bytes_unbacked")
         if (
             issued is None
             or confirmed is None
@@ -3925,6 +4420,23 @@ def evaluate_rebound_raw_chain_probe(
     for observation in evidence["participant_observations"]:
         challenge = observation["challenge"]
         challenge["bound_core_raw_sha256"] = core_digest
+        # Phase one commits to the core digest too, so an exactly rebound chain
+        # must move the presentation challenge and its receipt as well.
+        presentation = challenge["presentation_challenge"]
+        presentation_value = challenge_from_inputs(
+            candidates["frame"],
+            presentation_challenge_inputs(core, observation, core_digest),
+            "presentation",
+        )[0]
+        presentation["challenge_value"] = presentation_value
+        presentation["challenge_id"] = challenge_identifier(presentation_value)
+        receipt = challenge["confirmation_receipt"]
+        receipt["presentation_challenge_id"] = presentation["challenge_id"]
+        receipt["receipt_raw_sha256"] = raw_sha256(
+            encode_confirmation_receipt_frame(
+                receipt, presentation["challenge_id"]
+            )
+        )
         challenge_value = challenge_from_inputs(
             candidates["frame"],
             chain_challenge_inputs(
