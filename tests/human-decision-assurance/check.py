@@ -671,11 +671,33 @@ def frame_value_bytes(name: str, value: str) -> bytes:
     return value.encode("ascii")
 
 
+def challenge_frame_fields(
+    frame_profile: dict[str, Any], phase: str = "authentication"
+) -> list[str]:
+    """Resolve the ordered field list for one challenge phase.
+
+    The v1 profile carries a single `ordered_fields` list because it has one
+    phase. The ADR 0093 v2 profile carries a list per phase, and the caller
+    must say which one it means rather than defaulting into whichever key
+    happens to exist -- a silent fallback here would let a phase-two frame be
+    built from phase-one fields and still verify.
+    """
+    binary = frame_profile["binary_frame"]
+    if "ordered_fields" in binary:
+        return binary["ordered_fields"]
+    key = f"{phase}_phase_ordered_fields"
+    if key not in binary:
+        raise KeyError(f"frame profile declares no field list for phase {phase!r}")
+    return binary[key]
+
+
 def encode_challenge_frame(
-    frame_profile: dict[str, Any], inputs: dict[str, str]
+    frame_profile: dict[str, Any],
+    inputs: dict[str, str],
+    phase: str = "authentication",
 ) -> bytes:
     binary = frame_profile["binary_frame"]
-    fields = binary["ordered_fields"]
+    fields = challenge_frame_fields(frame_profile, phase)
     result = bytearray(binary["magic_ascii"].encode("ascii"))
     result.extend(struct.pack(">H", len(fields)))
     for name in fields:
@@ -690,9 +712,11 @@ def encode_challenge_frame(
 
 
 def challenge_from_inputs(
-    frame_profile: dict[str, Any], inputs: dict[str, str]
+    frame_profile: dict[str, Any],
+    inputs: dict[str, str],
+    phase: str = "authentication",
 ) -> tuple[str, bytes]:
-    frame = encode_challenge_frame(frame_profile, inputs)
+    frame = encode_challenge_frame(frame_profile, inputs, phase)
     nonce = bytes.fromhex(inputs["nonce_hex"])
     challenge = nonce + hashlib.sha256(frame).digest()
     encoded = base64.urlsafe_b64encode(challenge).rstrip(b"=").decode("ascii")
