@@ -1225,6 +1225,82 @@ critic, or adversary—never truth authority, sole verifier, adjudicator, safety
 approver, publisher, or physical actor. Monitoring must not interrupt the Gate
 A mission.
 
+## ADR 0093 v2 adoption — exact remaining increment
+
+ADR 0093 closed the co-binding blocker in design and published at `08dbad6`.
+`8ed5d42` then made the assurance encoder phase-aware. Neither adopted v2: the
+Core still pins the v1 profile, the Evidence record carries no presentation
+challenge or confirmation receipt, and
+`confirmation_gesture_and_authenticator_actor_cryptographically_co_bound`
+remains false. Adoption was attempted once and reverted deliberately rather
+than left half-applied; what follows is the measured route, not a proposal.
+
+Core adoption and the Evidence receipt must land as one atomic change. The
+Core's raw digest is an input to the phase-one frame, so changing Core moves
+the presentation challenge, which moves the receipt digest, which moves the
+authentication challenge and its identity. Editing the fixtures first and
+reconciling afterwards produces recorded digests describing a Core that no
+longer exists.
+
+Derive the chain in this order, once, after the Core bytes are final:
+
+```text
+Core bytes -> core_raw_sha256
+           -> phase-one frame (12 fields, V2 magic) -> presentation_challenge_id
+           -> confirmation receipt frame -> confirmation_receipt_raw_sha256
+           -> phase-two frame (15 fields, 3 appended last) -> challenge_id
+```
+
+Exact edit points:
+
+1. `schemas/human-decision-assurance-core.schema.json` —
+   `ceremony_request.challenge_framing_profile` consts move to
+   `odeya-human-decision-challenge-frame-v2-candidate`, `0.2.0`,
+   `sha256:585952ace1c4e804c0443532ecb9fcc7eda6e7ce2cd1c18bfd459c0a14255273`,
+   `5701`. Add `authentication_commitment_fields` (the exact 15-field list
+   from the v2 profile), `two_phase_challenge_required`, and
+   `confirmation_receipt_profile`. Keep `challenge_commitment_fields`
+   unchanged; it is the presentation phase and its bytes do not move.
+2. The matching Core fixture.
+3. `schemas/human-decision-assurance-evidence.schema.json` — the participant
+   observation's `challenge` gains `presentation_challenge` and
+   `confirmation_receipt`. The receipt must not admit an
+   `authentication_challenge_id` field; that omission is the acyclicity.
+4. The Evidence fixture takes the derived values. Its `challenge_value`,
+   `challenge_id`, `issued_at`, and `expires_at` become the phase-two values.
+5. `tests/human-decision-assurance/check.py` — repoint the frame profile and
+   frame evidence paths, move `evaluate_challenge_frame`'s pinned
+   `profile_id`, `profile_version`, `issuance_disposition`, and `purpose` to
+   the v2 strings, extend `chain_challenge_inputs` with the three appended
+   fields sourced from the observation receipt, and verify the receipt against
+   the **recomputed** presentation challenge id.
+
+Two errors were made and corrected during the attempt; both are cheap to
+repeat:
+
+- Phase timestamps must sit inside the fixture's existing ceremony window
+  (`2026-07-19T06:00:00Z`–`06:05:00Z`, assertion at `06:02:00.250000Z`).
+  Inventing a fresh day produces
+  `decision_confirmation_stale_or_out_of_window`. Retained values that work:
+  phase one `06:00:00`–`06:05:00`, gesture `06:01:15`, phase two
+  `06:01:30`–`06:04:00`.
+- The receipt must bind the recomputed phase-one identity, never the recorded
+  one. Building it from the recorded id lets a session, origin, or
+  decision-subject substitution validate against a stale identity — the exact
+  presentation substitution this construction exists to refuse. That defect
+  was found and fixed in the `challenge-frame` suite and is easy to reproduce
+  in the larger checker.
+
+Do not repoint the frozen predecessor values. `tests/challenge-frame/check.py`
+and `architecture/human-decision-challenge-frame-v1-candidate-evidence.json`
+retain the v1 vector, and reproducing it exactly is what validates the encoder
+against history rather than against itself.
+
+After adoption: receipt-binding known-bads, refresh every record binding the
+changed bytes, one generalized guard re-audit, exact-commit rehearsal, and the
+ADR 0091 publication sequence. Only then may the co-binding prerequisite flip,
+and only as a construction property — never as measured ceremony evidence.
+
 ## Next architecture mission, in dependency order
 
 1. Resolve the active ADR 0092 PRQ-013 candidate from exact Git state. Its
