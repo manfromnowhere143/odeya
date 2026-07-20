@@ -313,14 +313,16 @@ that deserves to carry the mission forward.
 - Active architecture branch:
   `agent/t0-prq-013-assurance-candidate-20260719`
 - Exact published baseline observed at recovery:
-  `f1f25fd336daa1dd2707ba36b832e8d5c5e41d3e`
+  `f4067b5d857e627aaf17a91a7a99239e815ed2a3`
 - Exact published-baseline tree:
-  `a04586fd39c3a378b342f457a2fb105faf9de9b4`
+  `9aca5fe0e33ab8ff1fed29e8d308e0d008863644`
 - Canonical remote: `https://github.com/manfromnowhere143/odeya` (public;
   created 2026-07-17 under ADR 0047; default branch `main`)
 - Measured remote state on 2026-07-20: `origin/main` and permanent
-  `release/f1f25fd336daa1dd2707ba36b832e8d5c5e41d3e` both resolved to the
-  exact published baseline. Its candidate and post-main workflow censuses,
+  `release/f4067b5d857e627aaf17a91a7a99239e815ed2a3` both resolved to the
+  exact published baseline. Four permanent release refs now exist —
+  `a25d026`, `f1f25fd`, `8ed5d42`, `f4067b5` — and none is ever rewritten,
+  deleted, or recreated, including for a candidate that fails. Its candidate and post-main workflow censuses,
   remote-main rehearsal/comparison, and final read-only activation receipt are
   retained under `/Users/danielwahnich/workspace/odeya-release-evidence/`.
   Resolve their current byte validity through the admitted verifiers; do not
@@ -1224,6 +1226,61 @@ bounded outputs. Inkling may only be an untrusted producer, extractor, coder,
 critic, or adversary—never truth authority, sole verifier, adjudicator, safety
 approver, publisher, or physical actor. Monitoring must not interrupt the Gate
 A mission.
+
+## Session record — 2026-07-20, three published increments
+
+Published in order, each through the complete ADR 0091 sequence and each green
+on attempt 1: `08dbad6` closed the interrupted bookkeeping tranche and added
+ADR 0093; `8ed5d42` made the assurance encoder phase-aware; `f4067b5` recorded
+the v2 adoption route. Public `main` is `f4067b5`.
+
+The session opened on an interrupted tranche. A prior session had changed
+subject bytes and stopped before re-declaring the records that bind them, so
+the repository described bytes that no longer existed. Refreshing those records
+cascaded into gates that refuse a moved number until it is re-pinned
+deliberately, which is the intended behaviour and not an obstacle.
+
+Four defects were found. Each is recorded because the correction is worth more
+than the feature it interrupted:
+
+1. A substitution hole in the new `challenge-frame` checker. The receipt was
+   built from the recorded presentation challenge id rather than the
+   recomputed one, so a session, origin, or decision-subject substitution
+   would have changed the real challenge while the receipt kept validating
+   against a stale identity. That is the exact presentation substitution ADR
+   0093 exists to refuse. Found because three known-bads failed to produce the
+   expected error; fixing the expectations instead of the checker would have
+   buried it.
+2. Silent registry drift. The isolated-suite list lives in `scripts/validate.py`
+   and again in `scripts/audit_suite_guard_coverage.py`, and nothing compared
+   them. A newly registered suite passed validation on every run while never
+   being mutation-tested, and the coverage total did not move, so nothing
+   complained. Coverage would have read as complete while one suite had zero.
+   `scripts/validate_suite_guard_coverage.py` now compares the registries and
+   carries `lifecycle-closure`'s exclusion with its justification, refusing a
+   stale exclusion as well as a dropped suite.
+3. A machine-generated commit author. The predecessor commit was authored
+   `daniel wahnich <danielwahnich@10.25.100.12>`, exposing an internal address
+   that would have entered public history permanently. It was unpublished and
+   therefore still correctable.
+4. Two nested-field edits written at the top level of a JSON record, leaving
+   the real nested values stale. Both were caught by the byte-binding gates
+   rather than by review. Verify nesting before writing, not after.
+
+Guard coverage moved 373/853 to 458/927 across fourteen subjects, 469
+explicitly unproved. The denominator grew because `challenge-frame` entered it
+at 21/37; every other subject is unchanged and the deltas reconcile exactly.
+The refusal added in `8ed5d42` is a `raise` and is therefore outside the
+audit's discovery grammar, so it is guarded by a direct resolution check and
+not by the mutation audit.
+
+What is deliberately still false, and must not be flipped without the work:
+`confirmation_gesture_and_authenticator_actor_cryptographically_co_bound`.
+ADR 0093 supplies the construction and the `challenge-frame` suite re-derives
+it independently, but the Core still pins the v1 profile and the Evidence
+record carries no receipt. Adoption was attempted, hit a wall of coupled
+binding errors, and was reverted rather than left half-applied. The route is
+recorded above under the v2 adoption section.
 
 ## ADR 0093 v2 adoption — exact remaining increment
 
