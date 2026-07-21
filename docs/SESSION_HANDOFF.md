@@ -1,7 +1,7 @@
 # Odeya Session Handoff
 
 Status: canonical recovery entrypoint for the current Odeya architecture and
-repository-release mission. Last updated 2026-07-20, Asia/Jerusalem. This is a
+repository-release mission. Last updated 2026-07-21, Asia/Jerusalem. This is a
 handoff contract, not Gate A acceptance, implementation authorization, or
 scientific evidence; repository-publication authority comes only from the
 named decisions and release contract. The exact-SHA two-ref publication
@@ -201,38 +201,40 @@ predecessor. The live work is the bounded PRQ-013 assurance candidate:
   The lifecycle checker has dedicated statement (222/229) and condition
   (108/111) audits. The retained generalized
   `audit_suite_guard_coverage.py` record measures fourteen declared isolated
-  contract-checker subjects at 458 of 927 refusal statements proved, with 469
+  contract-checker subjects at 469 of 958 refusal statements proved, with 489
   explicitly unproved and zero crash-only detections. PRQ-013 contributes
-  188/253, leaving 65 explicitly unproved. The former 431/820 result is
+  199/284, leaving 85 explicitly unproved. The former 431/820 result is
   retracted: its assurance-checker mutations tripped the unrefreshed outer
   checker-byte binding rather than the intended guards. Central
   architecture/release gates—including the PRQ-009
   assignment-order checker—are outside that denominator and must carry their
-  own pinned known-bad self-tests. The 469 open isolated-suite guards are
+  own pinned known-bad self-tests. The 489 open isolated-suite guards are
   categorized by exact closure method in
   `docs/GUARD_COVERAGE_CLOSURE_PLAN.md`. Three closure
   patterns are proven and mechanical: harness self-tests (ADR 0080/0081),
   meta-proofs for the attribution self-tests (ADR 0083, now complete across all
   six), and the artifact-mutation vocabulary for once-loaded records (ADR 0082,
   proven on the first-slice inventory).
-- **PRQ-013 now has a falsifiable candidate, not closure.** ADR 0092, three
-  unissued Core/Evidence/Seal schema resource identities, a cycle-free static
-  challenge frame plus separate deterministic vector, an exact unissued
-  singleton-eligibility ruleset, a frozen-source consumer census, and a
-  semantic suite exist. The Core expresses pre-ceremony requirements rather
-  than completed observations. Evidence separates exact unmodified
-  cryptographic inputs from sanitized derived records and retains direct
-  challenge-lifecycle plus material-presentation/confirmation receipt
-  provenance, but does not dereference the backing bytes. The signed challenge
-  does not commit to the confirmation-receipt digest, so the application
-  gesture and authenticator actor are not cryptographically co-bound and the
-  profile is knowingly unissued. No independent ruleset implementation is
-  retained. The census is complete only for the
-  exact 112-schema predecessor tree: 19 direct or policy-conditional decision
-  rows and 9 pending operator-acceptance rows. Zero current consumers are
-  migrated. No admitted assurance record or `AssuredDecision` wrapper identity,
-  real protected ceremony, end-to-end consumer refusal, accountable review,
-  operator acceptance, or Gate A authority exists.
+- **PRQ-013 now has retained byte-bound/recomputation candidate evidence, not
+  closure.** ADRs 0092, 0093, and 0095 preserve the immutable, unissued 0.1
+  resources and add five unissued successor schemas, seven schema-valid
+  fixtures, 14 content-addressed synthetic backing preimages independently
+  rederived from their retained bytes, 44 expectation-free vectors, and 48
+  chain known-bads.
+  Three source-separated, non-sharing evaluators pass 132 exact
+  recomputations—44 each under Python 3.14.2, Node.js 24.18.0, and Temurin Java
+  21.0.9—and comparison binds the complete six-field projection: participant,
+  domain results, categorical results, categorical failures, final
+  disposition, and reason codes. Fixed times are deterministic fixture times
+  only. The source paths do not prove organizational independence, and ADR
+  0095 adoption remains incomplete until a context-isolated technical-review
+  determination is retained over the exact candidate bytes. The census remains
+  frozen over the exact 112-schema predecessor tree: 19 direct or
+  policy-conditional decision rows and 9 pending operator-acceptance rows.
+  Zero current consumers are migrated. No admitted assurance record or
+  `AssuredDecision` wrapper identity, T1/T2 dependency chain, real protected
+  ceremony, end-to-end consumer refusal, accountable review, operator
+  acceptance, or Gate A authority exists.
 - **Where to put pressure.** The remaining bulk is the per-case domain-logic
   layer: guards inside per-case checkers that no retained case exercises. They
   close by targeted, ablation-verified cases in the ADR 0071 style — one
@@ -309,22 +311,27 @@ that deserves to carry the mission forward.
 - Canonical workspace: `/Users/danielwahnich/workspace/odeya`; it is currently
   a protected concurrent-work lane on `agent/repository-release`.
 - Active architecture worktree:
-  `/Users/danielwahnich/workspace/odeya-prq-013-human-decision-assurance-20260719`
+  `/Users/danielwahnich/workspace/odeya-prq-013-byte-bound-candidate-20260721`
 - Active architecture branch:
-  `agent/t0-prq-013-assurance-candidate-20260719`
+  `agent/t0-prq-013-byte-bound-candidate-20260721`
 - Exact published baseline observed at recovery:
-  `f4067b5d857e627aaf17a91a7a99239e815ed2a3`
+  `34cad10a42027730a515614fc0a5bd664dd8933b`
 - Exact published-baseline tree:
-  `9aca5fe0e33ab8ff1fed29e8d308e0d008863644`
+  `4ea6a2c751f76cb97a434e749104ed9f667a68d4`
 - Canonical remote: `https://github.com/manfromnowhere143/odeya` (public;
   created 2026-07-17 under ADR 0047; default branch `main`)
-- Measured remote state on 2026-07-20: `origin/main` and permanent
-  `release/f4067b5d857e627aaf17a91a7a99239e815ed2a3` both resolved to the
-  exact published baseline. Four permanent release refs now exist —
-  `a25d026`, `f1f25fd`, `8ed5d42`, `f4067b5` — and none is ever rewritten,
-  deleted, or recreated, including for a candidate that fails. Its candidate and post-main workflow censuses,
-  remote-main rehearsal/comparison, and final read-only activation receipt are
-  retained under `/Users/danielwahnich/workspace/odeya-release-evidence/`.
+- Measured remote state on 2026-07-21: `origin/main` and permanent
+  `release/34cad10a42027730a515614fc0a5bd664dd8933b` both resolved to the
+  exact published baseline. Seven permanent release refs exist — `a25d026`,
+  `f1f25fd`, `08dbad6`, `8ed5d42`, `f4067b5`, `e0187bb`, and `34cad10` — and
+  none is ever rewritten, deleted, or recreated, including for a candidate
+  that fails. The exact `34cad10` local/remote rehearsal manifests have
+  SHA-256 `98e79d77b7e81acaa27e1f8e3de181bf72d38e714aa4a8a88a458d8768d25d82`
+  and `8743d89435b69f8f322ca7510d068bb6e0bbe7ecdccb1d07d50863b37012acdb`;
+  its comparison receipt has SHA-256
+  `88e350bd73436255d81a8427525226fb18078de0a8194266b9b91a79b9f1156b`.
+  Candidate/main workflow censuses and governance read-backs are retained
+  under `/Users/danielwahnich/workspace/odeya-release-evidence/`.
   Resolve their current byte validity through the admitted verifiers; do not
   infer it from this prose.
 - Pull requests are disabled; the exact inert merge configuration, Actions and
@@ -350,7 +357,7 @@ Run first:
 
 ```bash
 bash -euo pipefail <<'BASH'
-cd /Users/danielwahnich/workspace/odeya-prq-013-human-decision-assurance-20260719
+cd /Users/danielwahnich/workspace/odeya-prq-013-byte-bound-candidate-20260721
 source scripts/ci/sanitize-git-environment.sh
 git status --short --branch
 git rev-parse HEAD
@@ -359,24 +366,40 @@ git symbolic-ref --short HEAD
 git fetch --quiet origin main
 git remote -v
 git log --oneline --decorate -5
-BASE_COMMIT=f1f25fd336daa1dd2707ba36b832e8d5c5e41d3e
+PUBLISHED_BASELINE=34cad10a42027730a515614fc0a5bd664dd8933b
+PUBLISHED_TREE=4ea6a2c751f76cb97a434e749104ed9f667a68d4
 HEAD_COMMIT="$(git rev-parse HEAD)"
 REMOTE_MAIN="$(git rev-parse origin/main)"
 BASE_RELEASE="$(
   git ls-remote --refs origin \
-    "refs/heads/release/$BASE_COMMIT" |
+    "refs/heads/release/$PUBLISHED_BASELINE" |
+    awk '{print $1}'
+)"
+HEAD_RELEASE="$(
+  git ls-remote --refs origin \
+    "refs/heads/release/$HEAD_COMMIT" |
     awk '{print $1}'
 )"
 test "$(git symbolic-ref --short HEAD)" = \
-  agent/t0-prq-013-assurance-candidate-20260719
+  agent/t0-prq-013-byte-bound-candidate-20260721
 test "$(git remote)" = origin
 test "$(git remote get-url origin)" = \
   https://github.com/manfromnowhere143/odeya.git
-test "$REMOTE_MAIN" = "$BASE_COMMIT" || test "$REMOTE_MAIN" = "$HEAD_COMMIT"
-test "$BASE_RELEASE" = "$BASE_COMMIT"
-test "$(git rev-parse HEAD^)" = "$BASE_COMMIT"
-test "$HEAD_COMMIT" != "$BASE_COMMIT"
-test "$(git rev-list --count "$BASE_COMMIT..$HEAD_COMMIT")" = 1
+test "$(git rev-parse "$PUBLISHED_BASELINE^{tree}")" = "$PUBLISHED_TREE"
+test "$REMOTE_MAIN" = "$PUBLISHED_BASELINE" || test "$REMOTE_MAIN" = "$HEAD_COMMIT"
+test "$BASE_RELEASE" = "$PUBLISHED_BASELINE"
+if test "$HEAD_COMMIT" = "$PUBLISHED_BASELINE"; then
+  test "$REMOTE_MAIN" = "$PUBLISHED_BASELINE"
+  test "$HEAD_RELEASE" = "$PUBLISHED_BASELINE"
+else
+  test "$(git rev-parse "$HEAD_COMMIT^")" = "$PUBLISHED_BASELINE"
+  test "$(git rev-list --parents -n 1 "$HEAD_COMMIT" | awk '{print NF}')" = 2
+  test "$(git rev-list --count "$PUBLISHED_BASELINE..$HEAD_COMMIT")" = 1
+  test -z "$HEAD_RELEASE" || test "$HEAD_RELEASE" = "$HEAD_COMMIT"
+  if test "$REMOTE_MAIN" = "$HEAD_COMMIT"; then
+    test "$HEAD_RELEASE" = "$HEAD_COMMIT"
+  fi
+fi
 python3 scripts/ci/verify_github_release.py governance
 git diff --cached --name-only
 git diff --check
@@ -389,15 +412,15 @@ BASH
 Expected invariants:
 
 - the active architecture branch is
-  `agent/t0-prq-013-assurance-candidate-20260719`;
+  `agent/t0-prq-013-byte-bound-candidate-20260721`;
 - the canonical worktree remains on `agent/repository-release` with Daniel's
   protected UI/UX changes untouched;
-- the exact baseline remains at its permanent `release/<sha>` ref, while public
-  `origin/main` is either that baseline before publication or the exact active
-  `HEAD` after same-SHA promotion;
-- the active `HEAD` is one ordinary single-parent direct child of that baseline;
-  an unexpected rewind, replacement, merge, or multi-commit range fails
-  recovery;
+- the exact published baseline and tree remain at their permanent
+  `release/<sha>` ref, while public `origin/main` is either that baseline before
+  a new publication or the exact active `HEAD` after same-SHA promotion;
+- the active `HEAD` is either that already-published baseline or one ordinary
+  single-parent direct child of it; an unexpected rewind, replacement, merge,
+  or multi-commit range fails recovery;
 - both no-bypass rulesets and the exact account policy pass live governance
   verification;
 - the only remote is the canonical public `origin` created under ADR 0047;
@@ -423,9 +446,10 @@ Their appearance in `git status` is intentional and does not authorize another
 session to edit, stage, commit, normalize, discard, or describe them as Odeya's
 accepted design. Before every architecture commit, prove that these paths are
 absent from its diff. In particular,
-`docs/decisions/README.md` is protected, so ADR 0092 is intentionally not
-inserted into that index by this tranche. Do not mistake the absent index edit
-for an absent ADR or silently take ownership of Daniel's bytes.
+`docs/decisions/README.md` is protected, so ADRs 0092–0094 are intentionally
+not inserted into that index by these architecture tranches. Do not mistake
+the absent index edits for absent ADRs or silently take ownership of Daniel's
+bytes.
 
 ## Published C5 compatibility correction
 
@@ -492,31 +516,51 @@ human-controlled Odeya decision. The candidate keeps existing consumer schema
 bytes unchanged and adds, side by side:
 
 - unissued `HumanDecisionAssuranceCore`, `HumanDecisionAssuranceEvidence`, and
-  `HumanDecisionAssuranceSeal` 0.1.0 schema resource identities;
-- an exact, unissued singleton-eligibility ruleset with contradiction-first,
-  fail-closed precedence and no retained independent implementation;
-- a static, nonrecursive challenge-frame profile and a separately retained
-  deterministic recomputation vector, avoiding a profile/Core digest cycle;
-  the profile explicitly blocks issuance because it does not commit to the
-  presentation/confirmation receipt digest and therefore does not
-  cryptographically co-bind the application gesture and authenticator actor;
+  `HumanDecisionAssuranceSeal` 0.1.0 schema resource identities, all immutable
+  and still unissued;
+- an adopted, acyclic two-phase v2 challenge-frame profile and separately
+  retained v1/v2 deterministic recomputation vectors; the presentation
+  challenge precedes the confirmation receipt and the authentication challenge
+  commits to that receipt digest without creating a profile/Core digest cycle;
 - synthetic valid Core/Evidence/Seal controls and
   `PRQ-013-KB-001`, the unattended agent-accessible-key known-bad;
-- exact unmodified client data, authenticator data, signature, and credential
-  public-key roles, plus eight sanitized derived-observation roles, direct
-  challenge-lifecycle and presentation/confirmation provenance, and an
-  explicit boundary that backing evidence bytes are not dereferenced;
 - an exact census bound to predecessor commit
   `56e8062334fb81bba955ba137be690e085d4c88e` and tree
   `d90ed6dd8c54b91a1e503358f98ecaa08c766fa3`; and
-- an isolated checker with 5 safe controls, 205 one-mutation intent-bound
-  known-bads, and 145 distinct intent refusal rules.
+- an isolated checker with 11 safe controls, 215 one-mutation intent-bound
+  known-bads, and 155 distinct intent refusal rules.
 
-The measured candidate inventory is 115 schemas and 848 shared-manifest cases,
-with 14 isolated suites and 10 architecture-evidence checks. The current
-canonical audit covers 115 schemas and 209 fixtures; all 158 retained
+[ADR 0095](decisions/0095-reissue-human-decision-assurance-as-a-byte-bound-independently-recomputed-chain.md)
+adds the retained T0 successor tranche without mutating those predecessor
+identities:
+
+- five unissued successor schemas and seven schema-valid successor fixtures;
+- exact ruleset 0.2 and its resolver profile;
+- 14 content-addressed synthetic backing preimages, including the exact binary
+  confirmation-receipt frame, with digests, byte counts, descriptor relations,
+  and receipt rows independently rederived from retained bytes;
+- 44 expectation-free vectors and 48 intent-bound downstream chain known-bads;
+- source-separated, non-sharing Python 3.14.2, Node.js 24.18.0, and Temurin
+  Java 21.0.9 evaluators, each passing all 44 vectors for 132 exact
+  recomputations; and
+- exact comparison of `participant_id`, `domain_results`,
+  `categorical_results`, `categorical_failures`, `final_disposition`, and
+  `reason_codes` before Seal 0.2.
+
+Every fixed time in the successor evidence is a deterministic fixture time,
+not a ceremony observation or trusted time. The three source paths prove the
+declared code separation and non-sharing boundary only; organizational
+independence has not been proven. ADR 0095 adoption remains incomplete until a
+context-isolated technical-review determination with retained provenance is
+made over the exact candidate bytes, and that determination cannot count as
+accountable review or Gate A acceptance.
+
+The measured candidate inventory is 120 schemas and 860 shared-manifest cases
+(220 valid and 640 known-bad), with 14 isolated suites and 11
+architecture-evidence checks. The current canonical audit covers 120 schemas
+and 216 fixtures; all 158 predecessor retained
 cross-field rule cases isolate their declared rule. The generalized guard
-record is 458/927 proved across 14 suites, 469 explicitly unproved, and zero
+record is 469/958 proved across 14 suites, 489 explicitly unproved, and zero
 crash-only detections. Its former 431/820 result is retracted because an
 unrefreshed self-binding produced false-positive detections. The consumer census
 partitions all 112 predecessor
@@ -528,24 +572,71 @@ the operator-consumer rows, every explicit missing-node identity/kind/status
 tuple, and reconciles their coverage counts. Those semantic classifications
 remain explicit census judgments rather than independently derived facts.
 It also compares all current baseline-schema and Authority Matrix bytes with
-the frozen Git source, requires the exact 115-schema union, resolves every
+the frozen Git source, requires the exact 120-schema union, resolves every
 claim-bearing evidence reference to its required artifact role, and requires
 direct decision-confirmation and delegation/effective-control provenance.
 
 Those are structural and bounded-semantic candidate measurements, not
-admission. The three schema IDs are unissued; no admitted assurance-record or
-`AssuredDecision` wrapper identity exists; migrated consumer count is zero;
-verified backing evidence bytes, independent eligibility recomputation,
-cycle-free receipt/authenticator co-binding or an accepted transaction
-confirmation trusted path, end-to-end consumer refusal, real protected
-ceremony, accountable security and authority review, profile issuance, and
-Daniel's exact-byte acceptance are all absent. PRQ-013, T1, Gate A, runtime,
-deployment, scientific-results
-publication, spending, data access, and external effects remain blocked.
+admission. The 0.1 resources and all successors are unissued; no admitted
+assurance-record or `AssuredDecision` wrapper identity exists; migrated
+consumer count is zero. T1/T2, wrapper construction, end-to-end consumer
+refusal, real protected ceremony, accountable security and authority review,
+profile issuance, and Daniel's exact-byte acceptance are all absent. The
+receipt/authenticator co-binding and backing preimages exist only as synthetic
+construction evidence and must not be represented as measured ceremony or
+real-person evidence. PRQ-013, T1, Gate A, runtime, cloud access, deployment,
+scientific-results publication, spending, data access, and external effects
+remain blocked.
 Architecture-repository publication remains separately governed by the exact
 release contract. Commit, rehearsal, repository-publication, and remote-check
 status must always be resolved from the current exact Git subject and retained
 release evidence rather than inferred from this prose.
+
+## 2026-07-21 truth-surface reconciliation
+
+The adopted ADR 0093 bytes exposed a current-state defect in their published
+parent: the machine guard record and the later adoption log correctly retained
+`469/958` proved guards, `489` unproved guards, and `199/284` for the assurance
+checker, while the README, architecture status, active handoff sections, and
+guard-closure plan still presented the predecessor `458/927`, `469`, and
+`188/253` values. Several current assurance surfaces also still described the
+v1 receipt/authenticator limitation after the v2 two-phase construction had
+been adopted. The structural validator passed because it checked the machine
+record and a different README count sentence, not these public interpretations.
+
+The reconciliation corrects the current README, architecture status, active
+handoff, guard-closure plan, threat model, assurance contract and suite
+contract, and marks ADR 0092's v1 wording as retained history superseded in
+that one detail by ADR 0093. The Gate A prerequisite record now names ADR 0093
+and states the exact boundary: cryptographic co-binding is true only as a
+synthetic construction property; no real ceremony measured that one natural
+person performed both acts. Candidate evidence rebinds every changed artifact
+it already claimed to bind.
+
+This is not only an editorial repair.
+[ADR 0094](decisions/0094-bind-current-status-surfaces-to-retained-machine-evidence.md)
+requires the suite-guard validator to parse the named current sections and the
+complete closure-plan table from retained machine evidence; hidden comments,
+stale-plus-correct duplicates, relocated text, missing rows, and changed rows
+must refuse. The Gate A prerequisite validator applies the same scoped rule to
+the current ADR-0093 boundary and recovery identity. Their focused known-bads
+are intent-bound rather than credited by an unrelated error from the same
+file.
+Those passes establish bounded consistency only. Gate A, profile issuance,
+accountable review, real ceremony, runtime, deployment, scientific
+publication, spending, and external effects remain blocked. Commit, rehearsal,
+publication, and remote-settlement status for the containing subject must be
+resolved from Git and its external exact-SHA evidence; no prose line may supply
+that authority.
+
+One assurance case identifier still retains the v1 phrase
+`without-a-cycle-free-receipt-path` even though its mutation now tests the
+broader rule that an unissued profile cannot be relabelled issued. This tranche
+does not rename it: the retained generalized coverage record binds the checker
+bytes but not the case-corpus bytes, so carrying 199/284 across even a
+semantic-neutral corpus edit would be unproved. Rename it only with a
+deliberately input-bound remeasurement or a stronger audit-record dependency
+binding.
 
 ## Historical recovery log — retained chronology, not current state
 
@@ -1122,14 +1213,14 @@ directory, outside both the Git worktree and temporary storage:
 
 ```bash
 bash -euo pipefail <<'BASH'
-cd /Users/danielwahnich/workspace/odeya-prq-013-human-decision-assurance-20260719
+cd /Users/danielwahnich/workspace/odeya-prq-013-byte-bound-candidate-20260721
 source scripts/ci/sanitize-git-environment.sh
 commit="$(git rev-parse HEAD)"
 evidence="/Users/danielwahnich/workspace/odeya-release-evidence/$commit"
 test ! -e "$evidence"
 bash scripts/ci/rehearse-fresh-clone.sh \
   "$commit" \
-  /Users/danielwahnich/workspace/odeya-prq-013-human-decision-assurance-20260719 \
+  /Users/danielwahnich/workspace/odeya-prq-013-byte-bound-candidate-20260721 \
   "$evidence" \
   local
 python3 - "$evidence" "$commit" <<'PY'
@@ -1343,25 +1434,24 @@ proved. The other 20 are explicitly unproved, not silently covered.
 
 ## Next architecture mission, in dependency order
 
-1. Resolve the active ADR 0092 PRQ-013 candidate from exact Git state. Its
-   `HEAD` must be one clean direct child of fixed predecessor
-   `f1f25fd336daa1dd2707ba36b832e8d5c5e41d3e`; public `main` must equal that
-   predecessor before promotion or exact `HEAD` afterward. If the candidate is
-   not locally rehearsed, publication-audited, created once at its permanent
-   `release/<sha>` ref, green in all ten exact-SHA GitHub contexts on that ref,
-   same-SHA promoted, green in ten newly created post-main contexts, remotely
-   rehearsed, and comparator-equal, finish that ADR 0091 sequence before adding
-   bytes. If all evidence is already retained for exact `HEAD`, verify it
-   byte-for-field; never redo a permanent release ref or let a descendant
-   inherit its evidence.
-2. Freeze the PRQ-013 individual-assurance foundation candidate: design either
-   a cycle-free two-phase challenge that commits to an exact
-   pre-confirmation/presentation receipt or an accepted
-   transaction-confirmation trusted path; define exact evidence-store,
-   backing-artifact, and byte-verification contracts; and retain independent
-   architecture-time implementations of the singleton ruleset and verifier.
-   Keep the profile and ruleset unissued pending Gate A. This is a T0
-   prerequisite, not final PRQ-013 closure, consumer migration, or runtime.
+1. Resolve the active ADR 0092/0093 PRQ-013 candidate from exact Git state
+   against published baseline
+   `34cad10a42027730a515614fc0a5bd664dd8933b`. If `HEAD` equals that baseline,
+   verify its retained local/remote rehearsal, workflow, governance, and
+   comparison evidence byte-for-field and do not republish it. Otherwise,
+   `HEAD` must be one clean direct child; public `main` must equal the baseline
+   before promotion or exact `HEAD` afterward. Only that child may enter the
+   ADR 0091 permanent-ref, ten-context candidate, same-SHA promotion,
+   ten-context post-main, remote-rehearsal, comparison, and final read-back
+   sequence. Never redo a permanent release ref or let a descendant inherit
+   its evidence.
+2. Complete ADR 0095's remaining bounded adoption item: retain a
+   context-isolated technical-review determination over the exact T0
+   byte-bound/recomputation candidate bytes. Preserve reviewer provenance and
+   label the result correlated and non-accountable; it cannot establish
+   organizational independence, approve the ruleset, or accept Gate A. Keep
+   the profile, ruleset, 0.1 resources, and all successors unissued. This is a
+   T0 prerequisite, not final PRQ-013 closure, consumer migration, or runtime.
 3. Complete the remaining T0 closure without weakening PRQ-009 or the corrected
    C5 ownership semantics. Profile issuance, exact member/reducer/root
    identities, the assignable WorkIntent, thirteen-event assignment cohort,
@@ -1396,8 +1486,8 @@ proved. The other 20 are explicitly unproved, not silently covered.
    review.
 12. Produce one immutable candidate manifest and clean commit for Daniel's
    exact-byte Gate A accept, reject, or amend decision. Gate A evaluates the
-   ceremony architecture and synthetic/independent conformance evidence; it
-   does not require or authorize a live ceremony.
+   ceremony architecture and synthetic, source-separated conformance evidence;
+   it does not require or authorize a live ceremony.
 13. Only after Gate A and separate authority, run at most one bounded,
    disposable Gate B protected-ceremony probe under the accepted profile,
    alongside any other explicitly authorized probes. Agents receive no
@@ -1425,9 +1515,12 @@ the gate.
 
 ## The published surface is part of the evidence
 
-Published baseline `f1f25fd…` carries the ADR 0091 hook, verifier, fourth
-workflow, two-ref helper, and completed first activation; both no-bypass
-rulesets are observed. The hook and helper remain local workstation controls
+The current published baseline is `34cad10…`; its exact local and remote
+rehearsals, four-workflow/ten-job candidate and post-main censuses, comparison,
+and governance read-backs are retained externally under the evidence root.
+Historical first-activation baseline `f1f25fd…` introduced the ADR 0091 hook,
+verifier, fourth workflow, and two-ref helper; both no-bypass rulesets remain
+observed. The hook and helper remain local workstation controls
 alongside—not substitutes for—the server rulesets. Run
 `git config core.hooksPath .githooks` in every clone, publish only through
 `scripts/ci/push-rehearsed-head.sh`, and never call that local configuration

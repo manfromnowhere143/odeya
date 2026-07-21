@@ -55,10 +55,19 @@ named by a release manifest.
 | `Semantic contracts` | Admit the safe semantic partition, then execute all eight complete paired contract harnesses | Profile inventory and per-suite output | Not proof beyond the retained bounded subjects |
 | `Adversarial controls` | Admit the known-bad partition, then execute the same paired harnesses so negative controls cannot drift from their baselines | Profile inventory and expected-rejection output | Not an exhaustive threat proof |
 | `Canonical identity` | Reconcile the two retained canonicalization implementations and verify the migration audit is current | Comparison receipt and audit check output | Not a frozen canonical profile; its blockers remain explicit |
-| `Architecture evidence` | Reproduce five dedicated prerequisite/member checks: Gate A prerequisites, PRQ-009 order, schema reissue, module manifest, and first-slice scope. `Foundation` separately runs the complete integrated ten-check census, including lifecycle/suite guard and condition audits, schema-rule ablation, and refusal attribution | Dedicated evidence log plus the integrated Foundation log and pinned safe/known-bad inventories | Not registry admission, activation, or an acceptance decision |
+| `Architecture evidence` | Reproduce six dedicated prerequisite/member checks: Gate A prerequisites, PRQ-009 order, schema reissue, module manifest, first-slice scope, and human-decision-assurance successor recomputation. `Foundation` separately runs the complete integrated eleven-check census, including lifecycle/suite guard and condition audits, schema-rule ablation, refusal attribution, and the human-decision-assurance successor check | Dedicated evidence log plus the integrated Foundation log and pinned safe/known-bad inventories | Not registry admission, activation, or an acceptance decision |
 | `Repository / Release Surface` | Validate the README contract, action pins, least-privilege workflow shape, Dependabot scope, Markdown, Action syntax, and Mermaid rendering | Release-check log and rendered SVG | Not UI acceptance, deployment evidence, or a publication decision |
 | `Architecture / Bounded Formal Models` | Reproduce seven safe TLA+ models, the alternate cognitive fingerprint run, and all thirty intended counterexamples | Full TLC log and pinned toolchain manifest | Bounded safety evidence only; not liveness, implementation conformance, or a physical safety case |
 | `Publication sequence` | On a governed push, verify the exact checked-out SHA, ref, single-parent/direct-child range, and event before/after boundary | Exact push log and remote run identity | Not a summary of the other checks, an independent verifier, or publication authority by itself |
+
+The release checker compares the dedicated six-command run body and the
+integrated eleven-member Python tuple to exact inventories, pins the complete
+dedicated job and integrated-validator bytes, and binds the one executable
+consumption loop.
+The exact inventory contains nineteen retained known-bad mutations:
+each member is removed once, then an out-of-body seventh workflow step and a
+post-assignment same-cardinality Python rebinding are separately refused. The
+counts above therefore cannot remain green after executable inventory drift.
 
 At the completed first-activation checkpoint, public `main` carried the
 four-workflow/ten-job inventory at

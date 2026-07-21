@@ -168,12 +168,17 @@ second-nonce expected-pass control represents a fresh synthetic confirmation, wh
 prevents Core mutations from passing merely because the harness silently
 rewrote what it claims the principal confirmed.
 
-The receipt-to-authenticator binding is intentionally recorded as incomplete.
-The receipt names the challenge, but the signed challenge does not commit to
-the receipt digest, so this candidate cannot prove that both gestures came
-from the same actor. Profile issuance requires a cycle-free two-phase
-receipt-commitment construction or an accepted transaction-confirmation
-trusted path.
+The adopted v2 construction co-binds the two acts without a digest cycle. The
+presentation challenge is created first; the confirmation receipt binds that
+recomputed phase-one identity; and the authenticator-signed phase-two
+challenge commits to the receipt digest. The suite re-derives that chain from
+the Core and Evidence bytes and retains the v1 vector as superseded evidence.
+This is a synthetic construction property only: no real ceremony establishes
+that one natural person performed both acts, so the Evidence, Seal, and
+candidate proof boundaries remain false for observed co-binding. Profile
+issuance still requires backing-byte verification, independent eligibility
+recomputation, end-to-end consumer refusal, accountable review, and the
+operator's exact-byte decision.
 
 ## Evidence-reference and proof boundary
 

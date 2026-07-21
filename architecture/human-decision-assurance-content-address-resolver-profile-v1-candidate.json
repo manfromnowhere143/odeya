@@ -1,0 +1,229 @@
+{
+  "schema_version": "0.1.0",
+  "artifact_class": "human_decision_assurance_content_address_resolver_profile_candidate",
+  "profile_id": "urn:odeya:human-decision-assurance:content-address-resolver:0.1.0-candidate",
+  "profile_version": "0.1.0",
+  "candidate_status": "unissued_architecture_candidate_not_a_runtime_resolver",
+  "decision_ref": "docs/decisions/0095-reissue-human-decision-assurance-as-a-byte-bound-independently-recomputed-chain.md",
+  "identity": {
+    "canonical_object_identity": "lowercase_sha256_content_address",
+    "content_address_pattern": "^sha256:[0-9a-f]{64}$",
+    "digest_algorithm": "sha-256",
+    "digest_input": "exact_raw_preimage_bytes",
+    "filename_or_descriptor_is_proof": false,
+    "transport_path_is_identity": false
+  },
+  "repository_bundle_transport": {
+    "root": "architecture/evidence-blobs/sha256",
+    "path_template": "architecture/evidence-blobs/sha256/{hex[0:2]}/{hex[2:64]}",
+    "path_is_derived_only_from_content_address": true,
+    "absolute_paths_allowed": false,
+    "dot_segments_allowed": false,
+    "symbolic_links_allowed": false,
+    "hard_link_identity_trusted": false,
+    "network_fallback_allowed": false,
+    "environment_variable_expansion_allowed": false,
+    "resolver_search_path_allowed": false,
+    "read_mode": "binary_exact_no_newline_conversion",
+    "maximum_read_count_per_role": 1,
+    "bytes_may_be_normalized_or_reencoded": false
+  },
+  "closed_role_inventory": [
+    {
+      "ordinal": 1,
+      "role": "sanitized_challenge_lifecycle_and_atomic_consumption_record",
+      "required_media_type": "application/json",
+      "required_byte_fidelity": "sanitized_derived_observation_record"
+    },
+    {
+      "ordinal": 2,
+      "role": "exact_unmodified_client_data_json",
+      "required_media_type": "application/json",
+      "required_byte_fidelity": "exact_unmodified_cryptographic_input"
+    },
+    {
+      "ordinal": 3,
+      "role": "exact_unmodified_authenticator_data",
+      "required_media_type": "application/octet-stream",
+      "required_byte_fidelity": "exact_unmodified_cryptographic_input"
+    },
+    {
+      "ordinal": 4,
+      "role": "exact_unmodified_webauthn_signature",
+      "required_media_type": "application/octet-stream",
+      "required_byte_fidelity": "exact_unmodified_cryptographic_input"
+    },
+    {
+      "ordinal": 5,
+      "role": "exact_unmodified_credential_public_key",
+      "required_media_type": "application/cbor",
+      "required_byte_fidelity": "exact_unmodified_cryptographic_input"
+    },
+    {
+      "ordinal": 6,
+      "role": "exact_unmodified_displayed_decision_bytes",
+      "required_media_type": "application/octet-stream",
+      "required_byte_fidelity": "exact_unmodified_cryptographic_input"
+    },
+    {
+      "ordinal": 7,
+      "role": "exact_unmodified_confirmation_receipt_frame",
+      "required_media_type": "application/octet-stream",
+      "required_byte_fidelity": "exact_unmodified_binary_frame"
+    },
+    {
+      "ordinal": 8,
+      "role": "sanitized_exact_material_presentation_and_decision_confirmation_receipt",
+      "required_media_type": "application/json",
+      "required_byte_fidelity": "sanitized_derived_observation_record"
+    },
+    {
+      "ordinal": 9,
+      "role": "sanitized_custody_observation",
+      "required_media_type": "application/json",
+      "required_byte_fidelity": "sanitized_derived_observation_record"
+    },
+    {
+      "ordinal": 10,
+      "role": "sanitized_identity_proofing_profile",
+      "required_media_type": "application/json",
+      "required_byte_fidelity": "sanitized_derived_observation_record"
+    },
+    {
+      "ordinal": 11,
+      "role": "sanitized_principal_authenticator_binding",
+      "required_media_type": "application/json",
+      "required_byte_fidelity": "sanitized_derived_observation_record"
+    },
+    {
+      "ordinal": 12,
+      "role": "sanitized_controlled_time_observation",
+      "required_media_type": "application/json",
+      "required_byte_fidelity": "sanitized_derived_observation_record"
+    },
+    {
+      "ordinal": 13,
+      "role": "sanitized_verifier_observation",
+      "required_media_type": "application/json",
+      "required_byte_fidelity": "sanitized_derived_observation_record"
+    },
+    {
+      "ordinal": 14,
+      "role": "sanitized_delegation_effective_control_observation",
+      "required_media_type": "application/json",
+      "required_byte_fidelity": "sanitized_derived_observation_record"
+    }
+  ],
+  "descriptor_requirements": {
+    "role_unique_and_exactly_once": true,
+    "artifact_id_unique_and_nonempty": true,
+    "content_address_lowercase_and_syntactically_valid": true,
+    "byte_count_positive_integer": true,
+    "media_type_exact_match_to_role": true,
+    "byte_fidelity_exact_match_to_role": true,
+    "resolver_independent_blob_path_exact_match": true,
+    "inventory_order_exact_match": true,
+    "extra_roles_allowed": false
+  },
+  "total_resolution_algorithm": [
+    "parse_and_validate_the_closed_descriptor_inventory_without_reading_any_preimage",
+    "for_each_role_in_closed_inventory_order_derive_the_only_permitted_bundle_path_from_the_descriptor_content_address",
+    "attempt_one_binary_read_and_append_one_receipt_row_even_when_the_read_fails",
+    "when_no_complete_candidate_bytes_are_available_record_read_disposition_missing_or_unreadable_and_comparison_disposition_not_compared_no_read_without_observed_digest_or_byte_count",
+    "when_complete_candidate_bytes_are_available_record_read_disposition_readable_complete_and_recompute_observed_digest_and_byte_count_from_those_bytes",
+    "compare_observed_digest_byte_count_role_media_type_byte_fidelity_path_and_required_content_format_without_trusting_recorded_comparison_fields",
+    "record_match_only_when_every_comparison_and_required_content_format_succeeds_otherwise_record_mismatch",
+    "after_all_roles_recompute_the_confirmation_receipt_frame_relation_against_the_phase_two_authentication_frame",
+    "serialize_the_complete_receipt_without_a_self_digest"
+  ],
+  "typed_resolution_outcomes": {
+    "missing": {
+      "read_disposition": "missing",
+      "comparison_disposition": "not_compared_no_read",
+      "observed_digest_present": false,
+      "observed_byte_count_present": false,
+      "eligibility_effect": "indeterminate"
+    },
+    "unreadable": {
+      "read_disposition": "unreadable",
+      "comparison_disposition": "not_compared_no_read",
+      "observed_digest_present": false,
+      "observed_byte_count_present": false,
+      "eligibility_effect": "indeterminate"
+    },
+    "readable_match": {
+      "read_disposition": "readable_complete",
+      "comparison_disposition": "match",
+      "observed_digest_present": true,
+      "observed_byte_count_present": true,
+      "eligibility_effect": "supported"
+    },
+    "readable_mismatch_or_malformed": {
+      "read_disposition": "readable_complete",
+      "comparison_disposition": "mismatch",
+      "observed_digest_present": true,
+      "observed_byte_count_present": true,
+      "eligibility_effect": "invalid"
+    }
+  },
+  "format_checks": {
+    "json_roles": "strict_utf8_json_with_unique_member_names_and_no_nonfinite_numbers",
+    "cbor_role": "one_complete_deterministically_decodable_cbor_item_without_trailing_bytes",
+    "confirmation_receipt_frame_role": {
+      "magic_ascii": "ODEYA-HDA-CONFIRMATION-RECEIPT-V1",
+      "field_count_encoding": "unsigned_16_bit_big_endian",
+      "field_entry_encoding": "name_length_u16be_then_ascii_name_then_value_length_u32be_then_value",
+      "ordered_fields": [
+        "presentation_challenge_id",
+        "displayed_bytes_sha256",
+        "displayed_byte_count",
+        "rendering_profile_id",
+        "confirmation_gesture_kind",
+        "confirmation_gesture_at"
+      ],
+      "field_value_contracts": {
+        "presentation_challenge_id": "exactly_32_raw_octets",
+        "displayed_bytes_sha256": "exactly_32_raw_octets",
+        "displayed_byte_count": "exactly_4_octets_unsigned_32_bit_big_endian",
+        "rendering_profile_id": "nonempty_strict_ascii",
+        "confirmation_gesture_kind": "nonempty_strict_ascii",
+        "confirmation_gesture_at": "strict_ascii_utc_timestamp_yyyy_mm_dd_t_hh_mm_ss_dot_six_fraction_digits_z"
+      },
+      "exact_binary_preimage_required": true,
+      "json_rendering_or_reencoding_allowed": false,
+      "trailing_bytes_allowed": false
+    }
+  },
+  "receipt_frame_relation": {
+    "receipt_role": "exact_unmodified_confirmation_receipt_frame",
+    "receipt_frame_content_address_must_equal": "phase_two_authentication_frame.confirmation_receipt_raw_sha256",
+    "presentation_challenge_id_must_equal": "recomputed_phase_one_presentation_challenge_id",
+    "displayed_bytes_sha256_must_equal": "content_address_of_exact_unmodified_displayed_decision_bytes",
+    "displayed_byte_count_must_equal": "byte_count_of_exact_unmodified_displayed_decision_bytes",
+    "changed_receipt_after_phase_two_commitment": "readable_mismatch_invalid"
+  },
+  "refusal_rules": {
+    "descriptor_without_preimage": "missing_indeterminate",
+    "filename_content_disagreement": "readable_mismatch_invalid",
+    "wrong_byte_count": "readable_mismatch_invalid",
+    "wrong_media_type": "readable_mismatch_invalid",
+    "wrong_byte_fidelity": "readable_mismatch_invalid",
+    "readable_malformed_content": "readable_mismatch_invalid",
+    "omitted_failed_row": "invalid_incomplete_receipt",
+    "missing_as_successful_zero_byte_artifact": "invalid_false_match",
+    "duplicate_role": "invalid_inventory",
+    "role_swap": "invalid_inventory",
+    "invalid_inventory_stops_per_role_resolution": true,
+    "missing_role_code_also_emitted_after_invalid_inventory": false,
+    "reencoded_exact_bytes": "readable_mismatch_invalid"
+  },
+  "proof_boundary": {
+    "profile_issued": false,
+    "runtime_resolver_implemented": false,
+    "repository_bundle_is_a_transport_not_object_authority": true,
+    "network_access_authorized": false,
+    "credentials_authorized": false,
+    "gate_a_accepted": false,
+    "runtime_authorized": false
+  }
+}

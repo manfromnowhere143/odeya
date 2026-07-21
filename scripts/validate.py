@@ -192,8 +192,13 @@ REQUIRED_FILES = (
     "schemas/validation-result.schema.json",
     "schemas/handoff.schema.json",
     "schemas/human-decision-assurance-core.schema.json",
+    "schemas/human-decision-assurance-backing-byte-verification-receipt.schema.json",
+    "schemas/human-decision-assurance-eligibility-comparison-receipt.schema.json",
+    "schemas/human-decision-assurance-eligibility-recomputation-result.schema.json",
     "schemas/human-decision-assurance-evidence.schema.json",
+    "schemas/human-decision-assurance-evidence-v0-2.schema.json",
     "schemas/human-decision-assurance-seal.schema.json",
+    "schemas/human-decision-assurance-seal-v0-2.schema.json",
     "schemas/grounded-outcome.schema.json",
     "schemas/strategy-candidate.schema.json",
     "schemas/promotion-decision.schema.json",
@@ -216,13 +221,61 @@ REQUIRED_FILES = (
     "tests/architecture-schema/fixtures/canonical-work-lease-acquired.valid.json",
     "tests/architecture-schema/fixtures/canonical-work-lease-released.valid.json",
     "tests/architecture-schema/fixtures/human-decision-assurance-core.valid.json",
+    "tests/architecture-schema/fixtures/human-decision-assurance-backing-byte-verification-receipt.valid.json",
+    "tests/architecture-schema/fixtures/human-decision-assurance-eligibility-comparison-receipt.valid.json",
+    "tests/architecture-schema/fixtures/human-decision-assurance-eligibility-recomputation-result-java-21-0-9.valid.json",
+    "tests/architecture-schema/fixtures/human-decision-assurance-eligibility-recomputation-result-nodejs-24-18-0.valid.json",
+    "tests/architecture-schema/fixtures/human-decision-assurance-eligibility-recomputation-result-python.valid.json",
     "tests/architecture-schema/fixtures/human-decision-assurance-evidence.valid.json",
+    "tests/architecture-schema/fixtures/human-decision-assurance-evidence-v0-2.valid.json",
     "tests/architecture-schema/fixtures/human-decision-assurance-seal.valid.json",
+    "tests/architecture-schema/fixtures/human-decision-assurance-seal-v0-2.valid.json",
     "tests/architecture-schema/fixtures/prq-013-kb-001.agent-accessible-key.known-bad.json",
     "tests/architecture-schema/fixtures/human-decision-assurance-decision-subject.valid.json",
     "tests/human-decision-assurance/check.py",
     "tests/human-decision-assurance/cases.json",
     "tests/human-decision-assurance/README.md",
+    "architecture/human-decision-assurance-content-address-resolver-profile-v1-candidate.json",
+    "architecture/human-decision-assurance-individual-eligibility-ruleset-v2-candidate.json",
+    "docs/decisions/0094-bind-current-status-surfaces-to-retained-machine-evidence.md",
+    "docs/decisions/0095-reissue-human-decision-assurance-as-a-byte-bound-independently-recomputed-chain.md",
+    "scripts/generate_human_decision_assurance_successor.py",
+    "scripts/validate_human_decision_assurance_successor.py",
+    "tests/human-decision-assurance-successor/README.md",
+    "tests/human-decision-assurance-successor/vectors.json",
+    "tests/human-decision-assurance-successor/cases.json",
+    "tests/human-decision-assurance-successor/chain-cases.json",
+    "tests/human-decision-assurance-successor/input-manifest.json",
+    "tests/human-decision-assurance-successor/normative-input-safe-complete-eligible.json",
+    "tests/human-decision-assurance-successor/generation-manifest.json",
+    "tests/human-decision-assurance-successor/python/evaluator.py",
+    "tests/human-decision-assurance-successor/python/input_adapter.py",
+    "tests/human-decision-assurance-successor/python/config.json",
+    "tests/human-decision-assurance-successor/python/requirements.lock",
+    "tests/human-decision-assurance-successor/python/source-manifest.json",
+    "tests/human-decision-assurance-successor/node/src/evaluator.mjs",
+    "tests/human-decision-assurance-successor/node/src/input-adapter.mjs",
+    "tests/human-decision-assurance-successor/node/src/cli.mjs",
+    "tests/human-decision-assurance-successor/node/evaluator-config.json",
+    "tests/human-decision-assurance-successor/node/package-lock.json",
+    "tests/human-decision-assurance-successor/node/source-manifest.json",
+    "tests/human-decision-assurance-successor/java/src/odeya/hda/java21/StrictJson.java",
+    "tests/human-decision-assurance-successor/java/src/odeya/hda/java21/JsonPatch.java",
+    "tests/human-decision-assurance-successor/java/src/odeya/hda/java21/InputAdapter.java",
+    "tests/human-decision-assurance-successor/java/src/odeya/hda/java21/HumanDecisionAssuranceEvaluator.java",
+    "tests/human-decision-assurance-successor/java/evaluator-config.json",
+    "tests/human-decision-assurance-successor/java/dependency-lock.json",
+    "tests/human-decision-assurance-successor/java/source-manifest.json",
+    "tests/human-decision-assurance-successor/results/python.projection.json",
+    "tests/human-decision-assurance-successor/results/nodejs-24-18-0.projection.json",
+    "tests/human-decision-assurance-successor/results/java-21-0-9.projection.json",
+    "tests/human-decision-assurance-successor/runtime/python-3-14-2.profile.json",
+    "tests/human-decision-assurance-successor/runtime/nodejs-24-18-0.profile.json",
+    "tests/human-decision-assurance-successor/runtime/java-21-0-9.profile.json",
+    "tests/human-decision-assurance-successor/runtime/python-3-14-2.version.txt",
+    "tests/human-decision-assurance-successor/runtime/nodejs-24-18-0.version.txt",
+    "tests/human-decision-assurance-successor/runtime/java-21-0-9.version.txt",
+    "tests/human-decision-assurance-successor/runtime/javac-21-0-9.version.txt",
     "tests/cognitive-contracts/check.py",
     "tests/cognitive-contracts/cases.json",
     "tests/projection-contracts/check.py",
@@ -281,6 +334,7 @@ REQUIRED_FILES = (
     "tests/prq-009-assignment-order/cases.json",
     "scripts/validate_schema_resource_reissues.py",
     "scripts/validate_repository_release.py",
+    "scripts/ci/install-java.sh",
     "scripts/ci/install-node.sh",
     "scripts/ci/install-actionlint.sh",
     "scripts/ci/install-zizmor.sh",
@@ -332,6 +386,7 @@ ARCHITECTURE_EVIDENCE_CHECKS = (
     "scripts/validate_refusal_attribution.py",
     "scripts/validate_schema_rule_ablation.py",
     "scripts/validate_suite_guard_coverage.py",
+    "scripts/validate_human_decision_assurance_successor.py",
 )
 REPOSITORY_RELEASE_CHECKS = (
     "scripts/validate_repository_release.py",
@@ -1512,10 +1567,11 @@ def validate_decisions(errors: list[str]) -> int:
 
 
 README_CHECKPOINT = re.compile(
-    r"The current retained foundation contains (\d+) Draft 2020-12 schemas, (\d+)\s+"
-    r"valid/adversarial cases, (\w+) isolated contract suites, (\w+)\s+"
-    r"architecture-evidence checks, and (\w+) bounded safe TLA\+ models with\s+"
-    r"(\w+) mutation controls",
+    r"The\s+current\s+retained\s+foundation\s+contains\s+(\d+)\s+Draft\s+2020-12\s+"
+    r"schemas,\s+(\d+)\s+shared-manifest\s+cases\s+\((\d+)\s+valid\s+and\s+"
+    r"(\d+)\s+known-bad\),\s+(\w+)\s+isolated\s+contract\s+suites,\s+(\w+)\s+"
+    r"architecture-evidence\s+checks,\s+and\s+(\w+)\s+bounded\s+safe\s+TLA\+\s+"
+    r"models\s+with\s+(\w+)\s+mutation\s+controls",
     re.MULTILINE,
 )
 WORD_NUMBERS = {
@@ -1534,9 +1590,9 @@ def readme_checkpoint_errors(
     """Refuse a README whose checkpoint disagrees with this run's measurements.
 
     The checkpoint sentence states counts as fact on the repository's front page.
-    Nothing verified them and all four drifted. A number published without a
-    check is a claim, not evidence, and the front door is the worst place to keep
-    one.
+    A number published without a check is a claim, not evidence, and the front
+    door is the worst place to keep one. Bind the total and the admitted/known-bad
+    partition separately so a compensating classification change cannot pass.
     """
 
     readme_path = ROOT / "README.md"
@@ -1566,14 +1622,22 @@ def readme_checkpoint_errors(
 
     tla_models = len(sorted((ROOT / "formal/tla").glob("*.tla")))
     mutation_controls = len(sorted((ROOT / "formal/tla").glob("*.counterexample.cfg")))
+    schema_manifest = json.loads(SCHEMA_TEST_MANIFEST.read_text(encoding="utf-8"))
+    schema_partition = {"valid": 0, "invalid": 0}
+    for case in schema_manifest.get("cases", []):
+        expectation = case.get("expect")
+        if expectation in schema_partition:
+            schema_partition[expectation] += 1
     errors: list[str] = []
     declared = (
         ("Draft 2020-12 schemas", resolve(match.group(1)), schema_count),
-        ("valid/adversarial cases", resolve(match.group(2)), schema_case_count),
-        ("isolated contract suites", resolve(match.group(3)), suite_count),
-        ("architecture-evidence checks", resolve(match.group(4)), evidence_check_count),
-        ("bounded safe TLA+ models", resolve(match.group(5)), tla_models),
-        ("mutation controls", resolve(match.group(6)), mutation_controls),
+        ("shared-manifest cases", resolve(match.group(2)), schema_case_count),
+        ("valid shared-manifest cases", resolve(match.group(3)), schema_partition["valid"]),
+        ("known-bad shared-manifest cases", resolve(match.group(4)), schema_partition["invalid"]),
+        ("isolated contract suites", resolve(match.group(5)), suite_count),
+        ("architecture-evidence checks", resolve(match.group(6)), evidence_check_count),
+        ("bounded safe TLA+ models", resolve(match.group(7)), tla_models),
+        ("mutation controls", resolve(match.group(8)), mutation_controls),
     )
     for label, stated, actual in declared:
         if stated is None:

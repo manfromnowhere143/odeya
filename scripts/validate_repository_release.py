@@ -9,6 +9,8 @@ architecture/formal suites remain separate independent tools.
 from __future__ import annotations
 
 import argparse
+import ast
+import hashlib
 import json
 import os
 import re
@@ -81,6 +83,7 @@ STANDARD_CHECKOUT_REF = (
 PUBLICATION_CHECKOUT_REF = "ref: ${{ github.sha }}"
 SHELL_SCRIPTS = (
     ".githooks/pre-push",
+    "scripts/ci/install-java.sh",
     "scripts/ci/install-node.sh",
     "scripts/ci/install-actionlint.sh",
     "scripts/ci/install-zizmor.sh",
@@ -92,6 +95,34 @@ SHELL_SCRIPTS = (
     "scripts/ci/push-rehearsed-head.sh",
     "scripts/ci/rehearse-fresh-clone.sh",
 )
+EXPECTED_JAVA_TOOLCHAIN = {
+    "version": "21.0.9",
+    "version_file": ".java-version",
+    "distribution": "temurin",
+    "release_tag": "jdk-21.0.9+10",
+    "release_base": (
+        "https://github.com/adoptium/temurin21-binaries/releases/download/"
+        "jdk-21.0.9%2B10"
+    ),
+    "archives": {
+        "darwin_amd64": {
+            "name": "OpenJDK21U-jdk_x64_mac_hotspot_21.0.9_10.tar.gz",
+            "sha256": "f803a3f5bce141f23ac699dfcda06a721f4b74f53bacb0f4bbe9bfcad54427d8",
+        },
+        "darwin_arm64": {
+            "name": "OpenJDK21U-jdk_aarch64_mac_hotspot_21.0.9_10.tar.gz",
+            "sha256": "55a40abeb0e174fdc70f769b34b50b70c3967e0b12a643e6a3e23f9a582aac16",
+        },
+        "linux_amd64": {
+            "name": "OpenJDK21U-jdk_x64_linux_hotspot_21.0.9_10.tar.gz",
+            "sha256": "810d3773df7e0d6c4394e4e244b264c8b30e0b05a0acf542d065fd78a6b65c2f",
+        },
+        "linux_arm64": {
+            "name": "OpenJDK21U-jdk_aarch64_linux_hotspot_21.0.9_10.tar.gz",
+            "sha256": "edf0da4debe7cf475dbe320d174d6eed81479eb363f41e38a2efb740428c603a",
+        },
+    },
+}
 EXECUTABLE_SCRIPTS = (
     *SHELL_SCRIPTS,
     "scripts/ci/verify_github_release.py",
@@ -192,6 +223,100 @@ GIT_ENVIRONMENT_TO_REMOVE = (
     "GIT_TRANSPORT_HELPER_DEBUG",
     "GIT_WORK_TREE",
 )
+DEDICATED_ARCHITECTURE_EVIDENCE_COMMANDS = (
+    ("gate-a-prerequisites", "python scripts/validate_gate_a_prerequisites.py"),
+    ("prq-009-order", "python scripts/validate_prq_009_assignment_order.py"),
+    ("schema-reissue", "python scripts/validate_schema_resource_reissues.py"),
+    ("module-manifest", "python scripts/validate_module_manifest.py"),
+    ("first-slice-resolution", "python scripts/validate_first_slice_resolution.py"),
+    (
+        "hda-successor-recompute",
+        "python scripts/validate_human_decision_assurance_successor.py --recompute-all",
+    ),
+)
+INTEGRATED_ARCHITECTURE_EVIDENCE_CHECKS = (
+    ("gate-a-prerequisites", "scripts/validate_gate_a_prerequisites.py"),
+    ("prq-009-order", "scripts/validate_prq_009_assignment_order.py"),
+    ("schema-reissue", "scripts/validate_schema_resource_reissues.py"),
+    ("lifecycle-guard-coverage", "scripts/validate_lifecycle_guard_coverage.py"),
+    (
+        "lifecycle-condition-coverage",
+        "scripts/validate_lifecycle_condition_coverage.py",
+    ),
+    (
+        "canonicalization-dispositions",
+        "scripts/validate_canonicalization_dispositions.py",
+    ),
+    ("contract-profiles", "scripts/validate_contract_profiles.py"),
+    ("refusal-attribution", "scripts/validate_refusal_attribution.py"),
+    ("schema-rule-ablation", "scripts/validate_schema_rule_ablation.py"),
+    ("suite-guard-coverage", "scripts/validate_suite_guard_coverage.py"),
+    (
+        "hda-successor",
+        "scripts/validate_human_decision_assurance_successor.py",
+    ),
+)
+CARDINAL_WORDS = (
+    "zero",
+    "one",
+    "two",
+    "three",
+    "four",
+    "five",
+    "six",
+    "seven",
+    "eight",
+    "nine",
+    "ten",
+    "eleven",
+    "twelve",
+    "thirteen",
+    "fourteen",
+    "fifteen",
+    "sixteen",
+    "seventeen",
+    "eighteen",
+    "nineteen",
+    "twenty",
+)
+ARCHITECTURE_EVIDENCE_COUNT_BOUNDARY = (
+    f"Reproduce {CARDINAL_WORDS[len(DEDICATED_ARCHITECTURE_EVIDENCE_COMMANDS)]} "
+    "dedicated prerequisite/member checks: Gate A prerequisites, PRQ-009 order, "
+    "schema reissue, module manifest, first-slice scope, and human-decision-assurance "
+    f"successor recomputation. `Foundation` separately runs the complete integrated "
+    f"{CARDINAL_WORDS[len(INTEGRATED_ARCHITECTURE_EVIDENCE_CHECKS)]}-check census"
+)
+ARCHITECTURE_EVIDENCE_RUN_STEP_START = (
+    "      - name: Reproduce architecture evidence checks\n"
+    "        run: |\n"
+)
+ARCHITECTURE_EVIDENCE_RUN_STEP_END = (
+    "\n\n      - name: Prove architecture checks did not mutate tracked evidence\n"
+)
+EXPECTED_ARCHITECTURE_EVIDENCE_RUN_BODY = (
+    "          {\n"
+    + "".join(
+        f"            {command}\n"
+        for _, command in DEDICATED_ARCHITECTURE_EVIDENCE_COMMANDS
+    )
+    + "          } 2>&1 | tee artifacts/ci/architecture-evidence.log"
+)
+EXPECTED_ARCHITECTURE_EVIDENCE_JOB_SHA256 = (
+    "320ff9a1f7e9efb0e1247c91bf0aa01e5b5e45e64fcdf68e2fc51b2b3a2d33ef"
+)
+EXPECTED_INTEGRATED_VALIDATOR_SHA256 = (
+    "d394363020283f586203bb5485c9b821d2c43f680e61552770de8b62aef2b82d"
+)
+ARCHITECTURE_EVIDENCE_KNOWN_BAD_MUTATION_COUNT = (
+    len(DEDICATED_ARCHITECTURE_EVIDENCE_COMMANDS)
+    + len(INTEGRATED_ARCHITECTURE_EVIDENCE_CHECKS)
+    + 2
+)
+ARCHITECTURE_EVIDENCE_MUTATION_COUNT_BOUNDARY = (
+    "The exact inventory contains "
+    f"{CARDINAL_WORDS[ARCHITECTURE_EVIDENCE_KNOWN_BAD_MUTATION_COUNT]} "
+    "retained known-bad mutations"
+)
 RELEASE_CONTRACT_REQUIRED = (
     "The public canonical remote already exists at\n"
     "`https://github.com/manfromnowhere143/odeya`; its default branch is `main`.",
@@ -214,6 +339,8 @@ RELEASE_CONTRACT_REQUIRED = (
     "applied_outcome_unknown",
     "update_allows_fetch_and_merge=false",
     "does not authorize runtime",
+    ARCHITECTURE_EVIDENCE_COUNT_BOUNDARY,
+    ARCHITECTURE_EVIDENCE_MUTATION_COUNT_BOUNDARY,
 )
 RELEASE_CONTRACT_FORBIDDEN = (
     "canonical repository is private",
@@ -238,6 +365,7 @@ EXPECTED_WORKFLOW_MUTATION_IDS = (
     "workflow-run-trigger",
     "unexpected-job",
     "missing-fast-architecture-surface-lock",
+    "missing-hda-successor-recompute",
     "missing-release-branch-trigger",
     "missing-exact-checkout-ref",
     "publication-pull-request-trigger",
@@ -260,6 +388,50 @@ EXPECTED_FAST_SURFACE_MUTATION = (
     "",
     "fast policy architecture-surface/release validation",
 )
+EXPECTED_HDA_RECOMPUTE_MUTATION = (
+    "            python scripts/validate_human_decision_assurance_successor.py --recompute-all\n",
+    "",
+    "architecture evidence exact toolchain/recomputation contract",
+)
+EXPECTED_ARCHITECTURE_EVIDENCE_INVENTORY_MUTATIONS = {
+    **{
+        f"missing-dedicated-{mutation_name}": (
+            ".github/workflows/architecture.yml",
+            f"            {command}\n",
+            "",
+            "architecture evidence exact command census",
+        )
+        for mutation_name, command in DEDICATED_ARCHITECTURE_EVIDENCE_COMMANDS
+    },
+    "unexpected-dedicated-execution-step": (
+        ".github/workflows/architecture.yml",
+        ARCHITECTURE_EVIDENCE_RUN_STEP_START,
+        "      - name: Run a seventh dedicated architecture check\n"
+        "        run: python scripts/validate_contract_profiles.py\n\n"
+        + ARCHITECTURE_EVIDENCE_RUN_STEP_START,
+        "architecture evidence executable job bytes must be exact",
+    ),
+    **{
+        f"missing-integrated-{mutation_name}": (
+            "scripts/validate.py",
+            f'    "{relative}",\n',
+            "",
+            "integrated architecture evidence inventory must be exact",
+        )
+        for mutation_name, relative in INTEGRATED_ARCHITECTURE_EVIDENCE_CHECKS
+    },
+    "post-assignment-integrated-rebinding": (
+        "scripts/validate.py",
+        ")\nREPOSITORY_RELEASE_CHECKS = (\n",
+        ")\n"
+        'globals()["ARCHITECTURE_EVIDENCE_CHECKS"] = (\n'
+        "    ARCHITECTURE_EVIDENCE_CHECKS[:-1]\n"
+        '    + ("scripts/validate_repository_release.py",)\n'
+        ")\n"
+        "REPOSITORY_RELEASE_CHECKS = (\n",
+        "integrated architecture evidence executable bytes must be exact",
+    ),
+}
 REHEARSAL_TOOL_CACHE_BLOCK = (
     'ODEYA_TOOL_CACHE="$REHEARSAL_ROOT/tool-cache"\n'
     "readonly ODEYA_TOOL_CACHE\n"
@@ -306,6 +478,19 @@ EXPECTED_RELEASE_SCRIPT_MUTATIONS = {
     ),
 }
 EXPECTED_RELEASE_CONTRACT_MUTATIONS = {
+    "stale-architecture-evidence-counts": (
+        ARCHITECTURE_EVIDENCE_COUNT_BOUNDARY,
+        "Reproduce five dedicated prerequisite/member checks: Gate A prerequisites, "
+        "PRQ-009 order, schema reissue, module manifest, first-slice scope, and "
+        "human-decision-assurance successor recomputation. `Foundation` separately "
+        "runs the complete integrated ten-check census",
+        "Reproduce six dedicated prerequisite/member checks",
+    ),
+    "stale-architecture-evidence-mutation-count": (
+        ARCHITECTURE_EVIDENCE_MUTATION_COUNT_BOUNDARY,
+        "The exact inventory contains seventeen retained known-bad mutations",
+        ARCHITECTURE_EVIDENCE_MUTATION_COUNT_BOUNDARY,
+    ),
     "future-private-remote-regression": (
         "The public canonical remote already exists at\n"
         "`https://github.com/manfromnowhere143/odeya`; its default branch is `main`.",
@@ -551,6 +736,8 @@ def validate_toolchain(errors: list[str]) -> dict[str, Any]:
         errors.append("toolchain lock: Node version does not match .node-version")
     if lock.get("java", {}).get("version") != java_version:
         errors.append("toolchain lock: Java version does not match .java-version")
+    if lock.get("java") != EXPECTED_JAVA_TOOLCHAIN:
+        errors.append("toolchain lock: Java toolchain metadata is not the exact Temurin lock")
     if package.get("engines", {}).get("node") != node_version:
         errors.append("package.json: Node engine does not match the toolchain lock")
     expected_npm = lock.get("node", {}).get("npm_version")
@@ -674,6 +861,108 @@ def validate_python_lock(errors: list[str]) -> int:
     return passed
 
 
+def integrated_architecture_evidence_assignment(
+    text: str,
+) -> tuple[ast.Module | None, ast.Assign | None, list[str]]:
+    try:
+        tree = ast.parse(text)
+    except SyntaxError as exc:
+        return None, None, [
+            f"integrated architecture evidence inventory cannot be parsed: {exc}"
+        ]
+
+    assignments = [
+        node
+        for node in tree.body
+        if isinstance(node, ast.Assign)
+        and any(
+            isinstance(target, ast.Name)
+            and target.id == "ARCHITECTURE_EVIDENCE_CHECKS"
+            for target in node.targets
+        )
+    ]
+    if len(assignments) != 1:
+        return tree, None, [
+            "integrated architecture evidence inventory assignment must exist exactly once"
+        ]
+    return tree, assignments[0], []
+
+
+def integrated_architecture_evidence_inventory_errors(text: str) -> list[str]:
+    """Bind Foundation's reported evidence-check count to its executable tuple."""
+
+    errors: list[str] = []
+    observed_sha256 = hashlib.sha256(text.encode("utf-8")).hexdigest()
+    if observed_sha256 != EXPECTED_INTEGRATED_VALIDATOR_SHA256:
+        errors.append(
+            "integrated architecture evidence executable bytes must be exact: "
+            f"expected {EXPECTED_INTEGRATED_VALIDATOR_SHA256}, got {observed_sha256}"
+        )
+
+    tree, assignment, assignment_errors = (
+        integrated_architecture_evidence_assignment(text)
+    )
+    errors.extend(assignment_errors)
+    if tree is None or assignment is None:
+        return errors
+    try:
+        observed = ast.literal_eval(assignment.value)
+    except (TypeError, ValueError, SyntaxError):
+        errors.append(
+            "integrated architecture evidence inventory must be a literal tuple"
+        )
+        return errors
+
+    expected = tuple(
+        relative for _, relative in INTEGRATED_ARCHITECTURE_EVIDENCE_CHECKS
+    )
+    if observed != expected:
+        errors.append(
+            "integrated architecture evidence inventory must be exact: "
+            f"expected {expected}, got {observed!r}"
+        )
+
+    references = [
+        node
+        for node in ast.walk(tree)
+        if isinstance(node, ast.Name)
+        and node.id == "ARCHITECTURE_EVIDENCE_CHECKS"
+    ]
+    if (
+        len(references) != 2
+        or sum(isinstance(node.ctx, ast.Store) for node in references) != 1
+        or sum(isinstance(node.ctx, ast.Load) for node in references) != 1
+    ):
+        errors.append(
+            "integrated architecture evidence binding must have exactly one literal "
+            "definition and one executable consumption"
+        )
+
+    consumers = [
+        node
+        for node in tree.body
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+        and node.name == "validate_architecture_evidence_checks"
+    ]
+    consumption_loops = []
+    if len(consumers) == 1:
+        consumption_loops = [
+            node
+            for node in ast.walk(consumers[0])
+            if isinstance(node, ast.For)
+            and isinstance(node.target, ast.Name)
+            and node.target.id == "relative"
+            and isinstance(node.iter, ast.Name)
+            and node.iter.id == "ARCHITECTURE_EVIDENCE_CHECKS"
+        ]
+    if len(consumers) != 1 or len(consumption_loops) != 1:
+        errors.append(
+            "integrated architecture evidence inventory must have one exact "
+            "Foundation consumption loop"
+        )
+    return errors
+
+
 def workflow_policy_errors(
     text: str,
     relative: str,
@@ -770,6 +1059,64 @@ def workflow_policy_errors(
                         "fast policy architecture-surface/release validation "
                         f"must run exactly once: {command}"
                     )
+        architecture_evidence_marker = "\n  architecture-evidence:\n"
+        if text.count(architecture_evidence_marker) != 1:
+            issues.append("architecture evidence job boundary is absent or duplicated")
+        else:
+            architecture_evidence = text.split(architecture_evidence_marker, 1)[1]
+            architecture_evidence_job = (
+                "  architecture-evidence:\n" + architecture_evidence
+            )
+            observed_job_sha256 = hashlib.sha256(
+                architecture_evidence_job.encode("utf-8")
+            ).hexdigest()
+            if observed_job_sha256 != EXPECTED_ARCHITECTURE_EVIDENCE_JOB_SHA256:
+                issues.append(
+                    "architecture evidence executable job bytes must be exact: "
+                    f"expected {EXPECTED_ARCHITECTURE_EVIDENCE_JOB_SHA256}, "
+                    f"got {observed_job_sha256}"
+                )
+            if (
+                architecture_evidence.count(ARCHITECTURE_EVIDENCE_RUN_STEP_START) != 1
+                or architecture_evidence.count(ARCHITECTURE_EVIDENCE_RUN_STEP_END) != 1
+            ):
+                issues.append(
+                    "architecture evidence exact command census boundary is absent or duplicated"
+                )
+            else:
+                observed_run_body = architecture_evidence.split(
+                    ARCHITECTURE_EVIDENCE_RUN_STEP_START, 1
+                )[1].split(ARCHITECTURE_EVIDENCE_RUN_STEP_END, 1)[0]
+                if observed_run_body != EXPECTED_ARCHITECTURE_EVIDENCE_RUN_BODY:
+                    expected_commands = tuple(
+                        command
+                        for _, command in DEDICATED_ARCHITECTURE_EVIDENCE_COMMANDS
+                    )
+                    issues.append(
+                        "architecture evidence exact command census must match the "
+                        f"pinned inventory {expected_commands}"
+                    )
+            required_architecture_evidence_fragments = (
+                "    timeout-minutes: 20\n",
+                "        run: printf 'ODEYA_TOOL_CACHE=%s/odeya-release-tools\\n' \"$RUNNER_TEMP\" >> \"$GITHUB_ENV\"\n",
+                "              --require-hashes \\\n",
+                "              --only-binary=:all: \\\n",
+                "              --report artifacts/ci/architecture-evidence-pip-install-report.json \\\n",
+                "              --requirement tools/repository-release/requirements-architecture.lock\n",
+                '            node_bin="$(bash scripts/ci/install-node.sh)"\n',
+                '            java_bin="$(bash scripts/ci/install-java.sh)"\n',
+                "            python scripts/validate_human_decision_assurance_successor.py --recompute-all\n",
+                "          git diff --exit-code\n",
+                "          git diff --cached --exit-code\n",
+                "          path: artifacts/ci/\n",
+                "          if-no-files-found: error\n",
+            )
+            for fragment in required_architecture_evidence_fragments:
+                if architecture_evidence.count(fragment) != 1:
+                    issues.append(
+                        "architecture evidence exact toolchain/recomputation contract "
+                        f"must retain exactly one {fragment.strip()!r}"
+                    )
     if publication:
         if runner_count != 1 or text.count("    timeout-minutes: 5\n") != 1:
             issues.append("publication job must use exactly one five-minute timeout")
@@ -808,6 +1155,7 @@ def validate_policy_mutations(errors: list[str]) -> int:
         "schema_version",
         "base_workflow",
         "mutations",
+        "architecture_evidence_inventory_mutations",
         "release_contract",
         "release_contract_mutations",
         "release_script_mutations",
@@ -880,6 +1228,15 @@ def validate_policy_mutations(errors: list[str]) -> int:
                 "specification drifted from the pinned matrix"
             )
             continue
+        if (
+            case_id == "missing-hda-successor-recompute"
+            and (old, new, expected) != EXPECTED_HDA_RECOMPUTE_MUTATION
+        ):
+            errors.append(
+                "repository release mutation missing-hda-successor-recompute: "
+                "specification drifted from the pinned matrix"
+            )
+            continue
         base = workflow_texts[relative]
         if base.count(old) < 1:
             errors.append(f"repository release mutation {case_id}: source bytes are absent")
@@ -892,6 +1249,157 @@ def validate_policy_mutations(errors: list[str]) -> int:
             errors.append(
                 f"repository release mutation {case_id}: expected {expected!r} refusal, "
                 f"got {mutation_issues}"
+            )
+            continue
+        passed += 1
+    return passed
+
+
+def validate_architecture_evidence_inventory_mutations(errors: list[str]) -> int:
+    cases = load_json("tests/repository-release/cases.json", errors)
+    if not isinstance(cases, dict):
+        return 0
+    mutations = cases.get("architecture_evidence_inventory_mutations")
+    if not isinstance(mutations, list):
+        errors.append(
+            "architecture evidence inventory mutations: inventory is absent"
+        )
+        return 0
+    if (
+        len(EXPECTED_ARCHITECTURE_EVIDENCE_INVENTORY_MUTATIONS)
+        != ARCHITECTURE_EVIDENCE_KNOWN_BAD_MUTATION_COUNT
+    ):
+        errors.append(
+            "architecture evidence inventory mutations: executable census does not "
+            "match the release-contract count boundary"
+        )
+
+    observed_ids = [
+        case.get("id")
+        for case in mutations
+        if isinstance(case, dict)
+    ]
+    if (
+        len(observed_ids) != len(mutations)
+        or any(not isinstance(case_id, str) for case_id in observed_ids)
+        or len(set(observed_ids)) != len(observed_ids)
+        or tuple(observed_ids)
+        != tuple(EXPECTED_ARCHITECTURE_EVIDENCE_INVENTORY_MUTATIONS)
+    ):
+        errors.append(
+            "architecture evidence inventory mutations: case census/order is not "
+            "closed and exact"
+        )
+
+    base_documents = {
+        ".github/workflows/architecture.yml": read(
+            ".github/workflows/architecture.yml", errors
+        ),
+        "scripts/validate.py": read("scripts/validate.py", errors),
+    }
+    errors.extend(
+        f"scripts/validate.py: {issue}"
+        for issue in integrated_architecture_evidence_inventory_errors(
+            base_documents["scripts/validate.py"]
+        )
+    )
+
+    passed = 0
+    for case in mutations:
+        if not isinstance(case, dict):
+            errors.append(
+                "architecture evidence inventory mutations: case is not an object"
+            )
+            continue
+        if set(case) != {"id", "subject", "old", "new", "expected"}:
+            errors.append(
+                "architecture evidence inventory mutations: case members are not "
+                "closed and exact"
+            )
+            continue
+        case_id = case.get("id")
+        subject = case.get("subject")
+        old = case.get("old")
+        new = case.get("new")
+        expected = case.get("expected")
+        if not all(
+            isinstance(value, str) and value
+            for value in (case_id, subject, old, expected)
+        ) or not isinstance(new, str):
+            errors.append("architecture evidence inventory mutations: malformed case")
+            continue
+        expected_spec = EXPECTED_ARCHITECTURE_EVIDENCE_INVENTORY_MUTATIONS.get(
+            case_id
+        )
+        if expected_spec != (subject, old, new, expected):
+            errors.append(
+                f"architecture evidence inventory mutation {case_id}: "
+                "specification drifted from the executable inventory"
+            )
+            continue
+        base = base_documents.get(subject)
+        if base is None:
+            errors.append(
+                f"architecture evidence inventory mutation {case_id}: "
+                "subject is not admitted"
+            )
+            continue
+        if subject == ".github/workflows/architecture.yml":
+            if base.count(old) != 1:
+                errors.append(
+                    f"architecture evidence inventory mutation {case_id}: expected "
+                    f"one source occurrence, found {base.count(old)}"
+                )
+                continue
+            mutated = base.replace(old, new, 1)
+            mutation_issues = workflow_policy_errors(
+                mutated,
+                subject,
+                REQUIRED_JOB_IDS[subject],
+            )
+        else:
+            _, assignment, assignment_errors = (
+                integrated_architecture_evidence_assignment(base)
+            )
+            if case_id == "post-assignment-integrated-rebinding":
+                if base.count(old) != 1:
+                    errors.append(
+                        f"architecture evidence inventory mutation {case_id}: "
+                        f"expected one source occurrence, found {base.count(old)}"
+                    )
+                    continue
+                mutated = base.replace(old, new, 1)
+            elif assignment is None or assignment.end_lineno is None:
+                errors.extend(
+                    f"architecture evidence inventory mutation {case_id}: {issue}"
+                    for issue in assignment_errors
+                )
+                continue
+            else:
+                lines = base.splitlines(keepends=True)
+                start = assignment.lineno - 1
+                end = assignment.end_lineno
+                assignment_text = "".join(lines[start:end])
+                if assignment_text.count(old) != 1:
+                    errors.append(
+                        f"architecture evidence inventory mutation {case_id}: expected "
+                        "one occurrence in ARCHITECTURE_EVIDENCE_CHECKS, found "
+                        f"{assignment_text.count(old)}"
+                    )
+                    continue
+                mutated_assignment = assignment_text.replace(old, new, 1)
+                mutated = (
+                    "".join(lines[:start])
+                    + mutated_assignment
+                    + "".join(lines[end:])
+                )
+            mutation_issues = integrated_architecture_evidence_inventory_errors(
+                mutated
+            )
+        if not any(expected in issue for issue in mutation_issues):
+            errors.append(
+                f"architecture evidence inventory mutation {case_id}: expected "
+                f"{expected!r} refusal, got {mutation_issues}"
             )
             continue
         passed += 1
@@ -1169,6 +1677,32 @@ def validate_workflows(lock: dict[str, Any], errors: list[str]) -> tuple[int, in
 
 
 def validate_release_scripts(lock: dict[str, Any], errors: list[str]) -> None:
+    java_installer = read("scripts/ci/install-java.sh", errors)
+    java = lock.get("java", {}) if isinstance(lock, dict) else {}
+    java_version = str(java.get("version", ""))
+    java_release_tag = str(java.get("release_tag", ""))
+    java_release_base = str(java.get("release_base", ""))
+    if f'readonly VERSION="{java_version}"' not in java_installer:
+        errors.append("install-java.sh: version does not match toolchain lock")
+    if f'readonly RELEASE_TAG="{java_release_tag}"' not in java_installer:
+        errors.append("install-java.sh: release tag does not match toolchain lock")
+    if f'readonly RELEASE_BASE="{java_release_base}"' not in java_installer:
+        errors.append("install-java.sh: release base does not match toolchain lock")
+    for platform, archive in java.get("archives", {}).items():
+        if not isinstance(archive, dict):
+            errors.append(f"install-java.sh: invalid locked archive {platform}")
+            continue
+        archive_name = archive.get("name")
+        digest = archive.get("sha256")
+        if (
+            platform not in java_installer
+            or not isinstance(archive_name, str)
+            or archive_name not in java_installer
+            or not isinstance(digest, str)
+            or digest not in java_installer
+        ):
+            errors.append(f"install-java.sh: missing locked archive {platform}")
+
     node_installer = read("scripts/ci/install-node.sh", errors)
     node = lock.get("node", {}) if isinstance(lock, dict) else {}
     node_version = str(node.get("version", ""))
@@ -1542,8 +2076,6 @@ def validate_bare_interpreter_imports(errors: list[str]) -> None:
     Local-module imports are followed one level so a stdlib facade cannot
     hide a third-party import behind `import validate`.
     """
-    import ast
-
     stdlib = set(sys.stdlib_module_names)
     seen: set[str] = set()
     queue = list(BARE_INTERPRETER_SCRIPTS)
@@ -1600,6 +2132,9 @@ def main() -> int:
     validate_git_environment_sanitizer(errors)
     python_lock_mutation_count = validate_python_lock(errors)
     action_count, policy_mutation_count = validate_workflows(lock, errors)
+    architecture_evidence_inventory_mutation_count = (
+        validate_architecture_evidence_inventory_mutations(errors)
+    )
     release_contract_mutation_count = validate_release_contract_mutations(errors)
     release_script_mutation_count = validate_release_script_mutations(errors)
     validate_release_scripts(lock, errors)
@@ -1621,6 +2156,10 @@ def main() -> int:
     print(f"- {len(WORKFLOWS)} least-privilege workflows")
     print(f"- {action_count} immutable GitHub Action references")
     print(f"- {policy_mutation_count} known-bad workflow policy mutations rejected")
+    print(
+        f"- {architecture_evidence_inventory_mutation_count} known-bad "
+        "architecture-evidence inventory mutations rejected"
+    )
     print(
         f"- {release_contract_mutation_count} known-bad release-contract "
         "mutations rejected"

@@ -85,8 +85,26 @@ No item passes because a document sounds complete. Gate A accepts meanings, cont
   presence, and user verification are absent or `unknown`, and the claimed
   human initiation is `contradicted`; the expected disposition is `invalid`.
 
-The three Core/Evidence/Seal 0.1.0 schemas are unissued candidates; no admitted
-PRQ-013 record or `AssuredDecision` wrapper exists. Gate A remains blocked under
+The three Core/Evidence/Seal 0.1.0 resources remain immutable, unissued
+candidates. [ADR 0095](decisions/0095-reissue-human-decision-assurance-as-a-byte-bound-independently-recomputed-chain.md)
+now has retained T0 candidate evidence for five unissued successor schemas,
+seven schema-valid fixtures, fourteen content-addressed synthetic backing
+preimages independently rederived from retained bytes, 44 expectation-free
+vectors, 48 chain
+known-bads, and 132 exact passing recomputations across source-separated,
+non-sharing Python 3.14.2, Node.js 24.18.0, and Temurin Java 21.0.9
+implementations. Comparison is exact over `participant_id`, `domain_results`,
+`categorical_results`, `categorical_failures`, `final_disposition`, and
+`reason_codes`. Fixed times in that evidence are deterministic fixture times
+only.
+
+This does not prove organizational independence, a real ceremony, an admitted
+PRQ-013 record, or an `AssuredDecision` wrapper. ADR 0095 adoption remains
+incomplete until a context-isolated technical-review determination is retained
+over the exact candidate bytes; that determination cannot count as accountable
+review or Gate A acceptance. No current consumer is migrated, and T1/T2,
+wrapper construction, end-to-end consumer refusal, accountable review, and the
+operator's Gate A decision remain open. Gate A remains blocked under
 [ADR 0092](decisions/0092-bind-human-decisions-through-an-external-assurance-wrapper.md),
 which extends [ADR 0089](decisions/0089-a-valid-human-signature-is-not-a-human-decision.md), and the
 [cross-program process-evidence packet](CROSS_PROGRAM_PROCESS_EVIDENCE_ABSORPTION_2026-07-19.md).

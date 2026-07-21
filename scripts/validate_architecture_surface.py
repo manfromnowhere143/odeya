@@ -27,6 +27,7 @@ POLICY_VERSION = "0.1.0"
 REQUIRED_SAFE_CASE_IDS = {
     "approved-release-executable",
     "architecture-document",
+    "architecture-java-evaluator",
     "bounded-formal-model",
     "nonexecutable-validator",
     "retained-extensionless-license",
@@ -46,6 +47,8 @@ REQUIRED_KNOWN_BAD_CASE_IDS = {
     "unauthorized-executable-mode",
     "unapproved-code-under-script-root",
     "unknown-archive-type",
+    "unapproved-content-addressed-blob",
+    "unapproved-java-under-test-root",
 }
 POLICY_KEYS = {
     "policy_id",
@@ -108,6 +111,7 @@ EXECUTABLE_SUFFIXES = {
     ".h",
     ".hpp",
     ".ipa",
+    ".java",
     ".jar",
     ".js",
     ".jsx",

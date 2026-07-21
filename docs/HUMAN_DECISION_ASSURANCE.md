@@ -1,9 +1,12 @@
 # Human Decision Assurance
 
-Status: unissued Gate A architecture candidate, 2026-07-19. The contracts,
-fixtures, and checks described here are architecture evidence only. They do
-not establish a real human ceremony, satisfy a human-only authority slot,
-complete consumer migration, accept Gate A, or authorize runtime work.
+Status: unissued Gate A architecture candidate, 2026-07-21. The retained T0
+byte-bound/recomputation tranche is candidate evidence, and ADR 0095 adoption
+is still incomplete pending context-isolated technical review over the exact
+candidate bytes. The contracts, fixtures, and checks described here are
+architecture evidence only. They do not establish a real human ceremony,
+satisfy a human-only authority slot, complete consumer migration, accept Gate
+A, or authorize runtime, cloud, or deployment work.
 
 ## Why this contract exists
 
@@ -42,9 +45,12 @@ flowchart LR
     D["Exact source decision bytes<br/>source schema retains meaning"]
     M["Exact candidate bytes"]
     C["Assurance Core<br/>one later-ratification request<br/>no challenge output · no self-digest"]
-    H["RP/verifier challenge<br/>nonce ∥ SHA-256(exact frame)"]
-    E["One Evidence record<br/>one participant observation<br/>exact crypto inputs + sanitized derived records"]
-    S["One individual Seal<br/>candidate eligibility only"]
+    H["Two-phase challenge + receipt<br/>acyclic exact framing"]
+    E["Evidence 0.2<br/>one participant observation<br/>closed 14-role inventory"]
+    B["Backing-byte receipt<br/>14 retained preimages rederived"]
+    R["Three recomputation results<br/>Python · Node · Java"]
+    X["Comparison receipt<br/>exact six-field agreement"]
+    S["Seal 0.2<br/>candidate eligibility only"]
     W["Future AssuredDecision wrapper<br/>identity not assigned"]
     P["Controlled policy evaluation<br/>currentness · authority · quorum"]
 
@@ -53,44 +59,63 @@ flowchart LR
     C -->|raw SHA-256 + bytes| H
     H --> E
     C -->|raw SHA-256 + bytes| E
+    E --> B
+    E --> R
+    B --> R
+    R --> X
     C -->|unchanged binding| S
     E -->|one exact raw binding| S
+    B --> S
+    X --> S
     S --> W --> P
 
     classDef current fill:#E0F2FE,stroke:#0369A1,color:#0C4A6E
     classDef later fill:#F1F5F9,stroke:#64748B,color:#334155,stroke-dasharray: 5 5
-    class D,M,C,H,E,S current
+    class D,M,C,H,E,B,R,X,S current
     class W,P later
 ```
 
-The current candidate includes:
+The retained predecessor and successor candidates include:
 
 - `HumanDecisionAssuranceCore` 0.1.0;
-- `HumanDecisionAssuranceEvidence` 0.1.0;
-- `HumanDecisionAssuranceSeal` 0.1.0;
-- the exact `odeya-human-decision-challenge-frame-v1-candidate` binary framing
-  profile and a separately retained deterministic recomputation vector;
-- an exact, unissued singleton-eligibility ruleset whose total fail-closed law
-  is byte-bound by the Seal and cross-checked by the retained candidate
-  checker;
+- immutable, unissued `HumanDecisionAssuranceEvidence` 0.1.0 and
+  `HumanDecisionAssuranceSeal` 0.1.0 predecessors;
+- five separately identified, unissued successor schemas: Evidence 0.2,
+  BackingByteVerificationReceipt 0.1,
+  EligibilityRecomputationResult 0.1,
+  EligibilityComparisonReceipt 0.1, and Seal 0.2;
+- the exact adopted `odeya-human-decision-challenge-frame-v2-candidate`
+  two-phase binary framing profile and its deterministic recomputation vector,
+  while retaining the v1 profile and vector as superseded evidence;
+- exact, unissued singleton-eligibility ruleset 0.2 and a closed resolver
+  profile;
+- 14 content-addressed synthetic backing preimages, seven schema-valid
+  successor fixtures, 44 expectation-free evaluator vectors, and 48
+  downstream chain known-bads;
+- 132 exact passing recomputations: 44 each through source-separated,
+  non-sharing Python 3.14.2, Node.js 24.18.0, and Temurin Java 21.0.9
+  implementations;
 - a dedicated, schema-valid synthetic source decision whose exact candidate
   relation can be checked without reusing a historical operator decision; and
 - a machine consumer census over the frozen pre-candidate schema corpus,
   command vocabulary, event vocabulary, decision families, and known missing
   contract nodes.
 
-Raw SHA-256 is a T0 byte-binding mechanism, not canonical object identity. The
-three schema resource IDs exist only as unissued candidates. No admitted
-assurance-record or `AssuredDecision` wrapper identity exists, and every
-migrated consumer requires a new identity behind the eventually accepted
+Raw SHA-256 is a T0 byte-binding mechanism, not canonical object identity. All
+three 0.1 schema resources and all five successors remain unissued candidates.
+The 0.1 identities and bytes remain immutable; no successor redirects them.
+No admitted assurance-record or `AssuredDecision` wrapper identity exists, and
+every migrated consumer requires a new identity behind the eventually accepted
 canonical profile.
 
-The framing graph is deliberately acyclic. The static framing profile contains
-no Core, vector, Evidence, Seal, or self digest. The Core binds the profile's
-exact raw SHA-256 and byte count; the separate vector evidence binds both
-profile and Core bytes; Evidence then binds the Core; and the Seal binds the
-Core plus one exact Evidence record. Moving the Core-dependent vector back
-into the profile would create a mutual raw-digest cycle and is forbidden.
+The framing and successor graph is deliberately acyclic. The static framing
+profile contains no Core, vector, Evidence, receipt, result, Seal, or self
+digest. The Core binds the profile's exact raw SHA-256 and byte count; the
+separate vector evidence binds both profile and Core bytes; Evidence 0.2 binds
+the Core and closed backing inventory; the backing receipt precedes three
+recomputation results; their comparison precedes Seal 0.2; and the Seal binds
+both receipts without either receipt naming or predicting the Seal. Moving a
+downstream digest upstream would create a cycle and is forbidden.
 
 The Core is created before the ceremony. Its material bindings are therefore
 requirements for what a later ceremony must display and review, not
@@ -211,9 +236,12 @@ fixture's ceremony is synthetic.
 A presentation surface inside the trust boundary that fabricates its own
 receipt is detected only when its receipt disagrees, never prevented. That
 residue is the retained cost of declining the transaction-confirmation trusted
-path at Gate A. Profile issuance remains blocked pending an independent
-implementation, backing-byte dereference, end-to-end consumer refusal proof,
-accountable review, and operator acceptance.
+path at Gate A. The retained successor now supplies exact backing-byte
+dereference and three source-separated, non-sharing ruleset implementations.
+Profile and schema issuance remain blocked pending ADR 0095's context-isolated
+technical review of the exact candidate bytes, the later T1/T2 and wrapper
+dependencies, end-to-end consumer refusal, accountable review, and operator
+acceptance.
 
 The retained vector proves only deterministic framing and recomputation. A
 metamorphic second-nonce expected-pass control proves that the checker is not
@@ -278,23 +306,57 @@ claim-bearing reference against that role. A client-data artifact therefore
 cannot stand in for challenge generation, signature, custody, controlled time,
 verifier, decision confirmation, or delegation/effective-control evidence.
 
-The four inputs whose exact bytes feed cryptographic verification—client data
-JSON, authenticator data, WebAuthn signature, and credential public key—use
-`exact_unmodified_*` roles and
-`byte_fidelity: exact_unmodified_cryptographic_input`. Their sanitation status
-records a retention/content-policy review only; it never authorizes byte
-transformation. The other eight entries are explicitly
-`sanitized_derived_observation_record` values. Because this synthetic tranche
-does not dereference the backing bytes, the checker verifies those labels and
-relations, not actual byte fidelity.
+The five exact unmodified inputs—client data JSON, authenticator data,
+WebAuthn signature, credential public key, and displayed decision bytes—retain
+their exact byte-fidelity classes. The exact binary confirmation-receipt frame
+uses its own unmodified-binary-frame class. The other eight entries are
+explicitly `sanitized_derived_observation_record` values. Sanitation metadata
+records a retention/content-policy review only; it never authorizes
+transformation of an exact input.
 
-The current fixture retains artifact IDs, roles, raw digests, byte counts, and
-media types, but it does not dereference the backing artifact bytes.
-Assignment, natural-person identity, custody, effective control, and verifier
-independence are recorded as synthetic assertions under an unissued profile;
-the candidate does not mechanically establish them. The checker can reject
-internal inconsistency and role substitution, but it cannot upgrade those
-assertions into real-world facts.
+The successor fixture retains all fourteen synthetic preimages as actual
+content-addressed repository bytes. The backing verifier independently
+dereferences them and rederives each raw SHA-256, byte count, descriptor
+relation, receipt row, and the confirmation-frame relation; a path or declared
+digest is never trusted as its own proof. Missing is not represented as zero,
+and readable mismatch remains `invalid` rather than being softened to
+`unknown`.
+
+That exact byte verification establishes only the synthetic preimages and
+relations retained here. Assignment, natural-person identity, custody,
+effective control, and verifier independence remain synthetic assertions under
+an unissued profile. The validator can reject internal inconsistency and role
+substitution, but it cannot upgrade those assertions into real-world facts.
+
+### Non-sharing eligibility recomputation
+
+Ruleset 0.2 publicly inventories every required domain and applies one total,
+monotonic precedence law. Three source-separated implementations consume the
+same allowed normative schemas, ruleset, resolver profile, and input bytes,
+but do not share evaluator source, generated evaluator code, parsing or
+normalization helpers, intermediate state, expected answers, or one another's
+outputs. Python 3.14.2, Node.js 24.18.0, and Temurin Java 21.0.9 each pass all
+44 expectation-free vectors: 132 exact recomputations in total.
+
+The comparison receipt checks the complete projection, not only the final
+disposition. It requires exact agreement on `participant_id`,
+`domain_results`, `categorical_results`, `categorical_failures`,
+`final_disposition`, and `reason_codes`. The 48 downstream chain known-bads
+separately attack backing truth, deterministic negative reasons, result and
+source identities, projection completeness, acyclicity, receipt/Seal
+bindings, runtime and dependency pins, non-sharing, and preservation of the
+0.1 identities.
+
+The source separation and non-sharing controls are retained and machine
+checked. Organizational independence is not proven: the implementations share
+their normative contract and the retained work does not establish
+organizationally independent authorship or review. Agreement can therefore
+detect bounded implementation defects without proving that the common ruleset
+is correct.
+
+All fixed timestamps in the successor fixtures, results, receipts, and Seal
+are deterministic fixture times only. They do not establish freshness,
+trusted time, chronology in a real ceremony, or an observation about a person.
 
 ## Standards comparison
 
@@ -380,7 +442,7 @@ derive their semantic classification from source.
 It additionally compares every baseline schema with the frozen Git checkpoint,
 binds both the exact predecessor and deliberately amended
 `docs/AUTHORITY_MATRIX.md` bytes, requires the current schema paths to equal the
-exact baseline-plus-three-candidate disjoint union, and pins the
+exact 112-baseline-plus-eight-candidate disjoint union of 120 schemas, and pins the
 judgment-bearing classification, command/event partition, family, validator,
 construction, completeness, migration, and nonclaim sections. The amended
 matrix names only a future admitted `AssuredDecision` wrapper at an `H` slot and
@@ -392,11 +454,18 @@ missing contract into admitted authority.
 
 Gate A evaluates the architecture: exact ceremony protocol, evidence schemas
 and backing-byte rules, profile candidates, synthetic conformance vectors,
-independent architecture-time verifier implementations, wrapper/consumer
-contracts after their T1/T2 dependencies, accountable review, and the
-operator's exact-byte decision. It does not require or authorize a live
-ceremony, and the operator's Gate A decision is not evidence that the future
-engine ceremony works.
+source-separated, non-sharing architecture-time verifier implementations,
+wrapper/consumer contracts after their T1/T2 dependencies, accountable review,
+and the operator's exact-byte decision. It does not require or authorize a
+live ceremony, and the operator's Gate A decision is not evidence that the
+future engine ceremony works.
+
+The current T0 byte-bound/recomputation tranche is retained candidate evidence,
+not completed ADR adoption or PRQ-013 closure. ADR 0095 still requires a
+context-isolated technical-review determination over the exact candidate bytes.
+That determination is deliberately non-accountable and cannot substitute for
+the later accountable security/authority review or the operator's Gate A
+decision.
 
 After Gate A, one real protected ceremony may be separately authorized as a
 bounded, disposable Gate B probe under the accepted profile. Agents receive no
@@ -410,14 +479,15 @@ and failure evidence.
   evidence that a natural person saw any bytes.
 - The dedicated source fixture is relationally coherent but does not prove its
   declared operator, authorship, `decided_at`, or decision truth.
-- Backing evidence artifact bytes are not dereferenced in the current
-  synthetic chain.
-- The application confirmation receipt and authenticator actor are not yet
-  cryptographically co-bound; profile issuance requires a two-phase committed
-  receipt or an accepted transaction-confirmation trusted path.
-- The exact singleton ruleset is unissued and has no retained independent
-  implementation; the current checker provides deterministic cross-checking
-  only.
+- Fourteen content-addressed backing preimages are dereferenced and rederived,
+  but they are synthetic conformance bytes rather than real-world evidence.
+- The application confirmation receipt and authenticator actor are co-bound
+  only as a synthetic construction property of the adopted two-phase frame.
+  No real ceremony established that the same natural person performed both
+  acts, and the observed-evidence proof boundaries therefore remain false.
+- The exact singleton ruleset and every successor resource remain unissued.
+  Three source-separated, non-sharing implementations agree on the retained
+  vectors, but organizational independence is not proven.
 - Assignment, custody, effective control, verifier independence, and
   natural-person identity are asserted, not mechanically established.
 - The candidate performs no aggregate quorum or consumer-currentness
@@ -434,6 +504,8 @@ and failure evidence.
   the separately governed architecture-repository release path.
 
 The governing decisions are
-[ADR 0089](decisions/0089-a-valid-human-signature-is-not-a-human-decision.md)
+[ADR 0089](decisions/0089-a-valid-human-signature-is-not-a-human-decision.md),
+[ADR 0092](decisions/0092-bind-human-decisions-through-an-external-assurance-wrapper.md),
+[ADR 0093](decisions/0093-co-bind-the-confirmation-gesture-through-a-two-phase-challenge.md),
 and
-[ADR 0092](decisions/0092-bind-human-decisions-through-an-external-assurance-wrapper.md).
+[ADR 0095](decisions/0095-reissue-human-decision-assurance-as-a-byte-bound-independently-recomputed-chain.md).

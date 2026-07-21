@@ -1,0 +1,164 @@
+{
+  "schema_version": "0.1.0",
+  "artifact_class": "human_decision_assurance_successor_downstream_chain_known_bad_cases",
+  "decision_ref": "docs/decisions/0095-reissue-human-decision-assurance-as-a-byte-bound-independently-recomputed-chain.md",
+  "mutation_cardinality_per_case": 1,
+  "obligation_catalog": {
+    "acyclic.no_upstream_seal_reference": "The backing-byte receipt, every recomputation result, and the comparison receipt must not bind, name, predict, or reserve a Seal identity or digest.",
+    "backing.exact_byte_recomputation": "Every backing row is recomputed from the Evidence descriptor, resolver-derived path, and exact retained preimage bytes; recorded vector verification rows are not authority.",
+    "comparison.complete_three_way_projection": "The comparison binds three distinct results and compares participant_id, complete domain_results, complete categorical_results, categorical_failures, final_disposition, and reason_codes.",
+    "known_bad.one_mutation_safe_control": "Each refusal is one mutation relative to a named safe control and must fire the intended guard.",
+    "nonsharing.distinct_unshared_sources": "Implementations must not share evaluator source, generated evaluator code, helpers, intermediate state, expected answers, or peer output.",
+    "nonsharing.pinned_execution_inputs": "Each result binds an exact toolchain profile, dependency lock, adapter, configuration, input manifest, ruleset, Evidence, backing receipt, and raw projection.",
+    "reason.exact_recomputed_set": "Every result, comparison receipt, and Seal records exactly the deterministic sorted unique recomputed reason-code set for its state.",
+    "resource_identity.no_0_1_semantic_drift": "Published Evidence 0.1 and Seal 0.1 bytes and semantics remain immutable; changed successor semantics require 0.2 identities.",
+    "seal.binds_both_receipts": "Seal 0.2 binds exact raw bytes of both receipts and cannot omit or substitute either receipt.",
+    "seal.copy_and_precedence": "Seal copies the agreed complete projection without weakening it and applies invalid before indeterminate before eligible."
+  },
+  "safe_controls": {
+    "retained_safe_chain": {
+      "description": "The retained complete eligible synthetic successor chain.",
+      "setup": []
+    },
+    "python_indeterminate_reason_control": {
+      "description": "A coherent indeterminate Python projection with one unknown public domain.",
+      "setup": [
+        {"op": "replace", "path": "/projections/python/domain_results/2/folded_status", "value": "unknown"},
+        {"op": "replace", "path": "/projections/python/domain_results/2/reason_codes", "value": ["indeterminate.domain.challenge_and_replay.unknown"]},
+        {"op": "replace", "path": "/projections/python/final_disposition", "value": "indeterminate"},
+        {"op": "replace", "path": "/projections/python/reason_codes", "value": ["indeterminate.domain.challenge_and_replay.unknown"]}
+      ]
+    },
+    "python_invalid_reason_control": {
+      "description": "A coherent invalid Python projection retaining one lower-precedence indeterminate finding.",
+      "setup": [
+        {"op": "replace", "path": "/projections/python/domain_results/2/folded_status", "value": "contradicted"},
+        {"op": "replace", "path": "/projections/python/domain_results/2/reason_codes", "value": ["invalid.domain.challenge_and_replay.contradicted"]},
+        {"op": "replace", "path": "/projections/python/domain_results/3/folded_status", "value": "unknown"},
+        {"op": "replace", "path": "/projections/python/domain_results/3/reason_codes", "value": ["indeterminate.domain.decision_confirmation.unknown"]},
+        {"op": "replace", "path": "/projections/python/final_disposition", "value": "invalid"},
+        {"op": "replace", "path": "/projections/python/reason_codes", "value": ["indeterminate.domain.decision_confirmation.unknown", "invalid.domain.challenge_and_replay.contradicted"]}
+      ]
+    },
+    "comparison_missing_java_control": {
+      "description": "A coherent comparison receipt with the required Java result missing.",
+      "setup": [
+        {"op": "replace", "path": "/comparison/ordered_result_bindings/2/read_disposition", "value": "missing"},
+        {"op": "replace", "path": "/comparison/ordered_result_bindings/2/raw_sha256", "value": null},
+        {"op": "replace", "path": "/comparison/ordered_result_bindings/2/byte_count", "value": null},
+        {"op": "replace", "path": "/comparison/ordered_result_bindings/2/projection", "value": null},
+        {"op": "replace", "path": "/comparison/field_comparisons/0/comparison_disposition", "value": "missing_or_unreadable"},
+        {"op": "replace", "path": "/comparison/field_comparisons/1/comparison_disposition", "value": "missing_or_unreadable"},
+        {"op": "replace", "path": "/comparison/field_comparisons/2/comparison_disposition", "value": "missing_or_unreadable"},
+        {"op": "replace", "path": "/comparison/field_comparisons/3/comparison_disposition", "value": "missing_or_unreadable"},
+        {"op": "replace", "path": "/comparison/field_comparisons/4/comparison_disposition", "value": "missing_or_unreadable"},
+        {"op": "replace", "path": "/comparison/field_comparisons/5/comparison_disposition", "value": "missing_or_unreadable"},
+        {"op": "replace", "path": "/comparison/comparison_disposition", "value": "indeterminate_missing_or_unreadable"},
+        {"op": "replace", "path": "/comparison/agreed_projection", "value": null},
+        {"op": "replace", "path": "/comparison/reason_codes", "value": ["indeterminate.comparison.java_21_0_9.result_missing"]}
+      ]
+    },
+    "comparison_invalid_domain_control": {
+      "description": "A coherent comparison receipt with a readable Java domain_results disagreement and unchanged final disposition.",
+      "setup": [
+        {"op": "replace", "path": "/projections/java/domain_results/2/folded_status", "value": "unknown"},
+        {"op": "replace", "path": "/projections/java/domain_results/2/reason_codes", "value": ["indeterminate.domain.challenge_and_replay.unknown"]},
+        {"op": "copy", "from": "/projections/java", "path": "/comparison/ordered_result_bindings/2/projection"},
+        {"op": "replace", "path": "/comparison/field_comparisons/1/comparison_disposition", "value": "disagreement"},
+        {"op": "replace", "path": "/comparison/comparison_disposition", "value": "invalid_disagreement"},
+        {"op": "replace", "path": "/comparison/agreed_projection", "value": null},
+        {"op": "replace", "path": "/comparison/reason_codes", "value": ["invalid.comparison.domain_results.disagreement"]}
+      ]
+    },
+    "backing_indeterminate_control": {
+      "description": "A recomputed total backing receipt whose client-data blob is absent.",
+      "derive": "backing_receipt_from_evidence",
+      "setup": [
+        {"op": "replace", "path": "/evidence/ordered_artifact_inventory/1/content_address", "value": "sha256:0000000000000000000000000000000000000000000000000000000000000000"},
+        {"op": "replace", "path": "/evidence/ordered_artifact_inventory/1/repository_blob_path", "value": "architecture/evidence-blobs/sha256/00/00000000000000000000000000000000000000000000000000000000000000"}
+      ]
+    },
+    "backing_invalid_control": {
+      "description": "A recomputed backing receipt whose client-data descriptor has the wrong byte count.",
+      "derive": "backing_receipt_from_evidence",
+      "setup": [
+        {"op": "replace", "path": "/evidence/ordered_artifact_inventory/1/byte_count", "value": 55}
+      ]
+    },
+    "seal_indeterminate_control": {
+      "description": "A coherent blocked Seal over an indeterminate missing-Java comparison receipt.",
+      "setup": [
+        {"op": "replace", "path": "/comparison/comparison_disposition", "value": "indeterminate_missing_or_unreadable"},
+        {"op": "replace", "path": "/comparison/agreed_projection", "value": null},
+        {"op": "replace", "path": "/comparison/reason_codes", "value": ["indeterminate.comparison.java_21_0_9.result_missing"]},
+        {"op": "replace", "path": "/seal/receipt_dispositions/eligibility_comparison", "value": "indeterminate_missing_or_unreadable"},
+        {"op": "replace", "path": "/seal/receipt_dispositions/agreed_recomputation_disposition", "value": null},
+        {"op": "replace", "path": "/seal/copied_agreed_projection", "value": null},
+        {"op": "replace", "path": "/seal/assurance_disposition", "value": "indeterminate"},
+        {"op": "replace", "path": "/seal/decision_entry/policy_entry", "value": "blocked"},
+        {"op": "replace", "path": "/seal/reason_codes", "value": ["indeterminate.comparison.java_21_0_9.result_missing"]}
+      ]
+    },
+    "seal_invalid_control": {
+      "description": "A coherent blocked Seal over an invalid backing-byte receipt.",
+      "setup": [
+        {"op": "replace", "path": "/backing/verification_disposition", "value": "invalid"},
+        {"op": "replace", "path": "/backing/reason_codes", "value": ["invalid.backing_byte.exact_unmodified_client_data_json.mismatch"]},
+        {"op": "replace", "path": "/seal/receipt_dispositions/backing_byte_verification", "value": "invalid"},
+        {"op": "replace", "path": "/seal/assurance_disposition", "value": "invalid"},
+        {"op": "replace", "path": "/seal/decision_entry/policy_entry", "value": "blocked"},
+        {"op": "replace", "path": "/seal/reason_codes", "value": ["invalid.backing_byte.exact_unmodified_client_data_json.mismatch"]}
+      ]
+    }
+  },
+  "cases": [
+    {"case_id":"chain-answer-leaked-into-vector","kind":"known_bad","adr_0095_obligations":["known_bad.one_mutation_safe_control"],"checker":"expectation","safe_control":"retained_safe_chain","mutations":[{"op":"add","path":"/vectors/base_input/final_disposition","value":"eligible"}],"expected_errors":["expected_answer_leaked_into_vector_corpus"],"intent_errors":["expected_answer_leaked_into_vector_corpus"]},
+    {"case_id":"chain-evidence-artifact-id-order","kind":"known_bad","adr_0095_obligations":["backing.exact_byte_recomputation"],"checker":"evidence","safe_control":"retained_safe_chain","mutations":[{"op":"replace","path":"/evidence/ordered_artifact_ids/0","value":"artifact.changed.0001"}],"expected_errors":["evidence_artifact_id_order_mismatch"],"intent_errors":["evidence_artifact_id_order_mismatch"]},
+    {"case_id":"chain-evidence-content-path","kind":"known_bad","adr_0095_obligations":["backing.exact_byte_recomputation"],"checker":"evidence","safe_control":"retained_safe_chain","mutations":[{"op":"replace","path":"/evidence/ordered_artifact_inventory/0/repository_blob_path","value":"architecture/evidence-blobs/sha256/00/00000000000000000000000000000000000000000000000000000000000000"}],"expected_errors":["evidence_blob_path_not_content_derived","evidence_descriptor_inventory_mismatch"],"intent_errors":["evidence_blob_path_not_content_derived"]},
+    {"case_id":"chain-backing-failed-row-omitted","kind":"known_bad","adr_0095_obligations":["backing.exact_byte_recomputation"],"checker":"backing","safe_control":"retained_safe_chain","mutations":[{"op":"remove","path":"/backing/role_verifications/13"}],"expected_errors":["backing_role_rows_mismatch","backing_schema_rejected"],"intent_errors":["backing_role_rows_mismatch"]},
+    {"case_id":"chain-backing-relation-substitution","kind":"known_bad","adr_0095_obligations":["backing.exact_byte_recomputation","seal.binds_both_receipts"],"checker":"backing","safe_control":"retained_safe_chain","mutations":[{"op":"replace","path":"/backing/confirmation_receipt_frame_relation/observed_frame_raw_sha256","value":"sha256:0000000000000000000000000000000000000000000000000000000000000000"}],"expected_errors":["backing_confirmation_relation_mismatch"],"intent_errors":["backing_confirmation_relation_mismatch"]},
+    {"case_id":"chain-result-wrapper-stale-reason","kind":"known_bad","adr_0095_obligations":["reason.exact_recomputed_set"],"checker":"python_result","safe_control":"retained_safe_chain","mutations":[{"op":"replace","path":"/results/python/reason_codes","value":["eligible.stale.code"]}],"expected_errors":["python_result_projection_reason_codes_mismatch","python_result_schema_rejected"],"intent_errors":["python_result_projection_reason_codes_mismatch"]},
+    {"case_id":"chain-result-wrapper-domain-omitted","kind":"known_bad","adr_0095_obligations":["comparison.complete_three_way_projection"],"checker":"python_result","safe_control":"retained_safe_chain","mutations":[{"op":"remove","path":"/results/python/domain_results/10"}],"expected_errors":["python_result_projection_domain_results_mismatch","python_result_schema_rejected"],"intent_errors":["python_result_projection_domain_results_mismatch"]},
+    {"case_id":"chain-implementation-id-reused","kind":"known_bad","adr_0095_obligations":["nonsharing.distinct_unshared_sources"],"checker":"independence","safe_control":"retained_safe_chain","mutations":[{"op":"copy","from":"/results/python/implementation/implementation_id","path":"/results/node/implementation/implementation_id"}],"expected_errors":["implementation_identity_not_unique","node_configuration_implementation_id_mismatch","node_source_manifest_boundary_mismatch"],"intent_errors":["implementation_identity_not_unique"]},
+    {"case_id":"chain-implementation-source-digest-reused","kind":"known_bad","adr_0095_obligations":["nonsharing.distinct_unshared_sources"],"checker":"independence","safe_control":"retained_safe_chain","mutations":[{"op":"copy","from":"/results/python/implementation/source_binding/raw_sha256","path":"/results/node/implementation/source_binding/raw_sha256"}],"expected_errors":["implementation_source_digest_not_unique"],"intent_errors":["implementation_source_digest_not_unique"]},
+    {"case_id":"chain-comparison-common-input-substitution","kind":"known_bad","adr_0095_obligations":["nonsharing.pinned_execution_inputs"],"checker":"comparison","safe_control":"retained_safe_chain","mutations":[{"op":"replace","path":"/comparison/common_input_bindings/input_manifest/raw_sha256","value":"sha256:0000000000000000000000000000000000000000000000000000000000000000"}],"expected_errors":["comparison_common_input_bindings_mismatch"],"intent_errors":["comparison_common_input_bindings_mismatch"]},
+    {"case_id":"chain-comparison-asserted-field-agreement","kind":"known_bad","adr_0095_obligations":["comparison.complete_three_way_projection"],"checker":"comparison","safe_control":"retained_safe_chain","mutations":[{"op":"replace","path":"/comparison/field_comparisons/0/comparison_disposition","value":"disagreement"}],"expected_errors":["comparison_field_comparisons_not_semantically_recomputed","comparison_schema_rejected"],"intent_errors":["comparison_field_comparisons_not_semantically_recomputed"]},
+    {"case_id":"chain-comparison-agreed-projection-substitution","kind":"known_bad","adr_0095_obligations":["comparison.complete_three_way_projection","seal.copy_and_precedence"],"checker":"comparison","safe_control":"retained_safe_chain","mutations":[{"op":"replace","path":"/comparison/agreed_projection/domain_results/0/folded_status","value":"unknown"}],"expected_errors":["comparison_agreed_projection_mismatch"],"intent_errors":["comparison_agreed_projection_mismatch"]},
+    {"case_id":"chain-seal-backing-receipt-substitution","kind":"known_bad","adr_0095_obligations":["seal.binds_both_receipts"],"checker":"seal","safe_control":"retained_safe_chain","mutations":[{"op":"replace","path":"/seal/input_bindings/backing_byte_verification_receipt/raw_sha256","value":"sha256:0000000000000000000000000000000000000000000000000000000000000000"}],"expected_errors":["seal_backing_raw_sha256_mismatch"],"intent_errors":["seal_backing_raw_sha256_mismatch"]},
+    {"case_id":"chain-seal-comparison-receipt-substitution","kind":"known_bad","adr_0095_obligations":["seal.binds_both_receipts"],"checker":"seal","safe_control":"retained_safe_chain","mutations":[{"op":"replace","path":"/seal/input_bindings/eligibility_comparison_receipt/raw_sha256","value":"sha256:0000000000000000000000000000000000000000000000000000000000000000"}],"expected_errors":["seal_comparison_raw_sha256_mismatch"],"intent_errors":["seal_comparison_raw_sha256_mismatch"]},
+    {"case_id":"chain-seal-copied-projection-divergence","kind":"known_bad","adr_0095_obligations":["seal.copy_and_precedence"],"checker":"seal","safe_control":"retained_safe_chain","mutations":[{"op":"replace","path":"/seal/copied_agreed_projection/categorical_results/0/status","value":"unknown"}],"expected_errors":["seal_agreed_projection_not_exact_copy"],"intent_errors":["seal_agreed_projection_not_exact_copy"]},
+    {"case_id":"chain-seal-precedence-overclaim","kind":"known_bad","adr_0095_obligations":["seal.copy_and_precedence"],"checker":"seal","safe_control":"retained_safe_chain","mutations":[{"op":"replace","path":"/seal/assurance_disposition","value":"indeterminate"}],"expected_errors":["seal_precedence_disposition_mismatch","seal_schema_rejected"],"intent_errors":["seal_precedence_disposition_mismatch"]},
+    {"case_id":"chain-backing-names-seal","kind":"known_bad","adr_0095_obligations":["acyclic.no_upstream_seal_reference"],"checker":"acyclicity","safe_control":"retained_safe_chain","mutations":[{"op":"add","path":"/backing/downstream","special_value":"seal_artifact_id"}],"expected_errors":["backing_contains_forward_downstream_identity","backing_names_or_hashes_downstream_seal"],"intent_errors":["backing_names_or_hashes_downstream_seal"]},
+    {"case_id":"chain-comparison-hashes-seal","kind":"known_bad","adr_0095_obligations":["acyclic.no_upstream_seal_reference"],"checker":"acyclicity","safe_control":"retained_safe_chain","mutations":[{"op":"add","path":"/comparison/downstream","special_value":"seal_raw_sha256"}],"expected_errors":["comparison_contains_forward_downstream_identity","comparison_names_or_hashes_downstream_seal"],"intent_errors":["comparison_names_or_hashes_downstream_seal"]},
+    {"case_id":"chain-negative-result-stale-reason","kind":"known_bad","adr_0095_obligations":["reason.exact_recomputed_set"],"checker":"python_projection","safe_control":"python_indeterminate_reason_control","mutations":[{"op":"add","path":"/projections/python/reason_codes/-","value":"indeterminate.fixture.stale_residue"}],"expected_errors":["python_projection_reason_code_set_mismatch"],"intent_errors":["python_projection_reason_code_set_mismatch"]},
+    {"case_id":"chain-negative-result-positive-reason","kind":"known_bad","adr_0095_obligations":["reason.exact_recomputed_set"],"checker":"python_projection","safe_control":"python_indeterminate_reason_control","mutations":[{"op":"replace","path":"/projections/python/reason_codes","value":["eligible.all_required_inputs_supported"]}],"expected_errors":["python_projection_positive_reason_on_negative_result","python_projection_reason_code_set_mismatch"],"intent_errors":["python_projection_positive_reason_on_negative_result"]},
+    {"case_id":"chain-negative-result-duplicate-reason","kind":"known_bad","adr_0095_obligations":["reason.exact_recomputed_set"],"checker":"python_projection","safe_control":"python_indeterminate_reason_control","mutations":[{"op":"add","path":"/projections/python/reason_codes/-","value":"indeterminate.domain.challenge_and_replay.unknown"}],"expected_errors":["python_projection_duplicate_reason_code","python_projection_reason_code_set_mismatch"],"intent_errors":["python_projection_duplicate_reason_code"]},
+    {"case_id":"chain-negative-result-unsorted-reasons","kind":"known_bad","adr_0095_obligations":["reason.exact_recomputed_set"],"checker":"python_projection","safe_control":"python_invalid_reason_control","mutations":[{"op":"replace","path":"/projections/python/reason_codes","value":["invalid.domain.challenge_and_replay.contradicted","indeterminate.domain.decision_confirmation.unknown"]}],"expected_errors":["python_projection_reason_code_set_mismatch","python_projection_reason_codes_unsorted"],"intent_errors":["python_projection_reason_codes_unsorted"]},
+    {"case_id":"chain-negative-result-exact-set-mismatch","kind":"known_bad","adr_0095_obligations":["reason.exact_recomputed_set"],"checker":"python_projection","safe_control":"python_invalid_reason_control","mutations":[{"op":"remove","path":"/projections/python/reason_codes/0"}],"expected_errors":["python_projection_reason_code_set_mismatch"],"intent_errors":["python_projection_reason_code_set_mismatch"]},
+    {"case_id":"chain-actual-source-path-shared","kind":"known_bad","adr_0095_obligations":["nonsharing.distinct_unshared_sources"],"checker":"independence","safe_control":"retained_safe_chain","mutations":[{"op":"copy","from":"/source_manifests/python/source_files/0/repository_path","path":"/source_manifests/node/source_files/0/repository_path"}],"expected_errors":["implementation_source_file_bytes_shared","implementation_source_path_shared","node_source_manifest_cross_boundary_path","node_source_manifest_file_binding_mismatch","node_source_manifest_inventory_mismatch"],"intent_errors":["implementation_source_path_shared"]},
+    {"case_id":"chain-generated-source-consumed","kind":"known_bad","adr_0095_obligations":["nonsharing.distinct_unshared_sources"],"checker":"independence","safe_control":"retained_safe_chain","mutations":[{"op":"replace","path":"/source_manifests/node/generated_source_consumed","value":true}],"expected_errors":["node_source_manifest_boundary_mismatch"],"intent_errors":["node_source_manifest_boundary_mismatch"]},
+    {"case_id":"chain-evaluator-source-listed-generated","kind":"known_bad","adr_0095_obligations":["nonsharing.distinct_unshared_sources"],"checker":"independence","safe_control":"retained_safe_chain","mutations":[{"op":"add","path":"/generation_manifest/generated_artifacts/-","value":{"repository_path":"tests/human-decision-assurance-successor/python/evaluator.py"}}],"expected_errors":["evaluator_source_listed_as_generated_artifact"],"intent_errors":["evaluator_source_listed_as_generated_artifact"]},
+    {"case_id":"chain-toolchain-profile-unpinned","kind":"known_bad","adr_0095_obligations":["nonsharing.pinned_execution_inputs"],"checker":"python_result","safe_control":"retained_safe_chain","mutations":[{"op":"replace","path":"/results/python/implementation/toolchain_profile_binding/mutable_alias_used","value":true}],"expected_errors":["python_result_schema_rejected","python_toolchain_profile_binding_raw_binding_mismatch"],"intent_errors":["python_toolchain_profile_binding_raw_binding_mismatch"]},
+    {"case_id":"chain-dependency-graph-unpinned","kind":"known_bad","adr_0095_obligations":["nonsharing.pinned_execution_inputs"],"checker":"python_result","safe_control":"retained_safe_chain","mutations":[{"op":"replace","path":"/results/python/implementation/dependency_lock_binding/mutable_alias_used","value":true}],"expected_errors":["python_dependency_lock_binding_raw_binding_mismatch","python_result_schema_rejected"],"intent_errors":["python_dependency_lock_binding_raw_binding_mismatch"]},
+    {"case_id":"chain-result-input-binding-unpinned","kind":"known_bad","adr_0095_obligations":["nonsharing.pinned_execution_inputs"],"checker":"python_result","safe_control":"retained_safe_chain","mutations":[{"op":"replace","path":"/results/python/input_bindings/input_manifest/mutable_alias_used","value":true}],"expected_errors":["python_result_input_manifest_mutable_alias_used","python_result_schema_rejected"],"intent_errors":["python_result_input_manifest_mutable_alias_used"]},
+    {"case_id":"chain-result-bytes-reused","kind":"known_bad","adr_0095_obligations":["comparison.complete_three_way_projection","nonsharing.distinct_unshared_sources"],"checker":"comparison","safe_control":"retained_safe_chain","mutations":[{"op":"copy","from":"/comparison/ordered_result_bindings/0/raw_sha256","path":"/comparison/ordered_result_bindings/1/raw_sha256"}],"expected_errors":["comparison_node_result_binding_mismatch","comparison_result_bytes_reused"],"intent_errors":["comparison_result_bytes_reused"]},
+    {"case_id":"chain-java-result-missing","kind":"known_bad","adr_0095_obligations":["comparison.complete_three_way_projection"],"checker":"comparison","safe_control":"retained_safe_chain","mutations":[{"op":"remove","path":"/comparison/ordered_result_bindings/2"}],"expected_errors":["comparison_agreed_projection_mismatch","comparison_disposition_mismatch","comparison_field_comparisons_not_semantically_recomputed","comparison_reason_codes_mismatch","comparison_result_binding_count_mismatch","comparison_schema_rejected"],"intent_errors":["comparison_result_binding_count_mismatch"]},
+    {"case_id":"chain-readable-java-final-disagreement","kind":"known_bad","adr_0095_obligations":["comparison.complete_three_way_projection"],"checker":"comparison","safe_control":"retained_safe_chain","mutations":[{"op":"replace","path":"/projections/java/final_disposition","value":"invalid"}],"expected_errors":["comparison_agreed_projection_mismatch","comparison_disposition_mismatch","comparison_field_comparisons_not_semantically_recomputed","comparison_java_result_binding_mismatch","comparison_reason_codes_mismatch"],"intent_errors":["comparison_field_comparisons_not_semantically_recomputed"]},
+    {"case_id":"chain-final-only-comparison-misses-domain","kind":"known_bad","adr_0095_obligations":["comparison.complete_three_way_projection"],"checker":"comparison","safe_control":"retained_safe_chain","mutations":[{"op":"replace","path":"/projections/java/domain_results/2/folded_status","value":"unknown"}],"expected_errors":["comparison_agreed_projection_mismatch","comparison_disposition_mismatch","comparison_field_comparisons_not_semantically_recomputed","comparison_java_result_binding_mismatch","comparison_reason_codes_mismatch"],"intent_errors":["comparison_field_comparisons_not_semantically_recomputed"]},
+    {"case_id":"chain-final-only-comparison-misses-reason","kind":"known_bad","adr_0095_obligations":["comparison.complete_three_way_projection","reason.exact_recomputed_set"],"checker":"comparison","safe_control":"retained_safe_chain","mutations":[{"op":"replace","path":"/projections/java/reason_codes","value":["eligible.stale.reason"]}],"expected_errors":["comparison_agreed_projection_mismatch","comparison_disposition_mismatch","comparison_field_comparisons_not_semantically_recomputed","comparison_java_result_binding_mismatch","comparison_reason_codes_mismatch"],"intent_errors":["comparison_field_comparisons_not_semantically_recomputed"]},
+    {"case_id":"chain-seal-backing-receipt-omitted","kind":"known_bad","adr_0095_obligations":["seal.binds_both_receipts"],"checker":"seal","safe_control":"retained_safe_chain","mutations":[{"op":"remove","path":"/seal/input_bindings/backing_byte_verification_receipt"}],"expected_errors":["seal_backing_binding_not_object","seal_backing_receipt_binding_missing","seal_schema_rejected"],"intent_errors":["seal_backing_receipt_binding_missing"]},
+    {"case_id":"chain-seal-comparison-receipt-omitted","kind":"known_bad","adr_0095_obligations":["seal.binds_both_receipts"],"checker":"seal","safe_control":"retained_safe_chain","mutations":[{"op":"remove","path":"/seal/input_bindings/eligibility_comparison_receipt"}],"expected_errors":["seal_comparison_binding_not_object","seal_comparison_receipt_binding_missing","seal_schema_rejected"],"intent_errors":["seal_comparison_receipt_binding_missing"]},
+    {"case_id":"chain-evidence-semantics-under-0-1","kind":"known_bad","adr_0095_obligations":["resource_identity.no_0_1_semantic_drift"],"checker":"evidence","safe_control":"retained_safe_chain","mutations":[{"op":"replace","path":"/evidence/schema_version","value":"0.1.0"}],"expected_errors":["evidence_resource_identity_version_mismatch","evidence_schema_rejected"],"intent_errors":["evidence_resource_identity_version_mismatch"]},
+    {"case_id":"chain-seal-semantics-under-0-1","kind":"known_bad","adr_0095_obligations":["resource_identity.no_0_1_semantic_drift"],"checker":"seal","safe_control":"retained_safe_chain","mutations":[{"op":"replace","path":"/seal/schema_version","value":"0.1.0"}],"expected_errors":["seal_resource_identity_version_mismatch","seal_schema_rejected"],"intent_errors":["seal_resource_identity_version_mismatch"]},
+    {"case_id":"chain-result-names-seal","kind":"known_bad","adr_0095_obligations":["acyclic.no_upstream_seal_reference"],"checker":"acyclicity","safe_control":"retained_safe_chain","mutations":[{"op":"add","path":"/results/python/downstream","special_value":"seal_artifact_id"}],"expected_errors":["python_result_contains_forward_downstream_identity","python_result_names_or_hashes_downstream_seal"],"intent_errors":["python_result_names_or_hashes_downstream_seal"]},
+    {"case_id":"chain-comparison-exact-reason-stale","kind":"known_bad","adr_0095_obligations":["reason.exact_recomputed_set"],"checker":"comparison","safe_control":"retained_safe_chain","mutations":[{"op":"replace","path":"/comparison/reason_codes","value":["eligible.comparison.stale_agreement"]}],"expected_errors":["comparison_reason_codes_mismatch","comparison_schema_rejected"],"intent_errors":["comparison_reason_codes_mismatch"]},
+    {"case_id":"chain-comparison-indeterminate-reason-stale","kind":"known_bad","adr_0095_obligations":["reason.exact_recomputed_set"],"checker":"comparison","safe_control":"comparison_missing_java_control","mutations":[{"op":"replace","path":"/comparison/reason_codes","value":["indeterminate.comparison.python.result_missing"]}],"expected_errors":["comparison_reason_codes_mismatch"],"intent_errors":["comparison_reason_codes_mismatch"]},
+    {"case_id":"chain-comparison-invalid-reason-stale","kind":"known_bad","adr_0095_obligations":["reason.exact_recomputed_set"],"checker":"comparison","safe_control":"comparison_invalid_domain_control","mutations":[{"op":"replace","path":"/comparison/reason_codes","value":["invalid.comparison.reason_codes.disagreement"]}],"expected_errors":["comparison_reason_codes_mismatch"],"intent_errors":["comparison_reason_codes_mismatch"]},
+    {"case_id":"chain-backing-supported-reason-stale","kind":"known_bad","adr_0095_obligations":["backing.exact_byte_recomputation","reason.exact_recomputed_set"],"checker":"backing","safe_control":"retained_safe_chain","mutations":[{"op":"replace","path":"/backing/reason_codes","value":["supported.stale.backing"]}],"expected_errors":["backing_reason_codes_mismatch"],"intent_errors":["backing_reason_codes_mismatch"]},
+    {"case_id":"chain-backing-indeterminate-reason-stale","kind":"known_bad","adr_0095_obligations":["backing.exact_byte_recomputation","reason.exact_recomputed_set"],"checker":"backing","safe_control":"backing_indeterminate_control","mutations":[{"op":"replace","path":"/backing/reason_codes","value":["indeterminate.backing_byte.exact_unmodified_authenticator_data.missing"]}],"expected_errors":["backing_reason_codes_mismatch"],"intent_errors":["backing_reason_codes_mismatch"]},
+    {"case_id":"chain-backing-invalid-reason-stale","kind":"known_bad","adr_0095_obligations":["backing.exact_byte_recomputation","reason.exact_recomputed_set"],"checker":"backing","safe_control":"backing_invalid_control","mutations":[{"op":"replace","path":"/backing/reason_codes","value":["invalid.backing_byte.exact_unmodified_authenticator_data.mismatch"]}],"expected_errors":["backing_reason_codes_mismatch"],"intent_errors":["backing_reason_codes_mismatch"]},
+    {"case_id":"chain-seal-eligible-reason-stale","kind":"known_bad","adr_0095_obligations":["reason.exact_recomputed_set","seal.copy_and_precedence"],"checker":"seal","safe_control":"retained_safe_chain","mutations":[{"op":"replace","path":"/seal/reason_codes","value":["eligible.stale.seal"]}],"expected_errors":["seal_reason_codes_mismatch","seal_schema_rejected"],"intent_errors":["seal_reason_codes_mismatch"]},
+    {"case_id":"chain-seal-indeterminate-reason-stale","kind":"known_bad","adr_0095_obligations":["reason.exact_recomputed_set","seal.copy_and_precedence"],"checker":"seal","safe_control":"seal_indeterminate_control","mutations":[{"op":"replace","path":"/seal/reason_codes","value":["indeterminate.comparison.python.result_missing"]}],"expected_errors":["seal_reason_codes_mismatch"],"intent_errors":["seal_reason_codes_mismatch"]},
+    {"case_id":"chain-seal-invalid-reason-stale","kind":"known_bad","adr_0095_obligations":["reason.exact_recomputed_set","seal.copy_and_precedence"],"checker":"seal","safe_control":"seal_invalid_control","mutations":[{"op":"replace","path":"/seal/reason_codes","value":["invalid.backing_byte.exact_unmodified_authenticator_data.mismatch"]}],"expected_errors":["seal_reason_codes_mismatch"],"intent_errors":["seal_reason_codes_mismatch"]}
+  ]
+}

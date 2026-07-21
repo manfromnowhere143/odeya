@@ -186,6 +186,10 @@ def candidate_errors(candidate: dict, audit: dict, derived: dict | None = None) 
             "candidate does not describe the current audit schema corpus")
     require(basis.get("fixture_corpus_sha256") == audit.get("fixture_corpus_sha256"),
             "candidate does not describe the current audit fixture corpus")
+    require(basis.get("schema_count") == audit.get("schema_count"),
+            "candidate schema_count disagrees with the current audit")
+    require(basis.get("fixture_count") == audit.get("fixture_count"),
+            "candidate fixture_count disagrees with the current audit")
     require(basis.get("audit_version") == audit.get("audit_version"),
             "candidate audit_version disagrees with the audit")
 
@@ -343,6 +347,7 @@ def self_test(candidate: dict, audit: dict, derived: dict | None = None) -> int:
         ("acceptance pre-filled", lambda c: c["operator_acceptance"].__setitem__("D1", "accepted")),
         ("status promoted", lambda c: c.__setitem__("status", "accepted_partition")),
         ("corpus digest swapped", lambda c: c["partition_basis"].__setitem__("schema_corpus_sha256", "0" * 64)),
+        ("corpus count tampered", lambda c: c["partition_basis"].__setitem__("fixture_count", c["partition_basis"]["fixture_count"] - 1)),
         # the D3 tranche executed; the table is empty by measurement, so the
         # known-bad proof is now a fabricated row, not a dropped one
         ("d3 phantom row injected", lambda c: c["d3_decimal_table"].append({

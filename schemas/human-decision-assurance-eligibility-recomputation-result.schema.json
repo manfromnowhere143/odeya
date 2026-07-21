@@ -1,0 +1,1195 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:odeya:schema:human-decision-assurance-eligibility-recomputation-result:0.1.0",
+  "title": "Odeya Human Decision Assurance Eligibility Recomputation Result Candidate",
+  "description": "A complete, unissued architecture record over one separately identified eligibility implementation's direct raw projection. It binds that projection plus exact evaluator source, toolchain, dependency, configuration, input-manifest, vector, Evidence, backing-byte receipt, and ruleset bytes, then exposes the same domain and categorical projection. It contains no self-digest and is not approval or authority.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "artifact_class",
+    "artifact_id",
+    "assurance_id",
+    "version",
+    "candidate_status",
+    "implementation",
+    "input_bindings",
+    "execution",
+    "participant_id",
+    "domain_results",
+    "categorical_results",
+    "categorical_failures",
+    "final_disposition",
+    "reason_codes",
+    "proof_boundary",
+    "recomputed_at"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.1.0"
+    },
+    "artifact_class": {
+      "const": "human_decision_assurance_eligibility_recomputation_result_candidate"
+    },
+    "artifact_id": {
+      "$ref": "#/$defs/hda_successor_identifier"
+    },
+    "assurance_id": {
+      "$ref": "#/$defs/hda_successor_identifier"
+    },
+    "version": {
+      "const": 1
+    },
+    "candidate_status": {
+      "const": "unissued_architecture_candidate_not_human_authority"
+    },
+    "implementation": {
+      "$ref": "#/$defs/implementation"
+    },
+    "input_bindings": {
+      "$ref": "#/$defs/hda_result_input_bindings"
+    },
+    "execution": {
+      "$ref": "#/$defs/hda_recomputation_execution"
+    },
+    "participant_id": {
+      "$ref": "#/$defs/hda_successor_identifier"
+    },
+    "domain_results": {
+      "$ref": "#/$defs/domain_results"
+    },
+    "categorical_results": {
+      "$ref": "#/$defs/categorical_results"
+    },
+    "categorical_failures": {
+      "description": "The sorted unique set of condition identifiers whose recomputed status is failed. Positional and equality checks are semantic validation obligations.",
+      "type": "array",
+      "maxItems": 11,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/categorical_condition"
+      }
+    },
+    "final_disposition": {
+      "$ref": "#/$defs/final_disposition"
+    },
+    "reason_codes": {
+      "$ref": "#/$defs/hda_result_reason_codes"
+    },
+    "proof_boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "result_self_digest_forbidden",
+        "result_names_or_predicts_seal_identity",
+        "expected_result_fixture_consumed",
+        "shared_evaluator_source_consumed",
+        "generated_evaluator_code_consumed",
+        "network_service_used",
+        "ruleset_issued",
+        "organizational_independence_proven",
+        "eligibility_is_approval",
+        "result_grants_authority",
+        "gate_a_accepted",
+        "runtime_authorized",
+        "external_effects_authorized"
+      ],
+      "properties": {
+        "result_self_digest_forbidden": {
+          "const": true
+        },
+        "result_names_or_predicts_seal_identity": {
+          "const": false
+        },
+        "expected_result_fixture_consumed": {
+          "const": false
+        },
+        "shared_evaluator_source_consumed": {
+          "const": false
+        },
+        "generated_evaluator_code_consumed": {
+          "const": false
+        },
+        "network_service_used": {
+          "const": false
+        },
+        "ruleset_issued": {
+          "const": false
+        },
+        "organizational_independence_proven": {
+          "const": false
+        },
+        "eligibility_is_approval": {
+          "const": false
+        },
+        "result_grants_authority": {
+          "const": false
+        },
+        "gate_a_accepted": {
+          "const": false
+        },
+        "runtime_authorized": {
+          "const": false
+        },
+        "external_effects_authorized": {
+          "const": false
+        }
+      }
+    },
+    "recomputed_at": {
+      "$ref": "#/$defs/timestamp"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "implementation": {
+            "properties": {
+              "implementation_role": {
+                "const": "python"
+              }
+            },
+            "required": [
+              "implementation_role"
+            ]
+          }
+        },
+        "required": [
+          "implementation"
+        ]
+      },
+      "then": {
+        "properties": {
+          "implementation": {
+            "properties": {
+              "toolchain_name": {
+                "const": "python"
+              },
+              "toolchain_version": {
+                "const": "3.14.2"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "implementation": {
+            "properties": {
+              "implementation_role": {
+                "const": "nodejs_24_18_0"
+              }
+            },
+            "required": [
+              "implementation_role"
+            ]
+          }
+        },
+        "required": [
+          "implementation"
+        ]
+      },
+      "then": {
+        "properties": {
+          "implementation": {
+            "properties": {
+              "toolchain_name": {
+                "const": "nodejs"
+              },
+              "toolchain_version": {
+                "const": "24.18.0"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "implementation": {
+            "properties": {
+              "implementation_role": {
+                "const": "java_21_0_9"
+              }
+            },
+            "required": [
+              "implementation_role"
+            ]
+          }
+        },
+        "required": [
+          "implementation"
+        ]
+      },
+      "then": {
+        "properties": {
+          "implementation": {
+            "properties": {
+              "toolchain_name": {
+                "const": "java"
+              },
+              "toolchain_version": {
+                "const": "21.0.9"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "final_disposition": {
+            "const": "eligible"
+          }
+        },
+        "required": [
+          "final_disposition"
+        ]
+      },
+      "then": {
+        "properties": {
+          "domain_results": {
+            "not": {
+              "contains": {
+                "properties": {
+                  "folded_status": {
+                    "not": {
+                      "const": "supported"
+                    }
+                  }
+                },
+                "required": [
+                  "folded_status"
+                ]
+              }
+            }
+          },
+          "categorical_results": {
+            "not": {
+              "contains": {
+                "properties": {
+                  "status": {
+                    "not": {
+                      "const": "satisfied"
+                    }
+                  }
+                },
+                "required": [
+                  "status"
+                ]
+              }
+            }
+          },
+          "categorical_failures": {
+            "maxItems": 0
+          },
+          "reason_codes": {
+            "minItems": 1,
+            "maxItems": 1,
+            "prefixItems": [
+              {
+                "const": "eligible.all_required_inputs_supported"
+              }
+            ],
+            "items": false
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "final_disposition": {
+            "const": "indeterminate"
+          }
+        },
+        "required": [
+          "final_disposition"
+        ]
+      },
+      "then": {
+        "properties": {
+          "domain_results": {
+            "not": {
+              "contains": {
+                "properties": {
+                  "folded_status": {
+                    "const": "contradicted"
+                  }
+                },
+                "required": [
+                  "folded_status"
+                ]
+              }
+            }
+          },
+          "categorical_results": {
+            "not": {
+              "contains": {
+                "properties": {
+                  "status": {
+                    "const": "failed"
+                  }
+                },
+                "required": [
+                  "status"
+                ]
+              }
+            }
+          },
+          "categorical_failures": {
+            "maxItems": 0
+          },
+          "reason_codes": {
+            "items": {
+              "type": "string",
+              "pattern": "^indeterminate\\.[a-z][a-z0-9_]*(?:\\.[a-z][a-z0-9_]*)*$"
+            }
+          }
+        },
+        "anyOf": [
+          {
+            "properties": {
+              "domain_results": {
+                "contains": {
+                  "properties": {
+                    "folded_status": {
+                      "enum": [
+                        "unknown",
+                        "not_applicable"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "folded_status"
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "properties": {
+              "categorical_results": {
+                "contains": {
+                  "properties": {
+                    "status": {
+                      "enum": [
+                        "unknown",
+                        "not_applicable"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "status"
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "final_disposition": {
+            "const": "invalid"
+          }
+        },
+        "required": [
+          "final_disposition"
+        ]
+      },
+      "then": {
+        "properties": {
+          "reason_codes": {
+            "contains": {
+              "type": "string",
+              "pattern": "^invalid\\."
+            },
+            "items": {
+              "type": "string",
+              "pattern": "^(?:indeterminate|invalid)\\.[a-z][a-z0-9_]*(?:\\.[a-z][a-z0-9_]*)*$"
+            }
+          }
+        },
+        "anyOf": [
+          {
+            "properties": {
+              "domain_results": {
+                "contains": {
+                  "properties": {
+                    "folded_status": {
+                      "const": "contradicted"
+                    }
+                  },
+                  "required": [
+                    "folded_status"
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "properties": {
+              "categorical_results": {
+                "contains": {
+                  "properties": {
+                    "status": {
+                      "const": "failed"
+                    }
+                  },
+                  "required": [
+                    "status"
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "$defs": {
+    "hda_successor_identifier": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,255}$"
+    },
+    "raw_sha256": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "x-odeya-digest-scope": {
+        "kind": "byte_digest",
+        "subject": "exact raw bytes named by the adjacent immutable binding",
+        "algorithm": "sha-256",
+        "profile": "not_a_canonical_object_digest",
+        "status": "candidate_unissued"
+      }
+    },
+    "positive_byte_count": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 1073741824
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
+    },
+    "raw_artifact_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "raw_sha256",
+        "byte_count",
+        "mutable_alias_used"
+      ],
+      "properties": {
+        "artifact_id": {
+          "$ref": "#/$defs/hda_successor_identifier"
+        },
+        "raw_sha256": {
+          "$ref": "#/$defs/raw_sha256"
+        },
+        "byte_count": {
+          "$ref": "#/$defs/positive_byte_count"
+        },
+        "mutable_alias_used": {
+          "const": false
+        }
+      }
+    },
+    "hda_result_raw_schema_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "schema_resource_id",
+        "raw_sha256",
+        "byte_count",
+        "mutable_alias_used"
+      ],
+      "properties": {
+        "artifact_id": {
+          "$ref": "#/$defs/hda_successor_identifier"
+        },
+        "schema_resource_id": {
+          "type": "string",
+          "pattern": "^urn:odeya:schema:[a-z0-9][a-z0-9-]*:[0-9]+\\.[0-9]+\\.[0-9]+$",
+          "maxLength": 256
+        },
+        "raw_sha256": {
+          "$ref": "#/$defs/raw_sha256"
+        },
+        "byte_count": {
+          "$ref": "#/$defs/positive_byte_count"
+        },
+        "mutable_alias_used": {
+          "const": false
+        }
+      }
+    },
+    "implementation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "implementation_role",
+        "implementation_id",
+        "source_binding",
+        "toolchain_name",
+        "toolchain_version",
+        "toolchain_profile_binding",
+        "dependency_lock_binding",
+        "configuration_binding",
+        "input_adapter_binding",
+        "network_access",
+        "mutable_toolchain_alias_used"
+      ],
+      "properties": {
+        "implementation_role": {
+          "enum": [
+            "python",
+            "nodejs_24_18_0",
+            "java_21_0_9"
+          ]
+        },
+        "implementation_id": {
+          "$ref": "#/$defs/hda_successor_identifier"
+        },
+        "source_binding": {
+          "$ref": "#/$defs/raw_artifact_binding"
+        },
+        "toolchain_name": {
+          "enum": [
+            "python",
+            "nodejs",
+            "java"
+          ]
+        },
+        "toolchain_version": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,127}$"
+        },
+        "toolchain_profile_binding": {
+          "$ref": "#/$defs/raw_artifact_binding"
+        },
+        "dependency_lock_binding": {
+          "$ref": "#/$defs/raw_artifact_binding"
+        },
+        "configuration_binding": {
+          "$ref": "#/$defs/raw_artifact_binding"
+        },
+        "input_adapter_binding": {
+          "$ref": "#/$defs/raw_artifact_binding"
+        },
+        "network_access": {
+          "const": false
+        },
+        "mutable_toolchain_alias_used": {
+          "const": false
+        }
+      }
+    },
+    "ruleset_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ruleset_id",
+        "ruleset_version",
+        "raw_sha256",
+        "byte_count",
+        "mutable_alias_used"
+      ],
+      "properties": {
+        "ruleset_id": {
+          "const": "urn:odeya:human-decision-assurance-eligibility:0.2.0-candidate"
+        },
+        "ruleset_version": {
+          "const": "0.2.0"
+        },
+        "raw_sha256": {
+          "$ref": "#/$defs/raw_sha256"
+        },
+        "byte_count": {
+          "$ref": "#/$defs/positive_byte_count"
+        },
+        "mutable_alias_used": {
+          "const": false
+        }
+      }
+    },
+    "hda_result_input_bindings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evidence",
+        "backing_byte_verification_receipt",
+        "eligibility_ruleset",
+        "input_manifest",
+        "normative_input_vector"
+      ],
+      "properties": {
+        "evidence": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/hda_result_raw_schema_binding"
+            },
+            {
+              "properties": {
+                "schema_resource_id": {
+                  "const": "urn:odeya:schema:human-decision-assurance-evidence:0.2.0"
+                }
+              }
+            }
+          ]
+        },
+        "backing_byte_verification_receipt": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/hda_result_raw_schema_binding"
+            },
+            {
+              "properties": {
+                "schema_resource_id": {
+                  "const": "urn:odeya:schema:human-decision-assurance-backing-byte-verification-receipt:0.1.0"
+                }
+              }
+            }
+          ]
+        },
+        "eligibility_ruleset": {
+          "$ref": "#/$defs/ruleset_binding"
+        },
+        "input_manifest": {
+          "$ref": "#/$defs/raw_artifact_binding"
+        },
+        "normative_input_vector": {
+          "$ref": "#/$defs/raw_artifact_binding"
+        }
+      }
+    },
+    "hda_recomputation_execution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "exit_disposition",
+        "exit_code",
+        "output_transport",
+        "raw_projection_binding"
+      ],
+      "properties": {
+        "exit_disposition": {
+          "const": "completed"
+        },
+        "exit_code": {
+          "const": 0
+        },
+        "output_transport": {
+          "const": "raw_projection_is_direct_output_and_result_record_binds_it"
+        },
+        "raw_projection_binding": {
+          "$ref": "#/$defs/raw_artifact_binding"
+        }
+      }
+    },
+    "domain": {
+      "enum": [
+        "exact_core_and_evidence_binding",
+        "backing_byte_integrity",
+        "challenge_and_replay",
+        "decision_confirmation",
+        "authentication",
+        "identity_and_authenticator_binding",
+        "custody",
+        "delegation_objections_conflicts",
+        "controlled_time",
+        "verifier_independence",
+        "sanitation"
+      ]
+    },
+    "domain_result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "domain",
+        "input_observation_count",
+        "folded_status",
+        "reason_codes"
+      ],
+      "properties": {
+        "domain": {
+          "$ref": "#/$defs/domain"
+        },
+        "input_observation_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "folded_status": {
+          "enum": [
+            "supported",
+            "contradicted",
+            "unknown",
+            "not_applicable"
+          ]
+        },
+        "reason_codes": {
+          "$ref": "#/$defs/hda_result_reason_codes"
+        }
+      }
+    },
+    "domain_results": {
+      "type": "array",
+      "minItems": 11,
+      "maxItems": 11,
+      "prefixItems": [
+        {
+          "$ref": "#/$defs/domain_result_exact_binding"
+        },
+        {
+          "$ref": "#/$defs/domain_result_backing_integrity"
+        },
+        {
+          "$ref": "#/$defs/domain_result_challenge"
+        },
+        {
+          "$ref": "#/$defs/domain_result_confirmation"
+        },
+        {
+          "$ref": "#/$defs/domain_result_authentication"
+        },
+        {
+          "$ref": "#/$defs/domain_result_identity"
+        },
+        {
+          "$ref": "#/$defs/domain_result_custody"
+        },
+        {
+          "$ref": "#/$defs/domain_result_delegation"
+        },
+        {
+          "$ref": "#/$defs/domain_result_controlled_time"
+        },
+        {
+          "$ref": "#/$defs/domain_result_verifier"
+        },
+        {
+          "$ref": "#/$defs/domain_result_sanitation"
+        }
+      ],
+      "items": false
+    },
+    "domain_result_exact_binding": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/domain_result"
+        },
+        {
+          "properties": {
+            "domain": {
+              "const": "exact_core_and_evidence_binding"
+            }
+          }
+        }
+      ]
+    },
+    "domain_result_backing_integrity": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/domain_result"
+        },
+        {
+          "properties": {
+            "domain": {
+              "const": "backing_byte_integrity"
+            }
+          }
+        }
+      ]
+    },
+    "domain_result_challenge": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/domain_result"
+        },
+        {
+          "properties": {
+            "domain": {
+              "const": "challenge_and_replay"
+            }
+          }
+        }
+      ]
+    },
+    "domain_result_confirmation": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/domain_result"
+        },
+        {
+          "properties": {
+            "domain": {
+              "const": "decision_confirmation"
+            }
+          }
+        }
+      ]
+    },
+    "domain_result_authentication": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/domain_result"
+        },
+        {
+          "properties": {
+            "domain": {
+              "const": "authentication"
+            }
+          }
+        }
+      ]
+    },
+    "domain_result_identity": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/domain_result"
+        },
+        {
+          "properties": {
+            "domain": {
+              "const": "identity_and_authenticator_binding"
+            }
+          }
+        }
+      ]
+    },
+    "domain_result_custody": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/domain_result"
+        },
+        {
+          "properties": {
+            "domain": {
+              "const": "custody"
+            }
+          }
+        }
+      ]
+    },
+    "domain_result_delegation": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/domain_result"
+        },
+        {
+          "properties": {
+            "domain": {
+              "const": "delegation_objections_conflicts"
+            }
+          }
+        }
+      ]
+    },
+    "domain_result_controlled_time": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/domain_result"
+        },
+        {
+          "properties": {
+            "domain": {
+              "const": "controlled_time"
+            }
+          }
+        }
+      ]
+    },
+    "domain_result_verifier": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/domain_result"
+        },
+        {
+          "properties": {
+            "domain": {
+              "const": "verifier_independence"
+            }
+          }
+        }
+      ]
+    },
+    "domain_result_sanitation": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/domain_result"
+        },
+        {
+          "properties": {
+            "domain": {
+              "const": "sanitation"
+            }
+          }
+        }
+      ]
+    },
+    "categorical_condition": {
+      "enum": [
+        "challenge_consumption_state_fresh_consumed_once",
+        "challenge_not_previously_consumed",
+        "challenge_consumed_exactly_once",
+        "assertion_acceptance_and_consumption_atomic_action_equal",
+        "decision_confirmation_principal_matches_observation",
+        "decision_confirmation_human_initiated",
+        "decision_confirmation_separate_from_authenticator_gesture",
+        "same_origin_candidate_context_supported",
+        "no_authenticator_clone_risk_signal",
+        "no_shared_effective_control_principals",
+        "verifier_distinct_principal_and_effective_control"
+      ]
+    },
+    "categorical_result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "condition_id",
+        "status",
+        "reason_codes"
+      ],
+      "properties": {
+        "condition_id": {
+          "$ref": "#/$defs/categorical_condition"
+        },
+        "status": {
+          "enum": [
+            "satisfied",
+            "failed",
+            "unknown",
+            "not_applicable"
+          ]
+        },
+        "reason_codes": {
+          "$ref": "#/$defs/hda_result_reason_codes"
+        }
+      }
+    },
+    "categorical_results": {
+      "type": "array",
+      "minItems": 11,
+      "maxItems": 11,
+      "prefixItems": [
+        {
+          "$ref": "#/$defs/categorical_result_consumption_state"
+        },
+        {
+          "$ref": "#/$defs/categorical_result_prior_consumption"
+        },
+        {
+          "$ref": "#/$defs/categorical_result_result_consumption"
+        },
+        {
+          "$ref": "#/$defs/categorical_result_atomic_action"
+        },
+        {
+          "$ref": "#/$defs/categorical_result_principal_match"
+        },
+        {
+          "$ref": "#/$defs/categorical_result_human_initiated"
+        },
+        {
+          "$ref": "#/$defs/categorical_result_separate_gesture"
+        },
+        {
+          "$ref": "#/$defs/categorical_result_same_origin"
+        },
+        {
+          "$ref": "#/$defs/categorical_result_clone_signal"
+        },
+        {
+          "$ref": "#/$defs/categorical_result_shared_control"
+        },
+        {
+          "$ref": "#/$defs/categorical_result_verifier_relation"
+        }
+      ],
+      "items": false
+    },
+    "categorical_result_consumption_state": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/categorical_result"
+        },
+        {
+          "properties": {
+            "condition_id": {
+              "const": "challenge_consumption_state_fresh_consumed_once"
+            }
+          }
+        }
+      ]
+    },
+    "categorical_result_prior_consumption": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/categorical_result"
+        },
+        {
+          "properties": {
+            "condition_id": {
+              "const": "challenge_not_previously_consumed"
+            }
+          }
+        }
+      ]
+    },
+    "categorical_result_result_consumption": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/categorical_result"
+        },
+        {
+          "properties": {
+            "condition_id": {
+              "const": "challenge_consumed_exactly_once"
+            }
+          }
+        }
+      ]
+    },
+    "categorical_result_atomic_action": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/categorical_result"
+        },
+        {
+          "properties": {
+            "condition_id": {
+              "const": "assertion_acceptance_and_consumption_atomic_action_equal"
+            }
+          }
+        }
+      ]
+    },
+    "categorical_result_principal_match": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/categorical_result"
+        },
+        {
+          "properties": {
+            "condition_id": {
+              "const": "decision_confirmation_principal_matches_observation"
+            }
+          }
+        }
+      ]
+    },
+    "categorical_result_human_initiated": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/categorical_result"
+        },
+        {
+          "properties": {
+            "condition_id": {
+              "const": "decision_confirmation_human_initiated"
+            }
+          }
+        }
+      ]
+    },
+    "categorical_result_separate_gesture": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/categorical_result"
+        },
+        {
+          "properties": {
+            "condition_id": {
+              "const": "decision_confirmation_separate_from_authenticator_gesture"
+            }
+          }
+        }
+      ]
+    },
+    "categorical_result_same_origin": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/categorical_result"
+        },
+        {
+          "properties": {
+            "condition_id": {
+              "const": "same_origin_candidate_context_supported"
+            }
+          }
+        }
+      ]
+    },
+    "categorical_result_clone_signal": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/categorical_result"
+        },
+        {
+          "properties": {
+            "condition_id": {
+              "const": "no_authenticator_clone_risk_signal"
+            }
+          }
+        }
+      ]
+    },
+    "categorical_result_shared_control": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/categorical_result"
+        },
+        {
+          "properties": {
+            "condition_id": {
+              "const": "no_shared_effective_control_principals"
+            }
+          }
+        }
+      ]
+    },
+    "categorical_result_verifier_relation": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/categorical_result"
+        },
+        {
+          "properties": {
+            "condition_id": {
+              "const": "verifier_distinct_principal_and_effective_control"
+            }
+          }
+        }
+      ]
+    },
+    "final_disposition": {
+      "enum": [
+        "eligible",
+        "indeterminate",
+        "invalid"
+      ]
+    },
+    "hda_result_reason_codes": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 256,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^(?:eligible|indeterminate|invalid)\\.[a-z][a-z0-9_]*(?:\\.[a-z][a-z0-9_]*)*$"
+      }
+    }
+  }
+}

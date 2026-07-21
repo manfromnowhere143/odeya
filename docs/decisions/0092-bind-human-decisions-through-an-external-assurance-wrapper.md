@@ -9,6 +9,12 @@
   the future wrapper boundary; grants no human-only slot, aggregate quorum,
   assignment, currentness, approval, scientific-results publication,
   recovery, promotion, runtime, external-effect, or Gate A authority
+- Amendment: [ADR 0093](0093-co-bind-the-confirmation-gesture-through-a-two-phase-challenge.md)
+  adopts the acyclic v2 two-phase frame. It supersedes this record's v1
+  one-way receipt/authenticator limitation strictly as a synthetic construction
+  property; no real ceremony, issuance, authority, or Gate A acceptance follows.
+  The v1 wording below remains retained decision history, not current candidate
+  state.
 
 ## Context
 

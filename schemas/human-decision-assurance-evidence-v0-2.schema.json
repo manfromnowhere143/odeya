@@ -1,0 +1,1203 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:odeya:schema:human-decision-assurance-evidence:0.2.0",
+  "title": "Odeya Human Decision Assurance Evidence 0.2 Candidate",
+  "description": "An unissued architecture candidate for one declared principal act. It binds exact upstream bytes, exposes every eligibility-bearing observation domain, and names a closed fourteen-role content-addressed preimage inventory. It is not approval, authority, aggregate quorum, consumer currentness, or evidence that a real ceremony occurred.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "artifact_class",
+    "artifact_id",
+    "assurance_id",
+    "version",
+    "candidate_status",
+    "evidence_class",
+    "assurance_scope",
+    "core_binding",
+    "decision_subject_binding",
+    "candidate_manifest_binding",
+    "challenge_profile_binding",
+    "participant_observations",
+    "ordered_artifact_ids",
+    "ordered_artifact_inventory",
+    "forbidden_content_and_sanitation",
+    "proof_boundary",
+    "collected_at"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.2.0"
+    },
+    "artifact_class": {
+      "const": "human_decision_assurance_evidence_candidate"
+    },
+    "artifact_id": {
+      "$ref": "#/$defs/hda_successor_identifier"
+    },
+    "assurance_id": {
+      "$ref": "#/$defs/hda_successor_identifier"
+    },
+    "version": {
+      "const": 2
+    },
+    "candidate_status": {
+      "const": "unissued_architecture_candidate_not_human_authority"
+    },
+    "evidence_class": {
+      "enum": [
+        "synthetic_architecture_fixture",
+        "candidate_ceremony_evidence_not_admitted"
+      ]
+    },
+    "assurance_scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "principal_act_cardinality",
+        "aggregate_quorum_evaluation",
+        "currentness_evaluation",
+        "authority_evaluation",
+        "assured_decision_wrapper_identity_assigned"
+      ],
+      "properties": {
+        "principal_act_cardinality": {
+          "const": "exactly_one"
+        },
+        "aggregate_quorum_evaluation": {
+          "const": "deferred_to_assured_decision_wrapper"
+        },
+        "currentness_evaluation": {
+          "const": "deferred_to_assured_decision_wrapper"
+        },
+        "authority_evaluation": {
+          "const": "deferred_to_assured_decision_wrapper"
+        },
+        "assured_decision_wrapper_identity_assigned": {
+          "const": false
+        }
+      }
+    },
+    "core_binding": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/hda_evidence_raw_schema_binding"
+        },
+        {
+          "properties": {
+            "schema_resource_id": {
+              "const": "urn:odeya:schema:human-decision-assurance-core:0.1.0"
+            }
+          }
+        }
+      ]
+    },
+    "decision_subject_binding": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/hda_evidence_raw_schema_binding"
+        },
+        {
+          "properties": {
+            "schema_resource_id": {
+              "const": "urn:odeya:schema:operator-architecture-decision:0.4.0"
+            }
+          }
+        }
+      ]
+    },
+    "candidate_manifest_binding": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/hda_evidence_raw_schema_binding"
+        },
+        {
+          "properties": {
+            "schema_resource_id": {
+              "const": "urn:odeya:schema:architecture-candidate-manifest:0.5.0"
+            }
+          }
+        }
+      ]
+    },
+    "challenge_profile_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profile_id",
+        "profile_version",
+        "raw_sha256",
+        "byte_count",
+        "mutable_alias_used"
+      ],
+      "properties": {
+        "profile_id": {
+          "const": "odeya-human-decision-challenge-frame-v2-candidate"
+        },
+        "profile_version": {
+          "const": "0.2.0"
+        },
+        "raw_sha256": {
+          "$ref": "#/$defs/raw_sha256"
+        },
+        "byte_count": {
+          "$ref": "#/$defs/positive_byte_count"
+        },
+        "mutable_alias_used": {
+          "const": false
+        }
+      }
+    },
+    "participant_observations": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 1,
+      "items": {
+        "$ref": "#/$defs/participant_observation"
+      }
+    },
+    "ordered_artifact_ids": {
+      "description": "Artifact identifiers in the exact same order as ordered_artifact_inventory. The semantic checker must prove positional equality; uniqueItems prevents one identifier from being reused for two roles.",
+      "type": "array",
+      "minItems": 14,
+      "maxItems": 14,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/hda_successor_identifier"
+      }
+    },
+    "ordered_artifact_inventory": {
+      "description": "The complete ordered role inventory. A role cannot be omitted, duplicated, renamed, or appended without a new schema resource identity.",
+      "type": "array",
+      "minItems": 14,
+      "maxItems": 14,
+      "prefixItems": [
+        {
+          "$ref": "#/$defs/role_sanitized_challenge_lifecycle"
+        },
+        {
+          "$ref": "#/$defs/role_client_data_json"
+        },
+        {
+          "$ref": "#/$defs/role_authenticator_data"
+        },
+        {
+          "$ref": "#/$defs/role_webauthn_signature"
+        },
+        {
+          "$ref": "#/$defs/role_credential_public_key"
+        },
+        {
+          "$ref": "#/$defs/role_displayed_decision_bytes"
+        },
+        {
+          "$ref": "#/$defs/role_confirmation_receipt_frame"
+        },
+        {
+          "$ref": "#/$defs/role_decision_confirmation_receipt"
+        },
+        {
+          "$ref": "#/$defs/role_custody_observation"
+        },
+        {
+          "$ref": "#/$defs/role_identity_proofing_profile"
+        },
+        {
+          "$ref": "#/$defs/role_principal_authenticator_binding"
+        },
+        {
+          "$ref": "#/$defs/role_controlled_time_observation"
+        },
+        {
+          "$ref": "#/$defs/role_verifier_observation"
+        },
+        {
+          "$ref": "#/$defs/role_delegation_effective_control_observation"
+        }
+      ],
+      "items": false
+    },
+    "forbidden_content_and_sanitation": {
+      "$ref": "#/$defs/forbidden_content_and_sanitation"
+    },
+    "proof_boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evidence_self_digest_forbidden",
+        "profile_issued",
+        "real_human_ceremony_verified",
+        "signature_alone_proves_human_control",
+        "user_presence_proves_review",
+        "user_verification_proves_natural_person_identity",
+        "ceremony_proves_cognition",
+        "assignment_effective_control_mechanically_established",
+        "original_decision_authorship_proven",
+        "source_decided_at_proven",
+        "aggregate_quorum_evaluated",
+        "consumer_currentness_evaluated",
+        "evidence_grants_authority",
+        "gate_a_accepted",
+        "runtime_authorized",
+        "external_effects_authorized"
+      ],
+      "properties": {
+        "evidence_self_digest_forbidden": {
+          "const": true
+        },
+        "profile_issued": {
+          "const": false
+        },
+        "real_human_ceremony_verified": {
+          "const": false
+        },
+        "signature_alone_proves_human_control": {
+          "const": false
+        },
+        "user_presence_proves_review": {
+          "const": false
+        },
+        "user_verification_proves_natural_person_identity": {
+          "const": false
+        },
+        "ceremony_proves_cognition": {
+          "const": false
+        },
+        "assignment_effective_control_mechanically_established": {
+          "const": false
+        },
+        "original_decision_authorship_proven": {
+          "const": false
+        },
+        "source_decided_at_proven": {
+          "const": false
+        },
+        "aggregate_quorum_evaluated": {
+          "const": false
+        },
+        "consumer_currentness_evaluated": {
+          "const": false
+        },
+        "evidence_grants_authority": {
+          "const": false
+        },
+        "gate_a_accepted": {
+          "const": false
+        },
+        "runtime_authorized": {
+          "const": false
+        },
+        "external_effects_authorized": {
+          "const": false
+        }
+      }
+    },
+    "collected_at": {
+      "$ref": "#/$defs/timestamp"
+    }
+  },
+  "$defs": {
+    "hda_successor_identifier": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,255}$"
+    },
+    "schema_resource_id": {
+      "type": "string",
+      "pattern": "^urn:odeya:schema:[a-z0-9][a-z0-9-]*:[0-9]+\\.[0-9]+\\.[0-9]+$",
+      "maxLength": 256
+    },
+    "raw_sha256": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "x-odeya-digest-scope": {
+        "kind": "byte_digest",
+        "subject": "exact raw bytes named by the adjacent immutable binding",
+        "algorithm": "sha-256",
+        "profile": "not_a_canonical_object_digest",
+        "status": "candidate_unissued"
+      }
+    },
+    "positive_byte_count": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 1073741824
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
+    },
+    "observation_status": {
+      "enum": [
+        "supported",
+        "contradicted",
+        "unknown",
+        "not_applicable"
+      ]
+    },
+    "nullable_identifier": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/hda_successor_identifier"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "nullable_nonnegative_integer": {
+      "oneOf": [
+        {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "hda_evidence_raw_schema_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "schema_resource_id",
+        "raw_sha256",
+        "byte_count",
+        "mutable_alias_used"
+      ],
+      "properties": {
+        "artifact_id": {
+          "$ref": "#/$defs/hda_successor_identifier"
+        },
+        "schema_resource_id": {
+          "$ref": "#/$defs/schema_resource_id"
+        },
+        "raw_sha256": {
+          "$ref": "#/$defs/raw_sha256"
+        },
+        "byte_count": {
+          "$ref": "#/$defs/positive_byte_count"
+        },
+        "mutable_alias_used": {
+          "const": false
+        }
+      }
+    },
+    "domain_observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sequence_index",
+        "observation_id",
+        "status",
+        "evidence_role_refs"
+      ],
+      "properties": {
+        "sequence_index": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1023
+        },
+        "observation_id": {
+          "$ref": "#/$defs/hda_successor_identifier"
+        },
+        "status": {
+          "$ref": "#/$defs/observation_status"
+        },
+        "evidence_role_refs": {
+          "type": "array",
+          "maxItems": 14,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/evidence_role"
+          }
+        }
+      }
+    },
+    "domain_observation_sequence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "domain",
+        "public_eligibility_domain",
+        "observations"
+      ],
+      "properties": {
+        "domain": {
+          "$ref": "#/$defs/evidence_domain"
+        },
+        "public_eligibility_domain": {
+          "const": true
+        },
+        "observations": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 64,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/domain_observation"
+          }
+        }
+      }
+    },
+    "evidence_domain": {
+      "enum": [
+        "challenge_and_replay",
+        "decision_confirmation",
+        "authentication",
+        "identity_and_authenticator_binding",
+        "custody",
+        "delegation_objections_conflicts",
+        "controlled_time",
+        "verifier_independence",
+        "sanitation"
+      ]
+    },
+    "participant_observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "principal_id",
+        "domain_observation_sequences",
+        "categorical_inputs"
+      ],
+      "properties": {
+        "principal_id": {
+          "$ref": "#/$defs/hda_successor_identifier"
+        },
+        "domain_observation_sequences": {
+          "type": "array",
+          "minItems": 9,
+          "maxItems": 9,
+          "prefixItems": [
+            {
+              "$ref": "#/$defs/domain_challenge_and_replay"
+            },
+            {
+              "$ref": "#/$defs/domain_decision_confirmation"
+            },
+            {
+              "$ref": "#/$defs/domain_authentication"
+            },
+            {
+              "$ref": "#/$defs/domain_identity_and_authenticator_binding"
+            },
+            {
+              "$ref": "#/$defs/domain_custody"
+            },
+            {
+              "$ref": "#/$defs/domain_delegation_objections_conflicts"
+            },
+            {
+              "$ref": "#/$defs/domain_controlled_time"
+            },
+            {
+              "$ref": "#/$defs/domain_verifier_independence"
+            },
+            {
+              "$ref": "#/$defs/domain_sanitation"
+            }
+          ],
+          "items": false
+        },
+        "categorical_inputs": {
+          "$ref": "#/$defs/categorical_inputs"
+        }
+      }
+    },
+    "domain_challenge_and_replay": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/domain_observation_sequence"
+        },
+        {
+          "properties": {
+            "domain": {
+              "const": "challenge_and_replay"
+            }
+          }
+        }
+      ]
+    },
+    "domain_decision_confirmation": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/domain_observation_sequence"
+        },
+        {
+          "properties": {
+            "domain": {
+              "const": "decision_confirmation"
+            }
+          }
+        }
+      ]
+    },
+    "domain_authentication": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/domain_observation_sequence"
+        },
+        {
+          "properties": {
+            "domain": {
+              "const": "authentication"
+            }
+          }
+        }
+      ]
+    },
+    "domain_identity_and_authenticator_binding": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/domain_observation_sequence"
+        },
+        {
+          "properties": {
+            "domain": {
+              "const": "identity_and_authenticator_binding"
+            }
+          }
+        }
+      ]
+    },
+    "domain_custody": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/domain_observation_sequence"
+        },
+        {
+          "properties": {
+            "domain": {
+              "const": "custody"
+            }
+          }
+        }
+      ]
+    },
+    "domain_delegation_objections_conflicts": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/domain_observation_sequence"
+        },
+        {
+          "properties": {
+            "domain": {
+              "const": "delegation_objections_conflicts"
+            }
+          }
+        }
+      ]
+    },
+    "domain_controlled_time": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/domain_observation_sequence"
+        },
+        {
+          "properties": {
+            "domain": {
+              "const": "controlled_time"
+            }
+          }
+        }
+      ]
+    },
+    "domain_verifier_independence": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/domain_observation_sequence"
+        },
+        {
+          "properties": {
+            "domain": {
+              "const": "verifier_independence"
+            }
+          }
+        }
+      ]
+    },
+    "domain_sanitation": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/domain_observation_sequence"
+        },
+        {
+          "properties": {
+            "domain": {
+              "const": "sanitation"
+            }
+          }
+        }
+      ]
+    },
+    "categorical_inputs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "challenge_consumption_state",
+        "prior_consumption_count",
+        "result_consumption_count",
+        "assertion_acceptance_atomic_action_id",
+        "consumption_atomic_action_id",
+        "atomic_action_record_role",
+        "atomic_action_record_observation",
+        "decision_confirmation_principal_id",
+        "decision_confirmation_initiator_class",
+        "decision_confirmation_separate_from_authenticator_gesture",
+        "cross_origin_disposition",
+        "signature_counter_disposition",
+        "shared_effective_control_principal_ids",
+        "verifier_relation_to_decision_principal"
+      ],
+      "properties": {
+        "challenge_consumption_state": {
+          "enum": [
+            "fresh_consumed_once",
+            "unconsumed",
+            "replayed",
+            "unknown"
+          ]
+        },
+        "prior_consumption_count": {
+          "$ref": "#/$defs/nullable_nonnegative_integer"
+        },
+        "result_consumption_count": {
+          "$ref": "#/$defs/nullable_nonnegative_integer"
+        },
+        "assertion_acceptance_atomic_action_id": {
+          "$ref": "#/$defs/nullable_identifier"
+        },
+        "consumption_atomic_action_id": {
+          "$ref": "#/$defs/nullable_identifier"
+        },
+        "atomic_action_record_role": {
+          "const": "sanitized_challenge_lifecycle_and_atomic_consumption_record"
+        },
+        "atomic_action_record_observation": {
+          "$ref": "#/$defs/observation_status"
+        },
+        "decision_confirmation_principal_id": {
+          "$ref": "#/$defs/nullable_identifier"
+        },
+        "decision_confirmation_initiator_class": {
+          "enum": [
+            "human_initiated",
+            "agent_model_or_tool_initiated",
+            "unknown"
+          ]
+        },
+        "decision_confirmation_separate_from_authenticator_gesture": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "cross_origin_disposition": {
+          "enum": [
+            "same_origin_supported",
+            "approved_cross_origin_profile_supported",
+            "contradicted",
+            "unknown"
+          ]
+        },
+        "signature_counter_disposition": {
+          "enum": [
+            "observed_no_clone_conclusion",
+            "clone_risk_signal",
+            "unsupported",
+            "unknown"
+          ]
+        },
+        "shared_effective_control_principal_ids": {
+          "oneOf": [
+            {
+              "type": "array",
+              "maxItems": 64,
+              "uniqueItems": true,
+              "items": {
+                "$ref": "#/$defs/hda_successor_identifier"
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "verifier_relation_to_decision_principal": {
+          "enum": [
+            "distinct_principal_and_effective_control",
+            "author_correlated",
+            "same_principal",
+            "unknown"
+          ]
+        }
+      }
+    },
+    "evidence_role": {
+      "enum": [
+        "sanitized_challenge_lifecycle_and_atomic_consumption_record",
+        "exact_unmodified_client_data_json",
+        "exact_unmodified_authenticator_data",
+        "exact_unmodified_webauthn_signature",
+        "exact_unmodified_credential_public_key",
+        "exact_unmodified_displayed_decision_bytes",
+        "exact_unmodified_confirmation_receipt_frame",
+        "sanitized_exact_material_presentation_and_decision_confirmation_receipt",
+        "sanitized_custody_observation",
+        "sanitized_identity_proofing_profile",
+        "sanitized_principal_authenticator_binding",
+        "sanitized_controlled_time_observation",
+        "sanitized_verifier_observation",
+        "sanitized_delegation_effective_control_observation"
+      ]
+    },
+    "artifact_descriptor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "role",
+        "content_address",
+        "byte_count",
+        "media_type",
+        "byte_fidelity",
+        "repository_blob_path",
+        "synthetic_preimage",
+        "sanitization_status"
+      ],
+      "properties": {
+        "artifact_id": {
+          "$ref": "#/$defs/hda_successor_identifier"
+        },
+        "role": {
+          "$ref": "#/$defs/evidence_role"
+        },
+        "content_address": {
+          "$ref": "#/$defs/raw_sha256"
+        },
+        "byte_count": {
+          "$ref": "#/$defs/positive_byte_count"
+        },
+        "media_type": {
+          "type": "string",
+          "pattern": "^[a-z0-9!#$&^_.+-]+/[a-z0-9!#$&^_.+-]+$",
+          "maxLength": 128
+        },
+        "byte_fidelity": {
+          "enum": [
+            "exact_unmodified_cryptographic_input",
+            "exact_unmodified_binary_frame",
+            "sanitized_derived_observation_record"
+          ]
+        },
+        "repository_blob_path": {
+          "type": "string",
+          "pattern": "^architecture/evidence-blobs/sha256/[0-9a-f]{2}/[0-9a-f]{62}$",
+          "maxLength": 128
+        },
+        "synthetic_preimage": {
+          "type": "boolean"
+        },
+        "sanitization_status": {
+          "$ref": "#/$defs/observation_status"
+        }
+      }
+    },
+    "role_sanitized_challenge_lifecycle": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/artifact_descriptor"
+        },
+        {
+          "properties": {
+            "role": {
+              "const": "sanitized_challenge_lifecycle_and_atomic_consumption_record"
+            },
+            "byte_fidelity": {
+              "const": "sanitized_derived_observation_record"
+            }
+          }
+        }
+      ]
+    },
+    "role_client_data_json": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/artifact_descriptor"
+        },
+        {
+          "properties": {
+            "role": {
+              "const": "exact_unmodified_client_data_json"
+            },
+            "byte_fidelity": {
+              "const": "exact_unmodified_cryptographic_input"
+            }
+          }
+        }
+      ]
+    },
+    "role_authenticator_data": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/artifact_descriptor"
+        },
+        {
+          "properties": {
+            "role": {
+              "const": "exact_unmodified_authenticator_data"
+            },
+            "byte_fidelity": {
+              "const": "exact_unmodified_cryptographic_input"
+            }
+          }
+        }
+      ]
+    },
+    "role_webauthn_signature": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/artifact_descriptor"
+        },
+        {
+          "properties": {
+            "role": {
+              "const": "exact_unmodified_webauthn_signature"
+            },
+            "byte_fidelity": {
+              "const": "exact_unmodified_cryptographic_input"
+            }
+          }
+        }
+      ]
+    },
+    "role_credential_public_key": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/artifact_descriptor"
+        },
+        {
+          "properties": {
+            "role": {
+              "const": "exact_unmodified_credential_public_key"
+            },
+            "byte_fidelity": {
+              "const": "exact_unmodified_cryptographic_input"
+            }
+          }
+        }
+      ]
+    },
+    "role_displayed_decision_bytes": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/artifact_descriptor"
+        },
+        {
+          "properties": {
+            "role": {
+              "const": "exact_unmodified_displayed_decision_bytes"
+            },
+            "byte_fidelity": {
+              "const": "exact_unmodified_cryptographic_input"
+            }
+          }
+        }
+      ]
+    },
+    "role_confirmation_receipt_frame": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/artifact_descriptor"
+        },
+        {
+          "properties": {
+            "role": {
+              "const": "exact_unmodified_confirmation_receipt_frame"
+            },
+            "media_type": {
+              "const": "application/octet-stream"
+            },
+            "byte_fidelity": {
+              "const": "exact_unmodified_binary_frame"
+            }
+          }
+        }
+      ]
+    },
+    "role_decision_confirmation_receipt": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/artifact_descriptor"
+        },
+        {
+          "properties": {
+            "role": {
+              "const": "sanitized_exact_material_presentation_and_decision_confirmation_receipt"
+            },
+            "byte_fidelity": {
+              "const": "sanitized_derived_observation_record"
+            }
+          }
+        }
+      ]
+    },
+    "role_custody_observation": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/artifact_descriptor"
+        },
+        {
+          "properties": {
+            "role": {
+              "const": "sanitized_custody_observation"
+            },
+            "byte_fidelity": {
+              "const": "sanitized_derived_observation_record"
+            }
+          }
+        }
+      ]
+    },
+    "role_identity_proofing_profile": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/artifact_descriptor"
+        },
+        {
+          "properties": {
+            "role": {
+              "const": "sanitized_identity_proofing_profile"
+            },
+            "byte_fidelity": {
+              "const": "sanitized_derived_observation_record"
+            }
+          }
+        }
+      ]
+    },
+    "role_principal_authenticator_binding": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/artifact_descriptor"
+        },
+        {
+          "properties": {
+            "role": {
+              "const": "sanitized_principal_authenticator_binding"
+            },
+            "byte_fidelity": {
+              "const": "sanitized_derived_observation_record"
+            }
+          }
+        }
+      ]
+    },
+    "role_controlled_time_observation": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/artifact_descriptor"
+        },
+        {
+          "properties": {
+            "role": {
+              "const": "sanitized_controlled_time_observation"
+            },
+            "byte_fidelity": {
+              "const": "sanitized_derived_observation_record"
+            }
+          }
+        }
+      ]
+    },
+    "role_verifier_observation": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/artifact_descriptor"
+        },
+        {
+          "properties": {
+            "role": {
+              "const": "sanitized_verifier_observation"
+            },
+            "byte_fidelity": {
+              "const": "sanitized_derived_observation_record"
+            }
+          }
+        }
+      ]
+    },
+    "role_delegation_effective_control_observation": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/artifact_descriptor"
+        },
+        {
+          "properties": {
+            "role": {
+              "const": "sanitized_delegation_effective_control_observation"
+            },
+            "byte_fidelity": {
+              "const": "sanitized_derived_observation_record"
+            }
+          }
+        }
+      ]
+    },
+    "forbidden_content_observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "content_class",
+        "disposition",
+        "evidence_role_refs"
+      ],
+      "properties": {
+        "content_class": {
+          "enum": [
+            "raw_private_reasoning",
+            "reusable_secret",
+            "private_or_signing_key_material",
+            "pin_or_biometric_sample",
+            "unrestricted_prompt_or_model_output"
+          ]
+        },
+        "disposition": {
+          "enum": [
+            "absent",
+            "present",
+            "unknown"
+          ]
+        },
+        "evidence_role_refs": {
+          "type": "array",
+          "maxItems": 14,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/evidence_role"
+          }
+        }
+      }
+    },
+    "forbidden_content_and_sanitation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ordered_forbidden_content_observations",
+        "sanitization_verification_sequence",
+        "exact_cryptographic_input_transformation",
+        "sanitation_authorizes_exact_input_transformation",
+        "forbidden_content_present_disposition",
+        "unknown_sanitation_disposition"
+      ],
+      "properties": {
+        "ordered_forbidden_content_observations": {
+          "type": "array",
+          "minItems": 5,
+          "maxItems": 5,
+          "prefixItems": [
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/forbidden_content_observation"
+                },
+                {
+                  "properties": {
+                    "content_class": {
+                      "const": "raw_private_reasoning"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/forbidden_content_observation"
+                },
+                {
+                  "properties": {
+                    "content_class": {
+                      "const": "reusable_secret"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/forbidden_content_observation"
+                },
+                {
+                  "properties": {
+                    "content_class": {
+                      "const": "private_or_signing_key_material"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/forbidden_content_observation"
+                },
+                {
+                  "properties": {
+                    "content_class": {
+                      "const": "pin_or_biometric_sample"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/forbidden_content_observation"
+                },
+                {
+                  "properties": {
+                    "content_class": {
+                      "const": "unrestricted_prompt_or_model_output"
+                    }
+                  }
+                }
+              ]
+            }
+          ],
+          "items": false
+        },
+        "sanitization_verification_sequence": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 64,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/domain_observation"
+          }
+        },
+        "exact_cryptographic_input_transformation": {
+          "enum": [
+            "not_transformed",
+            "transformed",
+            "unknown"
+          ]
+        },
+        "sanitation_authorizes_exact_input_transformation": {
+          "const": false
+        },
+        "forbidden_content_present_disposition": {
+          "const": "invalid"
+        },
+        "unknown_sanitation_disposition": {
+          "const": "indeterminate"
+        }
+      }
+    }
+  }
+}

@@ -10,11 +10,10 @@ negative-detectors were a closed spelling vocabulary that five realistic
 variants passed silently, and it certified a binding field one harness
 enforces vacuously. This version answers each refutation structurally:
 
-- the registry is TOTAL over case-bearing manifests: every tests/*/cases.json
-  and tests/*/manifest.json whose case list is non-empty must be registered
-  as attributed (with its binding shape) or as known-unattributed (with a
-  reason) — an unknown suite fails closed whatever its expectation spelling,
-  so no new vocabulary can slip a negative past the census;
+- the registry is TOTAL over direct case-bearing suite JSON: every
+  tests/*/*.json whose case list is non-empty must be registered as attributed
+  (with its binding shape) or as known-unattributed (with a reason) — an
+  unconventional filename therefore cannot hide a second negative corpus;
 - known-unattributed corpora are counted and printed, never implied covered;
 - binding checks may read the whole manifest, so a suite whose exactness
   lives at manifest level (command-identity's exact_mismatch_reason_sets)
@@ -130,6 +129,11 @@ REGISTRY: dict[str, tuple[str, Any, Any]] = {
         intent_and_inventory("expected_errors"),
         None,
     ),
+    "human-decision-assurance-successor": (
+        "cases.json",
+        intent_and_inventory("expected_errors"),
+        None,
+    ),
     "constitutional-construction": ("cases.json", substring("expected_refusal_contains"), None),
     "work-identity-successor-cohort": ("cases.json", intent_and_inventory("expected_errors"), None),
     "work-intent-identity-candidate": ("cases.json", intent_and_inventory("expected_errors"), None),
@@ -145,12 +149,22 @@ REGISTRY: dict[str, tuple[str, Any, Any]] = {
     "architecture-schema": ("manifest.json", pointer_keyword, None),
 }
 
+# Additional deliberately named case manifests must be enumerated explicitly;
+# otherwise a second corpus beside a suite's conventional cases.json could
+# evade this census while still looking like retained negative evidence.
+ADDITIONAL_REGISTRY: dict[str, tuple[Any, Any]] = {
+    "human-decision-assurance-successor/chain-cases.json": (
+        intent_and_inventory("expected_errors"),
+        None,
+    ),
+}
+
 # Case-bearing manifests whose negatives are NOT attributed, held visible by
 # count instead of silently uncovered. Attributing them is open work (ADR
 # 0063); removing an entry here requires attributing the suite, because the
 # census fails closed on any unregistered case-bearing manifest.
 KNOWN_UNATTRIBUTED: dict[str, str] = {
-    "canonicalization/manifest.json": (
+    "canonicalization/expectations.json": (
         "canonical-identity vectors; refusals are code-bound in expectations.json"
     ),
 }
@@ -164,10 +178,18 @@ def count_negatives(cases: list[Any]) -> int:
     return count
 
 
-def audit_registered(suite: str, cases: list[Any], document: dict[str, Any]) -> tuple[list[str], int]:
+def audit_registered(
+    suite: str,
+    cases: list[Any],
+    document: dict[str, Any],
+    checks: tuple[Any, Any] | None = None,
+) -> tuple[list[str], int]:
     errors: list[str] = []
     bound = 0
-    _, structural_check, semantic_check = REGISTRY[suite]
+    if checks is None:
+        _, structural_check, semantic_check = REGISTRY[suite]
+    else:
+        structural_check, semantic_check = checks
     for case in cases:
         if not isinstance(case, dict):
             errors.append(f"{suite}: a case is not an object")
@@ -200,8 +222,7 @@ def census() -> tuple[list[str], int, int, int]:
     unattributed = 0
     for manifest_path in sorted(TESTS.glob("*/*.json")):
         relative = f"{manifest_path.parent.name}/{manifest_path.name}"
-        if manifest_path.name not in {"cases.json", "manifest.json"}:
-            continue
+        additional_registration = ADDITIONAL_REGISTRY.get(relative)
         try:
             document = json.loads(manifest_path.read_text(encoding="utf-8"))
         except json.JSONDecodeError as exc:
@@ -215,7 +236,16 @@ def census() -> tuple[list[str], int, int, int]:
         swept += 1
         suite = manifest_path.parent.name
         registered = REGISTRY.get(suite)
-        if registered is not None and registered[0] == manifest_path.name:
+        if additional_registration is not None:
+            suite_errors, suite_bound = audit_registered(
+                relative,
+                cases,
+                document,
+                additional_registration,
+            )
+            errors.extend(suite_errors)
+            bound += suite_bound
+        elif registered is not None and registered[0] == manifest_path.name:
             suite_errors, suite_bound = audit_registered(suite, cases, document)
             errors.extend(suite_errors)
             bound += suite_bound
@@ -233,6 +263,9 @@ def census() -> tuple[list[str], int, int, int]:
     for relative in KNOWN_UNATTRIBUTED:
         if not (TESTS / relative).is_file():
             errors.append(f"{relative}: recorded as known-unattributed but absent")
+    for relative in ADDITIONAL_REGISTRY:
+        if not (TESTS / relative).is_file():
+            errors.append(f"{relative}: registered additional case manifest is absent")
     return errors, bound, swept, unattributed
 
 

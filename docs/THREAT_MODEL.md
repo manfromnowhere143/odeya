@@ -149,7 +149,7 @@ A weaker tier cannot be selected because it is cheaper. The isolation claim must
 | T26 | Provider/model fallback silently changes a confirmatory attempt or its data behavior | Exact model/harness/provider/retention identity, fallback as new attempt, protocol comparability rule | Original attempt stops; new attempt is separately classified and adjudicated |
 | T27 | A contributor supplies a polished pseudoscientific or false premise and the engine optimizes for a persuasive compliant report | Premise/evidence-class challenge, rival and falsifier generation, admissibility rules, refusal benchmark, human/domain escalation | Mission is refused, reframed, or retained as an explicitly adversarial test; no eligible claim or publication |
 | T28 | A research benchmark appears strong because the agent retrieves the reference answer, evaluator artifact, derivative summary, or contaminated cache instead of synthesizing evidence | Exact contamination frontier, clean-room blocked-reference manifest, cache/index/embedding taint, ordinary-versus-clean-room comparison, atomic-fact audit | Evaluation is invalidated or reported as contaminated; no capability promotion |
-| T29 | An agent, compromised session, or shared credential turns a human-labelled key or authentication result into apparent human approval over unseen or changed bytes | PRQ-013 singleton later-ratification candidate binds the exact source decision and candidate bytes, source relationship, candidate RP/origin/algorithm policy, verifier-generated unpredictable content-addressed challenge, separate content-addressed presentation/confirmation receipt, full ceremony context, half-open single-consumption chronology, user presence/verification, identity/authenticator/custody observations, exact cryptographic inputs, and sanitized derived evidence. The current receipt names the challenge, but the signed challenge does not commit to the receipt digest; profile issuance is blocked pending a cycle-free two-phase commitment or accepted transaction-confirmation trusted path. Aggregate quorum, currentness, revocation, and authority remain deferred to a later controlled-time `AssuredDecision` evaluation | Individual assurance remains `indeterminate` or `invalid` when required observations fail; no same-actor cryptographic co-binding, original authorship, source timestamp, `H` slot, aggregate quorum, grant, release, or Gate A decision is satisfied |
+| T29 | An agent, compromised session, or shared credential turns a human-labelled key or authentication result into apparent human approval over unseen or changed bytes | PRQ-013 singleton later-ratification candidate binds the exact source decision and candidate bytes, source relationship, candidate RP/origin/algorithm policy, verifier-generated unpredictable content-addressed presentation challenge, separate content-addressed presentation/confirmation receipt, and an authenticator-signed phase-two challenge that commits to the receipt digest without a cycle. It also retains full ceremony context, half-open single-consumption chronology, user presence/verification, identity/authenticator/custody observations, exact cryptographic inputs, and sanitized derived evidence. The co-binding is a synthetic construction property, not measured ceremony evidence. Aggregate quorum, currentness, revocation, and authority remain deferred to a later controlled-time `AssuredDecision` evaluation | Individual assurance remains `indeterminate` or `invalid` when required observations fail; no real same-person ceremony, original authorship, source timestamp, `H` slot, aggregate quorum, grant, release, or Gate A decision is satisfied |
 
 Every row needs at least one known-bad architecture fixture before Gate A.
 Gate A additionally requires accepted protocol semantics, bounded
@@ -170,11 +170,13 @@ excluded from every `H` slot and quorum. Acceptance of that record falsifies
 the architecture.
 
 The positive synthetic chain is not a counterexample to session compromise.
-Its content-addressed receipt protects exact receipt identity, but does not
-prove that the authenticator actor caused the separate application gesture.
-Until a two-phase receipt commitment or accepted trusted transaction display
-is retained, the profile remains unissued and the same-actor claim remains
-false.
+Its adopted two-phase frame makes the authentication challenge commit to the
+exact presentation/confirmation receipt without a digest cycle. That proves a
+construction relation between retained synthetic bytes; it does not prove that
+one natural person caused both acts in a real ceremony. The profile remains
+unissued pending backing-byte verification, independent eligibility
+recomputation, end-to-end consumer refusal, accountable review, and the
+operator's exact-byte decision.
 
 The exact non-authoritative cognition records and invariants used to close T21–T26 are specified in [Cognitive Control Contracts](COGNITIVE_CONTROL_CONTRACTS.md).
 

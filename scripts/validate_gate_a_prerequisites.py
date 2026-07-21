@@ -10,7 +10,9 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 import sys
+from collections import Counter
 from pathlib import Path
 from typing import Any
 
@@ -25,6 +27,75 @@ CANONICAL_PROFILE_CORE = (
 CANONICAL_PROFILE_EVIDENCE = (
     ROOT / "architecture/canonicalization-profile-candidate-evidence.json"
 )
+# path, governed heading, end heading, unit kind, unique marker, ordinal,
+# SHA-256 of the normalized exact unit, then its complete governed section.
+CURRENT_ASSURANCE_UNITS = (
+    (
+        "docs/HUMAN_DECISION_ASSURANCE.md", "## Retained nonclaims", None,
+        "bullet", "The application confirmation receipt and authenticator actor", 3,
+        "22d92e1a3afd115ef693ab611315b84f27c740f893063e3de68b5d4187220e4c",
+        "832dde591a36cb040d82935144566f52ce32dbe9f504927a9cc9bbac6c806cfd",
+    ),
+    (
+        "tests/human-decision-assurance/README.md", "## Exact-byte, challenge, and confirmation checks", None,
+        "paragraph", "The adopted v2 construction co-binds the two acts", 3,
+        "4047524fdc329dbaf89ddcfa4c42fac4e08098a0a08eda5eb5214b05f1d84bb7",
+        "ddb3b51909c3904709156bf707b8c00af6064bad415fe4c8ccf547941afef29b",
+    ),
+    (
+        "docs/THREAT_MODEL.md", "## Abuse-case register", None, "table_row", "| T29 |", None,
+        "9ff1f0d40db48d6f85e0211a6c801bb0c668139dbb266203b83bbd45b7218574",
+        "3bf778d024e5a0d90cca8a65bc142ec23a85f063590a263a62de12aad26a4ce7",
+    ),
+    (
+        "docs/THREAT_MODEL.md", "## Abuse-case register", None, "paragraph", "The positive synthetic chain is not a counterexample", 3,
+        "31bc358eaa531e5e37889fa1a548d74b9f286e9562e08c34775771bf4c1cb643",
+        "3bf778d024e5a0d90cca8a65bc142ec23a85f063590a263a62de12aad26a4ce7",
+    ),
+    (
+        "docs/ARCHITECTURE_STATUS.md", "## Readiness by Gate A area", None, "table_row", "| G3 security/authority |", None,
+        "574b7e1a489c8db2bfde219445eedb0f3fc3574e10e741d5bda17e44529f2eeb",
+        "5d89475743c1ec7d92caac048ce158a2c9e5a1fca50a731ee5f12a3c0400ff75",
+    ),
+    (
+        "docs/ARCHITECTURE_STATUS.md", "## Critical blockers", None, "table_row", "| A-016 |", None,
+        "1a6d4e01a4c712fc52e294b9c73468d2a94e9b50fb6d1b8c208660e1609bbd0a",
+        "bfc10627b31d48125e9095c92a61916380ba584006683f5ec9cc011eaa6e11d4",
+    ),
+    (
+        "docs/SESSION_HANDOFF.md", "## What this lane established, and where to put pressure next", None,
+        "bullet", "**PRQ-013 now has retained byte-bound/recomputation candidate evidence, not closure.**", 1,
+        "ddd88f99d459c0cfb3d9f9f57c12cab6d55d95dafd33ebf8fdaa14d4466c87fe",
+        "9184df2c5b288ba5589d6312ca82d7686f8b5e07c61b709dd54c0c450b88e0cc",
+    ),
+    (
+        "docs/SESSION_HANDOFF.md", "## Active PRQ-013 candidate — resolve release status from Git", None,
+        "paragraph", "Those are structural and bounded-semantic candidate measurements", 6,
+        "e0e4fd58d204a82cbcc698f436818e390225733fd52474dd96f9f449d986852c",
+        "b230955b3e07c6d841c5f575c26f3536c14a01148c6c939a0c4f0a1d1fff86d9",
+    ),
+    (
+        "docs/decisions/0092-bind-human-decisions-through-an-external-assurance-wrapper.md",
+        "# ADR 0092: Bind human decisions through an external assurance wrapper", "## Context", "section", "", None,
+        "176d0c8bddd27ff718f78617f0248f2a566a51729a942752cf3212efb0c5fd51",
+        "176d0c8bddd27ff718f78617f0248f2a566a51729a942752cf3212efb0c5fd51",
+    ),
+    (
+        "docs/decisions/0094-bind-current-status-surfaces-to-retained-machine-evidence.md",
+        "## Decision", None, "section", "", None, "01aaf2f2943af931689598888ff9d709b750863360f02505d575242eaa8f7273",
+        "01aaf2f2943af931689598888ff9d709b750863360f02505d575242eaa8f7273",
+    ),
+)
+
+RECOVERY_HANDOFF = "docs/SESSION_HANDOFF.md"
+RECOVERY_HEADING = "## Current repository recovery identity"
+PUBLISHED_BASELINE = "34cad10a42027730a515614fc0a5bd664dd8933b"
+PUBLISHED_BASELINE_TREE = "4ea6a2c751f76cb97a434e749104ed9f667a68d4"
+RECOVERY_INVARIANT_SHA256 = "37b25307a3691eb275d6d457e2643e7400aa09d700b1fdb37ac63170bcb3cf2a"
+# SHA-256 of the normalized 51-line recovery program. Its separately named
+# cardinality line keeps the single-parent invariant reviewable.
+EXPECTED_RECOVERY_PROGRAM_SHA256 = "017526e98aeaec645f10b6f3cbf63aceb5d52ba12f46490d37a6d8891a31529c"
+PARENT_CARDINALITY_LINE = 'test "$(git rev-list --parents -n 1 "$HEAD_COMMIT" | awk \'{print NF}\')" = 2'
 EXPECTED_REFUSAL_KEYS = frozenset(
     {
         "gate_a_complete",
@@ -68,9 +139,49 @@ EXPECTED_HUMAN_DECISION_ASSURANCE = {
                 "urn:odeya:schema:human-decision-assurance-core:0.1.0",
         },
         {
+            "path": (
+                "schemas/human-decision-assurance-backing-byte-"
+                "verification-receipt.schema.json"
+            ),
+            "schema_id": (
+                "urn:odeya:schema:human-decision-assurance-backing-byte-"
+                "verification-receipt:0.1.0"
+            ),
+        },
+        {
+            "path": (
+                "schemas/human-decision-assurance-eligibility-comparison-"
+                "receipt.schema.json"
+            ),
+            "schema_id": (
+                "urn:odeya:schema:human-decision-assurance-eligibility-"
+                "comparison-receipt:0.1.0"
+            ),
+        },
+        {
+            "path": (
+                "schemas/human-decision-assurance-eligibility-"
+                "recomputation-result.schema.json"
+            ),
+            "schema_id": (
+                "urn:odeya:schema:human-decision-assurance-eligibility-"
+                "recomputation-result:0.1.0"
+            ),
+        },
+        {
+            "path": "schemas/human-decision-assurance-evidence-v0-2.schema.json",
+            "schema_id":
+                "urn:odeya:schema:human-decision-assurance-evidence:0.2.0",
+        },
+        {
             "path": "schemas/human-decision-assurance-evidence.schema.json",
             "schema_id":
                 "urn:odeya:schema:human-decision-assurance-evidence:0.1.0",
+        },
+        {
+            "path": "schemas/human-decision-assurance-seal-v0-2.schema.json",
+            "schema_id":
+                "urn:odeya:schema:human-decision-assurance-seal:0.2.0",
         },
         {
             "path": "schemas/human-decision-assurance-seal.schema.json",
@@ -86,9 +197,28 @@ EXPECTED_HUMAN_DECISION_ASSURANCE = {
         "after_t1_authority_assignment_and_t2_authority_currentness_quorum_"
         "consumer_contracts",
     "individual_eligibility_ruleset_ref":
-        "architecture/human-decision-assurance-individual-eligibility-ruleset-v1-candidate.json",
+        "architecture/human-decision-assurance-individual-eligibility-ruleset-v2-candidate.json",
     "individual_eligibility_ruleset_issued": False,
-    "independent_eligibility_recomputation_retained": False,
+    "independent_eligibility_recomputation_retained": True,
+    "independent_recomputation_scope": (
+        "three_source_separated_nonsharing_language_implementations_not_"
+        "organizational_independence"
+    ),
+    "organizational_independence_proven": False,
+    "successor_generation_manifest_ref": (
+        "tests/human-decision-assurance-successor/generation-manifest.json"
+    ),
+    "successor_generation_manifest_binding": {
+        "artifact_id": "hda-successor-generation-manifest.synthetic.0001",
+        "raw_sha256": (
+            "sha256:f401a95c52ccc49791872584971450c723d3c9d2632d66cbd3e9761fea26e247"
+        ),
+        "byte_count": 16050,
+    },
+    "synthetic_conformance_backing_bytes_dereferenced_and_verified": True,
+    "synthetic_content_addressed_backing_preimage_count": 14,
+    "successor_expectation_free_vector_count": 44,
+    "successor_chain_known_bad_count": 48,
     "material_presentation_receipt_verified_in_real_ceremony": False,
     # ADR 0093, adopted. True as a property of the two-phase frame
     # construction: the authentication challenge commits to the confirmation
@@ -105,13 +235,13 @@ EXPECTED_HUMAN_DECISION_ASSURANCE = {
         "architecture/human-decision-assurance-consumer-census.json",
     "consumer_census_binding": {
         "raw_sha256":
-            "sha256:d761cdb4ebd8776935a90bc7c877da805f3e07bb17ce1333f24c01619b4f9a3a",
-        "byte_count": 147738,
+            "sha256:f3214129e18f9db38a6c00a517712190cf257b62b51f42a032cd5af033820e98",
+        "byte_count": 151958,
         "baseline_git_commit": "56e8062334fb81bba955ba137be690e085d4c88e",
         "baseline_git_tree": "d90ed6dd8c54b91a1e503358f98ecaa08c766fa3",
         "baseline_schema_count": 112,
-        "candidate_mechanism_schema_count": 3,
-        "current_union_schema_count": 115,
+        "candidate_mechanism_schema_count": 8,
+        "current_union_schema_count": 120,
         "direct_or_policy_conditional_schema_count": 19,
         "pending_operator_acceptance_schema_count": 9,
     },
@@ -190,13 +320,466 @@ EXPECTED_HUMAN_DECISION_ASSURANCE = {
         "docs/decisions/0089-a-valid-human-signature-is-not-a-human-decision.md",
     "decision_ref":
         "docs/decisions/0092-bind-human-decisions-through-an-external-assurance-wrapper.md",
+    "co_binding_decision_ref":
+        "docs/decisions/0093-co-bind-the-confirmation-gesture-through-a-two-phase-challenge.md",
     "closure_disposition":
-        "freeze_unissued_individual_assurance_foundation_then_construct_t1_t2_"
-        "dependencies_and_unissued_wrapper_successors_prove_transitive_"
-        "migration_exact_backing_bytes_confirmation_actor_cobinding_"
-        "independent_recomputation_end_to_end_refusal_and_accountable_gate_a_"
-        "review_real_ceremony_deferred_to_separately_authorized_gate_b_probe",
+        "retain_unissued_t0_byte_bound_and_source_separated_recomputation_"
+        "candidate_evidence_pending_context_isolated_technical_review_then_"
+        "construct_t1_t2_dependencies_and_unissued_wrapper_successors_prove_"
+        "transitive_migration_end_to_end_refusal_and_accountable_gate_a_review_"
+        "real_ceremony_deferred_to_separately_authorized_gate_b_probe",
 }
+
+
+def normalize_prose(value: str) -> str:
+    return " ".join(value.split())
+
+
+def blank_non_newlines(value: str) -> str:
+    return "".join("\n" if character == "\n" else " " for character in value)
+
+
+def mask_html_comments(value: str) -> str:
+    return re.sub(
+        r"<!--.*?(?:-->|$)",
+        lambda match: blank_non_newlines(match.group()),
+        value,
+        flags=re.DOTALL,
+    )
+
+
+def visible_markdown(value: str) -> str:
+    lines = mask_html_comments(value).splitlines(keepends=True)
+    fence: str | None = None
+    for index, line in enumerate(lines):
+        opening = re.match(r"^[ \t]*(`{3,}|~{3,})", line)
+        if fence is None and opening is not None:
+            fence = opening.group(1)
+            lines[index] = blank_non_newlines(line)
+        elif fence is None and re.match(r"^(?: {4}|\t)", line):
+            lines[index] = blank_non_newlines(line)
+        elif fence is not None:
+            lines[index] = blank_non_newlines(line)
+            if re.match(
+                rf"^[ \t]*{re.escape(fence[0])}{{{len(fence)},}}[ \t]*(?:\r?\n)?$",
+                line,
+            ):
+                fence = None
+    return "".join(lines)
+
+
+def heading_parts(line: str) -> tuple[int, str] | None:
+    match = re.fullmatch(r"[ \t]{0,3}(#{1,6})[ \t]+(.+?)[ \t]*", line)
+    if match is None:
+        return None
+    title = re.sub(r"[ \t]+#+[ \t]*$", "", match.group(2)).strip()
+    return len(match.group(1)), normalize_prose(title)
+
+
+def governed_section(raw: str, heading: str, until_heading: str | None = None) -> tuple[str | None, str | None, str | None]:
+    visible = visible_markdown(raw)
+    headings: list[tuple[int, int, int, str]] = []
+    for match in re.finditer(r"(?m)^.*$", visible):
+        parts = heading_parts(match.group())
+        if parts is not None:
+            headings.append((match.start(), match.end(), *parts))
+    target = heading_parts(heading)
+    assert target is not None
+    matches = [item for item in headings if item[3] == target[1]]
+    if len(matches) != 1 or matches[0][2] != target[0]:
+        return None, None, (
+            f"governed heading {target[1]!r} must occur exactly once at "
+            f"level {target[0]}"
+        )
+    current = matches[0]
+    if until_heading is not None:
+        endpoint = heading_parts(until_heading)
+        assert endpoint is not None
+        ends = [item for item in headings if item[3] == endpoint[1]]
+        if len(ends) != 1 or ends[0][2] != endpoint[0] or ends[0][0] <= current[1]:
+            return None, None, (
+                f"governed end heading {endpoint[1]!r} must occur exactly once "
+                f"at level {endpoint[0]} after {target[1]!r}"
+            )
+        end = ends[0][0]
+    else:
+        end = next(
+            (
+                item[0]
+                for item in headings
+                if item[0] > current[1] and item[2] <= target[0]
+            ),
+            len(raw),
+        )
+    return raw[current[1]:end], visible[current[1]:end], None
+
+
+def current_file_text(relative_path: str, overrides: dict[str, str | None] | None) -> str | None:
+    if overrides is not None and relative_path in overrides:
+        return overrides[relative_path]
+    try:
+        return (ROOT / relative_path).read_text(encoding="utf-8")
+    except OSError:
+        return None
+
+
+def units_of_kind(section: str, kind: str) -> list[str]:
+    if kind == "section":
+        return [normalize_prose(section)]
+    if kind == "paragraph":
+        return [
+            normalize_prose(item)
+            for item in re.split(r"\n[ \t]*\n", section)
+            if normalize_prose(item)
+        ]
+    if kind == "table_row":
+        lines = section.splitlines()
+        separators = [
+            index
+            for index, line in enumerate(lines)
+            if re.fullmatch(r"[ \t]*\|(?:[ \t]*:?-+:?[ \t]*\|)+[ \t]*", line)
+        ]
+        if len(separators) != 1 or separators[0] == 0:
+            return []
+        start, end = separators[0] - 1, separators[0] + 1
+        while end < len(lines) and re.fullmatch(r"[ \t]*\|.*\|[ \t]*", lines[end]):
+            end += 1
+        return [
+            normalize_prose(line)
+            for line in lines[start:end]
+            if re.fullmatch(r"[ \t]*\|.*\|[ \t]*", line)
+        ]
+    lines = section.splitlines()
+    starts = [
+        index
+        for index, line in enumerate(lines)
+        if re.match(r"^[-*+][ \t]+", line)
+    ]
+    return [
+        normalize_prose("\n".join(lines[start:end]))
+        for start, end in zip(starts, [*starts[1:], len(lines)], strict=True)
+    ]
+
+
+def exact_unit_errors(
+    prefix: str,
+    section: str,
+    kind: str,
+    marker: str,
+    ordinal: int | None,
+    expected_digest: str,
+) -> list[str]:
+    units = units_of_kind(section, kind)
+    matches = units if kind == "section" else [unit for unit in units if marker in unit]
+    label = marker or "complete section"
+    if kind != "section" and normalize_prose(section).count(marker) != 1:
+        matches = []
+    if len(matches) != 1:
+        return [
+            f"{prefix}: governed {kind} marker {label!r} must occur exactly once; "
+            f"observed {len(matches)}"
+        ]
+    unit = matches[0]
+    failures: list[str] = []
+    if ordinal is not None and units.index(unit) != ordinal:
+        failures.append(f"{prefix}: governed {kind} {label!r} moved from ordinal {ordinal}")
+    if hashlib.sha256(unit.encode()).hexdigest() != expected_digest:
+        failures.append(f"{prefix}: governed {kind} {label!r} does not match its pinned exact unit")
+    return failures
+
+
+def assurance_truth_surface_errors(
+    overrides: dict[str, str | None] | None = None,
+) -> list[str]:
+    failures: list[str] = []
+    cache: dict[tuple[str, str, str | None], str | None] = {}
+    for (
+        path, heading, endpoint, kind, marker, ordinal, digest, section_digest,
+    ) in CURRENT_ASSURANCE_UNITS:
+        prefix = f"{path} [{heading}]"
+        raw = current_file_text(path, overrides)
+        if raw is None:
+            failures.append(f"{path}: required current truth-surface file is missing")
+            continue
+        key = (path, heading, endpoint)
+        if key not in cache:
+            _, section, section_error = governed_section(raw, heading, endpoint)
+            if section_error is not None:
+                failures.append(f"{prefix}: {section_error}")
+                cache[key] = None
+            else:
+                assert section is not None
+                cache[key] = section
+                if (
+                    hashlib.sha256(normalize_prose(section).encode()).hexdigest()
+                    != section_digest
+                ):
+                    failures.append(
+                        f"{prefix}: governed section does not match its pinned "
+                        "complete current structure"
+                    )
+        section = cache[key]
+        if section is not None:
+            failures.extend(
+                exact_unit_errors(prefix, section, kind, marker, ordinal, digest)
+            )
+    return failures
+
+
+def replace_once(raw: str, old: str, new: str, label: str, errors: list[str]) -> str:
+    if raw.count(old) != 1:
+        errors.append(f"cannot construct truth-surface self-test {label!r}")
+        return raw
+    return raw.replace(old, new, 1)
+
+
+def expect_self_test(label: str, observed: list[str], expected: str, errors: list[str]) -> int:
+    if expected in observed:
+        return 1
+    errors.append(
+        f"truth-surface self-test {label!r} missed intended error "
+        f"{expected!r}; observed {observed!r}"
+    )
+    return 0
+
+
+def assurance_truth_surface_known_bad_self_tests(errors: list[str]) -> int:
+    hda_path = "docs/HUMAN_DECISION_ASSURANCE.md"
+    status_path = "docs/ARCHITECTURE_STATUS.md"
+    threat_path = "docs/THREAT_MODEL.md"
+    adr_path = CURRENT_ASSURANCE_UNITS[-1][0]
+    hda = (ROOT / hda_path).read_text(encoding="utf-8")
+    status = (ROOT / status_path).read_text(encoding="utf-8")
+    threat = (ROOT / threat_path).read_text(encoding="utf-8")
+    if safe := assurance_truth_surface_errors():
+        errors.append(f"assurance truth-surface safe control failed: {safe!r}")
+    marker = "The application confirmation receipt and authenticator actor"
+    prefix = f"{hda_path} [## Retained nonclaims]"
+    missing = f"{prefix}: governed bullet marker {marker!r} must occur exactly once; observed 0"
+    hidden = replace_once(hda, marker, f"<!-- {marker} -->", "hidden", errors)
+    start = hda.find("- The application confirmation receipt")
+    end = hda.find("\n- The exact singleton ruleset", start)
+    if start < 0 or end < 0:
+        errors.append("cannot construct truth-surface self-test 'fenced-current-unit'")
+        fenced = hda
+    else:
+        fenced = hda[:start] + "```text\n" + hda[start:end] + "\n```" + hda[end:]
+    wrapped = replace_once(
+        hda, "## Retained nonclaims",
+        "## Retained nonclaims\n\nThe signed\nchallenge does not commit to the confirmation-receipt digest.",
+        "wrapped-stale", errors,
+    )
+    omitted_receipt = replace_once(
+        hda,
+        "## Retained nonclaims",
+        "## Retained nonclaims\n\n"
+        "Current authentication omits all confirmation-receipt material.",
+        "omitted-receipt-paragraph",
+        errors,
+    )
+    nested = replace_once(
+        hda, "## Retained nonclaims",
+        "## Retained nonclaims\n\n### Retained nonclaims ###",
+        "nested-closing-heading", errors,
+    )
+    suffix = hda[:end] + " This assertion is false." + hda[end:] if end >= 0 else hda
+    a016_rows = [line for line in status.splitlines() if line.startswith("| A-016 |")]
+    a016_cells = (
+        [cell.strip() for cell in a016_rows[0][1:-1].split("|")]
+        if len(a016_rows) == 1
+        else []
+    )
+    if len(a016_cells) != 4:
+        errors.append("cannot construct truth-surface self-test 'row-move'")
+        moved = status
+    else:
+        current_blocker = a016_cells[2]
+        moved = replace_once(
+            status, current_blocker, "The A-016 boundary was moved.", "row-move", errors,
+        )
+        if moved != status:
+            moved = replace_once(
+                moved,
+                "| A-015 | Critical |",
+                f"| A-015 | Critical | {current_blocker}. ",
+                "row-move-target",
+                errors,
+            )
+    a017 = replace_once(
+        status,
+        "\n\n## Machine-family maturity",
+        "\n| A-017 | Critical | The confirmation receipt is excluded from "
+        "authentication. | Refuse the contradictory status claim |\n\n"
+        "## Machine-family maturity",
+        "A-017-receipt-exclusion",
+        errors,
+    )
+    t30 = replace_once(
+        threat,
+        "\n\nEvery row needs at least one known-bad architecture fixture before Gate A.",
+        "\n| T30 | Current authentication omits all confirmation-receipt material. | "
+        "Contradicts the current construction | Blocked |\n\n"
+        "Every row needs at least one known-bad architecture fixture before Gate A.",
+        "T30-receipt-omission",
+        errors,
+    )
+    complete = "governed section does not match its pinned complete current structure"
+    mutants = (
+        ("hidden-current-unit", {hda_path: hidden}, missing),
+        ("fenced-current-unit", {hda_path: fenced}, missing),
+        ("wrapped-stale-plus-correct", {hda_path: wrapped}, f"{prefix}: {complete}"),
+        ("omitted-receipt-paragraph", {hda_path: omitted_receipt}, f"{prefix}: {complete}"),
+        ("nested-closing-heading", {hda_path: nested}, f"{prefix}: governed heading 'Retained nonclaims' must occur exactly once at level 2"),
+        ("unit-suffix-contradiction", {hda_path: suffix}, f"{prefix}: governed bullet {marker!r} does not match its pinned exact unit"),
+        ("A-016-assertion-moved-to-A-015", {status_path: moved}, f"{status_path} [## Critical blockers]: governed table_row '| A-016 |' does not match its pinned exact unit"),
+        ("A-017-receipt-exclusion", {status_path: a017}, f"{status_path} [## Critical blockers]: {complete}"),
+        ("T30-receipt-omission", {threat_path: t30}, f"{threat_path} [## Abuse-case register]: {complete}"),
+        ("missing-ADR-0094", {adr_path: None}, f"{adr_path}: required current truth-surface file is missing"),
+    )
+    return sum(
+        expect_self_test(label, assurance_truth_surface_errors(override), expected, errors)
+        for label, override, expected in mutants
+    )
+
+
+def fenced_blocks(value: str) -> list[tuple[str, str]]:
+    blocks: list[tuple[str, str]] = []
+    fence: str | None = None
+    info = ""
+    body: list[str] = []
+    for line in mask_html_comments(value).splitlines():
+        marker = re.match(r"^[ \t]*(`{3,}|~{3,})(.*)$", line)
+        if fence is None and marker is not None:
+            fence, info, body = marker.group(1), marker.group(2).strip(), []
+        elif fence is not None and re.fullmatch(
+            rf"[ \t]*{re.escape(fence[0])}{{{len(fence)},}}[ \t]*", line
+        ):
+            blocks.append((info, "\n".join(body)))
+            fence = None
+        elif fence is not None:
+            body.append(line)
+    return blocks
+
+
+def recovery_truth_surface_errors(
+    overrides: dict[str, str | None] | None = None,
+) -> list[str]:
+    prefix = f"{RECOVERY_HANDOFF} [{RECOVERY_HEADING}]"
+    raw = current_file_text(RECOVERY_HANDOFF, overrides)
+    if raw is None:
+        return [f"{RECOVERY_HANDOFF}: required recovery handoff is missing"]
+    raw_section, section, section_error = governed_section(raw, RECOVERY_HEADING)
+    if section_error is not None:
+        return [f"{prefix}: {section_error}"]
+    assert raw_section is not None and section is not None
+    failures: list[str] = []
+    labels = (
+        (
+            "baseline", PUBLISHED_BASELINE,
+            r"(?m)^- Exact published baseline observed at recovery:[ \t]*\n"
+            r"[ \t]+`([0-9a-f]{40})`[ \t]*$",
+        ),
+        (
+            "tree", PUBLISHED_BASELINE_TREE,
+            r"(?m)^- Exact published-baseline tree:[ \t]*\n"
+            r"[ \t]+`([0-9a-f]{40})`[ \t]*$",
+        ),
+    )
+    for label, expected, pattern in labels:
+        observed = re.findall(pattern, section)
+        literal = "Exact published baseline observed at recovery:" if label == "baseline" else "Exact published-baseline tree:"
+        if observed != [expected] or section.count(literal) != 1:
+            failures.append(
+                f"{prefix}: recovery {label} label must occur exactly once and "
+                f"equal {expected}"
+            )
+    unexpected = sorted(
+        set(re.findall(r"(?<![0-9a-f])[0-9a-f]{40}(?![0-9a-f])", section))
+        - {PUBLISHED_BASELINE, PUBLISHED_BASELINE_TREE}
+    )
+    if unexpected:
+        failures.append(f"{prefix}: unexpected full Git identities {unexpected!r}")
+    blocks = fenced_blocks(raw_section)
+    if len(blocks) != 1 or blocks[0][0] != "bash":
+        failures.append(f"{prefix}: recovery program must be exactly one bash fence")
+    else:
+        program = "\n".join(line.rstrip() for line in blocks[0][1].strip().splitlines())
+        if hashlib.sha256(program.encode()).hexdigest() != EXPECTED_RECOVERY_PROGRAM_SHA256:
+            failures.append(f"{prefix}: recovery program does not equal pinned expected program")
+        if program.count(PARENT_CARDINALITY_LINE) != 1:
+            failures.append(f"{prefix}: recovery program lost its one-parent cardinality guard")
+    if section.count("Expected invariants:") != 1:
+        failures.append(f"{prefix}: Expected invariants marker must occur exactly once")
+    else:
+        invariant_section = section.split("Expected invariants:", 1)[1]
+        marker = "the active `HEAD` is either that already-published baseline"
+        invariant_errors = exact_unit_errors(
+            prefix,
+            invariant_section,
+            "bullet",
+            marker,
+            3,
+            RECOVERY_INVARIANT_SHA256,
+        )
+        failures.extend(invariant_errors)
+    return failures
+
+
+def recovery_truth_surface_known_bad_self_tests(errors: list[str]) -> int:
+    raw = (ROOT / RECOVERY_HANDOFF).read_text(encoding="utf-8")
+    if safe := recovery_truth_surface_errors({RECOVERY_HANDOFF: raw}):
+        errors.append(f"recovery truth-surface safe control failed: {safe!r}")
+    prefix = f"{RECOVERY_HANDOFF} [{RECOVERY_HEADING}]"
+    program_error = f"{prefix}: recovery program does not equal pinned expected program"
+    mutations = (
+        (
+            "inverted-remote-main", program_error,
+            'test "$REMOTE_MAIN" = "$PUBLISHED_BASELINE" || test "$REMOTE_MAIN" = "$HEAD_COMMIT"',
+            'test "$REMOTE_MAIN" != "$PUBLISHED_BASELINE" || test "$REMOTE_MAIN" != "$HEAD_COMMIT"',
+        ),
+        (
+            "two-commit-range", program_error,
+            'test "$(git rev-list --count "$PUBLISHED_BASELINE..$HEAD_COMMIT")" = 1',
+            'test "$(git rev-list --count "$PUBLISHED_BASELINE..$HEAD_COMMIT")" = 2',
+        ),
+        (
+            "merge-parent-guard-removed",
+            f"{prefix}: recovery program lost its one-parent cardinality guard",
+            '  test "$(git rev-list --parents -n 1 "$HEAD_COMMIT" | awk \'{print NF}\')" = 2\n',
+            "",
+        ),
+    )
+    count = 0
+    for label, expected, old, new in mutations:
+        mutant = replace_once(raw, old, new, label, errors)
+        count += expect_self_test(
+            label, recovery_truth_surface_errors({RECOVERY_HANDOFF: mutant}),
+            expected, errors,
+        )
+    baseline = f"- Exact published baseline observed at recovery:\n  `{PUBLISHED_BASELINE}`"
+    duplicate = baseline + f"\n- Exact published baseline observed at recovery:\n  `{PUBLISHED_BASELINE_TREE}`"
+    mutant = replace_once(raw, baseline, duplicate, "duplicate-baseline-label", errors)
+    count += expect_self_test(
+        "duplicate-baseline-label", recovery_truth_surface_errors({RECOVERY_HANDOFF: mutant}),
+        f"{prefix}: recovery baseline label must occur exactly once and equal {PUBLISHED_BASELINE}",
+        errors,
+    )
+    invariant = "multi-commit range fails recovery;"
+    mutant = replace_once(
+        raw, invariant, invariant + " this statement is false;",
+        "recovery-invariant-suffix", errors,
+    )
+    count += expect_self_test(
+        "recovery-invariant-suffix", recovery_truth_surface_errors({RECOVERY_HANDOFF: mutant}),
+        (
+            f"{prefix}: governed bullet 'the active `HEAD` is either that "
+            "already-published baseline' does not match its pinned exact unit"
+        ),
+        errors,
+    )
+    return count
+
+
 EXPECTED_NEXT_DEPENDENCY_CONTAINED_TRANCHE = {
     "tranche_id": "T1.authority-assignment",
     "may_start_after": [
@@ -542,9 +1125,11 @@ def human_decision_assurance_errors(value: Any) -> list[str]:
         "candidate_evidence_ref",
         "challenge_frame_profile_ref",
         "challenge_frame_vector_evidence_ref",
+        "successor_generation_manifest_ref",
         "source_evidence_ref",
         "antecedent_decision_ref",
         "decision_ref",
+        "co_binding_decision_ref",
     ):
         relative = value.get(key)
         if isinstance(relative, str) and not (ROOT / relative).is_file():
@@ -586,6 +1171,112 @@ def human_decision_assurance_errors(value: Any) -> list[str]:
                 errors.append(
                     "human_decision_assurance.candidate_schema_refs"
                     f"[{index}] schema_id does not equal the retained $id"
+                )
+
+    successor_ref = value.get("successor_generation_manifest_ref")
+    successor_binding = value.get("successor_generation_manifest_binding")
+    if isinstance(successor_ref, str) and isinstance(successor_binding, dict):
+        successor_path = ROOT / successor_ref
+        try:
+            successor_raw = successor_path.read_bytes()
+            successor = load(successor_path)
+            vectors = load(
+                ROOT / "tests/human-decision-assurance-successor/vectors.json"
+            )
+            chain_cases = load(
+                ROOT
+                / "tests/human-decision-assurance-successor/chain-cases.json"
+            )
+        except (
+            OSError,
+            json.JSONDecodeError,
+            DuplicateKey,
+            ValueError,
+        ) as exc:
+            errors.append(
+                "human_decision_assurance successor chain is not strict "
+                f"retained evidence: {exc}"
+            )
+        else:
+            observed_digest = "sha256:" + hashlib.sha256(successor_raw).hexdigest()
+            expected_successor_binding = {
+                "artifact_id": successor.get("artifact_id"),
+                "raw_sha256": observed_digest,
+                "byte_count": len(successor_raw),
+            }
+            if successor_binding != expected_successor_binding:
+                errors.append(
+                    "human_decision_assurance.successor_generation_manifest_"
+                    "binding does not match retained strict bytes"
+                )
+
+            generated = successor.get("generated_artifacts")
+            generated = generated if isinstance(generated, list) else []
+            artifact_kind_counts = Counter(
+                item.get("artifact_kind")
+                for item in generated
+                if isinstance(item, dict)
+            )
+            identities = successor.get("implementation_identity_inventory")
+            identities = identities if isinstance(identities, list) else []
+            vectors_rows = vectors.get("vectors")
+            vectors_rows = vectors_rows if isinstance(vectors_rows, list) else []
+            chain_rows = chain_cases.get("cases")
+            chain_rows = chain_rows if isinstance(chain_rows, list) else []
+            successor_claims_hold = (
+                successor.get("artifact_class")
+                == "human_decision_assurance_successor_generation_manifest"
+                and successor.get("complete_projection_agreement") is True
+                and successor.get("content_addressed_backing_blob_count")
+                == value.get("synthetic_content_addressed_backing_preimage_count")
+                and successor.get("fixture_timestamp_semantics")
+                == (
+                    "deterministic_fixture_values_not_observed_ceremony_"
+                    "runtime_or_external_event_times"
+                )
+                and artifact_kind_counts["content_addressed_backing_preimage"]
+                == value.get("synthetic_content_addressed_backing_preimage_count")
+                and artifact_kind_counts["direct_evaluator_stdout_projection"] == 3
+                and artifact_kind_counts["schema_valid_recomputation_result"] == 3
+                and len(identities) == 3
+                and len(set(identities)) == 3
+                and len(vectors_rows)
+                == value.get("successor_expectation_free_vector_count")
+                and len(chain_rows)
+                == value.get("successor_chain_known_bad_count")
+                and all(
+                    isinstance(case, dict)
+                    and case.get("kind") == "known_bad"
+                    and isinstance(case.get("expected_errors"), list)
+                    and bool(case["expected_errors"])
+                    and isinstance(case.get("intent_errors"), list)
+                    and bool(case["intent_errors"])
+                    for case in chain_rows
+                )
+                and successor.get("organizational_independence_proven") is False
+                and successor.get("real_human_ceremony_verified") is False
+                and successor.get("gate_a_accepted") is False
+                and successor.get("runtime_authorized") is False
+                and successor.get("external_effects_authorized") is False
+                and successor.get("network_access") is False
+            )
+            if not successor_claims_hold:
+                errors.append(
+                    "human_decision_assurance successor manifest or bounded "
+                    "corpus counts do not retain the declared synthetic chain"
+                )
+            if (
+                value.get("independent_eligibility_recomputation_retained")
+                is not True
+                or value.get(
+                    "synthetic_conformance_backing_bytes_dereferenced_and_verified"
+                )
+                is not True
+                or value.get("organizational_independence_proven") is not False
+            ):
+                errors.append(
+                    "human_decision_assurance successor proof boundary is not "
+                    "source-separated, synthetic, and organizationally unproved"
                 )
 
     census_ref = value.get("consumer_census_ref")
@@ -851,9 +1542,49 @@ def validate_human_decision_assurance_known_bads(errors: list[str]) -> int:
             True,
         ),
         (
-            "independent-eligibility-recomputation-fabricated",
+            "retained-independent-eligibility-recomputation-erased",
             "independent_eligibility_recomputation_retained",
+            False,
+        ),
+        (
+            "independent-recomputation-scope-escalated",
+            "independent_recomputation_scope",
+            "organizationally_independent_external_review",
+        ),
+        (
+            "organizational-independence-fabricated",
+            "organizational_independence_proven",
             True,
+        ),
+        (
+            "successor-generation-manifest-binding-swapped",
+            "successor_generation_manifest_binding",
+            {
+                **EXPECTED_HUMAN_DECISION_ASSURANCE[
+                    "successor_generation_manifest_binding"
+                ],
+                "raw_sha256": "sha256:" + ("0" * 64),
+            },
+        ),
+        (
+            "synthetic-backing-byte-verification-erased",
+            "synthetic_conformance_backing_bytes_dereferenced_and_verified",
+            False,
+        ),
+        (
+            "synthetic-backing-preimage-count-inflated",
+            "synthetic_content_addressed_backing_preimage_count",
+            15,
+        ),
+        (
+            "successor-vector-count-inflated",
+            "successor_expectation_free_vector_count",
+            45,
+        ),
+        (
+            "successor-chain-known-bad-count-inflated",
+            "successor_chain_known_bad_count",
+            49,
         ),
         # The construction now exists, so the escalation to refuse is no longer
         # claiming it -- it is silently dropping it while the profile still
@@ -1282,9 +2013,15 @@ def main() -> int:
         require(
             prq013.get("finding_id") == "PRQ-013"
             and prq013.get("status") == "unresolved_blocking"
-            and "three unissued HumanDecisionAssurance" in prq013.get(
+            and "five separately identified unissued successor schemas"
+            in prq013.get(
                 "closure", ""
             )
+            and "source-separated non-sharing Python, Node.js, and Java"
+            in prq013.get("closure", "")
+            and "not organizational independence" in prq013.get("closure", "")
+            and "no context-isolated technical determination"
+            in prq013.get("closure", "")
             and "zero current consumers are migrated" in prq013.get(
                 "closure", ""
             )
@@ -1293,7 +2030,14 @@ def main() -> int:
             and "T1 AuthorityAssignment" in prq013.get("closure", "")
             and "required T2 command, event, state, reducer, currentness, quorum"
             in prq013.get("closure", "")
-            and "same-actor confirmation/authenticator cryptographic co-binding"
+            and (
+                "same-actor confirmation/authenticator cryptographic co-binding "
+                "is true strictly as a synthetic construction property"
+            )
+            in prq013.get("closure", "")
+            and (
+                "no real ceremony measured that one natural person performed both acts"
+            )
             in prq013.get("closure", "")
             and "Gate A neither requires nor authorizes a live protected ceremony"
             in prq013.get("closure", "")
@@ -1497,6 +2241,14 @@ def main() -> int:
     )
     next_tranche_known_bads = validate_next_tranche_known_bad(errors)
     prq_009_boundary_known_bads = validate_prq_009_boundary_known_bads(errors)
+    errors.extend(assurance_truth_surface_errors())
+    assurance_truth_surface_known_bads = (
+        assurance_truth_surface_known_bad_self_tests(errors)
+    )
+    errors.extend(recovery_truth_surface_errors())
+    recovery_truth_surface_known_bads = (
+        recovery_truth_surface_known_bad_self_tests(errors)
+    )
 
     if errors:
         for error in errors:
@@ -1518,6 +2270,9 @@ def main() -> int:
         "human-decision-assurance known-bads "
         f"and {prq_009_boundary_known_bads} PRQ-009 boundary known-bads "
         f"and {next_tranche_known_bads} next-tranche known-bad "
+        f"and {assurance_truth_surface_known_bads} assurance truth-surface "
+        f"known-bads and {recovery_truth_surface_known_bads} recovery "
+        "truth-surface known-bads "
         "rejected; candidate remains blocked and inactive"
     )
     return 0

@@ -13,7 +13,11 @@
     "docs/decisions/0018-separate-registry-membership-from-history.md",
     "docs/decisions/0019-materialize-fail-closed-work-lease-candidate.md",
     "docs/decisions/0020-freeze-nonrecursive-canonical-profile-candidate.md",
-    "docs/decisions/0089-a-valid-human-signature-is-not-a-human-decision.md"
+    "docs/decisions/0089-a-valid-human-signature-is-not-a-human-decision.md",
+    "docs/decisions/0092-bind-human-decisions-through-an-external-assurance-wrapper.md",
+    "docs/decisions/0093-co-bind-the-confirmation-gesture-through-a-two-phase-challenge.md",
+    "docs/decisions/0094-bind-current-status-surfaces-to-retained-machine-evidence.md",
+    "docs/decisions/0095-reissue-human-decision-assurance-as-a-byte-bound-independently-recomputed-chain.md"
   ],
   "plan_ref": "docs/GATE_A_PREREQUISITE_CLOSURE_PLAN_2026-07-16.md",
   "exact_scope": {
@@ -131,10 +135,10 @@
   },
   "canonical_profile_current_audit": {
     "audit_ref": "tests/canonicalization/SCHEMA_AUDIT.json",
-    "audit_raw_sha256": "sha256:45f17667f3aceb9818905445999987eac78a1c411e220b5cd53b52f04a291d47",
+    "audit_raw_sha256": "sha256:d010106ae27f292a428e09a7de5ae24d82e4ba9d57078032afceb14380476b43",
     "profile_status": "candidate_clear_unissued_pending_gate_a",
-    "schema_count": 115,
-    "fixture_count": 209,
+    "schema_count": 120,
+    "fixture_count": 216,
     "unprofiled_datetime_paths": 0,
     "number_or_decimal_findings": 0,
     "unscoped_digest_fields": 0,
@@ -160,8 +164,28 @@
         "schema_id": "urn:odeya:schema:human-decision-assurance-core:0.1.0"
       },
       {
+        "path": "schemas/human-decision-assurance-backing-byte-verification-receipt.schema.json",
+        "schema_id": "urn:odeya:schema:human-decision-assurance-backing-byte-verification-receipt:0.1.0"
+      },
+      {
+        "path": "schemas/human-decision-assurance-eligibility-comparison-receipt.schema.json",
+        "schema_id": "urn:odeya:schema:human-decision-assurance-eligibility-comparison-receipt:0.1.0"
+      },
+      {
+        "path": "schemas/human-decision-assurance-eligibility-recomputation-result.schema.json",
+        "schema_id": "urn:odeya:schema:human-decision-assurance-eligibility-recomputation-result:0.1.0"
+      },
+      {
+        "path": "schemas/human-decision-assurance-evidence-v0-2.schema.json",
+        "schema_id": "urn:odeya:schema:human-decision-assurance-evidence:0.2.0"
+      },
+      {
         "path": "schemas/human-decision-assurance-evidence.schema.json",
         "schema_id": "urn:odeya:schema:human-decision-assurance-evidence:0.1.0"
+      },
+      {
+        "path": "schemas/human-decision-assurance-seal-v0-2.schema.json",
+        "schema_id": "urn:odeya:schema:human-decision-assurance-seal:0.2.0"
       },
       {
         "path": "schemas/human-decision-assurance-seal.schema.json",
@@ -173,22 +197,34 @@
     "assured_decision_wrapper_identity_assigned": false,
     "individual_assurance_foundation_closes_prq_013": false,
     "assured_decision_dependency_stage": "after_t1_authority_assignment_and_t2_authority_currentness_quorum_consumer_contracts",
-    "individual_eligibility_ruleset_ref": "architecture/human-decision-assurance-individual-eligibility-ruleset-v1-candidate.json",
+    "individual_eligibility_ruleset_ref": "architecture/human-decision-assurance-individual-eligibility-ruleset-v2-candidate.json",
     "individual_eligibility_ruleset_issued": false,
-    "independent_eligibility_recomputation_retained": false,
+    "independent_eligibility_recomputation_retained": true,
+    "independent_recomputation_scope": "three_source_separated_nonsharing_language_implementations_not_organizational_independence",
+    "organizational_independence_proven": false,
+    "successor_generation_manifest_ref": "tests/human-decision-assurance-successor/generation-manifest.json",
+    "successor_generation_manifest_binding": {
+      "artifact_id": "hda-successor-generation-manifest.synthetic.0001",
+      "raw_sha256": "sha256:f401a95c52ccc49791872584971450c723d3c9d2632d66cbd3e9761fea26e247",
+      "byte_count": 16050
+    },
+    "synthetic_conformance_backing_bytes_dereferenced_and_verified": true,
+    "synthetic_content_addressed_backing_preimage_count": 14,
+    "successor_expectation_free_vector_count": 44,
+    "successor_chain_known_bad_count": 48,
     "material_presentation_receipt_verified_in_real_ceremony": false,
     "confirmation_gesture_and_authenticator_actor_cryptographically_co_bound": true,
     "exact_cryptographic_input_bytes_dereferenced_and_verified": false,
     "complete_consumer_census_for_frozen_source_corpus": true,
     "consumer_census_ref": "architecture/human-decision-assurance-consumer-census.json",
     "consumer_census_binding": {
-      "raw_sha256": "sha256:d761cdb4ebd8776935a90bc7c877da805f3e07bb17ce1333f24c01619b4f9a3a",
-      "byte_count": 147738,
+      "raw_sha256": "sha256:f3214129e18f9db38a6c00a517712190cf257b62b51f42a032cd5af033820e98",
+      "byte_count": 151958,
       "baseline_git_commit": "56e8062334fb81bba955ba137be690e085d4c88e",
       "baseline_git_tree": "d90ed6dd8c54b91a1e503358f98ecaa08c766fa3",
       "baseline_schema_count": 112,
-      "candidate_mechanism_schema_count": 3,
-      "current_union_schema_count": 115,
+      "candidate_mechanism_schema_count": 8,
+      "current_union_schema_count": 120,
       "direct_or_policy_conditional_schema_count": 19,
       "pending_operator_acceptance_schema_count": 9
     },
@@ -255,7 +291,8 @@
     "source_evidence_ref": "docs/CROSS_PROGRAM_PROCESS_EVIDENCE_ABSORPTION_2026-07-19.md",
     "antecedent_decision_ref": "docs/decisions/0089-a-valid-human-signature-is-not-a-human-decision.md",
     "decision_ref": "docs/decisions/0092-bind-human-decisions-through-an-external-assurance-wrapper.md",
-    "closure_disposition": "freeze_unissued_individual_assurance_foundation_then_construct_t1_t2_dependencies_and_unissued_wrapper_successors_prove_transitive_migration_exact_backing_bytes_confirmation_actor_cobinding_independent_recomputation_end_to_end_refusal_and_accountable_gate_a_review_real_ceremony_deferred_to_separately_authorized_gate_b_probe"
+    "co_binding_decision_ref": "docs/decisions/0093-co-bind-the-confirmation-gesture-through-a-two-phase-challenge.md",
+    "closure_disposition": "retain_unissued_t0_byte_bound_and_source_separated_recomputation_candidate_evidence_pending_context_isolated_technical_review_then_construct_t1_t2_dependencies_and_unissued_wrapper_successors_prove_transitive_migration_end_to_end_refusal_and_accountable_gate_a_review_real_ceremony_deferred_to_separately_authorized_gate_b_probe"
   },
   "findings": [
     {
@@ -334,7 +371,7 @@
       "finding_id": "PRQ-013",
       "title": "declared human principals and valid signatures do not establish a human-controlled decision",
       "status": "unresolved_blocking",
-      "closure": "three unissued HumanDecisionAssurance core, evidence, and seal schema resource identities, one exact unissued singleton-eligibility ruleset, one static challenge-frame profile, separate recomputation-vector evidence, a complete census for the exact frozen 112-schema source corpus, synthetic controls, and an intent-bound refusal suite now exist; this is only the T0 individual-assurance foundation candidate: zero current consumers are migrated, no admitted assurance record or assured-decision wrapper identity is issued, and no independent eligibility implementation, verified backing evidence bytes, same-actor confirmation/authenticator cryptographic co-binding, end-to-end consumer refusal, accountable security and authority review, or operator acceptance exists; remain unresolved_blocking until the individual-assurance foundation is frozen as unissued candidates, T1 AuthorityAssignment and the required T2 command, event, state, reducer, currentness, quorum, and consumer dependencies exist, separately identified unissued AssuredDecision and successor-consumer candidates are constructed, exact transitive migration without mutating retained identities is proved, exact backing evidence bytes, a cycle-free confirmation/authenticator co-binding or accepted transaction-confirmation trusted path, independent eligibility recomputation, and end-to-end refusal evidence are retained, and accountable review plus Daniel's exact-byte Gate A decision governs issuance and admission; Gate A neither requires nor authorizes a live protected ceremony, one real protected ceremony is a separately authorized bounded Gate B probe, and runtime conformance remains a Gate C exit condition; unattended agent-accessible keys, declared human types, signatures, timeout, silence, or prose-only caveats never satisfy a human-only decision"
+      "closure": "the immutable unissued 0.1 resources remain retained beside five separately identified unissued successor schemas, eligibility ruleset 0.2, fourteen content-addressed synthetic backing preimages, a byte-derived backing receipt, three source-separated non-sharing Python, Node.js, and Java recomputation records, a complete six-field comparison receipt, Seal 0.2, forty-four expectation-free vectors, and forty-eight intent-bound downstream chain known-bads; exact local replay produced 132 matching vector recomputations, but this is architecture evidence over synthetic bytes, not organizational independence, a real ceremony, a human decision, approval, or authority; the authentication challenge commits to the confirmation-receipt digest, so same-actor confirmation/authenticator cryptographic co-binding is true strictly as a synthetic construction property while no real ceremony measured that one natural person performed both acts; this remains only the T0 individual-assurance foundation candidate: zero current consumers are migrated, no admitted assurance record or assured-decision wrapper identity is issued, no context-isolated technical determination over the final exact candidate bytes is retained yet, and no end-to-end consumer refusal, accountable security and authority review, or operator acceptance exists; remain unresolved_blocking until that exact-byte technical review is retained, T1 AuthorityAssignment and the required T2 command, event, state, reducer, currentness, quorum, and consumer dependencies exist, separately identified unissued AssuredDecision and successor-consumer candidates are constructed, exact transitive migration without mutating retained identities and end-to-end refusal are proved, and accountable review plus Daniel's exact-byte Gate A decision governs issuance and admission; Gate A neither requires nor authorizes a live protected ceremony, one real protected ceremony is a separately authorized bounded Gate B probe, and runtime conformance remains a Gate C exit condition; unattended agent-accessible keys, declared human types, signatures, timeout, silence, or prose-only caveats never satisfy a human-only decision"
     }
   ],
   "construction_inventory_at_start": {

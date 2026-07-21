@@ -1,0 +1,1332 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:odeya:schema:human-decision-assurance-seal:0.2.0",
+  "title": "Odeya Human Decision Assurance Seal 0.2 Candidate",
+  "description": "An unissued singleton-assurance architecture candidate that binds exact Core, Evidence 0.2, ruleset 0.2, backing-byte receipt, and three-way eligibility-comparison receipt bytes. It copies an agreed recomputation projection without weakening it. It is not approval, aggregate quorum, current authority, consumer currentness, or Gate A acceptance.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "artifact_class",
+    "artifact_id",
+    "assurance_id",
+    "version",
+    "candidate_status",
+    "evidence_class",
+    "assurance_scope",
+    "input_bindings",
+    "receipt_dispositions",
+    "copied_agreed_projection",
+    "assurance_disposition",
+    "reason_codes",
+    "decision_entry",
+    "claim_boundary",
+    "sealed_at"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.2.0"
+    },
+    "artifact_class": {
+      "const": "human_decision_assurance_seal_candidate"
+    },
+    "artifact_id": {
+      "$ref": "#/$defs/hda_successor_identifier"
+    },
+    "assurance_id": {
+      "$ref": "#/$defs/hda_successor_identifier"
+    },
+    "version": {
+      "const": 2
+    },
+    "candidate_status": {
+      "const": "unissued_architecture_candidate_not_human_authority"
+    },
+    "evidence_class": {
+      "enum": [
+        "synthetic_architecture_fixture",
+        "candidate_ceremony_evidence_not_admitted"
+      ]
+    },
+    "assurance_scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "principal_act_cardinality",
+        "aggregate_quorum_evaluation",
+        "currentness_evaluation",
+        "authority_evaluation",
+        "assured_decision_wrapper_identity_assigned"
+      ],
+      "properties": {
+        "principal_act_cardinality": {
+          "const": "exactly_one"
+        },
+        "aggregate_quorum_evaluation": {
+          "const": "deferred_to_assured_decision_wrapper"
+        },
+        "currentness_evaluation": {
+          "const": "deferred_to_assured_decision_wrapper"
+        },
+        "authority_evaluation": {
+          "const": "deferred_to_assured_decision_wrapper"
+        },
+        "assured_decision_wrapper_identity_assigned": {
+          "const": false
+        }
+      }
+    },
+    "input_bindings": {
+      "$ref": "#/$defs/hda_seal_input_bindings"
+    },
+    "receipt_dispositions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "backing_byte_verification",
+        "eligibility_comparison",
+        "agreed_recomputation_disposition"
+      ],
+      "properties": {
+        "backing_byte_verification": {
+          "enum": [
+            "supported",
+            "indeterminate",
+            "invalid"
+          ]
+        },
+        "eligibility_comparison": {
+          "enum": [
+            "exact_agreement",
+            "indeterminate_missing_or_unreadable",
+            "invalid_disagreement"
+          ]
+        },
+        "agreed_recomputation_disposition": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/final_disposition"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "copied_agreed_projection": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/hda_seal_full_projection"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "assurance_disposition": {
+      "$ref": "#/$defs/final_disposition"
+    },
+    "reason_codes": {
+      "$ref": "#/$defs/hda_seal_reason_codes"
+    },
+    "decision_entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "policy_entry",
+        "decision_value_copied_into_seal",
+        "eligibility_is_approval",
+        "consumer_authority_effective",
+        "aggregate_quorum_effective",
+        "currentness_evaluation",
+        "currentness_evaluated_at",
+        "source_expiry_evaluated",
+        "withdrawal_revocation_contradiction_evaluated"
+      ],
+      "properties": {
+        "policy_entry": {
+          "enum": [
+            "may_enter_assured_decision_assembly_only",
+            "blocked"
+          ]
+        },
+        "decision_value_copied_into_seal": {
+          "const": false
+        },
+        "eligibility_is_approval": {
+          "const": false
+        },
+        "consumer_authority_effective": {
+          "const": false
+        },
+        "aggregate_quorum_effective": {
+          "const": false
+        },
+        "currentness_evaluation": {
+          "const": "deferred_to_consumer_policy_at_controlled_evaluation_time"
+        },
+        "currentness_evaluated_at": {
+          "type": "null"
+        },
+        "source_expiry_evaluated": {
+          "const": false
+        },
+        "withdrawal_revocation_contradiction_evaluated": {
+          "const": false
+        }
+      }
+    },
+    "claim_boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "seal_self_digest_forbidden",
+        "profile_issued",
+        "consumer_migration_complete",
+        "accountable_review_complete",
+        "real_human_ceremony_verified",
+        "human_only_slot_satisfied",
+        "aggregate_quorum_evaluated",
+        "aggregate_quorum_authority_effective",
+        "source_decision_semantics_interpreted",
+        "currentness_evaluated",
+        "organizational_independence_proven",
+        "seal_is_approval",
+        "seal_grants_authority",
+        "gate_a_accepted",
+        "runtime_authorized",
+        "external_effects_authorized"
+      ],
+      "properties": {
+        "seal_self_digest_forbidden": {
+          "const": true
+        },
+        "profile_issued": {
+          "const": false
+        },
+        "consumer_migration_complete": {
+          "const": false
+        },
+        "accountable_review_complete": {
+          "const": false
+        },
+        "real_human_ceremony_verified": {
+          "const": false
+        },
+        "human_only_slot_satisfied": {
+          "const": false
+        },
+        "aggregate_quorum_evaluated": {
+          "const": false
+        },
+        "aggregate_quorum_authority_effective": {
+          "const": false
+        },
+        "source_decision_semantics_interpreted": {
+          "const": false
+        },
+        "currentness_evaluated": {
+          "const": false
+        },
+        "organizational_independence_proven": {
+          "const": false
+        },
+        "seal_is_approval": {
+          "const": false
+        },
+        "seal_grants_authority": {
+          "const": false
+        },
+        "gate_a_accepted": {
+          "const": false
+        },
+        "runtime_authorized": {
+          "const": false
+        },
+        "external_effects_authorized": {
+          "const": false
+        }
+      }
+    },
+    "sealed_at": {
+      "$ref": "#/$defs/timestamp"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "assurance_disposition": {
+            "const": "eligible"
+          }
+        },
+        "required": [
+          "assurance_disposition"
+        ]
+      },
+      "then": {
+        "properties": {
+          "receipt_dispositions": {
+            "properties": {
+              "backing_byte_verification": {
+                "const": "supported"
+              },
+              "eligibility_comparison": {
+                "const": "exact_agreement"
+              },
+              "agreed_recomputation_disposition": {
+                "const": "eligible"
+              }
+            }
+          },
+          "copied_agreed_projection": {
+            "allOf": [
+              {
+                "$ref": "#/$defs/hda_seal_full_projection"
+              },
+              {
+                "properties": {
+                  "final_disposition": {
+                    "const": "eligible"
+                  }
+                }
+              }
+            ]
+          },
+          "reason_codes": {
+            "minItems": 1,
+            "maxItems": 1,
+            "prefixItems": [
+              {
+                "const": "eligible.all_required_inputs_supported"
+              }
+            ],
+            "items": false
+          },
+          "decision_entry": {
+            "properties": {
+              "policy_entry": {
+                "const": "may_enter_assured_decision_assembly_only"
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "decision_entry": {
+            "properties": {
+              "policy_entry": {
+                "const": "blocked"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "receipt_dispositions": {
+            "properties": {
+              "eligibility_comparison": {
+                "enum": [
+                  "indeterminate_missing_or_unreadable",
+                  "invalid_disagreement"
+                ]
+              }
+            },
+            "required": [
+              "eligibility_comparison"
+            ]
+          }
+        },
+        "required": [
+          "receipt_dispositions"
+        ]
+      },
+      "then": {
+        "properties": {
+          "receipt_dispositions": {
+            "properties": {
+              "agreed_recomputation_disposition": {
+                "type": "null"
+              }
+            }
+          },
+          "copied_agreed_projection": {
+            "type": "null"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "receipt_dispositions": {
+            "properties": {
+              "eligibility_comparison": {
+                "const": "exact_agreement"
+              }
+            },
+            "required": [
+              "eligibility_comparison"
+            ]
+          }
+        },
+        "required": [
+          "receipt_dispositions"
+        ]
+      },
+      "then": {
+        "properties": {
+          "receipt_dispositions": {
+            "properties": {
+              "agreed_recomputation_disposition": {
+                "$ref": "#/$defs/final_disposition"
+              }
+            }
+          },
+          "copied_agreed_projection": {
+            "$ref": "#/$defs/hda_seal_full_projection"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "receipt_dispositions": {
+            "properties": {
+              "backing_byte_verification": {
+                "const": "invalid"
+              }
+            },
+            "required": [
+              "backing_byte_verification"
+            ]
+          }
+        },
+        "required": [
+          "receipt_dispositions"
+        ]
+      },
+      "then": {
+        "properties": {
+          "assurance_disposition": {
+            "const": "invalid"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "receipt_dispositions": {
+            "properties": {
+              "eligibility_comparison": {
+                "const": "invalid_disagreement"
+              }
+            },
+            "required": [
+              "eligibility_comparison"
+            ]
+          }
+        },
+        "required": [
+          "receipt_dispositions"
+        ]
+      },
+      "then": {
+        "properties": {
+          "assurance_disposition": {
+            "const": "invalid"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "receipt_dispositions": {
+            "properties": {
+              "backing_byte_verification": {
+                "const": "indeterminate"
+              },
+              "eligibility_comparison": {
+                "not": {
+                  "const": "invalid_disagreement"
+                }
+              }
+            },
+            "required": [
+              "backing_byte_verification",
+              "eligibility_comparison"
+            ]
+          }
+        },
+        "required": [
+          "receipt_dispositions"
+        ]
+      },
+      "then": {
+        "properties": {
+          "assurance_disposition": {
+            "const": "indeterminate"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "receipt_dispositions": {
+            "properties": {
+              "backing_byte_verification": {
+                "not": {
+                  "const": "invalid"
+                }
+              },
+              "eligibility_comparison": {
+                "const": "indeterminate_missing_or_unreadable"
+              }
+            },
+            "required": [
+              "backing_byte_verification",
+              "eligibility_comparison"
+            ]
+          }
+        },
+        "required": [
+          "receipt_dispositions"
+        ]
+      },
+      "then": {
+        "properties": {
+          "assurance_disposition": {
+            "const": "indeterminate"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "receipt_dispositions": {
+            "properties": {
+              "backing_byte_verification": {
+                "const": "supported"
+              },
+              "eligibility_comparison": {
+                "const": "exact_agreement"
+              },
+              "agreed_recomputation_disposition": {
+                "const": "indeterminate"
+              }
+            },
+            "required": [
+              "backing_byte_verification",
+              "eligibility_comparison",
+              "agreed_recomputation_disposition"
+            ]
+          }
+        },
+        "required": [
+          "receipt_dispositions"
+        ]
+      },
+      "then": {
+        "properties": {
+          "assurance_disposition": {
+            "const": "indeterminate"
+          },
+          "copied_agreed_projection": {
+            "properties": {
+              "final_disposition": {
+                "const": "indeterminate"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "receipt_dispositions": {
+            "properties": {
+              "backing_byte_verification": {
+                "const": "supported"
+              },
+              "eligibility_comparison": {
+                "const": "exact_agreement"
+              },
+              "agreed_recomputation_disposition": {
+                "const": "invalid"
+              }
+            },
+            "required": [
+              "backing_byte_verification",
+              "eligibility_comparison",
+              "agreed_recomputation_disposition"
+            ]
+          }
+        },
+        "required": [
+          "receipt_dispositions"
+        ]
+      },
+      "then": {
+        "properties": {
+          "assurance_disposition": {
+            "const": "invalid"
+          },
+          "copied_agreed_projection": {
+            "properties": {
+              "final_disposition": {
+                "const": "invalid"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "assurance_disposition": {
+            "const": "indeterminate"
+          }
+        },
+        "required": [
+          "assurance_disposition"
+        ]
+      },
+      "then": {
+        "properties": {
+          "reason_codes": {
+            "items": {
+              "type": "string",
+              "pattern": "^indeterminate\\.[a-z][a-z0-9_]*(?:\\.[a-z][a-z0-9_]*)*$"
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "assurance_disposition": {
+            "const": "invalid"
+          }
+        },
+        "required": [
+          "assurance_disposition"
+        ]
+      },
+      "then": {
+        "properties": {
+          "reason_codes": {
+            "contains": {
+              "type": "string",
+              "pattern": "^invalid\\."
+            },
+            "items": {
+              "type": "string",
+              "pattern": "^(?:indeterminate|invalid)\\.[a-z][a-z0-9_]*(?:\\.[a-z][a-z0-9_]*)*$"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "hda_successor_identifier": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,255}$"
+    },
+    "raw_sha256": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "x-odeya-digest-scope": {
+        "kind": "byte_digest",
+        "subject": "exact raw bytes named by the adjacent immutable binding",
+        "algorithm": "sha-256",
+        "profile": "not_a_canonical_object_digest",
+        "status": "candidate_unissued"
+      }
+    },
+    "positive_byte_count": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 1073741824
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
+    },
+    "hda_seal_reason_codes": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 256,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^(?:eligible|indeterminate|invalid)\\.[a-z][a-z0-9_]*(?:\\.[a-z][a-z0-9_]*)*$"
+      }
+    },
+    "hda_seal_raw_schema_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "schema_resource_id",
+        "raw_sha256",
+        "byte_count",
+        "mutable_alias_used"
+      ],
+      "properties": {
+        "artifact_id": {
+          "$ref": "#/$defs/hda_successor_identifier"
+        },
+        "schema_resource_id": {
+          "type": "string",
+          "pattern": "^urn:odeya:schema:[a-z0-9][a-z0-9-]*:[0-9]+\\.[0-9]+\\.[0-9]+$",
+          "maxLength": 256
+        },
+        "raw_sha256": {
+          "$ref": "#/$defs/raw_sha256"
+        },
+        "byte_count": {
+          "$ref": "#/$defs/positive_byte_count"
+        },
+        "mutable_alias_used": {
+          "const": false
+        }
+      }
+    },
+    "ruleset_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ruleset_id",
+        "ruleset_version",
+        "raw_sha256",
+        "byte_count",
+        "mutable_alias_used"
+      ],
+      "properties": {
+        "ruleset_id": {
+          "const": "urn:odeya:human-decision-assurance-eligibility:0.2.0-candidate"
+        },
+        "ruleset_version": {
+          "const": "0.2.0"
+        },
+        "raw_sha256": {
+          "$ref": "#/$defs/raw_sha256"
+        },
+        "byte_count": {
+          "$ref": "#/$defs/positive_byte_count"
+        },
+        "mutable_alias_used": {
+          "const": false
+        }
+      }
+    },
+    "hda_seal_input_bindings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "core",
+        "evidence",
+        "eligibility_ruleset",
+        "backing_byte_verification_receipt",
+        "eligibility_comparison_receipt"
+      ],
+      "properties": {
+        "core": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/hda_seal_raw_schema_binding"
+            },
+            {
+              "properties": {
+                "schema_resource_id": {
+                  "const": "urn:odeya:schema:human-decision-assurance-core:0.1.0"
+                }
+              }
+            }
+          ]
+        },
+        "evidence": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/hda_seal_raw_schema_binding"
+            },
+            {
+              "properties": {
+                "schema_resource_id": {
+                  "const": "urn:odeya:schema:human-decision-assurance-evidence:0.2.0"
+                }
+              }
+            }
+          ]
+        },
+        "eligibility_ruleset": {
+          "$ref": "#/$defs/ruleset_binding"
+        },
+        "backing_byte_verification_receipt": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/hda_seal_raw_schema_binding"
+            },
+            {
+              "properties": {
+                "schema_resource_id": {
+                  "const": "urn:odeya:schema:human-decision-assurance-backing-byte-verification-receipt:0.1.0"
+                }
+              }
+            }
+          ]
+        },
+        "eligibility_comparison_receipt": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/hda_seal_raw_schema_binding"
+            },
+            {
+              "properties": {
+                "schema_resource_id": {
+                  "const": "urn:odeya:schema:human-decision-assurance-eligibility-comparison-receipt:0.1.0"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "final_disposition": {
+      "enum": [
+        "eligible",
+        "indeterminate",
+        "invalid"
+      ]
+    },
+    "hda_seal_domain": {
+      "enum": [
+        "exact_core_and_evidence_binding",
+        "backing_byte_integrity",
+        "challenge_and_replay",
+        "decision_confirmation",
+        "authentication",
+        "identity_and_authenticator_binding",
+        "custody",
+        "delegation_objections_conflicts",
+        "controlled_time",
+        "verifier_independence",
+        "sanitation"
+      ]
+    },
+    "hda_seal_domain_result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "domain",
+        "input_observation_count",
+        "folded_status",
+        "reason_codes"
+      ],
+      "properties": {
+        "domain": {
+          "$ref": "#/$defs/hda_seal_domain"
+        },
+        "input_observation_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "folded_status": {
+          "enum": [
+            "supported",
+            "contradicted",
+            "unknown",
+            "not_applicable"
+          ]
+        },
+        "reason_codes": {
+          "$ref": "#/$defs/hda_seal_reason_codes"
+        }
+      }
+    },
+    "hda_seal_domain_results": {
+      "type": "array",
+      "minItems": 11,
+      "maxItems": 11,
+      "prefixItems": [
+        {
+          "$ref": "#/$defs/hda_seal_domain_result_exact_binding"
+        },
+        {
+          "$ref": "#/$defs/hda_seal_domain_result_backing_integrity"
+        },
+        {
+          "$ref": "#/$defs/hda_seal_domain_result_challenge"
+        },
+        {
+          "$ref": "#/$defs/hda_seal_domain_result_confirmation"
+        },
+        {
+          "$ref": "#/$defs/hda_seal_domain_result_authentication"
+        },
+        {
+          "$ref": "#/$defs/hda_seal_domain_result_identity"
+        },
+        {
+          "$ref": "#/$defs/hda_seal_domain_result_custody"
+        },
+        {
+          "$ref": "#/$defs/hda_seal_domain_result_delegation"
+        },
+        {
+          "$ref": "#/$defs/hda_seal_domain_result_controlled_time"
+        },
+        {
+          "$ref": "#/$defs/hda_seal_domain_result_verifier"
+        },
+        {
+          "$ref": "#/$defs/hda_seal_domain_result_sanitation"
+        }
+      ],
+      "items": false
+    },
+    "hda_seal_domain_result_exact_binding": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/hda_seal_domain_result"
+        },
+        {
+          "properties": {
+            "domain": {
+              "const": "exact_core_and_evidence_binding"
+            }
+          }
+        }
+      ]
+    },
+    "hda_seal_domain_result_backing_integrity": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/hda_seal_domain_result"
+        },
+        {
+          "properties": {
+            "domain": {
+              "const": "backing_byte_integrity"
+            }
+          }
+        }
+      ]
+    },
+    "hda_seal_domain_result_challenge": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/hda_seal_domain_result"
+        },
+        {
+          "properties": {
+            "domain": {
+              "const": "challenge_and_replay"
+            }
+          }
+        }
+      ]
+    },
+    "hda_seal_domain_result_confirmation": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/hda_seal_domain_result"
+        },
+        {
+          "properties": {
+            "domain": {
+              "const": "decision_confirmation"
+            }
+          }
+        }
+      ]
+    },
+    "hda_seal_domain_result_authentication": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/hda_seal_domain_result"
+        },
+        {
+          "properties": {
+            "domain": {
+              "const": "authentication"
+            }
+          }
+        }
+      ]
+    },
+    "hda_seal_domain_result_identity": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/hda_seal_domain_result"
+        },
+        {
+          "properties": {
+            "domain": {
+              "const": "identity_and_authenticator_binding"
+            }
+          }
+        }
+      ]
+    },
+    "hda_seal_domain_result_custody": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/hda_seal_domain_result"
+        },
+        {
+          "properties": {
+            "domain": {
+              "const": "custody"
+            }
+          }
+        }
+      ]
+    },
+    "hda_seal_domain_result_delegation": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/hda_seal_domain_result"
+        },
+        {
+          "properties": {
+            "domain": {
+              "const": "delegation_objections_conflicts"
+            }
+          }
+        }
+      ]
+    },
+    "hda_seal_domain_result_controlled_time": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/hda_seal_domain_result"
+        },
+        {
+          "properties": {
+            "domain": {
+              "const": "controlled_time"
+            }
+          }
+        }
+      ]
+    },
+    "hda_seal_domain_result_verifier": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/hda_seal_domain_result"
+        },
+        {
+          "properties": {
+            "domain": {
+              "const": "verifier_independence"
+            }
+          }
+        }
+      ]
+    },
+    "hda_seal_domain_result_sanitation": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/hda_seal_domain_result"
+        },
+        {
+          "properties": {
+            "domain": {
+              "const": "sanitation"
+            }
+          }
+        }
+      ]
+    },
+    "hda_seal_categorical_condition": {
+      "enum": [
+        "challenge_consumption_state_fresh_consumed_once",
+        "challenge_not_previously_consumed",
+        "challenge_consumed_exactly_once",
+        "assertion_acceptance_and_consumption_atomic_action_equal",
+        "decision_confirmation_principal_matches_observation",
+        "decision_confirmation_human_initiated",
+        "decision_confirmation_separate_from_authenticator_gesture",
+        "same_origin_candidate_context_supported",
+        "no_authenticator_clone_risk_signal",
+        "no_shared_effective_control_principals",
+        "verifier_distinct_principal_and_effective_control"
+      ]
+    },
+    "hda_seal_categorical_result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "condition_id",
+        "status",
+        "reason_codes"
+      ],
+      "properties": {
+        "condition_id": {
+          "$ref": "#/$defs/hda_seal_categorical_condition"
+        },
+        "status": {
+          "enum": [
+            "satisfied",
+            "failed",
+            "unknown",
+            "not_applicable"
+          ]
+        },
+        "reason_codes": {
+          "$ref": "#/$defs/hda_seal_reason_codes"
+        }
+      }
+    },
+    "hda_seal_categorical_results": {
+      "type": "array",
+      "minItems": 11,
+      "maxItems": 11,
+      "prefixItems": [
+        {
+          "$ref": "#/$defs/hda_seal_categorical_result_consumption_state"
+        },
+        {
+          "$ref": "#/$defs/hda_seal_categorical_result_prior_consumption"
+        },
+        {
+          "$ref": "#/$defs/hda_seal_categorical_result_result_consumption"
+        },
+        {
+          "$ref": "#/$defs/hda_seal_categorical_result_atomic_action"
+        },
+        {
+          "$ref": "#/$defs/hda_seal_categorical_result_principal_match"
+        },
+        {
+          "$ref": "#/$defs/hda_seal_categorical_result_human_initiated"
+        },
+        {
+          "$ref": "#/$defs/hda_seal_categorical_result_separate_gesture"
+        },
+        {
+          "$ref": "#/$defs/hda_seal_categorical_result_same_origin"
+        },
+        {
+          "$ref": "#/$defs/hda_seal_categorical_result_clone_signal"
+        },
+        {
+          "$ref": "#/$defs/hda_seal_categorical_result_shared_control"
+        },
+        {
+          "$ref": "#/$defs/hda_seal_categorical_result_verifier_relation"
+        }
+      ],
+      "items": false
+    },
+    "hda_seal_categorical_result_consumption_state": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/hda_seal_categorical_result"
+        },
+        {
+          "properties": {
+            "condition_id": {
+              "const": "challenge_consumption_state_fresh_consumed_once"
+            }
+          }
+        }
+      ]
+    },
+    "hda_seal_categorical_result_prior_consumption": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/hda_seal_categorical_result"
+        },
+        {
+          "properties": {
+            "condition_id": {
+              "const": "challenge_not_previously_consumed"
+            }
+          }
+        }
+      ]
+    },
+    "hda_seal_categorical_result_result_consumption": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/hda_seal_categorical_result"
+        },
+        {
+          "properties": {
+            "condition_id": {
+              "const": "challenge_consumed_exactly_once"
+            }
+          }
+        }
+      ]
+    },
+    "hda_seal_categorical_result_atomic_action": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/hda_seal_categorical_result"
+        },
+        {
+          "properties": {
+            "condition_id": {
+              "const": "assertion_acceptance_and_consumption_atomic_action_equal"
+            }
+          }
+        }
+      ]
+    },
+    "hda_seal_categorical_result_principal_match": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/hda_seal_categorical_result"
+        },
+        {
+          "properties": {
+            "condition_id": {
+              "const": "decision_confirmation_principal_matches_observation"
+            }
+          }
+        }
+      ]
+    },
+    "hda_seal_categorical_result_human_initiated": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/hda_seal_categorical_result"
+        },
+        {
+          "properties": {
+            "condition_id": {
+              "const": "decision_confirmation_human_initiated"
+            }
+          }
+        }
+      ]
+    },
+    "hda_seal_categorical_result_separate_gesture": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/hda_seal_categorical_result"
+        },
+        {
+          "properties": {
+            "condition_id": {
+              "const": "decision_confirmation_separate_from_authenticator_gesture"
+            }
+          }
+        }
+      ]
+    },
+    "hda_seal_categorical_result_same_origin": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/hda_seal_categorical_result"
+        },
+        {
+          "properties": {
+            "condition_id": {
+              "const": "same_origin_candidate_context_supported"
+            }
+          }
+        }
+      ]
+    },
+    "hda_seal_categorical_result_clone_signal": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/hda_seal_categorical_result"
+        },
+        {
+          "properties": {
+            "condition_id": {
+              "const": "no_authenticator_clone_risk_signal"
+            }
+          }
+        }
+      ]
+    },
+    "hda_seal_categorical_result_shared_control": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/hda_seal_categorical_result"
+        },
+        {
+          "properties": {
+            "condition_id": {
+              "const": "no_shared_effective_control_principals"
+            }
+          }
+        }
+      ]
+    },
+    "hda_seal_categorical_result_verifier_relation": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/hda_seal_categorical_result"
+        },
+        {
+          "properties": {
+            "condition_id": {
+              "const": "verifier_distinct_principal_and_effective_control"
+            }
+          }
+        }
+      ]
+    },
+    "hda_seal_full_projection": {
+      "description": "The complete agreed direct evaluator output copied without status-vector reduction or field omission.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "participant_id",
+        "domain_results",
+        "categorical_results",
+        "categorical_failures",
+        "final_disposition",
+        "reason_codes"
+      ],
+      "properties": {
+        "participant_id": {
+          "$ref": "#/$defs/hda_successor_identifier"
+        },
+        "domain_results": {
+          "$ref": "#/$defs/hda_seal_domain_results"
+        },
+        "categorical_results": {
+          "$ref": "#/$defs/hda_seal_categorical_results"
+        },
+        "categorical_failures": {
+          "type": "array",
+          "maxItems": 11,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/hda_seal_categorical_condition"
+          }
+        },
+        "final_disposition": {
+          "$ref": "#/$defs/final_disposition"
+        },
+        "reason_codes": {
+          "$ref": "#/$defs/hda_seal_reason_codes"
+        }
+      }
+    }
+  }
+}

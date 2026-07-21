@@ -15,13 +15,12 @@ from __future__ import annotations
 
 import argparse
 import json
-import sys
 
 import validate as foundation
 
 
-EXPECTED_SCHEMAS = 115
-EXPECTED_CASES = {"valid": 213, "invalid": 635}
+EXPECTED_SCHEMAS = 120
+EXPECTED_CASES = {"valid": 220, "invalid": 640}
 
 
 def main() -> int:

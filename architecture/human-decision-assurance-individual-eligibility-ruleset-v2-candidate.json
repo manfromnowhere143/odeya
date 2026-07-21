@@ -1,0 +1,506 @@
+{
+  "schema_version": "0.2.0",
+  "artifact_class": "human_decision_assurance_individual_eligibility_ruleset_candidate",
+  "ruleset_id": "urn:odeya:human-decision-assurance-eligibility:0.2.0-candidate",
+  "ruleset_version": "0.2.0",
+  "candidate_status": "unissued_architecture_candidate_not_policy_authority",
+  "decision_ref": "docs/decisions/0095-reissue-human-decision-assurance-as-a-byte-bound-independently-recomputed-chain.md",
+  "supersedes_ruleset_id": "urn:odeya:human-decision-assurance-eligibility:0.1.0-candidate",
+  "scope": {
+    "principal_act_cardinality": "exactly_one",
+    "derives": "individual_participant_eligibility_only",
+    "aggregate_quorum_evaluation": "deferred_to_future_assured_decision_wrapper",
+    "currentness_evaluation": "deferred_to_future_assured_decision_wrapper",
+    "authority_evaluation": "deferred_to_future_assured_decision_wrapper",
+    "admission_evaluation": "separate_and_unresolved"
+  },
+  "normative_data_model": {
+    "serialization": "json_utf8",
+    "object_member_names_unique": true,
+    "unknown_members": "refuse",
+    "numbers": "base_10_integers_only_where_declared",
+    "strings": "exact_unicode_scalar_sequences_without_normalization",
+    "arrays": "ordered_and_duplicate_preserving_unless_a_field_rule_requires_uniqueness",
+    "content_address_pattern": "^sha256:[0-9a-f]{64}$",
+    "identifier_pattern": "^[a-z][a-z0-9]*(?:[._:-][a-z0-9]+)+$",
+    "observation_status_domain": [
+      "supported",
+      "contradicted",
+      "unknown",
+      "not_applicable"
+    ],
+    "read_disposition_domain": [
+      "readable_complete",
+      "missing",
+      "unreadable",
+      "resolver_failure",
+      "denied",
+      "truncated_no_complete_candidate"
+    ],
+    "comparison_disposition_domain": [
+      "match",
+      "mismatch",
+      "not_compared_no_read"
+    ],
+    "result_disposition_domain": [
+      "eligible",
+      "indeterminate",
+      "invalid"
+    ]
+  },
+  "required_domains": [
+    {
+      "domain_id": "exact_core_and_evidence_binding",
+      "source": "evidence_and_schema_raw_bindings",
+      "required_in_evidence_observation_sequences": false
+    },
+    {
+      "domain_id": "backing_byte_integrity",
+      "source": "backing_byte_verification_receipt",
+      "required_in_evidence_observation_sequences": false
+    },
+    {
+      "domain_id": "challenge_and_replay",
+      "source": "evidence_participant_observation_sequence",
+      "required_in_evidence_observation_sequences": true
+    },
+    {
+      "domain_id": "decision_confirmation",
+      "source": "evidence_participant_observation_sequence",
+      "required_in_evidence_observation_sequences": true
+    },
+    {
+      "domain_id": "authentication",
+      "source": "evidence_participant_observation_sequence",
+      "required_in_evidence_observation_sequences": true
+    },
+    {
+      "domain_id": "identity_and_authenticator_binding",
+      "source": "evidence_participant_observation_sequence",
+      "required_in_evidence_observation_sequences": true
+    },
+    {
+      "domain_id": "custody",
+      "source": "evidence_participant_observation_sequence",
+      "required_in_evidence_observation_sequences": true
+    },
+    {
+      "domain_id": "delegation_objections_conflicts",
+      "source": "evidence_participant_observation_sequence",
+      "required_in_evidence_observation_sequences": true
+    },
+    {
+      "domain_id": "controlled_time",
+      "source": "evidence_participant_observation_sequence",
+      "required_in_evidence_observation_sequences": true
+    },
+    {
+      "domain_id": "verifier_independence",
+      "source": "evidence_participant_observation_sequence",
+      "required_in_evidence_observation_sequences": true
+    },
+    {
+      "domain_id": "sanitation",
+      "source": "evidence_participant_observation_sequence_and_forbidden_content_findings",
+      "required_in_evidence_observation_sequences": true
+    }
+  ],
+  "required_evidence_observation_sequence_order": [
+    "challenge_and_replay",
+    "decision_confirmation",
+    "authentication",
+    "identity_and_authenticator_binding",
+    "custody",
+    "delegation_objections_conflicts",
+    "controlled_time",
+    "verifier_independence",
+    "sanitation"
+  ],
+  "required_categorical_inputs": [
+    "challenge_consumption_state",
+    "prior_consumption_count",
+    "result_consumption_count",
+    "assertion_acceptance_atomic_action_id",
+    "consumption_atomic_action_id",
+    "atomic_action_record_role",
+    "atomic_action_record_observation",
+    "decision_confirmation_principal_id",
+    "decision_confirmation_initiator_class",
+    "decision_confirmation_separate_from_authenticator_gesture",
+    "cross_origin_disposition",
+    "signature_counter_disposition",
+    "shared_effective_control_principal_ids",
+    "verifier_relation_to_decision_principal"
+  ],
+  "required_categorical_conditions": [
+    "challenge_consumption_state_fresh_consumed_once",
+    "challenge_not_previously_consumed",
+    "challenge_consumed_exactly_once",
+    "assertion_acceptance_and_consumption_atomic_action_equal",
+    "decision_confirmation_principal_matches_observation",
+    "decision_confirmation_human_initiated",
+    "decision_confirmation_separate_from_authenticator_gesture",
+    "same_origin_candidate_context_supported",
+    "no_authenticator_clone_risk_signal",
+    "no_shared_effective_control_principals",
+    "verifier_distinct_principal_and_effective_control"
+  ],
+  "domain_fold": {
+    "input": "one_nonempty_ordered_observation_status_sequence_per_required_evidence_domain",
+    "algorithm": [
+      "scan_the_complete_sequence_without_short_circuiting_or_overwriting_prior_findings",
+      "if_any_status_is_contradicted_emit_that_domain_as_contradicted",
+      "otherwise_if_any_status_is_unknown_or_not_applicable_emit_that_domain_as_indeterminate",
+      "otherwise_emit_that_domain_as_supported"
+    ],
+    "empty_or_absent_required_sequence": "indeterminate_missing",
+    "contradicted_then_unknown": "contradicted",
+    "unknown_then_contradicted": "contradicted",
+    "reason_emission": "emit_exactly_the_code_for_the_single_folded_domain_outcome_not_one_code_per_raw_observation",
+    "lower_precedence_raw_observation_codes_retained_after_contradiction": false,
+    "implementation_private_domains_allowed": false,
+    "undeclared_eligibility_bearing_input": "invalid"
+  },
+  "domain_input_observation_count_contract": {
+    "exact_core_and_evidence_binding": "one_compound_binding_observation",
+    "backing_byte_integrity": "number_of_present_verification_rows_not_number_of_descriptors",
+    "ordinary_public_domain": "number_of_present_items_in_that_public_domain_observation_sequence",
+    "sanitation": "sum_of_public_sanitation_observations_sanitization_verification_observations_and_forbidden_content_observations",
+    "missing_required_sequence": 0,
+    "fabricated_minimum_count_allowed": false
+  },
+  "backing_byte_integrity_fold": {
+    "inventory_must_equal_resolver_profile_closed_role_inventory": true,
+    "inventory_validation_precedes_per_role_resolution": true,
+    "invalid_inventory_result": "emit_only_invalid.backing_byte.closed_role_inventory_mismatch_for_the_backing_domain",
+    "one_total_receipt_row_per_inventory_role": true,
+    "duplicate_or_unexpected_role": "invalid",
+    "readable_match_and_well_formed": "supported",
+    "missing_or_unreadable": "indeterminate",
+    "readable_mismatch": "invalid",
+    "readable_malformed": "invalid",
+    "successful_zero_byte_representation_of_missing_bytes": "invalid",
+    "missing_observation_is_never_zero": true,
+    "receipt_frame_relation_mismatch": "invalid"
+  },
+  "categorical_law": {
+    "challenge_consumption_state": {
+      "satisfied_value": "fresh_consumed_once",
+      "unknown_or_absent": "indeterminate",
+      "any_other_present_value": "invalid"
+    },
+    "prior_consumption_count": {
+      "satisfied_value": 0,
+      "unknown_or_absent": "indeterminate",
+      "any_other_nonnegative_integer": "invalid"
+    },
+    "result_consumption_count": {
+      "satisfied_value": 1,
+      "unknown_or_absent": "indeterminate",
+      "any_other_nonnegative_integer": "invalid"
+    },
+    "atomic_action": {
+      "acceptance_identifier_field": "assertion_acceptance_atomic_action_id",
+      "consumption_identifier_field": "consumption_atomic_action_id",
+      "identifier_pattern": "^[a-z][a-z0-9]*(?:[._:-][a-z0-9]+)+$",
+      "absent_identifier_definition": "json_null_or_missing_member_before_schema_admission",
+      "both_identifiers_absent": "indeterminate",
+      "either_identifier_absent": "indeterminate",
+      "either_identifier_non_string_empty_or_malformed": "invalid",
+      "equality_checked_only_after_presence_type_nonempty_and_syntax_checks": true,
+      "two_valid_unequal_identifiers": "invalid",
+      "two_valid_equal_identifiers": "continue_to_backing_record",
+      "atomic_action_record_role_required_value": "sanitized_challenge_lifecycle_and_atomic_consumption_record",
+      "atomic_action_record_role_absent_or_unavailable": "indeterminate",
+      "atomic_action_record_role_wrong_present_value": "invalid",
+      "atomic_action_record_observation_unknown_or_not_applicable": "indeterminate",
+      "atomic_action_record_observation_contradicted": "invalid",
+      "atomic_action_record_observation_supported_and_identifier_equal": "satisfied",
+      "null_equality_establishes_atomicity": false
+    },
+    "decision_confirmation_principal_id": {
+      "satisfied_relation": "exactly_equals_participant_principal_id",
+      "present_unequal_identifier": "invalid",
+      "null_or_absent": "indeterminate"
+    },
+    "decision_confirmation_initiator_class": {
+      "satisfied_value": "human_initiated",
+      "unknown_or_absent": "indeterminate",
+      "any_other_present_value": "invalid"
+    },
+    "decision_confirmation_separate_from_authenticator_gesture": {
+      "satisfied_value": true,
+      "false": "invalid",
+      "unknown_or_absent": "indeterminate"
+    },
+    "cross_origin_disposition": {
+      "satisfied_value": "same_origin_supported",
+      "unknown_or_absent": "indeterminate",
+      "any_other_present_value": "invalid"
+    },
+    "signature_counter_disposition": {
+      "satisfied_value": "observed_no_clone_conclusion",
+      "unknown_or_absent": "indeterminate",
+      "any_other_present_value": "invalid"
+    },
+    "shared_effective_control_principal_ids": {
+      "satisfied_value": [],
+      "unknown_or_absent": "indeterminate",
+      "nonempty_array": "invalid"
+    },
+    "verifier_relation_to_decision_principal": {
+      "satisfied_value": "distinct_principal_and_effective_control",
+      "unknown_or_absent": "indeterminate",
+      "any_other_present_value": "invalid"
+    }
+  },
+  "sanitation_law": {
+    "observation_sequence_uses_domain_fold": true,
+    "any_contradicted_observation": "invalid",
+    "any_nonempty_forbidden_content_finding": "invalid",
+    "missing_unknown_or_not_applicable_without_contradiction": "indeterminate",
+    "all_required_observations_supported_and_no_forbidden_content": "supported",
+    "contradiction_may_be_collapsed_to_unknown": false,
+    "dedicated_contradiction_code": "invalid.sanitation.contradicted",
+    "generic_domain_contradiction_code_also_emitted": false
+  },
+  "precedence_and_totality": {
+    "ordered_precedence": [
+      "invalid",
+      "indeterminate",
+      "eligible"
+    ],
+    "invalid": "any_explicit_contradiction_readable_mismatch_readable_malformed_failed_categorical_condition_forbidden_content_finding_or_readable_independent_result_disagreement",
+    "indeterminate": "no_invalid_finding_and_any_absent_missing_unreadable_unknown_or_not_applicable_required_input",
+    "eligible": "every_required_domain_supported_every_categorical_condition_satisfied_no_negative_integrity_finding_and_complete_independent_agreement",
+    "later_inputs_may_weaken_an_earlier_finding": false,
+    "evaluation_is_total_over_every_declared_input": true,
+    "missing_is_zero": false,
+    "timeout_retry_exhaustion_or_missing_reviewer_implies_approval": false
+  },
+  "integrity_reason_attribution": {
+    "required_domain_inventory_mismatch": "exact_core_and_evidence_binding_domain",
+    "undeclared_eligibility_domain": "exact_core_and_evidence_binding_domain",
+    "resource_identity_version_mismatch": "exact_core_and_evidence_binding_domain",
+    "global_reason_set_copies_each_attributed_negative_code": true
+  },
+  "reason_code_contract": {
+    "grammar": "^(eligible|indeterminate|invalid)\\.[a-z][a-z0-9_]*(?:\\.[a-z][a-z0-9_]*)*$",
+    "character_set": "ascii",
+    "sort_order": "ascending_unsigned_utf8_byte_sequence",
+    "uniqueness": "set_uniqueness_before_sort",
+    "negative_prefixes": [
+      "indeterminate.",
+      "invalid."
+    ],
+    "eligible_exact_reason_codes": [
+      "eligible.all_required_inputs_supported"
+    ],
+    "invalid_result_reason_set": "sorted_unique_union_of_every_recomputed_invalid_and_indeterminate_finding",
+    "indeterminate_result_reason_set": "sorted_unique_set_of_every_recomputed_indeterminate_finding",
+    "positive_code_in_negative_result": "invalid_output",
+    "negative_code_in_eligible_result": "invalid_output",
+    "stale_unknown_duplicate_unsorted_or_extra_code": "invalid_output",
+    "recorded_set_must_equal_recomputed_set": true,
+    "dynamic_domain_code_templates": {
+      "supported": "eligible.domain.{domain_id}.supported",
+      "contradicted": "invalid.domain.{domain_id}.contradicted",
+      "missing": "indeterminate.domain.{domain_id}.missing",
+      "unknown": "indeterminate.domain.{domain_id}.unknown",
+      "not_applicable": "indeterminate.domain.{domain_id}.not_applicable"
+    },
+    "dynamic_backing_code_templates": {
+      "supported": "eligible.domain.backing_byte_integrity.supported",
+      "missing": "indeterminate.backing_byte.{role}.missing",
+      "unreadable": "indeterminate.backing_byte.{role}.unreadable",
+      "mismatch": "invalid.backing_byte.{role}.mismatch",
+      "malformed": "invalid.backing_byte.{role}.malformed"
+    },
+    "categorical_projection_code_templates": {
+      "satisfied": "eligible.categorical.{condition_id}.satisfied",
+      "failed": "invalid.categorical.{condition_id}.failed",
+      "unknown": "indeterminate.categorical.{condition_id}.unknown",
+      "not_applicable": "indeterminate.categorical.{condition_id}.not_applicable",
+      "global_negative_union_rule": "include_each_non_satisfied_categorical_projection_code_except_atomic_action_uses_the_more_specific_fixed_codes_below",
+      "global_eligible_rule": "emit_only_eligible.all_required_inputs_supported_not_the_per_projection_positive_codes"
+    },
+    "fixed_reason_codes": [
+      "eligible.all_required_inputs_supported",
+      "eligible.comparison.exact_three_way_full_projection_agreement",
+      "indeterminate.atomic_action.acceptance_id_missing",
+      "indeterminate.atomic_action.backing_record_missing",
+      "indeterminate.atomic_action.backing_record_unreadable",
+      "indeterminate.atomic_action.consumption_id_missing",
+      "indeterminate.comparison.java_21_0_9.result_missing",
+      "indeterminate.comparison.java_21_0_9.result_unreadable",
+      "indeterminate.comparison.nodejs_24_18_0.result_missing",
+      "indeterminate.comparison.nodejs_24_18_0.result_unreadable",
+      "indeterminate.comparison.python.result_missing",
+      "indeterminate.comparison.python.result_unreadable",
+      "invalid.atomic_action.acceptance_id_malformed",
+      "invalid.atomic_action.backing_record_contradicted",
+      "invalid.atomic_action.backing_record_malformed",
+      "invalid.atomic_action.consumption_id_malformed",
+      "invalid.atomic_action.identifiers_unequal",
+      "invalid.comparison.categorical_failures.disagreement",
+      "invalid.comparison.categorical_results.disagreement",
+      "invalid.comparison.dependency_graph_unpinned",
+      "invalid.comparison.domain_results.disagreement",
+      "invalid.comparison.final_disposition.disagreement",
+      "invalid.comparison.implementation_identity_not_unique",
+      "invalid.comparison.participant_id.disagreement",
+      "invalid.comparison.reason_codes.disagreement",
+      "invalid.comparison.result_bytes_reused",
+      "invalid.comparison.scope_incomplete",
+      "invalid.comparison.source_not_independent",
+      "invalid.comparison.toolchain_unpinned",
+      "invalid.comparison.result_input_binding_incomplete",
+      "invalid.integrity.dependency_cycle",
+      "invalid.integrity.receipt_substitution",
+      "invalid.integrity.required_domain_inventory_mismatch",
+      "invalid.integrity.required_result_domain_omitted",
+      "invalid.integrity.resource_identity_version_mismatch",
+      "invalid.integrity.seal_receipt_binding_missing",
+      "invalid.integrity.undeclared_eligibility_domain",
+      "invalid.output.duplicate_reason_code",
+      "invalid.output.disposition_mismatch",
+      "invalid.output.negative_code_on_eligible_result",
+      "invalid.output.positive_code_on_negative_result",
+      "invalid.output.reason_code_set_mismatch",
+      "invalid.output.reason_codes_unsorted",
+      "invalid.backing_byte.closed_role_inventory_mismatch",
+      "invalid.backing_byte.confirmation_receipt_relation_mismatch",
+      "invalid.backing_byte.failed_row_omitted",
+      "invalid.backing_byte.missing_recorded_as_readable_match",
+      "invalid.backing_byte.missing_recorded_as_zero_byte_match",
+      "invalid.sanitation.contradicted",
+      "invalid.sanitation.forbidden_content"
+    ]
+  },
+  "independent_recomputation_contract": {
+    "required_result_roles": [
+      "python",
+      "nodejs_24_18_0",
+      "java_21_0_9"
+    ],
+    "required_toolchain_versions": {
+      "python": "3.14.2",
+      "nodejs_24_18_0": "24.18.0",
+      "java_21_0_9": "21.0.9"
+    },
+    "shared_material_allowed": [
+      "published_schemas",
+      "this_ruleset",
+      "exact_input_bytes",
+      "normative_expectation_free_input_vectors"
+    ],
+    "shared_material_forbidden": [
+      "evaluator_source",
+      "generated_evaluator_code",
+      "parsing_helpers",
+      "normalization_helpers",
+      "intermediate_state",
+      "expected_result_fixtures",
+      "another_implementation_output"
+    ],
+    "implementation_ids_unique": true,
+    "implementation_source_digests_unique": true,
+    "exact_toolchain_identity_required": true,
+    "exact_dependency_lock_binding_required": true,
+    "exact_input_manifest_binding_required": true,
+    "complete_direct_output_top_level_field_order": [
+      "participant_id",
+      "domain_results",
+      "categorical_results",
+      "categorical_failures",
+      "final_disposition",
+      "reason_codes"
+    ],
+    "complete_domain_result_object_field_order": [
+      "domain",
+      "input_observation_count",
+      "folded_status",
+      "reason_codes"
+    ],
+    "complete_categorical_result_object_field_order": [
+      "condition_id",
+      "status",
+      "reason_codes"
+    ],
+    "comparison_receipt_reason_derivation": {
+      "complete_projection_field_order": [
+        "participant_id",
+        "domain_results",
+        "categorical_results",
+        "categorical_failures",
+        "final_disposition",
+        "reason_codes"
+      ],
+      "exact_agreement_reason_codes": [
+        "eligible.comparison.exact_three_way_full_projection_agreement"
+      ],
+      "missing_result_code_template": "indeterminate.comparison.{implementation_role}.result_missing",
+      "unreadable_result_code_template": "indeterminate.comparison.{implementation_role}.result_unreadable",
+      "field_disagreement_code_template": "invalid.comparison.{complete_projection_field}.disagreement",
+      "field_disagreement_evaluation": "compare_each_complete_top_level_field_across_all_readable_results_and_emit_disagreement_when_any_two_readable_values_differ",
+      "field_missing_or_unreadable_evaluation": "emit_missing_or_unreadable_for_a_field_when_no_readable_pair_disagrees_and_any_required_result_is_missing_or_unreadable",
+      "exact_agreement_result": "all_three_results_readable_and_all_six_complete_fields_equal",
+      "indeterminate_result_reason_set": "sorted_unique_set_of_every_missing_or_unreadable_result_code_when_no_field_disagrees",
+      "invalid_result_reason_set": "sorted_unique_union_of_every_field_disagreement_code_and_every_missing_or_unreadable_result_code",
+      "recorded_set_must_equal_recomputed_set": true,
+      "status_vector_substitution_permitted": false,
+      "final_disposition_only_comparison_permitted": false
+    },
+    "full_ordered_domain_projection_required": true,
+    "full_categorical_projection_required": true,
+    "full_reason_code_set_required": true,
+    "participant_identity_comparison_required": true,
+    "domain_observation_count_comparison_required": true,
+    "domain_local_reason_code_comparison_required": true,
+    "categorical_local_reason_code_comparison_required": true,
+    "lossy_status_vector_projection_allowed": false,
+    "java_result_missing_or_unreadable": "indeterminate",
+    "any_readable_field_disagreement": "invalid",
+    "final_disposition_only_comparison_allowed": false,
+    "exact_agreement_is_necessary_not_sufficient": true
+  },
+  "acyclic_chain_contract": {
+    "backing_byte_receipt_may_name_or_hash_seal": false,
+    "recomputation_result_may_name_or_hash_seal": false,
+    "comparison_receipt_may_name_or_hash_seal": false,
+    "seal_must_bind_backing_byte_receipt": true,
+    "seal_must_bind_comparison_receipt": true,
+    "comparison_receipt_must_bind_exact_result_bytes": true,
+    "receipt_substitution_after_comparison": "invalid",
+    "required_edge_order": [
+      "evidence_to_backing_byte_receipt",
+      "evidence_backing_byte_receipt_and_ruleset_to_recomputation_results",
+      "recomputation_results_to_comparison_receipt",
+      "evidence_ruleset_backing_byte_receipt_and_comparison_receipt_to_seal"
+    ]
+  },
+  "resource_identity_contract": {
+    "human_decision_assurance_evidence": {
+      "required_version": "0.2.0",
+      "required_resource_id": "urn:odeya:schema:human-decision-assurance-evidence:0.2.0",
+      "resource_id_must_not_equal": "urn:odeya:schema:human-decision-assurance-evidence:0.1.0"
+    },
+    "human_decision_assurance_seal": {
+      "required_version": "0.2.0",
+      "required_resource_id": "urn:odeya:schema:human-decision-assurance-seal:0.2.0",
+      "resource_id_must_not_equal": "urn:odeya:schema:human-decision-assurance-seal:0.1.0"
+    },
+    "published_0_1_bytes_are_immutable": true,
+    "changed_semantics_under_0_1_identity": "invalid"
+  },
+  "proof_boundary": {
+    "ruleset_issued": false,
+    "schemas_issued": false,
+    "independent_implementations_retained": false,
+    "java_21_0_9_implementation_retained": false,
+    "real_ceremony_verified": false,
+    "consumer_migration_complete": false,
+    "gate_a_accepted": false,
+    "runtime_authorized": false
+  }
+}

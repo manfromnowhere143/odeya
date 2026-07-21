@@ -295,7 +295,7 @@ jobs:
   architecture-evidence:
     name: Architecture evidence
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 20
     steps:
       - name: Check out the complete evidence history
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -309,26 +309,60 @@ jobs:
         with:
           python-version-file: .python-version
 
+      - name: Bind the isolated evaluator tool cache
+        run: printf 'ODEYA_TOOL_CACHE=%s/odeya-release-tools\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+
+      - name: Prepare diagnostic evidence
+        run: mkdir -p artifacts/ci
+
+      - name: Install the hash-locked architecture environment
+        run: |
+          {
+            python -m pip install \
+              --disable-pip-version-check \
+              --no-input \
+              --require-hashes \
+              --only-binary=:all: \
+              --report artifacts/ci/architecture-evidence-pip-install-report.json \
+              --requirement tools/repository-release/requirements-architecture.lock
+            python -m pip check
+          } 2>&1 | tee artifacts/ci/architecture-evidence-toolchain.log
+
+      - name: Install the exact evaluator toolchains
+        run: |
+          {
+            node_bin="$(bash scripts/ci/install-node.sh)"
+            java_bin="$(bash scripts/ci/install-java.sh)"
+            java_home="${java_bin%/bin/java}"
+            printf 'Node executable: %s\n' "$node_bin"
+            "$node_bin" --version
+            printf 'Java executable: %s\n' "$java_bin"
+            "$java_bin" -XshowSettings:properties -version
+            "$java_home/bin/javac" -version
+          } 2>&1 | tee -a artifacts/ci/architecture-evidence-toolchain.log
+
       - name: Reproduce architecture evidence checks
         run: |
-          mkdir -p artifacts/ci
           {
             python scripts/validate_gate_a_prerequisites.py
             python scripts/validate_prq_009_assignment_order.py
             python scripts/validate_schema_resource_reissues.py
             python scripts/validate_module_manifest.py
             python scripts/validate_first_slice_resolution.py
+            python scripts/validate_human_decision_assurance_successor.py --recompute-all
           } 2>&1 | tee artifacts/ci/architecture-evidence.log
 
       - name: Prove architecture checks did not mutate tracked evidence
-        run: git diff --exit-code
+        run: |
+          git diff --exit-code
+          git diff --cached --exit-code
 
       - name: Retain architecture evidence logs
         if: ${{ always() }}
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: architecture-evidence-${{ github.run_id }}-${{ github.run_attempt }}
-          path: artifacts/ci/architecture-evidence.log
-          if-no-files-found: warn
+          path: artifacts/ci/
+          if-no-files-found: error
           retention-days: 14
           compression-level: 9

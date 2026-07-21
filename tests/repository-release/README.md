@@ -8,24 +8,35 @@ The cases cover write permission expansion, trigger replacement and trigger
 injection, explicit token plumbing, deployment environments, missing job
 timeouts, persisted checkout credentials, shallow history, self-hosted
 runners, undeclared job insertion, and removal of the default-deny
-architecture-surface checker from the early Fast policy job. Additional cases
+architecture-surface checker from the early Fast policy job. They also prove
+that the exact HDA successor recomputation cannot disappear from the
+architecture-evidence job while its context remains green. Additional cases
 reject a missing `release/**` trigger, a checkout that is not pinned to the
 exact event subject, any pull-request or dispatch trigger on the push-only
 publication workflow, and a publication job that is conditional, allowed to
-continue on error, or reduced to a no-op. The exact twenty-case census and
+continue on error, or reduced to a no-op. The exact twenty-one-case census and
 order are pinned by the standard-library release checker. They are bounded
 regression controls, not a complete GitHub Actions or publication-sequence
 security proof.
 
 The exact mutations are in [cases.json](cases.json).
 
-Five release-contract mutations separately prove that the checker refuses a
-return to the future-private-remote fiction, substitution of the exact public
-remote identity, publication to `main` without exact evidence, and a claim
-that the local hook is server-side protection. The fifth appends a contradictory
-private/no-remote claim without removing any required positive sentence, so
-positive-phrase stuffing cannot pass. They mutate the current contract in
-memory and must fail for the named boundary.
+Nineteen architecture-evidence inventory mutations remove each of the six
+dedicated workflow commands and each of the eleven integrated Foundation
+checks in turn. Two additional probes insert an out-of-body seventh workflow
+step and rebind the integrated tuple after its literal assignment without
+changing the count. The release checker must reject all nineteen. This binds
+the published `six`/`eleven` count boundary to executable bytes rather than to
+prose, a single favored member, or count-only validation.
+
+Seven release-contract mutations separately prove that the checker refuses
+stale architecture-evidence check counts, a stale architecture-evidence
+mutation census, a return to the future-private-remote fiction, substitution
+of the exact public remote identity, publication to `main` without exact
+evidence, and a claim that the local hook is server-side protection. The
+seventh appends a contradictory private/no-remote claim without removing any
+required positive sentence, so positive-phrase stuffing cannot pass. They
+mutate the current contract in memory and must fail for the named boundary.
 
 Three release-script isolation mutations prove that a rehearsal cannot return
 to one shared mutable tool cache, cannot run the formal suite without binding

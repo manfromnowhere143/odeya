@@ -260,8 +260,13 @@ EXPECTED_VALIDATOR_PATHS = [
     "scripts/validate_canonicalization_dispositions.py",
 ]
 EXPECTED_CANDIDATE_SCHEMA_PATHS = [
+    "schemas/human-decision-assurance-backing-byte-verification-receipt.schema.json",
     "schemas/human-decision-assurance-core.schema.json",
+    "schemas/human-decision-assurance-eligibility-comparison-receipt.schema.json",
+    "schemas/human-decision-assurance-eligibility-recomputation-result.schema.json",
+    "schemas/human-decision-assurance-evidence-v0-2.schema.json",
     "schemas/human-decision-assurance-evidence.schema.json",
+    "schemas/human-decision-assurance-seal-v0-2.schema.json",
     "schemas/human-decision-assurance-seal.schema.json",
 ]
 EXPECTED_EVIDENCE_ROLES = [
@@ -452,8 +457,8 @@ EXPECTED_CENSUS_SUBJECT = {
     "baseline_git_commit": "56e8062334fb81bba955ba137be690e085d4c88e",
     "baseline_git_tree": "d90ed6dd8c54b91a1e503358f98ecaa08c766fa3",
     "baseline_schema_count": 112,
-    "candidate_mechanism_schema_count": 3,
-    "current_union_schema_count": 115,
+    "candidate_mechanism_schema_count": 8,
+    "current_union_schema_count": 120,
     "authority_matrix_ref": "docs/AUTHORITY_MATRIX.md",
     "baseline_authority_matrix_raw_sha256": (
         "sha256:5c1ffc01e8cafd84b2d761c53fb598aa159ba585ac743184a9a83872cce0b6be"
@@ -496,7 +501,7 @@ EXPECTED_CENSUS_SEMANTIC_SHA256 = {
         "sha256:ae5200cf5ffc8944cb5bd2297fab1a6e26187eb397a3d7891c78a9432ec23bf1"
     ),
     "candidate_status_projection": (
-        "sha256:816abcfb2c55e7055a219697a5c229f225ae8ac7ee4e7a34d86e3e525af45398"
+        "sha256:7b6a06af22c5ff85fb3e7fa925eaab744f1313949cbf131a9f8d8bf7d260b35b"
     ),
     "human_decision_families": (
         "sha256:145ba5502980c358a0710df70fcd1289770fe539699080ce9fece3dc37f68681"
@@ -511,7 +516,7 @@ EXPECTED_CENSUS_SEMANTIC_SHA256 = {
         "sha256:4dadf5ed2c2dfa0925aca40a44fa792c40959491e6d87f7703c36ea35340be89"
     ),
     "dynamic_completeness_rule": (
-        "sha256:6b7670ae0c0e499a866f1940cb6c38d28b8c54ca1ecb5fae87f8bed1eedd6138"
+        "sha256:43855c78a18715d0381e5c6ee8e816eb9fd06c6e6900dca2cf27f229b884773e"
     ),
     "migration": (
         "sha256:cced163ea2617444cf3348c497ace7ea9ad9c956c8668162dc9af2c8ade826eb"
@@ -3820,7 +3825,7 @@ def evaluate_census(
     if (
         set(candidate)
         != {"expected_count", "all_unissued", "all_non_authoritative", "rows"}
-        or candidate.get("expected_count") != 3
+        or candidate.get("expected_count") != 8
         or candidate.get("all_unissued") is not True
         or candidate.get("all_non_authoritative") is not True
         or not isinstance(candidate_rows, list)

@@ -1,0 +1,964 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:odeya:schema:human-decision-assurance-backing-byte-verification-receipt:0.1.0",
+  "title": "Odeya Human Decision Assurance Backing-Byte Verification Receipt Candidate",
+  "description": "An unissued, content-bound architecture receipt that records one typed row for every role in the closed HumanDecisionAssuranceEvidence 0.2 inventory. Missing or unreadable bytes remain unknown; readable mismatches and malformed bytes remain contradicted. The receipt contains no self-digest and grants no authority.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "artifact_class",
+    "artifact_id",
+    "assurance_id",
+    "version",
+    "candidate_status",
+    "evidence_binding",
+    "resolver_profile_binding",
+    "expected_role_count",
+    "role_verifications",
+    "confirmation_receipt_frame_relation",
+    "verification_disposition",
+    "reason_codes",
+    "proof_boundary",
+    "verified_at"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.1.0"
+    },
+    "artifact_class": {
+      "const": "human_decision_assurance_backing_byte_verification_receipt_candidate"
+    },
+    "artifact_id": {
+      "$ref": "#/$defs/hda_successor_identifier"
+    },
+    "assurance_id": {
+      "$ref": "#/$defs/hda_successor_identifier"
+    },
+    "version": {
+      "const": 1
+    },
+    "candidate_status": {
+      "const": "unissued_architecture_candidate_not_human_authority"
+    },
+    "evidence_binding": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/hda_backing_raw_schema_binding"
+        },
+        {
+          "properties": {
+            "schema_resource_id": {
+              "const": "urn:odeya:schema:human-decision-assurance-evidence:0.2.0"
+            }
+          }
+        }
+      ]
+    },
+    "resolver_profile_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profile_id",
+        "profile_version",
+        "raw_sha256",
+        "byte_count",
+        "content_address_is_object_identity",
+        "mutable_alias_used"
+      ],
+      "properties": {
+        "profile_id": {
+          "const": "urn:odeya:human-decision-assurance:content-address-resolver:0.1.0-candidate"
+        },
+        "profile_version": {
+          "const": "0.1.0"
+        },
+        "raw_sha256": {
+          "$ref": "#/$defs/raw_sha256"
+        },
+        "byte_count": {
+          "$ref": "#/$defs/positive_byte_count"
+        },
+        "content_address_is_object_identity": {
+          "const": true
+        },
+        "mutable_alias_used": {
+          "const": false
+        }
+      }
+    },
+    "expected_role_count": {
+      "const": 14
+    },
+    "role_verifications": {
+      "type": "array",
+      "minItems": 14,
+      "maxItems": 14,
+      "prefixItems": [
+        {
+          "$ref": "#/$defs/row_sanitized_challenge_lifecycle"
+        },
+        {
+          "$ref": "#/$defs/row_client_data_json"
+        },
+        {
+          "$ref": "#/$defs/row_authenticator_data"
+        },
+        {
+          "$ref": "#/$defs/row_webauthn_signature"
+        },
+        {
+          "$ref": "#/$defs/row_credential_public_key"
+        },
+        {
+          "$ref": "#/$defs/row_displayed_decision_bytes"
+        },
+        {
+          "$ref": "#/$defs/row_confirmation_receipt_frame"
+        },
+        {
+          "$ref": "#/$defs/row_decision_confirmation_receipt"
+        },
+        {
+          "$ref": "#/$defs/row_custody_observation"
+        },
+        {
+          "$ref": "#/$defs/row_identity_proofing_profile"
+        },
+        {
+          "$ref": "#/$defs/row_principal_authenticator_binding"
+        },
+        {
+          "$ref": "#/$defs/row_controlled_time_observation"
+        },
+        {
+          "$ref": "#/$defs/row_verifier_observation"
+        },
+        {
+          "$ref": "#/$defs/row_delegation_effective_control_observation"
+        }
+      ],
+      "items": false
+    },
+    "confirmation_receipt_frame_relation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "frame_role",
+        "expected_frame_content_address",
+        "observed_frame_raw_sha256",
+        "presentation_challenge_id",
+        "authentication_challenge_id",
+        "authentication_frame_committed_receipt_sha256",
+        "binary_framing_disposition",
+        "presentation_to_receipt_relation_disposition",
+        "receipt_to_authentication_relation_disposition"
+      ],
+      "properties": {
+        "frame_role": {
+          "const": "exact_unmodified_confirmation_receipt_frame"
+        },
+        "expected_frame_content_address": {
+          "$ref": "#/$defs/raw_sha256"
+        },
+        "observed_frame_raw_sha256": {
+          "$ref": "#/$defs/nullable_raw_sha256"
+        },
+        "presentation_challenge_id": {
+          "$ref": "#/$defs/raw_sha256"
+        },
+        "authentication_challenge_id": {
+          "$ref": "#/$defs/raw_sha256"
+        },
+        "authentication_frame_committed_receipt_sha256": {
+          "$ref": "#/$defs/nullable_raw_sha256"
+        },
+        "binary_framing_disposition": {
+          "$ref": "#/$defs/integrity_observation"
+        },
+        "presentation_to_receipt_relation_disposition": {
+          "$ref": "#/$defs/integrity_observation"
+        },
+        "receipt_to_authentication_relation_disposition": {
+          "$ref": "#/$defs/integrity_observation"
+        }
+      }
+    },
+    "verification_disposition": {
+      "enum": [
+        "supported",
+        "indeterminate",
+        "invalid"
+      ]
+    },
+    "reason_codes": {
+      "$ref": "#/$defs/hda_backing_reason_codes"
+    },
+    "proof_boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "receipt_self_digest_forbidden",
+        "receipt_names_or_predicts_seal_identity",
+        "profile_issued",
+        "bytes_verified_by_filename_or_descriptor_only",
+        "missing_bytes_represented_as_zero",
+        "receipt_grants_authority",
+        "gate_a_accepted",
+        "runtime_authorized",
+        "external_effects_authorized"
+      ],
+      "properties": {
+        "receipt_self_digest_forbidden": {
+          "const": true
+        },
+        "receipt_names_or_predicts_seal_identity": {
+          "const": false
+        },
+        "profile_issued": {
+          "const": false
+        },
+        "bytes_verified_by_filename_or_descriptor_only": {
+          "const": false
+        },
+        "missing_bytes_represented_as_zero": {
+          "const": false
+        },
+        "receipt_grants_authority": {
+          "const": false
+        },
+        "gate_a_accepted": {
+          "const": false
+        },
+        "runtime_authorized": {
+          "const": false
+        },
+        "external_effects_authorized": {
+          "const": false
+        }
+      }
+    },
+    "verified_at": {
+      "$ref": "#/$defs/timestamp"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "verification_disposition": {
+            "const": "supported"
+          }
+        },
+        "required": [
+          "verification_disposition"
+        ]
+      },
+      "then": {
+        "properties": {
+          "role_verifications": {
+            "not": {
+              "contains": {
+                "properties": {
+                  "integrity_observation": {
+                    "enum": [
+                      "contradicted",
+                      "unknown"
+                    ]
+                  }
+                },
+                "required": [
+                  "integrity_observation"
+                ]
+              }
+            }
+          },
+          "confirmation_receipt_frame_relation": {
+            "properties": {
+              "observed_frame_raw_sha256": {
+                "$ref": "#/$defs/raw_sha256"
+              },
+              "authentication_frame_committed_receipt_sha256": {
+                "$ref": "#/$defs/raw_sha256"
+              },
+              "binary_framing_disposition": {
+                "const": "supported"
+              },
+              "presentation_to_receipt_relation_disposition": {
+                "const": "supported"
+              },
+              "receipt_to_authentication_relation_disposition": {
+                "const": "supported"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "verification_disposition": {
+            "const": "indeterminate"
+          }
+        },
+        "required": [
+          "verification_disposition"
+        ]
+      },
+      "then": {
+        "properties": {
+          "role_verifications": {
+            "not": {
+              "contains": {
+                "properties": {
+                  "integrity_observation": {
+                    "const": "contradicted"
+                  }
+                },
+                "required": [
+                  "integrity_observation"
+                ]
+              }
+            }
+          },
+          "confirmation_receipt_frame_relation": {
+            "not": {
+              "anyOf": [
+                {
+                  "properties": {
+                    "binary_framing_disposition": {
+                      "const": "contradicted"
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "presentation_to_receipt_relation_disposition": {
+                      "const": "contradicted"
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "receipt_to_authentication_relation_disposition": {
+                      "const": "contradicted"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "anyOf": [
+          {
+            "properties": {
+              "role_verifications": {
+                "contains": {
+                  "properties": {
+                    "integrity_observation": {
+                      "const": "unknown"
+                    }
+                  },
+                  "required": [
+                    "integrity_observation"
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "properties": {
+              "confirmation_receipt_frame_relation": {
+                "anyOf": [
+                  {
+                    "properties": {
+                      "binary_framing_disposition": {
+                        "const": "unknown"
+                      }
+                    }
+                  },
+                  {
+                    "properties": {
+                      "presentation_to_receipt_relation_disposition": {
+                        "const": "unknown"
+                      }
+                    }
+                  },
+                  {
+                    "properties": {
+                      "receipt_to_authentication_relation_disposition": {
+                        "const": "unknown"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "verification_disposition": {
+            "const": "invalid"
+          }
+        },
+        "required": [
+          "verification_disposition"
+        ]
+      },
+      "then": {
+        "anyOf": [
+          {
+            "properties": {
+              "role_verifications": {
+                "contains": {
+                  "properties": {
+                    "integrity_observation": {
+                      "const": "contradicted"
+                    }
+                  },
+                  "required": [
+                    "integrity_observation"
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "properties": {
+              "confirmation_receipt_frame_relation": {
+                "anyOf": [
+                  {
+                    "properties": {
+                      "binary_framing_disposition": {
+                        "const": "contradicted"
+                      }
+                    }
+                  },
+                  {
+                    "properties": {
+                      "presentation_to_receipt_relation_disposition": {
+                        "const": "contradicted"
+                      }
+                    }
+                  },
+                  {
+                    "properties": {
+                      "receipt_to_authentication_relation_disposition": {
+                        "const": "contradicted"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "$defs": {
+    "hda_successor_identifier": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,255}$"
+    },
+    "raw_sha256": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "x-odeya-digest-scope": {
+        "kind": "byte_digest",
+        "subject": "exact raw bytes named by the adjacent immutable binding",
+        "algorithm": "sha-256",
+        "profile": "not_a_canonical_object_digest",
+        "status": "candidate_unissued"
+      }
+    },
+    "nullable_raw_sha256": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/raw_sha256"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "positive_byte_count": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 1073741824
+    },
+    "nullable_positive_byte_count": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/positive_byte_count"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
+    },
+    "hda_backing_raw_schema_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "schema_resource_id",
+        "raw_sha256",
+        "byte_count",
+        "mutable_alias_used"
+      ],
+      "properties": {
+        "artifact_id": {
+          "$ref": "#/$defs/hda_successor_identifier"
+        },
+        "schema_resource_id": {
+          "type": "string",
+          "pattern": "^urn:odeya:schema:[a-z0-9][a-z0-9-]*:[0-9]+\\.[0-9]+\\.[0-9]+$",
+          "maxLength": 256
+        },
+        "raw_sha256": {
+          "$ref": "#/$defs/raw_sha256"
+        },
+        "byte_count": {
+          "$ref": "#/$defs/positive_byte_count"
+        },
+        "mutable_alias_used": {
+          "const": false
+        }
+      }
+    },
+    "integrity_observation": {
+      "enum": [
+        "supported",
+        "contradicted",
+        "unknown"
+      ]
+    },
+    "hda_backing_reason_codes": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 256,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^(?:supported|indeterminate|invalid)\\.[a-z][a-z0-9_]*(?:\\.[a-z][a-z0-9_]*)*$"
+      }
+    },
+    "byte_fidelity": {
+      "enum": [
+        "exact_unmodified_cryptographic_input",
+        "exact_unmodified_binary_frame",
+        "sanitized_derived_observation_record"
+      ]
+    },
+    "verification_row": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "role",
+        "artifact_id",
+        "expected_content_address",
+        "expected_byte_count",
+        "expected_media_type",
+        "expected_byte_fidelity",
+        "repository_blob_path",
+        "read_disposition",
+        "observed_raw_sha256",
+        "observed_byte_count",
+        "format_disposition",
+        "comparison_disposition",
+        "integrity_observation"
+      ],
+      "properties": {
+        "role": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "artifact_id": {
+          "$ref": "#/$defs/hda_successor_identifier"
+        },
+        "expected_content_address": {
+          "$ref": "#/$defs/raw_sha256"
+        },
+        "expected_byte_count": {
+          "$ref": "#/$defs/positive_byte_count"
+        },
+        "expected_media_type": {
+          "type": "string",
+          "pattern": "^[a-z0-9!#$&^_.+-]+/[a-z0-9!#$&^_.+-]+$",
+          "maxLength": 128
+        },
+        "expected_byte_fidelity": {
+          "$ref": "#/$defs/byte_fidelity"
+        },
+        "repository_blob_path": {
+          "type": "string",
+          "pattern": "^architecture/evidence-blobs/sha256/[0-9a-f]{2}/[0-9a-f]{62}$",
+          "maxLength": 128
+        },
+        "read_disposition": {
+          "enum": [
+            "readable_complete",
+            "missing",
+            "unreadable",
+            "resolver_failure",
+            "denied",
+            "truncated_no_complete_candidate"
+          ]
+        },
+        "observed_raw_sha256": {
+          "$ref": "#/$defs/nullable_raw_sha256"
+        },
+        "observed_byte_count": {
+          "$ref": "#/$defs/nullable_positive_byte_count"
+        },
+        "format_disposition": {
+          "enum": [
+            "conformant",
+            "malformed",
+            "not_evaluated_no_read"
+          ]
+        },
+        "comparison_disposition": {
+          "enum": [
+            "match",
+            "mismatch",
+            "not_compared_no_read"
+          ]
+        },
+        "integrity_observation": {
+          "$ref": "#/$defs/integrity_observation"
+        }
+      },
+      "oneOf": [
+        {
+          "properties": {
+            "read_disposition": {
+              "const": "readable_complete"
+            },
+            "observed_raw_sha256": {
+              "$ref": "#/$defs/raw_sha256"
+            },
+            "observed_byte_count": {
+              "$ref": "#/$defs/positive_byte_count"
+            },
+            "format_disposition": {
+              "const": "conformant"
+            },
+            "comparison_disposition": {
+              "const": "match"
+            },
+            "integrity_observation": {
+              "const": "supported"
+            }
+          }
+        },
+        {
+          "properties": {
+            "read_disposition": {
+              "const": "readable_complete"
+            },
+            "observed_raw_sha256": {
+              "$ref": "#/$defs/raw_sha256"
+            },
+            "observed_byte_count": {
+              "$ref": "#/$defs/positive_byte_count"
+            },
+            "format_disposition": {
+              "enum": [
+                "conformant",
+                "malformed"
+              ]
+            },
+            "comparison_disposition": {
+              "const": "mismatch"
+            },
+            "integrity_observation": {
+              "const": "contradicted"
+            }
+          }
+        },
+        {
+          "properties": {
+            "read_disposition": {
+              "enum": [
+                "missing",
+                "unreadable",
+                "resolver_failure",
+                "denied",
+                "truncated_no_complete_candidate"
+              ]
+            },
+            "observed_raw_sha256": {
+              "type": "null"
+            },
+            "observed_byte_count": {
+              "type": "null"
+            },
+            "format_disposition": {
+              "const": "not_evaluated_no_read"
+            },
+            "comparison_disposition": {
+              "const": "not_compared_no_read"
+            },
+            "integrity_observation": {
+              "const": "unknown"
+            }
+          }
+        }
+      ]
+    },
+    "row_sanitized_challenge_lifecycle": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/verification_row"
+        },
+        {
+          "properties": {
+            "role": {
+              "const": "sanitized_challenge_lifecycle_and_atomic_consumption_record"
+            },
+            "expected_byte_fidelity": {
+              "const": "sanitized_derived_observation_record"
+            }
+          }
+        }
+      ]
+    },
+    "row_client_data_json": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/verification_row"
+        },
+        {
+          "properties": {
+            "role": {
+              "const": "exact_unmodified_client_data_json"
+            },
+            "expected_byte_fidelity": {
+              "const": "exact_unmodified_cryptographic_input"
+            }
+          }
+        }
+      ]
+    },
+    "row_authenticator_data": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/verification_row"
+        },
+        {
+          "properties": {
+            "role": {
+              "const": "exact_unmodified_authenticator_data"
+            },
+            "expected_byte_fidelity": {
+              "const": "exact_unmodified_cryptographic_input"
+            }
+          }
+        }
+      ]
+    },
+    "row_webauthn_signature": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/verification_row"
+        },
+        {
+          "properties": {
+            "role": {
+              "const": "exact_unmodified_webauthn_signature"
+            },
+            "expected_byte_fidelity": {
+              "const": "exact_unmodified_cryptographic_input"
+            }
+          }
+        }
+      ]
+    },
+    "row_credential_public_key": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/verification_row"
+        },
+        {
+          "properties": {
+            "role": {
+              "const": "exact_unmodified_credential_public_key"
+            },
+            "expected_byte_fidelity": {
+              "const": "exact_unmodified_cryptographic_input"
+            }
+          }
+        }
+      ]
+    },
+    "row_displayed_decision_bytes": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/verification_row"
+        },
+        {
+          "properties": {
+            "role": {
+              "const": "exact_unmodified_displayed_decision_bytes"
+            },
+            "expected_byte_fidelity": {
+              "const": "exact_unmodified_cryptographic_input"
+            }
+          }
+        }
+      ]
+    },
+    "row_confirmation_receipt_frame": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/verification_row"
+        },
+        {
+          "properties": {
+            "role": {
+              "const": "exact_unmodified_confirmation_receipt_frame"
+            },
+            "expected_media_type": {
+              "const": "application/octet-stream"
+            },
+            "expected_byte_fidelity": {
+              "const": "exact_unmodified_binary_frame"
+            }
+          }
+        }
+      ]
+    },
+    "row_decision_confirmation_receipt": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/verification_row"
+        },
+        {
+          "properties": {
+            "role": {
+              "const": "sanitized_exact_material_presentation_and_decision_confirmation_receipt"
+            },
+            "expected_byte_fidelity": {
+              "const": "sanitized_derived_observation_record"
+            }
+          }
+        }
+      ]
+    },
+    "row_custody_observation": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/verification_row"
+        },
+        {
+          "properties": {
+            "role": {
+              "const": "sanitized_custody_observation"
+            },
+            "expected_byte_fidelity": {
+              "const": "sanitized_derived_observation_record"
+            }
+          }
+        }
+      ]
+    },
+    "row_identity_proofing_profile": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/verification_row"
+        },
+        {
+          "properties": {
+            "role": {
+              "const": "sanitized_identity_proofing_profile"
+            },
+            "expected_byte_fidelity": {
+              "const": "sanitized_derived_observation_record"
+            }
+          }
+        }
+      ]
+    },
+    "row_principal_authenticator_binding": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/verification_row"
+        },
+        {
+          "properties": {
+            "role": {
+              "const": "sanitized_principal_authenticator_binding"
+            },
+            "expected_byte_fidelity": {
+              "const": "sanitized_derived_observation_record"
+            }
+          }
+        }
+      ]
+    },
+    "row_controlled_time_observation": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/verification_row"
+        },
+        {
+          "properties": {
+            "role": {
+              "const": "sanitized_controlled_time_observation"
+            },
+            "expected_byte_fidelity": {
+              "const": "sanitized_derived_observation_record"
+            }
+          }
+        }
+      ]
+    },
+    "row_verifier_observation": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/verification_row"
+        },
+        {
+          "properties": {
+            "role": {
+              "const": "sanitized_verifier_observation"
+            },
+            "expected_byte_fidelity": {
+              "const": "sanitized_derived_observation_record"
+            }
+          }
+        }
+      ]
+    },
+    "row_delegation_effective_control_observation": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/verification_row"
+        },
+        {
+          "properties": {
+            "role": {
+              "const": "sanitized_delegation_effective_control_observation"
+            },
+            "expected_byte_fidelity": {
+              "const": "sanitized_derived_observation_record"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
