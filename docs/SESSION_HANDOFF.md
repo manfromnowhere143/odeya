@@ -681,6 +681,43 @@ semantic-neutral corpus edit would be unproved. Rename it only with a
 deliberately input-bound remeasurement or a stronger audit-record dependency
 binding.
 
+## 2026-07-22 current-resource identity correction
+
+Recovery resolved exact local `HEAD`, `origin/main`, and permanent
+`release/36d798e2cb7d22352ba62e4fc07106e685b87f9f` to the same published
+commit, with tree `3aa8c916da40365ef36746278b3d716590145987` and both no-bypass
+rulesets still passing the live governance verifier. The protected UI/UX lane
+remained outside the architecture worktree and was not modified.
+
+A read-only current-resource sweep found 13 Markdown links whose visible
+schema version named a predecessor while the link resolved to the current
+reissued schema file. This bounded descendant corrects eleven of those links,
+all nineteen stale declaring-resource versions in the canonical digest-domain
+table, and the current module-manifest schema count and scoped digest. The
+canonical profile evidence row is rebound to the corrected profile document at
+`sha256:1e5352ab297196aab8c1235fc1224f2e46aaf12c47f6e99c3c8324d8aa0d1c17`,
+22571 bytes. No schema, profile-core, HDA successor, closure/install
+observation, technical-review report, runtime, provider, or deployment byte is
+changed.
+
+The remaining two stale links are `PolicyDecision` and
+`AdmissionEvidenceBundle` in `docs/AUTHORITY_MATRIX.md`. That file is an exact
+input to the frozen HDA consumer census. A trial correction correctly made the
+HDA suite refuse with `census_current_authority_matrix_drift`, so the file was
+restored byte-for-byte. Correct those labels only in a deliberate successor
+census/evidence tranche; do not misclassify them as intentional historical
+references and do not mutate the retained `.0005` HDA chain or round-eleven
+report.
+
+Focused canonical-profile, module-manifest, and schema-reissue checks pass.
+The full structural validator passes with the existing measured inventory: 185
+Markdown documents, 120 schemas, 860 shared cases, 14 isolated suites, 11
+architecture-evidence checks, 64 canonical cases, four metamorphic relations,
+and 120/216 canonical schema/fixture audit coverage. These are bounded
+architecture checks only. The profile remains unissued; HDA-CTX-001 through
+HDA-CTX-016 still require accountable closure review; PRQ-009, PRQ-013, T1,
+Gate A, runtime, deployment, and external effects remain blocked.
+
 ## Historical recovery log — retained chronology, not current state
 
 The dated tranche records below preserve how the architecture evidence evolved.

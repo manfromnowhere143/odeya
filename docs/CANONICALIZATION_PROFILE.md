@@ -92,27 +92,27 @@ that prose drift:
 
 | Subject | Domain | Declaring schema resource |
 | --- | --- | --- |
-| admission evidence bundle | `odeya-admission-evidence-bundle-v2` | `admission-evidence-bundle:0.2.0` |
-| aggregate-state member | `odeya-aggregate-state-subject-member-v1` | `aggregate-state-subject-registry:0.1.0` |
-| aggregate-state registry | `odeya-aggregate-state-subject-registry-v1` | `aggregate-state-subject-registry:0.1.0` |
-| C0 registry bundle | `odeya-c0-registry-bundle-v1` | `c0-registry-bundle:0.1.0` |
-| command design vocabulary | `odeya-command-design-vocabulary-v1` | `command-design-vocabulary:0.1.0` |
-| command receipt | `odeya-command-receipt-v2` | `command-receipt:0.4.0` |
-| command request | `odeya-command-request-v2` | `command-envelope:0.5.0` |
-| command result | `odeya-command-result-v1` | `command-receipt:0.4.0` |
-| engine contract root | `odeya-engine-contract-root-v1` | `engine-contract-root:0.1.0` |
-| event-contract member | `odeya-event-contract-member-v1` | `event-contract-registry:0.1.0` |
-| event-contract registry | `odeya-event-contract-registry-v1` | `event-contract-registry:0.1.0` |
+| admission evidence bundle | `odeya-admission-evidence-bundle-v2` | `admission-evidence-bundle:0.9.0` |
+| aggregate-state member | `odeya-aggregate-state-subject-member-v1` | `aggregate-state-subject-registry:0.6.0` |
+| aggregate-state registry | `odeya-aggregate-state-subject-registry-v1` | `aggregate-state-subject-registry:0.6.0` |
+| C0 registry bundle | `odeya-c0-registry-bundle-v1` | `c0-registry-bundle:0.6.0` |
+| command design vocabulary | `odeya-command-design-vocabulary-v1` | `command-design-vocabulary:0.5.0` |
+| command receipt | `odeya-command-receipt-v2` | `command-receipt:0.11.0` |
+| command request | `odeya-command-request-v2` | `command-envelope:0.12.0` |
+| command result | `odeya-command-result-v1` | `command-receipt:0.11.0` |
+| engine contract root | `odeya-engine-contract-root-v1` | `engine-contract-root:0.7.0` |
+| event-contract member | `odeya-event-contract-member-v1` | `event-contract-registry:0.6.0` |
+| event-contract registry | `odeya-event-contract-registry-v1` | `event-contract-registry:0.6.0` |
 | event payload | `odeya-event-payload-v1` | `research-event:0.18.0` |
-| ledger checkpoint | `odeya-ledger-checkpoint-v1` | `ledger-checkpoint:0.2.0` |
-| P0 constitutional recovery admission | `odeya-p0-constitutional-recovery-admission-v1` | `registry-activation:0.1.0` |
-| policy decision | `odeya-policy-decision-v2` | `policy-decision:0.2.0` |
-| reducer member | `odeya-reducer-registry-member-v1` | `reducer-registry:0.1.0` |
-| reducer registry | `odeya-reducer-registry-v1` | `reducer-registry:0.1.0` |
-| registry activation | `odeya-registry-activation-v1` | `registry-activation:0.1.0` |
+| ledger checkpoint | `odeya-ledger-checkpoint-v1` | `ledger-checkpoint:0.9.0` |
+| P0 constitutional recovery admission | `odeya-p0-constitutional-recovery-admission-v1` | `registry-activation:0.8.0` |
+| policy decision | `odeya-policy-decision-v2` | `policy-decision:0.9.0` |
+| reducer member | `odeya-reducer-registry-member-v1` | `reducer-registry:0.6.0` |
+| reducer registry | `odeya-reducer-registry-v1` | `reducer-registry:0.6.0` |
+| registry activation | `odeya-registry-activation-v1` | `registry-activation:0.8.0` |
 | research event | `odeya-research-event-v1` | `research-event:0.18.0` |
-| schema-registry member | `odeya-schema-registry-member-v1` | `schema-registry:0.1.0` |
-| schema registry | `odeya-schema-registry-v1` | `schema-registry:0.1.0` |
+| schema-registry member | `odeya-schema-registry-member-v1` | `schema-registry:0.7.0` |
+| schema registry | `odeya-schema-registry-v1` | `schema-registry:0.7.0` |
 
 Reservation of a name in this candidate table does not admit any current
 consumer. Every scoped digest contract still has to carry the exact future

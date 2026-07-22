@@ -66,7 +66,7 @@ A `LedgerCheckpoint` periodically binds:
 
 The exact commitment structure must support inclusion and consistency proofs without requiring all data to be public. A custom unaudited Merkle design is forbidden; the accepted algorithm, leaf framing, domain separation, ordering, empty-tree behavior, proof format, and test vectors are versioned.
 
-The closed structural record is [`ledger-checkpoint` 0.2.0](../schemas/ledger-checkpoint.schema.json). Its commitments include command receipts and the separate immutable admission-evidence set, so replay does not preserve only an outcome while losing why the pure admission decision chose it. `constitutional_snapshots` now requires exact EngineContractRoot and AggregateStateSubjectRegistry references in addition to the C0 component slots. The digest contract already includes the whole `/constitutional_snapshots` object, so those new bindings are covered without adding a competing child pointer. Its structured `checkpoint_digest_contract` fixes SHA-256, the `odeya-ledger-checkpoint-v1` domain, exact `odeya-jcs` profile identity, exact checkpoint schema identity/digest binding, and the complete included/excluded JSON-Pointer sets. The checkpoint digest and all signatures are outside the hashed subject; every signature separately names the exact checkpoint digest and purpose context. Digest recomputation, actual schema/profile digest equality, admission-evidence completeness, root/bundle/component compatibility, signature validity, set cardinality, inclusion/consistency proofs, and previous-checkpoint ordering remain semantic checks; JSON Schema cannot establish them. Dependency direction is checkpoint -> root/C0/component subjects; no root or registry subject may embed the activating/future checkpoint.
+The closed structural record is [`ledger-checkpoint` 0.9.0](../schemas/ledger-checkpoint.schema.json). Its commitments include command receipts and the separate immutable admission-evidence set, so replay does not preserve only an outcome while losing why the pure admission decision chose it. `constitutional_snapshots` now requires exact EngineContractRoot and AggregateStateSubjectRegistry references in addition to the C0 component slots. The digest contract already includes the whole `/constitutional_snapshots` object, so those new bindings are covered without adding a competing child pointer. Its structured `checkpoint_digest_contract` fixes SHA-256, the `odeya-ledger-checkpoint-v1` domain, exact `odeya-jcs` profile identity, exact checkpoint schema identity/digest binding, and the complete included/excluded JSON-Pointer sets. The checkpoint digest and all signatures are outside the hashed subject; every signature separately names the exact checkpoint digest and purpose context. Digest recomputation, actual schema/profile digest equality, admission-evidence completeness, root/bundle/component compatibility, signature validity, set cardinality, inclusion/consistency proofs, and previous-checkpoint ordering remain semantic checks; JSON Schema cannot establish them. Dependency direction is checkpoint -> root/C0/component subjects; no root or registry subject may embed the activating/future checkpoint.
 
 ### Independent witnessing
 
@@ -149,7 +149,7 @@ Backups are immutable against ordinary application credentials. Backup administr
 
 Backup completion means bytes were written. Backup verification means exact manifest/digest checks passed. Recoverability means a clean-room restore drill passed all semantic checks. These are separate retained states.
 
-[`backup-manifest` 0.1.0](../schemas/backup-manifest.schema.json) represents those three states separately and makes embedded key material structurally impossible. Its deployment-neutral fixture intentionally leaves recoverability `not_run`; a completed and digest-verified backup must not be narrated as a proven restore.
+[`backup-manifest` 0.6.0](../schemas/backup-manifest.schema.json) represents those three states separately and makes embedded key material structurally impossible. Its deployment-neutral fixture intentionally leaves recoverability `not_run`; a completed and digest-verified backup must not be narrated as a proven restore.
 
 ## Restore procedure
 
@@ -171,7 +171,7 @@ A production restore follows a deterministic case, never an improvised operator 
 
 Restored scheduler history is reconciled after C1. A scheduled activity that has no legal next action in canonical state is cancelled/quarantined even if the scheduler calls it running.
 
-[`restore-verification-report` 0.1.0](../schemas/restore-verification-report.schema.json) binds the selected sources, isolated environment, all C0–C6 plane results, current-security frontier, the eleven founding invariants, known-answer/known-bad results, review determinations, and a fail-closed service recommendation. [`recovery-decision` 0.1.0](../schemas/recovery-decision.schema.json) is the separate recovery-quorum decision. Neither record is a publication, spending, R2+ effect, or physical-action grant.
+[`restore-verification-report` 0.5.0](../schemas/restore-verification-report.schema.json) binds the selected sources, isolated environment, all C0–C6 plane results, current-security frontier, the eleven founding invariants, known-answer/known-bad results, review determinations, and a fail-closed service recommendation. [`recovery-decision` 0.6.0](../schemas/recovery-decision.schema.json) is the separate recovery-quorum decision. Neither record is a publication, spending, R2+ effect, or physical-action grant.
 
 ## Restore verification invariants
 
@@ -210,7 +210,7 @@ The deployment profile specifies generation, hardware protection, exportability,
 
 Key loss and key compromise are distinct incidents. Loss may make bytes unrecoverable; compromise makes authenticity after a bounded time uncertain. Neither is repaired by re-signing old subjects. Old signatures/checkpoints retain original key/time/trust evidence plus the compromise assessment.
 
-The deployment-neutral [`key-profile` 0.1.0](../schemas/key-profile.schema.json) requires all eight logical classes, explicit allowed and forbidden operations, activation and recovery quorums, separation constraints, lifecycle policies, algorithm agility, and a hard `key_material_embedded=false` boundary. Its proposed fixture is not evidence of a selected cryptographic product, protected key, or executable recovery setup.
+The deployment-neutral [`key-profile` 0.5.0](../schemas/key-profile.schema.json) requires all eight logical classes, explicit allowed and forbidden operations, activation and recovery quorums, separation constraints, lifecycle policies, algorithm agility, and a hard `key_material_embedded=false` boundary. Its proposed fixture is not evidence of a selected cryptographic product, protected key, or executable recovery setup.
 
 ## Restore resurrection and current-policy fence
 

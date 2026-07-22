@@ -79,11 +79,11 @@ A bare number, score, or prose conclusion is not a scientific result object.
 The existing mission, protocol, atomic metric, and claim records cover
 important common fields, but they must not be stretched until loose strings or
 a single atomic metric silently carry every claim type. The candidate adds
-[`EstimandContract` 0.1.0](../schemas/estimand-contract.schema.json) and
-[`ScientificResultEnvelope` 0.1.0](../schemas/scientific-result-envelope.schema.json).
+[`EstimandContract` 0.8.0](../schemas/estimand-contract.schema.json) and
+[`ScientificResultEnvelope` 0.9.0](../schemas/scientific-result-envelope.schema.json).
 Optional strict bindings were added to
-[`ProtocolSnapshot` 0.1.0](../schemas/protocol-snapshot.schema.json) and
-[`MetricResult` 0.1.0](../schemas/metric-result.schema.json), so their legacy
+[`ProtocolSnapshot` 0.9.0](../schemas/protocol-snapshot.schema.json) and
+[`MetricResult` 0.8.0](../schemas/metric-result.schema.json), so their legacy
 records remain structurally valid while legacy loose fields cannot become
 estimand or claim authority. No missing `ResearchMissionSpec` or `ClaimVersion`
 path alias was invented. The dependency order is:
@@ -434,7 +434,7 @@ Each admitted method declares:
 
 Do not write custom statistical algorithms when mature audited libraries exist. Odeya owns the contract, evidence, authority, orchestration, verification, and learning semantics—not reinventions of numerical statistics.
 
-The closed structural contract is [`method-registry` 0.1.0](../schemas/method-registry.schema.json). It deliberately distinguishes a proposed record from an admitted method. A structurally valid record remains unusable for claim-bearing work until its guarantee and assumptions are semantically reviewed, every applicable known-bad vector partition is populated, the required independent implementations agree under a frozen numerical profile, rights are settled, and an accountable admission decision is retained. A registry digest identifies those exact records; it is not an endorsement of every method it contains.
+The closed structural contract is [`method-registry` 0.7.0](../schemas/method-registry.schema.json). It deliberately distinguishes a proposed record from an admitted method. A structurally valid record remains unusable for claim-bearing work until its guarantee and assumptions are semantically reviewed, every applicable known-bad vector partition is populated, the required independent implementations agree under a frozen numerical profile, rights are settled, and an accountable admission decision is retained. A registry digest identifies those exact records; it is not an endorsement of every method it contains.
 
 ## Mathematical implementation dependency
 
