@@ -1,7 +1,7 @@
 # Odeya Session Handoff
 
 Status: canonical recovery entrypoint for the current Odeya architecture and
-repository-release mission. Last updated 2026-07-21, Asia/Jerusalem. This is a
+repository-release mission. Last updated 2026-07-22, Asia/Jerusalem. This is a
 handoff contract, not Gate A acceptance, implementation authorization, or
 scientific evidence; repository-publication authority comes only from the
 named decisions and release contract. The exact-SHA two-ref publication
@@ -194,8 +194,9 @@ single audit instrument, every time before a number reached the record.
 ## What this lane established, and where to put pressure next
 
 The migration wave remains at audit zero and the profile remains unissued by
-design. C5's WorkLease release-claim compatibility correction is the published
-predecessor. The live work is the bounded PRQ-013 assurance candidate:
+design. C5's WorkLease release-claim compatibility correction remains retained
+foundation evidence. The exact published predecessor for the live bounded
+PRQ-013 correction is `86c0f1ed8ba20d74324d64529bf5435a0524f4cd`:
 
 - **Guard coverage has explicit denominators, not whole-repository coverage.**
   The lifecycle checker has dedicated statement (222/229) and condition
@@ -216,19 +217,29 @@ predecessor. The live work is the bounded PRQ-013 assurance candidate:
   six), and the artifact-mutation vocabulary for once-loaded records (ADR 0082,
   proven on the first-slice inventory).
 - **PRQ-013 now has retained byte-bound/recomputation candidate evidence, not
-  closure.** ADRs 0092, 0093, and 0095 preserve the immutable, unissued 0.1
+  closure.** ADRs 0092, 0093, 0095, and 0096 preserve the immutable, unissued 0.1
   resources and add five unissued successor schemas, seven schema-valid
   fixtures, 14 content-addressed synthetic backing preimages independently
-  rederived from their retained bytes, 44 expectation-free vectors, and 48
+  rederived from their retained bytes, 44 expectation-free vectors, and 49
   chain known-bads.
   Three source-separated, non-sharing evaluators pass 132 exact
   recomputations—44 each under Python 3.14.2, Node.js 24.18.0, and Temurin Java
   21.0.9—and comparison binds the complete six-field projection: participant,
   domain results, categorical results, categorical failures, final
   disposition, and reason codes. Fixed times are deterministic fixture times
-  only. The source paths do not prove organizational independence, and ADR
-  0095 adoption remains incomplete until a context-isolated technical-review
-  determination is retained over the exact candidate bytes. The census remains
+  only. The eleven-round context-isolated technical-review report records
+  `no_grounded_refutation_observed_within_declared_attacks` for corrected exact
+  scope `.0005`, rooted at
+  `sha256:97062b38a14d5bdccf5ad87c547c62388e7cd82256a445f631856aecee54e1d9`;
+  round eleven reproduced closure observation `.0003`, install observation
+  `.0004`, 25 context-review known-bads including the live generator path, two
+  integration-truth controls, exact-bound regeneration, and full integration
+  within its declared checks. The report is
+  correlated, non-accountable, non-human model-worker
+  evidence, not correctness, a `ReviewDetermination`, or organizational
+  independence. All
+  `HDA-CTX-001` through `HDA-CTX-016` findings remain
+  `changed_candidate_pending_accountable_closure_review`. The census remains
   frozen over the exact 112-schema predecessor tree: 19 direct or
   policy-conditional decision rows and 9 pending operator-acceptance rows.
   Zero current consumers are migrated. No admitted assurance record or
@@ -311,25 +322,26 @@ that deserves to carry the mission forward.
 - Canonical workspace: `/Users/danielwahnich/workspace/odeya`; it is currently
   a protected concurrent-work lane on `agent/repository-release`.
 - Active architecture worktree:
-  `/Users/danielwahnich/workspace/odeya-prq-013-byte-bound-candidate-20260721`
+  `/Users/danielwahnich/workspace/odeya-prq-013-context-review-20260721`
 - Active architecture branch:
-  `agent/t0-prq-013-byte-bound-candidate-20260721`
+  `agent/t0-prq-013-context-review-20260721`
 - Exact published baseline observed at recovery:
-  `34cad10a42027730a515614fc0a5bd664dd8933b`
+  `86c0f1ed8ba20d74324d64529bf5435a0524f4cd`
 - Exact published-baseline tree:
-  `4ea6a2c751f76cb97a434e749104ed9f667a68d4`
+  `0465eac6adf3f49629e72b1c9e6dce6d4acd121c`
 - Canonical remote: `https://github.com/manfromnowhere143/odeya` (public;
   created 2026-07-17 under ADR 0047; default branch `main`)
 - Measured remote state on 2026-07-21: `origin/main` and permanent
-  `release/34cad10a42027730a515614fc0a5bd664dd8933b` both resolved to the
-  exact published baseline. Seven permanent release refs exist — `a25d026`,
-  `f1f25fd`, `08dbad6`, `8ed5d42`, `f4067b5`, `e0187bb`, and `34cad10` — and
+  `release/86c0f1ed8ba20d74324d64529bf5435a0524f4cd` both resolved to the
+  exact published baseline. Eight permanent release refs exist — `a25d026`,
+  `f1f25fd`, `08dbad6`, `8ed5d42`, `f4067b5`, `e0187bb`, `34cad10`, and
+  `86c0f1e` — and
   none is ever rewritten, deleted, or recreated, including for a candidate
-  that fails. The exact `34cad10` local/remote rehearsal manifests have
-  SHA-256 `98e79d77b7e81acaa27e1f8e3de181bf72d38e714aa4a8a88a458d8768d25d82`
-  and `8743d89435b69f8f322ca7510d068bb6e0bbe7ecdccb1d07d50863b37012acdb`;
+  that fails. The exact `86c0f1e` local/remote rehearsal manifests have
+  SHA-256 `04d18247dc181f347ed6e075282123d4285926f13c68c2b823330deb40f729bf`
+  and `ba2ba6a8f6cb6a06cef04b1057fcbcea3e5ab378ae0ade519a7b9bc78a5cfc47`;
   its comparison receipt has SHA-256
-  `88e350bd73436255d81a8427525226fb18078de0a8194266b9b91a79b9f1156b`.
+  `378f7c66f8e09025124ad86c871cdbd0e3319122f99090bc22cf48769c2df442`.
   Candidate/main workflow censuses and governance read-backs are retained
   under `/Users/danielwahnich/workspace/odeya-release-evidence/`.
   Resolve their current byte validity through the admitted verifiers; do not
@@ -347,6 +359,21 @@ that deserves to carry the mission forward.
   execute its own exact-SHA sequence and inherits no evidence.
 - Runtime, deployment, external-effect, and Gate A authority: not granted
 
+### Sole-writer and collision rule
+
+Only the active architecture worktree and branch named above may be mutated for
+this mission. Every new session must verify `pwd`, branch, `HEAD`, index, and
+working-tree status before editing; delegated review workers are read-only
+unless they receive one bounded same-worktree write assignment from the active
+writer. If any second dirty Odeya lane appears, freeze all mutation, compare
+its branch, `HEAD`, dirty-path inventory, byte overlap, and commit ancestry,
+then name exactly one writer before resuming. The older experimental worktree
+`/Users/danielwahnich/workspace/odeya-prq-013-human-decision-assurance-20260719`
+on `agent/t0-prq-013-assurance-candidate-20260719` is quarantined unfinished
+evidence: do not merge, publish, normalize, or discard it by implication. Its
+unique output-bundle and sandbox experiments are outside this candidate until
+they receive their own explicit scope and review.
+
 This committed file cannot contain the hash of the commit that contains it
 without recursion. The active branch `HEAD` is therefore the rehearsal subject
 to resolve, never a hash copied from chat. It becomes a validated local
@@ -357,7 +384,7 @@ Run first:
 
 ```bash
 bash -euo pipefail <<'BASH'
-cd /Users/danielwahnich/workspace/odeya-prq-013-byte-bound-candidate-20260721
+cd /Users/danielwahnich/workspace/odeya-prq-013-context-review-20260721
 source scripts/ci/sanitize-git-environment.sh
 git status --short --branch
 git rev-parse HEAD
@@ -366,8 +393,8 @@ git symbolic-ref --short HEAD
 git fetch --quiet origin main
 git remote -v
 git log --oneline --decorate -5
-PUBLISHED_BASELINE=34cad10a42027730a515614fc0a5bd664dd8933b
-PUBLISHED_TREE=4ea6a2c751f76cb97a434e749104ed9f667a68d4
+PUBLISHED_BASELINE=86c0f1ed8ba20d74324d64529bf5435a0524f4cd
+PUBLISHED_TREE=0465eac6adf3f49629e72b1c9e6dce6d4acd121c
 HEAD_COMMIT="$(git rev-parse HEAD)"
 REMOTE_MAIN="$(git rev-parse origin/main)"
 BASE_RELEASE="$(
@@ -381,7 +408,7 @@ HEAD_RELEASE="$(
     awk '{print $1}'
 )"
 test "$(git symbolic-ref --short HEAD)" = \
-  agent/t0-prq-013-byte-bound-candidate-20260721
+  agent/t0-prq-013-context-review-20260721
 test "$(git remote)" = origin
 test "$(git remote get-url origin)" = \
   https://github.com/manfromnowhere143/odeya.git
@@ -412,7 +439,7 @@ BASH
 Expected invariants:
 
 - the active architecture branch is
-  `agent/t0-prq-013-byte-bound-candidate-20260721`;
+  `agent/t0-prq-013-context-review-20260721`;
 - the canonical worktree remains on `agent/repository-release` with Daniel's
   protected UI/UX changes untouched;
 - the exact published baseline and tree remain at their permanent
@@ -446,7 +473,7 @@ Their appearance in `git status` is intentional and does not authorize another
 session to edit, stage, commit, normalize, discard, or describe them as Odeya's
 accepted design. Before every architecture commit, prove that these paths are
 absent from its diff. In particular,
-`docs/decisions/README.md` is protected, so ADRs 0092–0094 are intentionally
+`docs/decisions/README.md` is protected, so ADRs 0092–0096 are intentionally
 not inserted into that index by these architecture tranches. Do not mistake
 the absent index edits for absent ADRs or silently take ownership of Daniel's
 bytes.
@@ -539,7 +566,7 @@ identities:
 - 14 content-addressed synthetic backing preimages, including the exact binary
   confirmation-receipt frame, with digests, byte counts, descriptor relations,
   and receipt rows independently rederived from retained bytes;
-- 44 expectation-free vectors and 48 intent-bound downstream chain known-bads;
+- 44 expectation-free vectors and 49 intent-bound downstream chain known-bads;
 - source-separated, non-sharing Python 3.14.2, Node.js 24.18.0, and Temurin
   Java 21.0.9 evaluators, each passing all 44 vectors for 132 exact
   recomputations; and
@@ -550,10 +577,26 @@ identities:
 Every fixed time in the successor evidence is a deterministic fixture time,
 not a ceremony observation or trusted time. The three source paths prove the
 declared code separation and non-sharing boundary only; organizational
-independence has not been proven. ADR 0095 adoption remains incomplete until a
-context-isolated technical-review determination with retained provenance is
-made over the exact candidate bytes, and that determination cannot count as
-accountable review or Gate A acceptance.
+independence has not been proven.
+
+[ADR 0096](decisions/0096-reconstruct-the-successor-phase-two-binding-before-technical-review.md)
+records the initial correction and review boundary; the retained report now
+contains eleven review rounds. Independent reconstruction
+refuted published predecessor `86c0f1e` because its authentication challenge ID
+belonged to the older confirmation receipt. The corrected generation-manifest
+root is
+`sha256:97062b38a14d5bdccf5ad87c547c62388e7cd82256a445f631856aecee54e1d9`.
+Closure observation `.0003`, install observation `.0004`, 49 semantic
+known-bads, 12 runtime controls, and 132 recomputations are retained. Round ten
+refuted the live generator reader's repository-configuration isolation; round
+eleven reproduced the corrected Gate and generator readers, binding-shape and
+PRQ-013 truth controls, exact-bound regeneration, and full integration. The
+retained bounded result is
+`no_grounded_refutation_observed_within_declared_attacks`. The report is
+correlated, context-isolated, non-accountable, non-human model-worker evidence,
+not a `ReviewDetermination`, accountable review, organizational independence,
+or Gate A acceptance. All `HDA-CTX-001` through `HDA-CTX-016` findings remain
+`changed_candidate_pending_accountable_closure_review`.
 
 The measured candidate inventory is 120 schemas and 860 shared-manifest cases
 (220 valid and 640 known-bad), with 14 isolated suites and 11
@@ -1213,14 +1256,14 @@ directory, outside both the Git worktree and temporary storage:
 
 ```bash
 bash -euo pipefail <<'BASH'
-cd /Users/danielwahnich/workspace/odeya-prq-013-byte-bound-candidate-20260721
+cd /Users/danielwahnich/workspace/odeya-prq-013-context-review-20260721
 source scripts/ci/sanitize-git-environment.sh
 commit="$(git rev-parse HEAD)"
 evidence="/Users/danielwahnich/workspace/odeya-release-evidence/$commit"
 test ! -e "$evidence"
 bash scripts/ci/rehearse-fresh-clone.sh \
   "$commit" \
-  /Users/danielwahnich/workspace/odeya-prq-013-byte-bound-candidate-20260721 \
+  /Users/danielwahnich/workspace/odeya-prq-013-context-review-20260721 \
   "$evidence" \
   local
 python3 - "$evidence" "$commit" <<'PY'
@@ -1434,9 +1477,9 @@ proved. The other 20 are explicitly unproved, not silently covered.
 
 ## Next architecture mission, in dependency order
 
-1. Resolve the active ADR 0092/0093 PRQ-013 candidate from exact Git state
+1. Resolve the active ADR 0095/0096 PRQ-013 correction from exact Git state
    against published baseline
-   `34cad10a42027730a515614fc0a5bd664dd8933b`. If `HEAD` equals that baseline,
+   `86c0f1ed8ba20d74324d64529bf5435a0524f4cd`. If `HEAD` equals that baseline,
    verify its retained local/remote rehearsal, workflow, governance, and
    comparison evidence byte-for-field and do not republish it. Otherwise,
    `HEAD` must be one clean direct child; public `main` must equal the baseline
@@ -1445,13 +1488,23 @@ proved. The other 20 are explicitly unproved, not silently covered.
    ten-context post-main, remote-rehearsal, comparison, and final read-back
    sequence. Never redo a permanent release ref or let a descendant inherit
    its evidence.
-2. Complete ADR 0095's remaining bounded adoption item: retain a
-   context-isolated technical-review determination over the exact T0
-   byte-bound/recomputation candidate bytes. Preserve reviewer provenance and
-   label the result correlated and non-accountable; it cannot establish
-   organizational independence, approve the ruleset, or accept Gate A. Keep
-   the profile, ruleset, 0.1 resources, and all successors unissued. This is a
-   T0 prerequisite, not final PRQ-013 closure, consumer migration, or runtime.
+2. Preserve the completed eleventh bounded attack round over exact reissued
+   root
+   `sha256:97062b38a14d5bdccf5ad87c547c62388e7cd82256a445f631856aecee54e1d9`,
+   closure observation `.0003`, install observation `.0004`, policy `10eb30db`,
+   both isolated local Git object-reader paths, all 25 context-review
+   known-bads, the two PRQ-013 integration-truth known-bads, exact-bound
+   regeneration, and full integration. Its bounded result is
+   `no_grounded_refutation_observed_within_declared_attacks`, not correctness,
+   independence, approval, or Gate A.
+   Do not repeat or inherit the review after any bound-member byte change.
+   Carry `HDA-CTX-001` through `HDA-CTX-016` into accountable closure review
+   and keep the report
+   labelled correlated, non-accountable, non-human, and not a
+   `ReviewDetermination`; it cannot establish organizational independence,
+   approve the ruleset, or accept Gate A. Keep the profile, ruleset, 0.1
+   resources, and all successors unissued. This is T0 evidence, not final
+   PRQ-013 closure, consumer migration, or runtime.
 3. Complete the remaining T0 closure without weakening PRQ-009 or the corrected
    C5 ownership semantics. Profile issuance, exact member/reducer/root
    identities, the assignable WorkIntent, thirteen-event assignment cohort,
@@ -1515,7 +1568,7 @@ the gate.
 
 ## The published surface is part of the evidence
 
-The current published baseline is `34cad10…`; its exact local and remote
+The current published baseline is `86c0f1e…`; its exact local and remote
 rehearsals, four-workflow/ten-job candidate and post-main censuses, comparison,
 and governance read-backs are retained externally under the evidence root.
 Historical first-activation baseline `f1f25fd…` introduced the ADR 0091 hook,

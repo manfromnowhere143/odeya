@@ -90,7 +90,7 @@ candidates. [ADR 0095](decisions/0095-reissue-human-decision-assurance-as-a-byte
 now has retained T0 candidate evidence for five unissued successor schemas,
 seven schema-valid fixtures, fourteen content-addressed synthetic backing
 preimages independently rederived from retained bytes, 44 expectation-free
-vectors, 48 chain
+vectors, 49 chain
 known-bads, and 132 exact passing recomputations across source-separated,
 non-sharing Python 3.14.2, Node.js 24.18.0, and Temurin Java 21.0.9
 implementations. Comparison is exact over `participant_id`, `domain_results`,
@@ -99,12 +99,19 @@ implementations. Comparison is exact over `participant_id`, `domain_results`,
 only.
 
 This does not prove organizational independence, a real ceremony, an admitted
-PRQ-013 record, or an `AssuredDecision` wrapper. ADR 0095 adoption remains
-incomplete until a context-isolated technical-review determination is retained
-over the exact candidate bytes; that determination cannot count as accountable
-review or Gate A acceptance. No current consumer is migrated, and T1/T2,
-wrapper construction, end-to-end consumer refusal, accountable review, and the
-operator's Gate A decision remain open. Gate A remains blocked under
+PRQ-013 record, or an `AssuredDecision` wrapper. The retained eleven-round
+context-isolated technical-review report records
+`no_grounded_refutation_observed_within_declared_attacks` for exact reissued
+scope `.0005`; round eleven reproduced closure observation `.0003`, install
+observation `.0004`, the Gate and live-generator object readers, all declared
+cross-runtime checks, and full repository integration. The report is
+correlated, non-accountable model-worker evidence, not a `ReviewDetermination`,
+organizationally independent review, or Gate A acceptance. All
+`HDA-CTX-001` through `HDA-CTX-016` findings remain pending accountable closure
+review. No current consumer is migrated, and T1/T2, wrapper construction,
+end-to-end consumer refusal, accountable review, and the operator's Gate A
+decision remain open.
+Gate A remains blocked under
 [ADR 0092](decisions/0092-bind-human-decisions-through-an-external-assurance-wrapper.md),
 which extends [ADR 0089](decisions/0089-a-valid-human-signature-is-not-a-human-decision.md), and the
 [cross-program process-evidence packet](CROSS_PROGRAM_PROCESS_EVIDENCE_ABSORPTION_2026-07-19.md).
@@ -218,7 +225,7 @@ Only after Gate A decisions and authorized Gate B findings are integrated:
 Until Gate A passes:
 
 - permitted: research, architecture, specifications, schemas, adversarial schema fixtures, decision records, threat models, mathematical definitions, paper plans, non-executable interface diagrams, independent architecture-time reference verifiers, and validation of those artifacts;
-- prohibited: engine runtime code, production UI code, infrastructure provisioning, deployment, external integrations, DNS changes, data migration, autonomous execution, or public release.
+- prohibited: engine runtime code, production UI code, infrastructure provisioning, deployment, external integrations, DNS changes, data migration, autonomous execution, or product/scientific-results public release. Exact-commit architecture-repository publication remains the separately governed exception defined by ADR 0047, ADR 0091, and the repository release contract; it grants no Gate A, runtime, deployment, or scientific-publication authority.
 
 After Gate A, only explicitly authorized Gate B probes are additionally permitted. Product implementation remains prohibited until Gate C.
 

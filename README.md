@@ -2,7 +2,7 @@
 
 Odeya is a private research engine that turns a thesis into a governed, replayable chain from question to evidence to warranted claim.
 
-> **Current state — 2026-07-19:** architecture foundation only. No executable research engine, autonomous-science capability, production deployment, or automatic publication is claimed. Runtime work remains blocked until the architecture gates are accepted.
+> **Current state — 2026-07-22:** architecture foundation only. No executable research engine, autonomous-science capability, production deployment, or automatic publication is claimed. Runtime work remains blocked until the architecture gates are accepted.
 
 The provisional web address is `odeya.danielwahnich.dev`. The apex domain, company, trademark, and scientific-publication decisions remain separate.
 
@@ -94,7 +94,7 @@ The PRQ-013 T0 byte-bound/recomputation tranche now retains candidate evidence
 under [ADR 0095](docs/decisions/0095-reissue-human-decision-assurance-as-a-byte-bound-independently-recomputed-chain.md):
 five unissued successor schemas, seven schema-valid fixtures, 14
 content-addressed synthetic backing preimages independently rederived from
-their retained bytes, 44 expectation-free vectors, and 48 downstream chain
+their retained bytes, 44 expectation-free vectors, and 49 downstream chain
 known-bads. Three
 source-separated, non-sharing evaluators produced 132 exact recomputations
 (44 each under Python 3.14.2, Node.js 24.18.0, and Temurin Java 21.0.9), and
@@ -107,9 +107,19 @@ independence: the implementations share the normative contracts and this work
 has not proved organizationally independent authorship or review.
 
 The 0.1 resources remain immutable and unissued, and every successor is also
-unissued. ADR 0095 adoption remains incomplete until a context-isolated
-technical-review determination is retained over the exact candidate bytes;
-that determination cannot count as accountable review or Gate A acceptance.
+unissued. The retained eleven-round, context-isolated technical-review report
+records `no_grounded_refutation_observed_within_declared_attacks` for the exact
+reissued scope only: round eleven reproduced the Gate and generator local Git
+readers, corrected PRQ-013 truth bindings, closure, install, cross-runtime, and
+full-integration controls. The reissued scope `.0005` is rooted
+at `sha256:97062b38a14d5bdccf5ad87c547c62388e7cd82256a445f631856aecee54e1d9`;
+closure observation `.0003`, install observation `.0004`, 25 context-review
+known-bads including a live generator-path control, and two integration-truth
+controls survived only the declared round-eleven checks. The report is
+correlated, non-accountable model-worker evidence—not a
+`ReviewDetermination`, organizational independence, or Gate A acceptance—and
+all `HDA-CTX-001` through `HDA-CTX-016` findings remain pending accountable
+closure review.
 No real ceremony occurred, no current consumer is migrated, and no T1/T2,
 wrapper, end-to-end consumer refusal, accountable review, or operator Gate A
 decision is complete. [Gate A remains blocked](docs/ARCHITECTURE_STATUS.md),
@@ -199,7 +209,7 @@ Gate A or runtime authority.
 
 ## Next
 
-The canonical-migration wave is closed at audit zero (ADRs 0032–0050): all six blocking finding classes — 1,222 findings in total — now measure zero, every reissue ledgered so each reissued schema's predecessor verifies against its recorded checkpoint commit, and the audit reports `gate_a_disposition: candidate_clear`. The profile nevertheless remains **unissued**: freezing it requires independent review of the executed wave and the operator's exact-byte decision, which no session can grant itself. That executed wave was then attacked across four rounds of context-isolated adversarial review (ADRs 0051, 0063, 0069, 0077), each briefed to refute; each round found real defects — a fabricated disposition field in the evidence writer, a publication path a plain `git push` bypassed, coverage audits that could regenerate their own records — and each is retracted in place with corrected, re-measured figures. Those reviewers were context-isolated but not independent: they shared the producer's provider, model family, and prompt family, five of the twelve correlation axes `ModelConfigurationRecord` already enumerates, and that is recorded rather than glossed (see the [reviewer-agent proposal](docs/REVIEWER_AGENT_PROPOSAL.md)). The immediate PRQ-013 step is a context-isolated technical review of the exact retained ADR 0095 successor bytes; only a retained determination can complete that ADR's bounded adoption checklist, and it remains non-accountable review. T1 AuthorityAssignment, the command/event/state/reducer graph, the constitutional root/checkpoint/activation chain, independent reducers and verifiers, replay/recovery/correction-fanout evidence, rights-settled proof import, accountable human reviews, an exact candidate manifest, and the owner's exact-byte decision all remain mandatory before Gate A. The [closure plan](docs/GATE_A_PREREQUISITE_CLOSURE_PLAN_2026-07-16.md) and [current handoff](docs/SESSION_HANDOFF.md) retain the dependency order and every open limitation.
+The canonical-migration wave is closed at audit zero (ADRs 0032–0050): all six blocking finding classes — 1,222 findings in total — now measure zero, every reissue ledgered so each reissued schema's predecessor verifies against its recorded checkpoint commit, and the audit reports `gate_a_disposition: candidate_clear`. The profile nevertheless remains **unissued**: freezing it requires independent review of the executed wave and the operator's exact-byte decision, which no session can grant itself. That executed wave was then attacked across four rounds of context-isolated adversarial review (ADRs 0051, 0063, 0069, 0077), each briefed to refute; each round found real defects — a fabricated disposition field in the evidence writer, a publication path a plain `git push` bypassed, coverage audits that could regenerate their own records — and each is retracted in place with corrected, re-measured figures. Those reviewers were context-isolated but not independent: they shared the producer's provider, model family, and prompt family, five of the twelve correlation axes `ModelConfigurationRecord` already enumerates, and that is recorded rather than glossed (see the [reviewer-agent proposal](docs/REVIEWER_AGENT_PROPOSAL.md)). The ADR 0095 refutation followed the same discipline. T1 `AuthorityAssignment` is the next PRQ-013 downstream tranche only after the four named T0 prerequisites—canonical schema-identity candidate closure, standalone member-record contracts, PRQ-005 through PRQ-010 candidate corrections, and PRQ-013 individual-assurance-foundation candidate closure—are satisfied. The constitutional root/checkpoint/activation chain, independent reducers and verifiers, replay/recovery/correction-fanout evidence, rights-settled proof import, accountable human reviews, an exact candidate manifest, and the owner's exact-byte decision all remain mandatory before Gate A. The [closure plan](docs/GATE_A_PREREQUISITE_CLOSURE_PLAN_2026-07-16.md) and [current handoff](docs/SESSION_HANDOFF.md) retain the dependency order and every open limitation.
 
 Only an accepted Gate A candidate can authorize disposable Gate B probes; one bounded replayable engine slice begins only after a separate Gate C decision.
 

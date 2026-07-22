@@ -12,8 +12,10 @@ ceremony, accesses a network, grants authority, or accepts Gate A.
 from __future__ import annotations
 
 import argparse
+import base64
 import copy
 import hashlib
+import io
 import json
 import os
 import platform
@@ -21,6 +23,7 @@ import re
 import struct
 import subprocess
 import sys
+import tarfile
 import tempfile
 from dataclasses import dataclass
 from pathlib import Path
@@ -40,6 +43,11 @@ INPUT_MANIFEST_PATH = SUITE / "input-manifest.json"
 NORMATIVE_INPUT_PATH = SUITE / "normative-input-safe-complete-eligible.json"
 GENERATION_MANIFEST_PATH = SUITE / "generation-manifest.json"
 GENERATOR_PATH = ROOT / "scripts/generate_human_decision_assurance_successor.py"
+TOOLCHAIN_LOCK_PATH = ROOT / "tools/repository-release/toolchain.lock.json"
+ARCHITECTURE_REQUIREMENTS_SOURCE_PATH = ROOT / "requirements-architecture.txt"
+ARCHITECTURE_REQUIREMENTS_LOCK_PATH = (
+    ROOT / "tools/repository-release/requirements-architecture.lock"
+)
 RULESET_PATH = (
     ROOT
     / "architecture/human-decision-assurance-individual-eligibility-ruleset-v2-candidate.json"
@@ -55,6 +63,9 @@ CANDIDATE_MANIFEST_PATH = (
 )
 CHALLENGE_PROFILE_PATH = (
     ROOT / "architecture/human-decision-challenge-frame-v2-candidate.json"
+)
+CHALLENGE_EVIDENCE_PATH = (
+    ROOT / "architecture/human-decision-challenge-frame-v2-candidate-evidence.json"
 )
 
 EVIDENCE_PATH = FIXTURES / "human-decision-assurance-evidence-v0-2.valid.json"
@@ -132,7 +143,8 @@ IMPLEMENTATION_ARTIFACT_IDS = {
         "dependency_lock_binding": "hda-dependency-lock.python.0001",
         "configuration_binding": "hda-evaluator-configuration.python.0001",
         "input_adapter_binding": "hda-input-adapter.python.0001",
-        "raw_projection_binding": "hda-eligibility-projection.python.synthetic.0001",
+        "raw_projection_binding": "hda-eligibility-projection.python.synthetic.0002",
+        "result_id": "hda-recomputation-result.python.synthetic.0002",
     },
     "node": {
         "source_binding": "hda-evaluator-source-manifest.nodejs_24_18_0.0001",
@@ -140,7 +152,8 @@ IMPLEMENTATION_ARTIFACT_IDS = {
         "dependency_lock_binding": "hda-dependency-lock.nodejs_24_18_0.0001",
         "configuration_binding": "hda-evaluator-configuration.nodejs_24_18_0.0001",
         "input_adapter_binding": "hda-input-adapter.nodejs_24_18_0.0001",
-        "raw_projection_binding": "hda-eligibility-projection.nodejs_24_18_0.synthetic.0001",
+        "raw_projection_binding": "hda-eligibility-projection.nodejs_24_18_0.synthetic.0002",
+        "result_id": "hda-recomputation-result.nodejs_24_18_0.synthetic.0002",
     },
     "java": {
         "source_binding": "hda-evaluator-source-manifest.java_21_0_9.0001",
@@ -148,7 +161,8 @@ IMPLEMENTATION_ARTIFACT_IDS = {
         "dependency_lock_binding": "hda-dependency-lock.java_21_0_9.0001",
         "configuration_binding": "hda-evaluator-configuration.java_21_0_9.0001",
         "input_adapter_binding": "hda-input-adapter.java_21_0_9.0001",
-        "raw_projection_binding": "hda-eligibility-projection.java_21_0_9.synthetic.0001",
+        "raw_projection_binding": "hda-eligibility-projection.java_21_0_9.synthetic.0002",
+        "result_id": "hda-recomputation-result.java_21_0_9.synthetic.0002",
     },
 }
 
@@ -167,6 +181,37 @@ RULESET_ID = "urn:odeya:human-decision-assurance-eligibility:0.2.0-candidate"
 RESOLVER_ID = (
     "urn:odeya:human-decision-assurance:content-address-resolver:0.1.0-candidate"
 )
+VECTOR_CORPUS_ARTIFACT_ID = "hda-successor-vectors.0002"
+NORMATIVE_INPUT_ARTIFACT_ID = (
+    "hda-successor-normative-input.safe-complete-eligible.0002"
+)
+INPUT_MANIFEST_ARTIFACT_ID = "hda-successor-input-manifest.synthetic.0002"
+BACKING_RECEIPT_ARTIFACT_ID = "hda-backing-byte-receipt.synthetic.0002"
+COMPARISON_ARTIFACT_ID = "hda-comparison-receipt.synthetic.0002"
+SEAL_ARTIFACT_ID = "hda-seal.synthetic.0003"
+GENERATION_MANIFEST_ARTIFACT_ID = (
+    "hda-successor-generation-manifest.synthetic.0005"
+)
+PREDECESSOR_SUBJECT = {
+    "commit": "86c0f1ed8ba20d74324d64529bf5435a0524f4cd",
+    "tree": "0465eac6adf3f49629e72b1c9e6dce6d4acd121c",
+    "sole_parent": "34cad10a42027730a515614fc0a5bd664dd8933b",
+    "generation_manifest_artifact_id": (
+        "hda-successor-generation-manifest.synthetic.0001"
+    ),
+    "generation_manifest_raw_sha256": (
+        "sha256:f401a95c52ccc49791872584971450c723d3c9d2632d66cbd3e9761fea26e247"
+    ),
+    "generation_manifest_byte_count": 16050,
+    "vector_corpus_raw_sha256": (
+        "sha256:c81d7d9636d5a4f79a545bbad0ef5454ab8a4bb171d896e0035f1096b2c9cc1a"
+    ),
+    "stale_authentication_challenge_id": (
+        "sha256:1b19ecdf21c6a4d9644fe18757cbd11d1bd32b4a0059a23b2e66ff7363e23a05"
+    ),
+    "disposition": "invalid_stale_phase_two_authentication_challenge_binding",
+    "retention": "exact_git_parent_object_and_context_review_evidence",
+}
 SHA256_RE = re.compile(r"^sha256:[0-9a-f]{64}$")
 UTC_MICROSECOND_RE = re.compile(
     rb"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}"
@@ -180,6 +225,27 @@ CONFIRMATION_FRAME_FIELDS = (
     "rendering_profile_id",
     "confirmation_gesture_kind",
     "confirmation_gesture_at",
+)
+CHALLENGE_FRAME_MAGIC = "ODEYA-HDA-CHALLENGE-FRAME-V2"
+PRESENTATION_CHALLENGE_FIELDS = (
+    "core_schema_resource_id",
+    "core_raw_sha256",
+    "decision_schema_resource_id",
+    "decision_raw_sha256",
+    "candidate_schema_resource_id",
+    "candidate_raw_sha256",
+    "session_id",
+    "issued_at",
+    "expires_at",
+    "relying_party_id",
+    "expected_origin",
+    "nonce",
+)
+AUTHENTICATION_CHALLENGE_FIELDS = (
+    *PRESENTATION_CHALLENGE_FIELDS,
+    "presentation_challenge_id",
+    "confirmation_receipt_raw_sha256",
+    "confirmation_receipt_profile_id",
 )
 OUTPUT_FIELD_ORDER = (
     "participant_id",
@@ -381,6 +447,218 @@ def parse_confirmation_frame(raw: bytes) -> dict[str, bytes] | None:
         return None
 
 
+def challenge_digest_octets(value: Any, label: str) -> bytes:
+    if not isinstance(value, str) or SHA256_RE.fullmatch(value) is None:
+        raise ValueError(f"{label} is not one lowercase sha256 digest")
+    return bytes.fromhex(value[7:])
+
+
+def challenge_nonce_octets(value: Any, label: str) -> bytes:
+    if (
+        not isinstance(value, str)
+        or re.fullmatch(r"[0-9a-f]{64}", value) is None
+    ):
+        raise ValueError(f"{label} is not one 32-octet lowercase nonce")
+    return bytes.fromhex(value)
+
+
+def challenge_ascii(value: Any, label: str) -> bytes:
+    if not isinstance(value, str) or not value or not value.isascii():
+        raise ValueError(f"{label} is not nonempty ASCII")
+    return value.encode("ascii")
+
+
+def encode_profile_ordered_frame(
+    magic: str, ordered_names: Sequence[str], values: Mapping[str, bytes]
+) -> bytes:
+    """Encode from the profile's order and a separately constructed value map."""
+    output = bytearray(challenge_ascii(magic, "challenge frame magic"))
+    output.extend(struct.pack(">H", len(ordered_names)))
+    for name in ordered_names:
+        name_raw = challenge_ascii(name, "challenge frame field name")
+        value = values[name]
+        output.extend(struct.pack(">H", len(name_raw)))
+        output.extend(name_raw)
+        output.extend(struct.pack(">I", len(value)))
+        output.extend(value)
+    return bytes(output)
+
+
+def recompute_successor_phase_two_challenge(
+    retained: "Retained", receipt_digest: str | None, errors: list[str]
+) -> dict[str, Any] | None:
+    """Derive phase two from the exact profile, source vector, and receipt digest.
+
+    This implementation is deliberately profile-order driven and does not call
+    the generator.  The retained ADR 0093 evidence supplies only shared inputs,
+    phase intervals, and nonces; its predecessor receipt digest and phase-two
+    outputs are not consumed.
+    """
+    if receipt_digest is None:
+        return None
+    profile = retained.challenge_profile
+    evidence = retained.challenge_evidence
+    binary = profile.get("binary_frame")
+    receipt_profile = profile.get("confirmation_receipt")
+    if (
+        not isinstance(binary, dict)
+        or not isinstance(receipt_profile, dict)
+        or binary.get("magic_ascii") != CHALLENGE_FRAME_MAGIC
+        or tuple(binary.get("presentation_phase_ordered_fields", ()))
+        != PRESENTATION_CHALLENGE_FIELDS
+        or tuple(binary.get("authentication_phase_ordered_fields", ()))
+        != AUTHENTICATION_CHALLENGE_FIELDS
+        or binary.get("appended_authentication_fields_must_be_last") is not True
+        or binary.get("field_reordering_allowed") is not False
+        or receipt_profile.get("receipt_profile_id")
+        != "odeya-human-decision-confirmation-receipt-v1-candidate"
+    ):
+        add_error(errors, "backing_challenge_profile_contract_mismatch")
+        return None
+    profile_digest, profile_count = path_binding(CHALLENGE_PROFILE_PATH)
+    if evidence.get("profile_binding") != {
+        "path": str(CHALLENGE_PROFILE_PATH.relative_to(ROOT)),
+        "profile_id": profile.get("profile_id"),
+        "profile_version": profile.get("profile_version"),
+        "raw_sha256": profile_digest,
+        "byte_count": profile_count,
+    }:
+        add_error(errors, "backing_challenge_evidence_profile_binding_mismatch")
+        return None
+    vector = evidence.get("synthetic_test_vector")
+    if not isinstance(vector, dict):
+        add_error(errors, "backing_challenge_source_vector_missing")
+        return None
+    shared = vector.get("shared_inputs")
+    presentation = vector.get("presentation_phase")
+    authentication = vector.get("authentication_phase")
+    if not all(
+        isinstance(value, dict)
+        for value in (shared, presentation, authentication)
+    ):
+        add_error(errors, "backing_challenge_source_vector_incomplete")
+        return None
+    try:
+        shared_values = {
+            "core_schema_resource_id": challenge_ascii(
+                shared.get("core_schema_resource_id"), "core schema resource id"
+            ),
+            "core_raw_sha256": challenge_digest_octets(
+                shared.get("core_raw_sha256"), "core raw digest"
+            ),
+            "decision_schema_resource_id": challenge_ascii(
+                shared.get("decision_schema_resource_id"),
+                "decision schema resource id",
+            ),
+            "decision_raw_sha256": challenge_digest_octets(
+                shared.get("decision_raw_sha256"), "decision raw digest"
+            ),
+            "candidate_schema_resource_id": challenge_ascii(
+                shared.get("candidate_schema_resource_id"),
+                "candidate schema resource id",
+            ),
+            "candidate_raw_sha256": challenge_digest_octets(
+                shared.get("candidate_raw_sha256"), "candidate raw digest"
+            ),
+            "session_id": challenge_ascii(shared.get("session_id"), "session id"),
+            "relying_party_id": challenge_ascii(
+                shared.get("relying_party_id"), "relying-party id"
+            ),
+            "expected_origin": challenge_ascii(
+                shared.get("expected_origin"), "expected origin"
+            ),
+        }
+
+        def phase_values(phase: Mapping[str, Any], label: str) -> dict[str, bytes]:
+            return {
+                "issued_at": challenge_ascii(
+                    phase.get("issued_at"), f"{label} issued_at"
+                ),
+                "expires_at": challenge_ascii(
+                    phase.get("expires_at"), f"{label} expires_at"
+                ),
+                "nonce": challenge_nonce_octets(
+                    phase.get("nonce_hex"), f"{label} nonce"
+                ),
+            }
+
+        presentation_values = {**shared_values, **phase_values(presentation, "phase one")}
+        presentation_frame = encode_profile_ordered_frame(
+            CHALLENGE_FRAME_MAGIC,
+            PRESENTATION_CHALLENGE_FIELDS,
+            presentation_values,
+        )
+        presentation_octets = (
+            presentation_values["nonce"] + hashlib.sha256(presentation_frame).digest()
+        )
+        presentation_id = raw_sha256(presentation_octets)
+        presentation_base64url = base64.urlsafe_b64encode(
+            presentation_octets
+        ).decode("ascii").rstrip("=")
+        if (
+            presentation.get("frame_byte_count") != len(presentation_frame)
+            or presentation.get("frame_raw_sha256") != raw_sha256(presentation_frame)
+            or presentation.get("challenge_base64url") != presentation_base64url
+            or presentation.get("presentation_challenge_id") != presentation_id
+        ):
+            add_error(
+                errors,
+                "backing_presentation_challenge_source_recomputation_mismatch",
+            )
+
+        authentication_values = {
+            **shared_values,
+            **phase_values(authentication, "phase two"),
+            "presentation_challenge_id": challenge_digest_octets(
+                presentation_id, "recomputed presentation challenge id"
+            ),
+            "confirmation_receipt_raw_sha256": challenge_digest_octets(
+                receipt_digest, "successor confirmation receipt digest"
+            ),
+            "confirmation_receipt_profile_id": challenge_ascii(
+                receipt_profile.get("receipt_profile_id"),
+                "confirmation receipt profile id",
+            ),
+        }
+        authentication_frame = encode_profile_ordered_frame(
+            CHALLENGE_FRAME_MAGIC,
+            AUTHENTICATION_CHALLENGE_FIELDS,
+            authentication_values,
+        )
+        authentication_octets = (
+            authentication_values["nonce"]
+            + hashlib.sha256(authentication_frame).digest()
+        )
+    except (KeyError, TypeError, ValueError, struct.error) as exc:
+        add_error(errors, "backing_challenge_recomputation_failed", str(exc))
+        return None
+
+    return {
+        "challenge_profile_binding": {
+            "artifact_id": "hda-challenge-frame-profile.v2.0001",
+            "raw_sha256": profile_digest,
+            "byte_count": profile_count,
+            "mutable_alias_used": False,
+        },
+        "challenge_vector_evidence_binding": {
+            "artifact_id": "hda-challenge-frame-v2-evidence.0001",
+            "raw_sha256": path_binding(CHALLENGE_EVIDENCE_PATH)[0],
+            "byte_count": path_binding(CHALLENGE_EVIDENCE_PATH)[1],
+            "mutable_alias_used": False,
+        },
+        "presentation_frame_raw_sha256": raw_sha256(presentation_frame),
+        "presentation_challenge_id": presentation_id,
+        "confirmation_receipt_raw_sha256": receipt_digest,
+        "authentication_frame_byte_count": len(authentication_frame),
+        "authentication_frame_raw_sha256": raw_sha256(authentication_frame),
+        "authentication_challenge_base64url": base64.urlsafe_b64encode(
+            authentication_octets
+        ).decode("ascii").rstrip("="),
+        "authentication_challenge_id": raw_sha256(authentication_octets),
+        "retained_relation_exact_match": True,
+    }
+
+
 def backing_format_conformant(
     role: str, required_media_type: str, raw: bytes
 ) -> tuple[bool, dict[str, bytes] | None]:
@@ -422,6 +700,8 @@ class Retained:
     chain_cases: dict[str, Any]
     ruleset: dict[str, Any]
     resolver: dict[str, Any]
+    challenge_profile: dict[str, Any]
+    challenge_evidence: dict[str, Any]
     evidence: dict[str, Any]
     backing: dict[str, Any]
     results: dict[str, dict[str, Any]]
@@ -443,12 +723,16 @@ def required_paths() -> list[Path]:
         NORMATIVE_INPUT_PATH,
         GENERATION_MANIFEST_PATH,
         GENERATOR_PATH,
+        TOOLCHAIN_LOCK_PATH,
+        ARCHITECTURE_REQUIREMENTS_SOURCE_PATH,
+        ARCHITECTURE_REQUIREMENTS_LOCK_PATH,
         RULESET_PATH,
         RESOLVER_PATH,
         CORE_PATH,
         DECISION_PATH,
         CANDIDATE_MANIFEST_PATH,
         CHALLENGE_PROFILE_PATH,
+        CHALLENGE_EVIDENCE_PATH,
         EVIDENCE_PATH,
         BACKING_PATH,
         COMPARISON_PATH,
@@ -478,6 +762,8 @@ def load_retained(errors: list[str]) -> Retained | None:
             chain_cases=load_json(CHAIN_CASES_PATH),
             ruleset=load_json(RULESET_PATH),
             resolver=load_json(RESOLVER_PATH),
+            challenge_profile=load_json(CHALLENGE_PROFILE_PATH),
+            challenge_evidence=load_json(CHALLENGE_EVIDENCE_PATH),
             evidence=load_json(EVIDENCE_PATH),
             backing=load_json(BACKING_PATH),
             results={role: load_json(path) for role, path in RESULT_PATHS.items()},
@@ -544,6 +830,19 @@ def check_raw_binding(
         add_error(errors, f"{label}_artifact_id_mismatch")
     if schema_id is not None and binding.get("schema_resource_id") != schema_id:
         add_error(errors, f"{label}_schema_resource_id_mismatch")
+
+
+def expected_manifest_entry(
+    artifact_id: str, path: Path, artifact_kind: str
+) -> dict[str, Any]:
+    digest, count = path_binding(path)
+    return {
+        "artifact_id": artifact_id,
+        "repository_path": str(path.relative_to(ROOT)),
+        "raw_sha256": digest,
+        "byte_count": count,
+        "artifact_kind": artifact_kind,
+    }
 
 
 def check_ruleset_binding(binding: Any, label: str, errors: list[str]) -> None:
@@ -970,11 +1269,31 @@ def recompute_backing_from_evidence(
         "exact_unmodified_confirmation_receipt_frame", {}
     )
     expected_frame_digest = frame_descriptor.get("content_address")
-    presentation_id = normative_relation.get("presentation_challenge_id")
-    authentication_id = normative_relation.get("authentication_challenge_id")
+    recorded_presentation_id = normative_relation.get("presentation_challenge_id")
+    recorded_authentication_id = normative_relation.get(
+        "authentication_challenge_id"
+    )
     committed_digest = normative_relation.get(
         "authentication_frame_committed_receipt_sha256"
     )
+    challenge_recomputation = recompute_successor_phase_two_challenge(
+        retained, frame_observed_digest, errors
+    )
+    presentation_id = recorded_presentation_id
+    authentication_id = recorded_authentication_id
+    if challenge_recomputation is not None:
+        presentation_id = challenge_recomputation["presentation_challenge_id"]
+        authentication_id = challenge_recomputation["authentication_challenge_id"]
+        if recorded_presentation_id != presentation_id:
+            add_error(
+                errors,
+                "backing_confirmation_relation_presentation_challenge_id_mismatch",
+            )
+        if recorded_authentication_id != authentication_id:
+            add_error(
+                errors,
+                "backing_confirmation_relation_authentication_challenge_id_mismatch",
+            )
     binary_state = (
         "supported"
         if parsed_frame is not None
@@ -996,7 +1315,10 @@ def recompute_backing_from_evidence(
             and frame_displayed_count == displayed_observed_count
         ):
             presentation_state = "supported"
-        if frame_observed_digest == committed_digest == expected_frame_digest:
+        if (
+            frame_observed_digest == committed_digest == expected_frame_digest
+            and recorded_authentication_id == authentication_id
+        ):
             authentication_state = "supported"
     expected_relation = {
         "frame_role": "exact_unmodified_confirmation_receipt_frame",
@@ -1016,8 +1338,11 @@ def recompute_backing_from_evidence(
 def validate_backing(retained: Retained, errors: list[str]) -> None:
     backing = retained.backing
     validate_schema(retained.schemas["backing"], backing, "backing", errors)
-    if backing.get("assurance_id") != retained.evidence.get("assurance_id"):
-        add_error(errors, "backing_assurance_id_mismatch")
+    if (
+        backing.get("artifact_id") != BACKING_RECEIPT_ARTIFACT_ID
+        or backing.get("assurance_id") != retained.evidence.get("assurance_id")
+    ):
+        add_error(errors, "backing_identity_mismatch")
     check_raw_binding(
         backing.get("evidence_binding"), EVIDENCE_PATH, "backing_evidence", errors,
         artifact_id=retained.evidence.get("artifact_id"), schema_id=EVIDENCE_SCHEMA_ID,
@@ -1354,8 +1679,12 @@ def validate_result(role: str, retained: Retained, errors: list[str]) -> None:
     projection = retained.projections[role]
     validate_schema(retained.schemas["result"], result, f"{role}_result", errors)
     validate_raw_projection(projection, retained, f"{role}_projection", errors)
-    if result.get("assurance_id") != retained.evidence.get("assurance_id"):
-        add_error(errors, f"{role}_result_assurance_id_mismatch")
+    if (
+        result.get("artifact_id")
+        != IMPLEMENTATION_ARTIFACT_IDS[role]["result_id"]
+        or result.get("assurance_id") != retained.evidence.get("assurance_id")
+    ):
+        add_error(errors, f"{role}_result_identity_mismatch")
     implementation = result.get("implementation", {})
     if (
         implementation.get("implementation_role") != IMPLEMENTATION_ROLES[role]
@@ -1397,7 +1726,7 @@ def validate_result(role: str, retained: Retained, errors: list[str]) -> None:
     check_raw_binding(
         bindings.get("normative_input_vector"), NORMATIVE_INPUT_PATH,
         f"{role}_result_normative_vector", errors,
-        artifact_id="hda-successor-normative-input.safe-complete-eligible.0001",
+        artifact_id=NORMATIVE_INPUT_ARTIFACT_ID,
     )
     execution = result.get("execution", {})
     check_raw_binding(
@@ -1436,6 +1765,110 @@ def manifest_source_paths(value: Any) -> list[str]:
 
     visit(value)
     return result
+
+
+def runtime_profile_errors(
+    profile: Any, role: str, lock_digest: str, lock_count: int
+) -> list[str]:
+    errors: list[str] = []
+    if not isinstance(profile, dict):
+        return [f"{role}_runtime_profile_must_be_object"]
+    if (
+        profile.get("artifact_class")
+        != "human_decision_assurance_exact_runtime_profile"
+        or profile.get("artifact_id")
+        != IMPLEMENTATION_ARTIFACT_IDS[role]["toolchain_profile_binding"]
+        or profile.get("implementation_role") != IMPLEMENTATION_ROLES[role]
+        or profile.get("toolchain_name") != TOOLCHAIN_NAMES[role]
+        or profile.get("toolchain_version") != TOOLCHAIN_VERSIONS[role]
+        or profile.get("mutable_toolchain_alias_used") is not False
+        or profile.get("network_access") is not False
+        or profile.get("profile_self_digest_forbidden") is not True
+    ):
+        add_error(errors, f"{role}_runtime_profile_identity_mismatch")
+    lock = profile.get("repository_toolchain_lock", {})
+    if (
+        lock.get("repository_path")
+        != "tools/repository-release/toolchain.lock.json"
+        or lock.get("raw_sha256") != lock_digest
+        or lock.get("byte_count") != lock_count
+    ):
+        add_error(errors, f"{role}_runtime_profile_toolchain_lock_mismatch")
+    host = profile.get("host_observation")
+    if (
+        not isinstance(host, dict)
+        or set(host) != {"machine", "system"}
+        or (host.get("system"), host.get("machine"))
+        not in {
+            ("Darwin", "arm64"),
+            ("Darwin", "x86_64"),
+            ("Linux", "aarch64"),
+            ("Linux", "arm64"),
+            ("Linux", "x86_64"),
+        }
+    ):
+        add_error(errors, f"{role}_runtime_profile_host_observation_invalid")
+    observations = profile.get("executable_observations")
+    if not isinstance(observations, list) or len(observations) != (
+        2 if role == "java" else 1
+    ):
+        add_error(errors, f"{role}_runtime_profile_observation_count_mismatch")
+        observations = []
+    expected_functions = {
+        "python": ["interpreter"],
+        "node": ["runtime"],
+        "java": ["runtime", "compiler"],
+    }[role]
+    if [
+        item.get("function") for item in observations if isinstance(item, dict)
+    ] != expected_functions:
+        add_error(errors, f"{role}_runtime_profile_function_inventory_mismatch")
+    for observation in observations:
+        if (
+            not isinstance(observation, dict)
+            or set(observation)
+            != {
+                "byte_count",
+                "function",
+                "invocation_path",
+                "raw_sha256",
+                "resolved_path",
+                "version_probe",
+            }
+            or not isinstance(observation.get("invocation_path"), str)
+            or not observation.get("invocation_path")
+            or not isinstance(observation.get("resolved_path"), str)
+            or not observation.get("resolved_path")
+            or not isinstance(observation.get("raw_sha256"), str)
+            or SHA256_RE.fullmatch(observation["raw_sha256"]) is None
+            or isinstance(observation.get("byte_count"), bool)
+            or not isinstance(observation.get("byte_count"), int)
+            or observation["byte_count"] <= 0
+        ):
+            add_error(errors, f"{role}_runtime_profile_observation_shape_invalid")
+        probe = (
+            observation.get("version_probe", {})
+            if isinstance(observation, dict)
+            else {}
+        )
+        probe_path_text = probe.get("repository_path")
+        if not isinstance(probe_path_text, str):
+            add_error(errors, f"{role}_runtime_version_probe_path_invalid")
+            continue
+        probe_path = ROOT / probe_path_text
+        if not probe_path.is_file():
+            add_error(errors, f"{role}_runtime_version_probe_missing")
+            continue
+        digest, count = path_binding(probe_path)
+        if (
+            probe.get("exit_code") != 0
+            or isinstance(probe.get("exit_code"), bool)
+            or probe.get("raw_sha256") != digest
+            or probe.get("byte_count") != count
+            or isinstance(probe.get("byte_count"), bool)
+        ):
+            add_error(errors, f"{role}_runtime_version_probe_binding_mismatch")
+    return errors
 
 
 def validate_source_independence(retained: Retained, errors: list[str]) -> None:
@@ -1588,49 +2021,9 @@ def validate_source_independence(retained: Retained, errors: list[str]) -> None:
     lock_digest, lock_count = path_binding(toolchain_lock)
     for role, profile_path in RUNTIME_PROFILE_PATHS.items():
         profile = load_json(profile_path)
-        if (
-            profile.get("artifact_class") != "human_decision_assurance_exact_runtime_profile"
-            or profile.get("artifact_id")
-            != IMPLEMENTATION_ARTIFACT_IDS[role]["toolchain_profile_binding"]
-            or profile.get("implementation_role") != IMPLEMENTATION_ROLES[role]
-            or profile.get("toolchain_name") != TOOLCHAIN_NAMES[role]
-            or profile.get("toolchain_version") != TOOLCHAIN_VERSIONS[role]
-            or profile.get("mutable_toolchain_alias_used") is not False
-            or profile.get("network_access") is not False
-            or profile.get("profile_self_digest_forbidden") is not True
-        ):
-            add_error(errors, f"{role}_runtime_profile_identity_mismatch")
-        lock = profile.get("repository_toolchain_lock", {})
-        if (
-            lock.get("repository_path")
-            != "tools/repository-release/toolchain.lock.json"
-            or lock.get("raw_sha256") != lock_digest
-            or lock.get("byte_count") != lock_count
-        ):
-            add_error(errors, f"{role}_runtime_profile_toolchain_lock_mismatch")
-        observations = profile.get("executable_observations")
-        if not isinstance(observations, list) or len(observations) != (
-            2 if role == "java" else 1
-        ):
-            add_error(errors, f"{role}_runtime_profile_observation_count_mismatch")
-            observations = []
-        for observation in observations:
-            probe = observation.get("version_probe", {}) if isinstance(observation, dict) else {}
-            probe_path_text = probe.get("repository_path")
-            if not isinstance(probe_path_text, str):
-                add_error(errors, f"{role}_runtime_version_probe_path_invalid")
-                continue
-            probe_path = ROOT / probe_path_text
-            if not probe_path.is_file():
-                add_error(errors, f"{role}_runtime_version_probe_missing")
-                continue
-            digest, count = path_binding(probe_path)
-            if (
-                probe.get("exit_code") != 0
-                or probe.get("raw_sha256") != digest
-                or probe.get("byte_count") != count
-            ):
-                add_error(errors, f"{role}_runtime_version_probe_binding_mismatch")
+        errors.extend(
+            runtime_profile_errors(profile, role, lock_digest, lock_count)
+        )
 
 
 def validate_common_input_manifest(retained: Retained, errors: list[str]) -> None:
@@ -1644,7 +2037,7 @@ def validate_common_input_manifest(retained: Retained, errors: list[str]) -> Non
     if (
         manifest.get("artifact_class")
         != "human_decision_assurance_successor_expectation_free_safe_input_manifest"
-        or manifest.get("artifact_id") != "hda-successor-input-manifest.synthetic.0001"
+        or manifest.get("artifact_id") != INPUT_MANIFEST_ARTIFACT_ID
         or manifest.get("assurance_id") != retained.evidence.get("assurance_id")
         or manifest.get("expected_answer_values_present") is not False
         or manifest.get("peer_output_values_present") is not False
@@ -1660,7 +2053,7 @@ def validate_common_input_manifest(retained: Retained, errors: list[str]) -> Non
         NORMATIVE_INPUT_PATH,
         "input_manifest_materialized_vector",
         errors,
-        artifact_id="hda-successor-normative-input.safe-complete-eligible.0001",
+        artifact_id=NORMATIVE_INPUT_ARTIFACT_ID,
     )
     materialization = manifest.get("materialization_contract", {})
     if materialization != {
@@ -1676,7 +2069,7 @@ def validate_common_input_manifest(retained: Retained, errors: list[str]) -> Non
         VECTORS_PATH,
         "input_manifest_vector_corpus",
         errors,
-        artifact_id="hda-successor-vectors.0001",
+        artifact_id=VECTOR_CORPUS_ARTIFACT_ID,
     )
     check_ruleset_binding(process.get("eligibility_ruleset"), "input_manifest", errors)
     resolver_binding = process.get("content_address_resolver_profile", {})
@@ -1743,8 +2136,11 @@ def validate_common_input_manifest(retained: Retained, errors: list[str]) -> Non
 def validate_comparison(retained: Retained, errors: list[str]) -> None:
     comparison = retained.comparison
     validate_schema(retained.schemas["comparison"], comparison, "comparison", errors)
-    if comparison.get("assurance_id") != retained.evidence.get("assurance_id"):
-        add_error(errors, "comparison_assurance_id_mismatch")
+    if (
+        comparison.get("artifact_id") != COMPARISON_ARTIFACT_ID
+        or comparison.get("assurance_id") != retained.evidence.get("assurance_id")
+    ):
+        add_error(errors, "comparison_identity_mismatch")
     common = comparison.get("common_input_bindings")
     if common != retained.results["python"].get("input_bindings"):
         add_error(errors, "comparison_common_input_bindings_mismatch")
@@ -1866,7 +2262,10 @@ def validate_seal(retained: Retained, errors: list[str]) -> None:
     seal = retained.seal
     comparison = retained.comparison
     validate_schema(retained.schemas["seal"], seal, "seal", errors)
-    if seal.get("schema_version") != "0.2.0":
+    if (
+        seal.get("schema_version") != "0.2.0"
+        or seal.get("artifact_id") != SEAL_ARTIFACT_ID
+    ):
         add_error(errors, "seal_resource_identity_version_mismatch")
     if seal.get("assurance_id") != retained.evidence.get("assurance_id"):
         add_error(errors, "seal_assurance_id_mismatch")
@@ -1961,7 +2360,7 @@ def validate_seal(retained: Retained, errors: list[str]) -> None:
 
 def validate_generation_manifest(retained: Retained, errors: list[str]) -> None:
     manifest = retained.generation_manifest
-    manifest_id = "hda-successor-generation-manifest.synthetic.0001"
+    manifest_id = GENERATION_MANIFEST_ARTIFACT_ID
     if (
         manifest.get("artifact_class")
         != "human_decision_assurance_successor_generation_manifest"
@@ -1984,13 +2383,134 @@ def validate_generation_manifest(retained: Retained, errors: list[str]) -> None:
         or manifest.get("external_effects_authorized") is not False
     ):
         add_error(errors, "generation_manifest_identity_or_boundary_mismatch")
-    check_raw_binding(
-        manifest.get("generator_source_binding"),
+    if manifest.get("generator_source_binding") != expected_manifest_entry(
+        "hda-successor-evidence-generator.python.0005",
         GENERATOR_PATH,
-        "generation_manifest_generator",
-        errors,
-        artifact_id="hda-successor-evidence-generator.python.0001",
+        "retained_evidence_generator",
+    ):
+        add_error(errors, "generation_manifest_generator_binding_mismatch")
+    if manifest.get("predecessor_candidate") != PREDECESSOR_SUBJECT:
+        add_error(errors, "generation_manifest_predecessor_binding_mismatch")
+    relation = retained.backing.get("confirmation_receipt_frame_relation", {})
+    relation_receipt_digest = (
+        relation.get("observed_frame_raw_sha256")
+        if isinstance(relation, dict)
+        else None
     )
+    expected_challenge_recomputation = recompute_successor_phase_two_challenge(
+        retained, relation_receipt_digest, errors
+    )
+    if (
+        expected_challenge_recomputation is None
+        or manifest.get("phase_two_challenge_recomputation")
+        != expected_challenge_recomputation
+    ):
+        add_error(errors, "generation_manifest_phase_two_recomputation_mismatch")
+    expected_review_scope = {
+        "scope_id": "hda-successor-t0-technical-review-scope.0005",
+        "scope_semantics": (
+            "the_exact_generation_manifest_and_every_direct_or_transitively_"
+            "bound_t0_member_excluding_the_later_review_report_and_status_prose"
+        ),
+        "direct_input_bindings": [
+            expected_manifest_entry(
+                VECTOR_CORPUS_ARTIFACT_ID,
+                VECTORS_PATH,
+                "expectation_free_vector_corpus",
+            ),
+            expected_manifest_entry(
+                "hda-successor-case-answers.0001",
+                CASES_PATH,
+                "private_conformance_answer_corpus",
+            ),
+            expected_manifest_entry(
+                "hda-successor-chain-known-bads.0002",
+                CHAIN_CASES_PATH,
+                "downstream_chain_known_bad_corpus",
+            ),
+            expected_manifest_entry(
+                "hda-successor-validator.python.0005",
+                Path(__file__).resolve(),
+                "separately_implemented_retained_chain_validator",
+            ),
+            expected_manifest_entry(
+                "hda-individual-eligibility-ruleset.v2.0001",
+                RULESET_PATH,
+                "normative_eligibility_ruleset",
+            ),
+            expected_manifest_entry(
+                "hda-content-address-resolver-profile.0001",
+                RESOLVER_PATH,
+                "content_address_resolver_profile",
+            ),
+            expected_manifest_entry(
+                "hda-challenge-frame-profile.v2.0001",
+                CHALLENGE_PROFILE_PATH,
+                "challenge_frame_profile",
+            ),
+            expected_manifest_entry(
+                "hda-challenge-frame-v2-evidence.0001",
+                CHALLENGE_EVIDENCE_PATH,
+                "challenge_frame_source_vector_evidence",
+            ),
+            expected_manifest_entry(
+                "hda-core-fixture.synthetic.0001",
+                CORE_PATH,
+                "exact_core_fixture",
+            ),
+            expected_manifest_entry(
+                "hda-decision-subject-fixture.synthetic.0001",
+                DECISION_PATH,
+                "exact_decision_subject_fixture",
+            ),
+            expected_manifest_entry(
+                "hda-candidate-manifest-fixture.synthetic.0001",
+                CANDIDATE_MANIFEST_PATH,
+                "exact_candidate_manifest_fixture",
+            ),
+            expected_manifest_entry(
+                "repository-release-toolchain-lock.0001",
+                TOOLCHAIN_LOCK_PATH,
+                "toolchain_lock",
+            ),
+            expected_manifest_entry(
+                "architecture-python-requirements-source.0001",
+                ARCHITECTURE_REQUIREMENTS_SOURCE_PATH,
+                "python_requirements_source",
+            ),
+            expected_manifest_entry(
+                "architecture-python-requirements-lock.0001",
+                ARCHITECTURE_REQUIREMENTS_LOCK_PATH,
+                "hash_locked_python_environment",
+            ),
+            *[
+                expected_manifest_entry(
+                    f"hda-evaluator-configuration.{IMPLEMENTATION_ROLES[role]}.0001",
+                    CONFIG_PATHS[role],
+                    "evaluator_configuration",
+                )
+                for role in ROLE_KEYS
+            ],
+            *[
+                expected_manifest_entry(
+                    f"hda-dependency-lock.{IMPLEMENTATION_ROLES[role]}.0001",
+                    DEPENDENCY_LOCK_PATHS[role],
+                    "evaluator_dependency_lock",
+                )
+                for role in ROLE_KEYS
+            ],
+        ],
+        "transitive_binding_roots": [
+            "generator_source_binding",
+            "normative_schema_bindings",
+            "generated_artifacts",
+        ],
+        "generation_manifest_self_digest_forbidden": True,
+        "any_bound_member_byte_change_invalidates_review": True,
+        "review_report_is_out_of_scope_to_avoid_self_reference": True,
+    }
+    if manifest.get("bounded_technical_review_scope") != expected_review_scope:
+        add_error(errors, "generation_manifest_technical_review_scope_mismatch")
 
     inventory = retained.evidence.get("ordered_artifact_inventory", [])
     expected_paths = {
@@ -2252,22 +2772,142 @@ def validate_acyclicity(retained: Retained, errors: list[str]) -> None:
         add_error(errors, "assurance_dependency_cycle")
 
 
-def exact_python() -> Path:
-    override = os.environ.get("ODEYA_HDA_PYTHON")
-    candidates = [Path(override)] if override else []
-    candidates.extend([Path(sys.executable), ROOT / ".venv-architecture/bin/python"])
-    for candidate in candidates:
-        if not candidate.is_file():
-            continue
-        completed = subprocess.run(
-            [str(candidate), "--version"], capture_output=True, text=True, check=False
+TOOLCHAIN_OVERRIDE_NAMES = (
+    "ODEYA_HDA_PYTHON",
+    "ODEYA_HDA_NODE",
+    "ODEYA_HDA_JAVA",
+    "ODEYA_HDA_JAVAC",
+)
+
+
+def reject_toolchain_overrides(environment: Mapping[str, str]) -> None:
+    present = [name for name in TOOLCHAIN_OVERRIDE_NAMES if name in environment]
+    if present:
+        raise RuntimeError(
+            "HDA executable overrides are forbidden: " + ", ".join(present)
         )
-        observed = (completed.stdout + completed.stderr).strip()
-        if completed.returncode == 0 and observed == "Python 3.14.2":
-            return candidate.resolve()
-    raise RuntimeError(
-        "exact Python 3.14.2 is required; set ODEYA_HDA_PYTHON to its absolute executable"
+
+
+def evaluator_environment(
+    source: Mapping[str, str] | None = None,
+) -> dict[str, str]:
+    observed = os.environ if source is None else source
+    environment = {
+        "LANG": "C",
+        "LC_ALL": "C",
+        "PATH": os.defpath,
+        "PYTHONHASHSEED": "0",
+        "TZ": "UTC",
+    }
+    for name in ("SYSTEMROOT", "TMPDIR"):
+        if name in observed:
+            environment[name] = observed[name]
+    return environment
+
+
+def stream_digest_and_count(stream: Any) -> tuple[str, int]:
+    digest = hashlib.sha256()
+    count = 0
+    while True:
+        chunk = stream.read(1024 * 1024)
+        if not chunk:
+            break
+        digest.update(chunk)
+        count += len(chunk)
+    return "sha256:" + digest.hexdigest(), count
+
+
+def streamed_path_binding(path: Path) -> tuple[str, int]:
+    with path.open("rb") as stream:
+        return stream_digest_and_count(stream)
+
+
+def tool_cache_root() -> Path:
+    configured = os.environ.get("ODEYA_TOOL_CACHE")
+    return Path(
+        configured
+        if configured is not None
+        else Path(tempfile.gettempdir()) / "odeya-release-tools"
+    ).resolve()
+
+
+def archive_member_binding(
+    archive_path: Path,
+    expected_archive_sha256: str,
+    member_suffix: str,
+    label: str,
+) -> tuple[str, int]:
+    if archive_path.is_symlink() or not archive_path.is_file():
+        raise RuntimeError(f"{label} pinned installer archive is unavailable")
+    archive_binding = streamed_path_binding(archive_path)
+    if archive_binding[0] != "sha256:" + expected_archive_sha256:
+        raise RuntimeError(f"{label} installer archive digest is not locked")
+    try:
+        with tarfile.open(archive_path, mode="r:gz") as archive:
+            members = [
+                member
+                for member in archive.getmembers()
+                if member.isfile() and member.name.endswith(member_suffix)
+            ]
+            if len(members) != 1:
+                raise RuntimeError(
+                    f"{label} archive must contain one exact {member_suffix} member"
+                )
+            stream = archive.extractfile(members[0])
+            if stream is None:
+                raise RuntimeError(f"{label} archive member is unreadable")
+            with stream:
+                return stream_digest_and_count(stream)
+    except (OSError, tarfile.TarError) as exc:
+        raise RuntimeError(f"{label} installer archive is unreadable: {exc}") from exc
+
+
+def require_installed_archive_member(
+    *,
+    selected_path: Path,
+    expected_selected_path: Path,
+    archive_path: Path,
+    expected_archive_sha256: str,
+    member_suffix: str,
+    label: str,
+) -> Path:
+    try:
+        selected = selected_path.resolve(strict=True)
+        expected_selected = expected_selected_path.resolve(strict=True)
+    except OSError as exc:
+        raise RuntimeError(f"{label} selected executable is unavailable: {exc}") from exc
+    if selected != expected_selected:
+        raise RuntimeError(f"{label} is not the canonical installer-cache executable")
+    archive_binding = archive_member_binding(
+        archive_path,
+        expected_archive_sha256,
+        member_suffix,
+        label,
     )
+    if streamed_path_binding(selected) != archive_binding:
+        raise RuntimeError(
+            f"{label} selected executable bytes differ from the pinned archive member"
+        )
+    return selected
+
+
+def exact_python() -> Path:
+    reject_toolchain_overrides(os.environ)
+    try:
+        candidate = Path(sys.executable).resolve(strict=True)
+    except OSError as exc:
+        raise RuntimeError(f"the verifier interpreter is unavailable: {exc}") from exc
+    completed = subprocess.run(
+        [str(candidate), "--version"],
+        env=evaluator_environment(),
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    observed = (completed.stdout + completed.stderr).strip()
+    if completed.returncode != 0 or observed != "Python 3.14.2":
+        raise RuntimeError("the current verifier interpreter must be Python 3.14.2")
+    return candidate
 
 
 def platform_key() -> str:
@@ -2287,45 +2927,89 @@ def platform_key() -> str:
 
 
 def exact_node() -> Path:
-    override = os.environ.get("ODEYA_HDA_NODE")
-    cache = Path(os.environ.get("ODEYA_TOOL_CACHE", Path(tempfile.gettempdir()) / "odeya-release-tools"))
-    candidates = [Path(override)] if override else []
-    candidates.append(cache / "node/v24.18.0" / platform_key() / "bin/node")
-    for candidate in candidates:
-        if not candidate.is_file():
-            continue
-        completed = subprocess.run(
-            [str(candidate), "--version"], capture_output=True, text=True, check=False
-        )
-        if completed.returncode == 0 and completed.stdout.strip() == "v24.18.0":
-            return candidate.resolve()
-    raise RuntimeError(
-        "exact Node.js 24.18.0 is required; run scripts/ci/install-node.sh or set ODEYA_HDA_NODE"
+    reject_toolchain_overrides(os.environ)
+    key = platform_key()
+    cache = tool_cache_root()
+    lock = load_json(TOOLCHAIN_LOCK_PATH)
+    expected_archive_sha256 = lock.get("node", {}).get("archives", {}).get(key)
+    if not isinstance(expected_archive_sha256, str):
+        raise RuntimeError(f"Node archive lock is missing for {key}")
+    archive_platform = {
+        "darwin_amd64": "darwin-x64",
+        "darwin_arm64": "darwin-arm64",
+        "linux_amd64": "linux-x64",
+        "linux_arm64": "linux-arm64",
+    }[key]
+    candidate = cache / "node/v24.18.0" / key / "bin/node"
+    selected = require_installed_archive_member(
+        selected_path=candidate,
+        expected_selected_path=candidate,
+        archive_path=(
+            cache / "node" / f"node-v24.18.0-{archive_platform}.tar.gz"
+        ),
+        expected_archive_sha256=expected_archive_sha256,
+        member_suffix="/bin/node",
+        label="Node.js 24.18.0",
     )
+    completed = subprocess.run(
+        [str(selected), "--version"],
+        env=evaluator_environment(),
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if completed.returncode != 0 or completed.stdout.strip() != "v24.18.0":
+        raise RuntimeError("pinned Node.js archive member is not version 24.18.0")
+    return selected
 
 
 def exact_java_bins() -> tuple[Path, Path]:
-    java_override = os.environ.get("ODEYA_HDA_JAVA")
-    javac_override = os.environ.get("ODEYA_HDA_JAVAC")
-    cache = Path(os.environ.get("ODEYA_TOOL_CACHE", Path(tempfile.gettempdir()) / "odeya-release-tools"))
-    install = cache / "java/jdk-21.0.9+10" / platform_key()
+    reject_toolchain_overrides(os.environ)
+    key = platform_key()
+    cache = tool_cache_root()
+    install = cache / "java/jdk-21.0.9+10" / key
     if platform.system() == "Darwin":
         install = install / "Contents/Home"
-    java = Path(java_override) if java_override else install / "bin/java"
-    javac = Path(javac_override) if javac_override else install / "bin/javac"
-    if not java.is_file() or not javac.is_file():
-        raise RuntimeError(
-            "exact Temurin Java 21.0.9+10 is required; run scripts/ci/install-java.sh "
-            "or set ODEYA_HDA_JAVA and ODEYA_HDA_JAVAC"
-        )
+    lock = load_json(TOOLCHAIN_LOCK_PATH)
+    archive_lock = lock.get("java", {}).get("archives", {}).get(key)
+    if not isinstance(archive_lock, dict):
+        raise RuntimeError(f"Java archive lock is missing for {key}")
+    archive_name = archive_lock.get("name")
+    expected_archive_sha256 = archive_lock.get("sha256")
+    if not isinstance(archive_name, str) or not isinstance(
+        expected_archive_sha256, str
+    ):
+        raise RuntimeError(f"Java archive lock is malformed for {key}")
+    archive_path = cache / "java" / archive_name
+    java = require_installed_archive_member(
+        selected_path=install / "bin/java",
+        expected_selected_path=install / "bin/java",
+        archive_path=archive_path,
+        expected_archive_sha256=expected_archive_sha256,
+        member_suffix="/bin/java",
+        label="Temurin Java 21.0.9+10",
+    )
+    javac = require_installed_archive_member(
+        selected_path=install / "bin/javac",
+        expected_selected_path=install / "bin/javac",
+        archive_path=archive_path,
+        expected_archive_sha256=expected_archive_sha256,
+        member_suffix="/bin/javac",
+        label="Temurin javac 21.0.9+10",
+    )
     runtime = subprocess.run(
         [str(java), "-XshowSettings:properties", "-version"],
+        env=evaluator_environment(),
         capture_output=True,
         text=True,
         check=False,
     )
     compiler = subprocess.run(
-        [str(javac), "-version"], capture_output=True, text=True, check=False
+        [str(javac), "-version"],
+        env=evaluator_environment(),
+        capture_output=True,
+        text=True,
+        check=False,
     )
     if (
         runtime.returncode != 0
@@ -2334,20 +3018,274 @@ def exact_java_bins() -> tuple[Path, Path]:
         or compiler.stdout.strip() != "javac 21.0.9"
     ):
         raise RuntimeError("Java toolchain is not exact Temurin/Javac 21.0.9+10")
-    return java.resolve(), javac.resolve()
+    return java, javac
 
 
-def evaluator_environment() -> dict[str, str]:
-    env = os.environ.copy()
-    env.update(
-        {
-            "LC_ALL": "C",
-            "LANG": "C",
-            "TZ": "UTC",
-            "PYTHONHASHSEED": "0",
-        }
+def matching_host_profile_binding_errors(
+    profile: dict[str, Any],
+    selected: Mapping[str, Path],
+    *,
+    observed_host: tuple[str, str] | None = None,
+) -> list[str]:
+    role = str(profile.get("implementation_role", "unknown"))
+    host = profile.get("host_observation", {})
+    actual_host = (
+        (platform.system(), platform.machine())
+        if observed_host is None
+        else observed_host
     )
-    return env
+    if (host.get("system"), host.get("machine")) != actual_host:
+        return []
+    errors: list[str] = []
+    observations = profile.get("executable_observations", [])
+    for observation in observations if isinstance(observations, list) else []:
+        function = observation.get("function") if isinstance(observation, dict) else None
+        executable = selected.get(function) if isinstance(function, str) else None
+        if executable is None:
+            errors.append(f"{role}_matching_host_selected_function_missing")
+            continue
+        try:
+            binding = streamed_path_binding(executable.resolve(strict=True))
+        except OSError:
+            errors.append(f"{role}_matching_host_selected_executable_unreadable")
+            continue
+        if binding != (
+            observation.get("raw_sha256"),
+            observation.get("byte_count"),
+        ):
+            errors.append(f"{role}_matching_host_executable_binding_mismatch")
+    return errors
+
+
+def validate_selected_executable_profiles(
+    python: Path,
+    node: Path | None,
+    java_bins: tuple[Path, Path] | None,
+    errors: list[str],
+) -> None:
+    selected_by_role: dict[str, dict[str, Path]] = {
+        "python": {"interpreter": python},
+    }
+    if node is not None:
+        selected_by_role["node"] = {"runtime": node}
+    if java_bins is not None:
+        selected_by_role["java"] = {
+            "runtime": java_bins[0],
+            "compiler": java_bins[1],
+        }
+    for role, selected in selected_by_role.items():
+        profile = load_json(RUNTIME_PROFILE_PATHS[role])
+        errors.extend(matching_host_profile_binding_errors(profile, selected))
+
+
+def expect_runtime_refusal(
+    label: str,
+    operation: Any,
+    expected_fragment: str,
+    errors: list[str],
+) -> bool:
+    try:
+        operation()
+    except RuntimeError as exc:
+        if expected_fragment in str(exc):
+            return True
+        add_error(
+            errors,
+            "runtime_boundary_known_bad_wrong_reason",
+            f"{label}: {exc}",
+        )
+        return False
+    add_error(errors, "runtime_boundary_known_bad_not_refused", label)
+    return False
+
+
+def run_runtime_boundary_known_bads(errors: list[str]) -> int:
+    passed = 0
+    for name in TOOLCHAIN_OVERRIDE_NAMES:
+        if expect_runtime_refusal(
+            f"override-{name}",
+            lambda name=name: reject_toolchain_overrides({name: "/tmp/wrapper"}),
+            name,
+            errors,
+        ):
+            passed += 1
+
+    injected = {
+        "NODE_OPTIONS": "--require=/tmp/injected.js",
+        "JAVA_TOOL_OPTIONS": "-javaagent:/tmp/injected.jar",
+        "JDK_JAVA_OPTIONS": "-javaagent:/tmp/injected.jar",
+        "LD_PRELOAD": "/tmp/injected.so",
+        "DYLD_INSERT_LIBRARIES": "/tmp/injected.dylib",
+        "PATH": "/tmp/injected-bin",
+    }
+    closed = evaluator_environment(injected)
+    forbidden_environment = set(injected) - {"PATH"}
+    if (
+        not forbidden_environment.intersection(closed)
+        and closed.get("PATH") == os.defpath
+    ):
+        passed += 1
+    else:
+        add_error(errors, "runtime_boundary_injected_environment_survived")
+
+    with tempfile.TemporaryDirectory(prefix="odeya-hda-toolchain-self-test-") as temporary:
+        root = Path(temporary)
+        archive_path = root / "safe.tar.gz"
+        member_raw = b"pinned-executable-member\n"
+        with tarfile.open(archive_path, mode="w:gz") as archive:
+            info = tarfile.TarInfo("package/bin/node")
+            info.size = len(member_raw)
+            archive.addfile(info, io.BytesIO(member_raw))
+        archive_sha = streamed_path_binding(archive_path)[0][7:]
+        selected = root / "install/bin/node"
+        selected.parent.mkdir(parents=True)
+        selected.write_bytes(member_raw)
+        safe = require_installed_archive_member(
+            selected_path=selected,
+            expected_selected_path=selected,
+            archive_path=archive_path,
+            expected_archive_sha256=archive_sha,
+            member_suffix="/bin/node",
+            label="self-test runtime",
+        )
+        if safe == selected.resolve():
+            passed += 1
+        else:
+            add_error(errors, "runtime_boundary_archive_safe_control_failed")
+
+        if expect_runtime_refusal(
+            "wrong-archive-digest",
+            lambda: archive_member_binding(
+                archive_path, "0" * 64, "/bin/node", "self-test runtime"
+            ),
+            "archive digest is not locked",
+            errors,
+        ):
+            passed += 1
+        if expect_runtime_refusal(
+            "missing-archive",
+            lambda: archive_member_binding(
+                root / "missing.tar.gz",
+                archive_sha,
+                "/bin/node",
+                "self-test runtime",
+            ),
+            "archive is unavailable",
+            errors,
+        ):
+            passed += 1
+
+        selected.write_bytes(b"v24.18.0\n")
+        if expect_runtime_refusal(
+            "installed-member-mismatch",
+            lambda: require_installed_archive_member(
+                selected_path=selected,
+                expected_selected_path=selected,
+                archive_path=archive_path,
+                expected_archive_sha256=archive_sha,
+                member_suffix="/bin/node",
+                label="self-test runtime",
+            ),
+            "bytes differ from the pinned archive member",
+            errors,
+        ):
+            passed += 1
+
+        duplicate_archive = root / "duplicate.tar.gz"
+        with tarfile.open(duplicate_archive, mode="w:gz") as archive:
+            for prefix in ("first", "second"):
+                info = tarfile.TarInfo(f"{prefix}/bin/node")
+                info.size = len(member_raw)
+                archive.addfile(info, io.BytesIO(member_raw))
+        duplicate_sha = streamed_path_binding(duplicate_archive)[0][7:]
+        if expect_runtime_refusal(
+            "duplicate-archive-member",
+            lambda: archive_member_binding(
+                duplicate_archive,
+                duplicate_sha,
+                "/bin/node",
+                "self-test runtime",
+            ),
+            "must contain one exact",
+            errors,
+        ):
+            passed += 1
+
+    with tempfile.TemporaryDirectory(
+        prefix="odeya-hda-profile-self-test-"
+    ) as temporary:
+        selected_python = Path(temporary) / "python"
+        selected_python.write_bytes(b"synthetic-profile-executable\n")
+        binding = streamed_path_binding(selected_python)
+        profile = load_json(RUNTIME_PROFILE_PATHS["python"])
+        profile["executable_observations"][0]["raw_sha256"] = binding[0]
+        profile["executable_observations"][0]["byte_count"] = binding[1]
+        observed_host = (
+            profile["host_observation"]["system"],
+            profile["host_observation"]["machine"],
+        )
+        safe_profile_errors = matching_host_profile_binding_errors(
+            profile,
+            {"interpreter": selected_python},
+            observed_host=observed_host,
+        )
+        if safe_profile_errors:
+            add_error(
+                errors,
+                "runtime_boundary_profile_safe_control_failed",
+                repr(safe_profile_errors),
+            )
+        for field, replacement in (
+            ("raw_sha256", "sha256:" + ("0" * 64)),
+            ("byte_count", 1),
+        ):
+            candidate = copy.deepcopy(profile)
+            candidate["executable_observations"][0][field] = replacement
+            observed = matching_host_profile_binding_errors(
+                candidate,
+                {"interpreter": selected_python},
+                observed_host=observed_host,
+            )
+            if "python_matching_host_executable_binding_mismatch" in observed:
+                passed += 1
+            else:
+                add_error(
+                    errors,
+                    "runtime_boundary_profile_known_bad_not_refused",
+                    field,
+                )
+    return passed
+
+
+def validate_predecessor_migration_self_test(
+    python: Path, errors: list[str]
+) -> bool:
+    completed = subprocess.run(
+        [
+            str(python),
+            *PYTHON_ISOLATION_FLAGS,
+            str(GENERATOR_PATH),
+            "--self-test-predecessor-migration",
+        ],
+        cwd=ROOT,
+        env=evaluator_environment(),
+        capture_output=True,
+        check=False,
+    )
+    expected = (
+        b"exact predecessor migration replayed; same-length, zero-stale, "
+        b"and multiple-stale controls refused\n"
+    )
+    if completed.returncode != 0 or completed.stdout != expected or completed.stderr:
+        add_error(
+            errors,
+            "predecessor_migration_self_test_failed",
+            (completed.stdout + completed.stderr).decode(
+                "utf-8", errors="replace"
+            ).strip(),
+        )
+        return False
+    return True
 
 
 def validate_python_bytecode_isolation(python: Path, errors: list[str]) -> None:
@@ -2535,6 +3473,8 @@ def run_recomputations(retained: Retained, recompute_all: bool, errors: list[str
     except RuntimeError as exc:
         add_error(errors, "exact_recomputation_toolchain_unavailable", str(exc))
         return 0
+    validate_selected_executable_profiles(python, node, java_bins, errors)
+    validate_predecessor_migration_self_test(python, errors)
     validate_python_bytecode_isolation(python, errors)
     cases = retained.cases.get("cases", [])
     count = 0
@@ -2835,7 +3775,9 @@ def run_known_bad_self_tests(retained: Retained, errors: list[str]) -> int:
     return len(cases)
 
 
-def validate_all(retained: Retained, recompute_all: bool, errors: list[str]) -> tuple[int, int]:
+def validate_all(
+    retained: Retained, recompute_all: bool, errors: list[str]
+) -> tuple[int, int, int]:
     validate_expectation_boundary(retained, errors)
     validate_ruleset_and_resolver(retained, errors)
     validate_evidence(retained, errors)
@@ -2849,8 +3791,9 @@ def validate_all(retained: Retained, recompute_all: bool, errors: list[str]) -> 
     validate_generation_manifest(retained, errors)
     validate_acyclicity(retained, errors)
     known_bads = run_known_bad_self_tests(retained, errors)
+    runtime_known_bads = run_runtime_boundary_known_bads(errors)
     recomputations = run_recomputations(retained, recompute_all, errors)
-    return known_bads, recomputations
+    return known_bads, runtime_known_bads, recomputations
 
 
 def parse_args() -> argparse.Namespace:
@@ -2868,9 +3811,12 @@ def main() -> int:
     errors: list[str] = []
     retained = load_retained(errors)
     known_bads = 0
+    runtime_known_bads = 0
     recomputations = 0
     if retained is not None:
-        known_bads, recomputations = validate_all(retained, args.recompute_all, errors)
+        known_bads, runtime_known_bads, recomputations = validate_all(
+            retained, args.recompute_all, errors
+        )
     if errors:
         for error in errors:
             print(f"ERROR: {error}", file=sys.stderr)
@@ -2885,6 +3831,8 @@ def main() -> int:
         "5-schema byte-bound retained chain; 14 content-addressed preimages; "
         "3 source-separated result records; exact full-field comparison and Seal copy/precedence; "
         f"{known_bads} in-memory known-bad semantic mutations refused; "
+        f"{runtime_known_bads} toolchain-boundary controls passed; "
+        "exact predecessor migration self-test passed; "
         f"{recomputations} {mode} vector recomputations matched"
     )
     return 0

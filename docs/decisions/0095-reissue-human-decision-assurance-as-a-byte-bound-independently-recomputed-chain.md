@@ -1,9 +1,9 @@
 # ADR 0095: Reissue human-decision assurance as a byte-bound, independently recomputed chain
 
-- Status: Accepted as direction and architecture design; the byte-bound and
-  recomputation tranche is retained candidate evidence, but adoption remains
-  incomplete until context-isolated technical review of the exact candidate
-  bytes; every successor remains unissued, and Gate A remains blocked
+- Status: Accepted as direction and architecture design; all seven bounded
+  adoption-evidence items are retained for the corrected exact T0 scope,
+  including correlated, context-isolated, non-accountable technical-review
+  evidence; every successor remains unissued, and Gate A remains blocked
 - Date: 2026-07-21
 - Decision owners: constitutional authority, security, architecture review,
   evidence integrity
@@ -311,9 +311,10 @@ is incomplete until one exact candidate commit retains all of:
 5. backing-byte and comparison receipts that satisfy the acyclic graph;
 6. machine validation that recomputes every digest and refusal from repository
    bytes; and
-7. a context-isolated technical-review determination over the exact candidate
-   bytes, with reviewer provenance retained and with that determination
-   explicitly barred from counting as accountable review or Gate A acceptance.
+7. a context-isolated technical-review evidence report over the exact candidate
+   bytes, with reviewer provenance retained and with that report explicitly
+   labelled correlated, non-accountable, non-human, and not a
+   `ReviewDetermination`, accountable review, or Gate A acceptance.
 
 Even that retained tranche remains unissued architecture evidence. Profile or
 schema issuance, admission, accountable security and authority review, and
@@ -321,8 +322,8 @@ Daniel's exact-byte Gate A decision remain separate unresolved obligations.
 
 ### Retained candidate-evidence checkpoint
 
-The candidate prepared for the containing exact commit now retains the first
-six evidence classes above:
+The corrected candidate prepared for the containing exact commit now retains
+all seven evidence classes above:
 
 - five successor schemas and seven schema-valid fixtures;
 - fourteen content-addressed synthetic backing preimages, with every digest,
@@ -334,23 +335,37 @@ six evidence classes above:
 - three direct projections and three bound result records whose comparison is
   exact across `participant_id`, `domain_results`, `categorical_results`,
   `categorical_failures`, `final_disposition`, and `reason_codes`;
-- forty-eight intent-bound downstream chain known-bads over backing truth,
-  results, comparison, acyclicity, receipt and Seal bindings, source/runtime
-  identity, and predecessor immutability; and
+- forty-nine intent-bound downstream chain known-bads over backing truth,
+  the stale phase-two authentication-challenge relation, results, comparison,
+  acyclicity, receipt and Seal bindings, source/runtime identity, and
+  predecessor immutability;
 - machine regeneration and validation from repository bytes, including the
-  retained false authority boundaries.
+  retained false authority boundaries; and
+- a retained eleven-round technical-review evidence report: independent
+  phase-two reconstruction refuted the exact published predecessor and every
+  later refutation was preserved; corrected bounded root
+  `sha256:97062b38a14d5bdccf5ad87c547c62388e7cd82256a445f631856aecee54e1d9`
+  records `no_grounded_refutation_observed_within_declared_attacks`; round
+  eleven reproduced the corrected Gate and live-generator object readers,
+  PRQ-013 truth surface, exact-bound regeneration, and full integration within
+  its declared attacks only.
 
 Every fixed time in that synthetic evidence is a deterministic fixture time,
 not a ceremony observation, trusted timestamp, or proof of freshness. Exact
 Git identity and release evidence for the containing subject must be resolved
 from Git and the release contract; this ADR cannot supply them.
 
-The seventh adoption item is still absent: no context-isolated technical-review
-determination over the exact candidate bytes is retained. Until that review is
-completed with provenance and its non-accountable boundary made explicit, ADR
-0095 adoption remains incomplete. The three source paths establish the stated
-code-separation and non-sharing controls, not organizational independence;
-organizationally independent authorship or review has not been proven.
+The seventh bounded evidence item is retained at
+`architecture/human-decision-assurance-context-isolated-technical-review.json`.
+The report is model-worker evidence, not a `ReviewDetermination`: it is
+context-isolated but shares provider, model, harness, prompt, source-corpus,
+human-principal, and incentive axes. It therefore cannot close accountable or
+organizationally independent review. Findings `HDA-CTX-001` through
+`HDA-CTX-016` remain `changed_candidate_pending_accountable_closure_review`.
+The three source paths
+establish the stated code-separation and non-sharing controls, not
+organizational independence; organizationally independent authorship or review
+has not been proven.
 
 ## Known-bad proof obligations
 
@@ -373,6 +388,10 @@ refuse at least:
 - the binary confirmation-receipt-frame role missing, duplicated, role-swapped,
   re-encoded, truncated, or changed after its digest enters the phase-two
   frame;
+- the corrected phase-two authentication challenge ID restored to the exact
+  predecessor value while the successor confirmation-receipt bytes remain,
+  requiring the authentication-ID, complete relation, backing reason-code, and
+  backing-disposition mismatch diagnostics;
 - a descriptor with no preimage, a filename that claims a digest different
   from its bytes, a wrong byte count or media type, and a readable malformed
   preimage;

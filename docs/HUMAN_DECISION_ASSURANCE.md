@@ -1,12 +1,16 @@
 # Human Decision Assurance
 
-Status: unissued Gate A architecture candidate, 2026-07-21. The retained T0
-byte-bound/recomputation tranche is candidate evidence, and ADR 0095 adoption
-is still incomplete pending context-isolated technical review over the exact
-candidate bytes. The contracts, fixtures, and checks described here are
-architecture evidence only. They do not establish a real human ceremony,
-satisfy a human-only authority slot, complete consumer migration, accept Gate
-A, or authorize runtime, cloud, or deployment work.
+Status: unissued Gate A architecture candidate, 2026-07-22. The retained T0
+byte-bound/recomputation tranche and its seven-item bounded adoption-evidence
+checklist are retained for corrected exact scope `.0005`. The eleven-round
+context-isolated technical-review report records
+`no_grounded_refutation_observed_within_declared_attacks` for that exact scope
+and is correlated, non-accountable model-worker evidence, not a
+`ReviewDetermination`. The contracts, fixtures,
+and checks described here are architecture evidence only. They do not
+establish a real human ceremony, satisfy a human-only authority slot, complete
+consumer migration, accept Gate A, or authorize runtime, cloud, or deployment
+work.
 
 ## Why this contract exists
 
@@ -90,7 +94,7 @@ The retained predecessor and successor candidates include:
 - exact, unissued singleton-eligibility ruleset 0.2 and a closed resolver
   profile;
 - 14 content-addressed synthetic backing preimages, seven schema-valid
-  successor fixtures, 44 expectation-free evaluator vectors, and 48
+  successor fixtures, 44 expectation-free evaluator vectors, and 49
   downstream chain known-bads;
 - 132 exact passing recomputations: 44 each through source-separated,
   non-sharing Python 3.14.2, Node.js 24.18.0, and Temurin Java 21.0.9
@@ -238,10 +242,18 @@ receipt is detected only when its receipt disagrees, never prevented. That
 residue is the retained cost of declining the transaction-confirmation trusted
 path at Gate A. The retained successor now supplies exact backing-byte
 dereference and three source-separated, non-sharing ruleset implementations.
-Profile and schema issuance remain blocked pending ADR 0095's context-isolated
-technical review of the exact candidate bytes, the later T1/T2 and wrapper
-dependencies, end-to-end consumer refusal, accountable review, and operator
-acceptance.
+The retained review refuted the published predecessor's stale phase-two
+challenge relation and then preserved each later refutation through round ten.
+Round eleven found no grounded refutation within its declared attacks against
+the corrected bounded scope rooted at
+`sha256:97062b38a14d5bdccf5ad87c547c62388e7cd82256a445f631856aecee54e1d9`;
+closure observation `.0003`, install observation `.0004`, the Gate and live
+generator readers, strict-binding and PRQ-013 truth controls, exact-bound
+regeneration, and full integration survived only those declared checks. Profile and schema issuance
+remain blocked by all `HDA-CTX-001` through `HDA-CTX-016` findings pending
+accountable closure review, the later T1/T2 and wrapper dependencies,
+end-to-end consumer refusal, accountable security and authority review, and
+operator acceptance.
 
 The retained vector proves only deterministic framing and recomputation. A
 metamorphic second-nonce expected-pass control proves that the checker is not
@@ -341,11 +353,12 @@ outputs. Python 3.14.2, Node.js 24.18.0, and Temurin Java 21.0.9 each pass all
 The comparison receipt checks the complete projection, not only the final
 disposition. It requires exact agreement on `participant_id`,
 `domain_results`, `categorical_results`, `categorical_failures`,
-`final_disposition`, and `reason_codes`. The 48 downstream chain known-bads
-separately attack backing truth, deterministic negative reasons, result and
-source identities, projection completeness, acyclicity, receipt/Seal
-bindings, runtime and dependency pins, non-sharing, and preservation of the
-0.1 identities.
+`final_disposition`, and `reason_codes`. The 49 downstream chain known-bads
+separately attack backing truth, including restoration of the exact stale
+predecessor phase-two authentication challenge ID, deterministic negative
+reasons, result and source identities, projection completeness, acyclicity,
+receipt/Seal bindings, runtime and dependency pins, non-sharing, and
+preservation of the 0.1 identities.
 
 The source separation and non-sharing controls are retained and machine
 checked. Organizational independence is not proven: the implementations share
@@ -460,12 +473,16 @@ and the operator's exact-byte decision. It does not require or authorize a
 live ceremony, and the operator's Gate A decision is not evidence that the
 future engine ceremony works.
 
-The current T0 byte-bound/recomputation tranche is retained candidate evidence,
-not completed ADR adoption or PRQ-013 closure. ADR 0095 still requires a
-context-isolated technical-review determination over the exact candidate bytes.
-That determination is deliberately non-accountable and cannot substitute for
-the later accountable security/authority review or the operator's Gate A
-decision.
+The current T0 byte-bound/recomputation tranche retains all seven bounded ADR
+0095 adoption-evidence items for the corrected exact scope; this is not profile
+or schema issuance, broader PRQ-013 closure, or Gate A acceptance. The
+eleven-round technical-review report records
+`no_grounded_refutation_observed_within_declared_attacks` for the exact scope
+only. It is deliberately
+correlated, non-accountable, non-human, and not a `ReviewDetermination`; it
+cannot substitute for accountable security/authority review or the operator's
+Gate A decision. Every `HDA-CTX-001` through `HDA-CTX-016` finding remains
+`changed_candidate_pending_accountable_closure_review`.
 
 After Gate A, one real protected ceremony may be separately authorized as a
 bounded, disposable Gate B probe under the accepted profile. Agents receive no
@@ -507,5 +524,6 @@ The governing decisions are
 [ADR 0089](decisions/0089-a-valid-human-signature-is-not-a-human-decision.md),
 [ADR 0092](decisions/0092-bind-human-decisions-through-an-external-assurance-wrapper.md),
 [ADR 0093](decisions/0093-co-bind-the-confirmation-gesture-through-a-two-phase-challenge.md),
+[ADR 0095](decisions/0095-reissue-human-decision-assurance-as-a-byte-bound-independently-recomputed-chain.md),
 and
-[ADR 0095](decisions/0095-reissue-human-decision-assurance-as-a-byte-bound-independently-recomputed-chain.md).
+[ADR 0096](decisions/0096-reconstruct-the-successor-phase-two-binding-before-technical-review.md).

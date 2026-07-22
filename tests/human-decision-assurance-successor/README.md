@@ -86,11 +86,12 @@ defect can survive exact agreement.
 
 ## Downstream chain refusals
 
-`chain-cases.json` retains 48 intent-bound chain known-bads. They attack
-backing truth, deterministic negative reasons, result/source identities,
-complete projection comparison, acyclicity, receipt and Seal bindings,
-runtime/dependency pins, source non-sharing, and immutability of the 0.1
-resource identities. Each mutation is evaluated against its declared safe
+`chain-cases.json` retains 49 intent-bound chain known-bads. They attack
+backing truth, including restoration of the exact stale predecessor phase-two
+authentication challenge ID, deterministic negative reasons, result/source
+identities, complete projection comparison, acyclicity, receipt and Seal
+bindings, runtime/dependency pins, source non-sharing, and immutability of the
+0.1 resource identities. Each mutation is evaluated against its declared safe
 control and intended diagnostic; an unrelated refusal does not earn credit.
 
 The complete retained generation chain is therefore bounded by:
@@ -99,7 +100,7 @@ The complete retained generation chain is therefore bounded by:
 - 44 answer-free evaluator vectors and 132 exact cross-toolchain
   recomputations;
 - exact six-field projection comparison;
-- 48 downstream chain known-bads; and
+- 49 downstream chain known-bads; and
 - a generation manifest that records false authority boundaries and forbids a
   self-digest.
 
@@ -108,11 +109,18 @@ standards conformance, a real ceremony, or consumer integration.
 
 ## Adoption and authority boundary
 
-The T0 byte-bound/recomputation tranche is retained candidate evidence, but
-ADR 0095 adoption remains incomplete until a context-isolated technical-review
-determination is retained over the exact candidate bytes. That review must be
-labelled correlated/non-accountable and cannot establish organizational
+The T0 byte-bound/recomputation tranche retains all seven bounded ADR 0095
+adoption-evidence items for corrected exact scope `.0005`. The eleven-round
+context-isolated report records
+`no_grounded_refutation_observed_within_declared_attacks`; round eleven
+reproduced the Gate and live-generator readers, corrected PRQ-013 truth
+surface, 25 context-review known-bads, two result/ledger integration controls,
+exact-bound regeneration, and full integration within its declared checks. It is correlated,
+non-accountable, non-human model-worker
+evidence—not a `ReviewDetermination`—and cannot establish organizational
 independence, accountable security or authority review, or Gate A acceptance.
+All `HDA-CTX-001` through `HDA-CTX-016` findings remain pending accountable
+closure review.
 
 No current consumer is migrated. T1 `AuthorityAssignment`, the required T2
 command/event/state/reducer/currentness/quorum contracts, the

@@ -20,8 +20,11 @@ import hashlib
 import json
 import os
 import platform
+import re
+import struct
 import subprocess
 import sys
+import tarfile
 import tempfile
 from pathlib import Path
 from typing import Any
@@ -33,13 +36,23 @@ ROOT = Path(__file__).resolve().parents[1]
 SUITE = ROOT / "tests/human-decision-assurance-successor"
 FIXTURES = ROOT / "tests/architecture-schema/fixtures"
 VECTOR_PATH = SUITE / "vectors.json"
+CASES_PATH = SUITE / "cases.json"
+CHAIN_CASES_PATH = SUITE / "chain-cases.json"
+VALIDATOR_PATH = ROOT / "scripts/validate_human_decision_assurance_successor.py"
 RULESET_PATH = ROOT / "architecture/human-decision-assurance-individual-eligibility-ruleset-v2-candidate.json"
 RESOLVER_PATH = ROOT / "architecture/human-decision-assurance-content-address-resolver-profile-v1-candidate.json"
 TOOLCHAIN_LOCK_PATH = ROOT / "tools/repository-release/toolchain.lock.json"
+ARCHITECTURE_REQUIREMENTS_SOURCE_PATH = ROOT / "requirements-architecture.txt"
+ARCHITECTURE_REQUIREMENTS_LOCK_PATH = (
+    ROOT / "tools/repository-release/requirements-architecture.lock"
+)
 CORE_PATH = FIXTURES / "human-decision-assurance-core.valid.json"
 DECISION_PATH = FIXTURES / "human-decision-assurance-decision-subject.valid.json"
 CANDIDATE_MANIFEST_PATH = ROOT / "tests/architecture-review/fixtures/architecture-candidate-manifest.valid.json"
 CHALLENGE_PROFILE_PATH = ROOT / "architecture/human-decision-challenge-frame-v2-candidate.json"
+CHALLENGE_EVIDENCE_PATH = (
+    ROOT / "architecture/human-decision-challenge-frame-v2-candidate-evidence.json"
+)
 
 EVIDENCE_PATH = FIXTURES / "human-decision-assurance-evidence-v0-2.valid.json"
 BACKING_RECEIPT_PATH = FIXTURES / "human-decision-assurance-backing-byte-verification-receipt.valid.json"
@@ -54,6 +67,37 @@ VECTOR_ID = "safe-complete-eligible"
 RULESET_ID = "urn:odeya:human-decision-assurance-eligibility:0.2.0-candidate"
 RULESET_VERSION = "0.2.0"
 RESOLVER_ID = "urn:odeya:human-decision-assurance:content-address-resolver:0.1.0-candidate"
+VECTOR_CORPUS_ARTIFACT_ID = "hda-successor-vectors.0002"
+NORMATIVE_INPUT_ARTIFACT_ID = (
+    "hda-successor-normative-input.safe-complete-eligible.0002"
+)
+INPUT_MANIFEST_ARTIFACT_ID = "hda-successor-input-manifest.synthetic.0002"
+BACKING_RECEIPT_ARTIFACT_ID = "hda-backing-byte-receipt.synthetic.0002"
+COMPARISON_ARTIFACT_ID = "hda-comparison-receipt.synthetic.0002"
+SEAL_ARTIFACT_ID = "hda-seal.synthetic.0003"
+GENERATION_MANIFEST_ARTIFACT_ID = (
+    "hda-successor-generation-manifest.synthetic.0005"
+)
+PREDECESSOR_SUBJECT = {
+    "commit": "86c0f1ed8ba20d74324d64529bf5435a0524f4cd",
+    "tree": "0465eac6adf3f49629e72b1c9e6dce6d4acd121c",
+    "sole_parent": "34cad10a42027730a515614fc0a5bd664dd8933b",
+    "generation_manifest_artifact_id": (
+        "hda-successor-generation-manifest.synthetic.0001"
+    ),
+    "generation_manifest_raw_sha256": (
+        "sha256:f401a95c52ccc49791872584971450c723d3c9d2632d66cbd3e9761fea26e247"
+    ),
+    "generation_manifest_byte_count": 16050,
+    "vector_corpus_raw_sha256": (
+        "sha256:c81d7d9636d5a4f79a545bbad0ef5454ab8a4bb171d896e0035f1096b2c9cc1a"
+    ),
+    "stale_authentication_challenge_id": (
+        "sha256:1b19ecdf21c6a4d9644fe18757cbd11d1bd32b4a0059a23b2e66ff7363e23a05"
+    ),
+    "disposition": "invalid_stale_phase_two_authentication_challenge_binding",
+    "retention": "exact_git_parent_object_and_context_review_evidence",
+}
 # Deterministic fixture timestamps make regeneration byte-for-byte replayable.
 # They are not observations of a ceremony, runtime execution, or external event.
 FIXED_TIMES = {
@@ -146,24 +190,24 @@ IMPLEMENTATION_METADATA = {
         "toolchain_version": "3.14.2",
         "source_manifest_id": "hda-evaluator-source-manifest.python.3_14_2.0001",
         "runtime_profile_id": "hda-runtime-profile.python.3_14_2.0001",
-        "projection_id": "hda-eligibility-projection.python.synthetic.0001",
-        "result_id": "hda-recomputation-result.python.synthetic.0001",
+        "projection_id": "hda-eligibility-projection.python.synthetic.0002",
+        "result_id": "hda-recomputation-result.python.synthetic.0002",
     },
     "nodejs_24_18_0": {
         "toolchain_name": "nodejs",
         "toolchain_version": "24.18.0",
         "source_manifest_id": "hda-evaluator-source-manifest.nodejs_24_18_0.0001",
         "runtime_profile_id": "hda-runtime-profile.nodejs_24_18_0.0001",
-        "projection_id": "hda-eligibility-projection.nodejs_24_18_0.synthetic.0001",
-        "result_id": "hda-recomputation-result.nodejs_24_18_0.synthetic.0001",
+        "projection_id": "hda-eligibility-projection.nodejs_24_18_0.synthetic.0002",
+        "result_id": "hda-recomputation-result.nodejs_24_18_0.synthetic.0002",
     },
     "java_21_0_9": {
         "toolchain_name": "java",
         "toolchain_version": "21.0.9",
         "source_manifest_id": "hda-evaluator-source-manifest.java_21_0_9.0001",
         "runtime_profile_id": "hda-runtime-profile.java_21_0_9.0001",
-        "projection_id": "hda-eligibility-projection.java_21_0_9.synthetic.0001",
-        "result_id": "hda-recomputation-result.java_21_0_9.synthetic.0001",
+        "projection_id": "hda-eligibility-projection.java_21_0_9.synthetic.0002",
+        "result_id": "hda-recomputation-result.java_21_0_9.synthetic.0002",
     },
 }
 
@@ -231,6 +275,279 @@ def raw_binding(artifact_id: str, path: Path) -> dict[str, Any]:
     }
 
 
+def digest_octets(value: Any, label: str) -> bytes:
+    if (
+        not isinstance(value, str)
+        or re.fullmatch(r"sha256:[0-9a-f]{64}", value) is None
+    ):
+        raise GenerationError(f"{label}: expected one sha256-prefixed digest")
+    try:
+        return bytes.fromhex(value[7:])
+    except ValueError as exc:
+        raise GenerationError(f"{label}: digest is not lowercase hexadecimal") from exc
+
+
+def encode_named_binary_frame(
+    magic: Any, fields: list[tuple[str, bytes]], label: str
+) -> bytes:
+    if not isinstance(magic, str) or not magic.isascii():
+        raise GenerationError(f"{label}: frame magic must be ASCII")
+    encoded = bytearray(magic.encode("ascii"))
+    encoded.extend(struct.pack(">H", len(fields)))
+    for name, value in fields:
+        if not name.isascii():
+            raise GenerationError(f"{label}: field name must be ASCII")
+        name_bytes = name.encode("ascii")
+        encoded.extend(struct.pack(">H", len(name_bytes)))
+        encoded.extend(name_bytes)
+        encoded.extend(struct.pack(">I", len(value)))
+        encoded.extend(value)
+    return bytes(encoded)
+
+
+def challenge_shared_fields(shared: dict[str, Any]) -> list[tuple[str, bytes]]:
+    def text(key: str) -> bytes:
+        value = shared.get(key)
+        if not isinstance(value, str) or not value.isascii():
+            raise GenerationError(f"challenge shared input {key} must be ASCII")
+        return value.encode("ascii")
+
+    return [
+        ("core_schema_resource_id", text("core_schema_resource_id")),
+        (
+            "core_raw_sha256",
+            digest_octets(shared.get("core_raw_sha256"), "core_raw_sha256"),
+        ),
+        ("decision_schema_resource_id", text("decision_schema_resource_id")),
+        (
+            "decision_raw_sha256",
+            digest_octets(
+                shared.get("decision_raw_sha256"), "decision_raw_sha256"
+            ),
+        ),
+        ("candidate_schema_resource_id", text("candidate_schema_resource_id")),
+        (
+            "candidate_raw_sha256",
+            digest_octets(
+                shared.get("candidate_raw_sha256"), "candidate_raw_sha256"
+            ),
+        ),
+        ("session_id", text("session_id")),
+    ]
+
+
+def challenge_interval_fields(
+    shared: dict[str, Any], phase: dict[str, Any]
+) -> list[tuple[str, bytes]]:
+    fields: list[tuple[str, bytes]] = []
+    for name in ("issued_at", "expires_at"):
+        value = phase.get(name)
+        if not isinstance(value, str) or not value.isascii():
+            raise GenerationError(f"challenge phase {name} must be ASCII")
+        fields.append((name, value.encode("ascii")))
+    for name in ("relying_party_id", "expected_origin"):
+        value = shared.get(name)
+        if not isinstance(value, str) or not value.isascii():
+            raise GenerationError(f"challenge shared input {name} must be ASCII")
+        fields.append((name, value.encode("ascii")))
+    nonce = phase.get("nonce_hex")
+    try:
+        nonce_bytes = bytes.fromhex(nonce) if isinstance(nonce, str) else b""
+    except ValueError as exc:
+        raise GenerationError("challenge phase nonce is not hexadecimal") from exc
+    if len(nonce_bytes) != 32:
+        raise GenerationError("challenge phase nonce is not exactly 32 octets")
+    fields.append(("nonce", nonce_bytes))
+    return fields
+
+
+def exact_receipt_preimage(base_input: dict[str, Any]) -> bytes:
+    artifacts = base_input.get("backing_byte_inputs", {}).get("artifacts", [])
+    matches = [
+        item
+        for item in artifacts
+        if isinstance(item, dict)
+        and item.get("descriptor", {}).get("role")
+        == "exact_unmodified_confirmation_receipt_frame"
+    ]
+    if len(matches) != 1:
+        raise GenerationError(
+            "expected exactly one confirmation-receipt frame preimage"
+        )
+    raw_base64 = matches[0].get("preimage", {}).get("raw_base64")
+    if not isinstance(raw_base64, str):
+        raise GenerationError("confirmation-receipt frame preimage is absent")
+    try:
+        return base64.b64decode(raw_base64, validate=True)
+    except ValueError as exc:
+        raise GenerationError(
+            "confirmation-receipt frame preimage is not strict Base64"
+        ) from exc
+
+
+def recompute_phase_two_challenge_relation(
+    base_input: dict[str, Any],
+    *,
+    vector_raw_sha256: str,
+) -> dict[str, Any]:
+    """Recompute the successor receipt's phase-two challenge from source bytes.
+
+    The published predecessor copied the ADR 0093 authentication challenge ID
+    after replacing the confirmation-receipt bytes.  That left every local
+    checker green because the old validator compared only the copied receipt
+    digest.  Generation now fails unless the retained relation equals a fresh
+    construction from the exact challenge profile, exact upstream vector
+    inputs, and exact successor receipt preimage.
+    """
+
+    profile = load_json(CHALLENGE_PROFILE_PATH)
+    evidence = load_json(CHALLENGE_EVIDENCE_PATH)
+    profile_binding = evidence.get("profile_binding")
+    profile_raw = CHALLENGE_PROFILE_PATH.read_bytes()
+    if profile_binding != {
+        "path": relative(CHALLENGE_PROFILE_PATH),
+        "profile_id": profile.get("profile_id"),
+        "profile_version": profile.get("profile_version"),
+        "raw_sha256": digest_bytes(profile_raw),
+        "byte_count": len(profile_raw),
+    }:
+        raise GenerationError("challenge-frame evidence profile binding is stale")
+    source_vector = evidence.get("synthetic_test_vector")
+    if not isinstance(source_vector, dict):
+        raise GenerationError("challenge-frame evidence has no synthetic vector")
+    shared = source_vector.get("shared_inputs")
+    presentation = source_vector.get("presentation_phase")
+    authentication = source_vector.get("authentication_phase")
+    if not all(isinstance(value, dict) for value in (shared, presentation, authentication)):
+        raise GenerationError("challenge-frame source vector is incomplete")
+
+    magic = profile.get("binary_frame", {}).get("magic_ascii")
+    presentation_fields = challenge_shared_fields(shared) + challenge_interval_fields(
+        shared, presentation
+    )
+    expected_presentation_order = profile.get("binary_frame", {}).get(
+        "presentation_phase_ordered_fields"
+    )
+    if [name for name, _ in presentation_fields] != expected_presentation_order:
+        raise GenerationError("presentation frame field order differs from profile")
+    presentation_frame = encode_named_binary_frame(
+        magic, presentation_fields, "presentation challenge"
+    )
+    presentation_nonce = presentation_fields[-1][1]
+    presentation_octets = presentation_nonce + hashlib.sha256(
+        presentation_frame
+    ).digest()
+    presentation_id = digest_bytes(presentation_octets)
+    presentation_base64url = base64.urlsafe_b64encode(presentation_octets).decode(
+        "ascii"
+    ).rstrip("=")
+    if (
+        len(presentation_frame) != presentation.get("frame_byte_count")
+        or digest_bytes(presentation_frame) != presentation.get("frame_raw_sha256")
+        or presentation_base64url != presentation.get("challenge_base64url")
+        or presentation_id != presentation.get("presentation_challenge_id")
+    ):
+        raise GenerationError(
+            "upstream presentation challenge does not independently recompute"
+        )
+
+    receipt_raw = exact_receipt_preimage(base_input)
+    receipt_digest = digest_bytes(receipt_raw)
+    receipt_profile_id = profile.get("confirmation_receipt", {}).get(
+        "receipt_profile_id"
+    )
+    if not isinstance(receipt_profile_id, str) or not receipt_profile_id.isascii():
+        raise GenerationError("confirmation-receipt profile identity is invalid")
+    appended = [
+        (
+            "presentation_challenge_id",
+            digest_octets(presentation_id, "presentation_challenge_id"),
+        ),
+        (
+            "confirmation_receipt_raw_sha256",
+            digest_octets(receipt_digest, "confirmation_receipt_raw_sha256"),
+        ),
+        ("confirmation_receipt_profile_id", receipt_profile_id.encode("ascii")),
+    ]
+    authentication_fields = (
+        challenge_shared_fields(shared)
+        + challenge_interval_fields(shared, authentication)
+        + appended
+    )
+    expected_authentication_order = profile.get("binary_frame", {}).get(
+        "authentication_phase_ordered_fields"
+    )
+    if [name for name, _ in authentication_fields] != expected_authentication_order:
+        raise GenerationError("authentication frame field order differs from profile")
+    authentication_frame = encode_named_binary_frame(
+        magic, authentication_fields, "authentication challenge"
+    )
+    authentication_nonce_hex = authentication.get("nonce_hex")
+    if (
+        not isinstance(authentication_nonce_hex, str)
+        or re.fullmatch(r"[0-9a-f]{64}", authentication_nonce_hex) is None
+    ):
+        raise GenerationError("authentication nonce is not 32 lowercase octets")
+    authentication_nonce = bytes.fromhex(authentication_nonce_hex)
+    authentication_octets = authentication_nonce + hashlib.sha256(
+        authentication_frame
+    ).digest()
+    authentication_id = digest_bytes(authentication_octets)
+
+    relation = base_input.get("backing_byte_inputs", {}).get(
+        "confirmation_receipt_frame_relation"
+    )
+    expected_relation = {
+        "frame_role": "exact_unmodified_confirmation_receipt_frame",
+        "expected_frame_content_address": receipt_digest,
+        "observed_frame_raw_sha256": receipt_digest,
+        "presentation_challenge_id": presentation_id,
+        "authentication_challenge_id": authentication_id,
+        "authentication_frame_committed_receipt_sha256": receipt_digest,
+        "binary_framing_disposition": "supported",
+        "presentation_to_receipt_relation_disposition": "supported",
+        "receipt_to_authentication_relation_disposition": "supported",
+    }
+    if relation != expected_relation:
+        stale_predecessor_relation = copy.deepcopy(expected_relation)
+        stale_predecessor_relation["authentication_challenge_id"] = (
+            PREDECESSOR_SUBJECT["stale_authentication_challenge_id"]
+        )
+        if (
+            relation != stale_predecessor_relation
+            or vector_raw_sha256
+            != PREDECESSOR_SUBJECT["vector_corpus_raw_sha256"]
+        ):
+            raise GenerationError(
+                "confirmation-receipt relation is not the exact independently "
+                "recomputed phase-two relation or the one exact retained "
+                "predecessor defect"
+            )
+        relation.clear()
+        relation.update(copy.deepcopy(expected_relation))
+
+    return {
+        "challenge_profile_binding": raw_binding(
+            "hda-challenge-frame-profile.v2.0001", CHALLENGE_PROFILE_PATH
+        ),
+        "challenge_vector_evidence_binding": raw_binding(
+            "hda-challenge-frame-v2-evidence.0001", CHALLENGE_EVIDENCE_PATH
+        ),
+        "presentation_frame_raw_sha256": digest_bytes(presentation_frame),
+        "presentation_challenge_id": presentation_id,
+        "confirmation_receipt_raw_sha256": receipt_digest,
+        "authentication_frame_byte_count": len(authentication_frame),
+        "authentication_frame_raw_sha256": digest_bytes(authentication_frame),
+        "authentication_challenge_base64url": base64.urlsafe_b64encode(
+            authentication_octets
+        )
+        .decode("ascii")
+        .rstrip("="),
+        "authentication_challenge_id": authentication_id,
+        "retained_relation_exact_match": True,
+    }
+
+
 def schema_binding(artifact_id: str, schema_resource_id: str, path: Path) -> dict[str, Any]:
     return {
         **raw_binding(artifact_id, path),
@@ -289,6 +606,169 @@ def closed_environment() -> dict[str, str]:
         if name in os.environ:
             environment[name] = os.environ[name]
     return environment
+
+
+def platform_key() -> str:
+    mapping = {
+        ("Darwin", "x86_64"): "darwin_amd64",
+        ("Darwin", "arm64"): "darwin_arm64",
+        ("Linux", "x86_64"): "linux_amd64",
+        ("Linux", "aarch64"): "linux_arm64",
+        ("Linux", "arm64"): "linux_arm64",
+    }
+    observed = (platform.system(), platform.machine())
+    try:
+        return mapping[observed]
+    except KeyError as exc:
+        raise GenerationError(
+            f"unsupported exact-toolchain platform: {observed[0]}/{observed[1]}"
+        ) from exc
+
+
+def tool_cache_root() -> Path:
+    configured = os.environ.get("ODEYA_TOOL_CACHE")
+    return Path(
+        configured
+        if configured is not None
+        else Path(tempfile.gettempdir()) / "odeya-release-tools"
+    ).resolve()
+
+
+def stream_digest_and_count(stream: Any) -> tuple[str, int]:
+    digest = hashlib.sha256()
+    count = 0
+    while True:
+        chunk = stream.read(1024 * 1024)
+        if not chunk:
+            break
+        digest.update(chunk)
+        count += len(chunk)
+    return "sha256:" + digest.hexdigest(), count
+
+
+def path_digest_and_count(path: Path) -> tuple[str, int]:
+    with path.open("rb") as stream:
+        return stream_digest_and_count(stream)
+
+
+def attest_archive_member(
+    *,
+    selected_path: Path,
+    expected_selected_path: Path,
+    archive_path: Path,
+    expected_archive_sha256: str,
+    member_suffix: str,
+    label: str,
+) -> None:
+    try:
+        selected = selected_path.resolve(strict=True)
+        expected_selected = expected_selected_path.resolve(strict=True)
+    except OSError as exc:
+        raise GenerationError(f"{label} selected executable is unavailable: {exc}") from exc
+    if selected != expected_selected:
+        raise GenerationError(
+            f"{label} must be the canonical installer-cache executable"
+        )
+    if archive_path.is_symlink() or not archive_path.is_file():
+        raise GenerationError(f"{label} pinned installer archive is unavailable")
+    archive_digest, _ = path_digest_and_count(archive_path)
+    if archive_digest != "sha256:" + expected_archive_sha256:
+        raise GenerationError(f"{label} installer archive digest is not locked")
+    try:
+        with tarfile.open(archive_path, mode="r:gz") as archive:
+            members = [
+                member
+                for member in archive.getmembers()
+                if member.isfile() and member.name.endswith(member_suffix)
+            ]
+            if len(members) != 1:
+                raise GenerationError(
+                    f"{label} archive must contain one exact {member_suffix} member"
+                )
+            stream = archive.extractfile(members[0])
+            if stream is None:
+                raise GenerationError(f"{label} archive member is unreadable")
+            with stream:
+                archive_member = stream_digest_and_count(stream)
+    except (OSError, tarfile.TarError) as exc:
+        raise GenerationError(f"{label} installer archive is unreadable: {exc}") from exc
+    if path_digest_and_count(selected) != archive_member:
+        raise GenerationError(
+            f"{label} selected executable bytes differ from the pinned archive member"
+        )
+
+
+def attest_generation_toolchains(
+    python_executable: Path, node_executable: Path, java_bin: Path
+) -> None:
+    try:
+        selected_python = python_executable.resolve(strict=True)
+        generator_python = Path(sys.executable).resolve(strict=True)
+    except OSError as exc:
+        raise GenerationError(f"Python generator interpreter is unavailable: {exc}") from exc
+    if selected_python != generator_python:
+        raise GenerationError(
+            "the Python evaluator must be the exact generator interpreter"
+        )
+    python_probe = run(
+        [str(selected_python), "--version"], environment=closed_environment()
+    )
+    if python_probe.stdout + python_probe.stderr != b"Python 3.14.2\n":
+        raise GenerationError("the generator interpreter is not Python 3.14.2")
+
+    lock = load_json(TOOLCHAIN_LOCK_PATH)
+    key = platform_key()
+    cache = tool_cache_root()
+    node_platform = {
+        "darwin_amd64": "darwin-x64",
+        "darwin_arm64": "darwin-arm64",
+        "linux_amd64": "linux-x64",
+        "linux_arm64": "linux-arm64",
+    }[key]
+    node_archive_name = f"node-v24.18.0-{node_platform}.tar.gz"
+    node_archive_sha = lock.get("node", {}).get("archives", {}).get(key)
+    if not isinstance(node_archive_sha, str):
+        raise GenerationError(f"Node archive lock is missing for {key}")
+    expected_node = cache / "node/v24.18.0" / key / "bin/node"
+    attest_archive_member(
+        selected_path=node_executable,
+        expected_selected_path=expected_node,
+        archive_path=cache / "node" / node_archive_name,
+        expected_archive_sha256=node_archive_sha,
+        member_suffix="/bin/node",
+        label="Node.js 24.18.0",
+    )
+
+    java_lock = lock.get("java", {}).get("archives", {}).get(key)
+    if not isinstance(java_lock, dict):
+        raise GenerationError(f"Java archive lock is missing for {key}")
+    java_archive_name = java_lock.get("name")
+    java_archive_sha = java_lock.get("sha256")
+    if not isinstance(java_archive_name, str) or not isinstance(
+        java_archive_sha, str
+    ):
+        raise GenerationError(f"Java archive lock is malformed for {key}")
+    java_home = cache / "java/jdk-21.0.9+10" / key
+    if platform.system() == "Darwin":
+        java_home = java_home / "Contents/Home"
+    expected_java_bin = java_home / "bin"
+    try:
+        selected_java_bin = java_bin.resolve(strict=True)
+        canonical_java_bin = expected_java_bin.resolve(strict=True)
+    except OSError as exc:
+        raise GenerationError(f"Java bin directory is unavailable: {exc}") from exc
+    if selected_java_bin != canonical_java_bin:
+        raise GenerationError("Java must use the canonical installer-cache bin directory")
+    java_archive_path = cache / "java" / java_archive_name
+    for executable_name in ("java", "javac"):
+        attest_archive_member(
+            selected_path=selected_java_bin / executable_name,
+            expected_selected_path=expected_java_bin / executable_name,
+            archive_path=java_archive_path,
+            expected_archive_sha256=java_archive_sha,
+            member_suffix=f"/bin/{executable_name}",
+            label=f"Temurin {executable_name} 21.0.9+10",
+        )
 
 
 def create_source_manifests() -> dict[str, dict[str, Any]]:
@@ -510,7 +990,7 @@ def create_backing_receipt(base_input: dict[str, Any], evidence: dict[str, Any])
     receipt = {
         "schema_version": "0.1.0",
         "artifact_class": "human_decision_assurance_backing_byte_verification_receipt_candidate",
-        "artifact_id": "hda-backing-byte-receipt.synthetic.0001",
+        "artifact_id": BACKING_RECEIPT_ARTIFACT_ID,
         "assurance_id": ASSURANCE_ID,
         "version": 1,
         "candidate_status": "unissued_architecture_candidate_not_human_authority",
@@ -552,7 +1032,7 @@ def create_normative_input_and_manifest(base_input: dict[str, Any], evidence: di
     manifest = {
         "schema_version": "0.1.0",
         "artifact_class": "human_decision_assurance_successor_expectation_free_safe_input_manifest",
-        "artifact_id": "hda-successor-input-manifest.synthetic.0001",
+        "artifact_id": INPUT_MANIFEST_ARTIFACT_ID,
         "assurance_id": ASSURANCE_ID,
         "candidate_status": "synthetic_architecture_inputs_not_ceremony_evidence",
         "vector_id": VECTOR_ID,
@@ -563,12 +1043,14 @@ def create_normative_input_and_manifest(base_input: dict[str, Any], evidence: di
             ),
         },
         "process_read_set": {
-            "expectation_free_vector_corpus": raw_binding("hda-successor-vectors.0001", VECTOR_PATH),
+            "expectation_free_vector_corpus": raw_binding(
+                VECTOR_CORPUS_ARTIFACT_ID, VECTOR_PATH
+            ),
             "eligibility_ruleset": ruleset_binding(),
             "content_address_resolver_profile": raw_binding("hda-content-address-resolver-profile.0001", RESOLVER_PATH),
         },
         "materialized_normative_input": raw_binding(
-            "hda-successor-normative-input.safe-complete-eligible.0001", NORMATIVE_INPUT_PATH
+            NORMATIVE_INPUT_ARTIFACT_ID, NORMATIVE_INPUT_PATH
         ),
         "materialization_contract": {
             "base_input_source": "vectors.json#base_input",
@@ -689,9 +1171,11 @@ def common_input_bindings(evidence: dict[str, Any], receipt: dict[str, Any]) -> 
             receipt["artifact_id"], BACKING_SCHEMA_ID, BACKING_RECEIPT_PATH
         ),
         "eligibility_ruleset": ruleset_binding(),
-        "input_manifest": raw_binding("hda-successor-input-manifest.synthetic.0001", INPUT_MANIFEST_PATH),
+        "input_manifest": raw_binding(
+            INPUT_MANIFEST_ARTIFACT_ID, INPUT_MANIFEST_PATH
+        ),
         "normative_input_vector": raw_binding(
-            "hda-successor-normative-input.safe-complete-eligible.0001", NORMATIVE_INPUT_PATH
+            NORMATIVE_INPUT_ARTIFACT_ID, NORMATIVE_INPUT_PATH
         ),
     }
 
@@ -802,7 +1286,7 @@ def create_comparison(
     comparison = {
         "schema_version": "0.1.0",
         "artifact_class": "human_decision_assurance_eligibility_comparison_receipt_candidate",
-        "artifact_id": "hda-comparison-receipt.synthetic.0001",
+        "artifact_id": COMPARISON_ARTIFACT_ID,
         "assurance_id": ASSURANCE_ID,
         "version": 1,
         "candidate_status": "unissued_architecture_candidate_not_human_authority",
@@ -845,7 +1329,7 @@ def create_seal(
     seal = {
         "schema_version": "0.2.0",
         "artifact_class": "human_decision_assurance_seal_candidate",
-        "artifact_id": "hda-seal.synthetic.0002",
+        "artifact_id": SEAL_ARTIFACT_ID,
         "assurance_id": ASSURANCE_ID,
         "version": 2,
         "candidate_status": "unissued_architecture_candidate_not_human_authority",
@@ -1009,6 +1493,7 @@ def create_generation_manifest(
     results: dict[str, dict[str, Any]],
     comparison: dict[str, Any],
     seal: dict[str, Any],
+    phase_two_recomputation: dict[str, Any],
 ) -> None:
     generated_entries = list(backing_blob_entries)
     generated_entries.extend(
@@ -1016,11 +1501,15 @@ def create_generation_manifest(
             manifest_entry(evidence["artifact_id"], EVIDENCE_PATH, "schema_valid_evidence_fixture"),
             manifest_entry(receipt["artifact_id"], BACKING_RECEIPT_PATH, "schema_valid_backing_receipt_fixture"),
             manifest_entry(
-                "hda-successor-normative-input.safe-complete-eligible.0001",
+                NORMATIVE_INPUT_ARTIFACT_ID,
                 NORMATIVE_INPUT_PATH,
                 "materialized_expectation_free_input",
             ),
-            manifest_entry("hda-successor-input-manifest.synthetic.0001", INPUT_MANIFEST_PATH, "safe_input_manifest"),
+            manifest_entry(
+                INPUT_MANIFEST_ARTIFACT_ID,
+                INPUT_MANIFEST_PATH,
+                "safe_input_manifest",
+            ),
         ]
     )
     for role in ROLE_ORDER:
@@ -1060,16 +1549,126 @@ def create_generation_manifest(
     manifest = {
         "schema_version": "0.1.0",
         "artifact_class": "human_decision_assurance_successor_generation_manifest",
-        "artifact_id": "hda-successor-generation-manifest.synthetic.0001",
+        "artifact_id": GENERATION_MANIFEST_ARTIFACT_ID,
         "assurance_id": ASSURANCE_ID,
         "candidate_status": "synthetic_architecture_evidence_not_ceremony_or_authority",
-        "generator_source_binding": raw_binding(
-            "hda-successor-evidence-generator.python.0001", Path(__file__).resolve()
+        "generator_source_binding": manifest_entry(
+            "hda-successor-evidence-generator.python.0005",
+            Path(__file__).resolve(),
+            "retained_evidence_generator",
         ),
         "normative_schema_bindings": [
             manifest_entry(f"hda-schema.{name}.0001", path, "json_schema")
             for name, path in SCHEMA_PATHS.items()
         ],
+        "predecessor_candidate": copy.deepcopy(PREDECESSOR_SUBJECT),
+        "phase_two_challenge_recomputation": copy.deepcopy(
+            phase_two_recomputation
+        ),
+        "bounded_technical_review_scope": {
+            "scope_id": "hda-successor-t0-technical-review-scope.0005",
+            "scope_semantics": (
+                "the_exact_generation_manifest_and_every_direct_or_"
+                "transitively_bound_t0_member_excluding_the_later_review_"
+                "report_and_status_prose"
+            ),
+            "direct_input_bindings": [
+                manifest_entry(
+                    VECTOR_CORPUS_ARTIFACT_ID,
+                    VECTOR_PATH,
+                    "expectation_free_vector_corpus",
+                ),
+                manifest_entry(
+                    "hda-successor-case-answers.0001",
+                    CASES_PATH,
+                    "private_conformance_answer_corpus",
+                ),
+                manifest_entry(
+                    "hda-successor-chain-known-bads.0002",
+                    CHAIN_CASES_PATH,
+                    "downstream_chain_known_bad_corpus",
+                ),
+                manifest_entry(
+                    "hda-successor-validator.python.0005",
+                    VALIDATOR_PATH,
+                    "separately_implemented_retained_chain_validator",
+                ),
+                manifest_entry(
+                    "hda-individual-eligibility-ruleset.v2.0001",
+                    RULESET_PATH,
+                    "normative_eligibility_ruleset",
+                ),
+                manifest_entry(
+                    "hda-content-address-resolver-profile.0001",
+                    RESOLVER_PATH,
+                    "content_address_resolver_profile",
+                ),
+                manifest_entry(
+                    "hda-challenge-frame-profile.v2.0001",
+                    CHALLENGE_PROFILE_PATH,
+                    "challenge_frame_profile",
+                ),
+                manifest_entry(
+                    "hda-challenge-frame-v2-evidence.0001",
+                    CHALLENGE_EVIDENCE_PATH,
+                    "challenge_frame_source_vector_evidence",
+                ),
+                manifest_entry(
+                    "hda-core-fixture.synthetic.0001",
+                    CORE_PATH,
+                    "exact_core_fixture",
+                ),
+                manifest_entry(
+                    "hda-decision-subject-fixture.synthetic.0001",
+                    DECISION_PATH,
+                    "exact_decision_subject_fixture",
+                ),
+                manifest_entry(
+                    "hda-candidate-manifest-fixture.synthetic.0001",
+                    CANDIDATE_MANIFEST_PATH,
+                    "exact_candidate_manifest_fixture",
+                ),
+                manifest_entry(
+                    "repository-release-toolchain-lock.0001",
+                    TOOLCHAIN_LOCK_PATH,
+                    "toolchain_lock",
+                ),
+                manifest_entry(
+                    "architecture-python-requirements-source.0001",
+                    ARCHITECTURE_REQUIREMENTS_SOURCE_PATH,
+                    "python_requirements_source",
+                ),
+                manifest_entry(
+                    "architecture-python-requirements-lock.0001",
+                    ARCHITECTURE_REQUIREMENTS_LOCK_PATH,
+                    "hash_locked_python_environment",
+                ),
+                *[
+                    manifest_entry(
+                        f"hda-evaluator-configuration.{role}.0001",
+                        IMPLEMENTATION_FILES[role]["configuration"],
+                        "evaluator_configuration",
+                    )
+                    for role in ROLE_ORDER
+                ],
+                *[
+                    manifest_entry(
+                        f"hda-dependency-lock.{role}.0001",
+                        IMPLEMENTATION_FILES[role]["dependency_lock"],
+                        "evaluator_dependency_lock",
+                    )
+                    for role in ROLE_ORDER
+                ],
+            ],
+            "transitive_binding_roots": [
+                "generator_source_binding",
+                "normative_schema_bindings",
+                "generated_artifacts",
+            ],
+            "generation_manifest_self_digest_forbidden": True,
+            "any_bound_member_byte_change_invalidates_review": True,
+            "review_report_is_out_of_scope_to_avoid_self_reference": True,
+        },
         "generated_artifacts": generated_entries,
         "chain_order": [
             "Evidence 0.2 and fourteen content-addressed backing preimages",
@@ -1084,10 +1683,10 @@ def create_generation_manifest(
         ],
         "chain_edges": [
             {"from": evidence["artifact_id"], "to": receipt["artifact_id"]},
-            {"from": receipt["artifact_id"], "to": "hda-successor-input-manifest.synthetic.0001"},
+            {"from": receipt["artifact_id"], "to": INPUT_MANIFEST_ARTIFACT_ID},
             *[
                 {
-                    "from": "hda-successor-input-manifest.synthetic.0001",
+                    "from": INPUT_MANIFEST_ARTIFACT_ID,
                     "to": IMPLEMENTATION_METADATA[role]["projection_id"],
                 }
                 for role in ROLE_ORDER
@@ -1104,7 +1703,7 @@ def create_generation_manifest(
                 for role in ROLE_ORDER
             ],
             {"from": comparison["artifact_id"], "to": seal["artifact_id"]},
-            {"from": seal["artifact_id"], "to": "hda-successor-generation-manifest.synthetic.0001"},
+            {"from": seal["artifact_id"], "to": GENERATION_MANIFEST_ARTIFACT_ID},
         ],
         "implementation_identity_inventory": [configs[role]["implementation_id"] for role in ROLE_ORDER],
         "complete_projection_agreement": True,
@@ -1125,33 +1724,284 @@ def create_generation_manifest(
     write_json(GENERATION_MANIFEST_PATH, manifest)
 
 
+def replace_exactly_one_identifier(
+    raw: bytes, stale: bytes, corrected: bytes
+) -> bytes:
+    if len(stale) != len(corrected):
+        raise GenerationError("predecessor migration identifiers differ in length")
+    if raw.count(stale) != 1:
+        raise GenerationError(
+            "published predecessor vector does not contain exactly one stale id"
+        )
+    return raw.replace(stale, corrected)
+
+
+def migrate_exact_predecessor_vector(
+    predecessor_raw: bytes,
+    corrected_authentication_challenge_id: str,
+    corrected_semantic_value: dict[str, Any],
+) -> bytes:
+    if (
+        digest_bytes(predecessor_raw)
+        != PREDECESSOR_SUBJECT["vector_corpus_raw_sha256"]
+    ):
+        raise GenerationError("vector migration input is not the exact predecessor")
+    if re.fullmatch(
+        r"sha256:[0-9a-f]{64}", corrected_authentication_challenge_id
+    ) is None:
+        raise GenerationError("corrected authentication challenge id is invalid")
+    stale = PREDECESSOR_SUBJECT["stale_authentication_challenge_id"].encode(
+        "ascii"
+    )
+    corrected = corrected_authentication_challenge_id.encode("ascii")
+    migrated_raw = replace_exactly_one_identifier(
+        predecessor_raw, stale, corrected
+    )
+    migrated_value = strict_json_bytes(
+        migrated_raw, "exact migrated predecessor vector"
+    )
+    if migrated_value != corrected_semantic_value:
+        raise GenerationError(
+            "byte-preserving predecessor migration changed unexpected semantics"
+        )
+    return migrated_raw
+
+
+def local_git_object_directory(repository_root: Path) -> Path:
+    """Resolve the worktree's shared object directory without consulting Git."""
+    dot_git = repository_root / ".git"
+    if dot_git.is_dir() and not dot_git.is_symlink():
+        git_directory = dot_git.resolve(strict=True)
+    elif dot_git.is_file() and not dot_git.is_symlink():
+        pointer = dot_git.read_text(encoding="utf-8")
+        if (
+            len(pointer.encode("utf-8")) > 4096
+            or not pointer.startswith("gitdir: ")
+            or "\x00" in pointer
+        ):
+            raise GenerationError("Git worktree pointer is malformed")
+        pointer_value = pointer.removeprefix("gitdir: ").strip()
+        if not pointer_value:
+            raise GenerationError("Git worktree pointer is empty")
+        candidate = Path(pointer_value)
+        if not candidate.is_absolute():
+            candidate = repository_root / candidate
+        git_directory = candidate.resolve(strict=True)
+    else:
+        raise GenerationError("repository has no regular Git directory")
+
+    common_pointer = git_directory / "commondir"
+    if common_pointer.exists():
+        if not common_pointer.is_file() or common_pointer.is_symlink():
+            raise GenerationError("Git common-directory pointer is not regular")
+        common_value = common_pointer.read_text(encoding="utf-8")
+        if (
+            len(common_value.encode("utf-8")) > 4096
+            or not common_value.strip()
+            or "\x00" in common_value
+        ):
+            raise GenerationError("Git common-directory pointer is malformed")
+        common_candidate = Path(common_value.strip())
+        if not common_candidate.is_absolute():
+            common_candidate = git_directory / common_candidate
+        common_directory = common_candidate.resolve(strict=True)
+    else:
+        common_directory = git_directory
+    object_directory = (common_directory / "objects").resolve(strict=True)
+    if not object_directory.is_dir():
+        raise GenerationError("Git object directory is absent")
+    return object_directory
+
+
+def git_object_bytes(
+    commit: str,
+    repository_path: str,
+    *,
+    repository_root: Path = ROOT,
+) -> bytes:
+    """Read one literal local blob without repository config, refs, or fetch."""
+    if re.fullmatch(r"[0-9a-f]{40}", commit) is None:
+        raise GenerationError("predecessor commit is not an exact object id")
+    components = repository_path.split("/")
+    if (
+        not repository_path
+        or repository_path.startswith("/")
+        or any(component in {"", ".", ".."} for component in components)
+        or "\x00" in repository_path
+    ):
+        raise GenerationError("predecessor repository path is not normalized")
+    object_directory = local_git_object_directory(repository_root)
+    with tempfile.TemporaryDirectory(prefix="odeya-hda-object-reader-") as raw_root:
+        isolated_git_directory = Path(raw_root) / "isolated.git"
+        (isolated_git_directory / "objects").mkdir(parents=True)
+        (isolated_git_directory / "refs").mkdir()
+        (isolated_git_directory / "HEAD").write_bytes(
+            b"ref: refs/heads/unused\n"
+        )
+        environment = closed_environment()
+        environment.update(
+            {
+                "GIT_CONFIG_GLOBAL": os.devnull,
+                "GIT_CONFIG_NOSYSTEM": "1",
+                "GIT_DIR": str(isolated_git_directory),
+                "GIT_LITERAL_PATHSPECS": "1",
+                "GIT_NO_LAZY_FETCH": "1",
+                "GIT_NO_REPLACE_OBJECTS": "1",
+                "GIT_OBJECT_DIRECTORY": str(object_directory),
+                "GIT_OPTIONAL_LOCKS": "0",
+                "GIT_TERMINAL_PROMPT": "0",
+            }
+        )
+        completed = subprocess.run(
+            [
+                "git",
+                "--no-replace-objects",
+                "--literal-pathspecs",
+                "cat-file",
+                "blob",
+                f"{commit}:{repository_path}",
+            ],
+            cwd=repository_root,
+            env=environment,
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            check=False,
+        )
+    if completed.returncode != 0:
+        raise GenerationError("local predecessor Git object is unavailable")
+    return completed.stdout
+
+
+def self_test_predecessor_migration() -> None:
+    repository_path = relative(VECTOR_PATH)
+    predecessor_raw = git_object_bytes(
+        PREDECESSOR_SUBJECT["commit"], repository_path
+    )
+    predecessor_value = strict_json_bytes(
+        predecessor_raw, "published predecessor vector"
+    )
+    recomputation = recompute_phase_two_challenge_relation(
+        predecessor_value["base_input"],
+        vector_raw_sha256=digest_bytes(predecessor_raw),
+    )
+    migrated_raw = migrate_exact_predecessor_vector(
+        predecessor_raw,
+        recomputation["authentication_challenge_id"],
+        predecessor_value,
+    )
+    if migrated_raw != VECTOR_PATH.read_bytes():
+        raise GenerationError(
+            "exact predecessor migration does not reproduce the retained vector"
+        )
+
+    near_miss = predecessor_raw.replace(
+        b'  "suite_version": "0.1.0",',
+        b'  "suite_version": "0.1.1",',
+        1,
+    )
+    if near_miss == predecessor_raw or len(near_miss) != len(predecessor_raw):
+        raise GenerationError("same-length migration near-miss setup failed")
+    try:
+        migrate_exact_predecessor_vector(
+            near_miss,
+            recomputation["authentication_challenge_id"],
+            predecessor_value,
+        )
+    except GenerationError as exc:
+        if str(exc) != "vector migration input is not the exact predecessor":
+            raise
+    else:
+        raise GenerationError("same-length migration near-miss was accepted")
+
+    stale = PREDECESSOR_SUBJECT["stale_authentication_challenge_id"].encode(
+        "ascii"
+    )
+    corrected = recomputation["authentication_challenge_id"].encode("ascii")
+    for label, candidate in (
+        ("zero-stale", predecessor_raw.replace(stale, corrected)),
+        ("multiple-stale", predecessor_raw + stale),
+    ):
+        try:
+            replace_exactly_one_identifier(candidate, stale, corrected)
+        except GenerationError as exc:
+            if "exactly one stale id" not in str(exc):
+                raise
+        else:
+            raise GenerationError(f"{label} predecessor migration was accepted")
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--self-test-predecessor-migration",
+        action="store_true",
+        help=(
+            "replay the one-time migration from the exact published Git object "
+            "and run its refusal controls without generating artifacts"
+        ),
+    )
     parser.add_argument(
         "--python-executable",
         type=Path,
         default=Path(sys.executable),
         help="Exact Python 3.14.2 executable; defaults to the generator interpreter.",
     )
-    parser.add_argument("--node-executable", type=Path, required=True, help="Exact Node.js 24.18.0 executable.")
+    parser.add_argument(
+        "--node-executable",
+        type=Path,
+        help="Canonical installer-cache Node.js 24.18.0 executable.",
+    )
     parser.add_argument(
         "--java-bin",
         type=Path,
-        required=True,
-        help="bin directory containing exact Temurin java and javac 21.0.9+10.",
+        help=(
+            "canonical installer-cache bin directory containing Temurin java "
+            "and javac 21.0.9+10"
+        ),
     )
-    return parser.parse_args()
+    args = parser.parse_args()
+    if not args.self_test_predecessor_migration and (
+        args.node_executable is None or args.java_bin is None
+    ):
+        parser.error("--node-executable and --java-bin are required for generation")
+    return args
 
 
 def main() -> int:
     args = parse_args()
-    vectors = load_json(VECTOR_PATH)
+    if args.self_test_predecessor_migration:
+        self_test_predecessor_migration()
+        print(
+            "exact predecessor migration replayed; same-length, zero-stale, "
+            "and multiple-stale controls refused"
+        )
+        return 0
+    assert args.node_executable is not None and args.java_bin is not None
+    attest_generation_toolchains(
+        args.python_executable, args.node_executable, args.java_bin
+    )
+    vector_raw_before = VECTOR_PATH.read_bytes()
+    vectors = strict_json_bytes(vector_raw_before, relative(VECTOR_PATH))
     if vectors.get("artifact_class") != "human_decision_assurance_successor_expectation_free_evaluator_inputs":
         raise GenerationError("unexpected vector corpus artifact class")
     safe_entries = [entry for entry in vectors["vectors"] if entry.get("vector_id") == VECTOR_ID]
     if len(safe_entries) != 1 or safe_entries[0].get("mutations") != []:
         raise GenerationError("safe-complete-eligible must be the unique zero-mutation retained vector")
     base_input = vectors["base_input"]
+    phase_two_recomputation = recompute_phase_two_challenge_relation(
+        base_input, vector_raw_sha256=digest_bytes(vector_raw_before)
+    )
+    # This is a one-predecessor correction, not a generic refresh: the helper
+    # accepts only the exact published vector digest and exact stale value.
+    # Once corrected, every later invocation must already match recomputation.
+    if digest_bytes(vector_raw_before) == PREDECESSOR_SUBJECT["vector_corpus_raw_sha256"]:
+        migrated_raw = migrate_exact_predecessor_vector(
+            vector_raw_before,
+            phase_two_recomputation["authentication_challenge_id"],
+            vectors,
+        )
+        write_bytes(VECTOR_PATH, migrated_raw)
 
     backing_blob_entries = create_backing_blobs(base_input)
     configs = create_source_manifests()
@@ -1164,7 +2014,16 @@ def main() -> int:
     comparison = create_comparison(configs, results, evidence, receipt)
     seal = create_seal(evidence, receipt, comparison)
     validate_generated_chain(evidence, receipt, results, comparison, seal)
-    create_generation_manifest(backing_blob_entries, configs, evidence, receipt, results, comparison, seal)
+    create_generation_manifest(
+        backing_blob_entries,
+        configs,
+        evidence,
+        receipt,
+        results,
+        comparison,
+        seal,
+        phase_two_recomputation,
+    )
     print(
         "generated HDA successor chain: 14 backing blobs, 3 direct projections, "
         "7 schema-valid fixtures, and 1 downstream generation manifest"
