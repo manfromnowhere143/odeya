@@ -247,6 +247,10 @@ INTEGRATED_ARCHITECTURE_EVIDENCE_CHECKS = (
         "canonicalization-dispositions",
         "scripts/validate_canonicalization_dispositions.py",
     ),
+    (
+        "canonicalization-evaluator-integrity",
+        "scripts/validate_canonicalization_evaluator_integrity.py",
+    ),
     ("contract-profiles", "scripts/validate_contract_profiles.py"),
     ("refusal-attribution", "scripts/validate_refusal_attribution.py"),
     ("schema-rule-ablation", "scripts/validate_schema_rule_ablation.py"),
@@ -305,7 +309,7 @@ EXPECTED_ARCHITECTURE_EVIDENCE_JOB_SHA256 = (
     "320ff9a1f7e9efb0e1247c91bf0aa01e5b5e45e64fcdf68e2fc51b2b3a2d33ef"
 )
 EXPECTED_INTEGRATED_VALIDATOR_SHA256 = (
-    "d394363020283f586203bb5485c9b821d2c43f680e61552770de8b62aef2b82d"
+    "a70af885d6a7383927401985faef7afd809c30bc9dd7f7b2b4c08b3d552cdf56"
 )
 ARCHITECTURE_EVIDENCE_KNOWN_BAD_MUTATION_COUNT = (
     len(DEDICATED_ARCHITECTURE_EVIDENCE_COMMANDS)

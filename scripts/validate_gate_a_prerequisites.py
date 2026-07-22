@@ -122,12 +122,12 @@ CURRENT_ASSURANCE_UNITS = (
 
 RECOVERY_HANDOFF = "docs/SESSION_HANDOFF.md"
 RECOVERY_HEADING = "## Current repository recovery identity"
-PUBLISHED_BASELINE = "86c0f1ed8ba20d74324d64529bf5435a0524f4cd"
-PUBLISHED_BASELINE_TREE = "0465eac6adf3f49629e72b1c9e6dce6d4acd121c"
+PUBLISHED_BASELINE = "05c2c3b18a3987c337a8c76d8db55ea4eb72bfa9"
+PUBLISHED_BASELINE_TREE = "35f3622e8c3b883f33b0e5761686f6972ec1f67e"
 RECOVERY_INVARIANT_SHA256 = "37b25307a3691eb275d6d457e2643e7400aa09d700b1fdb37ac63170bcb3cf2a"
 # SHA-256 of the normalized 51-line recovery program. Its separately named
 # cardinality line keeps the single-parent invariant reviewable.
-EXPECTED_RECOVERY_PROGRAM_SHA256 = "571cffe01ba6e0ce1741ca93a25afe88a501820b7c5c4485ee5d35720f9c615a"
+EXPECTED_RECOVERY_PROGRAM_SHA256 = "0025c657f0676eb7ba995bd84ce2f581311d4a60ca8d29d372f4e35c5b095c6b"
 PARENT_CARDINALITY_LINE = 'test "$(git rev-list --parents -n 1 "$HEAD_COMMIT" | awk \'{print NF}\')" = 2'
 EXPECTED_REFUSAL_KEYS = frozenset(
     {
@@ -4122,10 +4122,6 @@ def context_isolated_technical_review_errors(value: Any) -> list[str]:
             install_digest, install_count = raw_file_binding(
                 HDA_CONTEXT_PYTHON_INSTALL_OBSERVATION
             )
-            surface_policy_path = ROOT / "architecture/architecture-surface-policy.json"
-            surface_policy_digest, surface_policy_count = raw_file_binding(
-                surface_policy_path
-            )
             reissued_subject = {
                 "subject_kind": (
                     "exact_bounded_t0_byte_scope_with_reissued_generator_local_"
@@ -4156,9 +4152,12 @@ def context_isolated_technical_review_errors(value: Any) -> list[str]:
                 },
                 "architecture_surface_policy_binding": {
                     "policy_id": "odeya-architecture-surface-policy",
-                    "repository_path": str(surface_policy_path.relative_to(ROOT)),
-                    "raw_sha256": surface_policy_digest,
-                    "byte_count": surface_policy_count,
+                    "repository_path": "architecture/architecture-surface-policy.json",
+                    "raw_sha256": (
+                        "sha256:10eb30db9c46f8771718285d4f5463004f7419f0ded06ce5a"
+                        "03efeb0f98ef81d"
+                    ),
+                    "byte_count": 7927,
                 },
                 "scope_id": generation.get("bounded_technical_review_scope", {}).get(
                     "scope_id"

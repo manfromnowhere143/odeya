@@ -326,22 +326,28 @@ that deserves to carry the mission forward.
 - Active architecture branch:
   `agent/t0-prq-013-context-review-20260721`
 - Exact published baseline observed at recovery:
-  `86c0f1ed8ba20d74324d64529bf5435a0524f4cd`
+  `05c2c3b18a3987c337a8c76d8db55ea4eb72bfa9`
 - Exact published-baseline tree:
-  `0465eac6adf3f49629e72b1c9e6dce6d4acd121c`
+  `35f3622e8c3b883f33b0e5761686f6972ec1f67e`
 - Canonical remote: `https://github.com/manfromnowhere143/odeya` (public;
   created 2026-07-17 under ADR 0047; default branch `main`)
-- Measured remote state on 2026-07-21: `origin/main` and permanent
-  `release/86c0f1ed8ba20d74324d64529bf5435a0524f4cd` both resolved to the
-  exact published baseline. Eight permanent release refs exist — `a25d026`,
-  `f1f25fd`, `08dbad6`, `8ed5d42`, `f4067b5`, `e0187bb`, `34cad10`, and
-  `86c0f1e` — and
+- Measured remote state on 2026-07-22: `origin/main` and permanent
+  `release/05c2c3b18a3987c337a8c76d8db55ea4eb72bfa9` both resolved to the
+  exact published baseline. Ten permanent release refs exist — `a25d026`,
+  `f1f25fd`, `08dbad6`, `8ed5d42`, `f4067b5`, `e0187bb`, `34cad10`,
+  `86c0f1e`, `36d798e`, and `05c2c3b` — and
   none is ever rewritten, deleted, or recreated, including for a candidate
-  that fails. The exact `86c0f1e` local/remote rehearsal manifests have
-  SHA-256 `04d18247dc181f347ed6e075282123d4285926f13c68c2b823330deb40f729bf`
-  and `ba2ba6a8f6cb6a06cef04b1057fcbcea3e5ab378ae0ade519a7b9bc78a5cfc47`;
+  that fails. The exact `05c2c3b` local/remote rehearsal manifests have
+  SHA-256 `0163a315e8170cbce89923ece25d87e53e0011182032a7fea5bb1cbd20e1d738`
+  and `758042501dedde1034d435f4bde591397eb58d8e6fd8c02c8bc190aeee84ef3f`;
   its comparison receipt has SHA-256
-  `378f7c66f8e09025124ad86c871cdbd0e3319122f99090bc22cf48769c2df442`.
+  `af51b8d51905caab1de49d1f8a806fc468a81296e36da4423b67d3a61b597c27`.
+  Candidate governance/check receipts have SHA-256
+  `4e0ff2546f598a7980015ab49d4c3f5a9e69ff92aa0235a319de50c40c604803`
+  and `c37af0a916c6662a74b43e463f053fa5b6cfeaa7c61e9f4dcc7b2c60d6690a3e`;
+  promotion governance and post-main checks have SHA-256
+  `e55615fb75e580eea9002534d9a43294d431bbd021f7596fa036971ce29a4cea`
+  and `1b723bf69a6bfadf44004439fc1103a4c279e637122975081998cb536cd196d2`.
   Candidate/main workflow censuses and governance read-backs are retained
   under `/Users/danielwahnich/workspace/odeya-release-evidence/`.
   Resolve their current byte validity through the admitted verifiers; do not
@@ -393,8 +399,8 @@ git symbolic-ref --short HEAD
 git fetch --quiet origin main
 git remote -v
 git log --oneline --decorate -5
-PUBLISHED_BASELINE=86c0f1ed8ba20d74324d64529bf5435a0524f4cd
-PUBLISHED_TREE=0465eac6adf3f49629e72b1c9e6dce6d4acd121c
+PUBLISHED_BASELINE=05c2c3b18a3987c337a8c76d8db55ea4eb72bfa9
+PUBLISHED_TREE=35f3622e8c3b883f33b0e5761686f6972ec1f67e
 HEAD_COMMIT="$(git rev-parse HEAD)"
 REMOTE_MAIN="$(git rev-parse origin/main)"
 BASE_RELEASE="$(
@@ -717,6 +723,83 @@ and 120/216 canonical schema/fixture audit coverage. These are bounded
 architecture checks only. The profile remains unissued; HDA-CTX-001 through
 HDA-CTX-016 still require accountable closure review; PRQ-009, PRQ-013, T1,
 Gate A, runtime, deployment, and external effects remain blocked.
+
+## 2026-07-22 canonicalization evaluator-integrity candidate
+
+The identity-correction descendant was published as exact commit
+`05c2c3b18a3987c337a8c76d8db55ea4eb72bfa9`, tree
+`35f3622e8c3b883f33b0e5761686f6972ec1f67e`, with sole parent
+`36d798e2cb7d22352ba62e4fc07106e685b87f9f`. Local `HEAD`, `origin/main`,
+remote `main`, and its permanent release ref agreed after separate
+four-workflow/ten-job candidate and post-main censuses, governance read-backs,
+credential-free remote replay, and local/remote invariant comparison. The
+protected UI/UX lane remained outside architecture staging.
+
+A no-write adversarial probe then demonstrated that the retained
+canonicalization comparator can accept copied output as stronger evidence than
+the bytes support. Pairing the retained Python result with a copy whose
+`implementation` object alone was replaced by the retained Node metadata made
+the unchanged comparator return zero with `status=pass` and
+`implementation_agreement=true`. Omitting a case made the overall comparison
+fail while that Boolean remained true. The latter field therefore reports the
+absence of one error-string prefix; it does not prove completeness, distinct
+execution, or implementation independence.
+
+[ADR 0097](decisions/0097-adversarially-validate-the-canonicalization-evaluator.md)
+adds one bounded, no-write meta-evaluator and keeps three claims separate:
+oracle conformity, cross-result comparison, and execution/source separation.
+The unmodified retained pair supports oracle `pass` and comparison `exact`,
+but its origin remains `unwitnessed_retained_artifact`; source separation is
+`not_proven`. The copied-and-relabelled probe deliberately retains the inner
+false accept while the outer evidence classifies claimed source separation as
+`contradicted`. Malformed, incomplete, or nonterminal result evidence is
+`indeterminate` when an observation can be formed. A missing bound file or
+comparator timeout instead refuses validation without a comparison
+disposition; neither condition is approval by silence.
+
+The candidate binds the exact published source checkpoint and exact subject
+bytes, executes every isolated comparator trial twice, and compares the full
+observations. Direct invocation emits one representative observation with its
+ordered trace, repetition count, and observation digest; integrated foundation
+validation checks successful termination but does not retain that stdout as a
+repository artifact. The corpus carries safe, attack, and gate known-bads. It
+does not change the frozen canonical vectors, oracle, source lock, runners,
+result files, comparison receipt, profile bytes, schemas, HDA evidence,
+runtime, or provider surface. A passing meta-evaluator means the demonstrated
+boundary was detected and correctly classified; it does not repair the
+comparator, prove causal execution, issue the profile, accept Gate A, or
+authorize runtime or an external effect. Resolve the containing commit,
+validation, rehearsal, publication, and remote settlement from exact Git and
+retained external evidence rather than this prose.
+
+The safe control uses the retained Python and Node result bytes exactly. The
+copied-and-relabelled trial constructs distinct right-hand raw bytes whose
+parsed value equals the retained Node-labelled result. Its mutation witness
+binds the source raw and object digests, intermediate copied-object digest,
+transformed raw digest, and exact allowed delta; the postcondition refuses a
+neutralized or no-op mutation. Thirty-three meta-known-bads cover every
+authority and nonclaim bit, duplicate keys, exact role/path substitution,
+final and ancestor symlinks, timeout configuration and process-group
+termination, delegate blindness, and mutation neutralization. The timeout
+control does not separately spawn and observe a child process. These controls
+strengthen the bounded falsifier only; they do not turn a retained labelled
+artifact into a causal execution receipt.
+
+The complete structural validator on these working-tree bytes measured 187
+Markdown documents, 120 schemas, 860 valid/adversarial shared cases, seven
+founding cross-field fixture groups, 14 isolated contract-family suites, 12
+architecture-evidence checks, one repository-release check, 64 canonical
+identity cases, four metamorphic relations, 120/216 canonical schema/fixture
+audit coverage, 97 architecture decisions, and 268 local Markdown links. The
+new checker additionally reproduced ten isolated comparator trials twice and
+rejected all 33 meta-gate known-bads. These are validation observations, not
+architecture acceptance or scientific-performance measurements.
+
+The live architecture-surface policy changed to admit this new checker. That
+byte change does not inherit or extend the retained round-eleven HDA review:
+round eleven remains historical evidence for its exact bound policy only and
+does not review the ADR 0097 descendant. A green validator preserves that
+separation; it is not a fresh HDA review or accountable closure.
 
 ## Historical recovery log — retained chronology, not current state
 
@@ -1514,17 +1597,17 @@ proved. The other 20 are explicitly unproved, not silently covered.
 
 ## Next architecture mission, in dependency order
 
-1. Resolve the active ADR 0095/0096 PRQ-013 correction from exact Git state
-   against published baseline
-   `86c0f1ed8ba20d74324d64529bf5435a0524f4cd`. If `HEAD` equals that baseline,
-   verify its retained local/remote rehearsal, workflow, governance, and
-   comparison evidence byte-for-field and do not republish it. Otherwise,
-   `HEAD` must be one clean direct child; public `main` must equal the baseline
-   before promotion or exact `HEAD` afterward. Only that child may enter the
-   ADR 0091 permanent-ref, ten-context candidate, same-SHA promotion,
-   ten-context post-main, remote-rehearsal, comparison, and final read-back
-   sequence. Never redo a permanent release ref or let a descendant inherit
-   its evidence.
+1. Complete the ADR 0097 canonicalization-evaluator-integrity tranche as one
+   clean direct child of published baseline
+   `05c2c3b18a3987c337a8c76d8db55ea4eb72bfa9`. Retain the reproduced copied-
+   result false accept and classify oracle conformity, case-projection comparison, and
+   causal execution origin separately. Do not repair or mutate the frozen
+   canonicalization subjects in this tranche, and do not issue the canonical
+   profile. After local validation, the child must complete its own ADR 0091
+   permanent-ref, ten-context candidate, same-SHA promotion, ten-context
+   post-main, remote-rehearsal, comparison, and final read-back sequence.
+   Never redo a permanent release ref or let a descendant inherit its
+   evidence.
 2. Preserve the completed eleventh bounded attack round over exact reissued
    root
    `sha256:97062b38a14d5bdccf5ad87c547c62388e7cd82256a445f631856aecee54e1d9`,
@@ -1605,7 +1688,7 @@ the gate.
 
 ## The published surface is part of the evidence
 
-The current published baseline is `86c0f1e…`; its exact local and remote
+The current published baseline is `05c2c3b…`; its exact local and remote
 rehearsals, four-workflow/ten-job candidate and post-main censuses, comparison,
 and governance read-backs are retained externally under the evidence root.
 Historical first-activation baseline `f1f25fd…` introduced the ADR 0091 hook,

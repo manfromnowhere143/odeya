@@ -1,0 +1,319 @@
+{
+  "candidate_binding": {
+    "bytes": 4848,
+    "path": "architecture/canonicalization-evaluator-integrity-candidate.json",
+    "sha256": "9edd31850f626e6b9401448f1247e6fdfdaaf5c22a57d945483eceed5acf5cec"
+  },
+  "case_corpus_version": "0.1.0",
+  "cases": [
+    {
+      "case_id": "safe_control",
+      "expected_cross_implementation_comparison": "exact",
+      "expected_execution_origin": "unwitnessed_retained_artifact",
+      "expected_execution_source_separation": "not_proven",
+      "expected_implementation_agreement": true,
+      "expected_oracle_conformity": "pass",
+      "expected_profile_issuance_blocking": true,
+      "expected_returncode": 0,
+      "expected_status": "pass",
+      "intended_falsifier": "The retained pair remains accurately described without upgrading labels into causal execution evidence.",
+      "kind": "control",
+      "mutation": "none"
+    },
+    {
+      "case_id": "copied_python_relabelled_node",
+      "expected_cross_implementation_comparison": "exact",
+      "expected_execution_origin": "synthetic_clone_with_relabelled_metadata",
+      "expected_execution_source_separation": "contradicted",
+      "expected_implementation_agreement": true,
+      "expected_oracle_conformity": "pass",
+      "expected_profile_issuance_blocking": true,
+      "expected_returncode": 0,
+      "expected_status": "pass",
+      "intended_falsifier": "A comparator pass and language metadata do not prove two causal executions or source separation.",
+      "kind": "attack",
+      "mutation": "clone_python_and_relabel_node"
+    },
+    {
+      "case_id": "one_sided_answer_tamper",
+      "expected_cross_implementation_comparison": "disagree",
+      "expected_execution_origin": "synthetic_one_sided_mutation",
+      "expected_execution_source_separation": "not_proven",
+      "expected_implementation_agreement": false,
+      "expected_oracle_conformity": "fail",
+      "expected_profile_issuance_blocking": true,
+      "expected_returncode": 1,
+      "expected_status": "fail",
+      "intended_falsifier": "One changed answer must be visible both as oracle failure and cross-result disagreement.",
+      "kind": "attack",
+      "mutation": "tamper_node_answer"
+    },
+    {
+      "case_id": "identical_common_mode_wrong_answer",
+      "expected_cross_implementation_comparison": "exact",
+      "expected_execution_origin": "synthetic_common_mode_mutation",
+      "expected_execution_source_separation": "not_proven",
+      "expected_implementation_agreement": true,
+      "expected_oracle_conformity": "fail",
+      "expected_profile_issuance_blocking": true,
+      "expected_returncode": 1,
+      "expected_status": "fail",
+      "intended_falsifier": "Exact agreement on the same wrong answer is not oracle conformity.",
+      "kind": "attack",
+      "mutation": "tamper_both_answers_identically"
+    },
+    {
+      "case_id": "coordinated_case_omission",
+      "expected_cross_implementation_comparison": "indeterminate",
+      "expected_execution_origin": "synthetic_coordinated_omission",
+      "expected_execution_source_separation": "not_proven",
+      "expected_implementation_agreement": true,
+      "expected_oracle_conformity": "fail",
+      "expected_profile_issuance_blocking": true,
+      "expected_returncode": 1,
+      "expected_status": "fail",
+      "intended_falsifier": "Agreement cannot be called exact when the pair omits an oracle case, even if the legacy Boolean stays true.",
+      "kind": "attack",
+      "mutation": "omit_same_case_from_both"
+    },
+    {
+      "case_id": "duplicate_case_identity",
+      "expected_cross_implementation_comparison": "indeterminate",
+      "expected_execution_origin": "synthetic_duplicate_identity",
+      "expected_execution_source_separation": "not_proven",
+      "expected_implementation_agreement": true,
+      "expected_oracle_conformity": "indeterminate",
+      "expected_profile_issuance_blocking": true,
+      "expected_returncode": 1,
+      "expected_status": "fail",
+      "intended_falsifier": "A duplicate subject identity prevents a well-defined oracle fold and result comparison.",
+      "kind": "attack",
+      "mutation": "duplicate_node_case_identity"
+    },
+    {
+      "case_id": "infrastructure_error",
+      "expected_cross_implementation_comparison": "indeterminate",
+      "expected_execution_origin": "synthetic_nonterminal_output",
+      "expected_execution_source_separation": "not_proven",
+      "expected_implementation_agreement": false,
+      "expected_oracle_conformity": "indeterminate",
+      "expected_profile_issuance_blocking": true,
+      "expected_returncode": 1,
+      "expected_status": "fail",
+      "intended_falsifier": "Malformed or nonterminal evidence is indeterminate and never approval by absence of a disagreement string.",
+      "kind": "attack",
+      "mutation": "malform_node_json"
+    },
+    {
+      "case_id": "implementation_identity_substitution",
+      "expected_cross_implementation_comparison": "exact",
+      "expected_execution_origin": "synthetic_identity_substitution",
+      "expected_execution_source_separation": "contradicted",
+      "expected_implementation_agreement": true,
+      "expected_oracle_conformity": "pass",
+      "expected_profile_issuance_blocking": true,
+      "expected_returncode": 1,
+      "expected_status": "fail",
+      "intended_falsifier": "Implementation identity checks and answer comparison are distinct propositions.",
+      "kind": "attack",
+      "mutation": "replace_node_runner_with_python"
+    },
+    {
+      "case_id": "shared_false_input_digest",
+      "expected_cross_implementation_comparison": "exact",
+      "expected_execution_origin": "synthetic_shared_binding_mutation",
+      "expected_execution_source_separation": "not_proven",
+      "expected_implementation_agreement": true,
+      "expected_oracle_conformity": "fail",
+      "expected_profile_issuance_blocking": true,
+      "expected_returncode": 1,
+      "expected_status": "fail",
+      "intended_falsifier": "Two matching result files cannot establish a false input binding against the oracle.",
+      "kind": "attack",
+      "mutation": "replace_shared_input_digest"
+    },
+    {
+      "case_id": "shared_false_manifest_digest",
+      "expected_cross_implementation_comparison": "exact",
+      "expected_execution_origin": "synthetic_shared_binding_mutation",
+      "expected_execution_source_separation": "not_proven",
+      "expected_implementation_agreement": true,
+      "expected_oracle_conformity": "pass",
+      "expected_profile_issuance_blocking": true,
+      "expected_returncode": 1,
+      "expected_status": "fail",
+      "intended_falsifier": "Answer conformity does not excuse a false manifest binding, and matching metadata does not prove source separation.",
+      "kind": "attack",
+      "mutation": "replace_shared_manifest_digest"
+    }
+  ],
+  "gate_known_bads": [
+    {
+      "case_id": "contract_closed_shape",
+      "expected_error": "closed_shape:contract",
+      "mutation": "Add an undeclared top-level contract member."
+    },
+    {
+      "case_id": "binding_path_replacement",
+      "expected_error": "unsafe_binding_path",
+      "mutation": "Replace the comparator path with a parent traversal."
+    },
+    {
+      "case_id": "binding_digest_replacement",
+      "expected_error": "binding_digest:tests/canonicalization/compare_results.py",
+      "mutation": "Replace the comparator digest with zeros."
+    },
+    {
+      "case_id": "trace_stage_reorder",
+      "expected_error": "trace_stage_order",
+      "mutation": "Swap binding verification and isolated materialization."
+    },
+    {
+      "case_id": "private_holdout_claim",
+      "expected_error": "boolean_boundary:declared_scope.claims_private_holdout",
+      "mutation": "Fabricate private-holdout coverage."
+    },
+    {
+      "case_id": "human_calibration_claim",
+      "expected_error": "boolean_boundary:declared_scope.claims_human_calibration",
+      "mutation": "Fabricate human-grader calibration."
+    },
+    {
+      "case_id": "profile_issuance_claim",
+      "expected_error": "boolean_boundary:authority.profile_issuance",
+      "mutation": "Grant profile-issuance authority."
+    },
+    {
+      "case_id": "authority_claim",
+      "expected_error": "boolean_boundary:authority.external_effects",
+      "mutation": "Grant external-effect authority."
+    },
+    {
+      "case_id": "prompt_injection_coverage_claim",
+      "expected_error": "boolean_boundary:declared_scope.claims_prompt_injection_coverage",
+      "mutation": "Claim prompt-injection coverage for a subject with no natural-language instruction channel."
+    },
+    {
+      "case_id": "case_census_reduction",
+      "expected_error": "case_census",
+      "mutation": "Remove one fixed adversarial trial."
+    },
+    {
+      "case_id": "expected_error_replacement",
+      "expected_error": "gate_expected_error:contract_closed_shape",
+      "mutation": "Replace a pinned known-bad refusal with an always-pass label."
+    },
+    {
+      "case_id": "candidate_binding_replacement",
+      "expected_error": "candidate_binding_digest",
+      "mutation": "Replace the candidate digest with zeros."
+    },
+    {
+      "case_id": "case_disposition_weakening",
+      "expected_error": "case_contract:copied_python_relabelled_node",
+      "mutation": "Relabel copied output as proven source separation."
+    },
+    {
+      "case_id": "case_mutation_replacement",
+      "expected_error": "case_contract:one_sided_answer_tamper",
+      "mutation": "Replace an attack mutation with the safe control."
+    },
+    {
+      "case_id": "clone_mutation_noop",
+      "expected_error": "mutation_postcondition:clone_python_and_relabel_node",
+      "mutation": "Neutralize the copied-output mutation while retaining its expected labels."
+    },
+    {
+      "case_id": "role_path_swap",
+      "expected_error": "binding_path_for_role:comparator",
+      "mutation": "Give the comparator role the manifest path, digest, and byte count."
+    },
+    {
+      "case_id": "lexical_path_alias",
+      "expected_error": "binding_path_for_role:comparator",
+      "mutation": "Alias the comparator path through a dot component."
+    },
+    {
+      "case_id": "duplicate_json_key",
+      "expected_error": "duplicate_json_key:a",
+      "mutation": "Repeat one JSON object member."
+    },
+    {
+      "case_id": "final_symlink_binding",
+      "expected_error": "binding_symlink:link.json",
+      "mutation": "Replace the bound final file with a symlink."
+    },
+    {
+      "case_id": "ancestor_symlink_binding",
+      "expected_error": "binding_symlink:linked/data.json",
+      "mutation": "Resolve a regular file through a symlinked ancestor."
+    },
+    {
+      "case_id": "timeout_configuration_weakening",
+      "expected_error": "trial_timeout",
+      "mutation": "Widen the pinned trial timeout."
+    },
+    {
+      "case_id": "timeout_control",
+      "expected_error": "infrastructure_timeout",
+      "mutation": "Run a fixed sleeping child past a short deadline and settle its isolated process group."
+    },
+    {
+      "case_id": "meta_delegate_blindness",
+      "expected_error": "known_bad_accepted:meta_delegate_blindness",
+      "mutation": "Send a non-refusing function through the known-bad refusal delegate."
+    },
+    {
+      "case_id": "gate_a_authority_claim",
+      "expected_error": "boolean_boundary:authority.gate_a_acceptance",
+      "mutation": "Grant Gate A acceptance authority."
+    },
+    {
+      "case_id": "runtime_authority_claim",
+      "expected_error": "boolean_boundary:authority.runtime",
+      "mutation": "Grant runtime authority."
+    },
+    {
+      "case_id": "deployment_authority_claim",
+      "expected_error": "boolean_boundary:authority.deployment",
+      "mutation": "Grant deployment authority."
+    },
+    {
+      "case_id": "publication_authority_claim",
+      "expected_error": "boolean_boundary:authority.publication",
+      "mutation": "Grant publication authority."
+    },
+    {
+      "case_id": "credentials_authority_claim",
+      "expected_error": "boolean_boundary:authority.credentials",
+      "mutation": "Grant credential authority."
+    },
+    {
+      "case_id": "executes_canonicalizers_claim",
+      "expected_error": "boolean_boundary:declared_scope.executes_canonicalizers",
+      "mutation": "Claim the meta-evaluator executes the canonicalizers."
+    },
+    {
+      "case_id": "repairs_comparator_claim",
+      "expected_error": "boolean_boundary:declared_scope.repairs_comparator",
+      "mutation": "Claim the tranche repairs the retained comparator."
+    },
+    {
+      "case_id": "organizational_independence_claim",
+      "expected_error": "boolean_boundary:declared_scope.claims_organizational_independence",
+      "mutation": "Claim organizational independence."
+    },
+    {
+      "case_id": "blinded_gate",
+      "expected_error": "baseline_classification",
+      "mutation": "Remove the baseline profile-issuance blocker."
+    },
+    {
+      "case_id": "duplicate_probe_subject",
+      "expected_error": "binding_path_for_role:manifest",
+      "mutation": "Bind two subject roles to the same file path."
+    }
+  ],
+  "timeout_seconds": 5,
+  "trial_repetitions": 2
+}

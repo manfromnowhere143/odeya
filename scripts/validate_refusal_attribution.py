@@ -118,6 +118,10 @@ def is_semantic_negative(case: dict[str, Any]) -> bool:
 # domain; a negative appearing there anyway is reported.
 REGISTRY: dict[str, tuple[str, Any, Any]] = {
     "architecture-review": ("cases.json", pointer_keyword, None),
+    # Observational meta-evaluator trials: kind=attack and expected_status=fail
+    # describe the unchanged comparator's observation, not a harness refusal.
+    # Its gate_known_bads are executed internally by the dedicated checker.
+    "canonicalization-evaluator-integrity": ("cases.json", None, None),
     "cognitive-contracts": ("cases.json", pointer_keyword, substring("expected_semantic_refusal_contains")),
     "mathematical-contracts": ("cases.json", pointer_keyword, substring("expected_semantic_refusal_contains")),
     "projection-contracts": ("cases.json", pointer_keyword, substring("expected_semantic_refusal_contains")),

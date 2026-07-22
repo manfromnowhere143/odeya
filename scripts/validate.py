@@ -120,6 +120,10 @@ REQUIRED_FILES = (
     "architecture/canonicalization-profile-core-candidate.json",
     "architecture/canonicalization-migration-disposition-candidate.json",
     "architecture/canonicalization-profile-candidate-evidence.json",
+    "architecture/canonicalization-evaluator-integrity-candidate.json",
+    "scripts/validate_canonicalization_evaluator_integrity.py",
+    "tests/canonicalization-evaluator-integrity/README.md",
+    "tests/canonicalization-evaluator-integrity/cases.json",
     "architecture/work-intent-core-candidate.json",
     "architecture/work-intent-identity-candidate-evidence.json",
     "architecture/work-intent-profile-bound-candidate.json",
@@ -382,6 +386,7 @@ ARCHITECTURE_EVIDENCE_CHECKS = (
     "scripts/validate_lifecycle_guard_coverage.py",
     "scripts/validate_lifecycle_condition_coverage.py",
     "scripts/validate_canonicalization_dispositions.py",
+    "scripts/validate_canonicalization_evaluator_integrity.py",
     "scripts/validate_contract_profiles.py",
     "scripts/validate_refusal_attribution.py",
     "scripts/validate_schema_rule_ablation.py",
@@ -1738,8 +1743,8 @@ def main() -> int:
         "no runtime, deployment, research-publication, or Gate A authority implied"
     )
     print(
-        f"- {canonical_case_count} canonical identity cases reconciled across "
-        "two pinned implementations"
+        f"- {canonical_case_count} canonical identity cases conform to the frozen "
+        "oracle in retained Python- and Node-labelled result sets"
     )
     print(f"- {canonical_relation_count} canonical identity metamorphic relations checked")
     print(
