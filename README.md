@@ -6,6 +6,18 @@ Odeya is a private research engine that turns a thesis into a governed, replayab
 
 The provisional web address is `odeya.danielwahnich.dev`. The apex domain, company, trademark, and scientific-publication decisions remain separate.
 
+## For reviewers: what is proven vs. planned
+
+Much of this repository is written as an internal evidence trail. This table is the external entry point; the [reviewer reading map](docs/INDEX.md) gives the reading order, a glossary, and where each kind of evidence lives.
+
+| Category | What it contains | Where to verify |
+| --- | --- | --- |
+| **Proven from bytes: release engineering** | An exact-commit fresh-clone rehearsal that rebuilds the checkpoint from a clean clone; least-privilege CI workflows with full-SHA-pinned Actions; a hash- and integrity-locked toolchain; 7 bounded TLA+ models whose 30 intended counterexamples are retained in-tree; adversarial known-bad manifests beside every isolated suite | [`scripts/ci/rehearse-fresh-clone.sh`](scripts/ci/rehearse-fresh-clone.sh), [`.github/workflows/`](.github/workflows/), [`tools/repository-release/`](tools/repository-release/), [`formal/tla/`](formal/tla/), [`tests/`](tests/), [repository release engineering](docs/REPOSITORY_RELEASE.md) |
+| **In progress: architecture evidence** | A schema/fixture corpus with isolated contract suites, and a mutation audit that measures which refusal guards are proved to fire versus explicitly unproved — the split is retained honestly rather than rounded up. Counts drift as tranches land, so they are stated only in validator-bound surfaces, not here | [Current status and blockers](docs/ARCHITECTURE_STATUS.md), the validator-bound checkpoint section below, [`architecture/`](architecture/) machine records |
+| **Not built, not claimed** | No engine runtime, services, deployment, or production UI exists; Gate A (architecture acceptance) remains blocked; no scientific result, autonomous-science capability, or model-performance claim is made | The banner above, [pre-implementation gate](docs/PRE_IMPLEMENTATION_GATE.md), [current status](docs/ARCHITECTURE_STATUS.md) |
+
+A green check anywhere in this repository is evidence about these bytes, never scientific truth.
+
 ## The system in one view
 
 Question → contract → evidence → independent verification → bounded claim. Nothing jumps the chain.
