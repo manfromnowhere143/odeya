@@ -202,14 +202,14 @@ PRQ-013 correction is `86c0f1ed8ba20d74324d64529bf5435a0524f4cd`:
   The lifecycle checker has dedicated statement (222/229) and condition
   (108/111) audits. The retained generalized
   `audit_suite_guard_coverage.py` record measures fourteen declared isolated
-  contract-checker subjects at 469 of 958 refusal statements proved, with 489
+  contract-checker subjects at 470 of 961 refusal statements proved, with 491
   explicitly unproved and zero crash-only detections. PRQ-013 contributes
   199/284, leaving 85 explicitly unproved. The former 431/820 result is
   retracted: its assurance-checker mutations tripped the unrefreshed outer
   checker-byte binding rather than the intended guards. Central
   architecture/release gates—including the PRQ-009
   assignment-order checker—are outside that denominator and must carry their
-  own pinned known-bad self-tests. The 489 open isolated-suite guards are
+  own pinned known-bad self-tests. The 491 open isolated-suite guards are
   categorized by exact closure method in
   `docs/GUARD_COVERAGE_CLOSURE_PLAN.md`. Three closure
   patterns are proven and mechanical: harness self-tests (ADR 0080/0081),

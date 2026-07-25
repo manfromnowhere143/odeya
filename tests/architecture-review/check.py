@@ -132,9 +132,33 @@ def attribution_self_test(manifest: dict) -> list[str]:
     return failures
 
 
+def evaluation_self_test(manifest: dict) -> list[str]:
+    """Prove on every run that the expect/actual mismatch guard fires.
+
+    A gate without a known-bad proof is prose (law 11). ``attribution_self_test``
+    proves the two constraint-attribution guards; this proves the prior guard on
+    the same line of defence: a genuinely valid instance relabelled ``invalid``
+    must be caught by the expect/actual check with the exact
+    ``expected invalid, got valid`` message. Fail closed if the mismatch sails
+    through.
+    """
+    template = next((c for c in manifest["cases"] if c["expect"] == "valid"), None)
+    if template is None:
+        return ["evaluation self-test found no valid case to relabel"]
+    relabelled = json.loads(json.dumps(template))
+    relabelled["expect"] = "invalid"
+    if not any(
+        "expected invalid, got valid" in failure
+        for failure in evaluate_case(relabelled)
+    ):
+        return ["evaluation self-test: an expect/actual mismatch was not detected"]
+    return []
+
+
 def main() -> int:
     manifest = load_json(CASES)
     failures: list[str] = attribution_self_test(manifest)
+    failures.extend(evaluation_self_test(manifest))
     for case in manifest["cases"]:
         failures.extend(evaluate_case(case))
 

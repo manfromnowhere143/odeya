@@ -99,7 +99,7 @@ CURRENT_ASSURANCE_UNITS = (
         "docs/SESSION_HANDOFF.md", "## What this lane established, and where to put pressure next", None,
         "bullet", "**PRQ-013 now has retained byte-bound/recomputation candidate evidence, not closure.**", 1,
         "995d7d3975047f8d64f41d137059b316e932202ab3d20e23b28b5b48af6bbc28",
-        "dd32bdd71a39c0b97f5bfdd4b1ee51bb60706c76ba9c31790afa144a725d76c7",
+        "ccfc00fe394d512541ee93f3f14998ecec4fda943c5f468c89bbb55409e0ae99",
     ),
     (
         "docs/SESSION_HANDOFF.md", "## Active PRQ-013 candidate — resolve release status from Git", None,
