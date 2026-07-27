@@ -122,12 +122,12 @@ CURRENT_ASSURANCE_UNITS = (
 
 RECOVERY_HANDOFF = "docs/SESSION_HANDOFF.md"
 RECOVERY_HEADING = "## Current repository recovery identity"
-PUBLISHED_BASELINE = "05c2c3b18a3987c337a8c76d8db55ea4eb72bfa9"
-PUBLISHED_BASELINE_TREE = "35f3622e8c3b883f33b0e5761686f6972ec1f67e"
+PUBLISHED_BASELINE = "b02b378f2226fc781a5b1a4a9d4c244fa0a377eb"
+PUBLISHED_BASELINE_TREE = "db2fd6e37f4b15bd2755b29a3f0295f83f934faf"
 RECOVERY_INVARIANT_SHA256 = "37b25307a3691eb275d6d457e2643e7400aa09d700b1fdb37ac63170bcb3cf2a"
 # SHA-256 of the normalized 51-line recovery program. Its separately named
 # cardinality line keeps the single-parent invariant reviewable.
-EXPECTED_RECOVERY_PROGRAM_SHA256 = "0025c657f0676eb7ba995bd84ce2f581311d4a60ca8d29d372f4e35c5b095c6b"
+EXPECTED_RECOVERY_PROGRAM_SHA256 = "6c31b5276084c1acba7f336b43018cfe7eea507f7b07dc57bbbe0dbc93f66b4c"
 PARENT_CARDINALITY_LINE = 'test "$(git rev-list --parents -n 1 "$HEAD_COMMIT" | awk \'{print NF}\')" = 2'
 EXPECTED_REFUSAL_KEYS = frozenset(
     {

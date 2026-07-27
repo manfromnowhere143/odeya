@@ -1,15 +1,15 @@
 # Odeya Session Handoff
 
 Status: canonical recovery entrypoint for the current Odeya architecture and
-repository-release mission. Last updated 2026-07-22, Asia/Jerusalem. This is a
+repository-release mission. Last updated 2026-07-27, Asia/Jerusalem. This is a
 handoff contract, not Gate A acceptance, implementation authorization, or
 scientific evidence; repository-publication authority comes only from the
 named decisions and release contract. The exact-SHA two-ref publication
 activation is complete at the exact public baseline named below, and the active
-lane is the PRQ-013 human-decision-assurance architecture candidate described
-below. This file cannot contain the commit that contains itself; resolve the
-candidate's exact commit, rehearsal, publication, workflow, and remote replay
-status from Git plus the external subject-bound receipts before acting.
+lane is reconciling the recovery baton before the next T0 identity-construction
+increment. This file cannot contain the commit that contains itself; resolve
+the candidate's exact commit, rehearsal, publication, workflow, and remote
+replay status from Git plus the external subject-bound receipts before acting.
 
 Read this file before changing repository bytes. Then read the detailed
 [Gate A working packet](GATE_A_HANDOFF_WORKING_PACKET_2026-07-15.md), the
@@ -133,6 +133,11 @@ Sentinel, Telos, and Inbar are proof missions and requirements sources. They are
 not Odeya runtime dependencies and their results do not prove that Odeya is
 implemented. Maestro and Aweb may be inspected as technical references only;
 neither is Odeya authority, storage, namespace, runtime, or control plane.
+Etzio is a separate research mission, not an Odeya proof mission or
+requirements authority. Its repository may be inspected as an untrusted
+evidence source only; no Etzio code, schema, store, namespace, control, or
+finding enters Odeya without a separately admitted evidence path and Daniel's
+explicit scope.
 
 ## The standard — read this before you touch anything
 
@@ -326,30 +331,34 @@ that deserves to carry the mission forward.
 - Active architecture branch:
   `agent/t0-prq-013-context-review-20260721`
 - Exact published baseline observed at recovery:
-  `05c2c3b18a3987c337a8c76d8db55ea4eb72bfa9`
+  `b02b378f2226fc781a5b1a4a9d4c244fa0a377eb`
 - Exact published-baseline tree:
-  `35f3622e8c3b883f33b0e5761686f6972ec1f67e`
+  `db2fd6e37f4b15bd2755b29a3f0295f83f934faf`
 - Canonical remote: `https://github.com/manfromnowhere143/odeya` (public;
   created 2026-07-17 under ADR 0047; default branch `main`)
-- Measured remote state on 2026-07-22: `origin/main` and permanent
-  `release/05c2c3b18a3987c337a8c76d8db55ea4eb72bfa9` both resolved to the
-  exact published baseline. Ten permanent release refs exist — `a25d026`,
+- Measured remote state on 2026-07-27: `origin/main` and permanent
+  `release/b02b378f2226fc781a5b1a4a9d4c244fa0a377eb` both resolved to the
+  exact published baseline. Thirteen permanent release refs exist — `a25d026`,
   `f1f25fd`, `08dbad6`, `8ed5d42`, `f4067b5`, `e0187bb`, `34cad10`,
-  `86c0f1e`, `36d798e`, and `05c2c3b` — and
+  `86c0f1e`, `36d798e`, `05c2c3b`, `ce962dd`, `f013b2d`, and `b02b378` — and
   none is ever rewritten, deleted, or recreated, including for a candidate
-  that fails. The exact `05c2c3b` local/remote rehearsal manifests have
-  SHA-256 `0163a315e8170cbce89923ece25d87e53e0011182032a7fea5bb1cbd20e1d738`
-  and `758042501dedde1034d435f4bde591397eb58d8e6fd8c02c8bc190aeee84ef3f`;
+  that fails. The exact `b02b378` local/remote rehearsal manifests have
+  SHA-256 `ba9a467920c98f8c8dc3b177e9d6096f4beb13bd585da7b553ed935b311aef47`
+  and `bc9b487dfd12dede67cdb4517cd9170a3ccc5f6c05889520a49c29a4b8f6f04b`;
   its comparison receipt has SHA-256
-  `af51b8d51905caab1de49d1f8a806fc468a81296e36da4423b67d3a61b597c27`.
+  `bde07f1c9e522a75dadc2c3075532bbbc35b851c800a199567e019c6edaf43c0`.
   Candidate governance/check receipts have SHA-256
-  `4e0ff2546f598a7980015ab49d4c3f5a9e69ff92aa0235a319de50c40c604803`
-  and `c37af0a916c6662a74b43e463f053fa5b6cfeaa7c61e9f4dcc7b2c60d6690a3e`;
+  `5a4fefb7eee2b4fa514ed408ff24fdab4d2045849419bdfdff836f3fda0abc37`
+  and `a95e24fc2a5ced8fe1e96be9c035be0bb49cbed13408bd4f761ce9c2cd321019`;
   promotion governance and post-main checks have SHA-256
-  `e55615fb75e580eea9002534d9a43294d431bbd021f7596fa036971ce29a4cea`
-  and `1b723bf69a6bfadf44004439fc1103a4c279e637122975081998cb536cd196d2`.
+  `4d9f8d9c219e39898637364245f6f83d106f41422536968c6c40a36652f75c16`
+  and `994493a98b2dd0e5c951d5405f3abb9076ed92e691c58cb455fceca41a7ec26c`.
   Candidate/main workflow censuses and governance read-backs are retained
   under `/Users/danielwahnich/workspace/odeya-release-evidence/`.
+  The remote-main rehearsal and comparison were freshly reproduced on
+  2026-07-27. Three later live-governance retries ended in GitHub TLS/API
+  timeouts; absence of that additional observation is `unverified`, not drift,
+  approval, or permission to skip the next exact live read-back.
   Resolve their current byte validity through the admitted verifiers; do not
   infer it from this prose.
 - Pull requests are disabled; the exact inert merge configuration, Actions and
@@ -399,8 +408,8 @@ git symbolic-ref --short HEAD
 git fetch --quiet origin main
 git remote -v
 git log --oneline --decorate -5
-PUBLISHED_BASELINE=05c2c3b18a3987c337a8c76d8db55ea4eb72bfa9
-PUBLISHED_TREE=35f3622e8c3b883f33b0e5761686f6972ec1f67e
+PUBLISHED_BASELINE=b02b378f2226fc781a5b1a4a9d4c244fa0a377eb
+PUBLISHED_TREE=db2fd6e37f4b15bd2755b29a3f0295f83f934faf
 HEAD_COMMIT="$(git rev-parse HEAD)"
 REMOTE_MAIN="$(git rev-parse origin/main)"
 BASE_RELEASE="$(
@@ -1597,18 +1606,24 @@ proved. The other 20 are explicitly unproved, not silently covered.
 
 ## Next architecture mission, in dependency order
 
-1. Complete the ADR 0097 canonicalization-evaluator-integrity tranche as one
-   clean direct child of published baseline
-   `05c2c3b18a3987c337a8c76d8db55ea4eb72bfa9`. Retain the reproduced copied-
-   result false accept and classify oracle conformity, case-projection comparison, and
-   causal execution origin separately. Do not repair or mutate the frozen
-   canonicalization subjects in this tranche, and do not issue the canonical
-   profile. After local validation, the child must complete its own ADR 0091
-   permanent-ref, ten-context candidate, same-SHA promotion, ten-context
-   post-main, remote-rehearsal, comparison, and final read-back sequence.
-   Never redo a permanent release ref or let a descendant inherit its
-   evidence.
-2. Preserve the completed eleventh bounded attack round over exact reissued
+1. Resolve the current `HEAD` from Git. If it is the recovery-baton-only direct
+   child of published baseline
+   `b02b378f2226fc781a5b1a4a9d4c244fa0a377eb`, finish that exact child's full
+   ADR 0091 sequence before adding T0 bytes: local rehearsal, permanent
+   `release/<sha>`, four candidate workflows and ten jobs, same-SHA `main`,
+   four new post-main workflows and ten jobs, remote-main rehearsal/comparison,
+   and final exact-ref/governance read-back. If `HEAD` is still the baseline,
+   create only that bounded reconciliation child. Never redo a permanent
+   release ref or let a descendant inherit evidence.
+2. After the recovery child is exactly published, begin PRQ-002 with the
+   smallest dependency-closed, unissued identity tranche: one exact
+   schema/state/reducer/event member cohort plus its pure registry-snapshot
+   identity in the one-way `schema -> state -> reducer -> event` order. Require
+   cross-object validation, independently recomputed digests, and known-bads
+   for missing, duplicate, substituted, reverse, parent/snapshot-embedded,
+   mutable-alias, and activation-contaminated identities. Do not add command
+   membership, issue a profile, construct an activation, or imply runtime.
+3. Preserve the completed eleventh bounded attack round over exact reissued
    root
    `sha256:97062b38a14d5bdccf5ad87c547c62388e7cd82256a445f631856aecee54e1d9`,
    closure observation `.0003`, install observation `.0004`, policy `10eb30db`,
@@ -1625,47 +1640,48 @@ proved. The other 20 are explicitly unproved, not silently covered.
    approve the ruleset, or accept Gate A. Keep the profile, ruleset, 0.1
    resources, and all successors unissued. This is T0 evidence, not final
    PRQ-013 closure, consumer migration, or runtime.
-3. Complete the remaining T0 closure without weakening PRQ-009 or the corrected
+4. Complete the remaining T0 closure without weakening PRQ-009 or the corrected
    C5 ownership semantics. Profile issuance, exact member/reducer/root
    identities, the assignable WorkIntent, thirteen-event assignment cohort,
    replay, registry/root, checkpoint/witness/P0/activation, and remaining
    prerequisite determinations stay open.
-4. After T0 and the PRQ-013 foundation candidate—not final PRQ-013
+5. After T0 and the PRQ-013 foundation candidate—not final PRQ-013
    closure—construct and prove the T1 `AuthorityAssignment` vertical contract.
-5. Complete the exact 42 payload schemas, 43 command records, 60 event records,
+6. Complete the exact 42 payload schemas, 43 command records, 60 event records,
    25 state/aggregate subjects, and 25 reducer records without changing the
    retained first-slice boundary by implication.
-6. Construct one digest-coherent registry/root/C0/checkpoint/witness/P0 and
+7. Construct one digest-coherent registry/root/C0/checkpoint/witness/P0 and
    inactive activation-candidate chain.
-7. Only after the T1/T2 authority, currentness, quorum, and consumer
+8. Only after the T1/T2 authority, currentness, quorum, and consumer
    dependencies exist, define side-by-side unissued assurance-record,
    `AssuredDecision`, and successor-consumer identities plus the exact
    transitive migration map. Do not mutate retained identities or call a
    candidate admitted.
-8. Prove end-to-end consumer refusal—not only standalone assurance refusal—for
+9. Prove end-to-end consumer refusal—not only standalone assurance refusal—for
    contradicted/`invalid` `PRQ-013-KB-001`, missing/unknown/`indeterminate`
    evidence, stale/withdrawn evidence, changed displayed or decided bytes,
    collapsed effective principals, invalid quorum, timeout, and silence.
    Recompute the census whenever a schema, command/event selector, decision
    family, or Authority Matrix byte changes.
-9. Produce two non-sharing architecture-time reference reducer implementations,
+10. Produce two non-sharing architecture-time reference reducer
+    implementations,
    fixture harnesses, and two independently isolated scientific verifier paths.
    They are design evidence, not engine runtime.
-10. Retain replay, interruption, recovery, correction fanout, resource and
-   authority race, proof-mission refusal, and rights-settled import evidence.
-11. Obtain accountable statistical,
-   physical/metrology/VVUQ/safety, security/privacy, distributed-systems, and
-   accessibility reviews, including accountable PRQ-013 security and authority
-   review.
-12. Produce one immutable candidate manifest and clean commit for Daniel's
-   exact-byte Gate A accept, reject, or amend decision. Gate A evaluates the
-   ceremony architecture and synthetic, source-separated conformance evidence;
-   it does not require or authorize a live ceremony.
-13. Only after Gate A and separate authority, run at most one bounded,
-   disposable Gate B protected-ceremony probe under the accepted profile,
-   alongside any other explicitly authorized probes. Agents receive no
-   credential or approval authority.
-14. Integrate the bounded Gate B findings, then request one separately
+11. Retain replay, interruption, recovery, correction fanout, resource and
+    authority race, proof-mission refusal, and rights-settled import evidence.
+12. Obtain accountable statistical,
+    physical/metrology/VVUQ/safety, security/privacy, distributed-systems, and
+    accessibility reviews, including accountable PRQ-013 security and
+    authority review.
+13. Produce one immutable candidate manifest and clean commit for Daniel's
+    exact-byte Gate A accept, reject, or amend decision. Gate A evaluates the
+    ceremony architecture and synthetic, source-separated conformance
+    evidence; it does not require or authorize a live ceremony.
+14. Only after Gate A and separate authority, run at most one bounded,
+    disposable Gate B protected-ceremony probe under the accepted profile,
+    alongside any other explicitly authorized probes. Agents receive no
+    credential or approval authority.
+15. Integrate the bounded Gate B findings, then request one separately
     authorized Gate C implementation increment with runtime conformance as its
     exit condition. The public architecture remote grants neither authority.
 
@@ -1688,7 +1704,7 @@ the gate.
 
 ## The published surface is part of the evidence
 
-The current published baseline is `05c2c3b…`; its exact local and remote
+The current published baseline is `b02b378…`; its exact local and remote
 rehearsals, four-workflow/ten-job candidate and post-main censuses, comparison,
 and governance read-backs are retained externally under the evidence root.
 Historical first-activation baseline `f1f25fd…` introduced the ADR 0091 hook,
