@@ -1,0 +1,366 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:odeya:architecture-schema:prq-002-event-member-probe:0.1.0",
+  "title": "Odeya PRQ-002A Event Member Identity Probe",
+  "description": "Closed architecture-only input for one synthetic event-contract member identity probe. It binds exact retained envelope-schema bytes and a prior reducer-member digest; it issues no event contract and authorizes no command or runtime behavior.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "record_kind",
+    "identity_scope",
+    "member_key",
+    "event_type",
+    "event_version",
+    "payload_type_id",
+    "payload_contract",
+    "aggregate_owner",
+    "producer_command_refs",
+    "canonical_reducer_ref",
+    "member_digest_contract",
+    "member_digest"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.1.0"
+    },
+    "record_kind": {
+      "const": "event_member_identity_probe"
+    },
+    "identity_scope": {
+      "const": "prq_002_structural_probe_only"
+    },
+    "member_key": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*@[0-9]+\\.[0-9]+\\.[0-9]+$",
+      "maxLength": 159
+    },
+    "event_type": {
+      "$ref": "#/$defs/identifier"
+    },
+    "event_version": {
+      "$ref": "#/$defs/semantic_version"
+    },
+    "payload_type_id": {
+      "type": "string",
+      "pattern": "^urn:odeya:architecture:event-payload:[a-z0-9._-]+:[0-9]+\\.[0-9]+\\.[0-9]+$",
+      "maxLength": 255
+    },
+    "payload_contract": {
+      "$ref": "#/$defs/payload_contract"
+    },
+    "aggregate_owner": {
+      "$ref": "#/$defs/aggregate_owner"
+    },
+    "producer_command_refs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/future_command_reference"
+      }
+    },
+    "canonical_reducer_ref": {
+      "$ref": "#/$defs/reducer_member_reference"
+    },
+    "member_digest_contract": {
+      "$ref": "#/$defs/member_digest_contract"
+    },
+    "member_digest": {
+      "$ref": "#/$defs/digest",
+      "x-odeya-digest-scope": {
+        "kind": "canonical_object_digest_probe",
+        "domain": "odeya-prq-002-event-member-probe-v1",
+        "algorithm": "sha256",
+        "profile": "urn:odeya:canonicalization:prq-002-identity-probe-jcs-0.1",
+        "status": "test_only_non_issuable"
+      }
+    }
+  },
+  "$defs": {
+    "digest": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$",
+      "maxLength": 127
+    },
+    "semantic_version": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
+    },
+    "event_envelope_schema_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_member_key",
+        "schema_id",
+        "semantic_version",
+        "byte_digest",
+        "byte_count",
+        "dialect",
+        "root_json_type",
+        "schema_member_digest"
+      ],
+      "properties": {
+        "schema_member_key": {
+          "const": "urn:odeya:architecture-schema:prq-002-structural-event:0.1.0@0.1.0"
+        },
+        "schema_id": {
+          "const": "urn:odeya:architecture-schema:prq-002-structural-event:0.1.0"
+        },
+        "semantic_version": {
+          "const": "0.1.0"
+        },
+        "byte_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "byte_count": {
+          "type": "integer",
+          "minimum": 2
+        },
+        "dialect": {
+          "const": "https://json-schema.org/draft/2020-12/schema"
+        },
+        "root_json_type": {
+          "const": "object"
+        },
+        "schema_member_digest": {
+          "$ref": "#/$defs/digest"
+        }
+      }
+    },
+    "payload_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event_envelope_schema_ref",
+        "payload_json_pointer",
+        "payload_required",
+        "nullable",
+        "exact_branch_required"
+      ],
+      "properties": {
+        "event_envelope_schema_ref": {
+          "$ref": "#/$defs/event_envelope_schema_reference"
+        },
+        "payload_json_pointer": {
+          "const": "/oneOf/0/properties/payload"
+        },
+        "payload_required": {
+          "const": true
+        },
+        "nullable": {
+          "const": false
+        },
+        "exact_branch_required": {
+          "const": true
+        }
+      }
+    },
+    "aggregate_owner": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "owning_module",
+        "aggregate_type",
+        "ownership_cardinality"
+      ],
+      "properties": {
+        "owning_module": {
+          "$ref": "#/$defs/identifier"
+        },
+        "aggregate_type": {
+          "$ref": "#/$defs/identifier"
+        },
+        "ownership_cardinality": {
+          "const": "exactly_one"
+        }
+      }
+    },
+    "future_command_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "command_type",
+        "command_version",
+        "reference_kind",
+        "resolution_requirement"
+      ],
+      "properties": {
+        "command_type": {
+          "$ref": "#/$defs/identifier"
+        },
+        "command_version": {
+          "$ref": "#/$defs/semantic_version"
+        },
+        "reference_kind": {
+          "const": "logical_reverse_reference"
+        },
+        "resolution_requirement": {
+          "const": "future_same_root_exact_member"
+        }
+      }
+    },
+    "reducer_member_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "aggregate_type",
+        "reducer_id",
+        "reducer_version",
+        "reducer_member_digest",
+        "resolution"
+      ],
+      "properties": {
+        "aggregate_type": {
+          "$ref": "#/$defs/identifier"
+        },
+        "reducer_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "reducer_version": {
+          "$ref": "#/$defs/semantic_version"
+        },
+        "reducer_member_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "resolution": {
+          "const": "exact_probe_member_digest"
+        }
+      }
+    },
+    "profile_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profile_id",
+        "profile_version",
+        "profile_core_schema_id",
+        "profile_core_raw_digest"
+      ],
+      "properties": {
+        "profile_id": {
+          "const": "urn:odeya:canonicalization:prq-002-identity-probe-jcs-0.1"
+        },
+        "profile_version": {
+          "const": "0.1.0"
+        },
+        "profile_core_schema_id": {
+          "const": "urn:odeya:architecture-schema:prq-002-identity-probe-profile:0.1.0"
+        },
+        "profile_core_raw_digest": {
+          "$ref": "#/$defs/digest"
+        }
+      }
+    },
+    "subject_schema_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_id",
+        "schema_digest"
+      ],
+      "properties": {
+        "schema_id": {
+          "const": "urn:odeya:architecture-schema:prq-002-event-member-probe:0.1.0"
+        },
+        "schema_digest": {
+          "$ref": "#/$defs/digest"
+        }
+      }
+    },
+    "member_digest_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "algorithm",
+        "domain_separator",
+        "canonicalization_profile_ref",
+        "subject_schema_ref",
+        "included_json_pointers",
+        "excluded_json_pointers"
+      ],
+      "properties": {
+        "algorithm": {
+          "const": "sha256"
+        },
+        "domain_separator": {
+          "const": "odeya-prq-002-event-member-probe-v1"
+        },
+        "canonicalization_profile_ref": {
+          "$ref": "#/$defs/profile_reference"
+        },
+        "subject_schema_ref": {
+          "$ref": "#/$defs/subject_schema_reference"
+        },
+        "included_json_pointers": {
+          "type": "array",
+          "minItems": 12,
+          "maxItems": 12,
+          "prefixItems": [
+            {
+              "const": "/schema_version"
+            },
+            {
+              "const": "/record_kind"
+            },
+            {
+              "const": "/identity_scope"
+            },
+            {
+              "const": "/member_key"
+            },
+            {
+              "const": "/event_type"
+            },
+            {
+              "const": "/event_version"
+            },
+            {
+              "const": "/payload_type_id"
+            },
+            {
+              "const": "/payload_contract"
+            },
+            {
+              "const": "/aggregate_owner"
+            },
+            {
+              "const": "/producer_command_refs"
+            },
+            {
+              "const": "/canonical_reducer_ref"
+            },
+            {
+              "const": "/member_digest_contract"
+            }
+          ],
+          "items": false
+        },
+        "excluded_json_pointers": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "prefixItems": [
+            {
+              "const": "/member_digest"
+            }
+          ],
+          "items": false
+        }
+      }
+    }
+  },
+  "x-odeya-authority-boundary": {
+    "identity_status": "test_only_non_issuable",
+    "product_schema": false,
+    "registry_admission": false,
+    "root_binding": false,
+    "gate_a_authority": false,
+    "runtime_authority": false,
+    "command_authority": false
+  }
+}

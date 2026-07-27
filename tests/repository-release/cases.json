@@ -87,6 +87,12 @@
       "expected": "architecture evidence exact toolchain/recomputation contract"
     },
     {
+      "id": "missing-prq-evaluator-no-compile",
+      "old": "              --no-compile \\\n",
+      "new": "",
+      "expected": "architecture evidence executable job bytes must be exact"
+    },
+    {
       "id": "missing-release-branch-trigger",
       "old": "      - main\n      - \"release/**\"\n  workflow_dispatch:",
       "new": "      - main\n  workflow_dispatch:",
@@ -171,6 +177,13 @@
       "expected": "architecture evidence exact command census"
     },
     {
+      "id": "missing-dedicated-prq-002-identity-probe",
+      "subject": ".github/workflows/architecture.yml",
+      "old": "            python tests/prq-002-identity-cohort/check.py --recompute-all --python-executable \"$ODEYA_PRQ002_PYTHON\" --node-executable \"$ODEYA_PRQ002_NODE\"\n",
+      "new": "",
+      "expected": "architecture evidence exact command census"
+    },
+    {
       "id": "missing-dedicated-hda-successor-recompute",
       "subject": ".github/workflows/architecture.yml",
       "old": "            python scripts/validate_human_decision_assurance_successor.py --recompute-all\n",
@@ -181,7 +194,7 @@
       "id": "unexpected-dedicated-execution-step",
       "subject": ".github/workflows/architecture.yml",
       "old": "      - name: Reproduce architecture evidence checks\n        run: |\n",
-      "new": "      - name: Run a seventh dedicated architecture check\n        run: python scripts/validate_contract_profiles.py\n\n      - name: Reproduce architecture evidence checks\n        run: |\n",
+      "new": "      - name: Run an eighth dedicated architecture check\n        run: python scripts/validate_contract_profiles.py\n\n      - name: Reproduce architecture evidence checks\n        run: |\n",
       "expected": "architecture evidence executable job bytes must be exact"
     },
     {
@@ -280,15 +293,15 @@
   "release_contract_mutations": [
     {
       "id": "stale-architecture-evidence-counts",
-      "old": "Reproduce six dedicated prerequisite/member checks: Gate A prerequisites, PRQ-009 order, schema reissue, module manifest, first-slice scope, and human-decision-assurance successor recomputation. `Foundation` separately runs the complete integrated twelve-check census",
+      "old": "Reproduce seven dedicated prerequisite/member checks: Gate A prerequisites, PRQ-009 order, schema reissue, module manifest, first-slice scope, the PRQ-002A identity probe, and human-decision-assurance successor recomputation. `Foundation` separately runs the complete integrated twelve-check census",
       "new": "Reproduce five dedicated prerequisite/member checks: Gate A prerequisites, PRQ-009 order, schema reissue, module manifest, first-slice scope, and human-decision-assurance successor recomputation. `Foundation` separately runs the complete integrated ten-check census",
-      "expected": "Reproduce six dedicated prerequisite/member checks"
+      "expected": "Reproduce seven dedicated prerequisite/member checks"
     },
     {
       "id": "stale-architecture-evidence-mutation-count",
-      "old": "The exact inventory contains twenty retained known-bad mutations",
+      "old": "The exact inventory contains twenty-one retained known-bad mutations",
       "new": "The exact inventory contains seventeen retained known-bad mutations",
-      "expected": "The exact inventory contains twenty retained known-bad mutations"
+      "expected": "The exact inventory contains twenty-one retained known-bad mutations"
     },
     {
       "id": "future-private-remote-regression",
@@ -335,6 +348,20 @@
       "old": "TLA2TOOLS_JAR=\"$TLA_JAR\"\nreadonly TLA2TOOLS_JAR\nexport TLA2TOOLS_JAR\nbash formal/tla/check.sh",
       "new": "bash formal/tla/check.sh",
       "expected": "fresh-clone rehearsal must bind TLA2TOOLS_JAR to its verified jar"
+    },
+    {
+      "id": "missing-rehearsal-prq-002-recomputation",
+      "subject": "scripts/ci/rehearse-fresh-clone.sh",
+      "old": "CURRENT_STAGE=\"prq-002-identity-probe\"\n.venv-architecture/bin/python -m pip install \\\n  --disable-pip-version-check \\\n  --no-input \\\n  --require-hashes \\\n  --only-binary=:all: \\\n  --no-compile \\\n  --requirement tests/prq-002-identity-cohort/python/requirements.lock \\\n  2>&1 | tee -a artifacts/rehearsal/foundation.log\n.venv-architecture/bin/python -m pip check \\\n  2>&1 | tee -a artifacts/rehearsal/foundation.log\nPRQ002_PYTHON_BIN=\"$(\n  \"$CLONE/.venv-architecture/bin/python\" -I -S -B \\\n    -c 'import sys; print(sys.executable)'\n)\"\nreadonly PRQ002_PYTHON_BIN\nPRQ002_NODE_BIN=\"$(bash scripts/ci/install-node.sh)\"\nreadonly PRQ002_NODE_BIN\nPRQ002_NODE_ROOT=\"${PRQ002_NODE_BIN%/bin/node}\"\nreadonly PRQ002_NODE_ROOT\nPRQ002_NPM_CLI=\"$PRQ002_NODE_ROOT/lib/node_modules/npm/bin/npm-cli.js\"\nreadonly PRQ002_NPM_CLI\n\"$PRQ002_NODE_BIN\" \"$PRQ002_NPM_CLI\" ci \\\n  --ignore-scripts \\\n  --no-audit \\\n  --no-fund \\\n  --prefix tests/prq-002-identity-cohort/node \\\n  2>&1 | tee -a artifacts/rehearsal/foundation.log\n.venv-architecture/bin/python \\\n  tests/prq-002-identity-cohort/check.py \\\n  --recompute-all \\\n  --python-executable \"$PRQ002_PYTHON_BIN\" \\\n  --node-executable \"$PRQ002_NODE_BIN\" \\\n  2>&1 | tee -a artifacts/rehearsal/foundation.log\nrm -rf -- \"$CLONE/tests/prq-002-identity-cohort/node/node_modules\"\nrecord_stage foundation passed\n",
+      "new": "CURRENT_STAGE=\"prq-002-identity-probe\"\n# PRQ-002 recomputation removed by known-bad fixture\nrecord_stage foundation passed\n",
+      "expected": "fresh-clone rehearsal must retain the exact PRQ-002 recomputation block"
+    },
+    {
+      "id": "literal-rehearsal-python-selector",
+      "subject": "scripts/ci/rehearse-fresh-clone.sh",
+      "old": "PRQ002_PYTHON_BIN=\"$(\n  \"$CLONE/.venv-architecture/bin/python\" -I -S -B \\\n    -c 'import sys; print(sys.executable)'\n)\"\nreadonly PRQ002_PYTHON_BIN\n",
+      "new": "PRQ002_PYTHON_BIN=\"$CLONE/.venv-architecture/bin/python\"\nreadonly PRQ002_PYTHON_BIN\n",
+      "expected": "fresh-clone rehearsal must retain the exact PRQ-002 recomputation block"
     },
     {
       "id": "shared-standalone-tool-cache",

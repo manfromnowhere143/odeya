@@ -230,6 +230,12 @@ DEDICATED_ARCHITECTURE_EVIDENCE_COMMANDS = (
     ("module-manifest", "python scripts/validate_module_manifest.py"),
     ("first-slice-resolution", "python scripts/validate_first_slice_resolution.py"),
     (
+        "prq-002-identity-probe",
+        "python tests/prq-002-identity-cohort/check.py --recompute-all "
+        '--python-executable "$ODEYA_PRQ002_PYTHON" '
+        '--node-executable "$ODEYA_PRQ002_NODE"',
+    ),
+    (
         "hda-successor-recompute",
         "python scripts/validate_human_decision_assurance_successor.py --recompute-all",
     ),
@@ -282,12 +288,14 @@ CARDINAL_WORDS = (
     "eighteen",
     "nineteen",
     "twenty",
+    "twenty-one",
 )
 ARCHITECTURE_EVIDENCE_COUNT_BOUNDARY = (
     f"Reproduce {CARDINAL_WORDS[len(DEDICATED_ARCHITECTURE_EVIDENCE_COMMANDS)]} "
     "dedicated prerequisite/member checks: Gate A prerequisites, PRQ-009 order, "
-    "schema reissue, module manifest, first-slice scope, and human-decision-assurance "
-    f"successor recomputation. `Foundation` separately runs the complete integrated "
+    "schema reissue, module manifest, first-slice scope, the PRQ-002A identity probe, "
+    "and human-decision-assurance successor recomputation. `Foundation` separately "
+    "runs the complete integrated "
     f"{CARDINAL_WORDS[len(INTEGRATED_ARCHITECTURE_EVIDENCE_CHECKS)]}-check census"
 )
 ARCHITECTURE_EVIDENCE_RUN_STEP_START = (
@@ -306,10 +314,10 @@ EXPECTED_ARCHITECTURE_EVIDENCE_RUN_BODY = (
     + "          } 2>&1 | tee artifacts/ci/architecture-evidence.log"
 )
 EXPECTED_ARCHITECTURE_EVIDENCE_JOB_SHA256 = (
-    "320ff9a1f7e9efb0e1247c91bf0aa01e5b5e45e64fcdf68e2fc51b2b3a2d33ef"
+    "5e66d6010f154f16d4367cc57dfb415cbdaf681583b2b72c680c89b5bfe50731"
 )
 EXPECTED_INTEGRATED_VALIDATOR_SHA256 = (
-    "a70af885d6a7383927401985faef7afd809c30bc9dd7f7b2b4c08b3d552cdf56"
+    "3a6ae4c651075a9871c029fe5aca14ef4a23c1004f3a5a639ec928672af936a9"
 )
 ARCHITECTURE_EVIDENCE_KNOWN_BAD_MUTATION_COUNT = (
     len(DEDICATED_ARCHITECTURE_EVIDENCE_COMMANDS)
@@ -370,6 +378,7 @@ EXPECTED_WORKFLOW_MUTATION_IDS = (
     "unexpected-job",
     "missing-fast-architecture-surface-lock",
     "missing-hda-successor-recompute",
+    "missing-prq-evaluator-no-compile",
     "missing-release-branch-trigger",
     "missing-exact-checkout-ref",
     "publication-pull-request-trigger",
@@ -397,6 +406,11 @@ EXPECTED_HDA_RECOMPUTE_MUTATION = (
     "",
     "architecture evidence exact toolchain/recomputation contract",
 )
+EXPECTED_PRQ_NO_COMPILE_MUTATION = (
+    "              --no-compile \\\n",
+    "",
+    "architecture evidence executable job bytes must be exact",
+)
 EXPECTED_ARCHITECTURE_EVIDENCE_INVENTORY_MUTATIONS = {
     **{
         f"missing-dedicated-{mutation_name}": (
@@ -410,7 +424,7 @@ EXPECTED_ARCHITECTURE_EVIDENCE_INVENTORY_MUTATIONS = {
     "unexpected-dedicated-execution-step": (
         ".github/workflows/architecture.yml",
         ARCHITECTURE_EVIDENCE_RUN_STEP_START,
-        "      - name: Run a seventh dedicated architecture check\n"
+        "      - name: Run an eighth dedicated architecture check\n"
         "        run: python scripts/validate_contract_profiles.py\n\n"
         + ARCHITECTURE_EVIDENCE_RUN_STEP_START,
         "architecture evidence executable job bytes must be exact",
@@ -447,6 +461,47 @@ REHEARSAL_TLA_BINDING_BLOCK = (
     "export TLA2TOOLS_JAR\n"
     "bash formal/tla/check.sh"
 )
+REHEARSAL_PYTHON_SELECTOR_BLOCK = (
+    'PRQ002_PYTHON_BIN="$(\n'
+    '  "$CLONE/.venv-architecture/bin/python" -I -S -B \\\n'
+    "    -c 'import sys; print(sys.executable)'\n"
+    ')"\n'
+    "readonly PRQ002_PYTHON_BIN\n"
+)
+REHEARSAL_PRQ002_RECOMPUTATION_BLOCK = (
+    'CURRENT_STAGE="prq-002-identity-probe"\n'
+    ".venv-architecture/bin/python -m pip install \\\n"
+    "  --disable-pip-version-check \\\n"
+    "  --no-input \\\n"
+    "  --require-hashes \\\n"
+    "  --only-binary=:all: \\\n"
+    "  --no-compile \\\n"
+    "  --requirement tests/prq-002-identity-cohort/python/requirements.lock \\\n"
+    "  2>&1 | tee -a artifacts/rehearsal/foundation.log\n"
+    ".venv-architecture/bin/python -m pip check \\\n"
+    "  2>&1 | tee -a artifacts/rehearsal/foundation.log\n"
+    + REHEARSAL_PYTHON_SELECTOR_BLOCK
+    + 'PRQ002_NODE_BIN="$(bash scripts/ci/install-node.sh)"\n'
+    "readonly PRQ002_NODE_BIN\n"
+    'PRQ002_NODE_ROOT="${PRQ002_NODE_BIN%/bin/node}"\n'
+    "readonly PRQ002_NODE_ROOT\n"
+    'PRQ002_NPM_CLI="$PRQ002_NODE_ROOT/lib/node_modules/npm/bin/npm-cli.js"\n'
+    "readonly PRQ002_NPM_CLI\n"
+    '"$PRQ002_NODE_BIN" "$PRQ002_NPM_CLI" ci \\\n'
+    "  --ignore-scripts \\\n"
+    "  --no-audit \\\n"
+    "  --no-fund \\\n"
+    "  --prefix tests/prq-002-identity-cohort/node \\\n"
+    "  2>&1 | tee -a artifacts/rehearsal/foundation.log\n"
+    ".venv-architecture/bin/python \\\n"
+    "  tests/prq-002-identity-cohort/check.py \\\n"
+    "  --recompute-all \\\n"
+    '  --python-executable "$PRQ002_PYTHON_BIN" \\\n'
+    '  --node-executable "$PRQ002_NODE_BIN" \\\n'
+    "  2>&1 | tee -a artifacts/rehearsal/foundation.log\n"
+    'rm -rf -- "$CLONE/tests/prq-002-identity-cohort/node/node_modules"\n'
+    "record_stage foundation passed\n"
+)
 STANDALONE_TOOL_CACHE_BLOCK = (
     "OWN_TOOL_CACHE=0\n"
     'if [[ -z "${ODEYA_TOOL_CACHE:-}" ]]; then\n'
@@ -472,6 +527,21 @@ EXPECTED_RELEASE_SCRIPT_MUTATIONS = {
         "bash formal/tla/check.sh",
         "fresh-clone rehearsal must bind TLA2TOOLS_JAR to its verified jar",
     ),
+    "missing-rehearsal-prq-002-recomputation": (
+        "scripts/ci/rehearse-fresh-clone.sh",
+        REHEARSAL_PRQ002_RECOMPUTATION_BLOCK,
+        'CURRENT_STAGE="prq-002-identity-probe"\n'
+        "# PRQ-002 recomputation removed by known-bad fixture\n"
+        "record_stage foundation passed\n",
+        "fresh-clone rehearsal must retain the exact PRQ-002 recomputation block",
+    ),
+    "literal-rehearsal-python-selector": (
+        "scripts/ci/rehearse-fresh-clone.sh",
+        REHEARSAL_PYTHON_SELECTOR_BLOCK,
+        'PRQ002_PYTHON_BIN="$CLONE/.venv-architecture/bin/python"\n'
+        "readonly PRQ002_PYTHON_BIN\n",
+        "fresh-clone rehearsal must retain the exact PRQ-002 recomputation block",
+    ),
     "shared-standalone-tool-cache": (
         "scripts/ci/check-repository-release.sh",
         STANDALONE_TOOL_CACHE_BLOCK,
@@ -488,7 +558,7 @@ EXPECTED_RELEASE_CONTRACT_MUTATIONS = {
         "PRQ-009 order, schema reissue, module manifest, first-slice scope, and "
         "human-decision-assurance successor recomputation. `Foundation` separately "
         "runs the complete integrated ten-check census",
-        "Reproduce six dedicated prerequisite/member checks",
+        "Reproduce seven dedicated prerequisite/member checks",
     ),
     "stale-architecture-evidence-mutation-count": (
         ARCHITECTURE_EVIDENCE_MUTATION_COUNT_BOUNDARY,
@@ -1103,12 +1173,16 @@ def workflow_policy_errors(
             required_architecture_evidence_fragments = (
                 "    timeout-minutes: 20\n",
                 "        run: printf 'ODEYA_TOOL_CACHE=%s/odeya-release-tools\\n' \"$RUNNER_TEMP\" >> \"$GITHUB_ENV\"\n",
-                "              --require-hashes \\\n",
-                "              --only-binary=:all: \\\n",
                 "              --report artifacts/ci/architecture-evidence-pip-install-report.json \\\n",
                 "              --requirement tools/repository-release/requirements-architecture.lock\n",
+                "              --no-compile \\\n",
+                "              --requirement tests/prq-002-identity-cohort/python/requirements.lock\n",
                 '            node_bin="$(bash scripts/ci/install-node.sh)"\n',
+                "              --prefix tests/prq-002-identity-cohort/node\n",
+                "            printf 'ODEYA_PRQ002_PYTHON=%s\\n' \"$python_bin\" >> \"$GITHUB_ENV\"\n",
+                "            printf 'ODEYA_PRQ002_NODE=%s\\n' \"$node_bin\" >> \"$GITHUB_ENV\"\n",
                 '            java_bin="$(bash scripts/ci/install-java.sh)"\n',
+                "            python tests/prq-002-identity-cohort/check.py --recompute-all --python-executable \"$ODEYA_PRQ002_PYTHON\" --node-executable \"$ODEYA_PRQ002_NODE\"\n",
                 "            python scripts/validate_human_decision_assurance_successor.py --recompute-all\n",
                 "          git diff --exit-code\n",
                 "          git diff --cached --exit-code\n",
@@ -1120,6 +1194,15 @@ def workflow_policy_errors(
                     issues.append(
                         "architecture evidence exact toolchain/recomputation contract "
                         f"must retain exactly one {fragment.strip()!r}"
+                    )
+            for fragment in (
+                "              --require-hashes \\\n",
+                "              --only-binary=:all: \\\n",
+            ):
+                if architecture_evidence.count(fragment) != 2:
+                    issues.append(
+                        "architecture evidence exact toolchain/recomputation contract "
+                        f"must retain exactly two {fragment.strip()!r}"
                     )
     if publication:
         if runner_count != 1 or text.count("    timeout-minutes: 5\n") != 1:
@@ -1238,6 +1321,15 @@ def validate_policy_mutations(errors: list[str]) -> int:
         ):
             errors.append(
                 "repository release mutation missing-hda-successor-recompute: "
+                "specification drifted from the pinned matrix"
+            )
+            continue
+        if (
+            case_id == "missing-prq-evaluator-no-compile"
+            and (old, new, expected) != EXPECTED_PRQ_NO_COMPILE_MUTATION
+        ):
+            errors.append(
+                "repository release mutation missing-prq-evaluator-no-compile: "
                 "specification drifted from the pinned matrix"
             )
             continue
@@ -1434,6 +1526,10 @@ def release_script_isolation_errors(rehearsal: str, release_check: str) -> list[
     if rehearsal.count(REHEARSAL_TLA_BINDING_BLOCK) != 1:
         errors.append(
             "fresh-clone rehearsal must bind TLA2TOOLS_JAR to its verified jar"
+        )
+    if rehearsal.count(REHEARSAL_PRQ002_RECOMPUTATION_BLOCK) != 1:
+        errors.append(
+            "fresh-clone rehearsal must retain the exact PRQ-002 recomputation block"
         )
     if release_check.count(STANDALONE_TOOL_CACHE_BLOCK) != 1:
         errors.append("standalone release check must allocate a unique tool cache")
@@ -1923,6 +2019,13 @@ def validate_release_scripts(lock: dict[str, Any], errors: list[str]) -> None:
         "--only-binary=:all:",
         ".java-version",
         "scripts/validate.py",
+        "tests/prq-002-identity-cohort/check.py",
+        "--recompute-all",
+        "--python-executable",
+        "--node-executable",
+        "tests/prq-002-identity-cohort/python/requirements.lock",
+        "PRQ002_PYTHON_BIN",
+        "PRQ002_NODE_BIN",
         "check-repository-release.sh",
         "formal/tla/check.sh",
         "git diff --exit-code",

@@ -75,6 +75,7 @@ AUDITED_SUITES = (
     "mathematical-contracts",
     "physical-contracts",
     "projection-contracts",
+    "prq-002-identity-cohort",
     "work-identity-successor-cohort",
     "work-intent-identity-candidate",
     "work-intent-reference-resolution",

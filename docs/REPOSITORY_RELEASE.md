@@ -55,17 +55,17 @@ named by a release manifest.
 | `Semantic contracts` | Admit the safe semantic partition, then execute all eight complete paired contract harnesses | Profile inventory and per-suite output | Not proof beyond the retained bounded subjects |
 | `Adversarial controls` | Admit the known-bad partition, then execute the same paired harnesses so negative controls cannot drift from their baselines | Profile inventory and expected-rejection output | Not an exhaustive threat proof |
 | `Canonical identity` | Reconcile the two retained canonicalization implementations and verify the migration audit is current | Comparison receipt and audit check output | Not a frozen canonical profile; its blockers remain explicit |
-| `Architecture evidence` | Reproduce six dedicated prerequisite/member checks: Gate A prerequisites, PRQ-009 order, schema reissue, module manifest, first-slice scope, and human-decision-assurance successor recomputation. `Foundation` separately runs the complete integrated twelve-check census, including canonicalization-evaluator integrity, lifecycle/suite guard and condition audits, schema-rule ablation, refusal attribution, and the human-decision-assurance successor check | Dedicated evidence log plus the integrated Foundation log and pinned safe/known-bad inventories | Not registry admission, activation, or an acceptance decision |
+| `Architecture evidence` | Reproduce seven dedicated prerequisite/member checks: Gate A prerequisites, PRQ-009 order, schema reissue, module manifest, first-slice scope, the PRQ-002A identity probe, and human-decision-assurance successor recomputation. `Foundation` separately runs the complete integrated twelve-check census, including canonicalization-evaluator integrity, lifecycle/suite guard and condition audits, schema-rule ablation, refusal attribution, and the human-decision-assurance successor check | Dedicated evidence log plus the integrated Foundation log and pinned safe/known-bad inventories | Not registry admission, activation, or an acceptance decision |
 | `Repository / Release Surface` | Validate the README contract, action pins, least-privilege workflow shape, Dependabot scope, Markdown, Action syntax, and Mermaid rendering | Release-check log and rendered SVG | Not UI acceptance, deployment evidence, or a publication decision |
 | `Architecture / Bounded Formal Models` | Reproduce seven safe TLA+ models, the alternate cognitive fingerprint run, and all thirty intended counterexamples | Full TLC log and pinned toolchain manifest | Bounded safety evidence only; not liveness, implementation conformance, or a physical safety case |
 | `Publication sequence` | On a governed push, verify the exact checked-out SHA, ref, single-parent/direct-child range, and event before/after boundary | Exact push log and remote run identity | Not a summary of the other checks, an independent verifier, or publication authority by itself |
 
-The release checker compares the dedicated six-command run body and the
+The release checker compares the dedicated seven-command run body and the
 integrated twelve-member Python tuple to exact inventories, pins the complete
 dedicated job and integrated-validator bytes, and binds the one executable
 consumption loop.
-The exact inventory contains twenty retained known-bad mutations:
-each member is removed once, then an out-of-body seventh workflow step and a
+The exact inventory contains twenty-one retained known-bad mutations:
+each member is removed once, then an out-of-body eighth workflow step and a
 post-assignment same-cardinality Python rebinding are separately refused. The
 counts above therefore cannot remain green after executable inventory drift.
 
@@ -99,8 +99,11 @@ environments, cloud credentials, or self-hosted runners.
   fails even when its source sibling passes.
 
 Hash locking establishes admitted bytes, not vulnerability absence. Dependabot
-tracks the pip, npm, and GitHub Actions manifests. `npm audit` is retained as a
-mutable advisory-freshness check whose answer may change without a
+tracks the root Python architecture manifest, release-tool npm manifest, and
+GitHub Actions manifests. The PRQ-002A evaluator locks are retained immutable
+test-evidence inputs; any dependency change requires deliberate reissue and
+recomputation rather than an automated update claim. `npm audit` is retained
+as a mutable advisory-freshness check whose answer may change without a
 repository-byte change; it is not part of canonical scientific identity. A
 Python advisory scanner is not yet admitted into the deterministic check
 because no pinned advisory snapshot/profile exists. As observed on 2026-07-19,

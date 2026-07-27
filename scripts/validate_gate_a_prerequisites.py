@@ -99,7 +99,7 @@ CURRENT_ASSURANCE_UNITS = (
         "docs/SESSION_HANDOFF.md", "## What this lane established, and where to put pressure next", None,
         "bullet", "**PRQ-013 now has retained byte-bound/recomputation candidate evidence, not closure.**", 1,
         "995d7d3975047f8d64f41d137059b316e932202ab3d20e23b28b5b48af6bbc28",
-        "ccfc00fe394d512541ee93f3f14998ecec4fda943c5f468c89bbb55409e0ae99",
+        "28c49abb77c9bb568f090e4dc2abfd7f3536b693d0fe41cb3455eaf3ec9e0604",
     ),
     (
         "docs/SESSION_HANDOFF.md", "## Active PRQ-013 candidate — resolve release status from Git", None,
@@ -122,12 +122,12 @@ CURRENT_ASSURANCE_UNITS = (
 
 RECOVERY_HANDOFF = "docs/SESSION_HANDOFF.md"
 RECOVERY_HEADING = "## Current repository recovery identity"
-PUBLISHED_BASELINE = "b02b378f2226fc781a5b1a4a9d4c244fa0a377eb"
-PUBLISHED_BASELINE_TREE = "db2fd6e37f4b15bd2755b29a3f0295f83f934faf"
+PUBLISHED_BASELINE = "e467bdbbc9ec0451b2c331c8005a2691087358b6"
+PUBLISHED_BASELINE_TREE = "7fa164999b430969fea9e519812321aa356d4a73"
 RECOVERY_INVARIANT_SHA256 = "37b25307a3691eb275d6d457e2643e7400aa09d700b1fdb37ac63170bcb3cf2a"
 # SHA-256 of the normalized 51-line recovery program. Its separately named
 # cardinality line keeps the single-parent invariant reviewable.
-EXPECTED_RECOVERY_PROGRAM_SHA256 = "6c31b5276084c1acba7f336b43018cfe7eea507f7b07dc57bbbe0dbc93f66b4c"
+EXPECTED_RECOVERY_PROGRAM_SHA256 = "0b1fa253611f0f002f58b9fd65ce92694dcac8d07eb043656e69231a6d328d31"
 PARENT_CARDINALITY_LINE = 'test "$(git rev-list --parents -n 1 "$HEAD_COMMIT" | awk \'{print NF}\')" = 2'
 EXPECTED_REFUSAL_KEYS = frozenset(
     {

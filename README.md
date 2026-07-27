@@ -2,7 +2,7 @@
 
 Odeya is a private research engine that turns a thesis into a governed, replayable chain from question to evidence to warranted claim.
 
-> **Current state — 2026-07-22:** architecture foundation only. No executable research engine, autonomous-science capability, production deployment, or automatic publication is claimed. Runtime work remains blocked until the architecture gates are accepted.
+> **Current state — 2026-07-27:** architecture foundation only. No executable research engine, autonomous-science capability, production deployment, or automatic publication is claimed. Runtime work remains blocked until the architecture gates are accepted.
 
 The provisional web address is `odeya.danielwahnich.dev`. The apex domain, company, trademark, and scientific-publication decisions remain separate.
 
@@ -94,13 +94,22 @@ They are requirements sources and bounded proof missions—not runtime dependenc
 ## Architecture checkpoint
 
 The current retained foundation contains 120 Draft 2020-12 schemas, 860
-shared-manifest cases (220 valid and 640 known-bad), 14 isolated contract
+shared-manifest cases (220 valid and 640 known-bad), 15 isolated contract
 suites, 12 architecture-evidence checks, and 7 bounded safe TLA+ models with
 30 mutation controls. These counts are bound to the validator run that
 measures them; the README previously stated four of them as fact while all four
 had drifted.
 
-Those results establish structural and bounded semantic evidence only, and their strength is measured by mutation rather than assumed. The lifecycle checker is audited explicitly: 222 of 229 refusal statements are proved reachable by disabling each in turn, and 108 of 111 removable guard conditions are proved load-bearing (ADR 0052–0054, 0065–0066, 0090); the named residue is retained rather than converted into a flattering completeness claim. That discipline was then generalized to every suite: across 14 declared isolated checker subjects, 470 of 961 refusal statements are proved to fire, with 491 retained explicitly as unproved and zero crash-only detections (ADR 0079–0085, 0098). The earlier 431/820 result is retracted: mutation of the self-bound assurance checker invalidated its outer evidence binding, so the audit credited that binding failure rather than the intended guard; the corrected harness refreshes the declared binding only inside each isolated mutation copy and proves its own unrefreshed/refreshed behavior before measuring. Every refusal-attribution claim is checked by a census that fails closed on any unattributed corpus (ADR 0062), and each of the 158 cross-field schema rules with a case is proven to notice its own deletion by two-sided ablation (ADR 0071–0073). Coverage is still not correctness: a proved guard is exercised, not shown to enforce the right rule, structural comparisons count as one condition regardless of field count, and [ADR 0030](docs/decisions/0030-statement-coverage-is-not-condition-coverage.md)'s caution stands — every coverage figure this repository ever published was wrong in the flattering direction until context-isolated adversarial review corrected it, and the corrections are retained.
+Those results establish structural and bounded semantic evidence only, and their strength is measured by mutation rather than assumed. The lifecycle checker is audited explicitly: 222 of 229 refusal statements are proved reachable by disabling each in turn, and 108 of 111 removable guard conditions are proved load-bearing (ADR 0052–0054, 0065–0066, 0090); the named residue is retained rather than converted into a flattering completeness claim. That discipline was then generalized to every suite: across 15 declared isolated checker subjects, 470 of 1088 refusal statements are proved to fire, with 618 retained explicitly as unproved and zero crash-only detections (ADR 0079–0085, 0098–0099). The new `prq-002-identity-cohort` subject contributes 0/127: its complete refusal denominator is measured, and none of those statements is yet credited with a retained mutation proof. The earlier 431/820 result is retracted: mutation of the self-bound assurance checker invalidated its outer evidence binding, so the audit credited that binding failure rather than the intended guard; the corrected harness refreshes the declared binding only inside each isolated mutation copy and proves its own unrefreshed/refreshed behavior before measuring. Every refusal-attribution claim is checked by a census that fails closed on any unattributed corpus (ADR 0062), and each of the 158 cross-field schema rules with a case is proven to notice its own deletion by two-sided ablation (ADR 0071–0073). Coverage is still not correctness: a proved guard is exercised, not shown to enforce the right rule, structural comparisons count as one condition regardless of field count, and [ADR 0030](docs/decisions/0030-statement-coverage-is-not-condition-coverage.md)'s caution stands — every coverage figure this repository ever published was wrong in the flattering direction until context-isolated adversarial review corrected it, and the corrections are retained.
+
+[ADR 0099](docs/decisions/0099-freeze-prq-002a-structural-identity-probe-layer.md)
+adds a bounded PRQ-002A structural probe without changing the 120-product-schema
+census: nine architecture-only schemas describe 21 non-issuable probe objects
+and 20 structured digests. Its isolated suite retains 47 cases—one safe and 46
+known-bad—and two source- and language-separated result documents whose current
+recomputation path is provenance-attested. This is not independence, issuance,
+PRQ-002 closure, an `EngineContractRoot`, activation, runtime, or Gate A
+evidence; the probe identifiers cannot be promoted into product identities.
 
 The PRQ-013 T0 byte-bound/recomputation tranche now retains candidate evidence
 under [ADR 0095](docs/decisions/0095-reissue-human-decision-assurance-as-a-byte-bound-independently-recomputed-chain.md):

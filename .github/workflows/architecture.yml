@@ -331,7 +331,25 @@ jobs:
       - name: Install the exact evaluator toolchains
         run: |
           {
+            python -m pip install \
+              --disable-pip-version-check \
+              --no-input \
+              --require-hashes \
+              --only-binary=:all: \
+              --no-compile \
+              --requirement tests/prq-002-identity-cohort/python/requirements.lock
+            python -m pip check
             node_bin="$(bash scripts/ci/install-node.sh)"
+            node_root="${node_bin%/bin/node}"
+            npm_cli="$node_root/lib/node_modules/npm/bin/npm-cli.js"
+            "$node_bin" "$npm_cli" ci \
+              --ignore-scripts \
+              --no-audit \
+              --no-fund \
+              --prefix tests/prq-002-identity-cohort/node
+            python_bin="$(python -c 'import sys; print(sys.executable)')"
+            printf 'ODEYA_PRQ002_PYTHON=%s\n' "$python_bin" >> "$GITHUB_ENV"
+            printf 'ODEYA_PRQ002_NODE=%s\n' "$node_bin" >> "$GITHUB_ENV"
             java_bin="$(bash scripts/ci/install-java.sh)"
             java_home="${java_bin%/bin/java}"
             printf 'Node executable: %s\n' "$node_bin"
@@ -349,6 +367,7 @@ jobs:
             python scripts/validate_schema_resource_reissues.py
             python scripts/validate_module_manifest.py
             python scripts/validate_first_slice_resolution.py
+            python tests/prq-002-identity-cohort/check.py --recompute-all --python-executable "$ODEYA_PRQ002_PYTHON" --node-executable "$ODEYA_PRQ002_NODE"
             python scripts/validate_human_decision_assurance_successor.py --recompute-all
           } 2>&1 | tee artifacts/ci/architecture-evidence.log
 

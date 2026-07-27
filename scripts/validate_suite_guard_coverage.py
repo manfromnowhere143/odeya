@@ -18,18 +18,18 @@ ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "architecture/suite-guard-coverage.json"
 AUDIT = ROOT / "scripts/audit_suite_guard_coverage.py"
 VALIDATOR = ROOT / "scripts/validate.py"
-PIN = {"guard_count": 961, "proved": 470, "unproved": 491, "crash_detected": 0}
+PIN = {"guard_count": 1088, "proved": 470, "unproved": 618, "crash_detected": 0}
 EXCLUDED = {"lifecycle-closure": "dedicated 222/229 statement and 108/111 condition audits"}
 # SHA-256 binds normalized, comment/fence-cleaned current units: README's whole
 # checkpoint, status/handoff row/bullet plus sections, and all current plan units.
 # Numeric truth remains derived from RECORD; contradictory sibling prose cannot pass.
 UNIT_SHA256 = {
-    "readme.current-section": "4c2481dd9f2e570244df303d888b0e600335ca17abf6a6bbe8d345e9cb37aa92",
-    "status.current-section": "86bac9b20908e04bb9a5e17fafc091d13f230d037d1e906ba2313b124c71d189",
-    "status.guard-row": "d771a7c47f1a9be966a2d38ff96a94621526593d70fa229ed097a73a74cdd8a9",
-    "handoff.current-section": "ccfc00fe394d512541ee93f3f14998ecec4fda943c5f468c89bbb55409e0ae99",
-    "handoff.guard-bullet": "7d24f777f2b107c87ffa3712ca2b1ea3b2f90109b6bc09964d719d4223fc6e17",
-    "plan.current-units": "50ff18f36d695e643e410bb0ea54cb5062135fe15d3f779dd1c0c7261bafc976",
+    "readme.current-section": "ad2f162d1a75a42fd14f876e432c36b257b2f4e6a26cabb54047a999b7a96ed4",
+    "status.current-section": "5bed55841589e40c42fdbd7896c7fe716d65cad81eafe9a57337854b6b538e12",
+    "status.guard-row": "bb392fff66c5a154264df404845c785ee952a0b55506d4a3bf16df41605a1b28",
+    "handoff.current-section": "28c49abb77c9bb568f090e4dc2abfd7f3536b693d0fe41cb3455eaf3ec9e0604",
+    "handoff.guard-bullet": "5b94e8daaba6292e580cc7394792d0511270cc1994247fe376477580374d4b13",
+    "plan.current-units": "abe0fdb3c806af0809875e8646fe985084f784435a77378295f60ad446bc6cec",
 }
 WORDS = "zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen eighteen nineteen twenty".split()
 WORD_VALUE = {word: index for index, word in enumerate(WORDS)}
@@ -575,8 +575,22 @@ def self_tests(facts: Facts, errors: list[str]) -> int:
     guard_line = next(line for line in kept[status].splitlines() if line.startswith("| Guard evidence |"))
     add(("whole-status-row", {status: kept[status].replace(guard_line, guard_line.replace("Coverage does not prove a guard enforces the right rule", "Coverage does not prove a guard enforces the right rule. Current fallback is 458/927", 1), 1)}, status_row_exact))
     add(("alternate-status-row", {status: kept[status].replace(guard_line, guard_line + "\n| Current alternate guard tally | 458/927 are proved and 469 are open | Current |", 1)}, status_exact))
-    anchor = "  own pinned known-bad self-tests. The 491 open isolated-suite guards are"
-    add(("alternate-handoff-prose", {handoff: swap(kept[handoff], anchor, "  own pinned known-bad self-tests. Current fallback: 458 of 927 are proved and 469 are open. The 491 open isolated-suite guards are")}, handoff_exact))
+    anchor = (
+        "  own pinned known-bad self-tests. "
+        f"The {facts.open} open isolated-suite guards are"
+    )
+    replacement = (
+        "  own pinned known-bad self-tests. Current fallback: "
+        "458 of 927 are proved and 469 are open. "
+        f"The {facts.open} open isolated-suite guards are"
+    )
+    add(
+        (
+            "alternate-handoff-prose",
+            {handoff: swap(kept[handoff], anchor, replacement)},
+            handoff_exact,
+        )
+    )
     add(("whole-plan-preamble", {plan_path: plan.replace("`scripts/audit_suite_guard_coverage.py`.", "`scripts/audit_suite_guard_coverage.py`. Current fallback is 458/927.", 1)}, plan_exact))
     add(("alternate-plan-prose", {plan_path: plan.replace("\nThe previously retained 431/820", "\nCurrent alternative denominator: 458 proved of 927, with 469 open.\n\nThe previously retained 431/820", 1)}, plan_exact))
     add(("alternate-plan-boundary", {plan_path: plan.replace("## Boundary\n", "## Boundary\n\nCurrent denominator is 458/927 with 469 open.\n", 1)}, plan_exact))

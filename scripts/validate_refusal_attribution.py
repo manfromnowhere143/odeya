@@ -141,6 +141,11 @@ REGISTRY: dict[str, tuple[str, Any, Any]] = {
     "constitutional-construction": ("cases.json", substring("expected_refusal_contains"), None),
     "work-identity-successor-cohort": ("cases.json", intent_and_inventory("expected_errors"), None),
     "work-intent-identity-candidate": ("cases.json", intent_and_inventory("expected_errors"), None),
+    "prq-002-identity-cohort": (
+        "cases.json",
+        intent_and_inventory("expected_errors"),
+        None,
+    ),
     "prq-009-assignment-order": (
         "cases.json",
         substring("expected_refusal_contains"),

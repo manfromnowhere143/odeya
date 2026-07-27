@@ -1,6 +1,6 @@
 # Registry Graph Contracts
 
-Status: architecture-only structural candidate, 2026-07-16. These contracts
+Status: architecture-only structural candidate, 2026-07-27. These contracts
 define the machine shape of Odeya's command/event/reducer/state graph. They do
 not identify an accepted Gate A member set, activate a runtime, prove a
 handler, prove a reducer implementation, or authorize product implementation.
@@ -230,6 +230,40 @@ Passing those cases establishes only that the current JSON Schemas reject the
 named structural mutations. It does not establish semantic closure, digest
 correctness, implementation independence, transaction isolation, replay
 agreement, scientific validity, or architecture acceptance.
+
+## PRQ-002A non-issuable structural identity probe
+
+[ADR 0099](decisions/0099-freeze-prq-002a-structural-identity-probe-layer.md)
+adds a separate architecture-only construction probe for the forward identity
+path that the embedded structural fixtures do not instantiate. The probe
+retains one exact non-self-hashing profile core, nine architecture schemas,
+12 standalone members, four flat ordered-map commitments, and four homogeneous
+pure snapshots. Its synthetic graph is limited to
+`structural-aggregate`; it creates no product registry member or production
+domain.
+
+The retained cohort contains 21 objects and 20 structured digests. Exact raw
+schema/profile bytes feed the member graph, decoded ASCII member keys are
+sorted by unsigned UTF-8 bytes before each family commitment, and each
+snapshot binds one family-specific commitment without history, membership,
+checkpoint, seal, or activation semantics. The retained Python- and
+Node-labelled source- and language-separated results agree exactly for this
+bounded cohort. Current recomputation additionally requires explicit
+executable selectors, exact installed canonicalizer payloads, runtime
+provenance checks, fresh challenges, and complete child attestations bound to
+the exact result lines. The retained Darwin/arm64 execution observations are
+host-specific and do not establish organizational independence.
+
+Dependency bootstrap and the Node installer may use a local cache or the
+network before evaluator execution. The evaluators are not OS-network
+sandboxed; their exact source manifests declare no network request, which is
+not an observation proving non-use.
+
+The probe is explicitly `test_only_non_issuable_structural_probe`. Its
+profile, domains, member digests, commitments, and snapshots are
+non-promotable. Passing the suite does not issue the canonicalization profile,
+close PRQ-002, allocate any product identity, admit a member, construct an
+`EngineContractRoot`, or authorize Gate A or runtime work.
 
 ## Work still required before an immutable candidate
 

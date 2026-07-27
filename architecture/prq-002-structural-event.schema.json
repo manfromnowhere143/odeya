@@ -1,0 +1,122 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:odeya:architecture-schema:prq-002-structural-event:0.1.0",
+  "title": "Odeya PRQ-002A Synthetic Structural Event",
+  "description": "Closed synthetic event envelope used only as retained raw schema bytes in the PRQ-002A identity-construction probe. Its sole branch makes the payload schema addressable at /oneOf/0/properties/payload; it defines no admitted event, producer command, reducer behavior, or runtime authority.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "record_kind",
+    "identity_scope",
+    "event_id",
+    "event_type",
+    "event_version",
+    "payload_type_id",
+    "aggregate",
+    "payload"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.1.0"
+    },
+    "record_kind": {
+      "const": "structural_event_probe"
+    },
+    "identity_scope": {
+      "const": "prq_002_structural_probe_only"
+    },
+    "event_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "event_type": {
+      "const": "structural.event_recorded"
+    },
+    "event_version": {
+      "const": "0.1.0"
+    },
+    "payload_type_id": {
+      "const": "urn:odeya:architecture:event-payload:structural.event-recorded:0.1.0"
+    },
+    "aggregate": {
+      "$ref": "#/$defs/aggregate_reference"
+    },
+    "payload": {
+      "$ref": "#/$defs/structural_payload"
+    }
+  },
+  "oneOf": [
+    {
+      "required": [
+        "event_type",
+        "event_version",
+        "payload_type_id",
+        "aggregate",
+        "payload"
+      ],
+      "properties": {
+        "event_type": {
+          "const": "structural.event_recorded"
+        },
+        "event_version": {
+          "const": "0.1.0"
+        },
+        "payload_type_id": {
+          "const": "urn:odeya:architecture:event-payload:structural.event-recorded:0.1.0"
+        },
+        "aggregate": {
+          "$ref": "#/$defs/aggregate_reference"
+        },
+        "payload": {
+          "$ref": "#/$defs/structural_payload"
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:[._:-][a-z0-9]+)*$",
+      "maxLength": 127
+    },
+    "aggregate_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "aggregate_type",
+        "aggregate_id"
+      ],
+      "properties": {
+        "aggregate_type": {
+          "const": "structural-aggregate"
+        },
+        "aggregate_id": {
+          "$ref": "#/$defs/identifier"
+        }
+      }
+    },
+    "structural_payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "value"
+      ],
+      "properties": {
+        "value": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        }
+      }
+    }
+  },
+  "x-odeya-authority-boundary": {
+    "identity_status": "synthetic_test_only_non_issuable",
+    "product_event_schema": false,
+    "command_authority": false,
+    "reducer_implementation": false,
+    "registry_admission": false,
+    "gate_a_authority": false,
+    "runtime_authority": false
+  }
+}

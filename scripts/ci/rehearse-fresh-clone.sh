@@ -176,6 +176,42 @@ python3 -m venv .venv-architecture
 CURRENT_STAGE="foundation"
 .venv-architecture/bin/python scripts/validate.py \
   2>&1 | tee artifacts/rehearsal/foundation.log
+
+CURRENT_STAGE="prq-002-identity-probe"
+.venv-architecture/bin/python -m pip install \
+  --disable-pip-version-check \
+  --no-input \
+  --require-hashes \
+  --only-binary=:all: \
+  --no-compile \
+  --requirement tests/prq-002-identity-cohort/python/requirements.lock \
+  2>&1 | tee -a artifacts/rehearsal/foundation.log
+.venv-architecture/bin/python -m pip check \
+  2>&1 | tee -a artifacts/rehearsal/foundation.log
+PRQ002_PYTHON_BIN="$(
+  "$CLONE/.venv-architecture/bin/python" -I -S -B \
+    -c 'import sys; print(sys.executable)'
+)"
+readonly PRQ002_PYTHON_BIN
+PRQ002_NODE_BIN="$(bash scripts/ci/install-node.sh)"
+readonly PRQ002_NODE_BIN
+PRQ002_NODE_ROOT="${PRQ002_NODE_BIN%/bin/node}"
+readonly PRQ002_NODE_ROOT
+PRQ002_NPM_CLI="$PRQ002_NODE_ROOT/lib/node_modules/npm/bin/npm-cli.js"
+readonly PRQ002_NPM_CLI
+"$PRQ002_NODE_BIN" "$PRQ002_NPM_CLI" ci \
+  --ignore-scripts \
+  --no-audit \
+  --no-fund \
+  --prefix tests/prq-002-identity-cohort/node \
+  2>&1 | tee -a artifacts/rehearsal/foundation.log
+.venv-architecture/bin/python \
+  tests/prq-002-identity-cohort/check.py \
+  --recompute-all \
+  --python-executable "$PRQ002_PYTHON_BIN" \
+  --node-executable "$PRQ002_NODE_BIN" \
+  2>&1 | tee -a artifacts/rehearsal/foundation.log
+rm -rf -- "$CLONE/tests/prq-002-identity-cohort/node/node_modules"
 record_stage foundation passed
 
 # The cheap gate inside validate.py binds the guard-coverage record to the

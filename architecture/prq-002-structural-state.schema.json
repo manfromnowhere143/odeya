@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:odeya:architecture-schema:prq-002-structural-state:0.1.0",
+  "title": "Odeya PRQ-002A Synthetic Structural State",
+  "description": "Closed synthetic state shape used only as retained raw schema bytes in the PRQ-002A identity-construction probe. It defines no implemented aggregate, reducer, lifecycle, persistence, admission, or runtime behavior.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "record_kind",
+    "identity_scope",
+    "aggregate_type",
+    "aggregate_version",
+    "phase",
+    "payload"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.1.0"
+    },
+    "record_kind": {
+      "const": "structural_state_probe"
+    },
+    "identity_scope": {
+      "const": "prq_002_structural_probe_only"
+    },
+    "aggregate_type": {
+      "const": "structural-aggregate"
+    },
+    "aggregate_version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "phase": {
+      "const": "recorded"
+    },
+    "payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "value"
+      ],
+      "properties": {
+        "value": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        }
+      }
+    }
+  },
+  "x-odeya-authority-boundary": {
+    "identity_status": "synthetic_test_only_non_issuable",
+    "product_state_schema": false,
+    "reducer_implementation": false,
+    "persistence_contract": false,
+    "gate_a_authority": false,
+    "runtime_authority": false
+  }
+}

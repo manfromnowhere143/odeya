@@ -1,0 +1,361 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:odeya:architecture-schema:prq-002-ordered-member-map-commitment-probe:0.1.0",
+  "title": "Odeya PRQ-002A Ordered Member-Map Commitment Probe",
+  "description": "Closed architecture-only flat commitment over ordered member-key/member-digest pairs for exactly one probe registry family. It is not a Merkle root, admission receipt, membership proof, registry history, checkpoint, or issued registry identity.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "commitment_kind",
+    "identity_scope",
+    "registry_family",
+    "algorithm",
+    "member_key_contract",
+    "member_count",
+    "ordered_members",
+    "ordered_member_pairs_digest_contract",
+    "ordered_member_pairs_digest"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.1.0"
+    },
+    "commitment_kind": {
+      "const": "ordered_member_map_commitment"
+    },
+    "identity_scope": {
+      "const": "prq_002_structural_probe_only"
+    },
+    "registry_family": {
+      "$ref": "#/$defs/registry_family"
+    },
+    "algorithm": {
+      "const": "odeya-canonical-map-commitment-v1"
+    },
+    "member_key_contract": {
+      "$ref": "#/$defs/member_key_contract"
+    },
+    "member_count": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "ordered_members": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/ordered_member"
+      }
+    },
+    "ordered_member_pairs_digest_contract": {
+      "$ref": "#/$defs/ordered_member_pairs_digest_contract"
+    },
+    "ordered_member_pairs_digest": {
+      "$ref": "#/$defs/digest",
+      "x-odeya-digest-scope": {
+        "kind": "canonical_object_digest_probe",
+        "domain": "odeya-prq-002-ordered-member-map-commitment-probe-v1",
+        "algorithm": "sha256",
+        "profile": "urn:odeya:canonicalization:prq-002-identity-probe-jcs-0.1",
+        "status": "test_only_non_issuable"
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "registry_family": {
+            "const": "schema_registry"
+          }
+        },
+        "required": [
+          "registry_family"
+        ]
+      },
+      "then": {
+        "properties": {
+          "member_key_contract": {
+            "properties": {
+              "member_key_expression": {
+                "const": "schema_id@semantic_version"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "registry_family": {
+            "const": "aggregate_state_subject_registry"
+          }
+        },
+        "required": [
+          "registry_family"
+        ]
+      },
+      "then": {
+        "properties": {
+          "member_key_contract": {
+            "properties": {
+              "member_key_expression": {
+                "const": "aggregate_type"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "registry_family": {
+            "const": "reducer_registry"
+          }
+        },
+        "required": [
+          "registry_family"
+        ]
+      },
+      "then": {
+        "properties": {
+          "member_key_contract": {
+            "properties": {
+              "member_key_expression": {
+                "const": "aggregate_type"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "registry_family": {
+            "const": "event_contract_registry"
+          }
+        },
+        "required": [
+          "registry_family"
+        ]
+      },
+      "then": {
+        "properties": {
+          "member_key_contract": {
+            "properties": {
+              "member_key_expression": {
+                "const": "event_type@event_version"
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "digest": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "registry_family": {
+      "enum": [
+        "schema_registry",
+        "aggregate_state_subject_registry",
+        "reducer_registry",
+        "event_contract_registry"
+      ]
+    },
+    "member_key_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profile_id",
+        "member_key_expression",
+        "allowed_characters",
+        "encoding",
+        "unicode_normalization",
+        "ordering",
+        "comparison",
+        "locale_or_case_folding",
+        "duplicate_member_keys"
+      ],
+      "properties": {
+        "profile_id": {
+          "const": "prq-002-member-key-utf8-v1"
+        },
+        "member_key_expression": {
+          "enum": [
+            "schema_id@semantic_version",
+            "aggregate_type",
+            "event_type@event_version"
+          ]
+        },
+        "allowed_characters": {
+          "const": "ascii_lowercase_digits_dot_underscore_colon_hyphen_at"
+        },
+        "encoding": {
+          "const": "utf-8"
+        },
+        "unicode_normalization": {
+          "const": "none"
+        },
+        "ordering": {
+          "const": "canonical_utf8_ascending"
+        },
+        "comparison": {
+          "const": "unsigned_lexicographic_byte_order"
+        },
+        "locale_or_case_folding": {
+          "const": "forbidden"
+        },
+        "duplicate_member_keys": {
+          "const": "reject"
+        }
+      }
+    },
+    "ordered_member": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "member_key",
+        "member_digest"
+      ],
+      "properties": {
+        "member_key": {
+          "type": "string",
+          "pattern": "^[a-z0-9._:@-]+$",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "member_digest": {
+          "$ref": "#/$defs/digest"
+        }
+      }
+    },
+    "profile_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profile_id",
+        "profile_version",
+        "profile_core_schema_id",
+        "profile_core_raw_digest"
+      ],
+      "properties": {
+        "profile_id": {
+          "const": "urn:odeya:canonicalization:prq-002-identity-probe-jcs-0.1"
+        },
+        "profile_version": {
+          "const": "0.1.0"
+        },
+        "profile_core_schema_id": {
+          "const": "urn:odeya:architecture-schema:prq-002-identity-probe-profile:0.1.0"
+        },
+        "profile_core_raw_digest": {
+          "$ref": "#/$defs/digest"
+        }
+      }
+    },
+    "subject_schema_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_id",
+        "schema_digest"
+      ],
+      "properties": {
+        "schema_id": {
+          "const": "urn:odeya:architecture-schema:prq-002-ordered-member-map-commitment-probe:0.1.0"
+        },
+        "schema_digest": {
+          "$ref": "#/$defs/digest"
+        }
+      }
+    },
+    "ordered_member_pairs_digest_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "algorithm",
+        "domain_separator",
+        "canonicalization_profile_ref",
+        "subject_schema_ref",
+        "included_json_pointers",
+        "excluded_json_pointers"
+      ],
+      "properties": {
+        "algorithm": {
+          "const": "sha256"
+        },
+        "domain_separator": {
+          "const": "odeya-prq-002-ordered-member-map-commitment-probe-v1"
+        },
+        "canonicalization_profile_ref": {
+          "$ref": "#/$defs/profile_reference"
+        },
+        "subject_schema_ref": {
+          "$ref": "#/$defs/subject_schema_reference"
+        },
+        "included_json_pointers": {
+          "type": "array",
+          "minItems": 9,
+          "maxItems": 9,
+          "prefixItems": [
+            {
+              "const": "/schema_version"
+            },
+            {
+              "const": "/commitment_kind"
+            },
+            {
+              "const": "/identity_scope"
+            },
+            {
+              "const": "/registry_family"
+            },
+            {
+              "const": "/algorithm"
+            },
+            {
+              "const": "/member_key_contract"
+            },
+            {
+              "const": "/member_count"
+            },
+            {
+              "const": "/ordered_members"
+            },
+            {
+              "const": "/ordered_member_pairs_digest_contract"
+            }
+          ],
+          "items": false
+        },
+        "excluded_json_pointers": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "prefixItems": [
+            {
+              "const": "/ordered_member_pairs_digest"
+            }
+          ],
+          "items": false
+        }
+      }
+    }
+  },
+  "x-odeya-authority-boundary": {
+    "identity_status": "test_only_non_issuable",
+    "registry_admission": false,
+    "membership_proof": false,
+    "history_or_transparency_proof": false,
+    "root_binding": false,
+    "gate_a_authority": false,
+    "runtime_authority": false
+  }
+}

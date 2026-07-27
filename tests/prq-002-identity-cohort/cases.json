@@ -1,0 +1,810 @@
+{
+  "schema_version": "0.1.0",
+  "artifact_class": "prq_002_identity_probe_case_manifest",
+  "artifact_id": "prq-002-identity-case-manifest.synthetic.0001",
+  "status": "test_only_non_issuable_structural_probe",
+  "base_input_path": "tests/prq-002-identity-cohort/fixtures/candidate-cohort.probe.json",
+  "safe_case_count": 1,
+  "minimum_adversarial_cases": 46,
+  "mutation_contract": "exactly_one_declared_raw_or_object_mutation_per_adversarial_case",
+  "cases": [
+    {
+      "id": "safe-complete-identity-cohort",
+      "kind": "safe",
+      "mutation": null,
+      "intent_errors": [],
+      "expected_errors": []
+    },
+    {
+      "id": "reject-input-bom",
+      "kind": "adversarial",
+      "mutation": {
+        "layer": "raw",
+        "op": "prepend_bom"
+      },
+      "intent_errors": [
+        "strict_input_bom"
+      ],
+      "expected_errors": [
+        "strict_input_bom"
+      ]
+    },
+    {
+      "id": "reject-duplicate-object-name-before-mapping",
+      "kind": "adversarial",
+      "mutation": {
+        "layer": "raw",
+        "op": "duplicate_top_level_status"
+      },
+      "intent_errors": [
+        "strict_input_duplicate_key"
+      ],
+      "expected_errors": [
+        "strict_input_duplicate_key"
+      ]
+    },
+    {
+      "id": "reject-trailing-json-value",
+      "kind": "adversarial",
+      "mutation": {
+        "layer": "raw",
+        "op": "append_trailing_object"
+      },
+      "intent_errors": [
+        "strict_input_trailing_data"
+      ],
+      "expected_errors": [
+        "strict_input_trailing_data"
+      ]
+    },
+    {
+      "id": "reject-invalid-utf8",
+      "kind": "adversarial",
+      "mutation": {
+        "layer": "raw",
+        "op": "inject_invalid_utf8"
+      },
+      "intent_errors": [
+        "strict_input_utf8"
+      ],
+      "expected_errors": [
+        "strict_input_utf8"
+      ]
+    },
+    {
+      "id": "reject-lexical-negative-zero",
+      "kind": "adversarial",
+      "mutation": {
+        "layer": "raw",
+        "op": "lexical_negative_zero"
+      },
+      "intent_errors": [
+        "strict_input_negative_zero"
+      ],
+      "expected_errors": [
+        "strict_input_negative_zero"
+      ]
+    },
+    {
+      "id": "reject-literal-nonfinite-number",
+      "kind": "adversarial",
+      "mutation": {
+        "layer": "raw",
+        "op": "lexical_nonfinite"
+      },
+      "intent_errors": [
+        "strict_input_nonfinite"
+      ],
+      "expected_errors": [
+        "strict_input_nonfinite"
+      ]
+    },
+    {
+      "id": "reject-overflow-to-nonfinite-number",
+      "kind": "adversarial",
+      "mutation": {
+        "layer": "raw",
+        "op": "numeric_overflow"
+      },
+      "intent_errors": [
+        "strict_input_nonfinite"
+      ],
+      "expected_errors": [
+        "strict_input_nonfinite"
+      ]
+    },
+    {
+      "id": "reject-escaped-lone-surrogate",
+      "kind": "adversarial",
+      "mutation": {
+        "layer": "raw",
+        "op": "escaped_lone_surrogate"
+      },
+      "intent_errors": [
+        "strict_input_unicode"
+      ],
+      "expected_errors": [
+        "strict_input_unicode"
+      ]
+    },
+    {
+      "id": "reject-base-profile-core-digest-substitution",
+      "kind": "adversarial",
+      "mutation": {
+        "layer": "object",
+        "op": "replace",
+        "path": "/profile/base_profile_core_ref/profile_core_raw_digest",
+        "value": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+      },
+      "intent_errors": [
+        "profile_base_core_binding_mismatch"
+      ],
+      "expected_errors": [
+        "probe_profile_core_instance_mismatch",
+        "profile_base_core_binding_mismatch",
+        "profile_schema_invalid"
+      ]
+    },
+    {
+      "id": "reject-domain-declaring-schema-digest-substitution",
+      "kind": "adversarial",
+      "mutation": {
+        "layer": "object",
+        "op": "replace",
+        "path": "/profile/domain_registry/0/declaring_schema_raw_digest",
+        "value": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+      },
+      "intent_errors": [
+        "profile_domain_registry_mismatch"
+      ],
+      "expected_errors": [
+        "probe_profile_core_instance_mismatch",
+        "profile_domain_registry_mismatch"
+      ]
+    },
+    {
+      "id": "reject-profile-authority-promotion",
+      "kind": "adversarial",
+      "mutation": {
+        "layer": "object",
+        "op": "replace",
+        "path": "/profile/authority_boundary/canonical_identity_issued",
+        "value": true
+      },
+      "intent_errors": [
+        "profile_authority_boundary_mismatch"
+      ],
+      "expected_errors": [
+        "probe_profile_core_instance_mismatch",
+        "profile_authority_boundary_mismatch",
+        "profile_schema_invalid"
+      ]
+    },
+    {
+      "id": "reject-ignored-profile-network-contract-mutation",
+      "kind": "adversarial",
+      "mutation": {
+        "layer": "object",
+        "op": "replace",
+        "path": "/profile/parser_and_canonicalization_contract/network_access",
+        "value": "enabled"
+      },
+      "intent_errors": [
+        "profile_schema_invalid",
+        "probe_profile_core_instance_mismatch"
+      ],
+      "expected_errors": [
+        "probe_profile_core_instance_mismatch",
+        "profile_schema_invalid"
+      ]
+    },
+    {
+      "id": "reject-schema-member-raw-digest-substitution",
+      "kind": "adversarial",
+      "mutation": {
+        "layer": "object",
+        "op": "replace",
+        "path": "/members/structural_state_schema/schema_bytes/byte_digest",
+        "value": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+      },
+      "intent_errors": [
+        "schema_member_raw_binding_mismatch"
+      ],
+      "expected_errors": [
+        "schema_member_digest_mismatch",
+        "schema_member_raw_binding_mismatch"
+      ]
+    },
+    {
+      "id": "reject-schema-member-byte-count-substitution",
+      "kind": "adversarial",
+      "mutation": {
+        "layer": "object",
+        "op": "replace",
+        "path": "/members/structural_event_schema/schema_bytes/byte_count",
+        "value": 3135
+      },
+      "intent_errors": [
+        "schema_member_raw_binding_mismatch"
+      ],
+      "expected_errors": [
+        "schema_member_digest_mismatch",
+        "schema_member_raw_binding_mismatch"
+      ]
+    },
+    {
+      "id": "reject-schema-member-key-substitution",
+      "kind": "adversarial",
+      "mutation": {
+        "layer": "object",
+        "op": "replace",
+        "path": "/members/structural_state_schema/member_key",
+        "value": "urn:odeya:architecture-schema:prq-002-structural-state:0.1.0@0.1.1"
+      },
+      "intent_errors": [
+        "schema_member_key_mismatch"
+      ],
+      "expected_errors": [
+        "commitment_member_set_mismatch",
+        "schema_member_digest_mismatch",
+        "schema_member_key_mismatch",
+        "state_schema_reference_mismatch"
+      ]
+    },
+    {
+      "id": "reject-schema-member-subject-schema-binding-substitution",
+      "kind": "adversarial",
+      "mutation": {
+        "layer": "object",
+        "op": "replace",
+        "path": "/members/structural_state_schema/member_digest_contract/subject_schema_ref/schema_digest",
+        "value": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+      },
+      "intent_errors": [
+        "schema_member_digest_contract_mismatch"
+      ],
+      "expected_errors": [
+        "schema_member_digest_contract_mismatch",
+        "schema_member_digest_mismatch"
+      ]
+    },
+    {
+      "id": "reject-schema-member-digest-substitution",
+      "kind": "adversarial",
+      "mutation": {
+        "layer": "object",
+        "op": "replace",
+        "path": "/members/identity_probe_profile_schema/member_digest",
+        "value": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+      },
+      "intent_errors": [
+        "schema_member_digest_mismatch"
+      ],
+      "expected_errors": [
+        "commitment_member_set_mismatch",
+        "schema_member_digest_mismatch"
+      ]
+    },
+    {
+      "id": "reject-parent-snapshot-inside-schema-member",
+      "kind": "adversarial",
+      "mutation": {
+        "layer": "object",
+        "op": "add",
+        "path": "/members/structural_state_schema/parent_snapshot",
+        "value": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+      },
+      "intent_errors": [
+        "schema_member_shape_mismatch"
+      ],
+      "expected_errors": [
+        "schema_member_schema_invalid",
+        "schema_member_shape_mismatch"
+      ]
+    },
+    {
+      "id": "reject-missing-required-event-member-field",
+      "kind": "adversarial",
+      "mutation": {
+        "layer": "object",
+        "op": "remove",
+        "path": "/members/event/payload_type_id"
+      },
+      "intent_errors": [
+        "event_schema_invalid"
+      ],
+      "expected_errors": [
+        "event_digest_construction_failed",
+        "event_identity_mismatch",
+        "event_schema_invalid"
+      ]
+    },
+    {
+      "id": "reject-extra-unscoped-state-member-field",
+      "kind": "adversarial",
+      "mutation": {
+        "layer": "object",
+        "op": "add",
+        "path": "/members/aggregate_state/unreviewed_note",
+        "value": false
+      },
+      "intent_errors": [
+        "aggregate_state_schema_invalid"
+      ],
+      "expected_errors": [
+        "aggregate_state_schema_invalid"
+      ]
+    },
+    {
+      "id": "reject-state-schema-member-digest-substitution",
+      "kind": "adversarial",
+      "mutation": {
+        "layer": "object",
+        "op": "replace",
+        "path": "/members/aggregate_state/state_schema_ref/schema_member_digest",
+        "value": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+      },
+      "intent_errors": [
+        "state_schema_reference_mismatch"
+      ],
+      "expected_errors": [
+        "state_member_digest_mismatch",
+        "state_schema_reference_mismatch"
+      ]
+    },
+    {
+      "id": "reject-state-schema-byte-digest-substitution",
+      "kind": "adversarial",
+      "mutation": {
+        "layer": "object",
+        "op": "replace",
+        "path": "/members/aggregate_state/state_schema_ref/byte_digest",
+        "value": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+      },
+      "intent_errors": [
+        "state_schema_reference_mismatch"
+      ],
+      "expected_errors": [
+        "state_member_digest_mismatch",
+        "state_schema_reference_mismatch"
+      ]
+    },
+    {
+      "id": "reject-state-aggregate-substitution",
+      "kind": "adversarial",
+      "mutation": {
+        "layer": "object",
+        "op": "replace",
+        "path": "/members/aggregate_state/aggregate_type",
+        "value": "other-aggregate"
+      },
+      "intent_errors": [
+        "state_identity_mismatch"
+      ],
+      "expected_errors": [
+        "state_identity_mismatch",
+        "state_member_digest_mismatch"
+      ]
+    },
+    {
+      "id": "reject-state-reverse-reference-member-digest",
+      "kind": "adversarial",
+      "mutation": {
+        "layer": "object",
+        "op": "add",
+        "path": "/members/aggregate_state/canonical_reducer_ref/reducer_member_digest",
+        "value": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+      },
+      "intent_errors": [
+        "state_reverse_reference_mismatch"
+      ],
+      "expected_errors": [
+        "aggregate_state_schema_invalid",
+        "state_member_digest_mismatch",
+        "state_reverse_reference_mismatch"
+      ]
+    },
+    {
+      "id": "reject-state-member-digest-substitution",
+      "kind": "adversarial",
+      "mutation": {
+        "layer": "object",
+        "op": "replace",
+        "path": "/members/aggregate_state/member_digest",
+        "value": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+      },
+      "intent_errors": [
+        "state_member_digest_mismatch"
+      ],
+      "expected_errors": [
+        "commitment_member_set_mismatch",
+        "reducer_state_reference_mismatch",
+        "state_member_digest_mismatch"
+      ]
+    },
+    {
+      "id": "reject-reducer-state-member-digest-substitution",
+      "kind": "adversarial",
+      "mutation": {
+        "layer": "object",
+        "op": "replace",
+        "path": "/members/reducer/state_subject_ref/state_member_digest",
+        "value": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+      },
+      "intent_errors": [
+        "reducer_state_reference_mismatch"
+      ],
+      "expected_errors": [
+        "reducer_member_digest_mismatch",
+        "reducer_state_reference_mismatch"
+      ]
+    },
+    {
+      "id": "reject-reducer-aggregate-substitution",
+      "kind": "adversarial",
+      "mutation": {
+        "layer": "object",
+        "op": "replace",
+        "path": "/members/reducer/aggregate_type",
+        "value": "other-aggregate"
+      },
+      "intent_errors": [
+        "reducer_identity_mismatch"
+      ],
+      "expected_errors": [
+        "reducer_identity_mismatch",
+        "reducer_member_digest_mismatch"
+      ]
+    },
+    {
+      "id": "reject-reducer-owner-substitution",
+      "kind": "adversarial",
+      "mutation": {
+        "layer": "object",
+        "op": "replace",
+        "path": "/members/reducer/owning_module",
+        "value": "other-module"
+      },
+      "intent_errors": [
+        "reducer_identity_mismatch"
+      ],
+      "expected_errors": [
+        "reducer_identity_mismatch",
+        "reducer_member_digest_mismatch"
+      ]
+    },
+    {
+      "id": "reject-reducer-reverse-reference-member-digest",
+      "kind": "adversarial",
+      "mutation": {
+        "layer": "object",
+        "op": "add",
+        "path": "/members/reducer/accepted_event_refs/0/event_member_digest",
+        "value": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+      },
+      "intent_errors": [
+        "reducer_reverse_reference_mismatch"
+      ],
+      "expected_errors": [
+        "reducer_member_digest_mismatch",
+        "reducer_reverse_reference_mismatch",
+        "reducer_schema_invalid"
+      ]
+    },
+    {
+      "id": "reject-event-envelope-schema-member-digest-substitution",
+      "kind": "adversarial",
+      "mutation": {
+        "layer": "object",
+        "op": "replace",
+        "path": "/members/event/payload_contract/event_envelope_schema_ref/schema_member_digest",
+        "value": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+      },
+      "intent_errors": [
+        "event_schema_reference_mismatch"
+      ],
+      "expected_errors": [
+        "event_member_digest_mismatch",
+        "event_schema_reference_mismatch"
+      ]
+    },
+    {
+      "id": "reject-event-envelope-schema-byte-digest-substitution",
+      "kind": "adversarial",
+      "mutation": {
+        "layer": "object",
+        "op": "replace",
+        "path": "/members/event/payload_contract/event_envelope_schema_ref/byte_digest",
+        "value": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+      },
+      "intent_errors": [
+        "event_schema_reference_mismatch"
+      ],
+      "expected_errors": [
+        "event_member_digest_mismatch",
+        "event_schema_reference_mismatch"
+      ]
+    },
+    {
+      "id": "reject-event-reducer-member-digest-substitution",
+      "kind": "adversarial",
+      "mutation": {
+        "layer": "object",
+        "op": "replace",
+        "path": "/members/event/canonical_reducer_ref/reducer_member_digest",
+        "value": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+      },
+      "intent_errors": [
+        "event_reducer_reference_mismatch"
+      ],
+      "expected_errors": [
+        "event_member_digest_mismatch",
+        "event_reducer_reference_mismatch"
+      ]
+    },
+    {
+      "id": "reject-event-owner-substitution",
+      "kind": "adversarial",
+      "mutation": {
+        "layer": "object",
+        "op": "replace",
+        "path": "/members/event/aggregate_owner/owning_module",
+        "value": "other-module"
+      },
+      "intent_errors": [
+        "event_aggregate_owner_mismatch"
+      ],
+      "expected_errors": [
+        "event_aggregate_owner_mismatch",
+        "event_member_digest_mismatch"
+      ]
+    },
+    {
+      "id": "reject-event-command-reverse-reference-member-digest",
+      "kind": "adversarial",
+      "mutation": {
+        "layer": "object",
+        "op": "add",
+        "path": "/members/event/producer_command_refs/0/command_member_digest",
+        "value": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+      },
+      "intent_errors": [
+        "event_command_reference_mismatch"
+      ],
+      "expected_errors": [
+        "event_command_reference_mismatch",
+        "event_member_digest_mismatch",
+        "event_schema_invalid"
+      ]
+    },
+    {
+      "id": "reject-duplicate-commitment-member-key",
+      "kind": "adversarial",
+      "mutation": {
+        "layer": "object",
+        "op": "replace",
+        "path": "/commitments/schema_registry/ordered_members/1/member_key",
+        "value_from": "/commitments/schema_registry/ordered_members/0/member_key"
+      },
+      "intent_errors": [
+        "commitment_member_keys_not_unique"
+      ],
+      "expected_errors": [
+        "commitment_digest_mismatch",
+        "commitment_member_keys_not_unique",
+        "commitment_member_set_mismatch",
+        "snapshot_commitment_binding_mismatch"
+      ]
+    },
+    {
+      "id": "reject-unsorted-commitment-member-pairs",
+      "kind": "adversarial",
+      "mutation": {
+        "layer": "object",
+        "op": "swap",
+        "path": "/commitments/schema_registry/ordered_members/0",
+        "other_index": 8
+      },
+      "intent_errors": [
+        "commitment_order_mismatch"
+      ],
+      "expected_errors": [
+        "commitment_digest_mismatch",
+        "commitment_member_set_mismatch",
+        "commitment_order_mismatch",
+        "snapshot_commitment_binding_mismatch"
+      ]
+    },
+    {
+      "id": "reject-commitment-member-digest-substitution",
+      "kind": "adversarial",
+      "mutation": {
+        "layer": "object",
+        "op": "replace",
+        "path": "/commitments/reducer_registry/ordered_members/0/member_digest",
+        "value": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+      },
+      "intent_errors": [
+        "commitment_member_set_mismatch"
+      ],
+      "expected_errors": [
+        "commitment_digest_mismatch",
+        "commitment_member_set_mismatch",
+        "snapshot_commitment_binding_mismatch"
+      ]
+    },
+    {
+      "id": "reject-commitment-member-count-substitution",
+      "kind": "adversarial",
+      "mutation": {
+        "layer": "object",
+        "op": "replace",
+        "path": "/commitments/event_contract_registry/member_count",
+        "value": 2
+      },
+      "intent_errors": [
+        "commitment_count_mismatch"
+      ],
+      "expected_errors": [
+        "commitment_count_mismatch",
+        "commitment_digest_mismatch",
+        "snapshot_commitment_binding_mismatch"
+      ]
+    },
+    {
+      "id": "reject-extra-unscoped-commitment-field",
+      "kind": "adversarial",
+      "mutation": {
+        "layer": "object",
+        "op": "add",
+        "path": "/commitments/reducer_registry/unreviewed_note",
+        "value": false
+      },
+      "intent_errors": [
+        "commitment_schema_invalid"
+      ],
+      "expected_errors": [
+        "commitment_schema_invalid",
+        "snapshot_commitment_binding_mismatch"
+      ]
+    },
+    {
+      "id": "reject-heterogeneous-snapshot-commitment",
+      "kind": "adversarial",
+      "mutation": {
+        "layer": "object",
+        "op": "replace",
+        "path": "/snapshots/schema_registry/member_set_commitment/registry_family",
+        "value": "event_contract_registry"
+      },
+      "intent_errors": [
+        "snapshot_commitment_binding_mismatch"
+      ],
+      "expected_errors": [
+        "snapshot_commitment_binding_mismatch",
+        "snapshot_digest_mismatch",
+        "snapshot_schema_invalid"
+      ]
+    },
+    {
+      "id": "reject-full-member-body-in-snapshot",
+      "kind": "adversarial",
+      "mutation": {
+        "layer": "object",
+        "op": "add",
+        "path": "/snapshots/aggregate_state_subject_registry/member_body",
+        "value_from": "/members/aggregate_state"
+      },
+      "intent_errors": [
+        "snapshot_forbidden_member_present"
+      ],
+      "expected_errors": [
+        "snapshot_forbidden_member_present",
+        "snapshot_schema_invalid"
+      ]
+    },
+    {
+      "id": "reject-snapshot-activation-contamination",
+      "kind": "adversarial",
+      "mutation": {
+        "layer": "object",
+        "op": "add",
+        "path": "/snapshots/aggregate_state_subject_registry/activation",
+        "value": {
+          "status": "active"
+        }
+      },
+      "intent_errors": [
+        "snapshot_forbidden_member_present",
+        "snapshot_schema_invalid"
+      ],
+      "expected_errors": [
+        "snapshot_forbidden_member_present",
+        "snapshot_schema_invalid"
+      ]
+    },
+    {
+      "id": "reject-foreign-snapshot-registry-id",
+      "kind": "adversarial",
+      "mutation": {
+        "layer": "object",
+        "op": "replace",
+        "path": "/snapshots/schema_registry/registry_id",
+        "value": "foreign-registry"
+      },
+      "intent_errors": [
+        "snapshot_registry_id_mismatch"
+      ],
+      "expected_errors": [
+        "snapshot_digest_mismatch",
+        "snapshot_registry_id_mismatch"
+      ]
+    },
+    {
+      "id": "reject-mutable-snapshot-predecessor-resolution",
+      "kind": "adversarial",
+      "mutation": {
+        "layer": "object",
+        "op": "replace",
+        "path": "/snapshots/reducer_registry/supersedes_snapshot_ref",
+        "value": {
+          "registry_family": "reducer_registry",
+          "registry_id": "reducer-registry-probe",
+          "version": "0.0.1",
+          "snapshot_digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+          "resolution": "latest"
+        }
+      },
+      "intent_errors": [
+        "snapshot_predecessor_reference_mismatch"
+      ],
+      "expected_errors": [
+        "snapshot_digest_mismatch",
+        "snapshot_predecessor_reference_mismatch",
+        "snapshot_schema_invalid"
+      ]
+    },
+    {
+      "id": "reject-snapshot-digest-substitution",
+      "kind": "adversarial",
+      "mutation": {
+        "layer": "object",
+        "op": "replace",
+        "path": "/snapshots/event_contract_registry/snapshot_digest",
+        "value": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+      },
+      "intent_errors": [
+        "snapshot_digest_mismatch"
+      ],
+      "expected_errors": [
+        "snapshot_digest_mismatch"
+      ]
+    },
+    {
+      "id": "reject-snapshot-digest-contract-profile-core-digest-substitution",
+      "kind": "adversarial",
+      "mutation": {
+        "layer": "object",
+        "op": "replace",
+        "path": "/snapshots/schema_registry/snapshot_digest_contract/canonicalization_profile_ref/profile_core_raw_digest",
+        "value": "sha256:7f7db0559bb8e5e2a82670104a5cb3e90668c8d0fdf13ece518d98d327222c4c"
+      },
+      "intent_errors": [
+        "snapshot_digest_contract_mismatch"
+      ],
+      "expected_errors": [
+        "snapshot_digest_contract_mismatch",
+        "snapshot_digest_mismatch"
+      ]
+    }
+  ],
+  "authority_boundary": {
+    "canonical_identity_issued": false,
+    "registry_admission": false,
+    "engine_contract_root_binding": false,
+    "gate_a_acceptance": false,
+    "runtime_authority": false,
+    "external_effect_authority": false,
+    "publication_authority": false
+  }
+}

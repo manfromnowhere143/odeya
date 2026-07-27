@@ -1,0 +1,404 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:odeya:architecture-schema:prq-002-pure-registry-snapshot-probe:0.1.0",
+  "title": "Odeya PRQ-002A Pure Registry Snapshot Identity Probe",
+  "description": "Closed architecture-only identity probe for one homogeneous registry-family snapshot. It carries a leaf-only commitment and no member bodies, evidence, admission/currentness claim, membership proof, history proof, checkpoint, signature, activation, or runtime binding.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "snapshot_kind",
+    "identity_scope",
+    "registry_family",
+    "registry_id",
+    "version",
+    "supersedes_snapshot_ref",
+    "canonicalization_profile_ref",
+    "member_set_commitment",
+    "snapshot_digest_contract",
+    "snapshot_digest"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.1.0"
+    },
+    "snapshot_kind": {
+      "const": "pure_registry_snapshot"
+    },
+    "identity_scope": {
+      "const": "prq_002_structural_probe_only"
+    },
+    "registry_family": {
+      "$ref": "#/$defs/registry_family"
+    },
+    "registry_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "version": {
+      "$ref": "#/$defs/semantic_version"
+    },
+    "supersedes_snapshot_ref": {
+      "$ref": "#/$defs/nullable_snapshot_reference"
+    },
+    "canonicalization_profile_ref": {
+      "$ref": "#/$defs/profile_reference"
+    },
+    "member_set_commitment": {
+      "$ref": "urn:odeya:architecture-schema:prq-002-ordered-member-map-commitment-probe:0.1.0"
+    },
+    "snapshot_digest_contract": {
+      "$ref": "#/$defs/snapshot_digest_contract"
+    },
+    "snapshot_digest": {
+      "$ref": "#/$defs/digest",
+      "x-odeya-digest-scope": {
+        "kind": "canonical_object_digest_probe",
+        "domain_resolution": "registry_family_selects_exact_probe_domain",
+        "algorithm": "sha256",
+        "profile": "urn:odeya:canonicalization:prq-002-identity-probe-jcs-0.1",
+        "status": "test_only_non_issuable"
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "registry_family": {
+            "const": "schema_registry"
+          }
+        },
+        "required": [
+          "registry_family"
+        ]
+      },
+      "then": {
+        "properties": {
+          "supersedes_snapshot_ref": {
+            "properties": {
+              "registry_family": {
+                "const": "schema_registry"
+              }
+            }
+          },
+          "member_set_commitment": {
+            "properties": {
+              "registry_family": {
+                "const": "schema_registry"
+              }
+            }
+          },
+          "snapshot_digest_contract": {
+            "properties": {
+              "domain_separator": {
+                "const": "odeya-prq-002-schema-registry-snapshot-probe-v1"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "registry_family": {
+            "const": "aggregate_state_subject_registry"
+          }
+        },
+        "required": [
+          "registry_family"
+        ]
+      },
+      "then": {
+        "properties": {
+          "supersedes_snapshot_ref": {
+            "properties": {
+              "registry_family": {
+                "const": "aggregate_state_subject_registry"
+              }
+            }
+          },
+          "member_set_commitment": {
+            "properties": {
+              "registry_family": {
+                "const": "aggregate_state_subject_registry"
+              }
+            }
+          },
+          "snapshot_digest_contract": {
+            "properties": {
+              "domain_separator": {
+                "const": "odeya-prq-002-aggregate-state-registry-snapshot-probe-v1"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "registry_family": {
+            "const": "reducer_registry"
+          }
+        },
+        "required": [
+          "registry_family"
+        ]
+      },
+      "then": {
+        "properties": {
+          "supersedes_snapshot_ref": {
+            "properties": {
+              "registry_family": {
+                "const": "reducer_registry"
+              }
+            }
+          },
+          "member_set_commitment": {
+            "properties": {
+              "registry_family": {
+                "const": "reducer_registry"
+              }
+            }
+          },
+          "snapshot_digest_contract": {
+            "properties": {
+              "domain_separator": {
+                "const": "odeya-prq-002-reducer-registry-snapshot-probe-v1"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "registry_family": {
+            "const": "event_contract_registry"
+          }
+        },
+        "required": [
+          "registry_family"
+        ]
+      },
+      "then": {
+        "properties": {
+          "supersedes_snapshot_ref": {
+            "properties": {
+              "registry_family": {
+                "const": "event_contract_registry"
+              }
+            }
+          },
+          "member_set_commitment": {
+            "properties": {
+              "registry_family": {
+                "const": "event_contract_registry"
+              }
+            }
+          },
+          "snapshot_digest_contract": {
+            "properties": {
+              "domain_separator": {
+                "const": "odeya-prq-002-event-registry-snapshot-probe-v1"
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "digest": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$",
+      "maxLength": 127
+    },
+    "semantic_version": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
+    },
+    "registry_family": {
+      "enum": [
+        "schema_registry",
+        "aggregate_state_subject_registry",
+        "reducer_registry",
+        "event_contract_registry"
+      ]
+    },
+    "snapshot_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "registry_family",
+        "registry_id",
+        "version",
+        "snapshot_digest",
+        "resolution"
+      ],
+      "properties": {
+        "registry_family": {
+          "$ref": "#/$defs/registry_family"
+        },
+        "registry_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "$ref": "#/$defs/semantic_version"
+        },
+        "snapshot_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "resolution": {
+          "const": "exact_immutable_subject"
+        }
+      }
+    },
+    "nullable_snapshot_reference": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "#/$defs/snapshot_reference"
+        }
+      ]
+    },
+    "profile_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profile_id",
+        "profile_version",
+        "profile_core_schema_id",
+        "profile_core_raw_digest"
+      ],
+      "properties": {
+        "profile_id": {
+          "const": "urn:odeya:canonicalization:prq-002-identity-probe-jcs-0.1"
+        },
+        "profile_version": {
+          "const": "0.1.0"
+        },
+        "profile_core_schema_id": {
+          "const": "urn:odeya:architecture-schema:prq-002-identity-probe-profile:0.1.0"
+        },
+        "profile_core_raw_digest": {
+          "$ref": "#/$defs/digest"
+        }
+      }
+    },
+    "subject_schema_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_id",
+        "schema_digest"
+      ],
+      "properties": {
+        "schema_id": {
+          "const": "urn:odeya:architecture-schema:prq-002-pure-registry-snapshot-probe:0.1.0"
+        },
+        "schema_digest": {
+          "$ref": "#/$defs/digest"
+        }
+      }
+    },
+    "snapshot_digest_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "algorithm",
+        "domain_separator",
+        "canonicalization_profile_ref",
+        "subject_schema_ref",
+        "included_json_pointers",
+        "excluded_json_pointers"
+      ],
+      "properties": {
+        "algorithm": {
+          "const": "sha256"
+        },
+        "domain_separator": {
+          "enum": [
+            "odeya-prq-002-schema-registry-snapshot-probe-v1",
+            "odeya-prq-002-aggregate-state-registry-snapshot-probe-v1",
+            "odeya-prq-002-reducer-registry-snapshot-probe-v1",
+            "odeya-prq-002-event-registry-snapshot-probe-v1"
+          ]
+        },
+        "canonicalization_profile_ref": {
+          "$ref": "#/$defs/profile_reference"
+        },
+        "subject_schema_ref": {
+          "$ref": "#/$defs/subject_schema_reference"
+        },
+        "included_json_pointers": {
+          "type": "array",
+          "minItems": 10,
+          "maxItems": 10,
+          "prefixItems": [
+            {
+              "const": "/schema_version"
+            },
+            {
+              "const": "/snapshot_kind"
+            },
+            {
+              "const": "/identity_scope"
+            },
+            {
+              "const": "/registry_family"
+            },
+            {
+              "const": "/registry_id"
+            },
+            {
+              "const": "/version"
+            },
+            {
+              "const": "/supersedes_snapshot_ref"
+            },
+            {
+              "const": "/canonicalization_profile_ref"
+            },
+            {
+              "const": "/member_set_commitment"
+            },
+            {
+              "const": "/snapshot_digest_contract"
+            }
+          ],
+          "items": false
+        },
+        "excluded_json_pointers": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "prefixItems": [
+            {
+              "const": "/snapshot_digest"
+            }
+          ],
+          "items": false
+        }
+      }
+    }
+  },
+  "x-odeya-authority-boundary": {
+    "identity_status": "test_only_non_issuable",
+    "registry_admission": false,
+    "registry_currentness": false,
+    "membership_or_history_proof": false,
+    "checkpoint_or_activation": false,
+    "root_binding": false,
+    "gate_a_authority": false,
+    "runtime_authority": false
+  }
+}

@@ -1,0 +1,317 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:odeya:architecture-schema:prq-002-aggregate-state-member-probe:0.1.0",
+  "title": "Odeya PRQ-002A Aggregate-State Member Identity Probe",
+  "description": "Closed architecture-only input for one synthetic aggregate-state member identity probe. Reverse reducer and event references are logical requirements only; the object is test-only and non-issuable.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "record_kind",
+    "identity_scope",
+    "member_key",
+    "aggregate_type",
+    "state_subject_id",
+    "state_subject_version",
+    "owning_module",
+    "state_schema_ref",
+    "canonical_reducer_ref",
+    "origin_event_refs",
+    "member_digest_contract",
+    "member_digest"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.1.0"
+    },
+    "record_kind": {
+      "const": "aggregate_state_member_identity_probe"
+    },
+    "identity_scope": {
+      "const": "prq_002_structural_probe_only"
+    },
+    "member_key": {
+      "$ref": "#/$defs/identifier"
+    },
+    "aggregate_type": {
+      "$ref": "#/$defs/identifier"
+    },
+    "state_subject_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "state_subject_version": {
+      "$ref": "#/$defs/semantic_version"
+    },
+    "owning_module": {
+      "$ref": "#/$defs/identifier"
+    },
+    "state_schema_ref": {
+      "$ref": "#/$defs/state_schema_member_reference"
+    },
+    "canonical_reducer_ref": {
+      "$ref": "#/$defs/future_reducer_reference"
+    },
+    "origin_event_refs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/future_event_reference"
+      }
+    },
+    "member_digest_contract": {
+      "$ref": "#/$defs/member_digest_contract"
+    },
+    "member_digest": {
+      "$ref": "#/$defs/digest",
+      "x-odeya-digest-scope": {
+        "kind": "canonical_object_digest_probe",
+        "domain": "odeya-prq-002-aggregate-state-member-probe-v1",
+        "algorithm": "sha256",
+        "profile": "urn:odeya:canonicalization:prq-002-identity-probe-jcs-0.1",
+        "status": "test_only_non_issuable"
+      }
+    }
+  },
+  "$defs": {
+    "digest": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$",
+      "maxLength": 127
+    },
+    "semantic_version": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
+    },
+    "state_schema_member_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_member_key",
+        "schema_id",
+        "semantic_version",
+        "byte_digest",
+        "byte_count",
+        "dialect",
+        "root_json_type",
+        "schema_member_digest"
+      ],
+      "properties": {
+        "schema_member_key": {
+          "type": "string",
+          "pattern": "^urn:odeya:architecture-schema:[a-z0-9._:-]+@[0-9]+\\.[0-9]+\\.[0-9]+$",
+          "maxLength": 255
+        },
+        "schema_id": {
+          "type": "string",
+          "pattern": "^urn:odeya:architecture-schema:[a-z0-9._:-]+:[0-9]+\\.[0-9]+\\.[0-9]+$",
+          "maxLength": 255
+        },
+        "semantic_version": {
+          "$ref": "#/$defs/semantic_version"
+        },
+        "byte_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "byte_count": {
+          "type": "integer",
+          "minimum": 2
+        },
+        "dialect": {
+          "const": "https://json-schema.org/draft/2020-12/schema"
+        },
+        "root_json_type": {
+          "const": "object"
+        },
+        "schema_member_digest": {
+          "$ref": "#/$defs/digest"
+        }
+      }
+    },
+    "future_reducer_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "aggregate_type",
+        "reducer_id",
+        "reducer_version",
+        "reference_kind",
+        "resolution_requirement"
+      ],
+      "properties": {
+        "aggregate_type": {
+          "$ref": "#/$defs/identifier"
+        },
+        "reducer_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "reducer_version": {
+          "$ref": "#/$defs/semantic_version"
+        },
+        "reference_kind": {
+          "const": "logical_reverse_reference"
+        },
+        "resolution_requirement": {
+          "const": "future_same_root_exact_member"
+        }
+      }
+    },
+    "future_event_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event_type",
+        "event_version",
+        "reference_kind",
+        "resolution_requirement"
+      ],
+      "properties": {
+        "event_type": {
+          "$ref": "#/$defs/identifier"
+        },
+        "event_version": {
+          "$ref": "#/$defs/semantic_version"
+        },
+        "reference_kind": {
+          "const": "logical_reverse_reference"
+        },
+        "resolution_requirement": {
+          "const": "future_same_root_exact_member"
+        }
+      }
+    },
+    "profile_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profile_id",
+        "profile_version",
+        "profile_core_schema_id",
+        "profile_core_raw_digest"
+      ],
+      "properties": {
+        "profile_id": {
+          "const": "urn:odeya:canonicalization:prq-002-identity-probe-jcs-0.1"
+        },
+        "profile_version": {
+          "const": "0.1.0"
+        },
+        "profile_core_schema_id": {
+          "const": "urn:odeya:architecture-schema:prq-002-identity-probe-profile:0.1.0"
+        },
+        "profile_core_raw_digest": {
+          "$ref": "#/$defs/digest"
+        }
+      }
+    },
+    "subject_schema_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_id",
+        "schema_digest"
+      ],
+      "properties": {
+        "schema_id": {
+          "const": "urn:odeya:architecture-schema:prq-002-aggregate-state-member-probe:0.1.0"
+        },
+        "schema_digest": {
+          "$ref": "#/$defs/digest"
+        }
+      }
+    },
+    "member_digest_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "algorithm",
+        "domain_separator",
+        "canonicalization_profile_ref",
+        "subject_schema_ref",
+        "included_json_pointers",
+        "excluded_json_pointers"
+      ],
+      "properties": {
+        "algorithm": {
+          "const": "sha256"
+        },
+        "domain_separator": {
+          "const": "odeya-prq-002-aggregate-state-member-probe-v1"
+        },
+        "canonicalization_profile_ref": {
+          "$ref": "#/$defs/profile_reference"
+        },
+        "subject_schema_ref": {
+          "$ref": "#/$defs/subject_schema_reference"
+        },
+        "included_json_pointers": {
+          "type": "array",
+          "minItems": 12,
+          "maxItems": 12,
+          "prefixItems": [
+            {
+              "const": "/schema_version"
+            },
+            {
+              "const": "/record_kind"
+            },
+            {
+              "const": "/identity_scope"
+            },
+            {
+              "const": "/member_key"
+            },
+            {
+              "const": "/aggregate_type"
+            },
+            {
+              "const": "/state_subject_id"
+            },
+            {
+              "const": "/state_subject_version"
+            },
+            {
+              "const": "/owning_module"
+            },
+            {
+              "const": "/state_schema_ref"
+            },
+            {
+              "const": "/canonical_reducer_ref"
+            },
+            {
+              "const": "/origin_event_refs"
+            },
+            {
+              "const": "/member_digest_contract"
+            }
+          ],
+          "items": false
+        },
+        "excluded_json_pointers": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "prefixItems": [
+            {
+              "const": "/member_digest"
+            }
+          ],
+          "items": false
+        }
+      }
+    }
+  },
+  "x-odeya-authority-boundary": {
+    "identity_status": "test_only_non_issuable",
+    "product_schema": false,
+    "registry_admission": false,
+    "root_binding": false,
+    "gate_a_authority": false,
+    "runtime_authority": false
+  }
+}
