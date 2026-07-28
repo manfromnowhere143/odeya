@@ -127,6 +127,25 @@ resolution, dependency-closed member instances, cross-object validation,
 accountable review, and operator acceptance remain blocking. PRQ-002 and Gate
 A remain open, and runtime remains unauthorized.
 
+[ADR 0101](decisions/0101-require-raw-number-token-provenance-before-profile-conformance.md)
+now records why host-value-only integer typing cannot support portable profile
+conformance. The retained PRQ-002C micro-suite observes exact staged agreement
+between two source- and language-separated implementations over 61 opaque,
+answer-free synthetic frames: 9 accepted, 52 refused, with 44 suite-gate
+known-bads. Its scope is only the fixed integer-type and
+integer-valued-const frames. It does not prove generic schema-path evaluation,
+number-position semantics, nine-domain framing, ordered-map laws,
+cross-object replay, complete offline resolution, organizational independence,
+or independent-host reproduction.
+
+The `odeya-jcs-0.2` core, evidence, migration, and twelve-resource cohort
+remain byte-for-byte frozen, unissued, and blocked from conformance and
+issuance. PRQ-002C is not an addendum to those bytes. The prospective
+`odeya-jcs-0.3` profile and its required side-by-side successor cohort do not
+exist. Full source-separated successor-profile conformance, accountable
+review, operator acceptance, PRQ-002 closure, Gate A acceptance, and runtime
+authority therefore remain absent.
+
 ### PRQ-003 — Logical payload identity is not bound to schema bytes
 
 Every command contract needs both:

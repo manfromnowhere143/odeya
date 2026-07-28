@@ -23,12 +23,12 @@ security proof.
 
 The exact mutations are in [cases.json](cases.json).
 
-Twenty-one architecture-evidence inventory mutations include nineteen that
-remove each of the seven dedicated workflow commands and each of the twelve
+Twenty-three architecture-evidence inventory mutations include twenty-one that
+remove each of the eight dedicated workflow commands and each of the thirteen
 integrated Foundation checks in turn. Two additional probes insert an
-out-of-body eighth workflow step and rebind the integrated tuple after its
+out-of-body ninth workflow step and rebind the integrated tuple after its
 literal assignment without changing the count. The release checker must reject
-all twenty-one. This binds the published `seven`/`twelve` count boundary to
+all twenty-three. This binds the published `eight`/`thirteen` count boundary to
 executable bytes rather than to prose, a single favored member, or count-only
 validation.
 
@@ -41,15 +41,16 @@ seventh appends a contradictory private/no-remote claim without removing any
 required positive sentence, so positive-phrase stuffing cannot pass. They
 mutate the current contract in memory and must fail for the named boundary.
 
-Five release-script isolation mutations prove that a rehearsal cannot return
+Six release-script isolation mutations prove that a rehearsal cannot return
 to one shared mutable tool cache, cannot run the formal suite without binding
 `TLA2TOOLS_JAR` to the jar it just digest-verified, cannot omit the exact
-PRQ-002A locked-install/recomputation block, cannot substitute a literal
-temporary-directory alias for the interpreter's self-reported path, and cannot
-make a standalone release check use a shared default tool directory. Their
-census and full mutation specifications are pinned. These are structural
-controls over exact scripts; the fresh-clone rehearsal remains the execution
-proof.
+PRQ-002A locked-install/recomputation block and its following PRQ-002C stage,
+cannot remove that PRQ-002C stage while leaving PRQ-002A intact, cannot
+substitute a literal temporary-directory alias for the interpreter's
+self-reported path, and cannot make a standalone release check use a shared
+default tool directory. Their census and full mutation specifications are
+pinned. These are structural controls over exact scripts; the fresh-clone
+rehearsal remains the execution proof.
 
 `scripts/compare_rehearsal_manifests.py --self-test` rejects nineteen drift
 classes, including cross-version substitution, shared-invalid manifest

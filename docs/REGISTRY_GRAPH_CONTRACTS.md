@@ -300,6 +300,29 @@ tranche constructs zero product identities, members, commitments, snapshots,
 roots, or activations; it does not close PRQ-002, accept Gate A, or authorize
 runtime work.
 
+## PRQ-002C bounded raw-number prerequisite
+
+[ADR 0101](decisions/0101-require-raw-number-token-provenance-before-profile-conformance.md)
+records that the frozen `odeya-jcs-0.2` candidate cannot portably distinguish
+integer tokens from integral fraction or exponent tokens after ordinary host
+mapping. Its architecture-only token contract therefore retains raw number
+lexemes and unique instance positions before schema type evaluation.
+
+The bounded PRQ-002C suite retains 61 opaque, answer-free synthetic frames:
+9 accepted and 52 refused. Python and Node implementations with separate
+source and parser strategies agree on the complete ordered staged projection,
+and 44 suite-gate known-bads fire. The two fixed frames exercise only an
+integer-type position and an integer-valued-const position. No generic schema
+resolver, product-domain frame, ordered member map, registry snapshot, member
+digest, cross-object replay, or offline archive is constructed or proved.
+
+This observation does not amend the frozen `odeya-jcs-0.2` core, evidence,
+migration record, or twelve-resource cohort. Those bytes remain unissued and
+blocked from conformance and issuance. The prospective `odeya-jcs-0.3`
+profile and its required reissued cohort do not exist. Source-separated
+full-profile conformance, accountable review, operator acceptance, PRQ-002
+closure, Gate A acceptance, and runtime authority remain false or absent.
+
 ## Work still required before an immutable candidate
 
 The following remain blocking:

@@ -24,10 +24,10 @@ EXCLUDED = {"lifecycle-closure": "dedicated 222/229 statement and 108/111 condit
 # checkpoint, status/handoff row/bullet plus sections, and all current plan units.
 # Numeric truth remains derived from RECORD; contradictory sibling prose cannot pass.
 UNIT_SHA256 = {
-    "readme.current-section": "c153b7be99e6c5f91a3a65eb1256958ff1cda5d4511bbd196bae7e61f87de2fb",
-    "status.current-section": "72996878878b1afef87f6a15f3ae97bc26941b62e1f75a236dd8da6424c5b82f",
+    "readme.current-section": "fe554e1224f07c8ff6aa292b22a9e79fcc64a11c149687b3e388d4793ec35fad",
+    "status.current-section": "4bd540c6e0e9ff47a134b45d0f7d8a55babfa4b17a10e20c7ce56da321bf2fe4",
     "status.guard-row": "291b33dc8f119079cb27ba7d58d3bab36535d2d5112ce99816f5ec961843ba66",
-    "handoff.current-section": "d68daac8923d501243ba85b95384d7bdddd5fe6249415cb9911bce4437e213d5",
+    "handoff.current-section": "05903a5ee196299d100d6d91fac7c6c217bf569fb991cce51cc4f4b56fb69d94",
     "handoff.guard-bullet": "59d641e7e6b78111649ef875fa63f6af98f2a371a65db469aa794f40606361d5",
     "plan.current-units": "5d636b50528833f36ccaf06f7e3a9590654821e255d116fc186f276b81a1a27c",
 }

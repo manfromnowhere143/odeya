@@ -105,24 +105,24 @@ CURRENT_ASSURANCE_UNITS = (
     (
         "docs/ARCHITECTURE_STATUS.md", "## Readiness by Gate A area", None, "table_row", "| G3 security/authority |", None,
         "0f6604e35890637bb7c14a990f53468bc0a2274fa4a4a139e94dd3bb459ba8ed",
-        "2d829a996f0efc208838e51839906ad28bd6fd6c633a5b7a2aa086c5766e6ac8",
+        "e9483445b3fc21e4d814bee52e111daa947401b909362fa7f50dc06233ab1e57",
     ),
     (
         "docs/ARCHITECTURE_STATUS.md", "## Critical blockers", None, "table_row", "| A-016 |", None,
         "c35e7cf3acee32233ab9216f4f317c48761465b490b9a0a36c56f5609931e11b",
-        "40e7b54471d373370c0e6c3137ed130614e85101df2252be91f72e22c3b7e590",
+        "96a0855391063e5c66d05fe17ec1bfd860ebc3f90f1007c90ecde16586f74050",
     ),
     (
         "docs/SESSION_HANDOFF.md", "## What this lane established, and where to put pressure next", None,
         "bullet", "**PRQ-013 now has retained byte-bound/recomputation candidate evidence, not closure.**", 1,
         "96db3a878a2aa66dfb3b33fbcf3466383deb9b5798972afc1c94da70293c1501",
-        "d68daac8923d501243ba85b95384d7bdddd5fe6249415cb9911bce4437e213d5",
+        "05903a5ee196299d100d6d91fac7c6c217bf569fb991cce51cc4f4b56fb69d94",
     ),
     (
         "docs/SESSION_HANDOFF.md", "## Active PRQ-013 candidate — resolve release status from Git", None,
         "paragraph", "Those are structural and bounded-semantic candidate measurements", 7,
         "e0e4fd58d204a82cbcc698f436818e390225733fd52474dd96f9f449d986852c",
-        "3f6f80564ee780feee5553df1ef1d66f2c65f586ca43546c944eb84e81b1a14b",
+        "1fc0a8a64451812b8a9164710b0f1f79d987d51f7d82c8976db4ecd557039e9e",
     ),
     (
         "docs/decisions/0092-bind-human-decisions-through-an-external-assurance-wrapper.md",
@@ -139,12 +139,12 @@ CURRENT_ASSURANCE_UNITS = (
 
 RECOVERY_HANDOFF = "docs/SESSION_HANDOFF.md"
 RECOVERY_HEADING = "## Current repository recovery identity"
-PUBLISHED_BASELINE = "5332239f84ff278815c25d888f115bce22919e34"
-PUBLISHED_BASELINE_TREE = "15cf8bf50d480baa833b86366fcacb3d11ae45d0"
+PUBLISHED_BASELINE = "a79d86b0a5e9581b3bacb57214cf180df3443566"
+PUBLISHED_BASELINE_TREE = "d44e9eb4751b97871aa9c995664782a5d031fb48"
 RECOVERY_INVARIANT_SHA256 = "37b25307a3691eb275d6d457e2643e7400aa09d700b1fdb37ac63170bcb3cf2a"
-# SHA-256 of the normalized 51-line recovery program. Its separately named
+# SHA-256 of the normalized 111-line recovery program. Its separately named
 # cardinality line keeps the single-parent invariant reviewable.
-EXPECTED_RECOVERY_PROGRAM_SHA256 = "1d3f36dd1bb0e9a847fce30d0715f476e0c1c11cd829c91fe88f51230e9b7c4e"
+EXPECTED_RECOVERY_PROGRAM_SHA256 = "6eab35a7689311a7b673cccc7d616ca1e20d0f09468b9f73c826f2eb530b6df0"
 PARENT_CARDINALITY_LINE = 'test "$(git rev-list --parents -n 1 "$HEAD_COMMIT" | awk \'{print NF}\')" = 2'
 EXPECTED_REFUSAL_KEYS = frozenset(
     {
@@ -7666,6 +7666,119 @@ def validate_next_tranche_known_bad(errors: list[str]) -> int:
     return 1
 
 
+def prq_002_closure_errors(value: Any) -> list[str]:
+    errors: list[str] = []
+    if not isinstance(value, dict):
+        return ["PRQ-002 closure must be an object"]
+    closure = value.get("closure")
+    if not isinstance(closure, str):
+        return ["PRQ-002 closure must be a string"]
+    if (
+        value.get("finding_id") != "PRQ-002"
+        or value.get("status") != "candidate_correction_in_progress"
+        or "PRQ-002A" not in closure
+        or "PRQ-002B" not in closure
+        or "PRQ-002C" not in closure
+        or "zero product identities" not in closure
+        or "PRQ-002 remains open" not in closure
+    ):
+        errors.append(
+            "PRQ-002 must expose the bounded A/B/C evidence without claiming "
+            "closure"
+        )
+    if (
+        "61 opaque answer-free synthetic frames" not in closure
+        or "9 accepted, 52 refused" not in closure
+        or "44 suite-gate known-bads" not in closure
+    ):
+        errors.append(
+            "PRQ-002 closure must retain the exact bounded PRQ-002C census"
+        )
+    if (
+        "fixed integer-type and integer-valued-const microframes only"
+        not in closure
+        or "not full successor-profile conformance" not in closure
+    ):
+        errors.append(
+            "PRQ-002 closure must retain the bounded microframe scope and "
+            "full-profile nonclaim"
+        )
+    if (
+        "odeya-jcs-0.2 bytes remain frozen, unissued, and blocked"
+        not in closure
+        or "odeya-jcs-0.3 does not exist" not in closure
+    ):
+        errors.append(
+            "PRQ-002 closure must retain the frozen 0.2 and absent 0.3 "
+            "lineage boundary"
+        )
+    return errors
+
+
+def validate_prq_002_closure_known_bads(errors: list[str]) -> int:
+    try:
+        inventory = load(INVENTORY)
+        baseline = inventory["findings"][1]
+    except (
+        DuplicateKey,
+        IndexError,
+        KeyError,
+        OSError,
+        UnicodeError,
+        ValueError,
+        json.JSONDecodeError,
+    ) as exc:
+        errors.append(f"PRQ-002 closure baseline self-test is unreadable: {exc}")
+        return 0
+    baseline_errors = prq_002_closure_errors(baseline)
+    if baseline_errors:
+        errors.append(
+            "PRQ-002 closure baseline self-test was rejected: "
+            + " | ".join(baseline_errors)
+        )
+        return 0
+
+    cases = (
+        (
+            "census-substitution",
+            "61 opaque answer-free synthetic frames",
+            "raw-number frames",
+            "PRQ-002 closure must retain the exact bounded PRQ-002C census",
+        ),
+        (
+            "full-profile-escalation",
+            "not full successor-profile conformance",
+            "full successor-profile conformance",
+            (
+                "PRQ-002 closure must retain the bounded microframe scope and "
+                "full-profile nonclaim"
+            ),
+        ),
+        (
+            "prospective-profile-invention",
+            "odeya-jcs-0.3 does not exist",
+            "odeya-jcs-0.3 exists",
+            (
+                "PRQ-002 closure must retain the frozen 0.2 and absent 0.3 "
+                "lineage boundary"
+            ),
+        ),
+    )
+    passed = 0
+    for case_id, old, new, expected in cases:
+        candidate = json.loads(json.dumps(baseline))
+        candidate["closure"] = candidate["closure"].replace(old, new, 1)
+        observed = prq_002_closure_errors(candidate)
+        if candidate["closure"] != baseline["closure"] and expected in observed:
+            passed += 1
+        else:
+            errors.append(
+                f"PRQ-002 closure {case_id} known-bad did not fire its "
+                "intended reason"
+            )
+    return passed
+
+
 def prq_013_closure_errors(
     value: Any,
     assurance: Any,
@@ -8162,17 +8275,7 @@ def main() -> int:
             "PRQ-001 must expose the frozen-for-review but unissued profile boundary",
             errors,
         )
-        require(
-            prq002.get("finding_id") == "PRQ-002"
-            and prq002.get("status") == "candidate_correction_in_progress"
-            and "PRQ-002A" in prq002.get("closure", "")
-            and "PRQ-002B" in prq002.get("closure", "")
-            and "zero product identities" in prq002.get("closure", "")
-            and "PRQ-002 remains open" in prq002.get("closure", ""),
-            "PRQ-002 must expose the bounded successor evidence without "
-            "claiming closure",
-            errors,
-        )
+        errors.extend(prq_002_closure_errors(prq002))
         require(
             prq008.get("finding_id") == "PRQ-008"
             and prq008.get("status") == "unresolved_blocking"
@@ -8430,6 +8533,7 @@ def main() -> int:
     )
     next_tranche_known_bads = validate_next_tranche_known_bad(errors)
     prq_009_boundary_known_bads = validate_prq_009_boundary_known_bads(errors)
+    prq_002_closure_known_bads = validate_prq_002_closure_known_bads(errors)
     prq_013_closure_known_bads = validate_prq_013_closure_known_bads(errors)
     errors.extend(assurance_truth_surface_errors())
     assurance_truth_surface_known_bads = (
@@ -8462,6 +8566,7 @@ def main() -> int:
         f"and {context_review_known_bads} context-review known-bads "
         f"and {closure_observation_known_bads} closure-observation known-bads "
         f"and {python_install_known_bads} locked-install known-bads "
+        f"and {prq_002_closure_known_bads} PRQ-002 closure known-bads "
         f"and {prq_009_boundary_known_bads} PRQ-009 boundary known-bads "
         f"and {prq_013_closure_known_bads} PRQ-013 closure known-bads "
         f"and {next_tranche_known_bads} next-tranche known-bad "

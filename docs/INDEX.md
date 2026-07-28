@@ -78,7 +78,9 @@ a concurrent design lane). Entry points by theme:
   [0099](decisions/0099-freeze-prq-002a-structural-identity-probe-layer.md)
   non-issuable structural identity probe, and
   [0100](decisions/0100-introduce-an-unissued-scoped-product-identity-profile-successor.md)
-  scoped unissued product-identity profile successor.
+  scoped unissued product-identity profile successor,
+  [0101](decisions/0101-require-raw-number-token-provenance-before-profile-conformance.md)
+  raw-number token provenance before profile conformance.
 - **Canonical migration wave** —
   [0032](decisions/0032-partition-the-canonical-migration-findings.md)
   partition the findings,
@@ -145,6 +147,11 @@ a concurrent design lane). Entry points by theme:
   — the bounded contract for the scoped, unissued `odeya-jcs-0.2` successor,
   its exact predecessor partition, structural-nonidentity vectors, and
   explicit nonclaims.
+- [PRQ-002C raw-number typing observation](../tests/product-identity-raw-number-typing/README.md)
+  — 61 opaque answer-free synthetic frames, two source- and
+  language-separated staged results, self-attested retained execution
+  receipts, and one exact comparison receipt for the bounded integer-position
+  rule only. It is not full-profile conformance.
 - [`formal/tla/`](../formal/tla/) — the bounded TLA+ models with their safe
   configurations and retained intended-counterexample configurations, run by
   [`formal/tla/check.sh`](../formal/tla/check.sh).
@@ -233,6 +240,11 @@ manifests outrank every prose surface, including this index.
   its [core](../architecture/canonicalization-profile-core-0.2-candidate.json),
   [external evidence](../architecture/canonicalization-profile-0.2-candidate-evidence.json),
   and [migration candidate](../architecture/canonicalization-profile-0.1-to-0.2-migration-candidate.json).
+  [ADR 0101](decisions/0101-require-raw-number-token-provenance-before-profile-conformance.md)
+  and its
+  [architecture-only token contract](../architecture/canonicalization-raw-number-token-contract-v1-candidate.json)
+  block conformance and issuance of those frozen bytes; the prospective
+  `odeya-jcs-0.3` profile does not exist.
 - [SCHEMA_RESOURCE_REISSUE_AND_RETENTION.md](SCHEMA_RESOURCE_REISSUE_AND_RETENTION.md)
   — how schema resources are reissued without mutating predecessors.
 

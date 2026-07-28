@@ -6,11 +6,12 @@ handoff contract, not Gate A acceptance, implementation authorization, or
 scientific evidence; repository-publication authority comes only from the
 named decisions and release contract. The exact-SHA two-ref publication
 activation is complete at the exact public baseline named below. The active
-architecture lane is building the bounded PRQ-002B product-identity/profile
-successor described below, without issuing a profile or constructing a product
-identity. This file cannot contain the commit that contains itself; resolve the
-candidate's exact commit, rehearsal, publication, workflow, and remote replay
-status from Git plus the external subject-bound receipts before acting.
+architecture lane carries the bounded PRQ-002C raw-number prerequisite
+candidate described below, without amending or issuing the frozen PRQ-002B
+profile or constructing a product identity. This file cannot contain the
+commit that contains itself; resolve the candidate's exact commit, rehearsal,
+publication, workflow, and remote replay status from Git plus the external
+subject-bound receipts before acting.
 
 Read this file before changing repository bytes. Then read the detailed
 [Gate A working packet](GATE_A_HANDOFF_WORKING_PACKET_2026-07-15.md), the
@@ -283,9 +284,43 @@ PRQ-013 correction is `86c0f1ed8ba20d74324d64529bf5435a0524f4cd`:
   integers cannot satisfy Boolean authority/nonclaim fields. Structural
   vectors are explicit nonidentity fixtures. No member,
   commitment, snapshot, digest, profile member, root, or activation exists;
-  both profiles remain unissued, source-separated successor conformance and
+  both profiles remain unissued, full successor-profile conformance and
   complete offline resolution remain absent, PRQ-002 and Gate A remain
   blocked, and runtime remains unauthorized.
+- **PRQ-002C now has bounded raw-number microframe evidence, not profile
+  conformance.** ADR 0101 retains an architecture-only raw-token contract and
+  61 opaque, answer-free synthetic frames: 9 accepted and 52 refused. Two
+  source- and language-separated implementations agree on the complete
+  ordered staged projection. The input manifest, Python and Node
+  implementations, retained results, and execution receipts are generation
+  `.0003`; the corrected comparison receipt is `.0004` and the
+  corrected expectation manifest is `.0005`. Fresh recomputation uses two
+  distinct challenges, requires the selected executable's pre/post binding to
+  remain equal, binds the retained input and source manifests once, and
+  reproduces all 61 projections. It does not retain pre/post snapshots of
+  those input or source files. The retained execution receipts are self-attested
+  byte-consistency records, not independently witnessed historical process
+  captures. The stale implementation-causal-binding known-bad refuses only an
+  inconsistent relabel; a coherently relabelled copied output and causal
+  execution origin remain unproved without an independent witness. All 44
+  suite-gate known-bads fire, including exact attacks on
+  JSON type/shape, strict parsing, suite inventory, dependency and source
+  import boundaries, timestamps, comparison, scope, independence,
+  attestation, and authority; they are not semantic-branch source ablations.
+  The fixed frames exercise only integer-type and integer-valued-const
+  positions. They do not prove generic schema-path evaluation,
+  number-position semantics, unique instance-pointer retention, exclusion of
+  dynamically discovered paths, nine-domain framing, ordered-map laws,
+  cross-object replay, complete offline resolution, organizational
+  independence, independent-host reproduction, or full successor-profile
+  conformance. The exact `odeya-jcs-0.2` core, evidence, migration, and
+  twelve-resource cohort remain byte-for-byte frozen, unissued, and blocked
+  from conformance and issuance. The prospective `odeya-jcs-0.3` profile and
+  reissued cohort do not exist. No product identity, PRQ-002 closure, Gate A
+  acceptance, runtime authority, profile issuance authority, or
+  scientific-results publication authority follows. Architecture-repository
+  publication remains separately governed by the exact-commit release
+  contract.
 - **Where to put pressure.** The remaining bulk is the per-case domain-logic
   layer: guards inside per-case checkers that no retained case exercises. They
   close by targeted, ablation-verified cases in the ADR 0071 style — one
@@ -362,34 +397,35 @@ that deserves to carry the mission forward.
 - Canonical workspace: `/Users/danielwahnich/workspace/odeya`; it is currently
   a protected concurrent-work lane on `agent/repository-release`.
 - Active architecture worktree:
-  `/Users/danielwahnich/workspace/odeya-prq-002-product-identity-20260728`
+  `/Users/danielwahnich/workspace/odeya-prq-002-successor-conformance-review-correction-20260728`
 - Active architecture branch:
-  `agent/t0-prq-002-product-identity-20260728`
+  `agent/t0-prq-002-successor-conformance-review-correction-20260728`
 - Exact published baseline observed at recovery:
-  `5332239f84ff278815c25d888f115bce22919e34`
+  `a79d86b0a5e9581b3bacb57214cf180df3443566`
 - Exact published-baseline tree:
-  `15cf8bf50d480baa833b86366fcacb3d11ae45d0`
+  `d44e9eb4751b97871aa9c995664782a5d031fb48`
 - Canonical remote: `https://github.com/manfromnowhere143/odeya` (public;
   created 2026-07-17 under ADR 0047; default branch `main`)
 - Measured remote state on 2026-07-28: `origin/main` and permanent
-  `release/5332239f84ff278815c25d888f115bce22919e34` both resolved to the
-  exact published baseline. Fifteen permanent release refs exist — `a25d026`,
+  `release/a79d86b0a5e9581b3bacb57214cf180df3443566` both resolved to the
+  exact published baseline. Sixteen permanent release refs exist — `a25d026`,
   `f1f25fd`, `08dbad6`, `8ed5d42`, `f4067b5`, `e0187bb`, `34cad10`,
   `86c0f1e`, `36d798e`, `05c2c3b`, `ce962dd`, `f013b2d`, `b02b378`, and
-  `e467bdb`, and `5332239` — and none is ever rewritten, deleted, or recreated,
-  including for a candidate that fails. The exact `5332239` local/remote
+  `e467bdb`, `5332239`, and `a79d86b` — and none is ever rewritten, deleted, or
+  recreated, including for a candidate that fails. The exact `a79d86b`
+  local/remote
   rehearsal manifests
   have SHA-256
-  `766be39136f6fe458f53b9e4c3cd555b121ec3960f16c8bece495c16826341a0`
-  and `41d03bcd12317b279c7f197efa04943b20504bdeed7a7421c697e42128987835`;
+  `a82d41518454d0ec184f86f175a8a74d6e3080cde470694416103b514281fb1e`
+  and `d01cfd0700aaf3f7574a3f5f57f1d18dea4f332a255ec535b58fc02ae203fae`;
   its comparison receipt has SHA-256
-  `91f741d1c139c3e58a68bf79910167d696a3bcc1bdcddbe39427040a0b106e1a`.
+  `8fbf59435cca857e731f1f9bf6d40f28c589c8d48375d5e867c51374b987611c`.
   Candidate governance/check receipts have SHA-256
-  `90d4fd6d639e4a2bef3360c3c97b45eba40aa0cf536708d2aaa427f0c06ceb9e`
-  and `3af43a87e918986dec1797d6e383eac29e5f6e06102611f87cd514df4c17256c`;
+  `9a1f679708266b9d30eb2af209c8f58f24fdbe4d955b6dc030a982d4dd283e47`
+  and `c6df5025e6c9d522c402b30b60929b2b1639229e28f6f9cf85342eb88d395ec1`;
   promotion governance and post-main checks have SHA-256
-  `ad9082a6b97e64ada046dcf65c5ef04cd85f2c82db591d3e4ca603b7deb46042`
-  and `ec69366b018b56571515f08b455d79cdbfef52fb6de9e3a9a992b955f5a78bd5`.
+  `c3b2ddfaeb150a143d3e79e6c6b8e34440fef140ec760d6580af2ca48324702b`
+  and `fe36ff4de88658ff59bb3e02ec976a27d9954ae86fee7fe4de60b44b182c512a`.
   Candidate/main workflow censuses and governance read-backs are retained
   under `/Users/danielwahnich/workspace/odeya-release-evidence/`.
   The remote-main rehearsal and comparison were freshly reproduced on
@@ -433,7 +469,7 @@ Run first:
 
 ```bash
 bash -euo pipefail <<'BASH'
-cd /Users/danielwahnich/workspace/odeya-prq-002-product-identity-20260728
+cd /Users/danielwahnich/workspace/odeya-prq-002-successor-conformance-review-correction-20260728
 source scripts/ci/sanitize-git-environment.sh
 git status --short --branch
 git rev-parse HEAD
@@ -442,8 +478,8 @@ git symbolic-ref --short HEAD
 git fetch --quiet origin main
 git remote -v
 git log --oneline --decorate -5
-PUBLISHED_BASELINE=5332239f84ff278815c25d888f115bce22919e34
-PUBLISHED_TREE=15cf8bf50d480baa833b86366fcacb3d11ae45d0
+PUBLISHED_BASELINE=a79d86b0a5e9581b3bacb57214cf180df3443566
+PUBLISHED_TREE=d44e9eb4751b97871aa9c995664782a5d031fb48
 HEAD_COMMIT="$(git rev-parse HEAD)"
 REMOTE_MAIN="$(git rev-parse origin/main)"
 BASE_RELEASE="$(
@@ -456,8 +492,68 @@ HEAD_RELEASE="$(
     "refs/heads/release/$HEAD_COMMIT" |
     awk '{print $1}'
 )"
+EXPECTED_ACTIVE_TRACKED="$(
+  printf '%s\n' \
+    .github/workflows/architecture.yml \
+    README.md \
+    architecture/architecture-surface-policy.json \
+    architecture/gate-a-prerequisite-closure.json \
+    docs/ARCHITECTURE_STATUS.md \
+    docs/GATE_A_PREREQUISITE_CLOSURE_PLAN_2026-07-16.md \
+    docs/INDEX.md \
+    docs/REGISTRY_GRAPH_CONTRACTS.md \
+    docs/REPOSITORY_RELEASE.md \
+    docs/SESSION_HANDOFF.md \
+    docs/STANDARDS_PROFILE.md \
+    scripts/ci/rehearse-fresh-clone.sh \
+    scripts/validate.py \
+    scripts/validate_gate_a_prerequisites.py \
+    scripts/validate_refusal_attribution.py \
+    scripts/validate_repository_release.py \
+    scripts/validate_suite_guard_coverage.py \
+    tests/repository-release/README.md \
+    tests/repository-release/cases.json
+)"
+EXPECTED_ACTIVE_UNTRACKED="$(
+  printf '%s\n' \
+    architecture/canonicalization-raw-number-token-contract-v1-candidate.json \
+    architecture/canonicalization-raw-number-token-contract.schema.json \
+    docs/decisions/0101-require-raw-number-token-provenance-before-profile-conformance.md \
+    scripts/validate_product_identity_raw_number_typing.py \
+    tests/product-identity-raw-number-typing/README.md \
+    tests/product-identity-raw-number-typing/cases.json \
+    tests/product-identity-raw-number-typing/input-manifest.json \
+    tests/product-identity-raw-number-typing/manifest.json \
+    tests/product-identity-raw-number-typing/node/package-lock.json \
+    tests/product-identity-raw-number-typing/node/package.json \
+    tests/product-identity-raw-number-typing/node/runner.mjs \
+    tests/product-identity-raw-number-typing/node/source-manifest.json \
+    tests/product-identity-raw-number-typing/python/dependency-lock.json \
+    tests/product-identity-raw-number-typing/python/runner.py \
+    tests/product-identity-raw-number-typing/python/source-manifest.json \
+    tests/product-identity-raw-number-typing/results/comparison-receipt.json \
+    tests/product-identity-raw-number-typing/results/node-execution-receipt.json \
+    tests/product-identity-raw-number-typing/results/node-recursive-descent.json \
+    tests/product-identity-raw-number-typing/results/python-execution-receipt.json \
+    tests/product-identity-raw-number-typing/results/python-stdlib.json \
+    tests/product-identity-raw-number-typing/vectors.json
+)"
+OBSERVED_ACTIVE_TRACKED="$(
+  {
+    git diff --name-only
+    git diff --cached --name-only
+  } | LC_ALL=C sort -u
+)"
+OBSERVED_ACTIVE_UNTRACKED="$(
+  git ls-files --others --exclude-standard | LC_ALL=C sort -u
+)"
+if test -n "$OBSERVED_ACTIVE_TRACKED$OBSERVED_ACTIVE_UNTRACKED"; then
+  test "$HEAD_COMMIT" = "$PUBLISHED_BASELINE"
+  test "$OBSERVED_ACTIVE_TRACKED" = "$EXPECTED_ACTIVE_TRACKED"
+  test "$OBSERVED_ACTIVE_UNTRACKED" = "$EXPECTED_ACTIVE_UNTRACKED"
+fi
 test "$(git symbolic-ref --short HEAD)" = \
-  agent/t0-prq-002-product-identity-20260728
+  agent/t0-prq-002-successor-conformance-review-correction-20260728
 test "$(git remote)" = origin
 test "$(git remote get-url origin)" = \
   https://github.com/manfromnowhere143/odeya.git
@@ -485,10 +581,15 @@ git -C /Users/danielwahnich/workspace/odeya status --short --branch
 BASH
 ```
 
+The dirty pre-commit state is therefore an exact 40-path candidate: 19 tracked
+paths and 21 untracked paths. The recovery program fails if either partition
+gains, loses, or exchanges one path. A clean direct-child `HEAD` is the only
+post-commit alternative; the program does not permit a dirty descendant.
+
 Expected invariants:
 
 - the active architecture branch is
-  `agent/t0-prq-002-product-identity-20260728`;
+  `agent/t0-prq-002-successor-conformance-review-correction-20260728`;
 - the canonical worktree remains on `agent/repository-release` with Daniel's
   protected UI/UX changes untouched;
 - the exact published baseline and tree remain at their permanent
@@ -500,7 +601,8 @@ Expected invariants:
 - both no-bypass rulesets and the exact account policy pass live governance
   verification;
 - the only remote is the canonical public `origin` created under ADR 0047;
-- no unexpected worktree path is dirty; and
+- no worktree path is dirty beyond the exact protected and quarantined
+  inventories below; and
 - Daniel's protected UI/UX lane remains outside architecture/release staging.
 
 If any invariant differs, stop and establish ownership and lineage before
@@ -526,6 +628,36 @@ absent from its diff. In particular,
 not inserted into that index by these architecture tranches. Do not mistake
 the absent index edits for absent ADRs or silently take ownership of Daniel's
 bytes.
+
+### Quarantined canonical-worktree collision
+
+Recovery on 2026-07-28 found additional untracked PRQ-shaped bytes in the
+canonical worktree. Its `agent/repository-release` HEAD is
+`4486a721eddcfa93ea87df8f8d0f411b42632838`, an ancestor 105 commits behind
+the published `a79d86b` baseline. The following paths are quarantined there:
+
+- untracked: `schemas/aggregate-state-subject-record.schema.json`
+- untracked: `schemas/event-contract-record.schema.json`
+- untracked: `schemas/reducer-contract-record.schema.json`
+- untracked: `schemas/schema-resource-record.schema.json`
+- untracked:
+  `tests/product-identity-raw-number-typing/results/comparison-receipt.json`
+- untracked:
+  `tests/product-identity-raw-number-typing/results/node-execution-receipt.json`
+- untracked:
+  `tests/product-identity-raw-number-typing/results/node-recursive-descent.json`
+- untracked:
+  `tests/product-identity-raw-number-typing/results/python-execution-receipt.json`
+- untracked:
+  `tests/product-identity-raw-number-typing/results/python-stdlib.json`
+
+All nine overlap current-path names but differ byte-for-byte from the active
+lane. They are not predecessor evidence, candidate inputs, or an alternate
+source of truth. Only the isolated successor-conformance worktree and branch
+named above is the architecture writer. Do not copy, merge, stage, edit,
+normalize, or delete the quarantined canonical bytes. Before commit or
+publication, re-run both worktree inventories; any new path, byte overlap, or
+ownership change freezes mutation again.
 
 ## Published C5 compatibility correction
 
@@ -648,7 +780,7 @@ or Gate A acceptance. All `HDA-CTX-001` through `HDA-CTX-016` findings remain
 `changed_candidate_pending_accountable_closure_review`.
 
 The measured candidate inventory is 132 schemas and 884 shared-manifest cases
-(232 valid and 652 known-bad), with 16 isolated suites and 12
+(232 valid and 652 known-bad), with 16 isolated suites and 13
 architecture-evidence checks. The frozen predecessor canonical audit covers
 120 schemas and 216 fixtures; all 158 predecessor retained
 cross-field rule cases isolate their declared rule. The generalized guard
@@ -853,6 +985,60 @@ Their branch names, worktree paths, counts, blockers, and publication statements
 are historical observations for their named bytes. They do not override the
 current recovery identity, hard boundary, or next mission recorded above and
 below.
+
+### 2026-07-28 freeze recovery and PRQ-002C evidence correction
+
+The interrupted writer was
+`/Users/danielwahnich/workspace/odeya-prq-002-successor-conformance-20260728`
+on `agent/t0-prq-002-successor-conformance-20260728`. Its unpublished clean
+commit `dcc9a22ca64c6f21abf1eb17a95083e9a37ef13a` was one direct child of
+published `a79d86b0a5e9581b3bacb57214cf180df3443566`. The pre-amend commit
+`a97471016b58de8484bd68a0c93c92180a577f1e` had complete local rehearsal
+evidence, but its tree differs in `README.md` and its evidence cannot transfer.
+The first exact-`dcc9a22` rehearsal failed at `formal-models` after local disk
+exhaustion. A second run reached the 16-suite/1,184-guard mutation audit before
+the host restart and never emitted a terminal result. Recovery therefore
+resumed no internal stage and inferred no pass.
+
+The complete pre-recovery Git and dirty-lane state is preserved outside the
+repository at
+`/Users/danielwahnich/workspace/odeya-recovery-20260728-freeze/`, created
+2026-07-28T22:21:48+03:00. The original branch remains unchanged. Its
+disk-failure receipt and the later
+operator-stopped receipt remain in separately named subject-bound directories
+under `/Users/danielwahnich/workspace/odeya-release-evidence/`; neither is
+release authority.
+
+Read-only review then reproduced one evidence-language defect: copying the
+Python result, relabelling it as Node, and recomputing the public causal-binding
+formula yields the retained Node result exactly. The old known-bad refused only
+the stale binding left by an inconsistent relabel; it did not prove coherent
+peer-output substitution refusal or causal execution origin. The corrected
+direct-child lane named in the current recovery identity therefore:
+
+- renames that known-bad and guard to state the measured consistency property;
+- reissues private expectations as `.0005` and the bound comparison as
+  `.0004`;
+- records the coherent-relabel and historical-witness limitations in
+  `README.md`, ADR 0101, the suite README, and this handoff; and
+- re-pins the existing exact README, handoff, and recovery truth surfaces.
+
+The recovery correction changes no raw-number vector, parser, retained result,
+execution receipt, raw-token contract, frozen `odeya-jcs-0.2` byte, schema
+inventory, Gate A authority bit, runtime surface, or deployment surface. The
+enclosing corrected commit cannot name itself recursively; resolve it from Git
+and require one sole parent equal to the published baseline. No GitHub write,
+runtime action, deployment, commercial action, or research publication was
+authorized merely by this correction.
+
+Recovery state is `SAFE TO RESUME` until the exact corrected commit has a
+complete local rehearsal. It becomes `CLOSED` only after the permanent
+`release/<sha>` ref, four candidate workflows and ten jobs, same-SHA `main`,
+four new post-main workflows and ten jobs, credential-free remote-main
+rehearsal/comparison, and final exact-ref/governance read-back all settle for
+that same SHA. The exact next action is the first unmet step in
+[Reproduce the current exact `HEAD`](#reproduce-the-current-exact-head) and
+the ADR 0091 publication sequence; no predecessor receipt is reusable.
 
 ## What the repository-release tranche established
 
@@ -1421,14 +1607,14 @@ directory, outside both the Git worktree and temporary storage:
 
 ```bash
 bash -euo pipefail <<'BASH'
-cd /Users/danielwahnich/workspace/odeya-prq-002-product-identity-20260728
+cd /Users/danielwahnich/workspace/odeya-prq-002-successor-conformance-review-correction-20260728
 source scripts/ci/sanitize-git-environment.sh
 commit="$(git rev-parse HEAD)"
 evidence="/Users/danielwahnich/workspace/odeya-release-evidence/$commit"
 test ! -e "$evidence"
 bash scripts/ci/rehearse-fresh-clone.sh \
   "$commit" \
-  /Users/danielwahnich/workspace/odeya-prq-002-product-identity-20260728 \
+  /Users/danielwahnich/workspace/odeya-prq-002-successor-conformance-review-correction-20260728 \
   "$evidence" \
   local
 python3 - "$evidence" "$commit" <<'PY'
@@ -1642,26 +1828,38 @@ proved. The other 20 are explicitly unproved, not silently covered.
 
 ## Next architecture mission, in dependency order
 
-1. Resolve the current `HEAD` from Git. If it is an exact ordinary
-   single-parent direct-child candidate of published baseline
-   `5332239f84ff278815c25d888f115bce22919e34`, finish that exact candidate's
-   full ADR 0091 sequence before adding any more bytes: local rehearsal,
-   permanent `release/<sha>`, four candidate workflows and ten jobs, same-SHA
-   `main`, four new post-main workflows and ten jobs, remote-main
-   rehearsal/comparison, and final exact-ref/governance read-back. If `HEAD` is
-   still the baseline, complete only the bounded PRQ-002B child defined next.
-   Never redo a permanent release ref or let a descendant inherit evidence.
-2. Complete the exact PRQ-002B candidate as an unissued architecture tranche:
-   retain the 12-resource cohort, nine product identity domains, scoped
-   `odeya-jcs-0.2` core/evidence/migration chain, frozen 120-resource
-   predecessor, explicit nonidentity structural vectors, and adversarial Gate
-   cross-check. After publication and settlement, continue PRQ-002 only through
-   source-separated successor conformance, complete offline resolution,
-   dependency-closed product members and registries, cross-object replay,
-   accountable review, and the operator's exact decision. Never promote a
-   probe or structural vector into a product identity. Do not issue a profile,
-   bind an `EngineContractRoot`, construct an activation, imply runtime, or
-   mark PRQ-002 resolved.
+1. Resolve the current `HEAD` from Git. The published baseline is
+   `a79d86b0a5e9581b3bacb57214cf180df3443566`. If `HEAD` is that baseline and
+   the expected PRQ-002C scope is dirty, finish only its exact validation and
+   context-isolated read-only technical review, explicitly not organizational
+   independence or accountable review, then create one ordinary single-parent
+   direct child.
+   If `HEAD` is already that exact child, add no further architecture bytes:
+   finish its full ADR 0091 sequence—local rehearsal, permanent
+   `release/<sha>`, four candidate workflows and ten jobs, same-SHA `main`,
+   four new post-main workflows and ten jobs, remote-main
+   rehearsal/comparison, and final exact-ref/governance read-back. Never redo
+   a permanent release ref or let a descendant inherit evidence.
+2. Do not expand the PRQ-002C candidate while its exact commit is unsettled.
+   Its bounded architecture-only scope is the raw number-token contract; 61
+   opaque answer-free frames with 9 accepted and 52 refused outcomes; Python
+   and Node `.0003` source-separated complete staged results; `.0003`
+   fresh-challenge self-attested execution receipts; `.0004` corrected exact
+   comparison; `.0005` corrected expectations; and all 44 evidence/authority
+   suite-gate known-bads. The stale causal-binding attack proves only refusal
+   of an inconsistent relabel; coherent copied-output substitution and causal
+   execution origin remain unproved without an independent witness.
+   Preserve every `odeya-jcs-0.2` core, evidence, migration, and
+   twelve-resource cohort byte unchanged and unissued; do not create or imply
+   the prospective `odeya-jcs-0.3` profile in this tranche. After exact
+   publication and settlement, the next smallest PRQ-002 unit is the
+   non-product prehash two-member schema-registry replay, followed by a
+   side-by-side 0.3 profile/reissue, full source-separated conformance,
+   complete offline resolution, dependency-closed product members and
+   registries, cross-object replay, accountable review, and the operator's
+   exact decision. Never promote a probe or structural vector into a product
+   identity. Do not issue a profile, bind an `EngineContractRoot`, construct
+   an activation, imply runtime, or mark PRQ-002 resolved.
 3. Preserve the completed eleventh bounded attack round over exact reissued
    root
    `sha256:97062b38a14d5bdccf5ad87c547c62388e7cd82256a445f631856aecee54e1d9`,
@@ -1743,7 +1941,7 @@ the gate.
 
 ## The published surface is part of the evidence
 
-The current published baseline is `5332239…`; its exact local and remote
+The current published baseline is `a79d86b…`; its exact local and remote
 rehearsals, four-workflow/ten-job candidate and post-main censuses, comparison,
 and governance read-backs are retained externally under the evidence root.
 Historical first-activation baseline `f1f25fd…` introduced the ADR 0091 hook,

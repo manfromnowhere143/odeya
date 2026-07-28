@@ -212,6 +212,14 @@ readonly PRQ002_NPM_CLI
   --node-executable "$PRQ002_NODE_BIN" \
   2>&1 | tee -a artifacts/rehearsal/foundation.log
 rm -rf -- "$CLONE/tests/prq-002-identity-cohort/node/node_modules"
+
+CURRENT_STAGE="prq-002c-raw-number-typing"
+.venv-architecture/bin/python \
+  scripts/validate_product_identity_raw_number_typing.py \
+  --recompute-all \
+  --python-executable "$PRQ002_PYTHON_BIN" \
+  --node-executable "$PRQ002_NODE_BIN" \
+  2>&1 | tee -a artifacts/rehearsal/foundation.log
 record_stage foundation passed
 
 # The cheap gate inside validate.py binds the guard-coverage record to the

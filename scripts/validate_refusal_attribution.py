@@ -173,6 +173,11 @@ REGISTRY: dict[str, tuple[str, Any, Any]] = {
         scalar_intent_and_inventory("expected_errors"),
         None,
     ),
+    "product-identity-raw-number-typing": (
+        "cases.json",
+        intent_and_inventory("expected_errors"),
+        None,
+    ),
     "prq-009-assignment-order": (
         "cases.json",
         substring("expected_refusal_contains"),

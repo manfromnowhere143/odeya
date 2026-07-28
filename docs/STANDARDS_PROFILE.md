@@ -151,6 +151,8 @@ RFC 8785 is necessary but not sufficient. Odeya's profile must:
 
 - reject duplicate object keys before parsing;
 - allow only valid UTF-8 and declare that Unicode is not normalized silently;
+- retain raw number-token provenance and the unique instance position before
+  host numeric conversion or schema type evaluation;
 - sort and encode exactly as JCS requires;
 - reject `NaN`, positive/negative infinity, and negative zero ambiguity;
 - represent exact scientific decimals as objects containing decimal string, unit, precision/scale, and semantic type;
@@ -161,6 +163,26 @@ RFC 8785 is necessary but not sufficient. Odeya's profile must:
 - include cross-language conformance vectors for numbers, Unicode, key ordering, time, missingness, and nested references.
 
 Changing the profile creates a new digest namespace. Existing bytes are never reinterpreted under a newer profile.
+
+Draft 2020-12 treats `integer` as a mathematical-value classification, so
+integral fraction and exponent tokens can satisfy `type: integer`. RFC 8785
+then serializes a finite binary64 value and cannot recover whether the input
+token was `1`, `1.0`, or `1e0`. [ADR 0101](decisions/0101-require-raw-number-token-provenance-before-profile-conformance.md)
+therefore proposes an Odeya-owned lexical overlay before mapping: an
+integer-type or integer-valued-const position admits only an integer token in
+the exact admissible range, and every lexical negative zero is refused. This
+is a declared Odeya restriction, not a claim that JSON Schema or JCS provides
+it.
+
+The retained PRQ-002C evidence is a bounded observation over 61 opaque,
+answer-free synthetic integer-position frames: two source- and
+language-separated implementations agree on 9 admissions and 52 refusals,
+and 44 suite-gate known-bads fire. It does not establish generic schema-path
+evaluation, number-position semantics, full RFC 8785 correctness, nine-domain
+framing, organizational independence, or full successor-profile conformance.
+The frozen `odeya-jcs-0.2` candidate remains unissued and blocked from
+conformance and issuance. The prospective `odeya-jcs-0.3` profile does not
+exist.
 
 ## JSON Schema validation profile
 

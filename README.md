@@ -2,7 +2,7 @@
 
 Odeya is a private research engine that turns a thesis into a governed, replayable chain from question to evidence to warranted claim.
 
-> **Current state — 2026-07-27:** architecture foundation only. No executable research engine, autonomous-science capability, production deployment, or automatic publication is claimed. Runtime work remains blocked until the architecture gates are accepted.
+> **Current state — 2026-07-28:** architecture foundation only. No executable research engine, autonomous-science capability, production deployment, or automatic publication is claimed. Runtime work remains blocked until the architecture gates are accepted.
 
 The provisional web address is `odeya.danielwahnich.dev`. The apex domain, company, trademark, and scientific-publication decisions remain separate.
 
@@ -24,33 +24,40 @@ Question → contract → evidence → independent verification → bounded clai
 
 ```mermaid
 flowchart TB
-    subgraph R["ODEYA · PRIVATE RESEARCH ENGINE"]
+    subgraph F["ARCHITECTURE EVIDENCE · PUBLISHED PREDECESSOR + CURRENT RELEASE SUBJECT"]
         direction LR
-        C["1 · CONTRACT<br/>thesis · frozen protocol<br/>authority · rights · budget"]
-        W["2 · EXPLORE<br/>search · plan · code<br/>experiment · critique"]
-        E["3 · EVIDENCE<br/>inputs · artifacts<br/>environment · cost · lineage"]
-        K[("CANONICAL SCIENTIFIC STATE<br/>append-only event + evidence ledger<br/>deterministic replay")]
-        V["4 · VERIFY<br/>Independent verification<br/>replication · falsifiers · replay"]
-        D["5 · ADJUDICATE<br/>rule-bound bounded outcome"]
-        L["6 · LEARN<br/>Grounded memory<br/>transfer · failure · unknowns"]
-        C --> W --> E --> K --> V --> D -->|every outcome| L
+        F4["PUBLISHED PREDECESSOR<br/>a79d86b release foundation<br/>remotely replayed"]
+        F1["CURRENT PRQ-002C RELEASE SUBJECT<br/>one direct-child commit · locally rehearsed at closeout<br/>132 schemas · 884 cases<br/>16 suites · 13 evidence checks<br/>7 TLA+ models · 30 controls<br/>remote settlement resolved externally<br/>PRQ-009 / PRQ-013 blocked"]
+        F4 --> F1
+    end
+
+    GA{"GATE A · BLOCKED<br/>operator architecture acceptance absent<br/>runtime · application · infrastructure<br/>and deployment unauthorized"}
+    F1 --> GA
+
+    subgraph R["ODEYA · PRIVATE RESEARCH ENGINE · PROPOSED CONTROL ARCHITECTURE · NOT IMPLEMENTED"]
+        direction TB
+        C["1 · CONTRACT + 2 · COMPILE<br/>canonical ResearchMissionSpec<br/>thesis · protocol · falsifiers · authority<br/>immutable protocol + compiled run manifest"]
+        K[("3 · ISOLATED EXECUTION + 4 · EVIDENCE<br/>search · plan · code · experiment<br/>content-addressed artifacts · claim provenance<br/>CANONICAL SCIENTIFIC STATE<br/>append-only event + evidence ledger · deterministic replay")]
+        V["5 · VERIFY + 6 · ADJUDICATE + 7 · LEARN<br/>Independent verification in a separate isolation boundary<br/>replication · falsifiers · replay · bounded outcome<br/>RESEARCH COCKPIT · disposable projections<br/>Grounded memory: failure · correction · unknowns<br/>never canonical authority"]
+        C --> K --> V
     end
 
     subgraph X["RELEASE PATH · adjudicated candidate only · one governed external effect · separate from scientific truth"]
         direction LR
         RC["Release candidate"]
         H{"Human release decision<br/>assurance wrapper required<br/>PRQ-013 migration blocked"}
-        G["Exact single-use grant"]
-        O["Bounded external effect"]
-        S["Independent observation<br/>applied · not applied · unknown"]
+        G["Exact single-use grant<br/>→ bounded external effect<br/>→ Independent observation<br/>applied · not applied · unknown"]
         N["Retained · not released"]
         RC --> H
-        H -->|authorized| G --> O --> S
+        H -->|authorized| G
         H -->|denied| N
     end
 
+    GA -.-> C
     R ~~~ X
 
+    classDef retained fill:#ECFDF5,stroke:#047857,stroke-width:1.5px,color:#064E3B
+    classDef blocked fill:#9F1239,stroke:#881337,stroke-width:2px,color:#FFFFFF
     classDef core fill:#FFFFFF,stroke:#0F172A,stroke-width:1.5px,color:#0F172A
     classDef evidence fill:#E0F2FE,stroke:#0369A1,stroke-width:1.5px,color:#0C4A6E
     classDef state fill:#082F49,stroke:#0369A1,stroke-width:1.5px,color:#FFFFFF
@@ -58,18 +65,31 @@ flowchart TB
     classDef release fill:#FFF7ED,stroke:#9A3412,stroke-width:1.5px,color:#7C2D12
     classDef releaseGate fill:#9F1239,stroke:#881337,stroke-width:1.5px,color:#FFFFFF
     classDef quiet fill:#F1F5F9,stroke:#64748B,stroke-width:1px,color:#334155
-    class C,W,V,L core
-    class E evidence
+    class F1,F4 retained
+    class GA blocked
+    class C,V core
     class K state
-    class D decision
-    class RC,G,O,S release
+    class RC,G release
     class H releaseGate
     class N quiet
+    style F fill:#F0FDF4,stroke:#047857,stroke-width:2px
     style R fill:#F8FAFC,stroke:#0F172A,stroke-width:2px
     style X fill:#FFFBEB,stroke:#9A3412,stroke-width:2px
 ```
 
-This is the intended control architecture, not a runtime screenshot. Models may propose, search, code, analyze, and criticize. They cannot grant themselves authority, verify their own claims, convert consensus into evidence, or treat a provider response as external truth.
+The green band distinguishes the published `a79d86b` predecessor from the
+current one-direct-child PRQ-002C release subject. At this 2026-07-28 closeout
+the subject is committed and locally fresh-clone rehearsed. A tracked file
+cannot contain the hash of the commit that contains it, and external settlement
+can change after its bytes are fixed; resolve the exact `HEAD`, tree, local
+evidence manifest, permanent release ref, public `main`, and remote replay from
+Git and subject-bound external receipts before acting. The blocked gate
+prevents architecture bytes from being mistaken for a built engine. The lower
+engine is the proposed control architecture, not a runtime screenshot, and the
+release path remains separately governed. Models may propose, search, code,
+analyze, and criticize. They cannot grant themselves authority, verify their
+own claims, convert consensus into evidence, or treat a provider response as
+external truth.
 
 ## Five operating laws
 
@@ -95,7 +115,7 @@ They are requirements sources and bounded proof missions—not runtime dependenc
 
 The current retained foundation contains 132 Draft 2020-12 schemas, 884
 shared-manifest cases (232 valid and 652 known-bad), 16 isolated contract
-suites, 12 architecture-evidence checks, and 7 bounded safe TLA+ models with
+suites, 13 architecture-evidence checks, and 7 bounded safe TLA+ models with
 30 mutation controls. These counts are bound to the validator run that
 measures them; the README previously stated four of them as fact while all four
 had drifted.
@@ -123,6 +143,34 @@ structural vectors are explicitly nonidentity fixtures. No product member,
 commitment, snapshot, canonical digest, profile member, root, or activation was
 constructed; both profiles remain unissued, PRQ-002 remains open, Gate A
 remains blocked, and runtime remains unauthorized.
+
+[ADR 0101](docs/decisions/0101-require-raw-number-token-provenance-before-profile-conformance.md)
+records the PRQ-002C interoperability blocker and one bounded observation of
+the proposed raw-token rule. Two source- and language-separated implementations
+agree on the complete staged projection for 61 opaque, answer-free synthetic
+integer-position frames: 9 are accepted and 52 are refused, and 44
+suite-gate known-bads fire. The input, implementation, and execution artifacts
+are generation `.0003`; the corrected comparison is `.0004` and the corrected
+expectation manifest is `.0005`. The execution receipts are fresh-challenge,
+self-attested byte-consistency records, not independently witnessed historical
+process captures. The stale implementation-causal-binding gate refuses an
+inconsistent relabel only; it does not prove refusal of a coherently relabelled
+copy or causal execution origin. The 44 gate attacks exercise exact JSON types
+and shapes, strict parsing, suite inventory, dependency and source-import
+boundaries, timestamps, comparison, scope, independence, attestation, and
+authority; they are not semantic-branch source ablations. This is evidence
+only for the fixed integer-type and
+integer-valued-const microframes. It does not establish generic schema-path
+evaluation, number-position semantics, unique instance-pointer retention,
+exclusion of dynamically discovered paths, nine-domain framing, ordered-map
+laws, cross-object replay, an offline registry, organizational independence,
+independent-host reproduction, or full successor-profile conformance. The
+frozen `odeya-jcs-0.2` bytes remain unissued and blocked from conformance and
+issuance; the prospective `odeya-jcs-0.3` profile does not exist. No product
+identity, PRQ-002 closure, Gate A acceptance, runtime authority, or publication
+authority follows from this evidence. Architecture-repository publication
+remains separately governed by the exact-commit release contract; profile
+issuance and scientific-results publication remain unauthorized.
 
 The PRQ-013 T0 byte-bound/recomputation tranche now retains candidate evidence
 under [ADR 0095](docs/decisions/0095-reissue-human-decision-assurance-as-a-byte-bound-independently-recomputed-chain.md):

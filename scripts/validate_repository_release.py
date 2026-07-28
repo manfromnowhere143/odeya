@@ -236,6 +236,13 @@ DEDICATED_ARCHITECTURE_EVIDENCE_COMMANDS = (
         '--node-executable "$ODEYA_PRQ002_NODE"',
     ),
     (
+        "prq-002c-raw-number-typing",
+        "python scripts/validate_product_identity_raw_number_typing.py "
+        "--recompute-all "
+        '--python-executable "$ODEYA_PRQ002_PYTHON" '
+        '--node-executable "$ODEYA_PRQ002_NODE"',
+    ),
+    (
         "hda-successor-recompute",
         "python scripts/validate_human_decision_assurance_successor.py --recompute-all",
     ),
@@ -261,6 +268,10 @@ INTEGRATED_ARCHITECTURE_EVIDENCE_CHECKS = (
     ("refusal-attribution", "scripts/validate_refusal_attribution.py"),
     ("schema-rule-ablation", "scripts/validate_schema_rule_ablation.py"),
     ("suite-guard-coverage", "scripts/validate_suite_guard_coverage.py"),
+    (
+        "prq-002c-raw-number-typing",
+        "scripts/validate_product_identity_raw_number_typing.py",
+    ),
     (
         "hda-successor",
         "scripts/validate_human_decision_assurance_successor.py",
@@ -289,12 +300,15 @@ CARDINAL_WORDS = (
     "nineteen",
     "twenty",
     "twenty-one",
+    "twenty-two",
+    "twenty-three",
 )
 ARCHITECTURE_EVIDENCE_COUNT_BOUNDARY = (
     f"Reproduce {CARDINAL_WORDS[len(DEDICATED_ARCHITECTURE_EVIDENCE_COMMANDS)]} "
     "dedicated prerequisite/member checks: Gate A prerequisites, PRQ-009 order, "
     "schema reissue, module manifest, first-slice scope, the PRQ-002A identity probe, "
-    "and human-decision-assurance successor recomputation. `Foundation` separately "
+    "the PRQ-002C raw-number prerequisite, and human-decision-assurance successor "
+    "recomputation. `Foundation` separately "
     "runs the complete integrated "
     f"{CARDINAL_WORDS[len(INTEGRATED_ARCHITECTURE_EVIDENCE_CHECKS)]}-check census"
 )
@@ -314,10 +328,10 @@ EXPECTED_ARCHITECTURE_EVIDENCE_RUN_BODY = (
     + "          } 2>&1 | tee artifacts/ci/architecture-evidence.log"
 )
 EXPECTED_ARCHITECTURE_EVIDENCE_JOB_SHA256 = (
-    "5e66d6010f154f16d4367cc57dfb415cbdaf681583b2b72c680c89b5bfe50731"
+    "ebf9e1b02526af513a638eb517b4beeefd9ebf65afcd151fc10e28162154f9b9"
 )
 EXPECTED_INTEGRATED_VALIDATOR_SHA256 = (
-    "cc6ba3e761a079a12870075419e7fedf7e4aaf2b767472eca85f36125acebef1"
+    "1801e0a3a47104b36b3a76e131f38098b874a0ca6559fdf63dd88038e5dc4098"
 )
 ARCHITECTURE_EVIDENCE_KNOWN_BAD_MUTATION_COUNT = (
     len(DEDICATED_ARCHITECTURE_EVIDENCE_COMMANDS)
@@ -424,7 +438,7 @@ EXPECTED_ARCHITECTURE_EVIDENCE_INVENTORY_MUTATIONS = {
     "unexpected-dedicated-execution-step": (
         ".github/workflows/architecture.yml",
         ARCHITECTURE_EVIDENCE_RUN_STEP_START,
-        "      - name: Run an eighth dedicated architecture check\n"
+        "      - name: Run a ninth dedicated architecture check\n"
         "        run: python scripts/validate_contract_profiles.py\n\n"
         + ARCHITECTURE_EVIDENCE_RUN_STEP_START,
         "architecture evidence executable job bytes must be exact",
@@ -468,6 +482,15 @@ REHEARSAL_PYTHON_SELECTOR_BLOCK = (
     ')"\n'
     "readonly PRQ002_PYTHON_BIN\n"
 )
+REHEARSAL_PRQ002C_RECOMPUTATION_BLOCK = (
+    '\nCURRENT_STAGE="prq-002c-raw-number-typing"\n'
+    ".venv-architecture/bin/python \\\n"
+    "  scripts/validate_product_identity_raw_number_typing.py \\\n"
+    "  --recompute-all \\\n"
+    '  --python-executable "$PRQ002_PYTHON_BIN" \\\n'
+    '  --node-executable "$PRQ002_NODE_BIN" \\\n'
+    "  2>&1 | tee -a artifacts/rehearsal/foundation.log\n"
+)
 REHEARSAL_PRQ002_RECOMPUTATION_BLOCK = (
     'CURRENT_STAGE="prq-002-identity-probe"\n'
     ".venv-architecture/bin/python -m pip install \\\n"
@@ -500,7 +523,8 @@ REHEARSAL_PRQ002_RECOMPUTATION_BLOCK = (
     '  --node-executable "$PRQ002_NODE_BIN" \\\n'
     "  2>&1 | tee -a artifacts/rehearsal/foundation.log\n"
     'rm -rf -- "$CLONE/tests/prq-002-identity-cohort/node/node_modules"\n'
-    "record_stage foundation passed\n"
+    + REHEARSAL_PRQ002C_RECOMPUTATION_BLOCK
+    + "record_stage foundation passed\n"
 )
 STANDALONE_TOOL_CACHE_BLOCK = (
     "OWN_TOOL_CACHE=0\n"
@@ -542,6 +566,13 @@ EXPECTED_RELEASE_SCRIPT_MUTATIONS = {
         "readonly PRQ002_PYTHON_BIN\n",
         "fresh-clone rehearsal must retain the exact PRQ-002 recomputation block",
     ),
+    "missing-rehearsal-prq-002c-recomputation": (
+        "scripts/ci/rehearse-fresh-clone.sh",
+        REHEARSAL_PRQ002C_RECOMPUTATION_BLOCK,
+        '\nCURRENT_STAGE="prq-002c-raw-number-typing"\n'
+        "# PRQ-002C recomputation removed by known-bad fixture\n",
+        "fresh-clone rehearsal must retain the exact PRQ-002C recomputation block",
+    ),
     "shared-standalone-tool-cache": (
         "scripts/ci/check-repository-release.sh",
         STANDALONE_TOOL_CACHE_BLOCK,
@@ -558,7 +589,7 @@ EXPECTED_RELEASE_CONTRACT_MUTATIONS = {
         "PRQ-009 order, schema reissue, module manifest, first-slice scope, and "
         "human-decision-assurance successor recomputation. `Foundation` separately "
         "runs the complete integrated ten-check census",
-        "Reproduce seven dedicated prerequisite/member checks",
+        "Reproduce eight dedicated prerequisite/member checks",
     ),
     "stale-architecture-evidence-mutation-count": (
         ARCHITECTURE_EVIDENCE_MUTATION_COUNT_BOUNDARY,
@@ -1183,6 +1214,7 @@ def workflow_policy_errors(
                 "            printf 'ODEYA_PRQ002_NODE=%s\\n' \"$node_bin\" >> \"$GITHUB_ENV\"\n",
                 '            java_bin="$(bash scripts/ci/install-java.sh)"\n',
                 "            python tests/prq-002-identity-cohort/check.py --recompute-all --python-executable \"$ODEYA_PRQ002_PYTHON\" --node-executable \"$ODEYA_PRQ002_NODE\"\n",
+                "            python scripts/validate_product_identity_raw_number_typing.py --recompute-all --python-executable \"$ODEYA_PRQ002_PYTHON\" --node-executable \"$ODEYA_PRQ002_NODE\"\n",
                 "            python scripts/validate_human_decision_assurance_successor.py --recompute-all\n",
                 "          git diff --exit-code\n",
                 "          git diff --cached --exit-code\n",
@@ -1530,6 +1562,10 @@ def release_script_isolation_errors(rehearsal: str, release_check: str) -> list[
     if rehearsal.count(REHEARSAL_PRQ002_RECOMPUTATION_BLOCK) != 1:
         errors.append(
             "fresh-clone rehearsal must retain the exact PRQ-002 recomputation block"
+        )
+    if rehearsal.count(REHEARSAL_PRQ002C_RECOMPUTATION_BLOCK) != 1:
+        errors.append(
+            "fresh-clone rehearsal must retain the exact PRQ-002C recomputation block"
         )
     if release_check.count(STANDALONE_TOOL_CACHE_BLOCK) != 1:
         errors.append("standalone release check must allocate a unique tool cache")
@@ -2020,6 +2056,7 @@ def validate_release_scripts(lock: dict[str, Any], errors: list[str]) -> None:
         ".java-version",
         "scripts/validate.py",
         "tests/prq-002-identity-cohort/check.py",
+        "scripts/validate_product_identity_raw_number_typing.py",
         "--recompute-all",
         "--python-executable",
         "--node-executable",

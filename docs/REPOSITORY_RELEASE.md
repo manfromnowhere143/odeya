@@ -55,19 +55,23 @@ named by a release manifest.
 | `Semantic contracts` | Admit the safe semantic partition, then execute all eight complete paired contract harnesses | Profile inventory and per-suite output | Not proof beyond the retained bounded subjects |
 | `Adversarial controls` | Admit the known-bad partition, then execute the same paired harnesses so negative controls cannot drift from their baselines | Profile inventory and expected-rejection output | Not an exhaustive threat proof |
 | `Canonical identity` | Reconcile the two retained `odeya-jcs-0.1` implementations and verify the frozen 120-schema/216-fixture predecessor audit is exact. `Foundation` separately checks the scoped, unissued PRQ-002B `odeya-jcs-0.2` successor candidate | Comparison receipt, predecessor-audit check output, and bounded successor-suite output | Not profile issuance, successor conformance, product identity, admission, PRQ-002 closure, or Gate A acceptance |
-| `Architecture evidence` | Reproduce seven dedicated prerequisite/member checks: Gate A prerequisites, PRQ-009 order, schema reissue, module manifest, first-slice scope, the PRQ-002A identity probe, and human-decision-assurance successor recomputation. `Foundation` separately runs the complete integrated twelve-check census, including canonicalization-evaluator integrity, lifecycle/suite guard and condition audits, schema-rule ablation, refusal attribution, and the human-decision-assurance successor check | Dedicated evidence log plus the integrated Foundation log and pinned safe/known-bad inventories | Not registry admission, activation, or an acceptance decision |
+| `Architecture evidence` | Reproduce eight dedicated prerequisite/member checks: Gate A prerequisites, PRQ-009 order, schema reissue, module manifest, first-slice scope, the PRQ-002A identity probe, the PRQ-002C raw-number prerequisite, and human-decision-assurance successor recomputation. `Foundation` separately runs the complete integrated thirteen-check census, including canonicalization-evaluator integrity, lifecycle/suite guard and condition audits, schema-rule ablation, refusal attribution, the PRQ-002C raw-number observation, and the human-decision-assurance successor check | Dedicated evidence log plus the integrated Foundation log and pinned safe/known-bad inventories | Not profile issuance or conformance, product identity, registry admission, activation, or an acceptance decision |
 | `Repository / Release Surface` | Validate the README contract, action pins, least-privilege workflow shape, Dependabot scope, Markdown, Action syntax, and Mermaid rendering | Release-check log and rendered SVG | Not UI acceptance, deployment evidence, or a publication decision |
 | `Architecture / Bounded Formal Models` | Reproduce seven safe TLA+ models, the alternate cognitive fingerprint run, and all thirty intended counterexamples | Full TLC log and pinned toolchain manifest | Bounded safety evidence only; not liveness, implementation conformance, or a physical safety case |
 | `Publication sequence` | On a governed push, verify the exact checked-out SHA, ref, single-parent/direct-child range, and event before/after boundary | Exact push log and remote run identity | Not a summary of the other checks, an independent verifier, or publication authority by itself |
 
-The release checker compares the dedicated seven-command run body and the
-integrated twelve-member Python tuple to exact inventories, pins the complete
+The release checker compares the dedicated eight-command run body and the
+integrated thirteen-member Python tuple to exact inventories, pins the complete
 dedicated job and integrated-validator bytes, and binds the one executable
 consumption loop.
-The exact inventory contains twenty-one retained known-bad mutations:
-each member is removed once, then an out-of-body eighth workflow step and a
+The exact inventory contains twenty-three retained known-bad mutations:
+each member is removed once, then an out-of-body ninth workflow step and a
 post-assignment same-cardinality Python rebinding are separately refused. The
 counts above therefore cannot remain green after executable inventory drift.
+Six separately retained release-script isolation mutations bind the exact
+PRQ-002A and PRQ-002C rehearsal sequence, interpreter selection, isolated tool
+caches, and verified TLA+ jar. They are bounded structural controls, not
+fresh-clone execution evidence or Gate A acceptance.
 
 At the completed first-activation checkpoint, public `main` carried the
 four-workflow/ten-job inventory at

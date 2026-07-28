@@ -1,0 +1,447 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:odeya:architecture-schema:canonicalization-raw-number-token-contract:0.1.0",
+  "title": "Odeya PRQ-002C Raw Number Token Contract",
+  "description": "Closed architecture-only decision contract for retaining JSON number-token provenance before schema validation. It is not a product schema resource, canonicalization profile, product identity, registry member, root, activation, Gate A decision, or runtime authority.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "artifact_class",
+    "contract_id",
+    "version",
+    "status",
+    "decision_ref",
+    "blocked_candidate_binding",
+    "raw_token_model",
+    "schema_type_rule",
+    "refusal_precedence",
+    "bounded_observation_contract",
+    "unresolved_integration",
+    "authority_boundary"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.1.0"
+    },
+    "artifact_class": {
+      "const": "canonicalization_raw_number_token_contract_candidate"
+    },
+    "contract_id": {
+      "const": "urn:odeya:canonicalization:raw-number-token-contract:0.1.0"
+    },
+    "version": {
+      "const": "0.1.0"
+    },
+    "status": {
+      "const": "proposed_architecture_only_non_product_contract"
+    },
+    "decision_ref": {
+      "const": "docs/decisions/0101-require-raw-number-token-provenance-before-profile-conformance.md"
+    },
+    "blocked_candidate_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profile_id",
+        "profile_version",
+        "source_checkpoint_commit",
+        "source_checkpoint_tree",
+        "frozen_artifact_inventory",
+        "profile_bytes_mutated_by_this_contract",
+        "successor_profile_conformance_complete"
+      ],
+      "properties": {
+        "profile_id": {
+          "const": "urn:odeya:canonicalization:odeya-jcs-0.2"
+        },
+        "profile_version": {
+          "const": "0.2.0"
+        },
+        "source_checkpoint_commit": {
+          "const": "a79d86b0a5e9581b3bacb57214cf180df3443566"
+        },
+        "source_checkpoint_tree": {
+          "const": "d44e9eb4751b97871aa9c995664782a5d031fb48"
+        },
+        "frozen_artifact_inventory": {
+          "const": [
+            {
+              "role": "profile_core",
+              "path": "architecture/canonicalization-profile-core-0.2-candidate.json",
+              "raw_sha256": "sha256:deab395ca2ce5524ceb65bdd307a43b4dd4613b78c92b16d13e1a69cac683941",
+              "byte_count_decimal": "25422"
+            },
+            {
+              "role": "profile_core_schema",
+              "path": "schemas/canonicalization-profile-core-v0-6.schema.json",
+              "raw_sha256": "sha256:6998a185d2615ecf68f9fe97c2cd91e7abbc3ea7e6bcd66c1d9cf1507cf7e6e7",
+              "byte_count_decimal": "67161"
+            },
+            {
+              "role": "profile_evidence",
+              "path": "architecture/canonicalization-profile-0.2-candidate-evidence.json",
+              "raw_sha256": "sha256:9995e1e7621abe480db2659f441006cb2ea351072b96a6a4f667cba811892b14",
+              "byte_count_decimal": "12043"
+            },
+            {
+              "role": "profile_evidence_schema",
+              "path": "schemas/canonicalization-profile-candidate-evidence-v0-6.schema.json",
+              "raw_sha256": "sha256:db626f85e7d3ddf408e640f6d349c95ad80bb2c06c399db9aa6127dafc33bcf1",
+              "byte_count_decimal": "51174"
+            },
+            {
+              "role": "profile_migration",
+              "path": "architecture/canonicalization-profile-0.1-to-0.2-migration-candidate.json",
+              "raw_sha256": "sha256:03e9aad2e40c328f80f2692f40c3d5c7ce23caeeddeb1749df0e1fe064302ed4",
+              "byte_count_decimal": "25013"
+            },
+            {
+              "role": "profile_migration_schema",
+              "path": "schemas/canonicalization-profile-migration.schema.json",
+              "raw_sha256": "sha256:8505024453dec8dc594a82ecb1ed7398e5bbd84b690ed5aec877f3c9669bfe08",
+              "byte_count_decimal": "74806"
+            }
+          ]
+        },
+        "profile_bytes_mutated_by_this_contract": {
+          "const": false
+        },
+        "successor_profile_conformance_complete": {
+          "const": false
+        }
+      }
+    },
+    "raw_token_model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "classification_point",
+        "json_number_grammar",
+        "integer_token_pattern",
+        "number_token_definition",
+        "max_number_token_bytes_decimal",
+        "lexical_negative_zero_definition",
+        "nonfinite_conversion",
+        "underflow_conversion",
+        "metadata_retention",
+        "metadata_projection_disposition",
+        "ieee754_conversion"
+      ],
+      "properties": {
+        "classification_point": {
+          "const": "after_utf8_and_json_lexing_before_mapping_or_schema_type_evaluation"
+        },
+        "json_number_grammar": {
+          "const": "RFC8259_number"
+        },
+        "integer_token_pattern": {
+          "const": "^-?(?:0|[1-9][0-9]*)$"
+        },
+        "number_token_definition": {
+          "const": "valid_json_number_token_containing_fraction_or_exponent"
+        },
+        "max_number_token_bytes_decimal": {
+          "const": "128"
+        },
+        "lexical_negative_zero_definition": {
+          "const": "reject_token_with_negative_sign_and_exact_zero_decimal_significand_before_host_conversion"
+        },
+        "nonfinite_conversion": {
+          "const": "reject_valid_json_number_token_whose_binary64_conversion_is_not_finite"
+        },
+        "underflow_conversion": {
+          "const": "reject_exact_nonzero_decimal_token_whose_binary64_conversion_is_positive_or_negative_zero"
+        },
+        "metadata_retention": {
+          "const": "retain_raw_lexeme_token_class_and_unique_instance_pointer_in_validation_sidecar_until_projection_construction"
+        },
+        "metadata_projection_disposition": {
+          "const": "validation_sidecar_metadata_is_not_inserted_into_projection_or_digest_preimage"
+        },
+        "ieee754_conversion": {
+          "const": "finite_binary64_required_before_rfc8785_serialization"
+        }
+      }
+    },
+    "schema_type_rule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "integer_position",
+        "integer_position_applies_when",
+        "integer_valued_const_rule",
+        "integer_const_value_mismatch_code",
+        "number_position_policy",
+        "boolean_is_not_integer",
+        "integer_minimum_decimal",
+        "integer_maximum_decimal",
+        "integral_fraction_or_exponent",
+        "draft_2020_12_delta",
+        "future_profile_integration_required"
+      ],
+      "properties": {
+        "integer_position": {
+          "const": "admit_integer_token_only"
+        },
+        "integer_position_applies_when": {
+          "const": "exact_resolved_applicable_schema_asserts_type_integer_or_an_integer_valued_const"
+        },
+        "integer_valued_const_rule": {
+          "const": "require_integer_token_then_compare_exact_decimal_integer_value"
+        },
+        "integer_const_value_mismatch_code": {
+          "const": "ODEYA_SCHEMA_CONST"
+        },
+        "number_position_policy": {
+          "const": "unresolved_beyond_global_token_length_negative_zero_nonfinite_and_underflow_refusals"
+        },
+        "boolean_is_not_integer": {
+          "const": true
+        },
+        "integer_minimum_decimal": {
+          "const": "-9007199254740991"
+        },
+        "integer_maximum_decimal": {
+          "const": "9007199254740991"
+        },
+        "integral_fraction_or_exponent": {
+          "const": "reject_at_integer_position_even_when_mathematical_value_is_integral"
+        },
+        "draft_2020_12_delta": {
+          "const": "odeya_profile_restriction_stricter_than_json_schema_integer_mathematical_value_semantics"
+        },
+        "future_profile_integration_required": {
+          "const": true
+        }
+      }
+    },
+    "refusal_precedence": {
+      "const": [
+        "ODEYA_PARSE_UTF8",
+        "ODEYA_PARSE_BOM",
+        "ODEYA_PARSE_SYNTAX",
+        "ODEYA_PARSE_DUPLICATE_KEY",
+        "ODEYA_PARSE_UNPAIRED_SURROGATE",
+        "ODEYA_CONFORMANCE_FRAME_SHAPE",
+        "ODEYA_SCHEMA_TYPE",
+        "ODEYA_LIMIT_NUMBER_TOKEN",
+        "ODEYA_NUMBER_NEGATIVE_ZERO",
+        "ODEYA_NUMBER_NONFINITE",
+        "ODEYA_NUMBER_UNDERFLOW",
+        "ODEYA_NUMBER_INTEGER_TOKEN_REQUIRED",
+        "ODEYA_NUMBER_DOMAIN",
+        "ODEYA_SCHEMA_CONST",
+        "accepted"
+      ]
+    },
+    "bounded_observation_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "suite_id",
+        "input_class",
+        "frame_profiles",
+        "answer_free_vectors",
+        "opaque_child_vector_ids_required",
+        "expectations_not_passed_to_children",
+        "child_filesystem_isolation_proven",
+        "required_implementation_roles",
+        "complete_result_projection_comparison_required",
+        "known_bad_self_test_required",
+        "unique_instance_pointer_retention_proved",
+        "dynamic_path_discovery_excluded",
+        "historical_process_independently_witnessed",
+        "product_digest_output_allowed",
+        "claim_scope"
+      ],
+      "properties": {
+        "suite_id": {
+          "const": "prq-002c-raw-number-typing.0001"
+        },
+        "input_class": {
+          "const": "synthetic_non_product_raw_json_frames"
+        },
+        "frame_profiles": {
+          "const": [
+            {
+              "frame_id": "odeya.raw-number-integer-type-position.v1",
+              "exact_members": [
+                "frame_id",
+                "integer_value"
+              ],
+              "position_rule": "type_integer"
+            },
+            {
+              "frame_id": "odeya.raw-number-integer-const-position.v1",
+              "exact_members": [
+                "frame_id",
+                "integer_value"
+              ],
+              "position_rule": "integer_const_decimal_1"
+            }
+          ]
+        },
+        "answer_free_vectors": {
+          "const": true
+        },
+        "opaque_child_vector_ids_required": {
+          "const": true
+        },
+        "expectations_not_passed_to_children": {
+          "const": true
+        },
+        "child_filesystem_isolation_proven": {
+          "const": false
+        },
+        "required_implementation_roles": {
+          "const": [
+            "python_stdlib_parse_hooks",
+            "nodejs_source_distinct_recursive_descent"
+          ]
+        },
+        "complete_result_projection_comparison_required": {
+          "const": true
+        },
+        "known_bad_self_test_required": {
+          "const": true
+        },
+        "unique_instance_pointer_retention_proved": {
+          "const": false
+        },
+        "dynamic_path_discovery_excluded": {
+          "const": false
+        },
+        "historical_process_independently_witnessed": {
+          "const": false
+        },
+        "product_digest_output_allowed": {
+          "const": false
+        },
+        "claim_scope": {
+          "const": "bounded_raw_number_token_and_fixed_microframe_observation_only"
+        }
+      }
+    },
+    "unresolved_integration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "current_profile_core_expresses_rule",
+        "current_product_schemas_bind_rule",
+        "future_profile_id",
+        "future_profile_core_exists",
+        "future_successor_schema_reissue_complete",
+        "generic_schema_path_evaluation_proved",
+        "number_position_semantics_complete",
+        "nine_domain_framing_conformance_proved",
+        "ordered_member_map_semantics_proved",
+        "cross_object_replay_proved",
+        "complete_offline_schema_registry",
+        "accountable_review_complete",
+        "operator_acceptance_complete"
+      ],
+      "properties": {
+        "current_profile_core_expresses_rule": {
+          "const": false
+        },
+        "current_product_schemas_bind_rule": {
+          "const": false
+        },
+        "future_profile_id": {
+          "const": "urn:odeya:canonicalization:odeya-jcs-0.3"
+        },
+        "future_profile_core_exists": {
+          "const": false
+        },
+        "future_successor_schema_reissue_complete": {
+          "const": false
+        },
+        "generic_schema_path_evaluation_proved": {
+          "const": false
+        },
+        "number_position_semantics_complete": {
+          "const": false
+        },
+        "nine_domain_framing_conformance_proved": {
+          "const": false
+        },
+        "ordered_member_map_semantics_proved": {
+          "const": false
+        },
+        "cross_object_replay_proved": {
+          "const": false
+        },
+        "complete_offline_schema_registry": {
+          "const": false
+        },
+        "accountable_review_complete": {
+          "const": false
+        },
+        "operator_acceptance_complete": {
+          "const": false
+        }
+      }
+    },
+    "authority_boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profile_issued",
+        "canonical_identity_issued",
+        "schema_resource_admitted",
+        "product_member_constructed",
+        "product_snapshot_constructed",
+        "product_digest_computed",
+        "engine_contract_root_bound",
+        "activation_exists",
+        "gate_a_complete",
+        "runtime_authorized",
+        "deployment_authorized",
+        "external_effects_authorized",
+        "publication_authorized"
+      ],
+      "properties": {
+        "profile_issued": {
+          "const": false
+        },
+        "canonical_identity_issued": {
+          "const": false
+        },
+        "schema_resource_admitted": {
+          "const": false
+        },
+        "product_member_constructed": {
+          "const": false
+        },
+        "product_snapshot_constructed": {
+          "const": false
+        },
+        "product_digest_computed": {
+          "const": false
+        },
+        "engine_contract_root_bound": {
+          "const": false
+        },
+        "activation_exists": {
+          "const": false
+        },
+        "gate_a_complete": {
+          "const": false
+        },
+        "runtime_authorized": {
+          "const": false
+        },
+        "deployment_authorized": {
+          "const": false
+        },
+        "external_effects_authorized": {
+          "const": false
+        },
+        "publication_authorized": {
+          "const": false
+        }
+      }
+    }
+  }
+}
