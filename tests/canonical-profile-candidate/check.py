@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-"""Validate the nonrecursive odeya-jcs-0.1 candidate parameter freeze.
+"""Validate the frozen nonrecursive odeya-jcs-0.1 predecessor cohort.
 
 This architecture-time checker binds exact profile-core bytes to retained
-conformance evidence, the current schema-domain inventory, the explicit
-version axes, and the still-blocking migration audit. A pass cannot issue a
-canonical identity, admit a registry member, accept Gate A, or authorize a
-runtime.
+conformance evidence, its exact 120-schema domain cohort, the explicit version
+axes, and the still-blocking migration audit. Side-by-side successor schemas
+are deliberately outside this predecessor proof and have their own checker. A
+pass cannot issue a canonical identity, admit a registry member, accept Gate A,
+or authorize a runtime.
 """
 
 from __future__ import annotations
@@ -31,9 +32,15 @@ EVIDENCE_SCHEMA = (
 CASES = SUITE / "cases.json"
 CANONICAL_SUITE = ROOT / "tests/canonicalization"
 CANONICAL_AUDIT = CANONICAL_SUITE / "SCHEMA_AUDIT.json"
+PREDECESSOR_SCHEMA_MANIFEST = (
+    ROOT / "tests/product-identity-profile-candidate/predecessor-schemas.json"
+)
 GATE_INVENTORY = ROOT / "architecture/gate-a-prerequisite-closure.json"
 PROFILE_ID = "urn:odeya:canonicalization:odeya-jcs-0.1"
 CORE_SCHEMA_ID = "urn:odeya:schema:canonicalization-profile-core:0.5.0"
+PREDECESSOR_COMMIT = "5332239f84ff278815c25d888f115bce22919e34"
+PREDECESSOR_TREE = "15cf8bf50d480baa833b86366fcacb3d11ae45d0"
+PREDECESSOR_SCHEMA_COUNT = 120
 
 EXPECTED_ARTIFACTS = {
     "docs/CANONICALIZATION_PROFILE.md": "profile_specification",
@@ -130,6 +137,59 @@ def schema_error_code(
     return f"{label}_schema_invalid" if errors else None
 
 
+def predecessor_schema_paths() -> list[Path]:
+    manifest = load(PREDECESSOR_SCHEMA_MANIFEST)
+    if (
+        manifest.get("artifact_class")
+        != "prq_002b_frozen_predecessor_schema_path_manifest"
+        or manifest.get("source_commit") != PREDECESSOR_COMMIT
+        or manifest.get("source_tree") != PREDECESSOR_TREE
+        or manifest.get("schema_path_count") != PREDECESSOR_SCHEMA_COUNT
+        or manifest.get("row_shape")
+        != ["path", "schema_id", "raw_digest", "byte_count"]
+    ):
+        raise ValueError("frozen predecessor schema manifest identity drifted")
+    rows = manifest.get("schemas")
+    if not isinstance(rows, list) or len(rows) != PREDECESSOR_SCHEMA_COUNT:
+        raise ValueError("frozen predecessor schema manifest count drifted")
+    paths: list[Path] = []
+    observed: set[str] = set()
+    for index, row in enumerate(rows):
+        if (
+            not isinstance(row, list)
+            or len(row) != 4
+            or not isinstance(row[0], str)
+            or not isinstance(row[1], str)
+            or not isinstance(row[2], str)
+            or not isinstance(row[3], int)
+        ):
+            raise ValueError(f"invalid predecessor schema row {index}")
+        relative, expected_id, expected_digest, expected_bytes = row
+        if relative in observed:
+            raise ValueError(f"duplicate predecessor schema path {relative}")
+        observed.add(relative)
+        path = ROOT / relative
+        if (
+            not relative.startswith("schemas/")
+            or not relative.endswith(".schema.json")
+            or not path.is_file()
+            or path.is_symlink()
+        ):
+            raise ValueError(f"unsafe predecessor schema path {relative}")
+        raw = path.read_bytes()
+        document = load(path)
+        if (
+            document.get("$id") != expected_id
+            or sha256(path) != expected_digest
+            or len(raw) != expected_bytes
+        ):
+            raise ValueError(f"frozen predecessor schema binding drifted: {relative}")
+        paths.append(path)
+    if [path.relative_to(ROOT).as_posix() for path in paths] != sorted(observed):
+        raise ValueError("frozen predecessor schema paths are not sorted")
+    return paths
+
+
 def declared_domain_constants() -> dict[str, str]:
     observed: dict[str, str] = {}
     duplicates: set[str] = set()
@@ -154,7 +214,7 @@ def declared_domain_constants() -> dict[str, str]:
             for item in value:
                 visit(item, schema_id)
 
-    for path in sorted((ROOT / "schemas").glob("*.json")):
+    for path in predecessor_schema_paths():
         schema = load(path)
         schema_id = schema.get("$id")
         if not isinstance(schema_id, str):

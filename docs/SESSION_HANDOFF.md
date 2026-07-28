@@ -1,13 +1,14 @@
 # Odeya Session Handoff
 
 Status: canonical recovery entrypoint for the current Odeya architecture and
-repository-release mission. Last updated 2026-07-27, Asia/Jerusalem. This is a
+repository-release mission. Last updated 2026-07-28, Asia/Jerusalem. This is a
 handoff contract, not Gate A acceptance, implementation authorization, or
 scientific evidence; repository-publication authority comes only from the
 named decisions and release contract. The exact-SHA two-ref publication
-activation is complete at the exact public baseline named below, and the active
-lane is preparing the bounded PRQ-002A non-issuable structural probe described
-below. This file cannot contain the commit that contains itself; resolve the
+activation is complete at the exact public baseline named below. The active
+architecture lane is building the bounded PRQ-002B product-identity/profile
+successor described below, without issuing a profile or constructing a product
+identity. This file cannot contain the commit that contains itself; resolve the
 candidate's exact commit, rehearsal, publication, workflow, and remote replay
 status from Git plus the external subject-bound receipts before acting.
 
@@ -206,17 +207,18 @@ PRQ-013 correction is `86c0f1ed8ba20d74324d64529bf5435a0524f4cd`:
 - **Guard coverage has explicit denominators, not whole-repository coverage.**
   The lifecycle checker has dedicated statement (222/229) and condition
   (108/111) audits. The retained generalized
-  `audit_suite_guard_coverage.py` record measures fifteen declared isolated
-  contract-checker subjects at 470 of 1088 refusal statements proved, with 618
+  `audit_suite_guard_coverage.py` record measures sixteen declared isolated
+  contract-checker subjects at 477 of 1184 refusal statements proved, with 707
   explicitly unproved and zero crash-only detections. PRQ-013 contributes
-  199/284, leaving 85 explicitly unproved; the new
+  206/287, leaving 81 explicitly unproved; the new
   `prq-002-identity-cohort` contributes 0/127, leaving all 127 explicitly
-  unproved. The former 431/820 result is retracted: its assurance-checker
+  unproved; `product-identity-profile-candidate` contributes 0/93, leaving all
+  93 explicitly unproved. The former 431/820 result is retracted: its assurance-checker
   mutations tripped the unrefreshed outer checker-byte binding rather than the
   intended guards. Central
   architecture/release gates—including the PRQ-009
   assignment-order checker—are outside that denominator and must carry their
-  own pinned known-bad self-tests. The 618 open isolated-suite guards are
+  own pinned known-bad self-tests. The 707 open isolated-suite guards are
   categorized by exact closure method in
   `docs/GUARD_COVERAGE_CLOSURE_PLAN.md`. Three closure
   patterns are proven and mechanical: harness self-tests (ADR 0080/0081),
@@ -246,9 +248,11 @@ PRQ-013 correction is `86c0f1ed8ba20d74324d64529bf5435a0524f4cd`:
   evidence, not correctness, a `ReviewDetermination`, or organizational
   independence. All
   `HDA-CTX-001` through `HDA-CTX-016` findings remain
-  `changed_candidate_pending_accountable_closure_review`. The census remains
-  frozen over the exact 112-schema predecessor tree: 19 direct or
-  policy-conditional decision rows and 9 pending operator-acceptance rows.
+  `changed_candidate_pending_accountable_closure_review`. The census retains
+  the exact 112-schema predecessor partition, the 8 HDA mechanism schemas, and
+  12 explicitly non-HDA/non-authority PRQ-002B successor schemas, for an exact
+  132-schema current union: 19 direct or policy-conditional decision rows and
+  9 pending operator-acceptance rows.
   Zero current consumers are migrated. No admitted assurance record or
   `AssuredDecision` wrapper identity, T1/T2 dependency chain, real protected
   ceremony, end-to-end consumer refusal, accountable review, operator
@@ -264,6 +268,24 @@ PRQ-013 correction is `86c0f1ed8ba20d74324d64529bf5435a0524f4cd`:
   requires newly identified product member schemas and domains, a reviewed
   profile successor/reissue, and an explicit migration; no probe identifier
   may be promoted into a product identity.
+- **PRQ-002B now has bounded product-identity/profile successor evidence, not
+  PRQ-002 closure.** ADR 0100 adds four standalone product-member schemas, one
+  ordered-map commitment schema, four pure-registry successor schemas, and
+  three schemas plus exact records for a scoped `odeya-jcs-0.2`
+  core/evidence/migration chain. The nine product-identity schemas use nine
+  distinct domain contracts. Exact current bytes and the frozen 120-schema
+  predecessor manifest reconcile to a disjoint 132-schema candidate union;
+  the predecessor audit remains frozen at 120 schemas and 216 fixtures. The
+  isolated product suite passes one safe control and 19 attributed
+  single-fault known-bads, while the Gate cross-check rejects 21 mutations:
+  16 exact-inventory or JSON-type attacks and 5 schema-valid semantic
+  downgrades. Integral floats cannot satisfy integer byte/count fields, and
+  integers cannot satisfy Boolean authority/nonclaim fields. Structural
+  vectors are explicit nonidentity fixtures. No member,
+  commitment, snapshot, digest, profile member, root, or activation exists;
+  both profiles remain unissued, source-separated successor conformance and
+  complete offline resolution remain absent, PRQ-002 and Gate A remain
+  blocked, and runtime remains unauthorized.
 - **Where to put pressure.** The remaining bulk is the per-case domain-logic
   layer: guards inside per-case checkers that no retained case exercises. They
   close by targeted, ablation-verified cases in the ADR 0071 style — one
@@ -340,37 +362,38 @@ that deserves to carry the mission forward.
 - Canonical workspace: `/Users/danielwahnich/workspace/odeya`; it is currently
   a protected concurrent-work lane on `agent/repository-release`.
 - Active architecture worktree:
-  `/Users/danielwahnich/workspace/odeya-prq-013-context-review-20260721`
+  `/Users/danielwahnich/workspace/odeya-prq-002-product-identity-20260728`
 - Active architecture branch:
-  `agent/t0-prq-013-context-review-20260721`
+  `agent/t0-prq-002-product-identity-20260728`
 - Exact published baseline observed at recovery:
-  `e467bdbbc9ec0451b2c331c8005a2691087358b6`
+  `5332239f84ff278815c25d888f115bce22919e34`
 - Exact published-baseline tree:
-  `7fa164999b430969fea9e519812321aa356d4a73`
+  `15cf8bf50d480baa833b86366fcacb3d11ae45d0`
 - Canonical remote: `https://github.com/manfromnowhere143/odeya` (public;
   created 2026-07-17 under ADR 0047; default branch `main`)
-- Measured remote state on 2026-07-27: `origin/main` and permanent
-  `release/e467bdbbc9ec0451b2c331c8005a2691087358b6` both resolved to the
-  exact published baseline. Fourteen permanent release refs exist — `a25d026`,
+- Measured remote state on 2026-07-28: `origin/main` and permanent
+  `release/5332239f84ff278815c25d888f115bce22919e34` both resolved to the
+  exact published baseline. Fifteen permanent release refs exist — `a25d026`,
   `f1f25fd`, `08dbad6`, `8ed5d42`, `f4067b5`, `e0187bb`, `34cad10`,
   `86c0f1e`, `36d798e`, `05c2c3b`, `ce962dd`, `f013b2d`, `b02b378`, and
-  `e467bdb` — and none is ever rewritten, deleted, or recreated, including for
-  a candidate that fails. The exact `e467bdb` local/remote rehearsal manifests
+  `e467bdb`, and `5332239` — and none is ever rewritten, deleted, or recreated,
+  including for a candidate that fails. The exact `5332239` local/remote
+  rehearsal manifests
   have SHA-256
-  `08121a1384bfda2c9004636f779947c9604501a2e1c58d1e7b620a116930f98b`
-  and `a01c2f6716a623d7d309861e4ef035d3d73063d04dee3150f0b5f5fbd6fcaae5`;
+  `766be39136f6fe458f53b9e4c3cd555b121ec3960f16c8bece495c16826341a0`
+  and `41d03bcd12317b279c7f197efa04943b20504bdeed7a7421c697e42128987835`;
   its comparison receipt has SHA-256
-  `8d50166f53ddeadb3052f59da458ca7380bd58dc6a5dfbe2518ed0640d725d04`.
+  `91f741d1c139c3e58a68bf79910167d696a3bcc1bdcddbe39427040a0b106e1a`.
   Candidate governance/check receipts have SHA-256
-  `11a51d829785735efc4d44082c3ed63d2047321375333738d6eea70c7054716c`
-  and `238231cd10ccf4b374648d71ce7aea04c9a22661b6f00f5d044163e8b422ee5e`;
+  `90d4fd6d639e4a2bef3360c3c97b45eba40aa0cf536708d2aaa427f0c06ceb9e`
+  and `3af43a87e918986dec1797d6e383eac29e5f6e06102611f87cd514df4c17256c`;
   promotion governance and post-main checks have SHA-256
-  `57106f9b2e2ccd7d74ebec5efbe9d375e1d31f9107eccfdf051a64f1891e8740`
-  and `5b87a77557b56aff6c99f169294d2049781b26a89c1fb8bef32bf0c407836be0`.
+  `ad9082a6b97e64ada046dcf65c5ef04cd85f2c82db591d3e4ca603b7deb46042`
+  and `ec69366b018b56571515f08b455d79cdbfef52fb6de9e3a9a992b955f5a78bd5`.
   Candidate/main workflow censuses and governance read-backs are retained
   under `/Users/danielwahnich/workspace/odeya-release-evidence/`.
   The remote-main rehearsal and comparison were freshly reproduced on
-  2026-07-27. Resolve every receipt's current byte validity through the
+  2026-07-28. Resolve every receipt's current byte validity through the
   admitted verifiers; do not infer it from this prose.
 - Pull requests are disabled; the exact inert merge configuration, Actions and
   workflow-token policies, no-bypass candidate ruleset `19178198`, and
@@ -410,7 +433,7 @@ Run first:
 
 ```bash
 bash -euo pipefail <<'BASH'
-cd /Users/danielwahnich/workspace/odeya-prq-013-context-review-20260721
+cd /Users/danielwahnich/workspace/odeya-prq-002-product-identity-20260728
 source scripts/ci/sanitize-git-environment.sh
 git status --short --branch
 git rev-parse HEAD
@@ -419,8 +442,8 @@ git symbolic-ref --short HEAD
 git fetch --quiet origin main
 git remote -v
 git log --oneline --decorate -5
-PUBLISHED_BASELINE=e467bdbbc9ec0451b2c331c8005a2691087358b6
-PUBLISHED_TREE=7fa164999b430969fea9e519812321aa356d4a73
+PUBLISHED_BASELINE=5332239f84ff278815c25d888f115bce22919e34
+PUBLISHED_TREE=15cf8bf50d480baa833b86366fcacb3d11ae45d0
 HEAD_COMMIT="$(git rev-parse HEAD)"
 REMOTE_MAIN="$(git rev-parse origin/main)"
 BASE_RELEASE="$(
@@ -434,7 +457,7 @@ HEAD_RELEASE="$(
     awk '{print $1}'
 )"
 test "$(git symbolic-ref --short HEAD)" = \
-  agent/t0-prq-013-context-review-20260721
+  agent/t0-prq-002-product-identity-20260728
 test "$(git remote)" = origin
 test "$(git remote get-url origin)" = \
   https://github.com/manfromnowhere143/odeya.git
@@ -465,7 +488,7 @@ BASH
 Expected invariants:
 
 - the active architecture branch is
-  `agent/t0-prq-013-context-review-20260721`;
+  `agent/t0-prq-002-product-identity-20260728`;
 - the canonical worktree remains on `agent/repository-release` with Daniel's
   protected UI/UX changes untouched;
 - the exact published baseline and tree remain at their permanent
@@ -580,8 +603,8 @@ bytes unchanged and adds, side by side:
 - an exact census bound to predecessor commit
   `56e8062334fb81bba955ba137be690e085d4c88e` and tree
   `d90ed6dd8c54b91a1e503358f98ecaa08c766fa3`; and
-- an isolated checker with 11 safe controls, 215 one-mutation intent-bound
-  known-bads, and 155 distinct intent refusal rules.
+- an isolated checker with 11 safe controls, 232 one-mutation intent-bound
+  known-bads, and 161 distinct intent refusal rules.
 
 [ADR 0095](decisions/0095-reissue-human-decision-assurance-as-a-byte-bound-independently-recomputed-chain.md)
 adds the retained T0 successor tranche without mutating those predecessor
@@ -624,24 +647,26 @@ not a `ReviewDetermination`, accountable review, organizational independence,
 or Gate A acceptance. All `HDA-CTX-001` through `HDA-CTX-016` findings remain
 `changed_candidate_pending_accountable_closure_review`.
 
-The measured candidate inventory is 120 schemas and 860 shared-manifest cases
-(220 valid and 640 known-bad), with 14 isolated suites and 11
-architecture-evidence checks. The current canonical audit covers 120 schemas
-and 216 fixtures; all 158 predecessor retained
+The measured candidate inventory is 132 schemas and 884 shared-manifest cases
+(232 valid and 652 known-bad), with 16 isolated suites and 12
+architecture-evidence checks. The frozen predecessor canonical audit covers
+120 schemas and 216 fixtures; all 158 predecessor retained
 cross-field rule cases isolate their declared rule. The generalized guard
-record is 469/958 proved across 14 suites, 489 explicitly unproved, and zero
+record is 477/1184 proved across 16 suites, 707 explicitly unproved, and zero
 crash-only detections. Its former 431/820 result is retracted because an
 unrefreshed self-binding produced false-positive detections. The consumer census
-partitions all 112 predecessor
-schemas without changing one byte, inventories 121 command and 135 event
+partitions all 112 predecessor schemas without changing one byte, classifies
+the 8 HDA mechanism schemas, and records all 12 PRQ-002B successor schemas as
+explicitly non-HDA and non-authority, for an exact 132-schema union. It
+inventories 121 command and 135 event
 selectors, records 18 decision families, 9 pending operator-acceptance
 consumers, 11 validators, and 33 explicit missing nodes.
 The checker pins the exact family and validator inventories, every field of
 the operator-consumer rows, every explicit missing-node identity/kind/status
 tuple, and reconciles their coverage counts. Those semantic classifications
 remain explicit census judgments rather than independently derived facts.
-It also compares all current baseline-schema and Authority Matrix bytes with
-the frozen Git source, requires the exact 120-schema union, resolves every
+It also compares all frozen baseline-schema and Authority Matrix bytes with
+the frozen Git source, requires the exact 112+8+12 schema union, resolves every
 claim-bearing evidence reference to its required artifact role, and requires
 direct decision-confirmation and delegation/effective-control provenance.
 
@@ -1396,14 +1421,14 @@ directory, outside both the Git worktree and temporary storage:
 
 ```bash
 bash -euo pipefail <<'BASH'
-cd /Users/danielwahnich/workspace/odeya-prq-013-context-review-20260721
+cd /Users/danielwahnich/workspace/odeya-prq-002-product-identity-20260728
 source scripts/ci/sanitize-git-environment.sh
 commit="$(git rev-parse HEAD)"
 evidence="/Users/danielwahnich/workspace/odeya-release-evidence/$commit"
 test ! -e "$evidence"
 bash scripts/ci/rehearse-fresh-clone.sh \
   "$commit" \
-  /Users/danielwahnich/workspace/odeya-prq-013-context-review-20260721 \
+  /Users/danielwahnich/workspace/odeya-prq-002-product-identity-20260728 \
   "$evidence" \
   local
 python3 - "$evidence" "$commit" <<'PY'
@@ -1619,21 +1644,24 @@ proved. The other 20 are explicitly unproved, not silently covered.
 
 1. Resolve the current `HEAD` from Git. If it is an exact ordinary
    single-parent direct-child candidate of published baseline
-   `e467bdbbc9ec0451b2c331c8005a2691087358b6`, finish that exact candidate's
+   `5332239f84ff278815c25d888f115bce22919e34`, finish that exact candidate's
    full ADR 0091 sequence before adding any more bytes: local rehearsal,
    permanent `release/<sha>`, four candidate workflows and ten jobs, same-SHA
    `main`, four new post-main workflows and ten jobs, remote-main
    rehearsal/comparison, and final exact-ref/governance read-back. If `HEAD` is
-   still the baseline, create only the bounded PRQ-002A child defined next.
+   still the baseline, complete only the bounded PRQ-002B child defined next.
    Never redo a permanent release ref or let a descendant inherit evidence.
-2. After the exact PRQ-002A candidate is published and settled, continue
-   PRQ-002 only through newly identified product member schemas and product
-   identity domains, followed by an accountably reviewed product-profile
-   successor/reissue and an explicit predecessor-to-successor migration.
-   Never promote a probe schema, object, digest, member, snapshot, profile, or
-   identifier into the product graph. Do not issue a profile, bind an
-   `EngineContractRoot`, construct an activation, imply runtime, or mark
-   PRQ-002 resolved.
+2. Complete the exact PRQ-002B candidate as an unissued architecture tranche:
+   retain the 12-resource cohort, nine product identity domains, scoped
+   `odeya-jcs-0.2` core/evidence/migration chain, frozen 120-resource
+   predecessor, explicit nonidentity structural vectors, and adversarial Gate
+   cross-check. After publication and settlement, continue PRQ-002 only through
+   source-separated successor conformance, complete offline resolution,
+   dependency-closed product members and registries, cross-object replay,
+   accountable review, and the operator's exact decision. Never promote a
+   probe or structural vector into a product identity. Do not issue a profile,
+   bind an `EngineContractRoot`, construct an activation, imply runtime, or
+   mark PRQ-002 resolved.
 3. Preserve the completed eleventh bounded attack round over exact reissued
    root
    `sha256:97062b38a14d5bdccf5ad87c547c62388e7cd82256a445f631856aecee54e1d9`,
@@ -1715,7 +1743,7 @@ the gate.
 
 ## The published surface is part of the evidence
 
-The current published baseline is `e467bdb…`; its exact local and remote
+The current published baseline is `5332239…`; its exact local and remote
 rehearsals, four-workflow/ten-job candidate and post-main censuses, comparison,
 and governance read-backs are retained externally under the evidence root.
 Historical first-activation baseline `f1f25fd…` introduced the ADR 0091 hook,

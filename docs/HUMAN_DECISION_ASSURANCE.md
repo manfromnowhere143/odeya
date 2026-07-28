@@ -455,13 +455,19 @@ derive their semantic classification from source.
 It additionally compares every baseline schema with the frozen Git checkpoint,
 binds both the exact predecessor and deliberately amended
 `docs/AUTHORITY_MATRIX.md` bytes, requires the current schema paths to equal the
-exact 112-baseline-plus-eight-candidate disjoint union of 120 schemas, and pins the
-judgment-bearing classification, command/event partition, family, validator,
-construction, completeness, migration, and nonclaim sections. The amended
-matrix names only a future admitted `AssuredDecision` wrapper at an `H` slot and
-records the exact contradiction-first `PRQ-013-KB-001` disposition. Those checks
-prevent a coordinated census/hash edit from silently converting a candidate or
-missing contract into admitted authority.
+exact disjoint union of 112 frozen baseline schemas and twenty side-by-side
+current candidates: eight HDA mechanism candidates and twelve PRQ-002B
+product-identity schema resources classified explicitly as non-HDA and
+non-authority. The resulting current union is 132 schemas. The PRQ-002B rows
+exist only to close the current path census; they are not HDA mechanisms,
+human-only slots, migrated consumers, product identities, or authority.
+The checker also pins the judgment-bearing classification, command/event
+partition, family, validator, construction, completeness, migration, and
+nonclaim sections. The amended matrix names only a future admitted
+`AssuredDecision` wrapper at an `H` slot and records the exact
+contradiction-first `PRQ-013-KB-001` disposition. Those checks prevent a
+coordinated census/hash edit from silently converting a candidate or missing
+contract into admitted authority.
 
 ## Gate staging
 

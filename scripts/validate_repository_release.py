@@ -317,7 +317,7 @@ EXPECTED_ARCHITECTURE_EVIDENCE_JOB_SHA256 = (
     "5e66d6010f154f16d4367cc57dfb415cbdaf681583b2b72c680c89b5bfe50731"
 )
 EXPECTED_INTEGRATED_VALIDATOR_SHA256 = (
-    "3a6ae4c651075a9871c029fe5aca14ef4a23c1004f3a5a639ec928672af936a9"
+    "cc6ba3e761a079a12870075419e7fedf7e4aaf2b767472eca85f36125acebef1"
 )
 ARCHITECTURE_EVIDENCE_KNOWN_BAD_MUTATION_COUNT = (
     len(DEDICATED_ARCHITECTURE_EVIDENCE_COMMANDS)
@@ -2159,6 +2159,11 @@ def validate_tla_pin_copies(errors: list[str]) -> None:
 # that runs inside an installed environment and fails only on the remote
 # runner — the incident's mechanism one layer down (environment pin instead
 # of count pin; independent review, ADR 0063).
+#
+# `validate_gate_a_prerequisites.py` is intentionally absent: its only direct
+# workflow invocation is in the architecture-evidence job, after that job's
+# exact hash-locked architecture environment installation. The release
+# contract separately pins that job's bytes, lock path, and command inventory.
 BARE_INTERPRETER_SCRIPTS = (
     "scripts/validate_architecture_surface.py",
     "scripts/validate_repository_release.py",
@@ -2166,7 +2171,6 @@ BARE_INTERPRETER_SCRIPTS = (
     "scripts/ci/verify_github_release.py",
     "tests/canonicalization/compare_results.py",
     "tests/canonicalization/audit_schemas.py",
-    "scripts/validate_gate_a_prerequisites.py",
     "scripts/validate_prq_009_assignment_order.py",
     "scripts/validate_schema_resource_reissues.py",
     "scripts/validate_lifecycle_guard_coverage.py",

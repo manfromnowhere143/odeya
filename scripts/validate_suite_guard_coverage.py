@@ -18,18 +18,18 @@ ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "architecture/suite-guard-coverage.json"
 AUDIT = ROOT / "scripts/audit_suite_guard_coverage.py"
 VALIDATOR = ROOT / "scripts/validate.py"
-PIN = {"guard_count": 1088, "proved": 470, "unproved": 618, "crash_detected": 0}
+PIN = {"guard_count": 1184, "proved": 477, "unproved": 707, "crash_detected": 0}
 EXCLUDED = {"lifecycle-closure": "dedicated 222/229 statement and 108/111 condition audits"}
 # SHA-256 binds normalized, comment/fence-cleaned current units: README's whole
 # checkpoint, status/handoff row/bullet plus sections, and all current plan units.
 # Numeric truth remains derived from RECORD; contradictory sibling prose cannot pass.
 UNIT_SHA256 = {
-    "readme.current-section": "ad2f162d1a75a42fd14f876e432c36b257b2f4e6a26cabb54047a999b7a96ed4",
-    "status.current-section": "5bed55841589e40c42fdbd7896c7fe716d65cad81eafe9a57337854b6b538e12",
-    "status.guard-row": "bb392fff66c5a154264df404845c785ee952a0b55506d4a3bf16df41605a1b28",
-    "handoff.current-section": "28c49abb77c9bb568f090e4dc2abfd7f3536b693d0fe41cb3455eaf3ec9e0604",
-    "handoff.guard-bullet": "5b94e8daaba6292e580cc7394792d0511270cc1994247fe376477580374d4b13",
-    "plan.current-units": "abe0fdb3c806af0809875e8646fe985084f784435a77378295f60ad446bc6cec",
+    "readme.current-section": "c153b7be99e6c5f91a3a65eb1256958ff1cda5d4511bbd196bae7e61f87de2fb",
+    "status.current-section": "72996878878b1afef87f6a15f3ae97bc26941b62e1f75a236dd8da6424c5b82f",
+    "status.guard-row": "291b33dc8f119079cb27ba7d58d3bab36535d2d5112ce99816f5ec961843ba66",
+    "handoff.current-section": "d68daac8923d501243ba85b95384d7bdddd5fe6249415cb9911bce4437e213d5",
+    "handoff.guard-bullet": "59d641e7e6b78111649ef875fa63f6af98f2a371a65db469aa794f40606361d5",
+    "plan.current-units": "5d636b50528833f36ccaf06f7e3a9590654821e255d116fc186f276b81a1a27c",
 }
 WORDS = "zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen eighteen nineteen twenty".split()
 WORD_VALUE = {word: index for index, word in enumerate(WORDS)}

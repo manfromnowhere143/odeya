@@ -209,7 +209,9 @@ properties.
 The checker does not trust the census's summary booleans. It recomputes the
 frozen source corpus from its exact Git commit and tree:
 
-- every baseline schema row and the disjoint three candidate-mechanism rows;
+- every one of the 112 baseline schema rows and the disjoint twenty current
+  candidate rows: eight HDA mechanism candidates and twelve PRQ-002B
+  product-identity schema resources classified as non-HDA and non-authority;
 - every row's path, observed `$id`, raw hash, byte length, and discovered
   marker pointer;
 - the exact baseline primary-class partition;
@@ -226,7 +228,10 @@ The census binds the baseline Authority Matrix bytes as historical provenance
 and, separately, the amended current Authority Matrix bytes used by this
 candidate wave. It does not require the current Matrix to equal the baseline;
 it requires both named byte identities and refuses unexplained current drift.
-The census is complete only for its named frozen source corpus. It is not
+The exact current path union is 132 schemas. The twelve PRQ-002B rows close
+that path inventory only; they are not HDA mechanisms, human-only slots,
+migrated consumers, product identities, or authority. The census is complete
+only for its named frozen baseline and side-by-side candidate scope. It is not
 consumer migration and does not authorize mutation of retained schema
 identities. Its family classifications are explicit census judgments under
 ADR 0092; the checker pins and reconciles them but does not independently

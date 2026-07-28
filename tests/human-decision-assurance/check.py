@@ -259,7 +259,14 @@ EXPECTED_VALIDATOR_PATHS = [
     "tests/work-identity-successor-cohort/check.py",
     "scripts/validate_canonicalization_dispositions.py",
 ]
-EXPECTED_CANDIDATE_SCHEMA_PATHS = [
+EXPECTED_SIDE_BY_SIDE_CANDIDATE_SCHEMA_PATHS = [
+    "schemas/aggregate-state-subject-record.schema.json",
+    "schemas/aggregate-state-subject-registry-v0-7.schema.json",
+    "schemas/canonicalization-profile-candidate-evidence-v0-6.schema.json",
+    "schemas/canonicalization-profile-core-v0-6.schema.json",
+    "schemas/canonicalization-profile-migration.schema.json",
+    "schemas/event-contract-record.schema.json",
+    "schemas/event-contract-registry-v0-7.schema.json",
     "schemas/human-decision-assurance-backing-byte-verification-receipt.schema.json",
     "schemas/human-decision-assurance-core.schema.json",
     "schemas/human-decision-assurance-eligibility-comparison-receipt.schema.json",
@@ -268,7 +275,36 @@ EXPECTED_CANDIDATE_SCHEMA_PATHS = [
     "schemas/human-decision-assurance-evidence.schema.json",
     "schemas/human-decision-assurance-seal-v0-2.schema.json",
     "schemas/human-decision-assurance-seal.schema.json",
+    "schemas/ordered-member-map-commitment.schema.json",
+    "schemas/reducer-contract-record.schema.json",
+    "schemas/reducer-registry-v0-7.schema.json",
+    "schemas/schema-registry-v0-8.schema.json",
+    "schemas/schema-resource-record.schema.json",
 ]
+EXPECTED_NON_HDA_NON_AUTHORITY_CANDIDATE_SCHEMA_PATHS = {
+    "schemas/aggregate-state-subject-record.schema.json",
+    "schemas/aggregate-state-subject-registry-v0-7.schema.json",
+    "schemas/canonicalization-profile-candidate-evidence-v0-6.schema.json",
+    "schemas/canonicalization-profile-core-v0-6.schema.json",
+    "schemas/canonicalization-profile-migration.schema.json",
+    "schemas/event-contract-record.schema.json",
+    "schemas/event-contract-registry-v0-7.schema.json",
+    "schemas/ordered-member-map-commitment.schema.json",
+    "schemas/reducer-contract-record.schema.json",
+    "schemas/reducer-registry-v0-7.schema.json",
+    "schemas/schema-registry-v0-8.schema.json",
+    "schemas/schema-resource-record.schema.json",
+}
+EXPECTED_HDA_CANDIDATE_MECHANISM_SCHEMA_PATHS = {
+    "schemas/human-decision-assurance-backing-byte-verification-receipt.schema.json",
+    "schemas/human-decision-assurance-core.schema.json",
+    "schemas/human-decision-assurance-eligibility-comparison-receipt.schema.json",
+    "schemas/human-decision-assurance-eligibility-recomputation-result.schema.json",
+    "schemas/human-decision-assurance-evidence-v0-2.schema.json",
+    "schemas/human-decision-assurance-evidence.schema.json",
+    "schemas/human-decision-assurance-seal-v0-2.schema.json",
+    "schemas/human-decision-assurance-seal.schema.json",
+}
 EXPECTED_EVIDENCE_ROLES = [
     "sanitized_challenge_lifecycle_and_atomic_consumption_record",
     "exact_unmodified_client_data_json",
@@ -440,7 +476,7 @@ EXPECTED_CENSUS_TOP_LEVEL_KEYS = {
     "pointer_discovery_profile",
     "class_definitions",
     "baseline_schema_partition",
-    "candidate_mechanism_schemas",
+    "side_by_side_candidate_schemas",
     "command_type_partition",
     "event_type_partition",
     "human_decision_families",
@@ -457,8 +493,10 @@ EXPECTED_CENSUS_SUBJECT = {
     "baseline_git_commit": "56e8062334fb81bba955ba137be690e085d4c88e",
     "baseline_git_tree": "d90ed6dd8c54b91a1e503358f98ecaa08c766fa3",
     "baseline_schema_count": 112,
-    "candidate_mechanism_schema_count": 8,
-    "current_union_schema_count": 120,
+    "side_by_side_candidate_schema_count": 20,
+    "hda_candidate_mechanism_schema_count": 8,
+    "non_hda_non_authority_candidate_schema_count": 12,
+    "current_union_schema_count": 132,
     "authority_matrix_ref": "docs/AUTHORITY_MATRIX.md",
     "baseline_authority_matrix_raw_sha256": (
         "sha256:5c1ffc01e8cafd84b2d761c53fb598aa159ba585ac743184a9a83872cce0b6be"
@@ -473,8 +511,12 @@ EXPECTED_CENSUS_SUBJECT = {
 }
 EXPECTED_CENSUS_SCOPE_BOUNDARY = {
     "baseline_rows_are_read_from_exact_git_tree": True,
-    "candidate_mechanism_rows_are_side_by_side_worktree_candidates": True,
-    "candidate_mechanism_rows_are_not_part_of_baseline_partition": True,
+    "side_by_side_candidate_rows_are_worktree_candidates": True,
+    "side_by_side_candidate_rows_are_not_part_of_baseline_partition": True,
+    (
+        "side_by_side_candidate_partition_is_exactly_eight_hda_candidate_"
+        "mechanisms_and_twelve_non_hda_non_authority_candidates"
+    ): True,
     "all_current_consumer_schemas_remain_byte_identical_to_baseline": True,
     "complete_means_complete_only_for_the_named_frozen_source_corpus": True,
     "future_schema_command_event_or_authority_matrix_change_requires_recomputation": True,
@@ -489,7 +531,7 @@ EXPECTED_CENSUS_SEMANTIC_SHA256 = {
         "sha256:0c602b6a11762e19e6926a5e9f069ae0e67cf4e81c0427cbafbf448db5d75d20"
     ),
     "class_definitions": (
-        "sha256:a243d9952f5e9c972533c298c880dd85ebe27859948418e63ae3417007988263"
+        "sha256:1028a2143658201abc66aec10e07ce1cd6429e2175a6031e18650b0a3d4ae130"
     ),
     "command_type_partition": (
         "sha256:663c333c7e42a2c63cdc754130a4e15a0c88e20c75283958f7bee22ed1960cef"
@@ -501,7 +543,7 @@ EXPECTED_CENSUS_SEMANTIC_SHA256 = {
         "sha256:ae5200cf5ffc8944cb5bd2297fab1a6e26187eb397a3d7891c78a9432ec23bf1"
     ),
     "candidate_status_projection": (
-        "sha256:7b6a06af22c5ff85fb3e7fa925eaab744f1313949cbf131a9f8d8bf7d260b35b"
+        "sha256:388a82698e523b3e79a9367ecdcd5ed4646d9bdb018c7b31f21aa9c45ba513c3"
     ),
     "human_decision_families": (
         "sha256:145ba5502980c358a0710df70fcd1289770fe539699080ce9fece3dc37f68681"
@@ -516,7 +558,7 @@ EXPECTED_CENSUS_SEMANTIC_SHA256 = {
         "sha256:4dadf5ed2c2dfa0925aca40a44fa792c40959491e6d87f7703c36ea35340be89"
     ),
     "dynamic_completeness_rule": (
-        "sha256:43855c78a18715d0381e5c6ee8e816eb9fd06c6e6900dca2cf27f229b884773e"
+        "sha256:63363406f506a79c7077d4f781008a8d36212c56fccdc4763922d345d252cbdf"
     ),
     "migration": (
         "sha256:cced163ea2617444cf3348c497ace7ea9ad9c956c8668162dc9af2c8ade826eb"
@@ -581,6 +623,23 @@ def semantic_sha256(value: Any) -> str:
     return raw_sha256(raw)
 
 
+def type_sensitive_equal(observed: Any, expected: Any) -> bool:
+    """Compare parsed JSON values without Python's bool/int/float coercions."""
+    if type(observed) is not type(expected):
+        return False
+    if isinstance(expected, dict):
+        return set(observed) == set(expected) and all(
+            type_sensitive_equal(observed[key], value)
+            for key, value in expected.items()
+        )
+    if isinstance(expected, list):
+        return len(observed) == len(expected) and all(
+            type_sensitive_equal(left, right)
+            for left, right in zip(observed, expected, strict=True)
+        )
+    return observed == expected
+
+
 def raw_binding(value: dict[str, Any]) -> tuple[str, int]:
     raw = render(value)
     return raw_sha256(raw), len(raw)
@@ -617,6 +676,22 @@ def apply_mutation(subject: Any, mutation: dict[str, Any]) -> None:
         index = int(final)
         if operation == "replace":
             parent[index] = mutation["value"]
+        elif operation == "swap":
+            other_tokens = pointer_tokens(mutation["other_path"])
+            other_parent = subject
+            for token in other_tokens[:-1]:
+                other_parent = (
+                    other_parent[int(token)]
+                    if isinstance(other_parent, list)
+                    else other_parent[token]
+                )
+            if not isinstance(other_parent, list):
+                raise TypeError("swap requires two list targets")
+            other_index = int(other_tokens[-1])
+            parent[index], other_parent[other_index] = (
+                other_parent[other_index],
+                parent[index],
+            )
         elif operation == "remove":
             del parent[index]
         elif operation == "add":
@@ -3576,23 +3651,29 @@ def evaluate_census(
     errors: list[str] = []
     current_schema_overrides = current_schema_overrides or {}
     extra_current_schema_paths = extra_current_schema_paths or []
+    if not isinstance(census, dict):
+        return ["census_identity_or_shape_mismatch"]
     if set(census) != EXPECTED_CENSUS_TOP_LEVEL_KEYS:
         errors.append("census_identity_or_shape_mismatch")
     if (
         census.get("artifact_type") != "HumanDecisionAssuranceConsumerCensus"
         or census.get("artifact_id")
         != "urn:odeya:architecture:"
-        "human-decision-assurance-consumer-census:2026-07-19:1"
-        or census.get("version") != 1
+        "human-decision-assurance-consumer-census:2026-07-28:2"
+        or not type_sensitive_equal(census.get("version"), 2)
         or census.get("status")
         != "candidate_complete_for_frozen_source_corpus_not_migrated"
-        or census.get("as_of_date") != "2026-07-19"
+        or census.get("as_of_date") != "2026-07-28"
     ):
         errors.append("census_identity_or_status_mismatch")
-    subject = census.get("subject", {})
-    if subject != EXPECTED_CENSUS_SUBJECT:
+    subject_value = census.get("subject")
+    if not type_sensitive_equal(subject_value, EXPECTED_CENSUS_SUBJECT):
         errors.append("census_subject_binding_mismatch")
-    if census.get("scope_boundary") != EXPECTED_CENSUS_SCOPE_BOUNDARY:
+    subject = subject_value if isinstance(subject_value, dict) else {}
+    if not type_sensitive_equal(
+        census.get("scope_boundary"),
+        EXPECTED_CENSUS_SCOPE_BOUNDARY,
+    ):
         errors.append("census_scope_boundary_mismatch")
     commit = subject.get("baseline_git_commit")
     tree = subject.get("baseline_git_tree")
@@ -3650,14 +3731,16 @@ def evaluate_census(
         + extra_current_schema_paths
     )
     if current_schema_paths != sorted(
-        [*baseline_paths, *EXPECTED_CANDIDATE_SCHEMA_PATHS]
+        [*baseline_paths, *EXPECTED_SIDE_BY_SIDE_CANDIDATE_SCHEMA_PATHS]
     ):
         errors.append("census_current_schema_union_or_baseline_drift")
 
-    profile = census.get("pointer_discovery_profile", {})
+    profile_value = census.get("pointer_discovery_profile")
+    profile = profile_value if isinstance(profile_value, dict) else {}
     markers = profile.get("exact_property_markers", [])
     profile_shape_invalid = (
         not isinstance(markers, list)
+        or any(not isinstance(marker, str) for marker in markers)
         or len(markers) != len(set(markers))
         or profile.get("traversal")
         != "depth_first_over_every_json_object_and_array"
@@ -3678,8 +3761,10 @@ def evaluate_census(
     ):
         errors.append("census_classification_profile_mismatch")
     marker_set = set(markers)
-    baseline = census.get("baseline_schema_partition", {})
-    rows = baseline.get("rows", [])
+    baseline_value = census.get("baseline_schema_partition")
+    baseline = baseline_value if isinstance(baseline_value, dict) else {}
+    rows_value = baseline.get("rows")
+    rows = rows_value if isinstance(rows_value, list) else []
     expected_baseline_row_keys = {
         "path",
         "schema_id",
@@ -3707,7 +3792,7 @@ def evaluate_census(
             "schema_ids_are_bound_as_observed_not_asserted_globally_unique"
         )
         is not True
-        or not isinstance(rows, list)
+        or not isinstance(rows_value, list)
         or any(
             not isinstance(row, dict)
             or set(row) != expected_baseline_row_keys
@@ -3715,7 +3800,9 @@ def evaluate_census(
         )
     ):
         errors.append("census_baseline_partition_mismatch")
-        if not isinstance(rows, list):
+        if not isinstance(rows_value, list) or any(
+            not isinstance(row, dict) for row in rows
+        ):
             rows = []
     baseline_judgment_projection = [
         {
@@ -3767,7 +3854,7 @@ def evaluate_census(
         if (
             row.get("schema_id") != document.get("$id")
             or row.get("raw_sha256") != raw_sha256(raw)
-            or row.get("byte_length") != len(raw)
+            or not type_sensitive_equal(row.get("byte_length"), len(raw))
         ):
             errors.append("census_baseline_row_binding_mismatch")
         if row.get("matching_pointers") != discovered_schema_pointers(
@@ -3792,10 +3879,22 @@ def evaluate_census(
     ):
         errors.append("census_primary_class_partition_mismatch")
 
-    candidate = census.get("candidate_mechanism_schemas", {})
-    candidate_rows = candidate.get("rows", [])
-    candidate_paths = [row.get("path") for row in candidate_rows]
-    expected_candidate_row_keys = {
+    side_by_side_value = census.get("side_by_side_candidate_schemas")
+    side_by_side = (
+        side_by_side_value if isinstance(side_by_side_value, dict) else {}
+    )
+    side_by_side_rows_value = side_by_side.get("rows")
+    side_by_side_rows = (
+        side_by_side_rows_value
+        if isinstance(side_by_side_rows_value, list)
+        else []
+    )
+    side_by_side_paths = [
+        row.get("path")
+        for row in side_by_side_rows
+        if isinstance(row, dict)
+    ]
+    expected_side_by_side_row_keys = {
         "path",
         "schema_id",
         "raw_sha256",
@@ -3819,23 +3918,74 @@ def evaluate_census(
                 "consumer_migrated",
             )
         }
-        for row in candidate_rows
+        for row in side_by_side_rows
         if isinstance(row, dict)
     ]
+    observed_hda_candidate_mechanism_paths = {
+        row.get("path")
+        for row in side_by_side_rows
+        if isinstance(row, dict)
+        and isinstance(row.get("path"), str)
+        and row.get("primary_class")
+        == "hda_candidate_mechanism_not_baseline_consumer"
+    }
+    observed_non_hda_non_authority_candidate_paths = {
+        row.get("path")
+        for row in side_by_side_rows
+        if isinstance(row, dict)
+        and isinstance(row.get("path"), str)
+        and row.get("primary_class")
+        == "non_hda_non_authority_candidate_not_baseline_consumer"
+    }
     if (
-        set(candidate)
-        != {"expected_count", "all_unissued", "all_non_authoritative", "rows"}
-        or candidate.get("expected_count") != 8
-        or candidate.get("all_unissued") is not True
-        or candidate.get("all_non_authoritative") is not True
-        or not isinstance(candidate_rows, list)
+        not isinstance(side_by_side_value, dict)
+        or set(side_by_side)
+        != {
+            "expected_count",
+            "hda_candidate_mechanism_count",
+            "non_hda_non_authority_candidate_count",
+            "partition_is_disjoint_and_complete",
+            "all_unissued",
+            "all_non_authoritative",
+            "rows",
+        }
+        or not type_sensitive_equal(side_by_side.get("expected_count"), 20)
+        or not type_sensitive_equal(
+            side_by_side.get("hda_candidate_mechanism_count"), 8
+        )
+        or not type_sensitive_equal(
+            side_by_side.get("non_hda_non_authority_candidate_count"), 12
+        )
+        or not type_sensitive_equal(
+            side_by_side.get("partition_is_disjoint_and_complete"), True
+        )
+        or not type_sensitive_equal(side_by_side.get("all_unissued"), True)
+        or not type_sensitive_equal(
+            side_by_side.get("all_non_authoritative"), True
+        )
+        or not isinstance(side_by_side_rows_value, list)
         or any(
             not isinstance(row, dict)
-            or set(row) != expected_candidate_row_keys
-            for row in candidate_rows
+            or set(row) != expected_side_by_side_row_keys
+            for row in side_by_side_rows
         )
-        or candidate_paths != EXPECTED_CANDIDATE_SCHEMA_PATHS
-        or set(candidate_paths) & set(paths)
+        or any(not isinstance(path, str) for path in side_by_side_paths)
+        or len(side_by_side_paths) != len(side_by_side_rows)
+        or side_by_side_paths != EXPECTED_SIDE_BY_SIDE_CANDIDATE_SCHEMA_PATHS
+        or set(side_by_side_paths) & set(paths)
+        or (
+            EXPECTED_HDA_CANDIDATE_MECHANISM_SCHEMA_PATHS
+            & EXPECTED_NON_HDA_NON_AUTHORITY_CANDIDATE_SCHEMA_PATHS
+        )
+        or (
+            EXPECTED_HDA_CANDIDATE_MECHANISM_SCHEMA_PATHS
+            | EXPECTED_NON_HDA_NON_AUTHORITY_CANDIDATE_SCHEMA_PATHS
+        )
+        != set(EXPECTED_SIDE_BY_SIDE_CANDIDATE_SCHEMA_PATHS)
+        or observed_hda_candidate_mechanism_paths
+        != EXPECTED_HDA_CANDIDATE_MECHANISM_SCHEMA_PATHS
+        or observed_non_hda_non_authority_candidate_paths
+        != EXPECTED_NON_HDA_NON_AUTHORITY_CANDIDATE_SCHEMA_PATHS
     ):
         errors.append("census_candidate_partition_mismatch")
     if (
@@ -3843,8 +3993,14 @@ def evaluate_census(
         != EXPECTED_CENSUS_SEMANTIC_SHA256["candidate_status_projection"]
     ):
         errors.append("census_candidate_status_escalated")
-    for row in candidate_rows:
+    for row in side_by_side_rows:
+        if not isinstance(row, dict):
+            errors.append("census_candidate_row_unrecomputable")
+            continue
         path = row.get("path")
+        if not isinstance(path, str):
+            errors.append("census_candidate_row_unrecomputable")
+            continue
         try:
             raw = (ROOT / path).read_bytes()
             document = loads_object(raw, path)
@@ -3854,14 +4010,18 @@ def evaluate_census(
         if (
             row.get("schema_id") != document.get("$id")
             or row.get("raw_sha256") != raw_sha256(raw)
-            or row.get("byte_length") != len(raw)
+            or not type_sensitive_equal(row.get("byte_length"), len(raw))
             or row.get("matching_pointers")
             != discovered_schema_pointers(document, marker_set)
         ):
             errors.append("census_candidate_row_binding_mismatch")
+        expected_primary_class = (
+            "non_hda_non_authority_candidate_not_baseline_consumer"
+            if path in EXPECTED_NON_HDA_NON_AUTHORITY_CANDIDATE_SCHEMA_PATHS
+            else "hda_candidate_mechanism_not_baseline_consumer"
+        )
         if (
-            row.get("primary_class")
-            != "candidate_mechanism_not_baseline_consumer"
+            row.get("primary_class") != expected_primary_class
             or row.get("consumer_migrated") is not False
         ):
             errors.append("census_candidate_status_escalated")
@@ -4042,8 +4202,14 @@ def evaluate_census(
     )
     expected_coverage = {
         "baseline_schema_rows": len(rows),
-        "candidate_mechanism_rows": len(candidate_rows),
-        "current_union_rows": len(rows) + len(candidate_rows),
+        "side_by_side_candidate_rows": len(side_by_side_rows),
+        "hda_candidate_mechanism_rows": len(
+            observed_hda_candidate_mechanism_paths
+        ),
+        "non_hda_non_authority_candidate_rows": len(
+            observed_non_hda_non_authority_candidate_paths
+        ),
+        "current_union_rows": len(rows) + len(side_by_side_rows),
         "baseline_primary_class_counts_sum_to_112": (
             sum(expected_classes.values()) == len(rows) == 112
         ),
@@ -4071,7 +4237,7 @@ def evaluate_census(
         "complete_only_for_frozen_source_corpus": True,
         "consumer_migration_complete": False,
     }
-    if census.get("coverage") != expected_coverage:
+    if not type_sensitive_equal(census.get("coverage"), expected_coverage):
         errors.append("census_coverage_reconciliation_mismatch")
     if (
         semantic_sha256(census.get("dynamic_completeness_rule"))
@@ -4123,23 +4289,23 @@ def evaluate_candidate_evidence(
         or candidate_evidence.get("schema_version") != "0.1.0"
         or candidate_evidence.get("artifact_class")
         != "human_decision_assurance_candidate_evidence"
-        or candidate_evidence.get("version") != "0.1.0"
+        or candidate_evidence.get("version") != "0.2.0"
         or candidate_evidence.get("evidence_status")
         != "candidate_measurement_not_admitted"
-        or not isinstance(candidate_evidence.get("evidence_id"), str)
-        or not candidate_evidence["evidence_id"].startswith(
-            "odeya.human-decision-assurance.candidate-evidence."
-        )
+        or candidate_evidence.get("evidence_id")
+        != "odeya.human-decision-assurance.candidate-evidence.2026-07-28"
     ):
         errors.append("candidate_evidence_identity_or_shape_mismatch")
-    bindings = candidate_evidence.get("ordered_artifact_bindings", [])
+    bindings_value = candidate_evidence.get("ordered_artifact_bindings")
+    bindings = bindings_value if isinstance(bindings_value, list) else []
     observed_path_roles = [
         (item.get("path"), item.get("role"))
         for item in bindings
         if isinstance(item, dict)
     ]
     if (
-        observed_path_roles != EXPECTED_CANDIDATE_EVIDENCE_BINDINGS
+        not isinstance(bindings_value, list)
+        or observed_path_roles != EXPECTED_CANDIDATE_EVIDENCE_BINDINGS
         or len(observed_path_roles) != len(set(observed_path_roles))
     ):
         errors.append("candidate_evidence_artifact_inventory_mismatch")
@@ -4160,7 +4326,7 @@ def evaluate_candidate_evidence(
             continue
         if (
             item.get("raw_sha256") != raw_sha256(raw)
-            or item.get("byte_count") != len(raw)
+            or not type_sensitive_equal(item.get("byte_count"), len(raw))
         ):
             errors.append("candidate_evidence_artifact_binding_mismatch")
     cases = cases_document.get("cases", [])
@@ -4185,14 +4351,23 @@ def evaluate_candidate_evidence(
         "exact_error_inventory_enforced": True,
         "harness_self_tested": True,
     }
-    if candidate_evidence.get("suite_summary") != expected_suite_summary:
+    if not type_sensitive_equal(
+        candidate_evidence.get("suite_summary"),
+        expected_suite_summary,
+    ):
         errors.append("candidate_evidence_suite_summary_mismatch")
     expected_census_summary = {
         "baseline_schema_rows": len(
             get(census, "baseline_schema_partition", "rows") or []
         ),
-        "candidate_mechanism_rows": len(
-            get(census, "candidate_mechanism_schemas", "rows") or []
+        "side_by_side_candidate_rows": len(
+            get(census, "side_by_side_candidate_schemas", "rows") or []
+        ),
+        "hda_candidate_mechanism_rows": len(
+            EXPECTED_HDA_CANDIDATE_MECHANISM_SCHEMA_PATHS
+        ),
+        "non_hda_non_authority_candidate_rows": len(
+            EXPECTED_NON_HDA_NON_AUTHORITY_CANDIDATE_SCHEMA_PATHS
         ),
         "command_types": get(
             census, "command_type_partition", "expected_count"
@@ -4213,7 +4388,10 @@ def evaluate_candidate_evidence(
         ),
         "current_consumers_migrated": False,
     }
-    if candidate_evidence.get("census_summary") != expected_census_summary:
+    if not type_sensitive_equal(
+        candidate_evidence.get("census_summary"),
+        expected_census_summary,
+    ):
         errors.append("candidate_evidence_census_summary_mismatch")
     expected_open_keys = {
         "profile_issued",

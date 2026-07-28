@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Deterministic architecture-schema audit against proposed odeya-jcs-0.1."""
+"""Deterministic audit of the frozen odeya-jcs-0.1 predecessor cohort."""
 
 from __future__ import annotations
 
@@ -23,7 +23,13 @@ FIXTURE_DIRS = (
     ROOT / "tests/mathematical-contracts/fixtures",
 )
 OUTPUT = Path(__file__).resolve().parent / "SCHEMA_AUDIT.json"
+PREDECESSOR_SCHEMA_MANIFEST = (
+    ROOT / "tests/product-identity-profile-candidate/predecessor-schemas.json"
+)
 PROFILE_ID = "urn:odeya:canonicalization:odeya-jcs-0.1"
+PREDECESSOR_COMMIT = "5332239f84ff278815c25d888f115bce22919e34"
+PREDECESSOR_TREE = "15cf8bf50d480baa833b86366fcacb3d11ae45d0"
+PREDECESSOR_SCHEMA_COUNT = 120
 FIXED_TIME_PATTERN = (
     "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:"
     "[0-9]{2}\\.[0-9]{6}Z$"
@@ -74,6 +80,68 @@ def load(path: Path) -> dict[str, Any]:
 
 def sha256(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
+
+
+def predecessor_schema_paths() -> list[Path]:
+    """Resolve and rebind the exact published 0.1 schema cohort.
+
+    The historical audit used a live ``schemas/*.json`` glob. Once a
+    side-by-side successor exists, that would either make the predecessor
+    evidence stale or tempt an in-place expansion of its claimed scope. This
+    manifest freezes the predecessor paths and exact bytes while the successor
+    cohort is audited separately.
+    """
+
+    manifest = load(PREDECESSOR_SCHEMA_MANIFEST)
+    if (
+        manifest.get("artifact_class")
+        != "prq_002b_frozen_predecessor_schema_path_manifest"
+        or manifest.get("source_commit") != PREDECESSOR_COMMIT
+        or manifest.get("source_tree") != PREDECESSOR_TREE
+        or manifest.get("schema_path_count") != PREDECESSOR_SCHEMA_COUNT
+        or manifest.get("row_shape")
+        != ["path", "schema_id", "raw_digest", "byte_count"]
+    ):
+        raise ValueError("frozen predecessor schema manifest identity drifted")
+    rows = manifest.get("schemas")
+    if not isinstance(rows, list) or len(rows) != PREDECESSOR_SCHEMA_COUNT:
+        raise ValueError("frozen predecessor schema manifest count drifted")
+    paths: list[Path] = []
+    observed: set[str] = set()
+    for index, row in enumerate(rows):
+        if (
+            not isinstance(row, list)
+            or len(row) != 4
+            or not isinstance(row[0], str)
+            or not isinstance(row[1], str)
+            or not isinstance(row[2], str)
+            or not isinstance(row[3], int)
+        ):
+            raise ValueError(f"invalid predecessor schema row {index}")
+        relative, expected_id, expected_digest, expected_bytes = row
+        if relative in observed:
+            raise ValueError(f"duplicate predecessor schema path {relative}")
+        observed.add(relative)
+        path = ROOT / relative
+        if (
+            not relative.startswith("schemas/")
+            or not relative.endswith(".schema.json")
+            or not path.is_file()
+            or path.is_symlink()
+        ):
+            raise ValueError(f"unsafe predecessor schema path {relative}")
+        raw = path.read_bytes()
+        document = load(path)
+        if (
+            document.get("$id") != expected_id
+            or "sha256:" + sha256(raw) != expected_digest
+            or len(raw) != expected_bytes
+        ):
+            raise ValueError(f"frozen predecessor schema binding drifted: {relative}")
+        paths.append(path)
+    if [path.relative_to(ROOT).as_posix() for path in paths] != sorted(observed):
+        raise ValueError("frozen predecessor schema paths are not sorted")
+    return paths
 
 
 def canonical_hash(value: Any) -> str:
@@ -698,7 +766,7 @@ def main() -> int:
     corpus_payload = b""
     fixture_payload = b""
 
-    for path in sorted(SCHEMA_DIR.glob("*.json")):
+    for path in predecessor_schema_paths():
         raw = path.read_bytes()
         schema = load(path)
         relative = path.relative_to(ROOT).as_posix()
@@ -915,7 +983,7 @@ def main() -> int:
         if not OUTPUT.is_file() or OUTPUT.read_text("utf-8") != rendered:
             print("canonicalization schema audit is stale", file=sys.stderr)
             return 1
-        print("canonicalization schema audit is current")
+        print("frozen predecessor canonicalization schema audit is exact")
         return 0
     if len(sys.argv) != 1:
         print("usage: audit_schemas.py [--check|--write]", file=sys.stderr)

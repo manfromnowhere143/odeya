@@ -9,7 +9,7 @@ This suite checks a deliberately nonrecursive construction:
 profile core without a self-digest
   -> external raw-byte binding
   -> retained two-path conformance evidence
-  -> current schema-domain and migration inventory
+  -> frozen predecessor schema-domain and migration inventory
 ```
 
 `architecture/canonicalization-profile-core-candidate.json` freezes the exact
@@ -19,18 +19,23 @@ version-axis parameters. It does not contain its own digest.
 
 `architecture/canonicalization-profile-candidate-evidence.json` binds the
 core and core-schema raw bytes, the nine retained conformance artifacts, the
-21 digest-domain constants currently declared by schemas, and the current
-blocking migration audit. Raw-byte binding bootstraps review of the profile;
-it is not a canonical object digest and must not be relabeled as one.
+21 digest-domain constants declared by the exact 120-schema predecessor
+cohort, and its frozen 120-schema/216-fixture migration audit. The audit's
+six-class finding set is empty and its disposition is `candidate_clear`; that
+bounded result is not profile issuance, complete consumer migration, or Gate A
+acceptance. Raw-byte binding bootstraps review of the profile; it is not a
+canonical object digest and must not be relabeled as one.
 
 The checker recomputes all bindings from local bytes, compares parser limits
 with the vector manifest, compares the eight explicit version axes with the
-Gate A inventory, extracts domain constants from every current schema, and
-requires the profile, migration, acceptance, and authority boundaries to stay
-fail-closed. One safe reference and 26 known-bad mutations exercise aliasing,
-self-reference, parser ambiguity, unsafe numbers, serializer substitution,
-envelope drift, fabricated digests or acceptance, incomplete domain/version
-inventories, evidence-hash drift, and authority escalation.
+Gate A inventory, extracts domain constants from every exact predecessor
+schema, and requires the profile, migration, acceptance, and authority
+boundaries to stay fail-closed. The twelve PRQ-002B successor resources and
+scoped `odeya-jcs-0.2` candidate are checked separately and cannot expand this
+predecessor proof. One safe reference and 26 known-bad mutations exercise
+aliasing, self-reference, parser ambiguity, unsafe numbers, serializer
+substitution, envelope drift, fabricated digests or acceptance, incomplete
+domain/version inventories, evidence-hash drift, and authority escalation.
 
 Run:
 

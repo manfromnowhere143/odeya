@@ -108,6 +108,7 @@ REQUIRED_FILES = (
     "docs/decisions/0089-a-valid-human-signature-is-not-a-human-decision.md",
     "docs/decisions/0092-bind-human-decisions-through-an-external-assurance-wrapper.md",
     "docs/decisions/0099-freeze-prq-002a-structural-identity-probe-layer.md",
+    "docs/decisions/0100-introduce-an-unissued-scoped-product-identity-profile-successor.md",
     "architecture/prq-002-identity-probe-profile.schema.json",
     "architecture/prq-002-identity-probe-profile-core.json",
     "architecture/prq-002-schema-member-probe.schema.json",
@@ -131,6 +132,9 @@ REQUIRED_FILES = (
     "architecture/canonicalization-profile-core-candidate.json",
     "architecture/canonicalization-migration-disposition-candidate.json",
     "architecture/canonicalization-profile-candidate-evidence.json",
+    "architecture/canonicalization-profile-core-0.2-candidate.json",
+    "architecture/canonicalization-profile-0.2-candidate-evidence.json",
+    "architecture/canonicalization-profile-0.1-to-0.2-migration-candidate.json",
     "architecture/canonicalization-evaluator-integrity-candidate.json",
     "scripts/validate_canonicalization_evaluator_integrity.py",
     "tests/canonicalization-evaluator-integrity/README.md",
@@ -159,6 +163,18 @@ REQUIRED_FILES = (
     "schemas/research-event-trace.schema.json",
     "schemas/canonicalization-profile-core.schema.json",
     "schemas/canonicalization-profile-candidate-evidence.schema.json",
+    "schemas/schema-resource-record.schema.json",
+    "schemas/aggregate-state-subject-record.schema.json",
+    "schemas/reducer-contract-record.schema.json",
+    "schemas/event-contract-record.schema.json",
+    "schemas/ordered-member-map-commitment.schema.json",
+    "schemas/schema-registry-v0-8.schema.json",
+    "schemas/aggregate-state-subject-registry-v0-7.schema.json",
+    "schemas/reducer-registry-v0-7.schema.json",
+    "schemas/event-contract-registry-v0-7.schema.json",
+    "schemas/canonicalization-profile-core-v0-6.schema.json",
+    "schemas/canonicalization-profile-candidate-evidence-v0-6.schema.json",
+    "schemas/canonicalization-profile-migration.schema.json",
     "schemas/work-intent-core.schema.json",
     "schemas/work-intent-identity-candidate-evidence.schema.json",
     "schemas/work-intent-profile-bound-candidate.schema.json",
@@ -247,6 +263,15 @@ REQUIRED_FILES = (
     "tests/architecture-schema/fixtures/human-decision-assurance-seal-v0-2.valid.json",
     "tests/architecture-schema/fixtures/prq-013-kb-001.agent-accessible-key.known-bad.json",
     "tests/architecture-schema/fixtures/human-decision-assurance-decision-subject.valid.json",
+    "tests/architecture-schema/fixtures/prq-002b-structural-nonidentity/prq-002b-schema-resource-record.structural-nonidentity.json",
+    "tests/architecture-schema/fixtures/prq-002b-structural-nonidentity/prq-002b-aggregate-state-subject-record.structural-nonidentity.json",
+    "tests/architecture-schema/fixtures/prq-002b-structural-nonidentity/prq-002b-reducer-contract-record.structural-nonidentity.json",
+    "tests/architecture-schema/fixtures/prq-002b-structural-nonidentity/prq-002b-event-contract-record.structural-nonidentity.json",
+    "tests/architecture-schema/fixtures/prq-002b-structural-nonidentity/prq-002b-ordered-member-map-commitment.structural-nonidentity.json",
+    "tests/architecture-schema/fixtures/prq-002b-structural-nonidentity/prq-002b-schema-registry-v0-8.structural-nonidentity.json",
+    "tests/architecture-schema/fixtures/prq-002b-structural-nonidentity/prq-002b-aggregate-state-subject-registry-v0-7.structural-nonidentity.json",
+    "tests/architecture-schema/fixtures/prq-002b-structural-nonidentity/prq-002b-reducer-registry-v0-7.structural-nonidentity.json",
+    "tests/architecture-schema/fixtures/prq-002b-structural-nonidentity/prq-002b-event-contract-registry-v0-7.structural-nonidentity.json",
     "tests/human-decision-assurance/check.py",
     "tests/human-decision-assurance/cases.json",
     "tests/human-decision-assurance/README.md",
@@ -316,6 +341,10 @@ REQUIRED_FILES = (
     "tests/canonical-profile-candidate/check.py",
     "tests/canonical-profile-candidate/cases.json",
     "tests/canonical-profile-candidate/README.md",
+    "tests/product-identity-profile-candidate/check.py",
+    "tests/product-identity-profile-candidate/cases.json",
+    "tests/product-identity-profile-candidate/predecessor-schemas.json",
+    "tests/product-identity-profile-candidate/README.md",
     "tests/work-intent-identity-candidate/check.py",
     "tests/work-intent-identity-candidate/cases.json",
     "tests/work-intent-identity-candidate/README.md",
@@ -408,6 +437,7 @@ ISOLATED_CONTRACT_SUITES = (
     "tests/work-intent-reference-resolution/check.py",
     "tests/challenge-frame/check.py",
     "tests/prq-002-identity-cohort/check.py",
+    "tests/product-identity-profile-candidate/check.py",
 )
 ARCHITECTURE_EVIDENCE_CHECKS = (
     "scripts/validate_gate_a_prerequisites.py",
@@ -1285,7 +1315,7 @@ def validate_architecture_semantic_fixtures(errors: list[str]) -> int:
 def validate_canonical_identity_evidence(
     errors: list[str],
 ) -> tuple[int, int, int, int]:
-    """Validate retained two-path identity evidence and audit freshness offline.
+    """Validate retained predecessor identity evidence and audit freshness offline.
 
     This executes only standard-library evidence comparators. It does not install
     packages, invoke either canonicalizer, access the network, or claim that the
@@ -1349,7 +1379,7 @@ def validate_canonical_identity_evidence(
         add(errors, f"canonical schema audit failed to execute: {type(exc).__name__}")
         return case_count, relation_count, 0, 0
     if audit_check.returncode != 0:
-        add(errors, "canonical schema/fixture migration audit is stale")
+        add(errors, "frozen predecessor canonical schema/fixture audit is stale")
 
     audit_document = load_json(
         ROOT / "tests/canonicalization/SCHEMA_AUDIT.json",
@@ -1778,8 +1808,10 @@ def main() -> int:
     )
     print(f"- {canonical_relation_count} canonical identity metamorphic relations checked")
     print(
-        f"- canonical migration inventory current for {canonical_schema_audit_count} schemas "
-        f"and {canonical_fixture_audit_count} fixtures; profile blockers remain explicit"
+        f"- frozen odeya-jcs-0.1 predecessor audit remains exact for "
+        f"{canonical_schema_audit_count} schemas and {canonical_fixture_audit_count} "
+        "fixtures; successor evidence is checked by its isolated contract and all "
+        "profile blockers remain explicit"
     )
     print(
         "- logical ownership manifest checked: "

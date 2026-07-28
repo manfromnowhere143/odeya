@@ -265,6 +265,41 @@ non-promotable. Passing the suite does not issue the canonicalization profile,
 close PRQ-002, allocate any product identity, admit a member, construct an
 `EngineContractRoot`, or authorize Gate A or runtime work.
 
+## PRQ-002B unissued scoped product-identity successor
+
+[ADR 0100](decisions/0100-introduce-an-unissued-scoped-product-identity-profile-successor.md)
+adds twelve side-by-side product schema resources under the scoped,
+non-aliasing `odeya-jcs-0.2` successor candidate: four standalone member
+schemas, one ordered-member-map commitment schema, four pure-registry
+successors, and three profile core/evidence/migration schemas. Nine product
+identity domains are declared before any product digest may be computed.
+
+The predecessor stays byte-for-byte distinct. Its frozen canonicalization
+audit remains exactly 120 schemas and 216 fixtures, while the scoped candidate
+partition is:
+
+```text
+106 retained direct odeya-jcs-0.1 consumers
+ 14 retained non-direct predecessor resources
+ 12 side-by-side successor resources
+---
+132 current product schema resources
+```
+
+Nine structural-nonidentity fixtures satisfy the shared schema harness without
+constructing identity. The dedicated candidate checker passes one safe control
+and nineteen attributed single-fault known-bads, while the generalized mutation
+audit currently proves 0 of its 93 refusal statements load-bearing. That
+0/93 result is explicit open evidence work, not positive coverage or
+correctness evidence.
+
+The profile and every successor resource remain unissued and unadmitted.
+Source-separated full-profile conformance, complete offline resolution,
+accountable review, and operator acceptance remain false or absent. The
+tranche constructs zero product identities, members, commitments, snapshots,
+roots, or activations; it does not close PRQ-002, accept Gate A, or authorize
+runtime work.
+
 ## Work still required before an immutable candidate
 
 The following remain blocking:

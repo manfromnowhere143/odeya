@@ -13,6 +13,9 @@
     "atomic_consumption",
     "authentication_intent",
     "bare_signature",
+    "candidate_evidence_artifact_binding",
+    "candidate_evidence_census_summary",
+    "candidate_evidence_suite_summary",
     "candidate_inclusion",
     "candidate_leaf_binding",
     "candidate_policy_authority",
@@ -20,6 +23,8 @@
     "census_baseline_classification",
     "census_baseline_shape",
     "census_candidate_boundary",
+    "census_candidate_partition",
+    "census_candidate_row_binding",
     "census_classification_profile",
     "census_command_partition",
     "census_command_partition_contract",
@@ -3565,6 +3570,114 @@
       ]
     },
     {
+      "name": "candidate-evidence-artifact-byte-count-cannot-use-json-float",
+      "kind": "adversarial",
+      "model": "candidate_evidence",
+      "adversarial_tag": "candidate_evidence_artifact_binding",
+      "mutation": {
+        "target": "candidate_evidence",
+        "op": "replace",
+        "path": "/ordered_artifact_bindings/0/byte_count",
+        "value": 17477.0
+      },
+      "expected_errors": [
+        "candidate_evidence_artifact_binding_mismatch"
+      ],
+      "intent_errors": [
+        "candidate_evidence_artifact_binding_mismatch"
+      ]
+    },
+    {
+      "name": "candidate-evidence-artifact-bindings-must-be-an-array",
+      "kind": "adversarial",
+      "model": "candidate_evidence",
+      "adversarial_tag": "candidate_evidence_artifact_binding",
+      "mutation": {
+        "target": "candidate_evidence",
+        "op": "replace",
+        "path": "/ordered_artifact_bindings",
+        "value": null
+      },
+      "expected_errors": [
+        "candidate_evidence_artifact_inventory_mismatch"
+      ],
+      "intent_errors": [
+        "candidate_evidence_artifact_inventory_mismatch"
+      ]
+    },
+    {
+      "name": "candidate-evidence-suite-count-cannot-use-json-float",
+      "kind": "adversarial",
+      "model": "candidate_evidence",
+      "adversarial_tag": "candidate_evidence_suite_summary",
+      "mutation": {
+        "target": "candidate_evidence",
+        "op": "replace",
+        "path": "/suite_summary/safe_controls",
+        "value": 11.0
+      },
+      "expected_errors": [
+        "candidate_evidence_suite_summary_mismatch"
+      ],
+      "intent_errors": [
+        "candidate_evidence_suite_summary_mismatch"
+      ]
+    },
+    {
+      "name": "candidate-evidence-suite-boolean-cannot-use-json-integer",
+      "kind": "adversarial",
+      "model": "candidate_evidence",
+      "adversarial_tag": "candidate_evidence_suite_summary",
+      "mutation": {
+        "target": "candidate_evidence",
+        "op": "replace",
+        "path": "/suite_summary/exact_error_inventory_enforced",
+        "value": 1
+      },
+      "expected_errors": [
+        "candidate_evidence_suite_summary_mismatch"
+      ],
+      "intent_errors": [
+        "candidate_evidence_suite_summary_mismatch"
+      ]
+    },
+    {
+      "name": "candidate-evidence-census-count-cannot-use-json-float",
+      "kind": "adversarial",
+      "model": "candidate_evidence",
+      "adversarial_tag": "candidate_evidence_census_summary",
+      "mutation": {
+        "target": "candidate_evidence",
+        "op": "replace",
+        "path": "/census_summary/hda_candidate_mechanism_rows",
+        "value": 8.0
+      },
+      "expected_errors": [
+        "candidate_evidence_census_summary_mismatch"
+      ],
+      "intent_errors": [
+        "candidate_evidence_census_summary_mismatch"
+      ]
+    },
+    {
+      "name": "candidate-evidence-census-boolean-cannot-use-json-integer",
+      "kind": "adversarial",
+      "model": "candidate_evidence",
+      "adversarial_tag": "candidate_evidence_census_summary",
+      "mutation": {
+        "target": "candidate_evidence",
+        "op": "replace",
+        "path": "/census_summary/current_consumers_migrated",
+        "value": 0
+      },
+      "expected_errors": [
+        "candidate_evidence_census_summary_mismatch"
+      ],
+      "intent_errors": [
+        "candidate_evidence_census_summary_mismatch"
+      ]
+    },
+    {
       "name": "core-relation-cannot-claim-original-authorship",
       "kind": "adversarial",
       "model": "chain",
@@ -3656,6 +3769,226 @@
       ],
       "intent_errors": [
         "census_scope_boundary_mismatch"
+      ]
+    },
+    {
+      "name": "census-hda-candidate-mechanism-count-cannot-use-json-float",
+      "kind": "adversarial",
+      "model": "census",
+      "adversarial_tag": "census_subject_binding",
+      "mutation": {
+        "target": "census",
+        "op": "replace",
+        "path": "/subject/hda_candidate_mechanism_schema_count",
+        "value": 8.0
+      },
+      "expected_errors": [
+        "census_subject_binding_mismatch"
+      ],
+      "intent_errors": [
+        "census_subject_binding_mismatch"
+      ]
+    },
+    {
+      "name": "census-side-by-side-scope-boolean-cannot-use-json-integer",
+      "kind": "adversarial",
+      "model": "census",
+      "adversarial_tag": "census_scope_boundary",
+      "mutation": {
+        "target": "census",
+        "op": "replace",
+        "path": "/scope_boundary/side_by_side_candidate_rows_are_worktree_candidates",
+        "value": 1
+      },
+      "expected_errors": [
+        "census_scope_boundary_mismatch"
+      ],
+      "intent_errors": [
+        "census_scope_boundary_mismatch"
+      ]
+    },
+    {
+      "name": "census-version-cannot-use-json-float",
+      "kind": "adversarial",
+      "model": "census",
+      "adversarial_tag": "census_identity_status",
+      "mutation": {
+        "target": "census",
+        "op": "replace",
+        "path": "/version",
+        "value": 2.0
+      },
+      "expected_errors": [
+        "census_identity_or_status_mismatch"
+      ],
+      "intent_errors": [
+        "census_identity_or_status_mismatch"
+      ]
+    },
+    {
+      "name": "census-candidate-byte-length-cannot-use-json-float",
+      "kind": "adversarial",
+      "model": "census",
+      "adversarial_tag": "census_candidate_row_binding",
+      "mutation": {
+        "target": "census",
+        "op": "replace",
+        "path": "/side_by_side_candidate_schemas/rows/0/byte_length",
+        "value": 16626.0
+      },
+      "expected_errors": [
+        "census_candidate_row_binding_mismatch"
+      ],
+      "intent_errors": [
+        "census_candidate_row_binding_mismatch"
+      ]
+    },
+    {
+      "name": "census-side-by-side-container-must-be-an-object",
+      "kind": "adversarial",
+      "model": "census",
+      "adversarial_tag": "census_candidate_partition",
+      "mutation": {
+        "target": "census",
+        "op": "replace",
+        "path": "/side_by_side_candidate_schemas",
+        "value": []
+      },
+      "expected_errors": [
+        "census_candidate_partition_mismatch",
+        "census_candidate_status_escalated",
+        "census_coverage_reconciliation_mismatch"
+      ],
+      "intent_errors": [
+        "census_candidate_partition_mismatch"
+      ]
+    },
+    {
+      "name": "census-side-by-side-rows-cannot-contain-null",
+      "kind": "adversarial",
+      "model": "census",
+      "adversarial_tag": "census_candidate_partition",
+      "mutation": {
+        "target": "census",
+        "op": "replace",
+        "path": "/side_by_side_candidate_schemas/rows",
+        "value": [
+          null
+        ]
+      },
+      "expected_errors": [
+        "census_candidate_partition_mismatch",
+        "census_candidate_row_unrecomputable",
+        "census_candidate_status_escalated",
+        "census_coverage_reconciliation_mismatch"
+      ],
+      "intent_errors": [
+        "census_candidate_partition_mismatch",
+        "census_candidate_row_unrecomputable"
+      ]
+    },
+    {
+      "name": "census-side-by-side-row-path-must-be-a-string",
+      "kind": "adversarial",
+      "model": "census",
+      "adversarial_tag": "census_candidate_row_binding",
+      "mutation": {
+        "target": "census",
+        "op": "replace",
+        "path": "/side_by_side_candidate_schemas/rows/0/path",
+        "value": null
+      },
+      "expected_errors": [
+        "census_candidate_partition_mismatch",
+        "census_candidate_row_unrecomputable",
+        "census_candidate_status_escalated",
+        "census_coverage_reconciliation_mismatch"
+      ],
+      "intent_errors": [
+        "census_candidate_partition_mismatch",
+        "census_candidate_row_unrecomputable"
+      ]
+    },
+    {
+      "name": "census-side-by-side-row-order-is-exact",
+      "kind": "adversarial",
+      "model": "census",
+      "adversarial_tag": "census_candidate_partition",
+      "mutation": {
+        "target": "census",
+        "op": "swap",
+        "path": "/side_by_side_candidate_schemas/rows/0",
+        "other_path": "/side_by_side_candidate_schemas/rows/1"
+      },
+      "expected_errors": [
+        "census_candidate_partition_mismatch",
+        "census_candidate_status_escalated"
+      ],
+      "intent_errors": [
+        "census_candidate_partition_mismatch"
+      ]
+    },
+    {
+      "name": "census-side-by-side-row-paths-must-be-unique",
+      "kind": "adversarial",
+      "model": "census",
+      "adversarial_tag": "census_candidate_partition",
+      "mutation": {
+        "target": "census",
+        "op": "replace",
+        "path": "/side_by_side_candidate_schemas/rows/1/path",
+        "value": "schemas/aggregate-state-subject-record.schema.json"
+      },
+      "expected_errors": [
+        "census_candidate_partition_mismatch",
+        "census_candidate_row_binding_mismatch",
+        "census_candidate_status_escalated",
+        "census_coverage_reconciliation_mismatch"
+      ],
+      "intent_errors": [
+        "census_candidate_partition_mismatch"
+      ]
+    },
+    {
+      "name": "census-non-hda-candidate-cannot-be-relabeled-as-hda-mechanism",
+      "kind": "adversarial",
+      "model": "census",
+      "adversarial_tag": "census_candidate_partition",
+      "mutation": {
+        "target": "census",
+        "op": "replace",
+        "path": "/side_by_side_candidate_schemas/rows/0/primary_class",
+        "value": "hda_candidate_mechanism_not_baseline_consumer"
+      },
+      "expected_errors": [
+        "census_candidate_partition_mismatch",
+        "census_candidate_status_escalated",
+        "census_coverage_reconciliation_mismatch"
+      ],
+      "intent_errors": [
+        "census_candidate_partition_mismatch",
+        "census_candidate_status_escalated"
+      ]
+    },
+    {
+      "name": "census-hda-mechanism-cannot-be-relabeled-as-non-hda-candidate",
+      "kind": "adversarial",
+      "model": "census",
+      "adversarial_tag": "census_candidate_partition",
+      "mutation": {
+        "target": "census",
+        "op": "replace",
+        "path": "/side_by_side_candidate_schemas/rows/7/primary_class",
+        "value": "non_hda_non_authority_candidate_not_baseline_consumer"
+      },
+      "expected_errors": [
+        "census_candidate_partition_mismatch",
+        "census_candidate_status_escalated",
+        "census_coverage_reconciliation_mismatch"
+      ],
+      "intent_errors": [
+        "census_candidate_partition_mismatch",
+        "census_candidate_status_escalated"
       ]
     },
     {
@@ -3774,7 +4107,7 @@
       "mutation": {
         "target": "census",
         "op": "replace",
-        "path": "/candidate_mechanism_schemas/rows/0/roles/0",
+        "path": "/side_by_side_candidate_schemas/rows/0/roles/0",
         "value": "admitted_authority"
       },
       "expected_errors": [
@@ -3792,7 +4125,7 @@
       "mutation": {
         "target": "census",
         "op": "add",
-        "path": "/candidate_mechanism_schemas/rows/0/authority_effective",
+        "path": "/side_by_side_candidate_schemas/rows/0/authority_effective",
         "value": true
       },
       "expected_errors": [

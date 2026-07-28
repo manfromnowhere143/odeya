@@ -1,0 +1,1789 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:odeya:schema:canonicalization-profile-core:0.6.0",
+  "title": "Odeya Canonicalization Profile 0.2 Core Candidate",
+  "description": "Closed schema for the scoped odeya-jcs-0.2 product-identity successor candidate. The core contains no digest of itself; exact raw-byte identity is bound only by external candidate evidence. Its twelve schema-byte bindings must be either uniformly unresolved placeholders or uniformly final raw digests and byte counts, while status remains explicitly unissued, unadmitted, and without product digests.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "artifact_class",
+    "profile_id",
+    "profile_version",
+    "candidate_status",
+    "scope",
+    "bootstrap_boundary",
+    "predecessor_binding",
+    "parser_contract",
+    "serialization_contract",
+    "scoped_digest_framing_contract",
+    "profile_reference_contract",
+    "member_key_profiles",
+    "successor_schema_bindings",
+    "domain_registry",
+    "superseded_reservations",
+    "digest_dependency_graph",
+    "migration_boundary",
+    "authority_boundary"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.6.0"
+    },
+    "artifact_class": {
+      "const": "canonicalization_profile_core_candidate"
+    },
+    "profile_id": {
+      "const": "urn:odeya:canonicalization:odeya-jcs-0.2"
+    },
+    "profile_version": {
+      "const": "0.2.0"
+    },
+    "candidate_status": {
+      "const": "scoped_successor_candidate_unissued_unadmitted_no_product_digests"
+    },
+    "scope": {
+      "const": {
+        "scope_id": "prq-002b-product-identity-foundation",
+        "scope_kind": "new_product_member_and_registry_identity_only",
+        "successor_of_profile_id": "urn:odeya:canonicalization:odeya-jcs-0.1",
+        "successor_of_profile_version": "0.1.0",
+        "product_identity_schema_count": 9,
+        "successor_schema_resource_count": 12,
+        "retained_predecessor_direct_consumer_count": 106,
+        "all_other_product_consumers_remain_on_predecessor": true,
+        "global_profile_replacement_claimed": false,
+        "profile_alias_declared": false,
+        "implicit_consumer_migration_allowed": false
+      }
+    },
+    "bootstrap_boundary": {
+      "const": {
+        "core_contains_self_hash": false,
+        "core_raw_bytes_bound_externally": true,
+        "bootstrap_identity_kind": "exact_raw_bytes_sha256_bound_by_external_candidate_evidence",
+        "profile_core_self_reference_forbidden": true,
+        "profile_aliases_allowed": false,
+        "mutable_locator_identity_allowed": false,
+        "operator_acceptance_required": true,
+        "operator_acceptance_ref": null
+      }
+    },
+    "predecessor_binding": {
+      "const": {
+        "profile_id": "urn:odeya:canonicalization:odeya-jcs-0.1",
+        "profile_version": "0.1.0",
+        "profile_issued": false,
+        "profile_core_path": "architecture/canonicalization-profile-core-candidate.json",
+        "profile_core_schema_path": "schemas/canonicalization-profile-core.schema.json",
+        "profile_core_schema_id": "urn:odeya:schema:canonicalization-profile-core:0.5.0",
+        "profile_core_raw_digest": "sha256:396d762ba753174d7cde87641d6cc970237fefbf6e9eeb5a3a513c048caf3e6a",
+        "profile_core_byte_count": 39045,
+        "profile_core_schema_raw_digest": "sha256:0c05b22cd34b66fa4573ef6b17ff9cae5b6618471320328614a36d233900499a",
+        "profile_core_schema_byte_count": 26754,
+        "profile_evidence_path": "architecture/canonicalization-profile-candidate-evidence.json",
+        "profile_evidence_schema_path": "schemas/canonicalization-profile-candidate-evidence.schema.json",
+        "profile_evidence_schema_id": "urn:odeya:schema:canonicalization-profile-candidate-evidence:0.5.0",
+        "profile_evidence_raw_digest": "sha256:e41d1ad6d1c60ecf6f6dbd7077455ad9834e93f4802a4f1f87a3b3a04a4847ae",
+        "profile_evidence_byte_count": 5348,
+        "profile_evidence_schema_raw_digest": "sha256:ca7822701dc3558410d7eb0cd1643542af85d5479640891983c5435cd5936e07",
+        "profile_evidence_schema_byte_count": 11272,
+        "binding_status": "exact_retained_unissued_predecessor_bytes"
+      }
+    },
+    "parser_contract": {
+      "const": {
+        "input_encoding": "utf-8",
+        "byte_order_mark": "reject",
+        "duplicate_object_names": "reject_before_mapping",
+        "trailing_data": "reject",
+        "comments_and_extensions": "reject",
+        "invalid_utf8": "reject",
+        "unpaired_surrogates": "reject",
+        "nonfinite_numbers": "reject",
+        "lexical_negative_zero": "reject",
+        "integer_domain": {
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991,
+          "outside_domain": "reject"
+        },
+        "limits": {
+          "max_bytes": 1048576,
+          "max_depth": 64,
+          "max_object_members": 4096,
+          "max_array_items": 10000,
+          "max_string_code_points": 262144,
+          "max_number_token_bytes": 128,
+          "max_total_nodes": 20000
+        },
+        "limit_exceeded_disposition": "reject_without_identity",
+        "schema_resolution": "preloaded_exact_resource_id_and_raw_digest",
+        "network_access": "disabled"
+      }
+    },
+    "serialization_contract": {
+      "const": {
+        "standard": "RFC8785_JSON_Canonicalization_Scheme",
+        "standard_reference": "https://www.rfc-editor.org/rfc/rfc8785",
+        "output_encoding": "utf-8",
+        "object_member_order": "raw_utf16_code_unit_ascending",
+        "array_order": "preserve_declared_sequence",
+        "unicode_normalization": "none",
+        "string_escaping": "rfc8785",
+        "number_serialization": "rfc8785_ecmascript_finite_ieee754"
+      }
+    },
+    "scoped_digest_framing_contract": {
+      "const": {
+        "freeze_status": "frozen_before_any_product_digest_computation",
+        "strict_subject_schema_validation_required": true,
+        "digest_contract_exact_members": [
+          "algorithm",
+          "domain_separator",
+          "canonicalization_profile_ref",
+          "subject_schema_ref",
+          "included_json_pointers",
+          "excluded_json_pointers"
+        ],
+        "digest_contract_additional_members": "reject",
+        "included_pointer_contract": {
+          "syntax": "RFC6901_JSON_Pointer",
+          "scope": "unique_top_level_subject_members_only",
+          "missing_pointer": "reject_without_identity",
+          "duplicate_pointer": "reject_without_identity",
+          "schema_fixed_exact_sequence_required": true
+        },
+        "excluded_pointer_contract": {
+          "syntax": "RFC6901_JSON_Pointer",
+          "scope": "schema_fixed_result_digest_plus_external_trace_review_or_conformance_evidence_members_only",
+          "missing_pointer": "reject_without_identity",
+          "overlap_with_included_pointer": "reject_without_identity",
+          "schema_fixed_exact_sequence_required": true
+        },
+        "scoped_digest_input_exact_members": [
+          "digest_contract",
+          "resolved_subject_schema",
+          "projection"
+        ],
+        "scoped_digest_input_additional_members": "reject",
+        "resolved_subject_schema_exact_members": [
+          "schema_id",
+          "schema_digest"
+        ],
+        "resolved_subject_schema_must_equal_subject_schema_ref": true,
+        "projection_construction": "copy_each_exact_included_top_level_member_under_its_unescaped_member_name",
+        "digest_contract_in_projection": true,
+        "result_digest_in_projection": false,
+        "preimage": "utf8_rfc8785_bytes_of_exact_scoped_digest_input",
+        "algorithm": "sha-256",
+        "output_lexical_form": "sha256_colon_64_lowercase_hex",
+        "digest_relabeling_or_inheritance": "forbidden",
+        "product_digest_computation_permitted": false,
+        "product_digest_computation_blocker": "final_successor_schema_bytes_core_raw_digest_conformance_and_operator_acceptance_absent"
+      }
+    },
+    "profile_reference_contract": {
+      "const": {
+        "exact_members": [
+          "profile_id",
+          "profile_version",
+          "profile_core_schema_id",
+          "profile_core_raw_digest"
+        ],
+        "profile_id": "urn:odeya:canonicalization:odeya-jcs-0.2",
+        "profile_version": "0.2.0",
+        "profile_core_schema_id": "urn:odeya:schema:canonicalization-profile-core:0.6.0",
+        "profile_core_raw_digest_source": "architecture/canonicalization-profile-0.2-candidate-evidence.json",
+        "profile_core_raw_digest_lexical_form": "sha256_colon_64_lowercase_hex",
+        "profile_core_self_reference_forbidden": true,
+        "admission_rule": "same_active_root_exact_member",
+        "legacy_name_object_id_or_bare_identifier_allowed": false,
+        "implicit_latest_allowed": false,
+        "implicit_predecessor_upcast_allowed": false,
+        "current_consumer_migration_complete": false
+      }
+    },
+    "member_key_profiles": {
+      "const": {
+        "schema_registry": {
+          "profile_id": "odeya-product-member-key-utf8-v1",
+          "member_key_expression": "schema_id@semantic_version",
+          "allowed_characters": "ascii_lowercase_digits_dot_underscore_colon_hyphen_at",
+          "encoding": "utf-8",
+          "unicode_normalization": "none",
+          "ordering": "canonical_utf8_ascending",
+          "comparison": "unsigned_lexicographic_byte_order",
+          "locale_or_case_folding": "forbidden",
+          "duplicate_member_keys": "reject"
+        },
+        "aggregate_state_subject_registry": {
+          "profile_id": "odeya-product-member-key-utf8-v1",
+          "member_key_expression": "aggregate_type",
+          "allowed_characters": "ascii_lowercase_digits_dot_underscore_colon_hyphen_at",
+          "encoding": "utf-8",
+          "unicode_normalization": "none",
+          "ordering": "canonical_utf8_ascending",
+          "comparison": "unsigned_lexicographic_byte_order",
+          "locale_or_case_folding": "forbidden",
+          "duplicate_member_keys": "reject"
+        },
+        "reducer_registry": {
+          "profile_id": "odeya-product-member-key-utf8-v1",
+          "member_key_expression": "aggregate_type",
+          "allowed_characters": "ascii_lowercase_digits_dot_underscore_colon_hyphen_at",
+          "encoding": "utf-8",
+          "unicode_normalization": "none",
+          "ordering": "canonical_utf8_ascending",
+          "comparison": "unsigned_lexicographic_byte_order",
+          "locale_or_case_folding": "forbidden",
+          "duplicate_member_keys": "reject"
+        },
+        "event_contract_registry": {
+          "profile_id": "odeya-product-member-key-utf8-v1",
+          "member_key_expression": "event_type@event_version",
+          "allowed_characters": "ascii_lowercase_digits_dot_underscore_colon_hyphen_at",
+          "encoding": "utf-8",
+          "unicode_normalization": "none",
+          "ordering": "canonical_utf8_ascending",
+          "comparison": "unsigned_lexicographic_byte_order",
+          "locale_or_case_folding": "forbidden",
+          "duplicate_member_keys": "reject"
+        }
+      }
+    },
+    "domain_registry": {
+      "const": [
+        {
+          "domain_separator": "odeya-schema-resource-record-v1",
+          "subject_class": "schema_resource_record",
+          "declaring_schema_binding_id": "schema_resource_record",
+          "registration_status": "scoped_successor_candidate_unissued_unadmitted"
+        },
+        {
+          "domain_separator": "odeya-aggregate-state-subject-record-v1",
+          "subject_class": "aggregate_state_subject_record",
+          "declaring_schema_binding_id": "aggregate_state_subject_record",
+          "registration_status": "scoped_successor_candidate_unissued_unadmitted"
+        },
+        {
+          "domain_separator": "odeya-reducer-contract-record-v1",
+          "subject_class": "reducer_contract_record",
+          "declaring_schema_binding_id": "reducer_contract_record",
+          "registration_status": "scoped_successor_candidate_unissued_unadmitted"
+        },
+        {
+          "domain_separator": "odeya-event-contract-record-v1",
+          "subject_class": "event_contract_record",
+          "declaring_schema_binding_id": "event_contract_record",
+          "registration_status": "scoped_successor_candidate_unissued_unadmitted"
+        },
+        {
+          "domain_separator": "odeya-ordered-member-map-commitment-v1",
+          "subject_class": "ordered_member_map_commitment",
+          "declaring_schema_binding_id": "ordered_member_map_commitment",
+          "registration_status": "scoped_successor_candidate_unissued_unadmitted"
+        },
+        {
+          "domain_separator": "odeya-schema-registry-v2",
+          "subject_class": "schema_registry",
+          "declaring_schema_binding_id": "schema_registry_v0_8",
+          "registration_status": "scoped_successor_candidate_unissued_unadmitted"
+        },
+        {
+          "domain_separator": "odeya-aggregate-state-subject-registry-v2",
+          "subject_class": "aggregate_state_subject_registry",
+          "declaring_schema_binding_id": "aggregate_state_subject_registry_v0_7",
+          "registration_status": "scoped_successor_candidate_unissued_unadmitted"
+        },
+        {
+          "domain_separator": "odeya-reducer-registry-v2",
+          "subject_class": "reducer_registry",
+          "declaring_schema_binding_id": "reducer_registry_v0_7",
+          "registration_status": "scoped_successor_candidate_unissued_unadmitted"
+        },
+        {
+          "domain_separator": "odeya-event-contract-registry-v2",
+          "subject_class": "event_contract_registry",
+          "declaring_schema_binding_id": "event_contract_registry_v0_7",
+          "registration_status": "scoped_successor_candidate_unissued_unadmitted"
+        }
+      ]
+    },
+    "superseded_reservations": {
+      "const": [
+        {
+          "domain_separator": "odeya-ordered-digest-list-commitment-v1",
+          "subject_class": "ordered_digest_list_commitment",
+          "intended_declaring_schema_id": "urn:odeya:schema:ordered-digest-list-commitment:0.1.0",
+          "predecessor_core_json_pointer": "/prospective_domain_registry/26",
+          "predecessor_registration_status": "prospective_name_reserved_no_declaring_constant",
+          "predecessor_issued": false,
+          "superseded_by_domain_separator": "odeya-ordered-member-map-commitment-v1",
+          "alias_or_digest_equivalence": false,
+          "disposition": "superseded_reservation_retained_never_issued_never_migrated"
+        }
+      ]
+    },
+    "digest_dependency_graph": {
+      "const": {
+        "edge_direction": "subject_to_exact_dependency",
+        "node_ids_unique": true,
+        "self_edges_allowed": false,
+        "cycles_allowed": false,
+        "nodes": [
+          "predecessor_profile_core_schema",
+          "predecessor_profile_core",
+          "predecessor_profile_evidence_schema",
+          "predecessor_profile_evidence",
+          "schema_resource_record",
+          "aggregate_state_subject_record",
+          "reducer_contract_record",
+          "event_contract_record",
+          "ordered_member_map_commitment",
+          "schema_registry_v0_8",
+          "aggregate_state_subject_registry_v0_7",
+          "reducer_registry_v0_7",
+          "event_contract_registry_v0_7",
+          "canonicalization_profile_core_v0_6",
+          "canonicalization_profile_candidate_evidence_v0_6",
+          "canonicalization_profile_migration",
+          "successor_profile_core_artifact",
+          "successor_profile_evidence_artifact",
+          "successor_profile_migration_artifact"
+        ],
+        "edges": [
+          {
+            "subject": "predecessor_profile_core",
+            "dependency": "predecessor_profile_core_schema"
+          },
+          {
+            "subject": "predecessor_profile_evidence",
+            "dependency": "predecessor_profile_evidence_schema"
+          },
+          {
+            "subject": "predecessor_profile_evidence",
+            "dependency": "predecessor_profile_core"
+          },
+          {
+            "subject": "schema_registry_v0_8",
+            "dependency": "ordered_member_map_commitment"
+          },
+          {
+            "subject": "aggregate_state_subject_registry_v0_7",
+            "dependency": "ordered_member_map_commitment"
+          },
+          {
+            "subject": "reducer_registry_v0_7",
+            "dependency": "ordered_member_map_commitment"
+          },
+          {
+            "subject": "event_contract_registry_v0_7",
+            "dependency": "ordered_member_map_commitment"
+          },
+          {
+            "subject": "successor_profile_core_artifact",
+            "dependency": "predecessor_profile_core_schema"
+          },
+          {
+            "subject": "successor_profile_core_artifact",
+            "dependency": "predecessor_profile_core"
+          },
+          {
+            "subject": "successor_profile_core_artifact",
+            "dependency": "predecessor_profile_evidence_schema"
+          },
+          {
+            "subject": "successor_profile_core_artifact",
+            "dependency": "predecessor_profile_evidence"
+          },
+          {
+            "subject": "successor_profile_core_artifact",
+            "dependency": "schema_resource_record"
+          },
+          {
+            "subject": "successor_profile_core_artifact",
+            "dependency": "aggregate_state_subject_record"
+          },
+          {
+            "subject": "successor_profile_core_artifact",
+            "dependency": "reducer_contract_record"
+          },
+          {
+            "subject": "successor_profile_core_artifact",
+            "dependency": "event_contract_record"
+          },
+          {
+            "subject": "successor_profile_core_artifact",
+            "dependency": "ordered_member_map_commitment"
+          },
+          {
+            "subject": "successor_profile_core_artifact",
+            "dependency": "schema_registry_v0_8"
+          },
+          {
+            "subject": "successor_profile_core_artifact",
+            "dependency": "aggregate_state_subject_registry_v0_7"
+          },
+          {
+            "subject": "successor_profile_core_artifact",
+            "dependency": "reducer_registry_v0_7"
+          },
+          {
+            "subject": "successor_profile_core_artifact",
+            "dependency": "event_contract_registry_v0_7"
+          },
+          {
+            "subject": "successor_profile_core_artifact",
+            "dependency": "canonicalization_profile_core_v0_6"
+          },
+          {
+            "subject": "successor_profile_core_artifact",
+            "dependency": "canonicalization_profile_candidate_evidence_v0_6"
+          },
+          {
+            "subject": "successor_profile_core_artifact",
+            "dependency": "canonicalization_profile_migration"
+          },
+          {
+            "subject": "successor_profile_evidence_artifact",
+            "dependency": "successor_profile_core_artifact"
+          },
+          {
+            "subject": "successor_profile_evidence_artifact",
+            "dependency": "canonicalization_profile_candidate_evidence_v0_6"
+          },
+          {
+            "subject": "successor_profile_evidence_artifact",
+            "dependency": "schema_resource_record"
+          },
+          {
+            "subject": "successor_profile_evidence_artifact",
+            "dependency": "aggregate_state_subject_record"
+          },
+          {
+            "subject": "successor_profile_evidence_artifact",
+            "dependency": "reducer_contract_record"
+          },
+          {
+            "subject": "successor_profile_evidence_artifact",
+            "dependency": "event_contract_record"
+          },
+          {
+            "subject": "successor_profile_evidence_artifact",
+            "dependency": "ordered_member_map_commitment"
+          },
+          {
+            "subject": "successor_profile_evidence_artifact",
+            "dependency": "schema_registry_v0_8"
+          },
+          {
+            "subject": "successor_profile_evidence_artifact",
+            "dependency": "aggregate_state_subject_registry_v0_7"
+          },
+          {
+            "subject": "successor_profile_evidence_artifact",
+            "dependency": "reducer_registry_v0_7"
+          },
+          {
+            "subject": "successor_profile_evidence_artifact",
+            "dependency": "event_contract_registry_v0_7"
+          },
+          {
+            "subject": "successor_profile_evidence_artifact",
+            "dependency": "canonicalization_profile_core_v0_6"
+          },
+          {
+            "subject": "successor_profile_evidence_artifact",
+            "dependency": "canonicalization_profile_migration"
+          },
+          {
+            "subject": "successor_profile_migration_artifact",
+            "dependency": "successor_profile_evidence_artifact"
+          },
+          {
+            "subject": "successor_profile_migration_artifact",
+            "dependency": "canonicalization_profile_migration"
+          },
+          {
+            "subject": "successor_profile_migration_artifact",
+            "dependency": "successor_profile_core_artifact"
+          },
+          {
+            "subject": "successor_profile_migration_artifact",
+            "dependency": "schema_resource_record"
+          },
+          {
+            "subject": "successor_profile_migration_artifact",
+            "dependency": "aggregate_state_subject_record"
+          },
+          {
+            "subject": "successor_profile_migration_artifact",
+            "dependency": "reducer_contract_record"
+          },
+          {
+            "subject": "successor_profile_migration_artifact",
+            "dependency": "event_contract_record"
+          },
+          {
+            "subject": "successor_profile_migration_artifact",
+            "dependency": "ordered_member_map_commitment"
+          },
+          {
+            "subject": "successor_profile_migration_artifact",
+            "dependency": "schema_registry_v0_8"
+          },
+          {
+            "subject": "successor_profile_migration_artifact",
+            "dependency": "aggregate_state_subject_registry_v0_7"
+          },
+          {
+            "subject": "successor_profile_migration_artifact",
+            "dependency": "reducer_registry_v0_7"
+          },
+          {
+            "subject": "successor_profile_migration_artifact",
+            "dependency": "event_contract_registry_v0_7"
+          },
+          {
+            "subject": "successor_profile_migration_artifact",
+            "dependency": "canonicalization_profile_core_v0_6"
+          },
+          {
+            "subject": "successor_profile_migration_artifact",
+            "dependency": "canonicalization_profile_candidate_evidence_v0_6"
+          }
+        ],
+        "core_raw_digest_inside_core": false,
+        "successor_core_raw_digest_inside_successor_schema_bytes": false,
+        "cross_resource_schema_reference_cycles_allowed": false
+      }
+    },
+    "migration_boundary": {
+      "const": {
+        "migration_candidate_path": "architecture/canonicalization-profile-0.1-to-0.2-migration-candidate.json",
+        "migration_schema_id": "urn:odeya:schema:canonicalization-profile-migration:0.1.0",
+        "migration_kind": "explicit_scoped_resource_successor_without_digest_inheritance",
+        "predecessor_instances_claimed_issued": false,
+        "probe_instances_in_scope": false,
+        "retained_predecessor_consumers_rewritten": false,
+        "current_consumer_migration_complete": false,
+        "offline_resolver_complete": false
+      }
+    },
+    "authority_boundary": {
+      "const": {
+        "profile_issued": false,
+        "canonical_identity_issued": false,
+        "schema_resources_admitted": false,
+        "product_members_constructed": false,
+        "product_snapshots_constructed": false,
+        "product_digests_computed": false,
+        "profile_registry_member_exists": false,
+        "profile_registry_member_ref": null,
+        "schema_registry_snapshot_exists": false,
+        "schema_registry_snapshot_ref": null,
+        "engine_contract_root_binding_exists": false,
+        "engine_contract_root_ref": null,
+        "activation_exists": false,
+        "activation_ref": null,
+        "operator_acceptance_ref": null,
+        "gate_a_complete": false,
+        "runtime_authorized": false,
+        "deployment_authorized": false,
+        "external_effects_authorized": false,
+        "publication_authorized": false
+      }
+    },
+    "successor_schema_bindings": {
+      "type": "array",
+      "minItems": 12,
+      "maxItems": 12,
+      "prefixItems": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "binding_id",
+            "path",
+            "schema_id",
+            "raw_digest",
+            "byte_count",
+            "resource_role"
+          ],
+          "properties": {
+            "binding_id": {
+              "const": "schema_resource_record"
+            },
+            "path": {
+              "const": "schemas/schema-resource-record.schema.json"
+            },
+            "schema_id": {
+              "const": "urn:odeya:schema:schema-resource-record:0.1.0"
+            },
+            "raw_digest": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/raw_digest",
+                  "x-odeya-digest-scope": {
+                    "kind": "byte_digest",
+                    "subject": "exact retained bytes named by sibling binding identity",
+                    "algorithm": "sha-256",
+                    "profile": "raw_bytes_no_canonicalization",
+                    "status": "candidate_unissued_exact_raw_byte_binding"
+                  }
+                },
+                {
+                  "const": "__PRQ002B_FINAL_SCHEMA_RAW_DIGEST_REQUIRED__SCHEMA_RESOURCE_RECORD__"
+                }
+              ],
+              "x-odeya-digest-scope": {
+                "kind": "byte_digest",
+                "subject": "exact retained successor schema resource bytes named by sibling path and schema_id",
+                "algorithm": "sha-256",
+                "profile": "raw_bytes_no_canonicalization",
+                "status": "candidate_unissued_exact_raw_byte_binding"
+              }
+            },
+            "byte_count": {
+              "oneOf": [
+                {
+                  "type": "integer",
+                  "minimum": 2
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "resource_role": {
+              "const": "product_member_schema"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "binding_id",
+            "path",
+            "schema_id",
+            "raw_digest",
+            "byte_count",
+            "resource_role"
+          ],
+          "properties": {
+            "binding_id": {
+              "const": "aggregate_state_subject_record"
+            },
+            "path": {
+              "const": "schemas/aggregate-state-subject-record.schema.json"
+            },
+            "schema_id": {
+              "const": "urn:odeya:schema:aggregate-state-subject-record:0.1.0"
+            },
+            "raw_digest": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/raw_digest",
+                  "x-odeya-digest-scope": {
+                    "kind": "byte_digest",
+                    "subject": "exact retained bytes named by sibling binding identity",
+                    "algorithm": "sha-256",
+                    "profile": "raw_bytes_no_canonicalization",
+                    "status": "candidate_unissued_exact_raw_byte_binding"
+                  }
+                },
+                {
+                  "const": "__PRQ002B_FINAL_SCHEMA_RAW_DIGEST_REQUIRED__AGGREGATE_STATE_SUBJECT_RECORD__"
+                }
+              ],
+              "x-odeya-digest-scope": {
+                "kind": "byte_digest",
+                "subject": "exact retained successor schema resource bytes named by sibling path and schema_id",
+                "algorithm": "sha-256",
+                "profile": "raw_bytes_no_canonicalization",
+                "status": "candidate_unissued_exact_raw_byte_binding"
+              }
+            },
+            "byte_count": {
+              "oneOf": [
+                {
+                  "type": "integer",
+                  "minimum": 2
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "resource_role": {
+              "const": "product_member_schema"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "binding_id",
+            "path",
+            "schema_id",
+            "raw_digest",
+            "byte_count",
+            "resource_role"
+          ],
+          "properties": {
+            "binding_id": {
+              "const": "reducer_contract_record"
+            },
+            "path": {
+              "const": "schemas/reducer-contract-record.schema.json"
+            },
+            "schema_id": {
+              "const": "urn:odeya:schema:reducer-contract-record:0.1.0"
+            },
+            "raw_digest": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/raw_digest",
+                  "x-odeya-digest-scope": {
+                    "kind": "byte_digest",
+                    "subject": "exact retained bytes named by sibling binding identity",
+                    "algorithm": "sha-256",
+                    "profile": "raw_bytes_no_canonicalization",
+                    "status": "candidate_unissued_exact_raw_byte_binding"
+                  }
+                },
+                {
+                  "const": "__PRQ002B_FINAL_SCHEMA_RAW_DIGEST_REQUIRED__REDUCER_CONTRACT_RECORD__"
+                }
+              ],
+              "x-odeya-digest-scope": {
+                "kind": "byte_digest",
+                "subject": "exact retained successor schema resource bytes named by sibling path and schema_id",
+                "algorithm": "sha-256",
+                "profile": "raw_bytes_no_canonicalization",
+                "status": "candidate_unissued_exact_raw_byte_binding"
+              }
+            },
+            "byte_count": {
+              "oneOf": [
+                {
+                  "type": "integer",
+                  "minimum": 2
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "resource_role": {
+              "const": "product_member_schema"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "binding_id",
+            "path",
+            "schema_id",
+            "raw_digest",
+            "byte_count",
+            "resource_role"
+          ],
+          "properties": {
+            "binding_id": {
+              "const": "event_contract_record"
+            },
+            "path": {
+              "const": "schemas/event-contract-record.schema.json"
+            },
+            "schema_id": {
+              "const": "urn:odeya:schema:event-contract-record:0.1.0"
+            },
+            "raw_digest": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/raw_digest",
+                  "x-odeya-digest-scope": {
+                    "kind": "byte_digest",
+                    "subject": "exact retained bytes named by sibling binding identity",
+                    "algorithm": "sha-256",
+                    "profile": "raw_bytes_no_canonicalization",
+                    "status": "candidate_unissued_exact_raw_byte_binding"
+                  }
+                },
+                {
+                  "const": "__PRQ002B_FINAL_SCHEMA_RAW_DIGEST_REQUIRED__EVENT_CONTRACT_RECORD__"
+                }
+              ],
+              "x-odeya-digest-scope": {
+                "kind": "byte_digest",
+                "subject": "exact retained successor schema resource bytes named by sibling path and schema_id",
+                "algorithm": "sha-256",
+                "profile": "raw_bytes_no_canonicalization",
+                "status": "candidate_unissued_exact_raw_byte_binding"
+              }
+            },
+            "byte_count": {
+              "oneOf": [
+                {
+                  "type": "integer",
+                  "minimum": 2
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "resource_role": {
+              "const": "product_member_schema"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "binding_id",
+            "path",
+            "schema_id",
+            "raw_digest",
+            "byte_count",
+            "resource_role"
+          ],
+          "properties": {
+            "binding_id": {
+              "const": "ordered_member_map_commitment"
+            },
+            "path": {
+              "const": "schemas/ordered-member-map-commitment.schema.json"
+            },
+            "schema_id": {
+              "const": "urn:odeya:schema:ordered-member-map-commitment:0.1.0"
+            },
+            "raw_digest": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/raw_digest",
+                  "x-odeya-digest-scope": {
+                    "kind": "byte_digest",
+                    "subject": "exact retained bytes named by sibling binding identity",
+                    "algorithm": "sha-256",
+                    "profile": "raw_bytes_no_canonicalization",
+                    "status": "candidate_unissued_exact_raw_byte_binding"
+                  }
+                },
+                {
+                  "const": "__PRQ002B_FINAL_SCHEMA_RAW_DIGEST_REQUIRED__ORDERED_MEMBER_MAP_COMMITMENT__"
+                }
+              ],
+              "x-odeya-digest-scope": {
+                "kind": "byte_digest",
+                "subject": "exact retained successor schema resource bytes named by sibling path and schema_id",
+                "algorithm": "sha-256",
+                "profile": "raw_bytes_no_canonicalization",
+                "status": "candidate_unissued_exact_raw_byte_binding"
+              }
+            },
+            "byte_count": {
+              "oneOf": [
+                {
+                  "type": "integer",
+                  "minimum": 2
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "resource_role": {
+              "const": "product_commitment_schema"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "binding_id",
+            "path",
+            "schema_id",
+            "raw_digest",
+            "byte_count",
+            "resource_role"
+          ],
+          "properties": {
+            "binding_id": {
+              "const": "schema_registry_v0_8"
+            },
+            "path": {
+              "const": "schemas/schema-registry-v0-8.schema.json"
+            },
+            "schema_id": {
+              "const": "urn:odeya:schema:schema-registry:0.8.0"
+            },
+            "raw_digest": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/raw_digest",
+                  "x-odeya-digest-scope": {
+                    "kind": "byte_digest",
+                    "subject": "exact retained bytes named by sibling binding identity",
+                    "algorithm": "sha-256",
+                    "profile": "raw_bytes_no_canonicalization",
+                    "status": "candidate_unissued_exact_raw_byte_binding"
+                  }
+                },
+                {
+                  "const": "__PRQ002B_FINAL_SCHEMA_RAW_DIGEST_REQUIRED__SCHEMA_REGISTRY_V0_8__"
+                }
+              ],
+              "x-odeya-digest-scope": {
+                "kind": "byte_digest",
+                "subject": "exact retained successor schema resource bytes named by sibling path and schema_id",
+                "algorithm": "sha-256",
+                "profile": "raw_bytes_no_canonicalization",
+                "status": "candidate_unissued_exact_raw_byte_binding"
+              }
+            },
+            "byte_count": {
+              "oneOf": [
+                {
+                  "type": "integer",
+                  "minimum": 2
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "resource_role": {
+              "const": "product_registry_schema"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "binding_id",
+            "path",
+            "schema_id",
+            "raw_digest",
+            "byte_count",
+            "resource_role"
+          ],
+          "properties": {
+            "binding_id": {
+              "const": "aggregate_state_subject_registry_v0_7"
+            },
+            "path": {
+              "const": "schemas/aggregate-state-subject-registry-v0-7.schema.json"
+            },
+            "schema_id": {
+              "const": "urn:odeya:schema:aggregate-state-subject-registry:0.7.0"
+            },
+            "raw_digest": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/raw_digest",
+                  "x-odeya-digest-scope": {
+                    "kind": "byte_digest",
+                    "subject": "exact retained bytes named by sibling binding identity",
+                    "algorithm": "sha-256",
+                    "profile": "raw_bytes_no_canonicalization",
+                    "status": "candidate_unissued_exact_raw_byte_binding"
+                  }
+                },
+                {
+                  "const": "__PRQ002B_FINAL_SCHEMA_RAW_DIGEST_REQUIRED__AGGREGATE_STATE_SUBJECT_REGISTRY_V0_7__"
+                }
+              ],
+              "x-odeya-digest-scope": {
+                "kind": "byte_digest",
+                "subject": "exact retained successor schema resource bytes named by sibling path and schema_id",
+                "algorithm": "sha-256",
+                "profile": "raw_bytes_no_canonicalization",
+                "status": "candidate_unissued_exact_raw_byte_binding"
+              }
+            },
+            "byte_count": {
+              "oneOf": [
+                {
+                  "type": "integer",
+                  "minimum": 2
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "resource_role": {
+              "const": "product_registry_schema"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "binding_id",
+            "path",
+            "schema_id",
+            "raw_digest",
+            "byte_count",
+            "resource_role"
+          ],
+          "properties": {
+            "binding_id": {
+              "const": "reducer_registry_v0_7"
+            },
+            "path": {
+              "const": "schemas/reducer-registry-v0-7.schema.json"
+            },
+            "schema_id": {
+              "const": "urn:odeya:schema:reducer-registry:0.7.0"
+            },
+            "raw_digest": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/raw_digest",
+                  "x-odeya-digest-scope": {
+                    "kind": "byte_digest",
+                    "subject": "exact retained bytes named by sibling binding identity",
+                    "algorithm": "sha-256",
+                    "profile": "raw_bytes_no_canonicalization",
+                    "status": "candidate_unissued_exact_raw_byte_binding"
+                  }
+                },
+                {
+                  "const": "__PRQ002B_FINAL_SCHEMA_RAW_DIGEST_REQUIRED__REDUCER_REGISTRY_V0_7__"
+                }
+              ],
+              "x-odeya-digest-scope": {
+                "kind": "byte_digest",
+                "subject": "exact retained successor schema resource bytes named by sibling path and schema_id",
+                "algorithm": "sha-256",
+                "profile": "raw_bytes_no_canonicalization",
+                "status": "candidate_unissued_exact_raw_byte_binding"
+              }
+            },
+            "byte_count": {
+              "oneOf": [
+                {
+                  "type": "integer",
+                  "minimum": 2
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "resource_role": {
+              "const": "product_registry_schema"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "binding_id",
+            "path",
+            "schema_id",
+            "raw_digest",
+            "byte_count",
+            "resource_role"
+          ],
+          "properties": {
+            "binding_id": {
+              "const": "event_contract_registry_v0_7"
+            },
+            "path": {
+              "const": "schemas/event-contract-registry-v0-7.schema.json"
+            },
+            "schema_id": {
+              "const": "urn:odeya:schema:event-contract-registry:0.7.0"
+            },
+            "raw_digest": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/raw_digest",
+                  "x-odeya-digest-scope": {
+                    "kind": "byte_digest",
+                    "subject": "exact retained bytes named by sibling binding identity",
+                    "algorithm": "sha-256",
+                    "profile": "raw_bytes_no_canonicalization",
+                    "status": "candidate_unissued_exact_raw_byte_binding"
+                  }
+                },
+                {
+                  "const": "__PRQ002B_FINAL_SCHEMA_RAW_DIGEST_REQUIRED__EVENT_CONTRACT_REGISTRY_V0_7__"
+                }
+              ],
+              "x-odeya-digest-scope": {
+                "kind": "byte_digest",
+                "subject": "exact retained successor schema resource bytes named by sibling path and schema_id",
+                "algorithm": "sha-256",
+                "profile": "raw_bytes_no_canonicalization",
+                "status": "candidate_unissued_exact_raw_byte_binding"
+              }
+            },
+            "byte_count": {
+              "oneOf": [
+                {
+                  "type": "integer",
+                  "minimum": 2
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "resource_role": {
+              "const": "product_registry_schema"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "binding_id",
+            "path",
+            "schema_id",
+            "raw_digest",
+            "byte_count",
+            "resource_role"
+          ],
+          "properties": {
+            "binding_id": {
+              "const": "canonicalization_profile_core_v0_6"
+            },
+            "path": {
+              "const": "schemas/canonicalization-profile-core-v0-6.schema.json"
+            },
+            "schema_id": {
+              "const": "urn:odeya:schema:canonicalization-profile-core:0.6.0"
+            },
+            "raw_digest": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/raw_digest",
+                  "x-odeya-digest-scope": {
+                    "kind": "byte_digest",
+                    "subject": "exact retained bytes named by sibling binding identity",
+                    "algorithm": "sha-256",
+                    "profile": "raw_bytes_no_canonicalization",
+                    "status": "candidate_unissued_exact_raw_byte_binding"
+                  }
+                },
+                {
+                  "const": "__PRQ002B_FINAL_SCHEMA_RAW_DIGEST_REQUIRED__CANONICALIZATION_PROFILE_CORE_V0_6__"
+                }
+              ],
+              "x-odeya-digest-scope": {
+                "kind": "byte_digest",
+                "subject": "exact retained successor schema resource bytes named by sibling path and schema_id",
+                "algorithm": "sha-256",
+                "profile": "raw_bytes_no_canonicalization",
+                "status": "candidate_unissued_exact_raw_byte_binding"
+              }
+            },
+            "byte_count": {
+              "oneOf": [
+                {
+                  "type": "integer",
+                  "minimum": 2
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "resource_role": {
+              "const": "profile_core_schema"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "binding_id",
+            "path",
+            "schema_id",
+            "raw_digest",
+            "byte_count",
+            "resource_role"
+          ],
+          "properties": {
+            "binding_id": {
+              "const": "canonicalization_profile_candidate_evidence_v0_6"
+            },
+            "path": {
+              "const": "schemas/canonicalization-profile-candidate-evidence-v0-6.schema.json"
+            },
+            "schema_id": {
+              "const": "urn:odeya:schema:canonicalization-profile-candidate-evidence:0.6.0"
+            },
+            "raw_digest": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/raw_digest",
+                  "x-odeya-digest-scope": {
+                    "kind": "byte_digest",
+                    "subject": "exact retained bytes named by sibling binding identity",
+                    "algorithm": "sha-256",
+                    "profile": "raw_bytes_no_canonicalization",
+                    "status": "candidate_unissued_exact_raw_byte_binding"
+                  }
+                },
+                {
+                  "const": "__PRQ002B_FINAL_SCHEMA_RAW_DIGEST_REQUIRED__CANONICALIZATION_PROFILE_CANDIDATE_EVIDENCE_V0_6__"
+                }
+              ],
+              "x-odeya-digest-scope": {
+                "kind": "byte_digest",
+                "subject": "exact retained successor schema resource bytes named by sibling path and schema_id",
+                "algorithm": "sha-256",
+                "profile": "raw_bytes_no_canonicalization",
+                "status": "candidate_unissued_exact_raw_byte_binding"
+              }
+            },
+            "byte_count": {
+              "oneOf": [
+                {
+                  "type": "integer",
+                  "minimum": 2
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "resource_role": {
+              "const": "profile_evidence_schema"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "binding_id",
+            "path",
+            "schema_id",
+            "raw_digest",
+            "byte_count",
+            "resource_role"
+          ],
+          "properties": {
+            "binding_id": {
+              "const": "canonicalization_profile_migration"
+            },
+            "path": {
+              "const": "schemas/canonicalization-profile-migration.schema.json"
+            },
+            "schema_id": {
+              "const": "urn:odeya:schema:canonicalization-profile-migration:0.1.0"
+            },
+            "raw_digest": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/raw_digest",
+                  "x-odeya-digest-scope": {
+                    "kind": "byte_digest",
+                    "subject": "exact retained bytes named by sibling binding identity",
+                    "algorithm": "sha-256",
+                    "profile": "raw_bytes_no_canonicalization",
+                    "status": "candidate_unissued_exact_raw_byte_binding"
+                  }
+                },
+                {
+                  "const": "__PRQ002B_FINAL_SCHEMA_RAW_DIGEST_REQUIRED__CANONICALIZATION_PROFILE_MIGRATION__"
+                }
+              ],
+              "x-odeya-digest-scope": {
+                "kind": "byte_digest",
+                "subject": "exact retained successor schema resource bytes named by sibling path and schema_id",
+                "algorithm": "sha-256",
+                "profile": "raw_bytes_no_canonicalization",
+                "status": "candidate_unissued_exact_raw_byte_binding"
+              }
+            },
+            "byte_count": {
+              "oneOf": [
+                {
+                  "type": "integer",
+                  "minimum": 2
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "resource_role": {
+              "const": "profile_migration_schema"
+            }
+          }
+        }
+      ],
+      "items": false
+    }
+  },
+  "oneOf": [
+    {
+      "properties": {
+        "successor_schema_bindings": {
+          "prefixItems": [
+            {
+              "properties": {
+                "raw_digest": {
+                  "const": "__PRQ002B_FINAL_SCHEMA_RAW_DIGEST_REQUIRED__SCHEMA_RESOURCE_RECORD__",
+                  "x-odeya-digest-scope": {
+                    "kind": "byte_digest",
+                    "subject": "exact retained successor schema resource bytes named by sibling path and schema_id",
+                    "algorithm": "sha-256",
+                    "profile": "raw_bytes_no_canonicalization",
+                    "status": "candidate_unissued_exact_raw_byte_binding"
+                  }
+                },
+                "byte_count": {
+                  "type": "null"
+                }
+              }
+            },
+            {
+              "properties": {
+                "raw_digest": {
+                  "const": "__PRQ002B_FINAL_SCHEMA_RAW_DIGEST_REQUIRED__AGGREGATE_STATE_SUBJECT_RECORD__",
+                  "x-odeya-digest-scope": {
+                    "kind": "byte_digest",
+                    "subject": "exact retained successor schema resource bytes named by sibling path and schema_id",
+                    "algorithm": "sha-256",
+                    "profile": "raw_bytes_no_canonicalization",
+                    "status": "candidate_unissued_exact_raw_byte_binding"
+                  }
+                },
+                "byte_count": {
+                  "type": "null"
+                }
+              }
+            },
+            {
+              "properties": {
+                "raw_digest": {
+                  "const": "__PRQ002B_FINAL_SCHEMA_RAW_DIGEST_REQUIRED__REDUCER_CONTRACT_RECORD__",
+                  "x-odeya-digest-scope": {
+                    "kind": "byte_digest",
+                    "subject": "exact retained successor schema resource bytes named by sibling path and schema_id",
+                    "algorithm": "sha-256",
+                    "profile": "raw_bytes_no_canonicalization",
+                    "status": "candidate_unissued_exact_raw_byte_binding"
+                  }
+                },
+                "byte_count": {
+                  "type": "null"
+                }
+              }
+            },
+            {
+              "properties": {
+                "raw_digest": {
+                  "const": "__PRQ002B_FINAL_SCHEMA_RAW_DIGEST_REQUIRED__EVENT_CONTRACT_RECORD__",
+                  "x-odeya-digest-scope": {
+                    "kind": "byte_digest",
+                    "subject": "exact retained successor schema resource bytes named by sibling path and schema_id",
+                    "algorithm": "sha-256",
+                    "profile": "raw_bytes_no_canonicalization",
+                    "status": "candidate_unissued_exact_raw_byte_binding"
+                  }
+                },
+                "byte_count": {
+                  "type": "null"
+                }
+              }
+            },
+            {
+              "properties": {
+                "raw_digest": {
+                  "const": "__PRQ002B_FINAL_SCHEMA_RAW_DIGEST_REQUIRED__ORDERED_MEMBER_MAP_COMMITMENT__",
+                  "x-odeya-digest-scope": {
+                    "kind": "byte_digest",
+                    "subject": "exact retained successor schema resource bytes named by sibling path and schema_id",
+                    "algorithm": "sha-256",
+                    "profile": "raw_bytes_no_canonicalization",
+                    "status": "candidate_unissued_exact_raw_byte_binding"
+                  }
+                },
+                "byte_count": {
+                  "type": "null"
+                }
+              }
+            },
+            {
+              "properties": {
+                "raw_digest": {
+                  "const": "__PRQ002B_FINAL_SCHEMA_RAW_DIGEST_REQUIRED__SCHEMA_REGISTRY_V0_8__",
+                  "x-odeya-digest-scope": {
+                    "kind": "byte_digest",
+                    "subject": "exact retained successor schema resource bytes named by sibling path and schema_id",
+                    "algorithm": "sha-256",
+                    "profile": "raw_bytes_no_canonicalization",
+                    "status": "candidate_unissued_exact_raw_byte_binding"
+                  }
+                },
+                "byte_count": {
+                  "type": "null"
+                }
+              }
+            },
+            {
+              "properties": {
+                "raw_digest": {
+                  "const": "__PRQ002B_FINAL_SCHEMA_RAW_DIGEST_REQUIRED__AGGREGATE_STATE_SUBJECT_REGISTRY_V0_7__",
+                  "x-odeya-digest-scope": {
+                    "kind": "byte_digest",
+                    "subject": "exact retained successor schema resource bytes named by sibling path and schema_id",
+                    "algorithm": "sha-256",
+                    "profile": "raw_bytes_no_canonicalization",
+                    "status": "candidate_unissued_exact_raw_byte_binding"
+                  }
+                },
+                "byte_count": {
+                  "type": "null"
+                }
+              }
+            },
+            {
+              "properties": {
+                "raw_digest": {
+                  "const": "__PRQ002B_FINAL_SCHEMA_RAW_DIGEST_REQUIRED__REDUCER_REGISTRY_V0_7__",
+                  "x-odeya-digest-scope": {
+                    "kind": "byte_digest",
+                    "subject": "exact retained successor schema resource bytes named by sibling path and schema_id",
+                    "algorithm": "sha-256",
+                    "profile": "raw_bytes_no_canonicalization",
+                    "status": "candidate_unissued_exact_raw_byte_binding"
+                  }
+                },
+                "byte_count": {
+                  "type": "null"
+                }
+              }
+            },
+            {
+              "properties": {
+                "raw_digest": {
+                  "const": "__PRQ002B_FINAL_SCHEMA_RAW_DIGEST_REQUIRED__EVENT_CONTRACT_REGISTRY_V0_7__",
+                  "x-odeya-digest-scope": {
+                    "kind": "byte_digest",
+                    "subject": "exact retained successor schema resource bytes named by sibling path and schema_id",
+                    "algorithm": "sha-256",
+                    "profile": "raw_bytes_no_canonicalization",
+                    "status": "candidate_unissued_exact_raw_byte_binding"
+                  }
+                },
+                "byte_count": {
+                  "type": "null"
+                }
+              }
+            },
+            {
+              "properties": {
+                "raw_digest": {
+                  "const": "__PRQ002B_FINAL_SCHEMA_RAW_DIGEST_REQUIRED__CANONICALIZATION_PROFILE_CORE_V0_6__",
+                  "x-odeya-digest-scope": {
+                    "kind": "byte_digest",
+                    "subject": "exact retained successor schema resource bytes named by sibling path and schema_id",
+                    "algorithm": "sha-256",
+                    "profile": "raw_bytes_no_canonicalization",
+                    "status": "candidate_unissued_exact_raw_byte_binding"
+                  }
+                },
+                "byte_count": {
+                  "type": "null"
+                }
+              }
+            },
+            {
+              "properties": {
+                "raw_digest": {
+                  "const": "__PRQ002B_FINAL_SCHEMA_RAW_DIGEST_REQUIRED__CANONICALIZATION_PROFILE_CANDIDATE_EVIDENCE_V0_6__",
+                  "x-odeya-digest-scope": {
+                    "kind": "byte_digest",
+                    "subject": "exact retained successor schema resource bytes named by sibling path and schema_id",
+                    "algorithm": "sha-256",
+                    "profile": "raw_bytes_no_canonicalization",
+                    "status": "candidate_unissued_exact_raw_byte_binding"
+                  }
+                },
+                "byte_count": {
+                  "type": "null"
+                }
+              }
+            },
+            {
+              "properties": {
+                "raw_digest": {
+                  "const": "__PRQ002B_FINAL_SCHEMA_RAW_DIGEST_REQUIRED__CANONICALIZATION_PROFILE_MIGRATION__",
+                  "x-odeya-digest-scope": {
+                    "kind": "byte_digest",
+                    "subject": "exact retained successor schema resource bytes named by sibling path and schema_id",
+                    "algorithm": "sha-256",
+                    "profile": "raw_bytes_no_canonicalization",
+                    "status": "candidate_unissued_exact_raw_byte_binding"
+                  }
+                },
+                "byte_count": {
+                  "type": "null"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "properties": {
+        "successor_schema_bindings": {
+          "prefixItems": [
+            {
+              "properties": {
+                "raw_digest": {
+                  "$ref": "#/$defs/raw_digest",
+                  "x-odeya-digest-scope": {
+                    "kind": "byte_digest",
+                    "subject": "exact retained successor schema resource bytes named by sibling path and schema_id",
+                    "algorithm": "sha-256",
+                    "profile": "raw_bytes_no_canonicalization",
+                    "status": "candidate_unissued_exact_raw_byte_binding"
+                  }
+                },
+                "byte_count": {
+                  "type": "integer",
+                  "minimum": 2
+                }
+              }
+            },
+            {
+              "properties": {
+                "raw_digest": {
+                  "$ref": "#/$defs/raw_digest",
+                  "x-odeya-digest-scope": {
+                    "kind": "byte_digest",
+                    "subject": "exact retained successor schema resource bytes named by sibling path and schema_id",
+                    "algorithm": "sha-256",
+                    "profile": "raw_bytes_no_canonicalization",
+                    "status": "candidate_unissued_exact_raw_byte_binding"
+                  }
+                },
+                "byte_count": {
+                  "type": "integer",
+                  "minimum": 2
+                }
+              }
+            },
+            {
+              "properties": {
+                "raw_digest": {
+                  "$ref": "#/$defs/raw_digest",
+                  "x-odeya-digest-scope": {
+                    "kind": "byte_digest",
+                    "subject": "exact retained successor schema resource bytes named by sibling path and schema_id",
+                    "algorithm": "sha-256",
+                    "profile": "raw_bytes_no_canonicalization",
+                    "status": "candidate_unissued_exact_raw_byte_binding"
+                  }
+                },
+                "byte_count": {
+                  "type": "integer",
+                  "minimum": 2
+                }
+              }
+            },
+            {
+              "properties": {
+                "raw_digest": {
+                  "$ref": "#/$defs/raw_digest",
+                  "x-odeya-digest-scope": {
+                    "kind": "byte_digest",
+                    "subject": "exact retained successor schema resource bytes named by sibling path and schema_id",
+                    "algorithm": "sha-256",
+                    "profile": "raw_bytes_no_canonicalization",
+                    "status": "candidate_unissued_exact_raw_byte_binding"
+                  }
+                },
+                "byte_count": {
+                  "type": "integer",
+                  "minimum": 2
+                }
+              }
+            },
+            {
+              "properties": {
+                "raw_digest": {
+                  "$ref": "#/$defs/raw_digest",
+                  "x-odeya-digest-scope": {
+                    "kind": "byte_digest",
+                    "subject": "exact retained successor schema resource bytes named by sibling path and schema_id",
+                    "algorithm": "sha-256",
+                    "profile": "raw_bytes_no_canonicalization",
+                    "status": "candidate_unissued_exact_raw_byte_binding"
+                  }
+                },
+                "byte_count": {
+                  "type": "integer",
+                  "minimum": 2
+                }
+              }
+            },
+            {
+              "properties": {
+                "raw_digest": {
+                  "$ref": "#/$defs/raw_digest",
+                  "x-odeya-digest-scope": {
+                    "kind": "byte_digest",
+                    "subject": "exact retained successor schema resource bytes named by sibling path and schema_id",
+                    "algorithm": "sha-256",
+                    "profile": "raw_bytes_no_canonicalization",
+                    "status": "candidate_unissued_exact_raw_byte_binding"
+                  }
+                },
+                "byte_count": {
+                  "type": "integer",
+                  "minimum": 2
+                }
+              }
+            },
+            {
+              "properties": {
+                "raw_digest": {
+                  "$ref": "#/$defs/raw_digest",
+                  "x-odeya-digest-scope": {
+                    "kind": "byte_digest",
+                    "subject": "exact retained successor schema resource bytes named by sibling path and schema_id",
+                    "algorithm": "sha-256",
+                    "profile": "raw_bytes_no_canonicalization",
+                    "status": "candidate_unissued_exact_raw_byte_binding"
+                  }
+                },
+                "byte_count": {
+                  "type": "integer",
+                  "minimum": 2
+                }
+              }
+            },
+            {
+              "properties": {
+                "raw_digest": {
+                  "$ref": "#/$defs/raw_digest",
+                  "x-odeya-digest-scope": {
+                    "kind": "byte_digest",
+                    "subject": "exact retained successor schema resource bytes named by sibling path and schema_id",
+                    "algorithm": "sha-256",
+                    "profile": "raw_bytes_no_canonicalization",
+                    "status": "candidate_unissued_exact_raw_byte_binding"
+                  }
+                },
+                "byte_count": {
+                  "type": "integer",
+                  "minimum": 2
+                }
+              }
+            },
+            {
+              "properties": {
+                "raw_digest": {
+                  "$ref": "#/$defs/raw_digest",
+                  "x-odeya-digest-scope": {
+                    "kind": "byte_digest",
+                    "subject": "exact retained successor schema resource bytes named by sibling path and schema_id",
+                    "algorithm": "sha-256",
+                    "profile": "raw_bytes_no_canonicalization",
+                    "status": "candidate_unissued_exact_raw_byte_binding"
+                  }
+                },
+                "byte_count": {
+                  "type": "integer",
+                  "minimum": 2
+                }
+              }
+            },
+            {
+              "properties": {
+                "raw_digest": {
+                  "$ref": "#/$defs/raw_digest",
+                  "x-odeya-digest-scope": {
+                    "kind": "byte_digest",
+                    "subject": "exact retained successor schema resource bytes named by sibling path and schema_id",
+                    "algorithm": "sha-256",
+                    "profile": "raw_bytes_no_canonicalization",
+                    "status": "candidate_unissued_exact_raw_byte_binding"
+                  }
+                },
+                "byte_count": {
+                  "type": "integer",
+                  "minimum": 2
+                }
+              }
+            },
+            {
+              "properties": {
+                "raw_digest": {
+                  "$ref": "#/$defs/raw_digest",
+                  "x-odeya-digest-scope": {
+                    "kind": "byte_digest",
+                    "subject": "exact retained successor schema resource bytes named by sibling path and schema_id",
+                    "algorithm": "sha-256",
+                    "profile": "raw_bytes_no_canonicalization",
+                    "status": "candidate_unissued_exact_raw_byte_binding"
+                  }
+                },
+                "byte_count": {
+                  "type": "integer",
+                  "minimum": 2
+                }
+              }
+            },
+            {
+              "properties": {
+                "raw_digest": {
+                  "$ref": "#/$defs/raw_digest",
+                  "x-odeya-digest-scope": {
+                    "kind": "byte_digest",
+                    "subject": "exact retained successor schema resource bytes named by sibling path and schema_id",
+                    "algorithm": "sha-256",
+                    "profile": "raw_bytes_no_canonicalization",
+                    "status": "candidate_unissued_exact_raw_byte_binding"
+                  }
+                },
+                "byte_count": {
+                  "type": "integer",
+                  "minimum": 2
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "raw_digest": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$",
+      "x-odeya-digest-scope": {
+        "kind": "raw_byte_digest",
+        "subject": "exact_retained_resource_bytes",
+        "algorithm": "sha-256",
+        "profile": "raw_bytes_no_canonicalization",
+        "status": "external_candidate_binding"
+      }
+    }
+  }
+}

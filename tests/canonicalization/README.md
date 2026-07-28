@@ -68,10 +68,14 @@ independently controlled host.
 - `results/` retains normalized, deterministic result evidence. Volatile host
   facts are confined to the separate environment section.
 - `SCHEMA_AUDIT.json` is the machine-readable migration/blocker inventory for
-  the current top-level architecture schemas and retained architecture-schema,
-  architecture-review, cognitive, projection, physical, and mathematical
-  contract fixtures. Missing optional fixture directories contribute no files;
-  every included path and byte is bound into the reported fixture-corpus hash.
+  the frozen `odeya-jcs-0.1` predecessor cohort: exactly 120 schema paths from
+  `tests/product-identity-profile-candidate/predecessor-schemas.json` and 216
+  retained top-level architecture-schema, architecture-review, cognitive,
+  projection, physical, and mathematical fixtures. The twelve side-by-side
+  PRQ-002B successor schema resources and their nested structural-nonidentity
+  vectors are outside this predecessor audit and have a separate checker.
+  Every included predecessor path and byte is bound into the reported corpus
+  hashes.
 
 Regenerate and then verify that report deterministically with:
 

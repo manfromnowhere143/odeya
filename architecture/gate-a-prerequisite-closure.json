@@ -17,7 +17,8 @@
     "docs/decisions/0092-bind-human-decisions-through-an-external-assurance-wrapper.md",
     "docs/decisions/0093-co-bind-the-confirmation-gesture-through-a-two-phase-challenge.md",
     "docs/decisions/0094-bind-current-status-surfaces-to-retained-machine-evidence.md",
-    "docs/decisions/0095-reissue-human-decision-assurance-as-a-byte-bound-independently-recomputed-chain.md"
+    "docs/decisions/0095-reissue-human-decision-assurance-as-a-byte-bound-independently-recomputed-chain.md",
+    "docs/decisions/0100-introduce-an-unissued-scoped-product-identity-profile-successor.md"
   ],
   "plan_ref": "docs/GATE_A_PREREQUISITE_CLOSURE_PLAN_2026-07-16.md",
   "exact_scope": {
@@ -120,6 +121,67 @@
     "current_consumer_migration_complete": false,
     "operator_acceptance_ref": null,
     "gate_a_disposition": "blocked"
+  },
+  "canonical_profile_successor_candidate": {
+    "scope_id": "prq-002b-product-identity-foundation",
+    "profile_id": "urn:odeya:canonicalization:odeya-jcs-0.2",
+    "profile_version": "0.2.0",
+    "core_status": "scoped_successor_candidate_unissued_unadmitted_no_product_digests",
+    "evidence_status": "scoped_successor_candidate_bytes_bound_profile_unissued_gate_a_blocked",
+    "migration_status": "explicit_scoped_candidate_migration_incomplete_unissued_unadmitted",
+    "profile_core_binding": {
+      "path": "architecture/canonicalization-profile-core-0.2-candidate.json",
+      "schema_path": "schemas/canonicalization-profile-core-v0-6.schema.json",
+      "schema_id": "urn:odeya:schema:canonicalization-profile-core:0.6.0",
+      "raw_sha256": "sha256:deab395ca2ce5524ceb65bdd307a43b4dd4613b78c92b16d13e1a69cac683941",
+      "byte_count": 25422
+    },
+    "profile_evidence_binding": {
+      "path": "architecture/canonicalization-profile-0.2-candidate-evidence.json",
+      "schema_path": "schemas/canonicalization-profile-candidate-evidence-v0-6.schema.json",
+      "schema_id": "urn:odeya:schema:canonicalization-profile-candidate-evidence:0.6.0",
+      "raw_sha256": "sha256:9995e1e7621abe480db2659f441006cb2ea351072b96a6a4f667cba811892b14",
+      "byte_count": 12043
+    },
+    "migration_record_binding": {
+      "path": "architecture/canonicalization-profile-0.1-to-0.2-migration-candidate.json",
+      "schema_path": "schemas/canonicalization-profile-migration.schema.json",
+      "schema_id": "urn:odeya:schema:canonicalization-profile-migration:0.1.0",
+      "raw_sha256": "sha256:03e9aad2e40c328f80f2692f40c3d5c7ce23caeeddeb1749df0e1fe064302ed4",
+      "byte_count": 25013
+    },
+    "schema_cohort_binding": {
+      "core_pointer": "/successor_schema_bindings",
+      "evidence_pointer": "/successor_schema_bindings",
+      "migration_pointer": "/resource_dispositions/*/successor",
+      "successor_resource_count": 12,
+      "product_identity_schema_count": 9,
+      "candidate_union_schema_count": 132,
+      "binding_equality_required": true,
+      "exact_current_bytes_required": true
+    },
+    "nonclaims": {
+      "predecessor_profile_issued": false,
+      "successor_profile_issued": false,
+      "canonical_identity_issued": false,
+      "global_profile_replacement_claimed": false,
+      "current_consumer_migration_complete": false,
+      "source_separated_conformance_complete": false,
+      "complete_offline_schema_registry": false,
+      "schema_resources_admitted": false,
+      "product_members_constructed": false,
+      "product_snapshots_constructed": false,
+      "product_digests_computed": false,
+      "profile_registry_member_ref": null,
+      "schema_registry_snapshot_ref": null,
+      "engine_contract_root_ref": null,
+      "activation_ref": null,
+      "accountable_review_complete": false,
+      "operator_acceptance_ref": null,
+      "prq_002_closed": false,
+      "gate_a_complete": false,
+      "runtime_authorized": false
+    }
   },
   "canonical_profile_blockers_at_start": {
     "audit_ref": "tests/canonicalization/SCHEMA_AUDIT.json",
@@ -227,13 +289,15 @@
     "complete_consumer_census_for_frozen_source_corpus": true,
     "consumer_census_ref": "architecture/human-decision-assurance-consumer-census.json",
     "consumer_census_binding": {
-      "raw_sha256": "sha256:f3214129e18f9db38a6c00a517712190cf257b62b51f42a032cd5af033820e98",
-      "byte_count": 151958,
+      "raw_sha256": "sha256:fab1014923da20003f4f8e99d96e6c1f981675ee54f39bb01ed0ddd53a3930e6",
+      "byte_count": 160603,
       "baseline_git_commit": "56e8062334fb81bba955ba137be690e085d4c88e",
       "baseline_git_tree": "d90ed6dd8c54b91a1e503358f98ecaa08c766fa3",
       "baseline_schema_count": 112,
-      "candidate_mechanism_schema_count": 8,
-      "current_union_schema_count": 120,
+      "side_by_side_candidate_schema_count": 20,
+      "hda_candidate_mechanism_schema_count": 8,
+      "non_hda_non_authority_candidate_schema_count": 12,
+      "current_union_schema_count": 132,
       "direct_or_policy_conditional_schema_count": 19,
       "pending_operator_acceptance_schema_count": 9
     },
@@ -315,7 +379,7 @@
       "finding_id": "PRQ-002",
       "title": "standalone member and registry snapshot identities incomplete",
       "status": "candidate_correction_in_progress",
-      "closure": "the bounded PRQ-002A architecture probe now exercises one non-issuable synthetic dependency-closed path through standalone schema, aggregate-state, reducer, and event members into four family-specific ordered-map commitments and four homogeneous pure snapshots with exact retained-byte and source-separated recomputation evidence; PRQ-002 remains open until production member schemas and domains, complete dependency-closed product members, independently reproduced cross-object validation, root-compatible registry snapshots, EngineContractRoot/C0/P0 binding, accountable review, and operator acceptance exist"
+      "closure": "the bounded PRQ-002A architecture probe remains non-issuable and separate; PRQ-002B now retains exact-byte, schema-valid architecture candidates for four standalone product member schemas, one ordered-map commitment schema, four pure-registry successor schemas, and an explicitly scoped odeya-jcs-0.2 core/evidence/migration chain, while constructing zero product identities, members, commitments, snapshots, roots, or activations. PRQ-002 remains open until source-separated conformance, complete offline resolution, admitted dependency-closed product members, independently reproduced cross-object validation, root-compatible registry snapshots, EngineContractRoot/C0/P0 binding, accountable review, and operator acceptance exist"
     },
     {
       "finding_id": "PRQ-003",

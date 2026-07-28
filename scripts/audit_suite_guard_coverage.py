@@ -74,6 +74,7 @@ AUDITED_SUITES = (
     "human-decision-assurance",
     "mathematical-contracts",
     "physical-contracts",
+    "product-identity-profile-candidate",
     "projection-contracts",
     "prq-002-identity-cohort",
     "work-identity-successor-cohort",
@@ -127,6 +128,17 @@ def discover(source: str) -> list[dict[str, Any]]:
         ):
             guard = f"{node.target.id} += {ast.unparse(node.value)}"
             replacement = "pass"
+        elif (
+            isinstance(node, ast.Expr)
+            and isinstance(node.value, ast.Call)
+            and isinstance(node.value.func, ast.Attribute)
+            and node.value.func.attr == "add"
+            and isinstance(node.value.func.value, ast.Name)
+            and node.value.func.value.id == "findings"
+            and node.value.args
+        ):
+            guard = message_template_from(node.value.args[0])
+            replacement = "pass"
         elif isinstance(node, ast.Return) and isinstance(node.value, ast.List) and node.value.elts:
             elements = node.value.elts
             guard = (
@@ -146,6 +158,22 @@ def discover(source: str) -> list[dict[str, Any]]:
             )
     found.sort(key=lambda item: (item["lineno"], item["end_lineno"]))
     return found
+
+
+def detector_self_test() -> bool:
+    """Prove the narrow findings.add expression detector and its exclusion."""
+    source = """
+def check(findings, unrelated, consume):
+    findings.add("expected_finding", "detail")
+    unrelated.add("unrelated_add", "detail")
+    consume(findings.add("nested_findings_add", "detail"))
+"""
+    guards = discover(source)
+    return (
+        len(guards) == 1
+        and guards[0]["guard"] == "expected_finding"
+        and guards[0]["replacement"] == "pass"
+    )
 
 
 def run_suite(tree: Path, relative: str, python: str) -> tuple[bool, bool]:
@@ -353,6 +381,13 @@ def main() -> int:
     # a relative path, which is how this was found -- by the rehearsal failing,
     # not by the local runs that had always used an absolute one.
     python = str(Path(args.python).resolve()) if Path(args.python).exists() else args.python
+    if not detector_self_test():
+        print(
+            "refusal-detector self-test failed: findings.add expression discovery "
+            "or unrelated .add exclusion is incorrect",
+            file=sys.stderr,
+        )
+        return 1
     if not subject_binding_refresh_self_test(python):
         print(
             "subject-binding refresh self-test failed: the guard audit cannot "

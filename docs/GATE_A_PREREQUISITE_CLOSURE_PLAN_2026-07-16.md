@@ -90,14 +90,15 @@ The two retained implementations agree on the bounded vector suite, but the
 exact nonrecursive candidate core and evidence binding now freeze the parser,
 RFC 8785 serialization, canonical envelope, digest framing, future reference
 shape, 21 current domain names, and eight version axes for review. This is a
-candidate-parameter freeze, not profile issuance or acceptance. The current
-112-schema/200-fixture migration audit remains blocking: 122
-unprofiled date-time paths, 129 number/decimal findings, 668 unscoped digest
-fields, 56 divergent common definitions, 11 unpinned profile bindings, and
-236 nonconformant fixture timestamps. No final member digest may be
-represented as frozen while those identity inputs remain unresolved. The
-machine inventory separately preserves the exact tranche-start audit and
-counts rather than rewriting history.
+candidate-parameter freeze, not profile issuance or acceptance. The
+`odeya-jcs-0.1` audit is now an explicitly frozen predecessor inventory over
+120 schemas and 216 fixtures. Its six measured finding classes are empty and
+its disposition is `candidate_clear`, but current consumer migration,
+accountable review, operator acceptance, and profile issuance remain
+incomplete. The twelve side-by-side PRQ-002B resources are outside that audit
+and use a separately scoped, unissued `odeya-jcs-0.2` successor candidate.
+Neither audit zero nor a successor schema census permits a final member digest
+to be represented as issued, admitted, or accepted.
 
 ### PRQ-002 — Member and snapshot identities are incomplete
 
@@ -111,6 +112,20 @@ are forbidden.
 Standalone state, reducer, event, and command member schemas are required so a
 member can be hashed and independently validated without extracting an
 anonymous nested `$defs` branch from its parent registry.
+
+[ADR 0100](decisions/0100-introduce-an-unissued-scoped-product-identity-profile-successor.md)
+now retains twelve exact side-by-side schema resources: four standalone
+product member schemas, one ordered-member-map commitment schema, four
+pure-registry successors, and three profile core/evidence/migration schemas.
+They declare nine product identity domains and expand the current schema
+inventory to 132 without mutating the frozen 120-resource predecessor. This is
+bounded candidate progress only. It constructs zero product identities,
+members, commitments, snapshots, roots, or activations; the profile and schema
+resources are unissued and unadmitted. The standalone command member
+contradiction above, source-separated conformance, complete offline
+resolution, dependency-closed member instances, cross-object validation,
+accountable review, and operator acceptance remain blocking. PRQ-002 and Gate
+A remain open, and runtime remains unauthorized.
 
 ### PRQ-003 — Logical payload identity is not bound to schema bytes
 

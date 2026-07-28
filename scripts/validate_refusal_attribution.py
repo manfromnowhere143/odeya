@@ -74,6 +74,28 @@ def intent_and_inventory(field: str) -> Callable[[dict[str, Any], dict[str, Any]
     return check
 
 
+def scalar_intent_and_inventory(
+    field: str,
+) -> Callable[[dict[str, Any], dict[str, Any]], bool]:
+    """A scalar intended guard plus the exact observed-error inventory.
+
+    The PRQ-002B harness enforces that ``intended_guard`` is present in, and
+    that the observed result equals, ``expected_errors``.  This census binds
+    the two declaration fields whose relationship that harness proves.
+    """
+    inventory = string_list(field)
+
+    def check(case: dict[str, Any], document: dict[str, Any]) -> bool:
+        intended = case.get("intended_guard")
+        return (
+            isinstance(intended, str)
+            and bool(intended)
+            and inventory(case, document)
+        )
+
+    return check
+
+
 def string_list(field: str) -> Callable[[dict[str, Any], dict[str, Any]], bool]:
     def check(case: dict[str, Any], _: dict[str, Any]) -> bool:
         value = case.get(field)
@@ -144,6 +166,11 @@ REGISTRY: dict[str, tuple[str, Any, Any]] = {
     "prq-002-identity-cohort": (
         "cases.json",
         intent_and_inventory("expected_errors"),
+        None,
+    ),
+    "product-identity-profile-candidate": (
+        "cases.json",
+        scalar_intent_and_inventory("expected_errors"),
         None,
     ),
     "prq-009-assignment-order": (
