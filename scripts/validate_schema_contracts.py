@@ -19,8 +19,8 @@ import json
 import validate as foundation
 
 
-EXPECTED_SCHEMAS = 132
-EXPECTED_CASES = {"valid": 232, "invalid": 652}
+EXPECTED_SCHEMAS = 144
+EXPECTED_CASES = {"valid": 244, "invalid": 664}
 
 
 def main() -> int:

@@ -1,8 +1,8 @@
 # Odeya
 
-Odeya is a private research engine that turns a thesis into a governed, replayable chain from question to evidence to warranted claim.
+Odeya is the architecture foundation for a private research engine that turns a thesis into a governed, replayable chain from question to evidence to warranted claim.
 
-> **Current state — 2026-07-29:** architecture foundation only. No executable research engine, autonomous-science capability, production deployment, or automatic publication is claimed. Runtime work remains blocked until the architecture gates are accepted.
+> **Current state — 2026-07-29:** architecture foundation only. No executable research engine, autonomous-science capability, production deployment, or automatic publication is claimed. Gate A remains blocked; runtime stays prohibited until Gate A is accepted, any separately authorized Gate B probes are settled, and Gate C explicitly authorizes one bounded increment.
 
 The provisional web address is `odeya.danielwahnich.dev`. The apex domain, company, trademark, and scientific-publication decisions remain separate.
 
@@ -12,33 +12,42 @@ Much of this repository is written as an internal evidence trail. This table is 
 
 | Category | What it contains | Where to verify |
 | --- | --- | --- |
-| **Proven from bytes: release engineering** | An exact-commit fresh-clone rehearsal that rebuilds the checkpoint from a clean clone; least-privilege CI workflows with full-SHA-pinned Actions; a hash- and integrity-locked toolchain; 7 bounded TLA+ models whose 30 intended counterexamples are retained in-tree; adversarial known-bad manifests beside every isolated suite | [`scripts/ci/rehearse-fresh-clone.sh`](scripts/ci/rehearse-fresh-clone.sh), [`.github/workflows/`](.github/workflows/), [`tools/repository-release/`](tools/repository-release/), [`formal/tla/`](formal/tla/), [`tests/`](tests/), [repository release engineering](docs/REPOSITORY_RELEASE.md) |
-| **In progress: architecture evidence** | A schema/fixture corpus with isolated contract suites, and a mutation audit that measures which refusal guards are proved to fire versus explicitly unproved — the split is retained honestly rather than rounded up. Counts drift as tranches land, so they are stated only in validator-bound surfaces, not here | [Current status and blockers](docs/ARCHITECTURE_STATUS.md), the validator-bound checkpoint section below, [`architecture/`](architecture/) machine records |
+| **Retained byte-bound release-engineering evidence** | Exact-commit fresh-clone rehearsals that rebuild their named subjects from clean clones; least-privilege CI workflows with full-SHA-pinned Actions; a hash- and integrity-locked toolchain; 7 bounded TLA+ models whose 30 intended counterexamples are retained in-tree; adversarial known-bad manifests beside every isolated suite. Resolve the current candidate and its own manifest before transferring any claim | [`scripts/ci/rehearse-fresh-clone.sh`](scripts/ci/rehearse-fresh-clone.sh), [`.github/workflows/`](.github/workflows/), [`tools/repository-release/`](tools/repository-release/), [`formal/tla/`](formal/tla/), [`tests/`](tests/), [repository release engineering](docs/REPOSITORY_RELEASE.md) |
+| **In progress: architecture evidence** | A schema/fixture corpus with isolated contract suites, and a mutation audit that measures which refusal guards are proved to fire versus explicitly unproved — the split is retained honestly rather than rounded up. Counts drift as tranches land, so they are stated only in validator-bound surfaces, not in this summary row | [Current status and blockers](docs/ARCHITECTURE_STATUS.md), the validator-bound checkpoint section below, [`architecture/`](architecture/) machine records |
 | **Not built, not claimed** | No engine runtime, services, deployment, or production UI exists; Gate A (architecture acceptance) remains blocked; no scientific result, autonomous-science capability, or model-performance claim is made | The banner above, [pre-implementation gate](docs/PRE_IMPLEMENTATION_GATE.md), [current status](docs/ARCHITECTURE_STATUS.md) |
 
 A green check anywhere in this repository is evidence about these bytes, never scientific truth.
 
 ## The system in one view
 
-Question → contract → evidence → independent verification → bounded claim. Nothing jumps the chain.
+Question → contract → evidence → separately assigned verification → bounded claim. Nothing jumps the chain.
 
 ```mermaid
 flowchart TB
-    subgraph F["ARCHITECTURE EVIDENCE · VERIFIED PREDECESSOR + CURRENT WORKING CANDIDATE"]
+    subgraph F["ARCHITECTURE EVIDENCE · CLOSED PUBLIC ANCESTOR + REHEARSED LOCAL PREDECESSOR + CURRENT WORKING CANDIDATE"]
         direction LR
-        F4["VERIFIED CLOSED PREDECESSOR<br/>d3ec64f3 · exact Git tree and cited blobs checked"]
-        F1["CURRENT PRQ-002D WORKING CANDIDATE<br/>commit · rehearsal · settlement resolved from Git and receipts<br/>132 schemas · 884 cases<br/>16 suites · 14 evidence checks<br/>7 TLA+ models · 30 controls<br/>PRQ-002 / PRQ-009 / PRQ-013 blocked"]
-        F4 --> F1
+        F4["CLOSED PUBLIC ANCESTOR<br/>d3ec64f3 · exact Git tree and cited blobs checked"]
+        F3["REHEARSED LOCAL PRQ-002D PREDECESSOR<br/>617209ba · exact-commit local manifest retained<br/>not publication or remote settlement"]
+        F1["CURRENT PRQ-002E WORKING CANDIDATE<br/>resolve exact commit · rehearsal · publication · remote status<br/>from Git and subject-bound receipts<br/>exact inventory + guard facts are validator-bound below"]
+        F4 --> F3 --> F1
     end
 
+    Q["OPEN ARCHITECTURE DEPENDENCIES<br/>PRQ-002 raw-aware traces + source-separated conformance<br/>PRQ-009 + PRQ-013 + accountable reviews<br/>operator exact-byte decision"]
     GA{"GATE A · BLOCKED<br/>operator architecture acceptance absent<br/>runtime · application · infrastructure<br/>and deployment unauthorized"}
-    F1 --> GA
+    GB{"GATE B · NOT AUTHORIZED<br/>disposable probes only<br/>each requires separate scope and settlement"}
+    GC{"GATE C · NOT REACHED<br/>one bounded implementation increment<br/>requires a separate explicit decision"}
+    I["BOUNDED IMPLEMENTATION SLICE<br/>NOT BUILT"]
+    F1 --> Q --> GA
+    GA -.->|only if separately authorized| GB
+    GA -.->|after acceptance + any authorized probes settled| GC
+    GB -.->|findings integrated before Gate C| GC
+    GC -.->|only after explicit authorization| I
 
     subgraph R["ODEYA · PRIVATE RESEARCH ENGINE · PROPOSED CONTROL ARCHITECTURE · NOT IMPLEMENTED"]
         direction TB
         C["1 · CONTRACT + 2 · COMPILE<br/>canonical ResearchMissionSpec<br/>thesis · protocol · falsifiers · authority<br/>immutable protocol + compiled run manifest"]
         K[("3 · ISOLATED EXECUTION + 4 · EVIDENCE<br/>search · plan · code · experiment<br/>content-addressed artifacts · claim provenance<br/>CANONICAL SCIENTIFIC STATE<br/>append-only event + evidence ledger · deterministic replay")]
-        V["5 · VERIFY + 6 · ADJUDICATE + 7 · LEARN<br/>Independent verification in a separate isolation boundary<br/>replication · falsifiers · replay · bounded outcome<br/>RESEARCH COCKPIT · disposable projections<br/>Grounded memory: failure · correction · unknowns<br/>never canonical authority"]
+        V["5 · VERIFY + 6 · ADJUDICATE + 7 · LEARN<br/>Separately assigned verification role<br/>separate isolation boundary · independence measured<br/>replication · falsifiers · replay · bounded outcome<br/>RESEARCH COCKPIT · disposable projections<br/>Grounded memory: failure · correction · unknowns<br/>never canonical authority"]
         C --> K --> V
     end
 
@@ -46,18 +55,22 @@ flowchart TB
         direction LR
         RC["Release candidate"]
         H{"Human release decision<br/>assurance wrapper required<br/>PRQ-013 migration blocked"}
-        G["Exact single-use grant<br/>→ bounded external effect<br/>→ Independent observation<br/>applied · not applied · unknown"]
+        M["Exact manifest sealed<br/>from candidate + decision"]
+        G["Exact single-use grant"]
+        E["Bounded external effect"]
+        O["Separately authorized observation + reconciliation role<br/>independence measured<br/>reconcile applied · not applied · unknown"]
         N["Retained · not released"]
         RC --> H
-        H -->|authorized| G
-        H -->|denied| N
+        H -->|authorized exact candidate| M --> G --> E --> O
+        H -->|denied or no valid decision| N
     end
 
-    GA -.-> C
+    F ~~~ R
     R ~~~ X
 
     classDef retained fill:#ECFDF5,stroke:#047857,stroke-width:1.5px,color:#064E3B
     classDef blocked fill:#9F1239,stroke:#881337,stroke-width:2px,color:#FFFFFF
+    classDef candidate fill:#E0F2FE,stroke:#0369A1,stroke-width:2px,color:#0C4A6E
     classDef core fill:#FFFFFF,stroke:#0F172A,stroke-width:1.5px,color:#0F172A
     classDef evidence fill:#E0F2FE,stroke:#0369A1,stroke-width:1.5px,color:#0C4A6E
     classDef state fill:#082F49,stroke:#0369A1,stroke-width:1.5px,color:#FFFFFF
@@ -65,11 +78,14 @@ flowchart TB
     classDef release fill:#FFF7ED,stroke:#9A3412,stroke-width:1.5px,color:#7C2D12
     classDef releaseGate fill:#9F1239,stroke:#881337,stroke-width:1.5px,color:#FFFFFF
     classDef quiet fill:#F1F5F9,stroke:#64748B,stroke-width:1px,color:#334155
-    class F1,F4 retained
+    class F3,F4 retained
+    class F1 candidate
     class GA blocked
+    class GB,GC decision
+    class Q,I quiet
     class C,V core
     class K state
-    class RC,G release
+    class RC,M,G,E,O release
     class H releaseGate
     class N quiet
     style F fill:#F0FDF4,stroke:#047857,stroke-width:2px
@@ -77,24 +93,25 @@ flowchart TB
     style X fill:#FFFBEB,stroke:#9A3412,stroke-width:2px
 ```
 
-The green band distinguishes the exact closed `d3ec64f3` predecessor from the
-current PRQ-002D working candidate. A tracked file cannot contain the hash of
-the commit that contains it, and rehearsal or external settlement can change
+The evidence band distinguishes green retained predecessors—the closed public
+`d3ec64f3` ancestor and exact rehearsed local `617209ba` predecessor—from the
+blue current PRQ-002E working candidate. A tracked file cannot contain the hash
+of the commit that contains it, and rehearsal or external settlement can change
 after its bytes are fixed; resolve the exact `HEAD`, tree, local evidence
 manifest, permanent release ref, public `main`, and remote replay from Git and
-subject-bound receipts before acting. The blocked gate prevents architecture
-bytes from being mistaken for a built engine. The lower engine is the
-proposed control architecture, not a runtime screenshot, and the release path
-remains separately governed. Models may propose, search, code, analyze, and
-criticize. They cannot grant themselves authority, verify their own claims,
-convert consensus into evidence, or treat a provider response as external
-truth.
+subject-bound receipts before acting. A predecessor's receipt never transfers
+to a descendant. The blocked gate prevents architecture bytes from being
+mistaken for a built engine. The lower engine is the proposed control
+architecture, not a runtime screenshot, and the release path remains separately
+governed. Models may propose, search, code, analyze, and criticize. They cannot
+grant themselves authority, verify their own claims, convert consensus into
+evidence, or treat a provider response as external truth.
 
 ## Five operating laws
 
 1. **Contract before cognition.** Scope, protocol, falsifiers, resources, rights, and authority are explicit before consequential work.
 2. **Evidence before narrative.** Every claim traverses to exact inputs, artifacts, environments, costs, methods, and producing activity.
-3. **Verification is independent.** Producing and verifying a scientific claim are separate roles, contexts, and retained records.
+3. **Verification is separately assigned.** Producing and verifying a scientific claim require separate roles, contexts, and retained records; organizational independence must be evidenced, never inferred from isolation or agreement.
 4. **Nulls and failures are first-class results.** Missing is never zero; blocked, invalid, contradicted, and inconclusive outcomes remain visible.
 5. **Every external effect is separately governed.** Publication, repository writes, paid compute, messages, lab actions, and physical actions require exact scoped authority and independent settlement.
 
@@ -112,14 +129,56 @@ They are requirements sources and bounded proof missions—not runtime dependenc
 
 ## Architecture checkpoint
 
-The current retained foundation contains 132 Draft 2020-12 schemas, 884
-shared-manifest cases (232 valid and 652 known-bad), 16 isolated contract
-suites, 14 architecture-evidence checks, and 7 bounded safe TLA+ models with
+The current retained foundation contains 144 Draft 2020-12 schemas, 908
+shared-manifest cases (244 valid and 664 known-bad), 17 isolated contract
+suites, 15 architecture-evidence checks, and 7 bounded TLA+ models with
 30 mutation controls. These counts are bound to the validator run that
 measures them; the README previously stated four of them as fact while all four
 had drifted.
 
-Those results establish structural and bounded semantic evidence only, and their strength is measured by mutation rather than assumed. The lifecycle checker is audited explicitly: 222 of 229 refusal statements are proved reachable by disabling each in turn, and 108 of 111 removable guard conditions are proved load-bearing (ADR 0052–0054, 0065–0066, 0090); the named residue is retained rather than converted into a flattering completeness claim. That discipline was then generalized to every suite: across 16 declared isolated checker subjects, 477 of 1184 refusal statements are proved to fire, with 707 retained explicitly as unproved and zero crash-only detections (ADR 0079–0085, 0098–0100). The `prq-002-identity-cohort` subject contributes 0/127 and the new `product-identity-profile-candidate` subject contributes 0/93: both enumerated refusal denominators under the retained discovery grammar are measured, and none of those statements is yet credited with a retained mutation proof. The earlier 431/820 result is retracted: mutation of the self-bound assurance checker invalidated its outer evidence binding, so the audit credited that binding failure rather than the intended guard; the corrected harness refreshes the declared binding only inside each isolated mutation copy and proves its own unrefreshed/refreshed behavior before measuring. Every refusal-attribution claim is checked by a census that fails closed on any unattributed corpus (ADR 0062), and each of the 158 predecessor cross-field schema rules with a case is proven to notice its own deletion by two-sided ablation (ADR 0071–0073). Coverage is still not correctness: a proved guard is exercised, not shown to enforce the right rule, structural comparisons count as one condition regardless of field count, and [ADR 0030](docs/decisions/0030-statement-coverage-is-not-condition-coverage.md)'s caution stands — every coverage figure this repository ever published was wrong in the flattering direction until context-isolated adversarial review corrected it, and the corrections are retained.
+Those results establish structural and bounded semantic evidence only, and their
+strength is measured by mutation rather than assumed. The lifecycle checker is
+audited explicitly: 222 of 229 refusal statements are proved reachable by
+disabling each in turn, and 108 of 111 removable guard conditions are proved
+load-bearing (ADR 0052–0054, 0065–0066, 0090). Its named residue is retained
+rather than converted into a flattering completeness claim.
+
+The separately declared generalized-audit census excludes lifecycle and
+central architecture/release gates. Under the retained v0.2 method, a guard is
+proved only when a syntax-valid isolated mutation produces an exact
+suite-reported refusal—exit 1, non-empty output, and no traceback—the restored
+control passes, and an identical repeat produces the same framed SHA-256
+fingerprint. In the current record, across 17 declared isolated checker subjects, 501 of 1260 refusal statements are proved to fire, with 759 retained explicitly as unproved and zero crash-only detections;
+unstable repeats are also unproved (ADR 0079–0085,
+0098–0100, 0103–0104). The `prq-002-identity-cohort` subject contributes 0/127,
+`product-identity-profile-candidate` contributes 0/97 with all 97 open, and
+`product-identity-profile-0.3-candidate` contributes 24/72 with 48 open.
+
+The immediately preceding unpublished 502/1260 record is superseded: a
+clean-clone run exposed a one-credit reproducibility mismatch, and a separate
+exact but unretained ablation showed the locally credited predecessor-profile
+row was false. The retained failure receipt proves only the failed stage, not
+the count or cause. The former 16-subject 477/1184 measurement and its 0/93
+`product-identity-profile-candidate` row are likewise superseded because the
+registered subject census and checker bytes changed; they are not additional
+current denominators. The earlier 431/820 result is retracted: mutation of the
+self-bound assurance checker invalidated its outer evidence binding, so the
+audit credited that binding failure rather than the intended guard. The
+corrected harness refreshes the declared binding only inside each isolated
+mutation copy and proves its own unrefreshed/refreshed behavior before
+measuring.
+
+Separately, the declared known-bad refusal corpora are checked by a census that
+fails closed on any unattributed case (ADR 0062), and each of the 158
+predecessor cross-field schema rules with a case is proven to notice its own
+deletion by two-sided ablation (ADR 0071–0073). Coverage is still not
+correctness: a proved guard is exercised, not shown to enforce the right rule;
+the generalized harness does not prove exact case-to-guard causality; structural
+comparisons count as one condition regardless of field count; and
+[ADR 0030](docs/decisions/0030-statement-coverage-is-not-condition-coverage.md)'s
+caution stands. Every coverage figure this repository previously published was
+wrong in the flattering direction until context-isolated adversarial review
+corrected it, and the corrections are retained.
 
 [ADR 0099](docs/decisions/0099-freeze-prq-002a-structural-identity-probe-layer.md)
 adds a bounded PRQ-002A structural probe without changing the 120-product-schema
@@ -165,7 +224,8 @@ exclusion of dynamically discovered paths, nine-domain framing, ordered-map
 laws, cross-object replay, an offline registry, organizational independence,
 independent-host reproduction, or full successor-profile conformance. The
 frozen `odeya-jcs-0.2` bytes remain unissued and blocked from conformance and
-issuance; the prospective `odeya-jcs-0.3` profile does not exist. No product
+issuance. The separate `odeya-jcs-0.3` construction candidate described below
+does not amend or establish conformance for those bytes. No product
 identity, PRQ-002 closure, Gate A acceptance, runtime authority, or publication
 authority follows from this evidence. Architecture-repository publication
 remains separately governed by the exact-commit release contract; profile
@@ -188,8 +248,20 @@ does not establish canonicalization-profile conformance, complete offline
 resolution, dependency-closed product registries, organizational
 independence, product identity, admission, PRQ-002 closure, Gate A acceptance,
 runtime authority, or publication authority. The frozen `odeya-jcs-0.2` bytes
-remain unissued, and the required side-by-side `odeya-jcs-0.3` reissue does not
-yet exist.
+remain unissued.
+
+[ADR 0103](docs/decisions/0103-construct-side-by-side-odeya-jcs-0-3-candidate.md)
+constructs the required side-by-side `odeya-jcs-0.3` architecture candidate:
+twelve final-only successor schemas, nine structural-nonidentity fixtures,
+three ordered candidate records, and a separate seven-output observation
+transaction over the resulting fifteen immutable subjects. Two source- and
+language-separated observers agree on the complete exact-byte fifteen-row
+projection. That agreement is bounded construction evidence only. It does not
+prove the static schema-position inventory, complete per-subject raw-number
+applicability traces, canonicalization conformance, complete offline
+resolution, organizational independence, product identity, profile or
+resource issuance/admission, PRQ-002 closure, Gate A acceptance, runtime
+authority, or publication authority.
 
 The PRQ-013 T0 byte-bound/recomputation tranche now retains candidate evidence
 under [ADR 0095](docs/decisions/0095-reissue-human-decision-assurance-as-a-byte-bound-independently-recomputed-chain.md):
@@ -271,7 +343,9 @@ python3 -m venv .venv-architecture
 .venv-architecture/bin/python scripts/validate.py
 ```
 
-Repository-release checks lint the workflows and Markdown, validate the README contract, and render the Mermaid map from the exact checked-in block:
+Repository-release checks lint the workflows and Markdown, validate the README
+contract, and render all seven governed Mermaid maps from the exact checked-in
+blocks across the README and three architecture documents:
 
 ```bash
 bash scripts/ci/check-repository-release.sh
@@ -283,11 +357,11 @@ After fetching the digest-verified JAR described in the [formal-model guide](for
 bash formal/tla/check.sh
 ```
 
-Which guards have a known-bad proof is measured rather than assumed. The lifecycle checker has its own dedicated statement and condition audits, and every other suite is measured by one generalized audit; both disable each refusal in turn and re-run:
+Which refusal statements have a retained mutation proof is measured rather than assumed. The lifecycle checker has its own dedicated statement and condition audits. The generalized v0.2 audit covers a separate declared checker census; lifecycle is excluded while the PRQ-002E checker is included. It requires a syntax-valid mutation, an exact suite-reported refusal, a passing restored control, and an identical repeated refusal fingerprint. It does not attribute the result to an exact case ID:
 
 ```bash
 python3 scripts/audit_lifecycle_guard_coverage.py       # lifecycle statements, ~90s
-python3 scripts/audit_suite_guard_coverage.py           # every other suite; duration is machine- and corpus-dependent
+python3 scripts/audit_suite_guard_coverage.py           # declared non-lifecycle checker census; duration varies
 ```
 
 See [repository release engineering](docs/REPOSITORY_RELEASE.md) for the exact CI jobs, threat boundary, toolchain pins, and fresh-clone rehearsal. A green check is evidence about this repository snapshot; it is never scientific truth or Gate A acceptance.
@@ -310,8 +384,25 @@ Gate A or runtime authority.
 
 ## Next
 
+The immediate continuation is deliberately singular. First resolve and
+reproduce the current PRQ-002E direct child of exact local predecessor
+`617209ba` from its own fresh-clone manifest; never inherit the predecessor's
+receipt or infer publication. Once that exact child is clean, the next smallest
+PRQ-002 architecture unit is complete raw-aware, per-subject applicability
+traces plus full source-separated cross-object conformance over the frozen
+`odeya-jcs-0.3` bytes. Only then proceed to complete offline resolution,
+dependency-closed product members and registries, accountable review, and the
+operator's exact-byte decision. No observer agreement, structural vector, or
+green validator may be promoted into conformance, product identity, profile
+issuance, PRQ-002 closure, Gate A acceptance, or runtime authority.
+
 The canonical-migration wave is closed at audit zero (ADRs 0032–0050): all six blocking finding classes — 1,222 findings in total — now measure zero, every reissue ledgered so each reissued schema's predecessor verifies against its recorded checkpoint commit, and the audit reports `gate_a_disposition: candidate_clear`. The profile nevertheless remains **unissued**: freezing it requires independent review of the executed wave and the operator's exact-byte decision, which no session can grant itself. [ADR 0097](docs/decisions/0097-adversarially-validate-the-canonicalization-evaluator.md) adds a separate meta-evaluator after a copied Python result relabelled with Node metadata passed the existing comparator; retained oracle conformity and case-projection agreement therefore remain distinct from causal execution-origin evidence, which is still unwitnessed. That executed wave was attacked across four rounds of context-isolated adversarial review (ADRs 0051, 0063, 0069, 0077), each briefed to refute; each round found real defects — a fabricated disposition field in the evidence writer, a publication path a plain `git push` bypassed, coverage audits that could regenerate their own records — and each is retracted in place with corrected, re-measured figures. Those reviewers were context-isolated but not independent: they shared the producer's provider, model family, and prompt family, five of the twelve correlation axes `ModelConfigurationRecord` already enumerates, and that is recorded rather than glossed (see the [reviewer-agent proposal](docs/REVIEWER_AGENT_PROPOSAL.md)). The ADR 0095 refutation followed the same discipline. T1 `AuthorityAssignment` is the next PRQ-013 downstream tranche only after the four named T0 prerequisites—canonical schema-identity candidate closure, standalone member-record contracts, PRQ-005 through PRQ-010 candidate corrections, and PRQ-013 individual-assurance-foundation candidate closure—are satisfied. The constitutional root/checkpoint/activation chain, independent reducers and verifiers, replay/recovery/correction-fanout evidence, rights-settled proof import, accountable human reviews, an exact candidate manifest, and the owner's exact-byte decision all remain mandatory before Gate A. The [closure plan](docs/GATE_A_PREREQUISITE_CLOSURE_PLAN_2026-07-16.md) and [current handoff](docs/SESSION_HANDOFF.md) retain the dependency order and every open limitation.
 
-Only an accepted Gate A candidate can authorize disposable Gate B probes; one bounded replayable engine slice begins only after a separate Gate C decision.
+Only after Gate A acceptance may the operator separately authorize a bounded
+Gate B probe. One bounded replayable engine slice remains prohibited until any
+authorized probes are settled and the operator makes a separate explicit Gate
+C decision.
 
-Autonomy expands after one full chain of custody survives replay, interruption, negative fixtures, recovery, and independent review—not before.
+Any future authority expansion remains blocked until one full chain of custody
+survives replay, interruption, negative fixtures, recovery, measured
+independence, accountable review, and the operator's exact decision.

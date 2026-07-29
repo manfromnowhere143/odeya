@@ -187,6 +187,42 @@ REQUIRED_FILES = (
     "tests/schema-registry-prehash-replay/results/python-execution-receipt.json",
     "tests/schema-registry-prehash-replay/results/node-execution-receipt.json",
     "tests/schema-registry-prehash-replay/results/comparison-receipt.json",
+    "docs/decisions/0103-construct-side-by-side-odeya-jcs-0-3-candidate.md",
+    "schemas/schema-resource-record-v0-2.schema.json",
+    "schemas/aggregate-state-subject-record-v0-2.schema.json",
+    "schemas/reducer-contract-record-v0-2.schema.json",
+    "schemas/event-contract-record-v0-2.schema.json",
+    "schemas/ordered-member-map-commitment-v0-2.schema.json",
+    "schemas/schema-registry-v0-9.schema.json",
+    "schemas/aggregate-state-subject-registry-v0-8.schema.json",
+    "schemas/reducer-registry-v0-8.schema.json",
+    "schemas/event-contract-registry-v0-8.schema.json",
+    "schemas/canonicalization-profile-core-v0-7.schema.json",
+    "schemas/canonicalization-profile-candidate-evidence-v0-7.schema.json",
+    "schemas/canonicalization-profile-migration-v0-2.schema.json",
+    "architecture/canonicalization-profile-core-0.3-candidate.json",
+    "architecture/canonicalization-profile-0.3-candidate-evidence.json",
+    "architecture/canonicalization-profile-0.2-to-0.3-migration-candidate.json",
+    "tests/product-identity-profile-0.3-candidate/README.md",
+    "tests/product-identity-profile-0.3-candidate/check.py",
+    "tests/product-identity-profile-0.3-candidate/cases.json",
+    "tests/product-identity-profile-0.3-candidate/input-manifest.json",
+    "tests/product-identity-profile-0.3-candidate/predecessor-schemas.json",
+    "tests/product-identity-profile-0.3-candidate/authoring/generate_candidate.py",
+    "tests/product-identity-profile-0.3-candidate/authoring/generate_predecessor_manifest.py",
+    "tests/product-identity-profile-0.3-candidate/authoring/run_observers.py",
+    "tests/product-identity-profile-0.3-candidate/python/observer.py",
+    "tests/product-identity-profile-0.3-candidate/python/dependency-lock.json",
+    "tests/product-identity-profile-0.3-candidate/python/source-manifest.json",
+    "tests/product-identity-profile-0.3-candidate/node/observer.mjs",
+    "tests/product-identity-profile-0.3-candidate/node/package.json",
+    "tests/product-identity-profile-0.3-candidate/node/package-lock.json",
+    "tests/product-identity-profile-0.3-candidate/node/source-manifest.json",
+    "tests/product-identity-profile-0.3-candidate/results/python-construction-observation.json",
+    "tests/product-identity-profile-0.3-candidate/results/node-construction-observation.json",
+    "tests/product-identity-profile-0.3-candidate/results/python-execution-receipt.json",
+    "tests/product-identity-profile-0.3-candidate/results/node-execution-receipt.json",
+    "tests/product-identity-profile-0.3-candidate/results/comparison-receipt.json",
     "architecture/work-intent-core-candidate.json",
     "architecture/work-intent-identity-candidate-evidence.json",
     "architecture/work-intent-profile-bound-candidate.json",
@@ -470,6 +506,7 @@ REQUIRED_FILES = (
 )
 ARCHITECTURE_SURFACE_CHECK = "scripts/validate_architecture_surface.py"
 ISOLATED_CONTRACT_SUITES = (
+    "tests/architecture-review/check.py",
     "tests/cognitive-contracts/check.py",
     "tests/projection-contracts/check.py",
     "tests/physical-contracts/check.py",
@@ -501,6 +538,7 @@ ARCHITECTURE_EVIDENCE_CHECKS = (
     "scripts/validate_suite_guard_coverage.py",
     "scripts/validate_product_identity_raw_number_typing.py",
     "scripts/validate_schema_registry_prehash_replay.py",
+    "tests/product-identity-profile-0.3-candidate/check.py",
     "scripts/validate_human_decision_assurance_successor.py",
 )
 REPOSITORY_RELEASE_CHECKS = (
@@ -1685,7 +1723,7 @@ README_CHECKPOINT = re.compile(
     r"The\s+current\s+retained\s+foundation\s+contains\s+(\d+)\s+Draft\s+2020-12\s+"
     r"schemas,\s+(\d+)\s+shared-manifest\s+cases\s+\((\d+)\s+valid\s+and\s+"
     r"(\d+)\s+known-bad\),\s+(\w+)\s+isolated\s+contract\s+suites,\s+(\w+)\s+"
-    r"architecture-evidence\s+checks,\s+and\s+(\w+)\s+bounded\s+safe\s+TLA\+\s+"
+    r"architecture-evidence\s+checks,\s+and\s+(\w+)\s+bounded\s+TLA\+\s+"
     r"models\s+with\s+(\w+)\s+mutation\s+controls",
     re.MULTILINE,
 )
@@ -1751,7 +1789,7 @@ def readme_checkpoint_errors(
         ("known-bad shared-manifest cases", resolve(match.group(4)), schema_partition["invalid"]),
         ("isolated contract suites", resolve(match.group(5)), suite_count),
         ("architecture-evidence checks", resolve(match.group(6)), evidence_check_count),
-        ("bounded safe TLA+ models", resolve(match.group(7)), tla_models),
+        ("bounded TLA+ models", resolve(match.group(7)), tla_models),
         ("mutation controls", resolve(match.group(8)), mutation_controls),
     )
     for label, stated, actual in declared:

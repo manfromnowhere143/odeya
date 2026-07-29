@@ -62,9 +62,18 @@ serialization item. It is not canonicalization-profile conformance, complete
 offline resolution, dependency-closed product registries, cross-object product
 replay, an independent process witness, organizational independence, profile
 issuance, product identity, admission, PRQ-002 closure, or Gate A acceptance.
-The frozen `odeya-jcs-0.2` bytes remain unissued; a complete side-by-side
-`odeya-jcs-0.3` core/evidence/migration and reissued twelve-resource cohort
-remain required before full successor conformance can be attempted.
+The frozen `odeya-jcs-0.2` bytes remain unissued. [ADR
+0103](decisions/0103-construct-side-by-side-odeya-jcs-0-3-candidate.md)
+retains the complete side-by-side `odeya-jcs-0.3` construction graph: twelve
+final-only successor schemas, nine structural-nonidentity fixtures, three
+ordered candidate records, and a separate seven-output observation
+transaction whose two source- and language-separated observers agree on the
+exact-byte fifteen-subject projection. This satisfies only the construction
+dependency. The static numeric-applicability inventory has not been proved by
+those observations, complete raw-aware per-subject traces and full successor
+conformance have not been produced, and offline dependency-closed resolution,
+accountable review, operator acceptance, identity, issuance, admission,
+PRQ-002 closure, and Gate A acceptance remain absent.
 
 ## G3 — Authority, security, and privacy
 

@@ -19,12 +19,13 @@ enforces vacuously. This version answers each refutation structurally:
   lives at manifest level (command-identity's exact_mismatch_reason_sets)
   is certified on the field its harness actually enforces exactly.
 
-This gate checks binding presence and shape; each suite's harness proves
-its bindings fire. Binding SEMANTICS vary by suite by design: pointer plus
-keyword where the refusing engine is the pinned validator, message
-substring where the checker is authored here, and declared intent plus an
-equality-enforced observed inventory in the three suites whose subset
-checks independent review defeated (ADR 0067).
+This gate checks binding presence and shape; each suite's harness proves its
+bindings fire. Binding SEMANTICS vary by suite by design: pointer plus keyword
+where the refusing engine is the pinned validator, message substring where the
+checker is authored here, declared intent plus an equality-enforced observed
+inventory where subset checks proved insufficient (ADR 0067), and an exact
+singleton guard where the harness requires one declared guard and no
+incidental refusal.
 """
 
 from __future__ import annotations
@@ -92,6 +93,25 @@ def scalar_intent_and_inventory(
             and bool(intended)
             and inventory(case, document)
         )
+
+    return check
+
+
+def exact_singleton_guard(
+    field: str,
+) -> Callable[[dict[str, Any], dict[str, Any]], bool]:
+    """A scalar guard whose harness requires exact singleton equality.
+
+    The PRQ-002E construction harness mutates one declared model position and
+    requires the resulting guard set to equal ``{expected_guard}``.  The
+    census therefore admits only a non-empty scalar binding; the suite
+    checker proves that this exact singleton, rather than an incidental
+    refusal, fires.
+    """
+
+    def check(case: dict[str, Any], _: dict[str, Any]) -> bool:
+        value = case.get(field)
+        return isinstance(value, str) and bool(value)
 
     return check
 
@@ -171,6 +191,11 @@ REGISTRY: dict[str, tuple[str, Any, Any]] = {
     "product-identity-profile-candidate": (
         "cases.json",
         scalar_intent_and_inventory("expected_errors"),
+        None,
+    ),
+    "product-identity-profile-0.3-candidate": (
+        "cases.json",
+        exact_singleton_guard("expected_guard"),
         None,
     ),
     "product-identity-raw-number-typing": (
@@ -317,7 +342,8 @@ def census() -> tuple[list[str], int, int, int]:
 
 def self_test() -> list[str]:
     """The gate must refuse a stripped binding, an unregistered case-bearing
-    manifest, and a vacuous command-identity binding."""
+    manifest, a vacuous command-identity binding, and a missing exact-singleton
+    guard."""
     failures: list[str] = []
     stripped = [{"name": "x", "expect": "reject"}]
     errors, _ = audit_registered("lifecycle-closure", stripped, {})
@@ -327,6 +353,16 @@ def self_test() -> list[str]:
     errors, _ = audit_registered("command-identity-contracts", no_exact_set, {"exact_mismatch_reason_sets": {}})
     if not any("lacks its declared attribution binding" in e for e in errors):
         failures.append("attribution gate self-test: a missing exact reason set was not refused")
+    missing_singleton_guard = [{"name": "x", "kind": "known_bad"}]
+    errors, _ = audit_registered(
+        "product-identity-profile-0.3-candidate",
+        missing_singleton_guard,
+        {},
+    )
+    if not any("lacks its declared attribution binding" in e for e in errors):
+        failures.append(
+            "attribution gate self-test: a missing exact singleton guard was not refused"
+        )
     original = REGISTRY.pop("lifecycle-closure")
     try:
         errors, _, _, _ = census()
@@ -351,7 +387,8 @@ def main() -> int:
         f"{swept} case-bearing manifests; {unattributed} negatives remain explicitly "
         "unattributed in registered corpora (ADR 0063); unknown case-bearing manifests "
         "fail closed; binding presence only, and binding semantics vary by suite "
-        "(pointer+keyword, message substring, or intent+exact inventory)"
+        "(pointer+keyword, message substring, intent+exact inventory, or exact "
+        "singleton guard)"
     )
     return 0
 

@@ -117,8 +117,8 @@ anonymous nested `$defs` branch from its parent registry.
 now retains twelve exact side-by-side schema resources: four standalone
 product member schemas, one ordered-member-map commitment schema, four
 pure-registry successors, and three profile core/evidence/migration schemas.
-They declare nine product identity domains and expand the current schema
-inventory to 132 without mutating the frozen 120-resource predecessor. This is
+They declare nine product identity domains and establish the scoped
+120-plus-12 partition at 132 without mutating the frozen predecessor. This is
 bounded candidate progress only. It constructs zero product identities,
 members, commitments, snapshots, roots, or activations; the profile and schema
 resources are unissued and unadmitted. The standalone command member
@@ -142,7 +142,7 @@ or independent-host reproduction.
 now retains the next dependency-bounded PRQ-002D candidate: one non-product
 two-member prehash schema-registry replay over 68 opaque virtual-file frames.
 One fixed private oracle accepts one frame and refuses 67; complete
-source- and language-separated Python and Node projections agree, and 67
+source- and language-separated Python and Node projections agree, and 77
 single-attributed parent-gate known-bads fire. The receipts are self-attested
 byte-consistency records, not independently witnessed process evidence, and
 the source controls are bounded inventories rather than process sandboxes or
@@ -150,13 +150,24 @@ general static analyses. The replay does not construct a product identity,
 issue a profile, prove complete offline resolution, close PRQ-002, accept Gate
 A, or authorize runtime.
 
+[ADR 0103](decisions/0103-construct-side-by-side-odeya-jcs-0-3-candidate.md)
+now retains the PRQ-002E construction dependency: twelve final-only
+`odeya-jcs-0.3` schema resources, nine structural-nonidentity fixtures, three
+ordered candidate records, and a separate seven-output observation
+transaction over the resulting fifteen immutable subjects. Source- and
+language-separated Python and Node observers agree on the complete exact-byte
+fifteen-row projection. The measured schema partition is now 120 original
+resources plus 12 frozen `0.2` candidates plus 12 new `0.3` candidates, or 144
+in total.
+
 The `odeya-jcs-0.2` core, evidence, migration, and twelve-resource cohort
 remain byte-for-byte frozen, unissued, and blocked from conformance and
-issuance. Neither PRQ-002C nor PRQ-002D is an addendum to those bytes. The
-prospective `odeya-jcs-0.3` profile and its required side-by-side successor
-cohort do not exist. Full source-separated successor-profile conformance,
-accountable review, operator acceptance, PRQ-002 closure, Gate A acceptance,
-and runtime authority therefore remain absent.
+issuance. PRQ-002C, PRQ-002D, and PRQ-002E do not amend those bytes. PRQ-002E
+is construction evidence, not static numeric-applicability proof or
+successor-profile conformance: complete per-subject raw-aware traces,
+dependency-closed offline resolution, full source-separated cross-object
+conformance, accountable review, operator acceptance, PRQ-002 closure, Gate A
+acceptance, and runtime authority remain absent.
 
 ### PRQ-003 — Logical payload identity is not bound to schema bytes
 

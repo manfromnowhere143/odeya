@@ -17,14 +17,74 @@ import re
 import stat
 import subprocess
 import sys
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Any
 
 
 ROOT = Path(__file__).resolve().parents[1]
+MERMAID_DOCUMENTS = {
+    "README.md": 1,
+    "docs/ARCHITECTURE.md": 3,
+    "docs/COGNITIVE_ARCHITECTURE.md": 1,
+    "docs/HUMAN_DECISION_ASSURANCE.md": 2,
+}
+MERMAID_UNSAFE_PATTERNS = (
+    (
+        "click directive",
+        re.compile(r"(?im)(?:^|;)[ \t]*click(?:[ \t]|$)"),
+    ),
+    ("configuration directive", re.compile(r"%%[ \t]*\{")),
+    (
+        "YAML frontmatter",
+        re.compile(r"\A(?:\ufeff)?[ \t]*---[ \t]*\r?\n"),
+    ),
+    ("javascript URI", re.compile(r"(?i)javascript[ \t]*:")),
+    (
+        "image asset property",
+        re.compile(
+            r"(?i)(?:^|[ \t\r\n,{])(?:img|\"img\"|'img')[ \t]*:"
+        ),
+    ),
+    (
+        "attribute object",
+        re.compile(r"@[ \t]*\{"),
+    ),
+    (
+        "HTML image element",
+        re.compile(r"(?i)<[ \t]*img(?:[ \t/>])"),
+    ),
+    (
+        "CSS resource URL",
+        re.compile(r"(?i)\burl[ \t]*\("),
+    ),
+    (
+        "Markdown image",
+        re.compile(r"!\[[^\]\r\n]*\][ \t]*\("),
+    ),
+    (
+        "resource URI scheme",
+        re.compile(r"(?i)(?<![A-Za-z0-9_])(?:https?|file|data|blob|ftp)[ \t]*:"),
+    ),
+    (
+        "protocol-relative resource location",
+        re.compile(r"(?<![:/])//[A-Za-z0-9._~\-\[]"),
+    ),
+)
+FENCED_CODE_OPEN = re.compile(
+    r"^(?P<indent> {0,3})(?P<fence>`{3,}|~{3,})(?P<info>[^\r\n]*)$"
+)
+MERMAID_FENCE_MARKER = re.compile(
+    r"(?i)(?:`{3,}|~{3,})[ \t]*"
+    r"(?:mermaid(?=[ \t]|$)|\{[ \t]*\.mermaid(?:[ \t}]|$))"
+)
+MERMAID_RENDERER_SHA256 = (
+    "8e0f253fa055a17e5a1a83ac469d2e1d190505b91e4360b11f7bedf805746879"
+)
+TRACKED_PATH_CENSUS_COMMAND = ("git", "ls-files", "-z")
 OPENING_SENTENCE = (
-    "Odeya is a private research engine that turns a thesis into a governed, "
-    "replayable chain from question to evidence to warranted claim."
+    "Odeya is the architecture foundation for a private research engine that "
+    "turns a thesis into a governed, replayable chain from question to evidence "
+    "to warranted claim."
 )
 WORKFLOWS = {
     ".github/workflows/architecture.yml": "Architecture / Foundation",
@@ -253,6 +313,12 @@ DEDICATED_ARCHITECTURE_EVIDENCE_COMMANDS = (
         '--node-executable "$ODEYA_PRQ002_NODE"',
     ),
     (
+        "prq-002e-profile-0.3-construction",
+        "python tests/product-identity-profile-0.3-candidate/authoring/"
+        "generate_candidate.py --check && "
+        "python tests/product-identity-profile-0.3-candidate/check.py",
+    ),
+    (
         "hda-successor-recompute",
         "python scripts/validate_human_decision_assurance_successor.py --recompute-all",
     ),
@@ -287,6 +353,10 @@ INTEGRATED_ARCHITECTURE_EVIDENCE_CHECKS = (
         "scripts/validate_schema_registry_prehash_replay.py",
     ),
     (
+        "prq-002e-profile-0.3-construction",
+        "tests/product-identity-profile-0.3-candidate/check.py",
+    ),
+    (
         "hda-successor",
         "scripts/validate_human_decision_assurance_successor.py",
     ),
@@ -318,13 +388,15 @@ CARDINAL_WORDS = (
     "twenty-three",
     "twenty-four",
     "twenty-five",
+    "twenty-six",
+    "twenty-seven",
 )
 ARCHITECTURE_EVIDENCE_COUNT_BOUNDARY = (
     f"Reproduce {CARDINAL_WORDS[len(DEDICATED_ARCHITECTURE_EVIDENCE_COMMANDS)]} "
     "dedicated prerequisite/member checks: Gate A prerequisites, PRQ-009 order, "
     "schema reissue, module manifest, first-slice scope, the PRQ-002A identity probe, "
     "the PRQ-002C raw-number prerequisite, the PRQ-002D prehash registry replay, "
-    "and human-decision-assurance successor "
+    "the PRQ-002E profile-0.3 construction, and human-decision-assurance successor "
     "recomputation. `Foundation` separately "
     "runs the complete integrated "
     f"{CARDINAL_WORDS[len(INTEGRATED_ARCHITECTURE_EVIDENCE_CHECKS)]}-check census"
@@ -345,10 +417,10 @@ EXPECTED_ARCHITECTURE_EVIDENCE_RUN_BODY = (
     + "          } 2>&1 | tee artifacts/ci/architecture-evidence.log"
 )
 EXPECTED_ARCHITECTURE_EVIDENCE_JOB_SHA256 = (
-    "779ea40b772fe75eed1b245863c9f1f0ac1b302954d26905ca6544ab390cc898"
+    "68dd19753287f9e31354726b5e75ae597f68bcb1b1b32073a1285f2ce8fbb530"
 )
 EXPECTED_INTEGRATED_VALIDATOR_SHA256 = (
-    "f8461ab9a919ffb037d7ae8d38d829267c80d8a993c4c93fbff2047c8f565ad7"
+    "130c3e6e7343b77bcf4eccdce3286b1b4d8a3b8995e3ded855b3cf497b28094c"
 )
 ARCHITECTURE_EVIDENCE_KNOWN_BAD_MUTATION_COUNT = (
     len(DEDICATED_ARCHITECTURE_EVIDENCE_COMMANDS)
@@ -366,6 +438,20 @@ ARCHITECTURE_EVIDENCE_RUN_COUNT_BOUNDARY = (
     "run body and the\nintegrated "
     f"{CARDINAL_WORDS[len(INTEGRATED_ARCHITECTURE_EVIDENCE_CHECKS)]}-member "
     "Python tuple"
+)
+RELEASE_CONTRACT_KNOWN_BAD_MUTATION_COUNT = 9
+RELEASE_SCRIPT_KNOWN_BAD_MUTATION_COUNT = 11
+RELEASE_SCRIPT_MUTATION_COUNT_BOUNDARY = (
+    f"{CARDINAL_WORDS[RELEASE_SCRIPT_KNOWN_BAD_MUTATION_COUNT].capitalize()} "
+    "separately retained release-script isolation mutations"
+)
+REPOSITORY_RELEASE_FIXTURE_COUNT_BOUNDARIES = (
+    f"{CARDINAL_WORDS[ARCHITECTURE_EVIDENCE_KNOWN_BAD_MUTATION_COUNT].capitalize()} "
+    "architecture-evidence inventory mutations",
+    f"{CARDINAL_WORDS[RELEASE_CONTRACT_KNOWN_BAD_MUTATION_COUNT].capitalize()} "
+    "release-contract mutations",
+    f"{CARDINAL_WORDS[RELEASE_SCRIPT_KNOWN_BAD_MUTATION_COUNT].capitalize()} "
+    "release-script isolation mutations",
 )
 RELEASE_CONTRACT_REQUIRED = (
     "The public canonical remote already exists at\n"
@@ -392,6 +478,7 @@ RELEASE_CONTRACT_REQUIRED = (
     ARCHITECTURE_EVIDENCE_COUNT_BOUNDARY,
     ARCHITECTURE_EVIDENCE_MUTATION_COUNT_BOUNDARY,
     ARCHITECTURE_EVIDENCE_RUN_COUNT_BOUNDARY,
+    RELEASE_SCRIPT_MUTATION_COUNT_BOUNDARY,
 )
 RELEASE_CONTRACT_FORBIDDEN = (
     "canonical repository is private",
@@ -463,7 +550,7 @@ EXPECTED_ARCHITECTURE_EVIDENCE_INVENTORY_MUTATIONS = {
     "unexpected-dedicated-execution-step": (
         ".github/workflows/architecture.yml",
         ARCHITECTURE_EVIDENCE_RUN_STEP_START,
-        "      - name: Run a tenth dedicated architecture check\n"
+        "      - name: Run an eleventh dedicated architecture check\n"
         "        run: python scripts/validate_contract_profiles.py\n\n"
         + ARCHITECTURE_EVIDENCE_RUN_STEP_START,
         "architecture evidence executable job bytes must be exact",
@@ -630,6 +717,35 @@ EXPECTED_RELEASE_SCRIPT_MUTATIONS = {
         "export ODEYA_TOOL_CACHE\n",
         "standalone release check must allocate a unique tool cache",
     ),
+    "weaken-mermaid-render-count": (
+        "scripts/ci/render-readme-architecture.sh",
+        'readonly EXPECTED_DIAGRAM_COUNT="7"',
+        'readonly EXPECTED_DIAGRAM_COUNT="1"',
+        "Mermaid renderer exact-byte contract drifted",
+    ),
+    "skip-non-readme-mermaid-renders": (
+        "scripts/ci/render-readme-architecture.sh",
+        "  rendered_count=$((rendered_count + 1))\n"
+        "  printf 'Rendered governed Mermaid map: %s\\n' \"$base\"\n"
+        "done",
+        "  rendered_count=$((rendered_count + 1))\n"
+        "  printf 'Rendered governed Mermaid map: %s\\n' \"$base\"\n"
+        "  break\n"
+        "done",
+        "Mermaid renderer exact-byte contract drifted",
+    ),
+    "remove-mermaid-image-signature-assertion": (
+        "scripts/ci/render-readme-architecture.sh",
+        '  assert_image "$rendered"\n',
+        '  test -s "$rendered"\n',
+        "Mermaid renderer exact-byte contract drifted",
+    ),
+    "renderer-crlf-byte-substitution": (
+        "scripts/ci/render-readme-architecture.sh",
+        "#!/usr/bin/env bash\n",
+        "#!/usr/bin/env bash\r\n",
+        "Mermaid renderer exact-byte contract drifted",
+    ),
 }
 EXPECTED_RELEASE_CONTRACT_MUTATIONS = {
     "stale-architecture-evidence-counts": (
@@ -638,7 +754,7 @@ EXPECTED_RELEASE_CONTRACT_MUTATIONS = {
         "PRQ-009 order, schema reissue, module manifest, first-slice scope, and "
         "human-decision-assurance successor recomputation. `Foundation` separately "
         "runs the complete integrated ten-check census",
-        "Reproduce nine dedicated prerequisite/member checks",
+        "Reproduce ten dedicated prerequisite/member checks",
     ),
     "stale-architecture-evidence-mutation-count": (
         ARCHITECTURE_EVIDENCE_MUTATION_COUNT_BOUNDARY,
@@ -649,7 +765,7 @@ EXPECTED_RELEASE_CONTRACT_MUTATIONS = {
         ARCHITECTURE_EVIDENCE_RUN_COUNT_BOUNDARY,
         "The release checker compares the dedicated eight-command run body and "
         "the\nintegrated fourteen-member Python tuple",
-        "The release checker compares the dedicated nine-command run body",
+        "The release checker compares the dedicated ten-command run body",
     ),
     "future-private-remote-regression": (
         "The public canonical remote already exists at\n"
@@ -680,6 +796,44 @@ EXPECTED_RELEASE_CONTRACT_MUTATIONS = {
         "It is\nhistory, not a procedure to rerun. The canonical repository is "
         "private and no remote exists.",
         "forbidden contradictory statement 'canonical repository is private'",
+    ),
+    "stale-release-script-mutation-count": (
+        RELEASE_SCRIPT_MUTATION_COUNT_BOUNDARY,
+        "Seven separately retained release-script isolation mutations",
+        RELEASE_SCRIPT_MUTATION_COUNT_BOUNDARY,
+    ),
+}
+EXPECTED_RELEASE_CENSUS_MUTATIONS = {
+    "coherent-release-script-growth-with-stale-prose": (
+        "release_script_mutations",
+        "synthetic-twelfth-release-script-mutation",
+        "release-script expected and fixture censuses must each contain exactly 11 members",
+    ),
+    "coherent-release-contract-growth-with-stale-prose": (
+        "release_contract_mutations",
+        "synthetic-tenth-release-contract-mutation",
+        "release-contract expected and fixture censuses must each contain exactly 9 members",
+    ),
+}
+EXPECTED_RELEASE_FIXTURE_README_MUTATIONS = {
+    "stale-architecture-evidence-fixture-readme-count": (
+        "Twenty-seven architecture-evidence inventory mutations",
+        "Twenty-five architecture-evidence inventory mutations",
+        "repository-release fixture README must carry exactly the "
+        "executable-derived boundary 'Twenty-seven architecture-evidence "
+        "inventory mutations'",
+    ),
+    "stale-release-contract-fixture-readme-count": (
+        "Nine release-contract mutations",
+        "Eight release-contract mutations",
+        "repository-release fixture README must carry exactly the "
+        "executable-derived boundary 'Nine release-contract mutations'",
+    ),
+    "stale-release-script-fixture-readme-count": (
+        "Eleven release-script isolation mutations",
+        "Seven release-script isolation mutations",
+        "repository-release fixture README must carry exactly the "
+        "executable-derived boundary 'Eleven release-script isolation mutations'",
     ),
 }
 GIT_ENVIRONMENT_TO_FIX = {
@@ -717,10 +871,85 @@ def load_json(relative: str, errors: list[str]) -> Any:
 
 def read(relative: str, errors: list[str]) -> str:
     try:
-        return (ROOT / relative).read_text(encoding="utf-8")
-    except OSError as exc:
+        return (ROOT / relative).read_bytes().decode("utf-8")
+    except (OSError, UnicodeDecodeError) as exc:
         errors.append(f"{relative}: unreadable: {exc}")
         return ""
+
+
+def is_markdown_path(relative: str) -> bool:
+    return PurePosixPath(relative).suffix.casefold() == ".md"
+
+
+def tracked_markdown_documents(
+    errors: list[str],
+    command: tuple[str, ...] = TRACKED_PATH_CENSUS_COMMAND,
+) -> dict[str, str]:
+    if command != TRACKED_PATH_CENSUS_COMMAND:
+        errors.append(
+            "tracked Markdown census command must list all tracked paths before "
+            "case-insensitive extension filtering"
+        )
+        return {}
+    environment = dict(os.environ)
+    dynamic_prefixes = (
+        "GIT_CONFIG_KEY_",
+        "GIT_CONFIG_VALUE_",
+        "GIT_TRACE",
+        "GIT_TRACE2",
+    )
+    for name in tuple(environment):
+        if name in GIT_ENVIRONMENT_TO_REMOVE or name.startswith(dynamic_prefixes):
+            environment.pop(name)
+    environment.update(GIT_ENVIRONMENT_TO_FIX)
+    try:
+        result = subprocess.run(
+            list(command),
+            cwd=ROOT,
+            env=environment,
+            capture_output=True,
+            check=False,
+            timeout=10,
+        )
+    except (OSError, subprocess.SubprocessError) as exc:
+        errors.append(f"tracked Markdown census could not run: {exc}")
+        return {}
+    if result.returncode != 0:
+        detail = result.stderr.decode("utf-8", errors="replace").strip()
+        errors.append(
+            "tracked Markdown census failed: "
+            + (detail or f"git exited {result.returncode}")
+        )
+        return {}
+    try:
+        encoded_paths = result.stdout.split(b"\0")
+        if encoded_paths and encoded_paths[-1] == b"":
+            encoded_paths.pop()
+        paths = [
+            item.decode("utf-8")
+            for item in encoded_paths
+            if is_markdown_path(item.decode("utf-8"))
+        ]
+    except UnicodeDecodeError as exc:
+        errors.append(f"tracked Markdown census contains a non-UTF-8 path: {exc}")
+        return {}
+    documents: dict[str, str] = {}
+    for relative in paths:
+        path = Path(relative)
+        if (
+            path.is_absolute()
+            or ".." in path.parts
+            or path.as_posix() != relative
+            or relative in documents
+        ):
+            errors.append(
+                f"tracked Markdown census contains an unsafe or duplicate path: {relative!r}"
+            )
+            continue
+        documents[relative] = read(relative, errors)
+    if not documents:
+        errors.append("tracked Markdown census is empty")
+    return documents
 
 
 def validate_git_environment_sanitizer(errors: list[str]) -> None:
@@ -826,20 +1055,100 @@ done
         errors.append(f"{relative}: trace-only isolation self-test failed: {detail}")
 
 
+def extract_mermaid_blocks(
+    document: str,
+    relative: str,
+    expected_count: int,
+    errors: list[str],
+) -> tuple[str, ...]:
+    candidates: list[tuple[str, bool]] = []
+    lines = document.splitlines()
+    cursor = 0
+    while cursor < len(lines):
+        opening = FENCED_CODE_OPEN.fullmatch(lines[cursor])
+        if opening is None:
+            cursor += 1
+            continue
+
+        fence = opening.group("fence")
+        marker = fence[0]
+        info = opening.group("info").strip()
+        # A backtick fence whose info string contains a backtick is not a
+        # CommonMark fenced-code opener.
+        if marker == "`" and "`" in info:
+            cursor += 1
+            continue
+
+        opening_indent = len(opening.group("indent"))
+        closing = re.compile(
+            rf"^ {{0,3}}{re.escape(marker)}{{{len(fence)},}}[ \t]*$"
+        )
+        body: list[str] = []
+        closed = False
+        cursor += 1
+        while cursor < len(lines):
+            line = lines[cursor]
+            if closing.fullmatch(line):
+                closed = True
+                cursor += 1
+                break
+            removable = min(opening_indent, len(line) - len(line.lstrip(" ")))
+            body.append(line[removable:])
+            cursor += 1
+
+        info_token = info.split(maxsplit=1)[0].casefold() if info else ""
+        if info_token == "mermaid":
+            candidates.append(("\n".join(body), closed))
+
+    marker_count = sum(
+        len(MERMAID_FENCE_MARKER.findall(line))
+        for line in lines
+    )
+    if marker_count != len(candidates):
+        errors.append(
+            f"{relative}: found {marker_count} Mermaid fence marker(s) but parsed "
+            f"{len(candidates)} top-level Mermaid block(s); container, nested, "
+            "attribute-only, and indented-code Mermaid fences are forbidden"
+        )
+    if len(candidates) != expected_count:
+        errors.append(
+            f"{relative}: expected exactly {expected_count} Mermaid block(s), "
+            f"found {len(candidates)}"
+        )
+        return ()
+    diagrams: list[str] = []
+    for index, (block, closed) in enumerate(candidates, start=1):
+        if not closed:
+            errors.append(f"{relative}: Mermaid block {index} is unclosed")
+            continue
+        diagram = block.strip()
+        if not diagram:
+            errors.append(f"{relative}: Mermaid block {index} is empty")
+            continue
+        for label, pattern in MERMAID_UNSAFE_PATTERNS:
+            if pattern.search(diagram):
+                errors.append(
+                    f"{relative}: Mermaid block {index} contains forbidden "
+                    f"{label}"
+                )
+                break
+        diagrams.append(diagram + "\n")
+    return tuple(diagrams)
+
+
 def extract_mermaid(readme: str, errors: list[str]) -> str:
-    blocks = re.findall(r"```mermaid\n(.*?)\n```", readme, flags=re.DOTALL)
+    blocks = extract_mermaid_blocks(readme, "README.md", 1, errors)
     if len(blocks) != 1:
-        errors.append(f"README.md: expected exactly one Mermaid block, found {len(blocks)}")
         return ""
-    diagram = blocks[0].strip() + "\n"
+    diagram = blocks[0]
     required = (
         "1 · CONTRACT",
         "PRIVATE RESEARCH ENGINE",
         "RELEASE PATH · adjudicated candidate only",
-        "Independent verification",
+        "Separately assigned verification role",
         "Human release decision",
         "Exact single-use grant",
-        "Independent observation",
+        "Separately authorized observation + reconciliation role",
         "Grounded memory",
         "CANONICAL SCIENTIFIC STATE",
         "append-only event + evidence ledger",
@@ -847,14 +1156,324 @@ def extract_mermaid(readme: str, errors: list[str]) -> str:
     for phrase in required:
         if phrase not in diagram:
             errors.append(f"README.md: Mermaid system map is missing {phrase!r}")
-    for unsafe in ("click ", "%%{", "javascript:"):
-        if unsafe.lower() in diagram.lower():
-            errors.append(f"README.md: Mermaid system map contains forbidden directive {unsafe!r}")
     if "R ~~~ X" not in diagram or re.search(r"\bD\s+[-.=~]+.*(?:RC|X)", diagram):
         errors.append(
             "README.md: scientific and release clusters need one invisible layout edge and no misleading cross-cluster claim edge"
         )
     return diagram
+
+
+def validate_architecture_mermaids(
+    errors: list[str],
+) -> dict[str, tuple[str, ...]]:
+    documents = tracked_markdown_documents(errors)
+    missing = set(MERMAID_DOCUMENTS) - set(documents)
+    if missing:
+        errors.append(
+            "governed Mermaid document census is not tracked and complete: "
+            f"missing {sorted(missing)}"
+        )
+    diagrams: dict[str, tuple[str, ...]] = {}
+    for relative, document in sorted(documents.items()):
+        expected_count = MERMAID_DOCUMENTS.get(relative, 0)
+        blocks = extract_mermaid_blocks(
+            document,
+            relative,
+            expected_count,
+            errors,
+        )
+        if relative != "README.md" and expected_count:
+            diagrams[relative] = blocks
+    return diagrams
+
+
+def mermaid_inventory_self_tests(errors: list[str]) -> int:
+    safe = "```mermaid\nflowchart LR\n    A --> B\n```"
+    safe_controls = (
+        ("backtick", safe, 1, ("flowchart LR\n    A --> B\n",)),
+        (
+            "tilde-spaced-info",
+            "~~~ mermaid\nflowchart LR\n    A --> B\n~~~",
+            1,
+            ("flowchart LR\n    A --> B\n",),
+        ),
+        (
+            "long-indented-casefolded",
+            "   ````Mermaid rendered-map\n"
+            "   flowchart LR\n"
+            "       A --> B\n"
+            "   ````",
+            1,
+            ("flowchart LR\n    A --> B\n",),
+        ),
+        (
+            "non-mermaid",
+            "```text\nnot a rendered diagram\n```",
+            0,
+            (),
+        ),
+    )
+    for control_id, source, expected_count, expected_blocks in safe_controls:
+        safe_errors: list[str] = []
+        safe_blocks = extract_mermaid_blocks(
+            source,
+            f"safe-{control_id}.md",
+            expected_count,
+            safe_errors,
+        )
+        if safe_errors or safe_blocks != expected_blocks:
+            errors.append(
+                f"Mermaid inventory safe control {control_id} failed: "
+                + " | ".join(safe_errors or [repr(safe_blocks)])
+            )
+
+    cases = (
+        (
+            "missing",
+            "",
+            1,
+            "known-bad.md: expected exactly 1 Mermaid block(s), found 0",
+        ),
+        (
+            "extra",
+            safe + "\n" + safe,
+            1,
+            "known-bad.md: expected exactly 1 Mermaid block(s), found 2",
+        ),
+        (
+            "empty",
+            "```mermaid\n\n```",
+            1,
+            "known-bad.md: Mermaid block 1 is empty",
+        ),
+        (
+            "unsafe",
+            "```mermaid\nflowchart LR\n    click A href\n```",
+            1,
+            "known-bad.md: Mermaid block 1 contains forbidden click directive",
+        ),
+        (
+            "unsafe-tab",
+            "```mermaid\nflowchart LR\n    click\tA href\n```",
+            1,
+            "known-bad.md: Mermaid block 1 contains forbidden click directive",
+        ),
+        (
+            "unsafe-configuration",
+            "```mermaid\n%%{init: {'theme': 'dark'}}%%\nflowchart LR\nA --> B\n```",
+            1,
+            "known-bad.md: Mermaid block 1 contains forbidden configuration directive",
+        ),
+        (
+            "unsafe-yaml-frontmatter",
+            "```mermaid\n---\ntitle: Hi\nconfig:\n  theme: dark\n---\n"
+            "flowchart LR\nA --> B\n```",
+            1,
+            "known-bad.md: Mermaid block 1 contains forbidden YAML frontmatter",
+        ),
+        (
+            "unsafe-javascript-uri",
+            "```mermaid\nflowchart LR\nA[\"javascript:alert\"] --> B\n```",
+            1,
+            "known-bad.md: Mermaid block 1 contains forbidden javascript URI",
+        ),
+        (
+            "unsafe-image-asset",
+            "```mermaid\nflowchart LR\n"
+            "A@{ img: \"asset.png\", label: \"x\" } --> B\n```",
+            1,
+            "known-bad.md: Mermaid block 1 contains forbidden image asset property",
+        ),
+        (
+            "unsafe-attribute-object",
+            "```mermaid\nflowchart LR\nA@{ shape: rect } --> B\n```",
+            1,
+            "known-bad.md: Mermaid block 1 contains forbidden attribute object",
+        ),
+        (
+            "unsafe-quoted-image-protocol-relative",
+            "```mermaid\nflowchart LR\n"
+            "A@{ \"img\": \"//example.invalid/x.png\", label: \"x\" } --> B\n```",
+            1,
+            "known-bad.md: Mermaid block 1 contains forbidden image asset property",
+        ),
+        (
+            "unsafe-protocol-relative-uri",
+            "```mermaid\nflowchart LR\nA[\"//example.invalid/x\"] --> B\n```",
+            1,
+            "known-bad.md: Mermaid block 1 contains forbidden "
+            "protocol-relative resource location",
+        ),
+        (
+            "unsafe-http-uri",
+            "```mermaid\nflowchart LR\nA[\"https://example.invalid/x\"] --> B\n```",
+            1,
+            "known-bad.md: Mermaid block 1 contains forbidden resource URI scheme",
+        ),
+        (
+            "unsafe-file-uri",
+            "```mermaid\nflowchart LR\nA[\"file:///tmp/x\"] --> B\n```",
+            1,
+            "known-bad.md: Mermaid block 1 contains forbidden resource URI scheme",
+        ),
+        (
+            "unsafe-data-uri",
+            "```mermaid\nflowchart LR\nA[\"data:image/png;base64,AA\"] --> B\n```",
+            1,
+            "known-bad.md: Mermaid block 1 contains forbidden resource URI scheme",
+        ),
+        (
+            "unsafe-html-image",
+            "```mermaid\nflowchart LR\nA[\"<img src='asset.png'>\"] --> B\n```",
+            1,
+            "known-bad.md: Mermaid block 1 contains forbidden HTML image element",
+        ),
+        (
+            "unsafe-css-resource",
+            "```mermaid\nflowchart LR\nA --> B\n"
+            "style A background-image:url(asset.png)\n```",
+            1,
+            "known-bad.md: Mermaid block 1 contains forbidden CSS resource URL",
+        ),
+        (
+            "unsafe-markdown-image",
+            "```mermaid\nflowchart LR\nA[\"![x](asset.png)\"] --> B\n```",
+            1,
+            "known-bad.md: Mermaid block 1 contains forbidden Markdown image",
+        ),
+        (
+            "unclosed",
+            "```mermaid\nflowchart LR\n    A --> B",
+            1,
+            "known-bad.md: Mermaid block 1 is unclosed",
+        ),
+        (
+            "tilde-extra",
+            safe + "\n~~~mermaid\nflowchart LR\n    C --> D\n~~~",
+            1,
+            "known-bad.md: expected exactly 1 Mermaid block(s), found 2",
+        ),
+        (
+            "spaced-info-extra",
+            safe + "\n``` mermaid\nflowchart LR\n    C --> D\n```",
+            1,
+            "known-bad.md: expected exactly 1 Mermaid block(s), found 2",
+        ),
+        (
+            "long-fence-extra",
+            safe + "\n````Mermaid map\nflowchart LR\n    C --> D\n````",
+            1,
+            "known-bad.md: expected exactly 1 Mermaid block(s), found 2",
+        ),
+        (
+            "shorter-close",
+            "````mermaid\nflowchart LR\n    A --> B\n```",
+            1,
+            "known-bad.md: Mermaid block 1 is unclosed",
+        ),
+        (
+            "ungoverned-document",
+            safe,
+            0,
+            "known-bad.md: expected exactly 0 Mermaid block(s), found 1",
+        ),
+        (
+            "blockquote-container",
+            "> ```mermaid\n> flowchart LR\n> A --> B\n> ```",
+            0,
+            "known-bad.md: found 1 Mermaid fence marker(s) but parsed 0 "
+            "top-level Mermaid block(s); container, nested, attribute-only, "
+            "and indented-code Mermaid fences are forbidden",
+        ),
+        (
+            "list-container",
+            "- ```mermaid\n  flowchart LR\n  A --> B\n  ```",
+            0,
+            "known-bad.md: found 1 Mermaid fence marker(s) but parsed 0 "
+            "top-level Mermaid block(s); container, nested, attribute-only, "
+            "and indented-code Mermaid fences are forbidden",
+        ),
+        (
+            "list-indented-container",
+            "- diagram\n    ```mermaid\n    flowchart LR\n    A --> B\n    ```",
+            0,
+            "known-bad.md: found 1 Mermaid fence marker(s) but parsed 0 "
+            "top-level Mermaid block(s); container, nested, attribute-only, "
+            "and indented-code Mermaid fences are forbidden",
+        ),
+        (
+            "nested-decoy",
+            "````text\n```mermaid\nflowchart LR\nA --> B\n```\n````",
+            0,
+            "known-bad.md: found 1 Mermaid fence marker(s) but parsed 0 "
+            "top-level Mermaid block(s); container, nested, attribute-only, "
+            "and indented-code Mermaid fences are forbidden",
+        ),
+        (
+            "attribute-only-info",
+            "```{.mermaid}\nflowchart LR\nA --> B\n```",
+            0,
+            "known-bad.md: found 1 Mermaid fence marker(s) but parsed 0 "
+            "top-level Mermaid block(s); container, nested, attribute-only, "
+            "and indented-code Mermaid fences are forbidden",
+        ),
+    )
+    passed = 0
+    for case_id, source, expected_count, expected in cases:
+        observed: list[str] = []
+        extract_mermaid_blocks(
+            source,
+            "known-bad.md",
+            expected_count,
+            observed,
+        )
+        if observed == [expected]:
+            passed += 1
+        else:
+            errors.append(
+                f"Mermaid inventory known-bad {case_id} expected "
+                f"{expected!r}; got {observed!r}"
+            )
+    uppercase_expected = (
+        "known-bad.MD: expected exactly 0 Mermaid block(s), found 1"
+    )
+    uppercase_observed: list[str] = []
+    if is_markdown_path("known-bad.MD"):
+        extract_mermaid_blocks(
+            safe,
+            "known-bad.MD",
+            0,
+            uppercase_observed,
+        )
+    if uppercase_observed == [uppercase_expected]:
+        passed += 1
+    else:
+        errors.append(
+            "Mermaid inventory known-bad uppercase-extension expected "
+            f"{uppercase_expected!r}; got {uppercase_observed!r}"
+        )
+    discovery_expected = (
+        "tracked Markdown census command must list all tracked paths before "
+        "case-insensitive extension filtering"
+    )
+    discovery_observed: list[str] = []
+    tracked_markdown_documents(
+        discovery_observed,
+        ("git", "ls-files", "-z", "--", "*.md"),
+    )
+    if discovery_observed == [discovery_expected]:
+        passed += 1
+    else:
+        errors.append(
+            "Mermaid inventory known-bad lowercase-only-discovery expected "
+            f"{discovery_expected!r}; got {discovery_observed!r}"
+        )
+    return passed
+
+
+def mermaid_filename(relative: str, index: int) -> str:
+    stem = relative.removesuffix(".md").replace("/", "__")
+    return f"{stem}-{index:02d}.mmd"
 
 
 def validate_readme(errors: list[str]) -> str:
@@ -1272,6 +1891,7 @@ def workflow_policy_errors(
                 "            python tests/prq-002-identity-cohort/check.py --recompute-all --python-executable \"$ODEYA_PRQ002_PYTHON\" --node-executable \"$ODEYA_PRQ002_NODE\"\n",
                 "            python scripts/validate_product_identity_raw_number_typing.py --recompute-all --python-executable \"$ODEYA_PRQ002_PYTHON\" --node-executable \"$ODEYA_PRQ002_NODE\"\n",
                 "            python scripts/validate_schema_registry_prehash_replay.py --recompute-all --python-executable \"$ODEYA_PRQ002_PYTHON\" --node-executable \"$ODEYA_PRQ002_NODE\"\n",
+                "            python tests/product-identity-profile-0.3-candidate/authoring/generate_candidate.py --check && python tests/product-identity-profile-0.3-candidate/check.py\n",
                 "            python scripts/validate_human_decision_assurance_successor.py --recompute-all\n",
                 "          git diff --exit-code\n",
                 "          git diff --cached --exit-code\n",
@@ -1334,6 +1954,8 @@ def validate_policy_mutations(errors: list[str]) -> int:
         "architecture_evidence_inventory_mutations",
         "release_contract",
         "release_contract_mutations",
+        "release_census_mutations",
+        "release_fixture_readme_mutations",
         "release_script_mutations",
     }:
         errors.append("repository release mutations: top-level members are not exact")
@@ -1606,7 +2228,290 @@ def release_contract_errors(text: str) -> list[str]:
     return errors
 
 
-def release_script_isolation_errors(rehearsal: str, release_check: str) -> list[str]:
+def release_census_errors(
+    release_script_expected_ids: list[str],
+    release_script_fixture_ids: list[str],
+    release_contract_expected_ids: list[str],
+    release_contract_fixture_ids: list[str],
+    release_contract: str,
+    fixture_readme: str,
+) -> list[str]:
+    errors: list[str] = []
+    censuses = (
+        (
+            "release-script",
+            release_script_expected_ids,
+            release_script_fixture_ids,
+            RELEASE_SCRIPT_KNOWN_BAD_MUTATION_COUNT,
+        ),
+        (
+            "release-contract",
+            release_contract_expected_ids,
+            release_contract_fixture_ids,
+            RELEASE_CONTRACT_KNOWN_BAD_MUTATION_COUNT,
+        ),
+    )
+    for label, expected_ids, fixture_ids, expected_count in censuses:
+        if len(expected_ids) != expected_count or len(fixture_ids) != expected_count:
+            errors.append(
+                f"{label} expected and fixture censuses must each contain exactly "
+                f"{expected_count} members"
+            )
+        if (
+            len(set(expected_ids)) != len(expected_ids)
+            or len(set(fixture_ids)) != len(fixture_ids)
+            or set(expected_ids) != set(fixture_ids)
+        ):
+            errors.append(
+                f"{label} expected and fixture censuses must be closed, unique, and equal"
+            )
+
+    if release_contract.count(RELEASE_SCRIPT_MUTATION_COUNT_BOUNDARY) != 1:
+        errors.append(
+            "release contract must carry exactly one executable-derived "
+            "release-script mutation count boundary"
+        )
+
+    cardinal_pattern = "|".join(
+        re.escape(word.capitalize()) for word in CARDINAL_WORDS
+    )
+    for boundary in REPOSITORY_RELEASE_FIXTURE_COUNT_BOUNDARIES:
+        suffix = boundary.split(" ", 1)[1]
+        pattern = re.compile(
+            rf"(?m)^(?:{cardinal_pattern}) {re.escape(suffix)}"
+        )
+        observed = pattern.findall(fixture_readme)
+        if observed != [boundary]:
+            errors.append(
+                "repository-release fixture README must carry exactly the "
+                f"executable-derived boundary {boundary!r}; found {observed}"
+            )
+    return errors
+
+
+def validate_release_census_mutations(errors: list[str]) -> int:
+    cases = load_json("tests/repository-release/cases.json", errors)
+    if not isinstance(cases, dict):
+        return 0
+    script_mutations = cases.get("release_script_mutations")
+    contract_mutations = cases.get("release_contract_mutations")
+    census_mutations = cases.get("release_census_mutations")
+    if not all(
+        isinstance(value, list)
+        for value in (script_mutations, contract_mutations, census_mutations)
+    ):
+        errors.append("repository release census mutations: inventory is absent")
+        return 0
+
+    def observed_ids(mutations: list[Any]) -> list[str]:
+        return [
+            case["id"]
+            for case in mutations
+            if isinstance(case, dict) and isinstance(case.get("id"), str)
+        ]
+
+    script_expected_ids = list(EXPECTED_RELEASE_SCRIPT_MUTATIONS)
+    script_fixture_ids = observed_ids(script_mutations)
+    contract_expected_ids = list(EXPECTED_RELEASE_CONTRACT_MUTATIONS)
+    contract_fixture_ids = observed_ids(contract_mutations)
+    release_contract = read("docs/REPOSITORY_RELEASE.md", errors)
+    fixture_readme = read("tests/repository-release/README.md", errors)
+    errors.extend(
+        release_census_errors(
+            script_expected_ids,
+            script_fixture_ids,
+            contract_expected_ids,
+            contract_fixture_ids,
+            release_contract,
+            fixture_readme,
+        )
+    )
+
+    mutation_ids = observed_ids(census_mutations)
+    if (
+        len(mutation_ids) != len(census_mutations)
+        or len(set(mutation_ids)) != len(mutation_ids)
+        or set(mutation_ids) != set(EXPECTED_RELEASE_CENSUS_MUTATIONS)
+    ):
+        errors.append(
+            "repository release census mutations: case census is not closed and exact"
+        )
+
+    passed = 0
+    for case in census_mutations:
+        if not isinstance(case, dict):
+            errors.append("repository release census mutations: case is not an object")
+            continue
+        if set(case) != {"id", "target", "synthetic_id", "expected"}:
+            errors.append(
+                "repository release census mutations: case members are not closed and exact"
+            )
+            continue
+        case_id = case.get("id")
+        target = case.get("target")
+        synthetic_id = case.get("synthetic_id")
+        expected = case.get("expected")
+        if not all(
+            isinstance(value, str) and value
+            for value in (case_id, target, synthetic_id, expected)
+        ):
+            errors.append("repository release census mutations: malformed case")
+            continue
+        if EXPECTED_RELEASE_CENSUS_MUTATIONS.get(case_id) != (
+            target,
+            synthetic_id,
+            expected,
+        ):
+            errors.append(
+                f"repository release census mutation {case_id}: "
+                "specification drifted from the pinned matrix"
+            )
+            continue
+
+        mutated_script_expected = list(script_expected_ids)
+        mutated_script_fixture = list(script_fixture_ids)
+        mutated_contract_expected = list(contract_expected_ids)
+        mutated_contract_fixture = list(contract_fixture_ids)
+        if target == "release_script_mutations":
+            mutated_script_expected.append(synthetic_id)
+            mutated_script_fixture.append(synthetic_id)
+        elif target == "release_contract_mutations":
+            mutated_contract_expected.append(synthetic_id)
+            mutated_contract_fixture.append(synthetic_id)
+        else:
+            errors.append(
+                f"repository release census mutation {case_id}: target is not admitted"
+            )
+            continue
+
+        mutation_issues = release_census_errors(
+            mutated_script_expected,
+            mutated_script_fixture,
+            mutated_contract_expected,
+            mutated_contract_fixture,
+            release_contract,
+            fixture_readme,
+        )
+        if not any(expected in issue for issue in mutation_issues):
+            errors.append(
+                f"repository release census mutation {case_id}: expected "
+                f"{expected!r} refusal, got {mutation_issues}"
+            )
+            continue
+        passed += 1
+    return passed
+
+
+def validate_release_fixture_readme_mutations(errors: list[str]) -> int:
+    cases = load_json("tests/repository-release/cases.json", errors)
+    if not isinstance(cases, dict):
+        return 0
+    mutations = cases.get("release_fixture_readme_mutations")
+    script_mutations = cases.get("release_script_mutations")
+    contract_mutations = cases.get("release_contract_mutations")
+    if not all(
+        isinstance(value, list)
+        for value in (mutations, script_mutations, contract_mutations)
+    ):
+        errors.append(
+            "repository release fixture README mutations: inventory is absent"
+        )
+        return 0
+
+    observed_ids = [
+        case.get("id")
+        for case in mutations
+        if isinstance(case, dict)
+    ]
+    if (
+        len(observed_ids) != len(mutations)
+        or any(not isinstance(case_id, str) for case_id in observed_ids)
+        or len(set(observed_ids)) != len(observed_ids)
+        or set(observed_ids) != set(EXPECTED_RELEASE_FIXTURE_README_MUTATIONS)
+    ):
+        errors.append(
+            "repository release fixture README mutations: "
+            "case census is not closed and exact"
+        )
+
+    def fixture_ids(items: list[Any]) -> list[str]:
+        return [
+            case["id"]
+            for case in items
+            if isinstance(case, dict) and isinstance(case.get("id"), str)
+        ]
+
+    script_expected_ids = list(EXPECTED_RELEASE_SCRIPT_MUTATIONS)
+    script_fixture_ids = fixture_ids(script_mutations)
+    contract_expected_ids = list(EXPECTED_RELEASE_CONTRACT_MUTATIONS)
+    contract_fixture_ids = fixture_ids(contract_mutations)
+    release_contract = read("docs/REPOSITORY_RELEASE.md", errors)
+    fixture_readme = read("tests/repository-release/README.md", errors)
+
+    passed = 0
+    for case in mutations:
+        if not isinstance(case, dict):
+            errors.append(
+                "repository release fixture README mutations: case is not an object"
+            )
+            continue
+        if set(case) != {"id", "old", "new", "expected"}:
+            errors.append(
+                "repository release fixture README mutations: "
+                "case members are not closed and exact"
+            )
+            continue
+        case_id = case.get("id")
+        old = case.get("old")
+        new = case.get("new")
+        expected = case.get("expected")
+        if not all(
+            isinstance(value, str) and value
+            for value in (case_id, old, new, expected)
+        ):
+            errors.append(
+                "repository release fixture README mutations: malformed case"
+            )
+            continue
+        if EXPECTED_RELEASE_FIXTURE_README_MUTATIONS.get(case_id) != (
+            old,
+            new,
+            expected,
+        ):
+            errors.append(
+                f"repository release fixture README mutation {case_id}: "
+                "specification drifted from the pinned matrix"
+            )
+            continue
+        if fixture_readme.count(old) != 1:
+            errors.append(
+                f"repository release fixture README mutation {case_id}: "
+                f"expected one source occurrence, found {fixture_readme.count(old)}"
+            )
+            continue
+        mutation_issues = release_census_errors(
+            script_expected_ids,
+            script_fixture_ids,
+            contract_expected_ids,
+            contract_fixture_ids,
+            release_contract,
+            fixture_readme.replace(old, new, 1),
+        )
+        if not any(expected in issue for issue in mutation_issues):
+            errors.append(
+                f"repository release fixture README mutation {case_id}: expected "
+                f"{expected!r} refusal, got {mutation_issues}"
+            )
+            continue
+        passed += 1
+    return passed
+
+
+def release_script_isolation_errors(
+    rehearsal: str,
+    release_check: str,
+    mermaid_renderer: str,
+) -> list[str]:
     errors: list[str] = []
     if rehearsal.count(REHEARSAL_TOOL_CACHE_BLOCK) != 1:
         errors.append(
@@ -1630,6 +2535,14 @@ def release_script_isolation_errors(rehearsal: str, release_check: str) -> list[
         )
     if release_check.count(STANDALONE_TOOL_CACHE_BLOCK) != 1:
         errors.append("standalone release check must allocate a unique tool cache")
+    renderer_digest = hashlib.sha256(
+        mermaid_renderer.encode("utf-8")
+    ).hexdigest()
+    if renderer_digest != MERMAID_RENDERER_SHA256:
+        errors.append(
+            "Mermaid renderer exact-byte contract drifted: expected "
+            f"{MERMAID_RENDERER_SHA256}, got {renderer_digest}"
+        )
     return errors
 
 
@@ -1641,6 +2554,14 @@ def validate_release_script_mutations(errors: list[str]) -> int:
     if not isinstance(mutations, list):
         errors.append("repository release script mutations: inventory is absent")
         return 0
+    if (
+        len(EXPECTED_RELEASE_SCRIPT_MUTATIONS)
+        != RELEASE_SCRIPT_KNOWN_BAD_MUTATION_COUNT
+    ):
+        errors.append(
+            "repository release script mutations: executable census does not "
+            "match the release-contract count boundary"
+        )
     observed_ids = [
         case.get("id")
         for case in mutations
@@ -1660,12 +2581,14 @@ def validate_release_script_mutations(errors: list[str]) -> int:
         for relative in {
             "scripts/ci/rehearse-fresh-clone.sh",
             "scripts/ci/check-repository-release.sh",
+            "scripts/ci/render-readme-architecture.sh",
         }
     }
     errors.extend(
         release_script_isolation_errors(
             base_documents["scripts/ci/rehearse-fresh-clone.sh"],
             base_documents["scripts/ci/check-repository-release.sh"],
+            base_documents["scripts/ci/render-readme-architecture.sh"],
         )
     )
     passed = 0
@@ -1715,6 +2638,7 @@ def validate_release_script_mutations(errors: list[str]) -> int:
         mutation_issues = release_script_isolation_errors(
             mutated_documents["scripts/ci/rehearse-fresh-clone.sh"],
             mutated_documents["scripts/ci/check-repository-release.sh"],
+            mutated_documents["scripts/ci/render-readme-architecture.sh"],
         )
         if not any(expected in issue for issue in mutation_issues):
             errors.append(
@@ -1735,6 +2659,14 @@ def validate_release_contract_mutations(errors: list[str]) -> int:
     if not isinstance(relative, str) or not isinstance(mutations, list):
         errors.append("repository release contract mutations: inventory is absent")
         return 0
+    if (
+        len(EXPECTED_RELEASE_CONTRACT_MUTATIONS)
+        != RELEASE_CONTRACT_KNOWN_BAD_MUTATION_COUNT
+    ):
+        errors.append(
+            "repository release contract mutations: executable census does not "
+            "match the fixture-README count boundary"
+        )
     if relative != "docs/REPOSITORY_RELEASE.md":
         errors.append(
             "repository release contract mutations: subject path is not exact"
@@ -2330,7 +3262,9 @@ def validate_bare_interpreter_imports(errors: list[str]) -> None:
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--extract-mermaid", type=Path)
+    extraction = parser.add_mutually_exclusive_group()
+    extraction.add_argument("--extract-mermaid", type=Path)
+    extraction.add_argument("--extract-mermaid-directory", type=Path)
     args = parser.parse_args()
 
     errors: list[str] = []
@@ -2339,12 +3273,19 @@ def main() -> int:
             errors.append(f"missing required release file: {relative}")
 
     diagram = validate_readme(errors)
+    mermaid_documents = {"README.md": (diagram,)}
+    mermaid_documents.update(validate_architecture_mermaids(errors))
+    mermaid_inventory_mutation_count = mermaid_inventory_self_tests(errors)
     lock = validate_toolchain(errors)
     validate_git_environment_sanitizer(errors)
     python_lock_mutation_count = validate_python_lock(errors)
     action_count, policy_mutation_count = validate_workflows(lock, errors)
     architecture_evidence_inventory_mutation_count = (
         validate_architecture_evidence_inventory_mutations(errors)
+    )
+    release_census_mutation_count = validate_release_census_mutations(errors)
+    release_fixture_readme_mutation_count = (
+        validate_release_fixture_readme_mutations(errors)
     )
     release_contract_mutation_count = validate_release_contract_mutations(errors)
     release_script_mutation_count = validate_release_script_mutations(errors)
@@ -2362,6 +3303,15 @@ def main() -> int:
     if args.extract_mermaid:
         args.extract_mermaid.parent.mkdir(parents=True, exist_ok=True)
         args.extract_mermaid.write_text(diagram, encoding="utf-8")
+    if args.extract_mermaid_directory:
+        args.extract_mermaid_directory.mkdir(parents=True, exist_ok=True)
+        for relative, diagrams in mermaid_documents.items():
+            for index, source in enumerate(diagrams, start=1):
+                destination = (
+                    args.extract_mermaid_directory
+                    / mermaid_filename(relative, index)
+                )
+                destination.write_text(source, encoding="utf-8")
 
     print("Odeya repository release validation PASSED")
     print(f"- {len(WORKFLOWS)} least-privilege workflows")
@@ -2372,6 +3322,14 @@ def main() -> int:
         "architecture-evidence inventory mutations rejected"
     )
     print(
+        f"- {release_census_mutation_count} known-bad release-census "
+        "coherence mutations rejected"
+    )
+    print(
+        f"- {release_fixture_readme_mutation_count} known-bad release-fixture "
+        "README cardinality mutations rejected"
+    )
+    print(
         f"- {release_contract_mutation_count} known-bad release-contract "
         "mutations rejected"
     )
@@ -2380,7 +3338,14 @@ def main() -> int:
         "mutations rejected"
     )
     print(f"- {python_lock_mutation_count} known-bad Python lock mutations rejected")
-    print("- 1 exact README Mermaid architecture map")
+    print(
+        f"- {sum(MERMAID_DOCUMENTS.values())} exact Mermaid architecture maps "
+        f"across {len(MERMAID_DOCUMENTS)} governed documents"
+    )
+    print(
+        f"- {mermaid_inventory_mutation_count} known-bad Mermaid inventory "
+        "mutations rejected"
+    )
     print("- Python, Node/npm, Java, ShellCheck, Actionlint, Zizmor, Gitleaks, Mermaid, Markdownlint, and TLA+ toolchains bounded")
     print("- architecture-only public-repository policy; no runtime or Gate A authority")
     return 0

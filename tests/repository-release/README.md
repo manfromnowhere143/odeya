@@ -23,26 +23,37 @@ security proof.
 
 The exact mutations are in [cases.json](cases.json).
 
-Twenty-five architecture-evidence inventory mutations include twenty-three that
-remove each of the nine dedicated workflow commands and each of the fourteen
+Twenty-seven architecture-evidence inventory mutations include twenty-five
+that remove each of the ten dedicated workflow commands and each of the fifteen
 integrated Foundation checks in turn. Two additional probes insert an
-out-of-body tenth workflow step and rebind the integrated tuple after its
+out-of-body eleventh workflow step and rebind the integrated tuple after its
 literal assignment without changing the count. The release checker must reject
-all twenty-five. This binds the published `nine`/`fourteen` count boundary to
+all twenty-seven. This binds the published `ten`/`fifteen` count boundary to
 executable bytes rather than to prose, a single favored member, or count-only
 validation.
 
-Eight release-contract mutations separately prove that the checker refuses
+Nine release-contract mutations separately prove that the checker refuses
 stale architecture-evidence check counts, a stale architecture-evidence
 mutation census, stale dedicated/integrated run-body counts, a return to the
 future-private-remote fiction, substitution of the exact public remote
 identity, publication to `main` without exact evidence, and a claim that the
 local hook is server-side protection. The eighth appends a contradictory
 private/no-remote claim without removing any required positive sentence, so
-positive-phrase stuffing cannot pass. They mutate the current contract in
+positive-phrase stuffing cannot pass. The ninth restores the stale
+release-script isolation-mutation count. They mutate the current contract in
 memory and must fail for the named boundary.
 
-Seven release-script isolation mutations prove that a rehearsal cannot return
+Two release-census coherence mutations then grow the executable expected matrix
+and JSON fixture census in lockstep while preserving the current prose. One
+adds a synthetic twelfth release-script member; the other adds a synthetic
+tenth release-contract member. Both must fail the executable-derived
+cardinality gate, proving that a coherent matrix/fixture update cannot leave
+this README or the release contract stale. Three additional truth-surface
+mutations independently replace the derived architecture-evidence,
+release-contract, and release-script counts in this README; each must fail for
+its own missing exact boundary.
+
+Eleven release-script isolation mutations prove that a rehearsal cannot return
 to one shared mutable tool cache, cannot run the formal suite without binding
 `TLA2TOOLS_JAR` to the jar it just digest-verified, cannot omit the exact
 PRQ-002A locked-install/recomputation block and its following PRQ-002C and
@@ -50,9 +61,12 @@ PRQ-002D stages, cannot remove either successor stage while leaving earlier
 stages intact, cannot
 substitute a literal temporary-directory alias for the interpreter's
 self-reported path, and cannot make a standalone release check use a shared
-default tool directory. Their census and full mutation specifications are
-pinned. These are structural controls over exact scripts; the fresh-clone
-rehearsal remains the execution proof.
+default tool directory. Four further controls refuse a weakened Mermaid render
+count, early loop termination after the README, removal of the per-image
+signature assertion, and CRLF substitution of the pinned renderer bytes. Their
+census and full mutation specifications are pinned. These are structural
+controls over exact scripts; the fresh-clone rehearsal remains the execution
+proof.
 
 `scripts/compare_rehearsal_manifests.py --self-test` rejects nineteen drift
 classes, including cross-version substitution, shared-invalid manifest

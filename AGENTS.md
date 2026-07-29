@@ -9,7 +9,8 @@ bash -euo pipefail <<'BASH'
 cd /Users/danielwahnich/workspace/odeya
 source scripts/ci/sanitize-git-environment.sh
 git status --short --branch
-sed -n '1,360p' docs/SESSION_HANDOFF.md
+awk '1; /^## Superseded PRQ-002D repository recovery identity/{found=1; exit} END{exit !found}' \
+  docs/SESSION_HANDOFF.md
 python3 -m venv .venv-architecture
 .venv-architecture/bin/python -m pip install \
   --no-input \
@@ -20,10 +21,14 @@ python3 -m venv .venv-architecture
 BASH
 ```
 
-Status inspection and handoff reading are mandatory in every session. If the
-isolated environment already contains the exact pinned dependencies, skip only
-environment creation and dependency installation, then run the validator.
-Never treat a structural validation pass as architecture acceptance.
+Status inspection and handoff reading are mandatory in every session. The
+bounded bootstrap extraction must reach the authoritative current recovery
+identity and sole next mission before it stops at the first superseded
+chronology; it is not a substitute for reading the entire handoff before any
+repository change. If the isolated environment already contains the exact
+pinned dependencies, skip only environment creation and dependency
+installation, then run the validator. Never treat a structural validation pass
+as architecture acceptance.
 
 ## Session recovery
 
