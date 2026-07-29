@@ -23,29 +23,31 @@ security proof.
 
 The exact mutations are in [cases.json](cases.json).
 
-Twenty-three architecture-evidence inventory mutations include twenty-one that
-remove each of the eight dedicated workflow commands and each of the thirteen
+Twenty-five architecture-evidence inventory mutations include twenty-three that
+remove each of the nine dedicated workflow commands and each of the fourteen
 integrated Foundation checks in turn. Two additional probes insert an
-out-of-body ninth workflow step and rebind the integrated tuple after its
+out-of-body tenth workflow step and rebind the integrated tuple after its
 literal assignment without changing the count. The release checker must reject
-all twenty-three. This binds the published `eight`/`thirteen` count boundary to
+all twenty-five. This binds the published `nine`/`fourteen` count boundary to
 executable bytes rather than to prose, a single favored member, or count-only
 validation.
 
-Seven release-contract mutations separately prove that the checker refuses
+Eight release-contract mutations separately prove that the checker refuses
 stale architecture-evidence check counts, a stale architecture-evidence
-mutation census, a return to the future-private-remote fiction, substitution
-of the exact public remote identity, publication to `main` without exact
-evidence, and a claim that the local hook is server-side protection. The
-seventh appends a contradictory private/no-remote claim without removing any
-required positive sentence, so positive-phrase stuffing cannot pass. They
-mutate the current contract in memory and must fail for the named boundary.
+mutation census, stale dedicated/integrated run-body counts, a return to the
+future-private-remote fiction, substitution of the exact public remote
+identity, publication to `main` without exact evidence, and a claim that the
+local hook is server-side protection. The eighth appends a contradictory
+private/no-remote claim without removing any required positive sentence, so
+positive-phrase stuffing cannot pass. They mutate the current contract in
+memory and must fail for the named boundary.
 
-Six release-script isolation mutations prove that a rehearsal cannot return
+Seven release-script isolation mutations prove that a rehearsal cannot return
 to one shared mutable tool cache, cannot run the formal suite without binding
 `TLA2TOOLS_JAR` to the jar it just digest-verified, cannot omit the exact
-PRQ-002A locked-install/recomputation block and its following PRQ-002C stage,
-cannot remove that PRQ-002C stage while leaving PRQ-002A intact, cannot
+PRQ-002A locked-install/recomputation block and its following PRQ-002C and
+PRQ-002D stages, cannot remove either successor stage while leaving earlier
+stages intact, cannot
 substitute a literal temporary-directory alias for the interpreter's
 self-reported path, and cannot make a standalone release check use a shared
 default tool directory. Their census and full mutation specifications are

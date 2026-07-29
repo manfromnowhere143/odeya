@@ -323,6 +323,35 @@ profile and its required reissued cohort do not exist. Source-separated
 full-profile conformance, accountable review, operator acceptance, PRQ-002
 closure, Gate A acceptance, and runtime authority remain false or absent.
 
+## PRQ-002D bounded non-product prehash replay
+
+[ADR 0102](decisions/0102-prove-non-product-prehash-schema-registry-replay.md)
+retains an exact-predecessor
+[contract](../architecture/prq-002d-schema-registry-prehash-contract-v1-candidate.json)
+and
+[contract schema](../architecture/prq-002d-schema-registry-prehash-contract.schema.json)
+for one synthetic two-member replay before any structured or product identity
+is constructed. The two member keys differ at `-` versus `.`, the first member
+contains one absolute reference to the second, and all resolution is limited
+to the pre-added in-memory registry.
+
+The retained suite contains 68 opaque virtual-file frames. One fixed private
+oracle accepts one frame and refuses 67 under the frozen precedence order.
+Source- and language-separated Python and Node implementations retain complete
+ordered results, self-attested byte-consistency receipts, and one exact
+comparison receipt. The parent gate retains 77 known-bad mutations, each of
+which must execute the same production guard and return its declared singleton
+code.
+
+This is bounded differential replay evidence, not a process sandbox, general
+static analysis, independently witnessed execution, complete offline
+resolution, dependency-closed product registry, cross-object product replay,
+canonicalization-profile conformance, product identity, member admission,
+profile issuance, PRQ-002 closure, Gate A acceptance, or runtime authority.
+The frozen `odeya-jcs-0.2` bytes remain unissued. The required side-by-side
+`odeya-jcs-0.3` core/evidence/migration and reissued twelve-resource cohort do
+not exist.
+
 ## Work still required before an immutable candidate
 
 The following remain blocking:

@@ -220,6 +220,21 @@ CURRENT_STAGE="prq-002c-raw-number-typing"
   --python-executable "$PRQ002_PYTHON_BIN" \
   --node-executable "$PRQ002_NODE_BIN" \
   2>&1 | tee -a artifacts/rehearsal/foundation.log
+
+CURRENT_STAGE="prq-002d-schema-registry-prehash-replay"
+"$PRQ002_NODE_BIN" "$PRQ002_NPM_CLI" ci \
+  --ignore-scripts \
+  --no-audit \
+  --no-fund \
+  --prefix tests/schema-registry-prehash-replay/node \
+  2>&1 | tee -a artifacts/rehearsal/foundation.log
+.venv-architecture/bin/python \
+  scripts/validate_schema_registry_prehash_replay.py \
+  --recompute-all \
+  --python-executable "$PRQ002_PYTHON_BIN" \
+  --node-executable "$PRQ002_NODE_BIN" \
+  2>&1 | tee -a artifacts/rehearsal/foundation.log
+rm -rf -- "$CLONE/tests/schema-registry-prehash-replay/node/node_modules"
 record_stage foundation passed
 
 # The cheap gate inside validate.py binds the guard-coverage record to the

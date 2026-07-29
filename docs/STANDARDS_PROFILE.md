@@ -184,6 +184,21 @@ The frozen `odeya-jcs-0.2` candidate remains unissued and blocked from
 conformance and issuance. The prospective `odeya-jcs-0.3` profile does not
 exist.
 
+[ADR 0102](decisions/0102-prove-non-product-prehash-schema-registry-replay.md)
+retains the next bounded PRQ-002D prerequisite before any structured or product
+identity: one synthetic two-member prehash schema-registry replay over 68
+opaque virtual-file frames. Source- and language-separated Python and Node
+implementations agree with one fixed private oracle and each other on one
+accepted frame and 67 refused frames; 77 named parent-gate known-bads each
+return their declared singleton guard. This does not amend `odeya-jcs-0.2` or
+establish full RFC 8785 correctness, generic schema evaluation, complete
+offline resolution, dependency-closed product registries, cross-object product
+replay, organizational independence, profile conformance, product identity,
+admission, issuance, PRQ-002 closure, Gate A acceptance, or runtime authority.
+A complete side-by-side `odeya-jcs-0.3`
+core/evidence/migration and reissued twelve-resource cohort remains the next
+profile-level dependency.
+
 ## JSON Schema validation profile
 
 JSON Schema `format` is annotation-only unless assertion behavior is enabled. Odeya must pin:

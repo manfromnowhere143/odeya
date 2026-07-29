@@ -347,6 +347,11 @@ jobs:
               --no-audit \
               --no-fund \
               --prefix tests/prq-002-identity-cohort/node
+            "$node_bin" "$npm_cli" ci \
+              --ignore-scripts \
+              --no-audit \
+              --no-fund \
+              --prefix tests/schema-registry-prehash-replay/node
             python_bin="$(python -c 'import sys; print(sys.executable)')"
             printf 'ODEYA_PRQ002_PYTHON=%s\n' "$python_bin" >> "$GITHUB_ENV"
             printf 'ODEYA_PRQ002_NODE=%s\n' "$node_bin" >> "$GITHUB_ENV"
@@ -369,6 +374,7 @@ jobs:
             python scripts/validate_first_slice_resolution.py
             python tests/prq-002-identity-cohort/check.py --recompute-all --python-executable "$ODEYA_PRQ002_PYTHON" --node-executable "$ODEYA_PRQ002_NODE"
             python scripts/validate_product_identity_raw_number_typing.py --recompute-all --python-executable "$ODEYA_PRQ002_PYTHON" --node-executable "$ODEYA_PRQ002_NODE"
+            python scripts/validate_schema_registry_prehash_replay.py --recompute-all --python-executable "$ODEYA_PRQ002_PYTHON" --node-executable "$ODEYA_PRQ002_NODE"
             python scripts/validate_human_decision_assurance_successor.py --recompute-all
           } 2>&1 | tee artifacts/ci/architecture-evidence.log
 

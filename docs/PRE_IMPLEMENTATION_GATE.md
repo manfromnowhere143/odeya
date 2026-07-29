@@ -52,6 +52,20 @@ No item passes because a document sounds complete. Gate A accepts meanings, cont
 - [ ] Corrections and dependency invalidation are replayable and visible.
 - [ ] Research-state view, compilation receipt, epistemic graph delta, experiment candidate, planning epoch, work contract, candidate artifact, and epistemic-transition meanings are frozen without granting model authority.
 
+ADR 0102 now retains bounded PRQ-002D candidate evidence for one synthetic
+two-member, prehash schema-registry replay: 68 opaque virtual-file frames,
+complete source- and language-separated Python and Node projections, and 77
+single-attributed parent-gate known-bads. One frame is accepted and 67 are
+refused under one fixed private oracle. This evidence precedes every structured
+or product identity and does not satisfy the unchecked G2 canonical
+serialization item. It is not canonicalization-profile conformance, complete
+offline resolution, dependency-closed product registries, cross-object product
+replay, an independent process witness, organizational independence, profile
+issuance, product identity, admission, PRQ-002 closure, or Gate A acceptance.
+The frozen `odeya-jcs-0.2` bytes remain unissued; a complete side-by-side
+`odeya-jcs-0.3` core/evidence/migration and reissued twelve-resource cohort
+remain required before full successor conformance can be attempted.
+
 ## G3 — Authority, security, and privacy
 
 - [ ] Proposal, protocol, safety, data-rights, resource, execution, verification, outcome, and publication authorities are separate records.

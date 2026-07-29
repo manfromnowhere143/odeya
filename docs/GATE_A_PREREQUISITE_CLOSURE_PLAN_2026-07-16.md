@@ -138,13 +138,25 @@ number-position semantics, nine-domain framing, ordered-map laws,
 cross-object replay, complete offline resolution, organizational independence,
 or independent-host reproduction.
 
+[ADR 0102](decisions/0102-prove-non-product-prehash-schema-registry-replay.md)
+now retains the next dependency-bounded PRQ-002D candidate: one non-product
+two-member prehash schema-registry replay over 68 opaque virtual-file frames.
+One fixed private oracle accepts one frame and refuses 67; complete
+source- and language-separated Python and Node projections agree, and 67
+single-attributed parent-gate known-bads fire. The receipts are self-attested
+byte-consistency records, not independently witnessed process evidence, and
+the source controls are bounded inventories rather than process sandboxes or
+general static analyses. The replay does not construct a product identity,
+issue a profile, prove complete offline resolution, close PRQ-002, accept Gate
+A, or authorize runtime.
+
 The `odeya-jcs-0.2` core, evidence, migration, and twelve-resource cohort
 remain byte-for-byte frozen, unissued, and blocked from conformance and
-issuance. PRQ-002C is not an addendum to those bytes. The prospective
-`odeya-jcs-0.3` profile and its required side-by-side successor cohort do not
-exist. Full source-separated successor-profile conformance, accountable
-review, operator acceptance, PRQ-002 closure, Gate A acceptance, and runtime
-authority therefore remain absent.
+issuance. Neither PRQ-002C nor PRQ-002D is an addendum to those bytes. The
+prospective `odeya-jcs-0.3` profile and its required side-by-side successor
+cohort do not exist. Full source-separated successor-profile conformance,
+accountable review, operator acceptance, PRQ-002 closure, Gate A acceptance,
+and runtime authority therefore remain absent.
 
 ### PRQ-003 — Logical payload identity is not bound to schema bytes
 

@@ -2,7 +2,7 @@
 
 Odeya is a private research engine that turns a thesis into a governed, replayable chain from question to evidence to warranted claim.
 
-> **Current state — 2026-07-28:** architecture foundation only. No executable research engine, autonomous-science capability, production deployment, or automatic publication is claimed. Runtime work remains blocked until the architecture gates are accepted.
+> **Current state — 2026-07-29:** architecture foundation only. No executable research engine, autonomous-science capability, production deployment, or automatic publication is claimed. Runtime work remains blocked until the architecture gates are accepted.
 
 The provisional web address is `odeya.danielwahnich.dev`. The apex domain, company, trademark, and scientific-publication decisions remain separate.
 
@@ -24,10 +24,10 @@ Question → contract → evidence → independent verification → bounded clai
 
 ```mermaid
 flowchart TB
-    subgraph F["ARCHITECTURE EVIDENCE · PUBLISHED PREDECESSOR + CURRENT RELEASE SUBJECT"]
+    subgraph F["ARCHITECTURE EVIDENCE · VERIFIED PREDECESSOR + CURRENT WORKING CANDIDATE"]
         direction LR
-        F4["PUBLISHED PREDECESSOR<br/>a79d86b release foundation<br/>remotely replayed"]
-        F1["CURRENT PRQ-002C RELEASE SUBJECT<br/>one direct-child commit · locally rehearsed at closeout<br/>132 schemas · 884 cases<br/>16 suites · 13 evidence checks<br/>7 TLA+ models · 30 controls<br/>remote settlement resolved externally<br/>PRQ-009 / PRQ-013 blocked"]
+        F4["VERIFIED CLOSED PREDECESSOR<br/>d3ec64f3 · exact Git tree and cited blobs checked"]
+        F1["CURRENT PRQ-002D WORKING CANDIDATE<br/>commit · rehearsal · settlement resolved from Git and receipts<br/>132 schemas · 884 cases<br/>16 suites · 14 evidence checks<br/>7 TLA+ models · 30 controls<br/>PRQ-002 / PRQ-009 / PRQ-013 blocked"]
         F4 --> F1
     end
 
@@ -77,19 +77,18 @@ flowchart TB
     style X fill:#FFFBEB,stroke:#9A3412,stroke-width:2px
 ```
 
-The green band distinguishes the published `a79d86b` predecessor from the
-current one-direct-child PRQ-002C release subject. At this 2026-07-28 closeout
-the subject is committed and locally fresh-clone rehearsed. A tracked file
-cannot contain the hash of the commit that contains it, and external settlement
-can change after its bytes are fixed; resolve the exact `HEAD`, tree, local
-evidence manifest, permanent release ref, public `main`, and remote replay from
-Git and subject-bound external receipts before acting. The blocked gate
-prevents architecture bytes from being mistaken for a built engine. The lower
-engine is the proposed control architecture, not a runtime screenshot, and the
-release path remains separately governed. Models may propose, search, code,
-analyze, and criticize. They cannot grant themselves authority, verify their
-own claims, convert consensus into evidence, or treat a provider response as
-external truth.
+The green band distinguishes the exact closed `d3ec64f3` predecessor from the
+current PRQ-002D working candidate. A tracked file cannot contain the hash of
+the commit that contains it, and rehearsal or external settlement can change
+after its bytes are fixed; resolve the exact `HEAD`, tree, local evidence
+manifest, permanent release ref, public `main`, and remote replay from Git and
+subject-bound receipts before acting. The blocked gate prevents architecture
+bytes from being mistaken for a built engine. The lower engine is the
+proposed control architecture, not a runtime screenshot, and the release path
+remains separately governed. Models may propose, search, code, analyze, and
+criticize. They cannot grant themselves authority, verify their own claims,
+convert consensus into evidence, or treat a provider response as external
+truth.
 
 ## Five operating laws
 
@@ -115,7 +114,7 @@ They are requirements sources and bounded proof missions—not runtime dependenc
 
 The current retained foundation contains 132 Draft 2020-12 schemas, 884
 shared-manifest cases (232 valid and 652 known-bad), 16 isolated contract
-suites, 13 architecture-evidence checks, and 7 bounded safe TLA+ models with
+suites, 14 architecture-evidence checks, and 7 bounded safe TLA+ models with
 30 mutation controls. These counts are bound to the validator run that
 measures them; the README previously stated four of them as fact while all four
 had drifted.
@@ -171,6 +170,26 @@ identity, PRQ-002 closure, Gate A acceptance, runtime authority, or publication
 authority follows from this evidence. Architecture-repository publication
 remains separately governed by the exact-commit release contract; profile
 issuance and scientific-results publication remain unauthorized.
+
+[ADR 0102](docs/decisions/0102-prove-non-product-prehash-schema-registry-replay.md)
+adds a bounded, non-product PRQ-002D prehash replay before any structured or
+product identity exists. Two source- and language-separated implementations
+evaluate the complete ordered projection for 68 opaque virtual-file frames:
+one is accepted and 67 are refused under one fixed private oracle. The parent
+gate retains 77 known-bad mutations, each of which must produce its declared
+singleton guard, and binds the predecessor commit, tree, cited blobs, runner
+sources, locked dependencies, raw inputs, complete results, execution
+receipts, and comparison projection by exact bytes. Evidence authoring stages
+and validates the complete generated graph before replacing the comparison
+receipt last. The receipts remain self-attested byte-consistency records, not
+independently witnessed process evidence; the source controls are bounded
+inventories, not process sandboxes or general static analyses. The proposition
+does not establish canonicalization-profile conformance, complete offline
+resolution, dependency-closed product registries, organizational
+independence, product identity, admission, PRQ-002 closure, Gate A acceptance,
+runtime authority, or publication authority. The frozen `odeya-jcs-0.2` bytes
+remain unissued, and the required side-by-side `odeya-jcs-0.3` reissue does not
+yet exist.
 
 The PRQ-013 T0 byte-bound/recomputation tranche now retains candidate evidence
 under [ADR 0095](docs/decisions/0095-reissue-human-decision-assurance-as-a-byte-bound-independently-recomputed-chain.md):

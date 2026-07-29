@@ -178,6 +178,11 @@ REGISTRY: dict[str, tuple[str, Any, Any]] = {
         intent_and_inventory("expected_errors"),
         None,
     ),
+    "schema-registry-prehash-replay": (
+        "cases.json",
+        intent_and_inventory("expected_errors"),
+        None,
+    ),
     "prq-009-assignment-order": (
         "cases.json",
         substring("expected_refusal_contains"),

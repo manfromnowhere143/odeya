@@ -48,6 +48,12 @@ CANONICAL_PROFILE_SUCCESSOR_MIGRATION = (
 PRQ_002B_PREDECESSOR_MANIFEST = (
     ROOT / "tests/product-identity-profile-candidate/predecessor-schemas.json"
 )
+PRQ_002D_MANIFEST = (
+    ROOT / "tests/schema-registry-prehash-replay/manifest.json"
+)
+PRQ_002D_CASES = (
+    ROOT / "tests/schema-registry-prehash-replay/cases.json"
+)
 HDA_CONTEXT_REVIEW = (
     ROOT / "architecture/human-decision-assurance-context-isolated-technical-review.json"
 )
@@ -105,24 +111,24 @@ CURRENT_ASSURANCE_UNITS = (
     (
         "docs/ARCHITECTURE_STATUS.md", "## Readiness by Gate A area", None, "table_row", "| G3 security/authority |", None,
         "0f6604e35890637bb7c14a990f53468bc0a2274fa4a4a139e94dd3bb459ba8ed",
-        "e9483445b3fc21e4d814bee52e111daa947401b909362fa7f50dc06233ab1e57",
+        "e597a221a6878f312bf90266f3bd8083ed0d3446dfaa11765a100313080626a7",
     ),
     (
         "docs/ARCHITECTURE_STATUS.md", "## Critical blockers", None, "table_row", "| A-016 |", None,
         "c35e7cf3acee32233ab9216f4f317c48761465b490b9a0a36c56f5609931e11b",
-        "96a0855391063e5c66d05fe17ec1bfd860ebc3f90f1007c90ecde16586f74050",
+        "194ff69141b82daf9a01645c5113f33de413824f0fa7a412ba5644f777790db1",
     ),
     (
         "docs/SESSION_HANDOFF.md", "## What this lane established, and where to put pressure next", None,
         "bullet", "**PRQ-013 now has retained byte-bound/recomputation candidate evidence, not closure.**", 1,
         "96db3a878a2aa66dfb3b33fbcf3466383deb9b5798972afc1c94da70293c1501",
-        "05903a5ee196299d100d6d91fac7c6c217bf569fb991cce51cc4f4b56fb69d94",
+        "b3d2bc55884a1174d248842a7a8a4ee6d43f3e0ba23c9778ad2b3665aec6787d",
     ),
     (
         "docs/SESSION_HANDOFF.md", "## Active PRQ-013 candidate — resolve release status from Git", None,
         "paragraph", "Those are structural and bounded-semantic candidate measurements", 7,
         "e0e4fd58d204a82cbcc698f436818e390225733fd52474dd96f9f449d986852c",
-        "1fc0a8a64451812b8a9164710b0f1f79d987d51f7d82c8976db4ecd557039e9e",
+        "f8b419cc746f3f85b4d5d5fa33f6f7a2a12353745e07aec0b1e397aff767eae9",
     ),
     (
         "docs/decisions/0092-bind-human-decisions-through-an-external-assurance-wrapper.md",
@@ -138,13 +144,19 @@ CURRENT_ASSURANCE_UNITS = (
 )
 
 RECOVERY_HANDOFF = "docs/SESSION_HANDOFF.md"
-RECOVERY_HEADING = "## Current repository recovery identity"
-PUBLISHED_BASELINE = "a79d86b0a5e9581b3bacb57214cf180df3443566"
-PUBLISHED_BASELINE_TREE = "d44e9eb4751b97871aa9c995664782a5d031fb48"
-RECOVERY_INVARIANT_SHA256 = "37b25307a3691eb275d6d457e2643e7400aa09d700b1fdb37ac63170bcb3cf2a"
-# SHA-256 of the normalized 111-line recovery program. Its separately named
+RECOVERY_HEADING = (
+    "## Current repository recovery identity — authoritative 2026-07-29"
+)
+RECOVERY_BASE = "d3ec64f3abfc64467c0bc3bfae330d86e2af89b2"
+RECOVERY_BASE_TREE = "69304534a61a7c5d085d183d847285a181eaabfc"
+RECOVERY_SECTION_SHA256 = (
+    "817d1322078b929ae35fc6f3885b54208b7f58739f4e50bf71ad5ed823a7887a"
+)
+# SHA-256 of the normalized 92-line recovery program. Its separately named
 # cardinality line keeps the single-parent invariant reviewable.
-EXPECTED_RECOVERY_PROGRAM_SHA256 = "6eab35a7689311a7b673cccc7d616ca1e20d0f09468b9f73c826f2eb530b6df0"
+EXPECTED_RECOVERY_PROGRAM_SHA256 = (
+    "12fba756eefe6e6202df6cdc53c729fa9cb1e2948476069f23a5ce5c29b4f730"
+)
 PARENT_CARDINALITY_LINE = 'test "$(git rev-list --parents -n 1 "$HEAD_COMMIT" | awk \'{print NF}\')" = 2'
 EXPECTED_REFUSAL_KEYS = frozenset(
     {
@@ -741,19 +753,23 @@ def recovery_truth_surface_errors(
     failures: list[str] = []
     labels = (
         (
-            "baseline", PUBLISHED_BASELINE,
-            r"(?m)^- Exact published baseline observed at recovery:[ \t]*\n"
+            "predecessor", RECOVERY_BASE,
+            r"(?m)^- Exact closed predecessor:[ \t]*\n"
             r"[ \t]+`([0-9a-f]{40})`[ \t]*$",
         ),
         (
-            "tree", PUBLISHED_BASELINE_TREE,
-            r"(?m)^- Exact published-baseline tree:[ \t]*\n"
+            "tree", RECOVERY_BASE_TREE,
+            r"(?m)^- Exact predecessor tree:[ \t]*\n"
             r"[ \t]+`([0-9a-f]{40})`[ \t]*$",
         ),
     )
     for label, expected, pattern in labels:
         observed = re.findall(pattern, section)
-        literal = "Exact published baseline observed at recovery:" if label == "baseline" else "Exact published-baseline tree:"
+        literal = (
+            "Exact closed predecessor:"
+            if label == "predecessor"
+            else "Exact predecessor tree:"
+        )
         if observed != [expected] or section.count(literal) != 1:
             failures.append(
                 f"{prefix}: recovery {label} label must occur exactly once and "
@@ -761,7 +777,7 @@ def recovery_truth_surface_errors(
             )
     unexpected = sorted(
         set(re.findall(r"(?<![0-9a-f])[0-9a-f]{40}(?![0-9a-f])", section))
-        - {PUBLISHED_BASELINE, PUBLISHED_BASELINE_TREE}
+        - {RECOVERY_BASE, RECOVERY_BASE_TREE}
     )
     if unexpected:
         failures.append(f"{prefix}: unexpected full Git identities {unexpected!r}")
@@ -774,20 +790,14 @@ def recovery_truth_surface_errors(
             failures.append(f"{prefix}: recovery program does not equal pinned expected program")
         if program.count(PARENT_CARDINALITY_LINE) != 1:
             failures.append(f"{prefix}: recovery program lost its one-parent cardinality guard")
-    if section.count("Expected invariants:") != 1:
-        failures.append(f"{prefix}: Expected invariants marker must occur exactly once")
-    else:
-        invariant_section = section.split("Expected invariants:", 1)[1]
-        marker = "the active `HEAD` is either that already-published baseline"
-        invariant_errors = exact_unit_errors(
-            prefix,
-            invariant_section,
-            "bullet",
-            marker,
-            3,
-            RECOVERY_INVARIANT_SHA256,
+    if (
+        hashlib.sha256(normalize_prose(section).encode()).hexdigest()
+        != RECOVERY_SECTION_SHA256
+    ):
+        failures.append(
+            f"{prefix}: recovery section does not match its pinned complete "
+            "current structure"
         )
-        failures.extend(invariant_errors)
     return failures
 
 
@@ -800,19 +810,23 @@ def recovery_truth_surface_known_bad_self_tests(errors: list[str]) -> int:
     mutations = (
         (
             "inverted-remote-main", program_error,
-            'test "$REMOTE_MAIN" = "$PUBLISHED_BASELINE" || test "$REMOTE_MAIN" = "$HEAD_COMMIT"',
-            'test "$REMOTE_MAIN" != "$PUBLISHED_BASELINE" || test "$REMOTE_MAIN" != "$HEAD_COMMIT"',
+            'test "$REMOTE_MAIN" = "$BASE" || test "$REMOTE_MAIN" = "$HEAD_COMMIT"',
+            'test "$REMOTE_MAIN" != "$BASE" || test "$REMOTE_MAIN" != "$HEAD_COMMIT"',
         ),
         (
             "two-commit-range", program_error,
-            'test "$(git rev-list --count "$PUBLISHED_BASELINE..$HEAD_COMMIT")" = 1',
-            'test "$(git rev-list --count "$PUBLISHED_BASELINE..$HEAD_COMMIT")" = 2',
+            'test "$(git rev-list --count "$BASE..$HEAD_COMMIT")" = 1',
+            'test "$(git rev-list --count "$BASE..$HEAD_COMMIT")" = 2',
         ),
         (
             "merge-parent-guard-removed",
             f"{prefix}: recovery program lost its one-parent cardinality guard",
-            '  test "$(git rev-list --parents -n 1 "$HEAD_COMMIT" | awk \'{print NF}\')" = 2\n',
-            "",
+            '  test "$(git rev-parse "$HEAD_COMMIT^")" = "$BASE"\n'
+            '  test "$(git rev-list --parents -n 1 "$HEAD_COMMIT" | '
+            'awk \'{print NF}\')" = 2\n'
+            '  test "$(git rev-list --count "$BASE..$HEAD_COMMIT")" = 1',
+            '  test "$(git rev-parse "$HEAD_COMMIT^")" = "$BASE"\n'
+            '  test "$(git rev-list --count "$BASE..$HEAD_COMMIT")" = 1',
         ),
     )
     count = 0
@@ -822,24 +836,41 @@ def recovery_truth_surface_known_bad_self_tests(errors: list[str]) -> int:
             label, recovery_truth_surface_errors({RECOVERY_HANDOFF: mutant}),
             expected, errors,
         )
-    baseline = f"- Exact published baseline observed at recovery:\n  `{PUBLISHED_BASELINE}`"
-    duplicate = baseline + f"\n- Exact published baseline observed at recovery:\n  `{PUBLISHED_BASELINE_TREE}`"
-    mutant = replace_once(raw, baseline, duplicate, "duplicate-baseline-label", errors)
-    count += expect_self_test(
-        "duplicate-baseline-label", recovery_truth_surface_errors({RECOVERY_HANDOFF: mutant}),
-        f"{prefix}: recovery baseline label must occur exactly once and equal {PUBLISHED_BASELINE}",
+    predecessor = f"- Exact closed predecessor:\n  `{RECOVERY_BASE}`"
+    duplicate = (
+        predecessor
+        + f"\n- Exact closed predecessor:\n  `{RECOVERY_BASE_TREE}`"
+    )
+    mutant = replace_once(
+        raw,
+        predecessor,
+        duplicate,
+        "duplicate-predecessor-label",
         errors,
     )
-    invariant = "multi-commit range fails recovery;"
+    count += expect_self_test(
+        "duplicate-predecessor-label",
+        recovery_truth_surface_errors({RECOVERY_HANDOFF: mutant}),
+        (
+            f"{prefix}: recovery predecessor label must occur exactly once "
+            f"and equal {RECOVERY_BASE}"
+        ),
+        errors,
+    )
+    invariant = (
+        "No merge, extra commit,\nsecond dirty Odeya lane, or path "
+        "substitution is an accepted recovery state."
+    )
     mutant = replace_once(
         raw, invariant, invariant + " this statement is false;",
-        "recovery-invariant-suffix", errors,
+        "recovery-section-suffix", errors,
     )
     count += expect_self_test(
-        "recovery-invariant-suffix", recovery_truth_surface_errors({RECOVERY_HANDOFF: mutant}),
+        "recovery-section-suffix",
+        recovery_truth_surface_errors({RECOVERY_HANDOFF: mutant}),
         (
-            f"{prefix}: governed bullet 'the active `HEAD` is either that "
-            "already-published baseline' does not match its pinned exact unit"
+            f"{prefix}: recovery section does not match its pinned complete "
+            "current structure"
         ),
         errors,
     )
@@ -7666,6 +7697,160 @@ def validate_next_tranche_known_bad(errors: list[str]) -> int:
     return 1
 
 
+PRQ_002D_EXPECTED_CENSUS = {
+    "vector_count_decimal": "68",
+    "accepted_count_decimal": "1",
+    "refused_count_decimal": "67",
+    "source_separated_implementation_count_decimal": "2",
+    "gate_known_bad_count_decimal": "77",
+}
+PRQ_002D_EXPECTED_CLAIM_BOUNDARY = {
+    "organizational_independence_proven": False,
+    "independent_host_reproduction_complete": False,
+    "historical_process_independently_witnessed": False,
+    "undeclared_filesystem_read_excluded": False,
+    "complete_offline_registry_proved": False,
+    "product_identity_computed": False,
+    "profile_issued": False,
+    "gate_a_complete": False,
+    "runtime_authorized": False,
+    "publication_authorized": False,
+}
+
+
+def prq_002d_evidence_errors(manifest: Any, cases: Any) -> list[str]:
+    """Bind the Gate A ledger to the bounded retained PRQ-002D census."""
+    errors: list[str] = []
+    if not isinstance(manifest, dict):
+        return ["PRQ-002D manifest must be an object"]
+    if (
+        manifest.get("schema_version") != "0.1.0"
+        or manifest.get("artifact_class")
+        != "prq_002d_schema_registry_prehash_suite_manifest"
+        or manifest.get("suite_id")
+        != "prq-002d-schema-registry-prehash-replay.0001"
+        or manifest.get("status")
+        != "architecture_only_non_product_nonidentity_observation"
+        or manifest.get("decision_ref")
+        != "docs/decisions/0102-prove-non-product-prehash-schema-registry-replay.md"
+    ):
+        errors.append(
+            "PRQ-002D manifest identity and status must remain exact bounded "
+            "architecture-only non-product evidence"
+        )
+    if manifest.get("census") != PRQ_002D_EXPECTED_CENSUS:
+        errors.append(
+            "PRQ-002D manifest must retain the exact 68/1/67/2/77 census"
+        )
+    retained_paths = manifest.get("retained_paths")
+    if (
+        not isinstance(retained_paths, dict)
+        or retained_paths.get("private_expectations")
+        != "tests/schema-registry-prehash-replay/cases.json"
+    ):
+        errors.append(
+            "PRQ-002D manifest must bind the exact retained private "
+            "expectations path"
+        )
+    claim_boundary = manifest.get("claim_boundary")
+    if (
+        not isinstance(claim_boundary, dict)
+        or set(claim_boundary) != set(PRQ_002D_EXPECTED_CLAIM_BOUNDARY)
+        or any(
+            claim_boundary.get(key) is not False
+            for key in PRQ_002D_EXPECTED_CLAIM_BOUNDARY
+        )
+    ):
+        errors.append(
+            "PRQ-002D claim boundary must remain the exact all-false "
+            "nonclaim set"
+        )
+
+    if not isinstance(cases, dict):
+        return errors + ["PRQ-002D cases must be an object"]
+    if (
+        cases.get("schema_version") != "0.1.0"
+        or cases.get("artifact_class")
+        != "prq_002d_schema_registry_prehash_private_expectations"
+        or cases.get("expectation_set_id")
+        != "prq-002d-schema-registry-prehash-expectations.0001"
+        or cases.get("suite_id") != manifest.get("suite_id")
+        or cases.get("vector_set_id")
+        != "prq-002d-schema-registry-prehash.synthetic.0001"
+    ):
+        errors.append(
+            "PRQ-002D cases identity must remain exact and bound to the "
+            "manifest suite"
+        )
+    if (
+        cases.get("case_count_decimal") != "68"
+        or cases.get("safe_count_decimal") != "1"
+        or cases.get("known_bad_count_decimal") != "67"
+    ):
+        errors.append(
+            "PRQ-002D cases must retain the exact 68/1/67 declared counts"
+        )
+    gate_rows = cases.get("gate_known_bads")
+    gate_ids = [
+        row.get("id")
+        for row in gate_rows
+        if isinstance(row, dict)
+    ] if isinstance(gate_rows, list) else []
+    if (
+        not isinstance(gate_rows, list)
+        or len(gate_rows) != 77
+        or len(gate_ids) != 77
+        or len(set(gate_ids)) != 77
+        or not all(isinstance(identifier, str) and identifier for identifier in gate_ids)
+    ):
+        errors.append(
+            "PRQ-002D cases must retain exactly 77 distinct gate "
+            "known-bad rows"
+        )
+    rows = cases.get("cases")
+    if not isinstance(rows, list):
+        return errors + ["PRQ-002D cases rows must be an array"]
+    expected_order = [
+        (str(index), f"PH-{index + 1:04d}")
+        for index in range(68)
+    ]
+    observed_order = [
+        (
+            row.get("sequence_index_decimal"),
+            row.get("vector_id"),
+        )
+        if isinstance(row, dict)
+        else (None, None)
+        for row in rows
+    ]
+    if len(rows) != 68 or observed_order != expected_order:
+        errors.append(
+            "PRQ-002D cases must retain exactly 68 ordered "
+            "PH-0001..PH-0068 rows"
+        )
+    kind_counts = Counter(
+        row.get("kind") if isinstance(row, dict) else None
+        for row in rows
+    )
+    disposition_counts = Counter(
+        row.get("expected_disposition") if isinstance(row, dict) else None
+        for row in rows
+    )
+    if (
+        kind_counts != Counter({"safe": 1, "known_bad": 67})
+        or disposition_counts != Counter({"accepted": 1, "refused": 67})
+        or not rows
+        or not isinstance(rows[0], dict)
+        or rows[0].get("kind") != "safe"
+        or rows[0].get("expected_disposition") != "accepted"
+    ):
+        errors.append(
+            "PRQ-002D cases must retain one safe accepted row and 67 "
+            "known-bad refused rows"
+        )
+    return errors
+
+
 def prq_002_closure_errors(value: Any) -> list[str]:
     errors: list[str] = []
     if not isinstance(value, dict):
@@ -7679,12 +7864,13 @@ def prq_002_closure_errors(value: Any) -> list[str]:
         or "PRQ-002A" not in closure
         or "PRQ-002B" not in closure
         or "PRQ-002C" not in closure
+        or "PRQ-002D" not in closure
         or "zero product identities" not in closure
         or "PRQ-002 remains open" not in closure
     ):
         errors.append(
-            "PRQ-002 must expose the bounded A/B/C evidence without claiming "
-            "closure"
+            "PRQ-002 must expose the bounded A/B/C/D evidence without "
+            "claiming closure"
         )
     if (
         "61 opaque answer-free synthetic frames" not in closure
@@ -7704,6 +7890,28 @@ def prq_002_closure_errors(value: Any) -> list[str]:
             "full-profile nonclaim"
         )
     if (
+        "68 opaque virtual-file frames" not in closure
+        or "1 accepted, 67 refused" not in closure
+        or "2 source- and language-separated evaluators" not in closure
+        or "77 parent-gate known-bads" not in closure
+    ):
+        errors.append(
+            "PRQ-002 closure must retain the exact bounded PRQ-002D census"
+        )
+    if (
+        "bounded non-product prehash replay evidence" not in closure
+        or "precedes structured or product identity" not in closure
+        or (
+            "does not establish full successor-profile conformance, complete "
+            "offline resolver proof, product identity, or PRQ-002 closure"
+        )
+        not in closure
+    ):
+        errors.append(
+            "PRQ-002 closure must retain the bounded PRQ-002D "
+            "non-product/nonclaim boundary"
+        )
+    if (
         "odeya-jcs-0.2 bytes remain frozen, unissued, and blocked"
         not in closure
         or "odeya-jcs-0.3 does not exist" not in closure
@@ -7715,7 +7923,11 @@ def prq_002_closure_errors(value: Any) -> list[str]:
     return errors
 
 
-def validate_prq_002_closure_known_bads(errors: list[str]) -> int:
+def validate_prq_002_closure_known_bads(
+    manifest: Any,
+    retained_cases: Any,
+    errors: list[str],
+) -> int:
     try:
         inventory = load(INVENTORY)
         baseline = inventory["findings"][1]
@@ -7737,8 +7949,15 @@ def validate_prq_002_closure_known_bads(errors: list[str]) -> int:
             + " | ".join(baseline_errors)
         )
         return 0
+    evidence_errors = prq_002d_evidence_errors(manifest, retained_cases)
+    if evidence_errors:
+        errors.append(
+            "PRQ-002D evidence baseline self-test was rejected: "
+            + " | ".join(evidence_errors)
+        )
+        return 0
 
-    cases = (
+    closure_cases = (
         (
             "census-substitution",
             "61 opaque answer-free synthetic frames",
@@ -7763,9 +7982,40 @@ def validate_prq_002_closure_known_bads(errors: list[str]) -> int:
                 "lineage boundary"
             ),
         ),
+        (
+            "prq-002d-omission",
+            "PRQ-002D",
+            "fourth bounded replay tranche",
+            (
+                "PRQ-002 must expose the bounded A/B/C/D evidence without "
+                "claiming closure"
+            ),
+        ),
+        (
+            "prq-002d-census-substitution",
+            "68 opaque virtual-file frames",
+            "69 opaque virtual-file frames",
+            "PRQ-002 closure must retain the exact bounded PRQ-002D census",
+        ),
+        (
+            "prq-002d-profile-identity-escalation",
+            (
+                "does not establish full successor-profile conformance, "
+                "complete offline resolver proof, product identity, or "
+                "PRQ-002 closure"
+            ),
+            (
+                "establishes full successor-profile conformance, complete "
+                "offline resolver proof, product identity, and PRQ-002 closure"
+            ),
+            (
+                "PRQ-002 closure must retain the bounded PRQ-002D "
+                "non-product/nonclaim boundary"
+            ),
+        ),
     )
     passed = 0
-    for case_id, old, new, expected in cases:
+    for case_id, old, new, expected in closure_cases:
         candidate = json.loads(json.dumps(baseline))
         candidate["closure"] = candidate["closure"].replace(old, new, 1)
         observed = prq_002_closure_errors(candidate)
@@ -7776,6 +8026,92 @@ def validate_prq_002_closure_known_bads(errors: list[str]) -> int:
                 f"PRQ-002 closure {case_id} known-bad did not fire its "
                 "intended reason"
             )
+
+    manifest_count_candidate = json.loads(json.dumps(manifest))
+    manifest_count_candidate["census"]["gate_known_bad_count_decimal"] = "76"
+    observed = prq_002d_evidence_errors(
+        manifest_count_candidate,
+        retained_cases,
+    )
+    expected = "PRQ-002D manifest must retain the exact 68/1/67/2/77 census"
+    if expected in observed:
+        passed += 1
+    else:
+        errors.append(
+            "PRQ-002D manifest-count known-bad did not fire its intended "
+            f"reason; got {observed!r}"
+        )
+
+    manifest_nonclaim_candidate = json.loads(json.dumps(manifest))
+    manifest_nonclaim_candidate["claim_boundary"]["product_identity_computed"] = True
+    observed = prq_002d_evidence_errors(
+        manifest_nonclaim_candidate,
+        retained_cases,
+    )
+    expected = (
+        "PRQ-002D claim boundary must remain the exact all-false nonclaim set"
+    )
+    if expected in observed:
+        passed += 1
+    else:
+        errors.append(
+            "PRQ-002D nonclaim known-bad did not fire its intended reason; "
+            f"got {observed!r}"
+        )
+
+    manifest_nonboolean_candidate = json.loads(json.dumps(manifest))
+    manifest_nonboolean_candidate["claim_boundary"]["gate_a_complete"] = 0
+    observed = prq_002d_evidence_errors(
+        manifest_nonboolean_candidate,
+        retained_cases,
+    )
+    if expected in observed:
+        passed += 1
+    else:
+        errors.append(
+            "PRQ-002D nonboolean-nonclaim known-bad did not fire its intended "
+            f"reason; got {observed!r}"
+        )
+
+    case_count_candidate = json.loads(json.dumps(retained_cases))
+    case_count_candidate["case_count_decimal"] = "69"
+    observed = prq_002d_evidence_errors(manifest, case_count_candidate)
+    expected = "PRQ-002D cases must retain the exact 68/1/67 declared counts"
+    if expected in observed:
+        passed += 1
+    else:
+        errors.append(
+            "PRQ-002D cases-count known-bad did not fire its intended reason; "
+            f"got {observed!r}"
+        )
+
+    gate_row_candidate = json.loads(json.dumps(retained_cases))
+    gate_row_candidate["gate_known_bads"].pop()
+    observed = prq_002d_evidence_errors(manifest, gate_row_candidate)
+    expected = (
+        "PRQ-002D cases must retain exactly 77 distinct gate known-bad rows"
+    )
+    if expected in observed:
+        passed += 1
+    else:
+        errors.append(
+            "PRQ-002D gate-row known-bad did not fire its intended reason; "
+            f"got {observed!r}"
+        )
+
+    case_row_candidate = json.loads(json.dumps(retained_cases))
+    case_row_candidate["cases"].pop()
+    observed = prq_002d_evidence_errors(manifest, case_row_candidate)
+    expected = (
+        "PRQ-002D cases must retain exactly 68 ordered PH-0001..PH-0068 rows"
+    )
+    if expected in observed:
+        passed += 1
+    else:
+        errors.append(
+            "PRQ-002D cases-row known-bad did not fire its intended reason; "
+            f"got {observed!r}"
+        )
     return passed
 
 
@@ -7986,6 +8322,8 @@ def main() -> int:
         prq_002b_predecessor_manifest = load(
             PRQ_002B_PREDECESSOR_MANIFEST
         )
+        prq_002d_manifest = load(PRQ_002D_MANIFEST)
+        prq_002d_cases = load(PRQ_002D_CASES)
     except (OSError, json.JSONDecodeError, DuplicateKey, ValueError) as exc:
         print(f"Gate A prerequisite closure: invalid evidence: {exc}", file=sys.stderr)
         return 1
@@ -8232,6 +8570,7 @@ def main() -> int:
             prq_002b_predecessor_manifest,
         )
     )
+    errors.extend(prq_002d_evidence_errors(prq_002d_manifest, prq_002d_cases))
 
     findings = inventory.get("findings")
     expected_ids = [f"PRQ-{index:03d}" for index in range(1, 14)]
@@ -8533,7 +8872,11 @@ def main() -> int:
     )
     next_tranche_known_bads = validate_next_tranche_known_bad(errors)
     prq_009_boundary_known_bads = validate_prq_009_boundary_known_bads(errors)
-    prq_002_closure_known_bads = validate_prq_002_closure_known_bads(errors)
+    prq_002_closure_known_bads = validate_prq_002_closure_known_bads(
+        prq_002d_manifest,
+        prq_002d_cases,
+        errors,
+    )
     prq_013_closure_known_bads = validate_prq_013_closure_known_bads(errors)
     errors.extend(assurance_truth_surface_errors())
     assurance_truth_surface_known_bads = (
@@ -8566,7 +8909,7 @@ def main() -> int:
         f"and {context_review_known_bads} context-review known-bads "
         f"and {closure_observation_known_bads} closure-observation known-bads "
         f"and {python_install_known_bads} locked-install known-bads "
-        f"and {prq_002_closure_known_bads} PRQ-002 closure known-bads "
+        f"and {prq_002_closure_known_bads} PRQ-002 ledger/evidence known-bads "
         f"and {prq_009_boundary_known_bads} PRQ-009 boundary known-bads "
         f"and {prq_013_closure_known_bads} PRQ-013 closure known-bads "
         f"and {next_tranche_known_bads} next-tranche known-bad "

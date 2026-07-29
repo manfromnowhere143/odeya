@@ -80,7 +80,9 @@ a concurrent design lane). Entry points by theme:
   [0100](decisions/0100-introduce-an-unissued-scoped-product-identity-profile-successor.md)
   scoped unissued product-identity profile successor,
   [0101](decisions/0101-require-raw-number-token-provenance-before-profile-conformance.md)
-  raw-number token provenance before profile conformance.
+  raw-number token provenance before profile conformance, and
+  [0102](decisions/0102-prove-non-product-prehash-schema-registry-replay.md)
+  non-product prehash schema-registry replay.
 - **Canonical migration wave** —
   [0032](decisions/0032-partition-the-canonical-migration-findings.md)
   partition the findings,
@@ -152,6 +154,12 @@ a concurrent design lane). Entry points by theme:
   language-separated staged results, self-attested retained execution
   receipts, and one exact comparison receipt for the bounded integer-position
   rule only. It is not full-profile conformance.
+- [PRQ-002D non-product prehash replay](../tests/schema-registry-prehash-replay/README.md)
+  — 68 opaque virtual-file frames, one fixed private oracle, complete
+  source- and language-separated Python and Node results, self-attested
+  execution receipts, one exact comparison receipt, and 77 named parent-gate
+  known-bads. It precedes every structured or product identity and is not
+  canonicalization-profile conformance.
 - [`formal/tla/`](../formal/tla/) — the bounded TLA+ models with their safe
   configurations and retained intended-counterexample configurations, run by
   [`formal/tla/check.sh`](../formal/tla/check.sh).
@@ -243,8 +251,12 @@ manifests outrank every prose surface, including this index.
   [ADR 0101](decisions/0101-require-raw-number-token-provenance-before-profile-conformance.md)
   and its
   [architecture-only token contract](../architecture/canonicalization-raw-number-token-contract-v1-candidate.json)
-  block conformance and issuance of those frozen bytes; the prospective
-  `odeya-jcs-0.3` profile does not exist.
+  block conformance and issuance of those frozen bytes.
+  [ADR 0102](decisions/0102-prove-non-product-prehash-schema-registry-replay.md)
+  and its
+  [non-product prehash replay contract](../architecture/prq-002d-schema-registry-prehash-contract-v1-candidate.json)
+  retain one bounded two-member replay without amending the profile. The
+  prospective `odeya-jcs-0.3` profile does not exist.
 - [SCHEMA_RESOURCE_REISSUE_AND_RETENTION.md](SCHEMA_RESOURCE_REISSUE_AND_RETENTION.md)
   — how schema resources are reissued without mutating predecessors.
 
