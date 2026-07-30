@@ -20,6 +20,7 @@ import copy
 import hashlib
 import json
 import re
+import subprocess
 import sys
 from pathlib import Path
 from typing import Any, Iterable
@@ -33,6 +34,10 @@ ROOT = Path(__file__).resolve().parents[2]
 SUITE = ROOT / "tests/product-identity-profile-candidate"
 CASES_PATH = SUITE / "cases.json"
 PREDECESSOR_PATH = SUITE / "predecessor-schemas.json"
+POST_PRQ_002B_CHECK = (
+    ROOT / "tests/product-identity-profile-0.3-candidate/check.py"
+)
+POST_PRQ_002B_CHECK_TIMEOUT_SECONDS = 60
 ALLOWED_SUITE_JSON_PATHS = {"cases.json", "predecessor-schemas.json"}
 DIGEST_RE = re.compile(r"^sha256:[0-9a-f]{64}$")
 JSON_SCHEMA_2020_12 = "https://json-schema.org/draft/2020-12/schema"
@@ -59,6 +64,20 @@ RESERVED_STRUCTURAL_SENTINELS = (
     "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
     "sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
     "sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+)
+POST_PRQ_002B_SCHEMA_PATHS = (
+    "schemas/aggregate-state-subject-record-v0-2.schema.json",
+    "schemas/aggregate-state-subject-registry-v0-8.schema.json",
+    "schemas/canonicalization-profile-candidate-evidence-v0-7.schema.json",
+    "schemas/canonicalization-profile-core-v0-7.schema.json",
+    "schemas/canonicalization-profile-migration-v0-2.schema.json",
+    "schemas/event-contract-record-v0-2.schema.json",
+    "schemas/event-contract-registry-v0-8.schema.json",
+    "schemas/ordered-member-map-commitment-v0-2.schema.json",
+    "schemas/reducer-contract-record-v0-2.schema.json",
+    "schemas/reducer-registry-v0-8.schema.json",
+    "schemas/schema-registry-v0-9.schema.json",
+    "schemas/schema-resource-record-v0-2.schema.json",
 )
 STRUCTURAL_RESULT_BINDINGS = {
     "schema_resource_record": (
@@ -1201,18 +1220,33 @@ def repository_findings(
         path.relative_to(ROOT).as_posix()
         for path in (ROOT / "schemas").glob("*.json")
     )
+    post_prq_002b_paths = sorted(
+        set(actual_schema_paths) & set(POST_PRQ_002B_SCHEMA_PATHS)
+    )
+    if post_prq_002b_paths and post_prq_002b_paths != sorted(
+        POST_PRQ_002B_SCHEMA_PATHS
+    ):
+        findings.add(
+            "post_prq_002b_schema_cohort_incomplete",
+            "a later side-by-side cohort must be absent or present as its exact "
+            f"12-resource inventory; observed={post_prq_002b_paths}",
+        )
+    prq_002b_schema_paths = sorted(
+        set(actual_schema_paths) - set(POST_PRQ_002B_SCHEMA_PATHS)
+    )
     expected_schema_paths = sorted(predecessor_paths + expected_product_paths)
-    if actual_schema_paths != expected_schema_paths:
-        missing = sorted(set(expected_schema_paths) - set(actual_schema_paths))
-        extra = sorted(set(actual_schema_paths) - set(expected_schema_paths))
+    if prq_002b_schema_paths != expected_schema_paths:
+        missing = sorted(set(expected_schema_paths) - set(prq_002b_schema_paths))
+        extra = sorted(set(prq_002b_schema_paths) - set(expected_schema_paths))
         findings.add(
             "candidate_schema_path_inventory_mismatch",
             f"missing={missing}, extra={extra}",
         )
-    if len(actual_schema_paths) != contract["candidate_schema_path_count"]:
+    if len(prq_002b_schema_paths) != contract["candidate_schema_path_count"]:
         findings.add(
             "candidate_schema_path_count_mismatch",
-            f"observed {len(actual_schema_paths)}, expected {contract['candidate_schema_path_count']}",
+            f"observed {len(prq_002b_schema_paths)}, "
+            f"expected {contract['candidate_schema_path_count']}",
         )
 
     predecessor_documents: dict[str, dict[str, Any]] = {}
@@ -2218,6 +2252,43 @@ def main() -> int:
         for line in live.lines():
             code, detail = line.split(": ", 1)
             findings.add(code, detail)
+        if all((ROOT / path).is_file() for path in POST_PRQ_002B_SCHEMA_PATHS):
+            if not POST_PRQ_002B_CHECK.is_file() or POST_PRQ_002B_CHECK.is_symlink():
+                findings.add(
+                    "post_prq_002b_checker_missing_or_unsafe",
+                    POST_PRQ_002B_CHECK.relative_to(ROOT).as_posix(),
+                )
+            else:
+                try:
+                    successor_check = subprocess.run(
+                        [sys.executable, str(POST_PRQ_002B_CHECK)],
+                        cwd=ROOT,
+                        stdin=subprocess.DEVNULL,
+                        capture_output=True,
+                        text=True,
+                        timeout=POST_PRQ_002B_CHECK_TIMEOUT_SECONDS,
+                        check=False,
+                    )
+                except (OSError, subprocess.TimeoutExpired) as exc:
+                    findings.add(
+                        "post_prq_002b_checker_failed",
+                        f"execution failed: {type(exc).__name__}",
+                    )
+                else:
+                    if successor_check.returncode != 0:
+                        detail = " | ".join(
+                            line.strip()
+                            for line in (
+                                successor_check.stdout
+                                + "\n"
+                                + successor_check.stderr
+                            ).splitlines()
+                            if line.strip()
+                        )
+                        findings.add(
+                            "post_prq_002b_checker_failed",
+                            detail[:2000] or "nonzero exit without diagnostics",
+                        )
 
     if findings:
         for line in findings.lines():

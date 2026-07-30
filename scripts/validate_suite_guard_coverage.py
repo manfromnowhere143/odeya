@@ -18,24 +18,83 @@ ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "architecture/suite-guard-coverage.json"
 AUDIT = ROOT / "scripts/audit_suite_guard_coverage.py"
 VALIDATOR = ROOT / "scripts/validate.py"
-PIN = {"guard_count": 1184, "proved": 477, "unproved": 707, "crash_detected": 0}
+# Derived from the retained v0.2 authoring measurement, never preregistered.
+PIN: dict[str, int] | None = {
+    "guard_count": 1260,
+    "proved": 501,
+    "unproved": 759,
+    "crash_detected": 0,
+}
 EXCLUDED = {"lifecycle-closure": "dedicated 222/229 statement and 108/111 condition audits"}
+RECORD_KEYS = {
+    "schema_version",
+    "artifact_class",
+    "inventory_id",
+    "version",
+    "status",
+    "execution_schedule",
+    "method",
+    "suites",
+    "summary",
+    "boundary",
+}
+SUITE_KEYS = {
+    "suite",
+    "subject",
+    "subject_sha256",
+    "guard_count",
+    "proved_count",
+    "control",
+    "guards",
+}
+GUARD_KEYS = {"guard", "proved", "detection", "refusal_fingerprint"}
+SUMMARY_KEYS = {"guard_count", "proved", "unproved", "crash_detected"}
+SCHEDULE_KEYS = {
+    "parallel_max_workers",
+    "serial_suites",
+    "serial_after_parallel",
+}
+RECORD_METHOD = (
+    "each refusal construct of a declared suite is disabled one at a time "
+    "in an isolated copy of the tree, any suite-declared checker-byte "
+    "binding is refreshed only inside that copy, syntax-invalid mutations "
+    "are refused before execution, and that suite is re-run; a guard is "
+    "proved only when the syntax-valid mutation emits nonempty output, "
+    "exits one without an interpreter traceback, the restored unmodified "
+    "control then passes, and the identical mutation repeats the same "
+    "SHA-256 fingerprint over an exact framed return-code/stdout/stderr "
+    "object; that fingerprint is retained in the proved row; empty "
+    "output, tracebacks, other exit codes, signals, failed recovery "
+    "controls, and unstable repeats are crash-only detections retained "
+    "as unproved; the predecessor profile checker runs after the bounded "
+    "parallel pool so its nested successor check cannot compete with the "
+    "successor audit"
+)
+RECORD_BOUNDARY = (
+    "statement reachability across the suites lifecycle-closure's dedicated "
+    "audits do not cover; not condition coverage, not correctness, not an "
+    "exact case-ID attribution protocol, not exclusion of every "
+    "non-traceback startup-failure mask, not hostile-concurrent-writer "
+    "resistance or a process sandbox, not an independently reproduced "
+    "verdict, and not Gate A acceptance"
+)
 # SHA-256 binds normalized, comment/fence-cleaned current units: README's whole
 # checkpoint, status/handoff row/bullet plus sections, and all current plan units.
 # Numeric truth remains derived from RECORD; contradictory sibling prose cannot pass.
 UNIT_SHA256 = {
-    "readme.current-section": "9c656bde7591f4998344b6e482dcaa37d123e9374ead8ec70829d67da9338d3b",
-    "status.current-section": "ebe7e0634c7943ab68e12e6e7741e6a699e51ac1e37b512c2308a69e3c9c372b",
-    "status.guard-row": "291b33dc8f119079cb27ba7d58d3bab36535d2d5112ce99816f5ec961843ba66",
-    "handoff.current-section": "b3d2bc55884a1174d248842a7a8a4ee6d43f3e0ba23c9778ad2b3665aec6787d",
-    "handoff.guard-bullet": "59d641e7e6b78111649ef875fa63f6af98f2a371a65db469aa794f40606361d5",
-    "plan.current-units": "5d636b50528833f36ccaf06f7e3a9590654821e255d116fc186f276b81a1a27c",
+    "readme.current-section": "919d2c1363cfdb78cf7ba196d8b6c74ce47c997d7215deb4fdd48c404c1be4a1",
+    "status.current-section": "876f8b35334f8905d5ff5cd3f3745c98c206c379bd5282437b8eb7ee4b752abb",
+    "status.guard-row": "9460c3e0541fde57fd350de923c76f40fe11bae99c5f1e82970e33c5f9a690fe",
+    "handoff.current-section": "5c2bd69c2bbba5f9e64b83f867f85209ccd9429f518bbc6f75f20685abbc3570",
+    "handoff.guard-bullet": "9156fb3a41a695caac94eae7d4533a7de8def1abe56d131bcb6870047b39b70d",
+    "plan.current-units": "732edac76e3f2ef88a484712470a806541ca551851dcaee1cb36994f666ac24a",
 }
 WORDS = "zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen eighteen nineteen twenty".split()
 WORD_VALUE = {word: index for index, word in enumerate(WORDS)}
 COMMENT = re.compile(r"<!--.*?-->", re.DOTALL)
 ATX = re.compile(r"(?m)^ {0,3}(#{1,6})[ \t]+(.+?)[ \t]*$")
 FENCE = re.compile(r"^ {0,3}(`{3,}|~{3,})")
+SUITE_NAME = re.compile(r"[a-z0-9]+(?:(?:-|\.)[a-z0-9]+)*\Z")
 
 PATTERNS = {
     "readme": re.compile(
@@ -69,7 +128,8 @@ PATTERNS = {
         r"covers (?P<suites>[a-z0-9-]+) declared isolated contract-checker "
         r"subjects: (?P<proved>\d+) of (?P<total>\d+) refusal statements are "
         r"proved load-bearing by mutation, (?P<unproved>\d+) have no retained "
-        r"proof, and (?P<crash>[a-z0-9-]+) are credited through a crash"
+        r"proof, and (?P<crash>[a-z0-9-]+) crash-only detections are retained "
+        r"as unproved"
     ),
 }
 UNITS = (
@@ -423,7 +483,335 @@ def truth_errors(facts: Facts, overrides: dict[str, str] | None = None) -> list[
     return errors
 
 
+def guard_state_error(guard: dict[str, Any]) -> str | None:
+    """Admit only the closed v0.2 proof/detection state machine."""
+
+    if set(guard) != GUARD_KEYS:
+        return "guard result members must be closed and exact"
+    if not isinstance(guard.get("guard"), str) or not guard["guard"]:
+        return "guard identity must be a nonempty string"
+    proved = guard.get("proved")
+    detection = guard.get("detection")
+    fingerprint = guard.get("refusal_fingerprint")
+    if type(proved) is not bool:
+        return "guard proved must be an exact JSON Boolean"
+    if detection is not None and type(detection) is not str:
+        return "guard detection must be a string or null"
+    if fingerprint is not None and type(fingerprint) is not str:
+        return "guard refusal_fingerprint must be a string or null"
+    proved_fingerprint = (
+        type(fingerprint) is str
+        and re.fullmatch(r"sha256:[0-9a-f]{64}", fingerprint) is not None
+    )
+    if (
+        proved is True
+        and detection == "suite_reported_refusal"
+        and proved_fingerprint
+    ):
+        return None
+    if proved is False and detection in {"crash", None} and fingerprint is None:
+        return None
+    if (proved, detection) not in {
+        (True, "suite_reported_refusal"),
+        (False, "crash"),
+        (False, None),
+    }:
+        return "guard proved/detection state is outside the closed v0.2 machine"
+    return "guard fingerprint is outside the closed v0.2 machine"
+
+
+def guard_state_self_tests(errors: list[str]) -> int:
+    safe = (
+        {
+            "guard": "g",
+            "proved": True,
+            "detection": "suite_reported_refusal",
+            "refusal_fingerprint": "sha256:" + "a" * 64,
+        },
+        {
+            "guard": "g",
+            "proved": False,
+            "detection": "crash",
+            "refusal_fingerprint": None,
+        },
+        {
+            "guard": "g",
+            "proved": False,
+            "detection": None,
+            "refusal_fingerprint": None,
+        },
+    )
+    if any(guard_state_error(row) is not None for row in safe):
+        errors.append("guard-state safe controls failed")
+    known_bad = (
+        {
+            "guard": "g",
+            "proved": True,
+            "detection": "crash",
+            "refusal_fingerprint": "sha256:" + "a" * 64,
+        },
+        {
+            "guard": "g",
+            "proved": True,
+            "detection": None,
+            "refusal_fingerprint": "sha256:" + "a" * 64,
+        },
+        {
+            "guard": "g",
+            "proved": True,
+            "detection": "mystery",
+            "refusal_fingerprint": "sha256:" + "a" * 64,
+        },
+        {
+            "guard": "g",
+            "proved": False,
+            "detection": "suite_reported_refusal",
+            "refusal_fingerprint": None,
+        },
+        {
+            "guard": "g",
+            "proved": False,
+            "detection": "mystery",
+            "refusal_fingerprint": None,
+        },
+        {
+            "guard": "g",
+            "proved": "false",
+            "detection": None,
+            "refusal_fingerprint": None,
+        },
+        {
+            "guard": "g",
+            "proved": 0,
+            "detection": None,
+            "refusal_fingerprint": None,
+        },
+        {
+            "guard": "g",
+            "detection": None,
+            "refusal_fingerprint": None,
+        },
+        {
+            "guard": "g",
+            "proved": False,
+            "refusal_fingerprint": None,
+        },
+        {
+            "proved": False,
+            "detection": None,
+            "refusal_fingerprint": None,
+        },
+        {
+            "guard": "g",
+            "proved": False,
+            "detection": None,
+            "refusal_fingerprint": None,
+            "extra": False,
+        },
+        {
+            "guard": "g",
+            "proved": True,
+            "detection": "suite_reported_refusal",
+            "refusal_fingerprint": None,
+        },
+        {
+            "guard": "g",
+            "proved": True,
+            "detection": "suite_reported_refusal",
+            "refusal_fingerprint": "a" * 64,
+        },
+        {
+            "guard": "g",
+            "proved": True,
+            "detection": "suite_reported_refusal",
+            "refusal_fingerprint": "sha256:" + "A" * 64,
+        },
+        {
+            "guard": "g",
+            "proved": False,
+            "detection": None,
+            "refusal_fingerprint": "sha256:" + "a" * 64,
+        },
+    )
+    passed = 0
+    for index, row in enumerate(known_bad):
+        if guard_state_error(row) is None:
+            errors.append(f"guard-state known-bad {index} was accepted")
+        else:
+            passed += 1
+    return passed
+
+
+def suite_census_errors(
+    measured: set[str], declared: set[str]
+) -> list[str]:
+    """Require the exact registered census outside the one named exclusion."""
+
+    expected = declared - EXCLUDED.keys()
+    errors = [
+        f"{name}: registered suite is absent from coverage record"
+        for name in sorted(expected - measured)
+    ]
+    errors += [
+        f"{name}: undeclared suite is present in coverage record"
+        for name in sorted(measured - expected)
+    ]
+    return errors
+
+
+def suite_census_self_tests(errors: list[str]) -> int:
+    safe_names = (
+        "architecture-review",
+        "product-identity-profile-0.3-candidate",
+        "x",
+    )
+    if any(SUITE_NAME.fullmatch(name) is None for name in safe_names):
+        errors.append("suite-name safe controls failed")
+    unsafe_names = (
+        "",
+        ".",
+        "..",
+        "../escape",
+        "/absolute",
+        "a/b",
+        "a\\b",
+        "Uppercase",
+        "double--hyphen",
+        "-leading",
+        "trailing-",
+    )
+    passed = 0
+    for index, name in enumerate(unsafe_names):
+        if SUITE_NAME.fullmatch(name) is not None:
+            errors.append(f"suite-name known-bad {index} was accepted")
+        else:
+            passed += 1
+    declared = {"alpha", "beta", "lifecycle-closure"}
+    safe = suite_census_errors({"alpha", "beta"}, declared)
+    if safe:
+        errors.append("suite-census safe control failed: " + " | ".join(safe))
+    census_known_bad = (
+        (
+            {"alpha"},
+            ["beta: registered suite is absent from coverage record"],
+        ),
+        (
+            {"alpha", "beta", "gamma"},
+            ["gamma: undeclared suite is present in coverage record"],
+        ),
+        (
+            {"alpha", "gamma"},
+            [
+                "beta: registered suite is absent from coverage record",
+                "gamma: undeclared suite is present in coverage record",
+            ],
+        ),
+    )
+    for index, (measured, wanted) in enumerate(census_known_bad):
+        seen = suite_census_errors(measured, declared)
+        if seen != wanted:
+            errors.append(
+                f"suite-census known-bad {index} expected {wanted!r}; got {seen!r}"
+            )
+        else:
+            passed += 1
+    return passed
+
+
+def schedule_state_error(schedule: object) -> str | None:
+    """Admit only the exact schedule that quarantines the nested checker."""
+
+    if not isinstance(schedule, dict) or set(schedule) != SCHEDULE_KEYS:
+        return "execution schedule members must be a closed exact object"
+    if (
+        type(schedule.get("parallel_max_workers")) is not int
+        or schedule["parallel_max_workers"] != 4
+    ):
+        return "execution schedule parallel_max_workers must be the exact integer 4"
+    if schedule.get("serial_suites") != [
+        "product-identity-profile-candidate"
+    ]:
+        return "execution schedule serial_suites must remain exact and ordered"
+    if schedule.get("serial_after_parallel") is not True:
+        return "execution schedule must run the serial phase after the parallel pool"
+    return None
+
+
+def schedule_state_self_tests(errors: list[str]) -> int:
+    safe = {
+        "parallel_max_workers": 4,
+        "serial_suites": ["product-identity-profile-candidate"],
+        "serial_after_parallel": True,
+    }
+    if schedule_state_error(safe) is not None:
+        errors.append("execution-schedule safe control failed")
+    known_bad = (
+        None,
+        {},
+        {
+            "parallel_max_workers": 4,
+            "serial_suites": ["product-identity-profile-candidate"],
+            "serial_after_parallel": True,
+            "extra": False,
+        },
+        {
+            "parallel_max_workers": True,
+            "serial_suites": ["product-identity-profile-candidate"],
+            "serial_after_parallel": True,
+        },
+        {
+            "parallel_max_workers": 6,
+            "serial_suites": ["product-identity-profile-candidate"],
+            "serial_after_parallel": True,
+        },
+        {
+            "parallel_max_workers": 4,
+            "serial_suites": [],
+            "serial_after_parallel": True,
+        },
+        {
+            "parallel_max_workers": 4,
+            "serial_suites": ["architecture-review"],
+            "serial_after_parallel": True,
+        },
+        {
+            "parallel_max_workers": 4,
+            "serial_suites": ["product-identity-profile-candidate"],
+            "serial_after_parallel": False,
+        },
+        {
+            "parallel_max_workers": 4,
+            "serial_suites": ["product-identity-profile-candidate"],
+            "serial_after_parallel": 1,
+        },
+    )
+    passed = 0
+    for index, row in enumerate(known_bad):
+        if schedule_state_error(row) is None:
+            errors.append(f"execution-schedule known-bad {index} was accepted")
+        else:
+            passed += 1
+    return passed
+
+
 def record_facts(document: dict[str, Any], errors: list[str]) -> Facts | None:
+    if set(document) != RECORD_KEYS:
+        errors.append("coverage record members must be closed and exact")
+    expected_scalars = {
+        "schema_version": "0.2.0",
+        "artifact_class": "architecture_evidence",
+        "inventory_id": "odeya.suite-guard-coverage",
+        "version": "0.2.0",
+        "status": "candidate_measurement_not_admitted",
+        "method": RECORD_METHOD,
+        "boundary": RECORD_BOUNDARY,
+    }
+    for field, value in expected_scalars.items():
+        if document.get(field) != value:
+            errors.append(f"coverage record {field} must remain exact")
+    schedule_error = schedule_state_error(document.get("execution_schedule"))
+    if schedule_error is not None:
+        errors.append(schedule_error)
     source = document.get("suites")
     if not isinstance(source, list):
         errors.append("coverage record suites must be a list")
@@ -437,6 +825,11 @@ def record_facts(document: dict[str, Any], errors: list[str]) -> Facts | None:
             continue
         name = item["suite"]
         names.append(name)
+        if SUITE_NAME.fullmatch(name) is None:
+            errors.append(f"{name!r}: suite identity is not a safe canonical name")
+            continue
+        if set(item) != SUITE_KEYS:
+            errors.append(f"{name}: suite result members must be closed and exact")
         guards = item.get("guards")
         if not isinstance(guards, list) or not all(isinstance(g, dict) for g in guards):
             errors.append(f"{name}: guards must be an object list")
@@ -446,36 +839,39 @@ def record_facts(document: dict[str, Any], errors: list[str]) -> Facts | None:
         suites.append(Suite(name, proved, len(guards)))
         if item.get("control") != "passed":
             errors.append(f"{name}: unmutated control did not pass")
-        subject = ROOT / str(item.get("subject", ""))
+        expected_subject = f"tests/{name}/check.py"
+        if item.get("subject") != expected_subject:
+            errors.append(f"{name}: subject path must equal {expected_subject}")
+        subject = ROOT / expected_subject
         actual = "sha256:" + hashlib.sha256(subject.read_bytes()).hexdigest() if subject.is_file() else None
         if actual is None:
             errors.append(f"{name}: subject is absent")
         elif item.get("subject_sha256") != actual:
             errors.append(f"{name}: record does not describe current checker bytes")
-        if item.get("guard_count") != len(guards):
+        if type(item.get("guard_count")) is not int or item.get("guard_count") != len(guards):
             errors.append(f"{name}: guard_count disagrees with enumeration")
-        if item.get("proved_count") != proved:
+        if type(item.get("proved_count")) is not int or item.get("proved_count") != proved:
             errors.append(f"{name}: proved_count disagrees with enumeration")
         for guard in guards:
-            if not isinstance(guard.get("guard"), str) or not guard["guard"]:
-                errors.append(f"{name}: guard identity is absent")
-            if guard.get("proved") is True and guard.get("detection") not in {"case_attributed", "crash"}:
-                errors.append(f"{name}: proved guard has no admitted detection kind")
+            state_error = guard_state_error(guard)
+            if state_error is not None:
+                errors.append(f"{name}: {state_error}")
     if len(names) != len(set(names)):
         errors.append("coverage record suite identities must be unique")
+    if names != sorted(names):
+        errors.append("coverage record suite identities must remain sorted")
     declared = set(re.findall(r'"tests/([^/"]+)/check\.py"', VALIDATOR.read_text()))
     measured = set(names)
-    for missing in sorted(declared - measured - EXCLUDED.keys()):
-        errors.append(f"{missing}: registered suite is absent from coverage record")
+    errors += suite_census_errors(measured, declared)
+    if schedule_error is None and not set(
+        document["execution_schedule"]["serial_suites"]
+    ).issubset(measured):
+        errors.append("execution schedule serial suites must be measured subjects")
     for name, reason in EXCLUDED.items():
         if name in measured:
             errors.append(f"{name}: measured despite exclusion for {reason}")
         elif name not in declared:
             errors.append(f"{name}: stale exclusion for {reason}")
-    if document.get("status") != "candidate_measurement_not_admitted":
-        errors.append("record status must remain candidate_measurement_not_admitted")
-    if document.get("artifact_class") != "architecture_evidence":
-        errors.append("record artifact_class must remain architecture_evidence")
     facts = Facts(tuple(suites), sum(x.proved for x in suites), sum(x.total for x in suites), crash)
     try:
         facts.hda
@@ -489,15 +885,23 @@ def record_facts(document: dict[str, Any], errors: list[str]) -> Facts | None:
         "crash_detected": facts.crash,
     }
     summary = document.get("summary")
-    if not isinstance(summary, dict):
+    if not isinstance(summary, dict) or set(summary) != SUMMARY_KEYS:
         errors.append("coverage record summary must be an object")
     else:
         for field, value in calculated.items():
-            if summary.get(field) != value:
+            if type(summary.get(field)) is not int or summary.get(field) != value:
                 errors.append(f"summary.{field} must equal enumerated value {value}")
-        for field, value in PIN.items():
-            if summary.get(field) != value:
-                errors.append(f"summary.{field} must retain pinned value {value}")
+        if PIN is None:
+            errors.append(
+                "coverage summary pin is unset; populate it from the retained "
+                "v0.2 audit before validation"
+            )
+        else:
+            for field, value in PIN.items():
+                if summary.get(field) != value:
+                    errors.append(
+                        f"summary.{field} must retain pinned value {value}"
+                    )
     return facts
 
 
@@ -575,14 +979,10 @@ def self_tests(facts: Facts, errors: list[str]) -> int:
     guard_line = next(line for line in kept[status].splitlines() if line.startswith("| Guard evidence |"))
     add(("whole-status-row", {status: kept[status].replace(guard_line, guard_line.replace("Coverage does not prove a guard enforces the right rule", "Coverage does not prove a guard enforces the right rule. Current fallback is 458/927", 1), 1)}, status_row_exact))
     add(("alternate-status-row", {status: kept[status].replace(guard_line, guard_line + "\n| Current alternate guard tally | 458/927 are proved and 469 are open | Current |", 1)}, status_exact))
-    anchor = (
-        "  own pinned known-bad self-tests. "
-        f"The {facts.open} open isolated-suite guards are"
-    )
+    anchor = f"The {facts.open} open isolated-suite guards are"
     replacement = (
-        "  own pinned known-bad self-tests. Current fallback: "
-        "458 of 927 are proved and 469 are open. "
-        f"The {facts.open} open isolated-suite guards are"
+        "Current fallback: 458 of 927 are proved and 469 are open. "
+        f"{anchor}"
     )
     add(
         (
@@ -634,10 +1034,12 @@ def main() -> int:
         print("suite guard coverage: record must be an object", file=sys.stderr)
         return 1
     facts = record_facts(document, errors)
-    known_bads = 0
+    known_bads = guard_state_self_tests(errors)
+    known_bads += suite_census_self_tests(errors)
+    known_bads += schedule_state_self_tests(errors)
     if facts is not None:
         errors += truth_errors(facts)
-        known_bads = self_tests(facts, errors)
+        known_bads += self_tests(facts, errors)
     if errors:
         print("suite guard coverage: FAILED")
         for error in errors:
@@ -645,8 +1047,9 @@ def main() -> int:
         return 1
     print(
         f"suite guard-coverage record checked: {facts.proved}/{facts.total} guards proved "
-        f"by mutation across {len(facts.suites)} suites, {facts.open} with no known-bad "
-        f"proof retained explicitly; {known_bads} exact truth-surface known-bads "
+        f"by mutation across {len(facts.suites)} suites, {facts.open} with no stable "
+        f"suite-reported-refusal proof retained explicitly; {known_bads} exact "
+        "guard-state/truth-surface known-bads "
         "rejected; coverage is not correctness and Gate A acceptance remains separate"
     )
     return 0

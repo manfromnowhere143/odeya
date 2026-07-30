@@ -1,6 +1,6 @@
 # Registry Graph Contracts
 
-Status: architecture-only structural candidate, 2026-07-27. These contracts
+Status: architecture-only structural candidate, 2026-07-29. These contracts
 define the machine shape of Odeya's command/event/reducer/state graph. They do
 not identify an accepted Gate A member set, activate a runtime, prove a
 handler, prove a reducer implementation, or authorize product implementation.
@@ -288,10 +288,10 @@ partition is:
 
 Nine structural-nonidentity fixtures satisfy the shared schema harness without
 constructing identity. The dedicated candidate checker passes one safe control
-and nineteen attributed single-fault known-bads, while the generalized mutation
-audit currently proves 0 of its 93 refusal statements load-bearing. That
-0/93 result is explicit open evidence work, not positive coverage or
-correctness evidence.
+and nineteen attributed single-fault known-bads. Generalized mutation evidence
+is not inferred from those cases: resolve this checker's exact current row only
+from `architecture/suite-guard-coverage.json`. Every unproved row is explicit
+open evidence work, not positive coverage or correctness evidence.
 
 The profile and every successor resource remain unissued and unadmitted.
 Source-separated full-profile conformance, complete offline resolution,
@@ -318,10 +318,10 @@ digest, cross-object replay, or offline archive is constructed or proved.
 
 This observation does not amend the frozen `odeya-jcs-0.2` core, evidence,
 migration record, or twelve-resource cohort. Those bytes remain unissued and
-blocked from conformance and issuance. The prospective `odeya-jcs-0.3`
-profile and its required reissued cohort do not exist. Source-separated
-full-profile conformance, accountable review, operator acceptance, PRQ-002
-closure, Gate A acceptance, and runtime authority remain false or absent.
+blocked from conformance and issuance. ADR 0101 itself did not construct
+`odeya-jcs-0.3` or its required reissued cohort. Source-separated full-profile
+conformance, accountable review, operator acceptance, PRQ-002 closure, Gate A
+acceptance, and runtime authority remain false or absent.
 
 ## PRQ-002D bounded non-product prehash replay
 
@@ -348,9 +348,127 @@ static analysis, independently witnessed execution, complete offline
 resolution, dependency-closed product registry, cross-object product replay,
 canonicalization-profile conformance, product identity, member admission,
 profile issuance, PRQ-002 closure, Gate A acceptance, or runtime authority.
-The frozen `odeya-jcs-0.2` bytes remain unissued. The required side-by-side
-`odeya-jcs-0.3` core/evidence/migration and reissued twelve-resource cohort do
-not exist.
+The frozen `odeya-jcs-0.2` bytes remain unissued. ADR 0102 itself did not
+construct or test the required side-by-side `odeya-jcs-0.3`
+core/evidence/migration or its reissued twelve-resource cohort.
+
+## PRQ-002E side-by-side `odeya-jcs-0.3` construction
+
+[ADR 0103](decisions/0103-construct-side-by-side-odeya-jcs-0-3-candidate.md)
+freezes one bounded architecture-only construction graph for
+`urn:odeya:canonicalization:odeya-jcs-0.3`, version `0.3.0`. It preserves
+every exact `odeya-jcs-0.2` byte and constructs no alias, redirect, implicit
+upcast, digest equivalence, or predecessor reinterpretation.
+
+The exact twelve-schema successor inventory is:
+
+| Schema path | Exact `$id` | Exact domain or role |
+| --- | --- | --- |
+| `schemas/schema-resource-record-v0-2.schema.json` | `urn:odeya:schema:schema-resource-record:0.2.0` | `odeya-schema-resource-record-v2` |
+| `schemas/aggregate-state-subject-record-v0-2.schema.json` | `urn:odeya:schema:aggregate-state-subject-record:0.2.0` | `odeya-aggregate-state-subject-record-v2` |
+| `schemas/reducer-contract-record-v0-2.schema.json` | `urn:odeya:schema:reducer-contract-record:0.2.0` | `odeya-reducer-contract-record-v2` |
+| `schemas/event-contract-record-v0-2.schema.json` | `urn:odeya:schema:event-contract-record:0.2.0` | `odeya-event-contract-record-v2` |
+| `schemas/ordered-member-map-commitment-v0-2.schema.json` | `urn:odeya:schema:ordered-member-map-commitment:0.2.0` | `odeya-ordered-member-map-commitment-v2` |
+| `schemas/schema-registry-v0-9.schema.json` | `urn:odeya:schema:schema-registry:0.9.0` | `odeya-schema-registry-v3` |
+| `schemas/aggregate-state-subject-registry-v0-8.schema.json` | `urn:odeya:schema:aggregate-state-subject-registry:0.8.0` | `odeya-aggregate-state-subject-registry-v3` |
+| `schemas/reducer-registry-v0-8.schema.json` | `urn:odeya:schema:reducer-registry:0.8.0` | `odeya-reducer-registry-v3` |
+| `schemas/event-contract-registry-v0-8.schema.json` | `urn:odeya:schema:event-contract-registry:0.8.0` | `odeya-event-contract-registry-v3` |
+| `schemas/canonicalization-profile-core-v0-7.schema.json` | `urn:odeya:schema:canonicalization-profile-core:0.7.0` | final-only core schema; no product domain |
+| `schemas/canonicalization-profile-candidate-evidence-v0-7.schema.json` | `urn:odeya:schema:canonicalization-profile-candidate-evidence:0.7.0` | final-only evidence schema; no product domain |
+| `schemas/canonicalization-profile-migration-v0-2.schema.json` | `urn:odeya:schema:canonicalization-profile-migration:0.2.0` | final-only migration schema; no product domain |
+
+The nine product domains are disjoint from `0.2` and bind only their exact
+declaring schemas. A domain name, profile ID, or schema ID alone never resolves
+a member. Resolution requires the expected resource ID, exact raw SHA-256, and
+decimal byte count before UTF-8 decoding; after parsing, body `$id`, semantic
+version, registry key, and dependency bindings must agree. Aliases, redirects,
+bare-ID or `latest` lookups, and network, file, search, environment, or mutable
+fallbacks refuse.
+
+The map algorithm remains `odeya-canonical-map-commitment-v1`: it defines the
+profile-independent ordered UTF-8 member-key/member-digest pair sequence. The
+reissue changes its profile-bound member-digest inputs and product domain, not
+that algorithm. The map algorithm, `sha-256` hash identifier,
+`sha256:<64 lowercase hexadecimal digits>` lexical digest, profile ID, and
+product domain are separate namespaces; none may substitute for another.
+
+The exact retained architecture records are:
+
+```text
+architecture/canonicalization-profile-core-0.3-candidate.json
+architecture/canonicalization-profile-0.3-candidate-evidence.json
+architecture/canonicalization-profile-0.2-to-0.3-migration-candidate.json
+```
+
+Their only permitted finalization graph is:
+
+```text
+exact frozen odeya-jcs-0.2 bytes
+  -> product-authoring transaction:
+       twelve final-only odeya-jcs-0.3 schema resources
+         -> exact schema raw digests and byte counts
+         -> static schema-position inventory inside the final core
+         -> final evidence record
+         -> final migration record
+       plus nine schema-valid structural-nonidentity fixtures
+  -> observation-authoring transaction over the immutable 15 subjects:
+       two source manifests
+       + two exact observer stdout results
+       + two execution receipts
+       + external comparison receipt replaced last
+  -> later conformance work, including downstream raw-number traces
+```
+
+Required bindings are final and non-null; retained schemas do not admit
+placeholder, mixed authoring/final, or unresolved raw-binding branches. The
+core does not hash itself. Evidence binds the core and schemas externally and
+does not bind the later migration-record digest or a trace about its own final
+bytes. Migration may bind the exact evidence record. Per-subject traces remain
+downstream of their subjects. No artifact binds itself or a downstream
+artifact.
+
+Receipt-last ordering is not sufficient by itself. Product authoring must
+build and validate exactly 24 outputs in an isolated same-filesystem staging
+directory—twelve schemas, nine fixtures, and three records—fsync the candidate
+files and directory, install only validated bytes, and install the migration
+record last. Only after the twelve schemas and three records are final may the
+separate observation transaction stage its seven outputs and replace the
+comparison receipt last. Readback recomputes both transaction inventories and
+refuses every missing, mixed-generation, stale, or mismatched subject.
+Downstream per-subject traces are deliberately absent from this construction
+slice and cannot be inferred from the observer results.
+
+Before the canonicalizer sees a value, an authoritative raw-octet adapter
+retains number lexemes and unique instance pointers, rejects malformed UTF-8,
+BOM, JSON extensions, duplicate decoded names, decoded surrogate or
+noncharacter code points, and preserves Unicode without normalization.
+
+The final core contains a static position inventory derived only from the
+twelve final schema byte strings. It binds exact schema IDs/digests and
+resolved schema locations, but no concrete subject digest. A downstream trace
+created after a subject is final binds that subject's raw digest/count, every
+numeric token and instance pointer, and its exact static position rule.
+Numeric literals in schema documents are schema-definition data, not
+automatically future instance positions; metaschema evaluation is a separate
+trace. A trace about the evidence record cannot be bound by that same record.
+
+A `type: number`, a number-admitting union, an unresolved branch, a missing or
+stale inventory/trace, or an unclassified numeric position refuses. Accepted
+safe integers convert to IEEE-754 binary64 under `roundTiesToEven`; no generic
+number-position policy is claimed.
+
+This freeze makes a 144-resource side-by-side census measurable: 120 original
+resources, 12 immutable `0.2` resources, and 12 new `0.3` resources. Two
+source- and language-separated observers agree on the complete exact-byte
+projection of the fifteen final schema-and-record subjects. That agreement
+does not prove the static position inventory or complete raw-aware
+applicability traces. The tranche constructs zero product digests, members,
+commitments, snapshots, membership proofs, roots, C0 bundles, checkpoints, P0
+admissions, or activations. It does not establish parser, JCS, schema, domain,
+registry, migration, or profile conformance; complete offline resolution;
+independent reproduction; accountable review; operator acceptance; issuance;
+admission; PRQ-002 closure; Gate A acceptance; runtime; deployment;
+publication; or external authority.
 
 ## Work still required before an immutable candidate
 

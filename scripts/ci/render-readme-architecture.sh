@@ -4,12 +4,14 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 readonly ROOT
 readonly OUTPUT="${1:-$ROOT/artifacts/repository-release/odeya-architecture.svg}"
-readonly SOURCE="${TMPDIR:-/tmp}/odeya-readme-architecture-$$.mmd"
+SOURCE_DIRECTORY="$(mktemp -d "${TMPDIR:-/tmp}/odeya-mermaid-sources.XXXXXX")"
+readonly SOURCE_DIRECTORY
 readonly MMDC="$ROOT/tools/repository-release/node_modules/.bin/mmdc"
 readonly EXPECTED_CHROME_MAJOR="150"
+readonly EXPECTED_DIAGRAM_COUNT="7"
 
 cleanup() {
-  rm -f -- "$SOURCE"
+  rm -rf -- "$SOURCE_DIRECTORY"
 }
 trap cleanup EXIT
 
@@ -46,30 +48,54 @@ fi
 printf 'Mermaid browser: %s\n' "$BROWSER_VERSION"
 
 mkdir -p "$(dirname "$OUTPUT")"
-python3 "$ROOT/scripts/validate_repository_release.py" --extract-mermaid "$SOURCE"
-"$MMDC" \
-  --input "$SOURCE" \
-  --output "$OUTPUT" \
-  --backgroundColor transparent \
-  --quiet
+python3 "$ROOT/scripts/validate_repository_release.py" \
+  --extract-mermaid-directory "$SOURCE_DIRECTORY"
 
-if [[ ! -s "$OUTPUT" ]]; then
-  printf 'Mermaid did not produce a nonempty image.\n' >&2
-  exit 5
+assert_image() {
+  local rendered="$1"
+  if [[ ! -s "$rendered" ]]; then
+    printf 'Mermaid did not produce a nonempty image: %s\n' "$rendered" >&2
+    exit 5
+  fi
+  case "$rendered" in
+    *.svg)
+      if [[ "$(head -c 4 "$rendered")" != "<svg" ]]; then
+        printf 'Mermaid output is not an SVG: %s\n' "$rendered" >&2
+        exit 6
+      fi
+      ;;
+    *.png)
+      if [[ "$(od -An -tx1 -N8 "$rendered" | tr -d ' \n')" != "89504e470d0a1a0a" ]]; then
+        printf 'Mermaid output is not a PNG: %s\n' "$rendered" >&2
+        exit 7
+      fi
+      ;;
+  esac
+}
+
+rendered_count=0
+for source in "$SOURCE_DIRECTORY"/*.mmd; do
+  base="$(basename "$source" .mmd)"
+  if [[ "$base" == "README-01" ]]; then
+    rendered="$OUTPUT"
+  else
+    rendered="$SOURCE_DIRECTORY/$base.svg"
+  fi
+  "$MMDC" \
+    --input "$source" \
+    --output "$rendered" \
+    --backgroundColor transparent \
+    --quiet
+  assert_image "$rendered"
+  rendered_count=$((rendered_count + 1))
+  printf 'Rendered governed Mermaid map: %s\n' "$base"
+done
+
+if [[ "$rendered_count" -ne "$EXPECTED_DIAGRAM_COUNT" ]]; then
+  printf 'Mermaid render census mismatch: expected %s, got %s.\n' \
+    "$EXPECTED_DIAGRAM_COUNT" "$rendered_count" >&2
+  exit 8
 fi
-case "$OUTPUT" in
-  *.svg)
-    if [[ "$(head -c 4 "$OUTPUT")" != "<svg" ]]; then
-      printf 'Mermaid output is not an SVG.\n' >&2
-      exit 6
-    fi
-    ;;
-  *.png)
-    if [[ "$(od -An -tx1 -N8 "$OUTPUT" | tr -d ' \n')" != "89504e470d0a1a0a" ]]; then
-      printf 'Mermaid output is not a PNG.\n' >&2
-      exit 7
-    fi
-    ;;
-esac
 
-printf 'Rendered README architecture map: %s\n' "$OUTPUT"
+printf 'Rendered %s governed Mermaid maps; retained README map: %s\n' \
+  "$rendered_count" "$OUTPUT"

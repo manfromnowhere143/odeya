@@ -227,16 +227,16 @@ The current proposed instance is
 Its offline [validator](../scripts/validate_module_manifest.py) presently
 proves the declared owner/module graph is acyclic, every declared dependency
 and layer edge resolves, all 30 logical modules obey the declared layer policy,
-all 47 machine aggregate types have one owner record, all 132 current schema
+all 47 machine aggregate types have one owner record, all 144 current schema
 files have one matching `$id`/owner record, and all 121 command plus 135 event
 discriminators derive one mapped aggregate owner. The instance is reissued as
 version 2 with digest
-`sha256:e6468055c0a4aa2c74b073aba5f20c8159729f520e0c7c936e1064ab54e23526`;
+`sha256:f0e0f846e4b0cf1c5b189fca599ec261783c339144153d5c5e3d2eb5db5d8327`;
 its validator retrieves the exact version-1 Git blob from checkpoint
 `f4429ce5ca71e58ebb5d65776a45ebb6a2a18889` and independently verifies
 the predecessor byte count, raw SHA-256, declared version, and scoped manifest
-digest. The twelve PRQ-002B schema resources enter this ownership inventory
-only as unissued, unadmitted architecture candidates; ownership does not
+digest. The twelve PRQ-002B and twelve PRQ-002E schema resources enter this
+ownership inventory only as unissued, unadmitted architecture candidates; ownership does not
 construct a product identity or registry member. Git-object reachability is
 lineage evidence, not durable offline retention. These are design-vocabulary,
 inventory, lineage, and owner/module-DAG checks, not an admitted command/event

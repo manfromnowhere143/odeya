@@ -1,6 +1,6 @@
 # Cognitive Architecture
 
-Status: proposed, 2026-07-15. This is the model-driven layer inside Odeya; it has no canonical-state, truth, spending, safety, or publication authority.
+Status: proposed architecture authored 2026-07-15 and reviewed 2026-07-29; unimplemented. This model-driven target has no canonical-state, truth, spending, safety, or publication authority.
 
 ## Verdict: a dual-loop scientific control system
 
@@ -15,18 +15,28 @@ They communicate only through typed proposals and retained artifacts.
 flowchart TB
     M[Mission contract] --> K[Deterministic lifecycle kernel]
     K --> F[Legal work frontier]
+    K -->|versioned read-only projection| G[Hypothesis / epistemic graph]
     F --> C[Research-State Compiler]
+    G --> C
     C --> S[Epistemic supervisor]
-    S <--> G[Hypothesis / epistemic graph]
-    S --> Q[Selective specialist coalition]
-    G --> P[Experiment and VOI frontier]
-    Q --> R[Model / tool / compute router]
-    P --> R
+    S --> Q[Proposed specialist coalition]
+    S --> P[Proposed graph deltas<br/>and experiment / VOI frontier]
+    Q --> WP[Proposed bounded work]
+    P --> WP
+    K --> WA{Deterministic work admission}
+    WP --> WA
+    WA -->|admit exact scope| WC[Admitted WorkContract + lease]
+    WA -->|reject or retain proposal| K
+    WC --> R[Isolated model / tool / compute execution]
     R --> A[Candidate artifacts and graph deltas]
-    A --> V[Independent verification fabric]
-    V --> D[Deterministic adjudicator and claim compiler]
-    D --> K
-    D --> G
+    A --> N{Deterministic kernel admission<br/>reject · retain-only · commit}
+    N --> K
+    K --> V[Separately assigned verification fabric<br/>isolation + measured independence vector retained]
+    V --> VR[Verification record]
+    VR --> N
+    K --> D[Deterministic adjudicator and claim compiler]
+    D --> DR[Determination or refusal]
+    DR --> N
 ```
 
 No model, including the epistemic supervisor, owns truth or mission state.
@@ -71,7 +81,7 @@ is deterministic at its pinned contract version. This creates an intentional asy
 Research is partially observed and the true transition law is generally unknown, so Odeya must not pretend to solve one fully specified POMDP. For a candidate experiment `d`, hard constraints first define
 
 \[
-\mathcal D_t=\{d:\text{observable, identifiable enough, authorized, affordable, safe enough, and verifiable}\}.
+\mathcal D_t=\{d:\text{observable, identifiable enough, authorized, affordable, within accepted risk and safety policy, and verifiable}\}.
 \]
 
 Within `\mathcal D_t`, planning retains a robust vector such as
@@ -87,14 +97,15 @@ The controller stops or escalates when the legal frontier is empty, a sealed sta
 
 ## Scientific lifecycle supervisor
 
-This is kernel code, not an LLM. It:
+In the target architecture this must be deterministic kernel code, not an LLM;
+no such runtime is implemented. It must:
 
-- derives the legal next-stage frontier;
-- enforces protocol and exposure state;
-- calculates remaining resources and active grants;
-- serializes mutable-stage promotion;
-- stops on missing evidence, permission, budget, or policy;
-- accepts model output only through validated commands and artifact promotion.
+- derive the legal next-stage frontier;
+- enforce protocol and exposure state;
+- calculate remaining resources and active grants;
+- serialize mutable-stage promotion;
+- stop on missing evidence, permission, budget, or policy;
+- accept model output only through validated commands and artifact promotion.
 
 It never asks a model whether a transition is legal when the contract can decide it.
 
@@ -119,7 +130,8 @@ It may not:
 - declare support, safety, value, or completion;
 - turn consensus into evidence.
 
-A context crash loses no scientific state. The next epoch compiles from retained facts.
+Acceptance invariant: a context crash must not lose canonical scientific
+state. A later epoch must compile from retained facts rather than model memory.
 
 ## Observable epistemic conduct
 
@@ -391,7 +403,9 @@ Production missions are not uncontrolled contextual-bandit experiments.
 - **Telos:** execution-grounded success, reward/grader hacking, known-bad controls, protocol leakage, and corrections. Primary test of verification and evaluator integrity.
 - **Inbar:** evidence admissibility, competing mechanisms, measurement/causal assumptions, prospective testbeds, sealed truth, and physical authority. A confident diagnosis from its current blocked substrate would be an Odeya failure.
 
-They enter as pinned benchmark/mission adapters, never merged repositories or training data.
+After explicit rights-settled admission, they may enter as pinned
+benchmark/mission adapters. They are never merged repositories or assumed
+training data.
 
 ## What is proposed as distinct
 

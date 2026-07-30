@@ -16,7 +16,7 @@ that existed at architecture checkpoint
 has changed. It inventories schema paths absent at that checkpoint separately;
 those are new candidates, not reissues and not proof of a predecessor.
 
-The current bounded comparison contains 98 reissued existing paths and 17 new
+The current bounded comparison contains 98 reissued existing paths and 46 new
 candidates. `canonical-work-lease:0.1.0` remains one of those new candidates:
 its raw-byte lineage and path classification are checked, but its canonical
 record identity, admission, reducer, and authority remain blocked. The two
@@ -25,6 +25,14 @@ also new, unissued candidates. Their raw schema bytes are inventoried here
 while separate nonrecursive evidence binds their exact candidate records;
 none creates a canonical content identity, admission, human-only authority, or
 profile acceptance.
+
+The 46-row new-path inventory includes the twelve final-only PRQ-002E
+`odeya-jcs-0.3` schema candidates added by ADR 0103. They are recorded as
+`new_schema_not_reissue` because their repository paths did not exist at the
+source checkpoint. Their explicit `0.2.0`, `0.7.0`, `0.8.0`, or `0.9.0`
+resource identities and raw-byte bindings do not overwrite, redirect, admit,
+or issue any predecessor resource and do not establish canonicalization
+conformance or product identity.
 
 ## Required reissue edge
 

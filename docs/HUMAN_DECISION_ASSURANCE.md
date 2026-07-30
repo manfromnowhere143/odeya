@@ -1,6 +1,7 @@
 # Human Decision Assurance
 
-Status: unissued Gate A architecture candidate, 2026-07-22. The retained T0
+Status: unissued Gate A architecture candidate; original T0 tranche
+2026-07-22, current schema census checked 2026-07-29. The retained T0
 byte-bound/recomputation tranche and its seven-item bounded adoption-evidence
 checklist are retained for corrected exact scope `.0005`. The eleven-round
 context-isolated technical-review report records
@@ -45,18 +46,18 @@ The generated challenge and evidence remain outside the Core whose exact bytes
 they bind. No artifact digests itself.
 
 ```mermaid
-flowchart LR
-    D["Exact source decision bytes<br/>source schema retains meaning"]
-    M["Exact candidate bytes"]
-    C["Assurance Core<br/>one later-ratification request<br/>no challenge output · no self-digest"]
-    H["Two-phase challenge + receipt<br/>acyclic exact framing"]
-    E["Evidence 0.2<br/>one participant observation<br/>closed 14-role inventory"]
-    B["Backing-byte receipt<br/>14 retained preimages rederived"]
-    R["Three recomputation results<br/>Python · Node · Java"]
-    X["Comparison receipt<br/>exact six-field agreement"]
-    S["Seal 0.2<br/>candidate eligibility only"]
-    W["Future AssuredDecision wrapper<br/>identity not assigned"]
-    P["Controlled policy evaluation<br/>currentness · authority · quorum"]
+flowchart TB
+    D["Synthetic source-decision bytes<br/>source schema retains meaning"]
+    M["Synthetic candidate bytes"]
+    C["Unissued Assurance Core candidate<br/>one later-ratification request<br/>no challenge output · no self-digest"]
+    H["Retained synthetic two-phase challenge + receipt<br/>acyclic exact framing"]
+    E["Unissued Evidence 0.2 candidate<br/>synthetic participant observation<br/>closed 14-role inventory"]
+    B["Retained backing-byte receipt<br/>14 synthetic preimages rederived"]
+    R["Retained recomputation results<br/>Python · Node · Java"]
+    X["Retained comparison receipt<br/>exact six-field agreement"]
+    S["Unissued Seal 0.2 candidate<br/>singleton eligibility only"]
+    W["Future AssuredDecision wrapper<br/>unimplemented · identity not assigned"]
+    P["Future controlled policy evaluation<br/>unimplemented · currentness · authority · quorum"]
 
     D --> C
     M --> C
@@ -71,11 +72,12 @@ flowchart LR
     E -->|one exact raw binding| S
     B --> S
     X --> S
-    S --> W --> P
+    S -.-> W
+    W -.-> P
 
-    classDef current fill:#E0F2FE,stroke:#0369A1,color:#0C4A6E
+    classDef retainedCandidate fill:#E0F2FE,stroke:#0369A1,color:#0C4A6E
     classDef later fill:#F1F5F9,stroke:#64748B,color:#334155,stroke-dasharray: 5 5
-    class D,M,C,H,E,B,R,X,S current
+    class D,M,C,H,E,B,R,X,S retainedCandidate
     class W,P later
 ```
 
@@ -265,20 +267,31 @@ randomness, atomic storage, or a real ceremony.
 Each required observation is explicit:
 
 ```mermaid
-stateDiagram-v2
-    [*] --> Supported: supported under applicable evidence profile
-    [*] --> Unknown: missing / unavailable / not verified
-    [*] --> NotApplicable: required support marked not applicable
-    [*] --> Contradicted: positive conflict or failed check
-    Supported --> IndividuallyEligible: all singleton rules supported
-    Unknown --> Indeterminate
-    NotApplicable --> Indeterminate
-    Contradicted --> Invalid
-    IndividuallyEligible --> WrapperAssembly: future only
-    Indeterminate --> Blocked
-    Invalid --> Blocked
-    WrapperAssembly --> ControlledEvaluation: currentness + authority + quorum
-    ControlledEvaluation --> NoAuthority: wrapper/profile unissued
+flowchart TB
+    O[Each member of the closed required<br/>observation + condition set] --> C{Retained member disposition}
+    C -->|supported under applicable profile| S[Supported]
+    C -->|missing · unavailable · not verified| U[Unknown]
+    C -->|required support marked not applicable| NA[Not applicable]
+    C -->|positive conflict or failed required condition| X[Contradicted]
+    S --> A{Evaluate complete retained set<br/>in fixed precedence order}
+    U --> A
+    NA --> A
+    X --> A
+    A -->|any Contradicted or failed required condition| INV[Invalid retained]
+    A -->|otherwise any Unknown or Not applicable| IND[Indeterminate retained]
+    A -->|otherwise all Supported<br/>and all required conditions satisfied| IE[Individually eligible]
+    IND --> RI[Wrapper assembly refused<br/>indeterminate is not approval]
+    INV --> RV[Wrapper assembly refused<br/>invalid is not approval]
+    IE -.-> W[Future AssuredDecision assembly<br/>unimplemented]
+    W -.-> CE[Future controlled evaluation<br/>currentness · authority · quorum]
+    CE -.-> B[Current boundary<br/>wrapper + profile unissued<br/>no authority]
+
+    classDef retainedCandidate fill:#E0F2FE,stroke:#0369A1,color:#0C4A6E
+    classDef refused fill:#FFF7ED,stroke:#9A3412,color:#7C2D12
+    classDef later fill:#F1F5F9,stroke:#64748B,color:#334155,stroke-dasharray: 5 5
+    class S,U,NA,X,A,IE,IND,INV retainedCandidate
+    class RI,RV refused
+    class W,CE,B later
 ```
 
 The synthetic positive control exercises the `Supported` branch without
@@ -455,12 +468,14 @@ derive their semantic classification from source.
 It additionally compares every baseline schema with the frozen Git checkpoint,
 binds both the exact predecessor and deliberately amended
 `docs/AUTHORITY_MATRIX.md` bytes, requires the current schema paths to equal the
-exact disjoint union of 112 frozen baseline schemas and twenty side-by-side
-current candidates: eight HDA mechanism candidates and twelve PRQ-002B
-product-identity schema resources classified explicitly as non-HDA and
-non-authority. The resulting current union is 132 schemas. The PRQ-002B rows
-exist only to close the current path census; they are not HDA mechanisms,
-human-only slots, migrated consumers, product identities, or authority.
+exact disjoint union of 112 frozen baseline schemas and 32 side-by-side
+current candidates: eight HDA mechanism candidates, twelve PRQ-002B
+product-identity schema resources, and twelve PRQ-002E `odeya-jcs-0.3`
+construction resources. Both PRQ-002 cohorts are classified explicitly as
+non-HDA and non-authority. The resulting current union is 144 schemas. Those
+24 rows exist only to close the current path census; they are not HDA
+mechanisms, human-only slots, migrated consumers, product identities, or
+authority.
 The checker also pins the judgment-bearing classification, command/event
 partition, family, validator, construction, completeness, migration, and
 nonclaim sections. The amended matrix names only a future admitted

@@ -198,6 +198,13 @@
       "expected": "architecture evidence exact command census"
     },
     {
+      "id": "missing-dedicated-prq-002e-profile-0.3-construction",
+      "subject": ".github/workflows/architecture.yml",
+      "old": "            python tests/product-identity-profile-0.3-candidate/authoring/generate_candidate.py --check && python tests/product-identity-profile-0.3-candidate/check.py\n",
+      "new": "",
+      "expected": "architecture evidence exact command census"
+    },
+    {
       "id": "missing-dedicated-hda-successor-recompute",
       "subject": ".github/workflows/architecture.yml",
       "old": "            python scripts/validate_human_decision_assurance_successor.py --recompute-all\n",
@@ -208,7 +215,7 @@
       "id": "unexpected-dedicated-execution-step",
       "subject": ".github/workflows/architecture.yml",
       "old": "      - name: Reproduce architecture evidence checks\n        run: |\n",
-      "new": "      - name: Run a tenth dedicated architecture check\n        run: python scripts/validate_contract_profiles.py\n\n      - name: Reproduce architecture evidence checks\n        run: |\n",
+      "new": "      - name: Run an eleventh dedicated architecture check\n        run: python scripts/validate_contract_profiles.py\n\n      - name: Reproduce architecture evidence checks\n        run: |\n",
       "expected": "architecture evidence executable job bytes must be exact"
     },
     {
@@ -303,6 +310,13 @@
       "expected": "integrated architecture evidence inventory must be exact"
     },
     {
+      "id": "missing-integrated-prq-002e-profile-0.3-construction",
+      "subject": "scripts/validate.py",
+      "old": "    \"tests/product-identity-profile-0.3-candidate/check.py\",\n",
+      "new": "",
+      "expected": "integrated architecture evidence inventory must be exact"
+    },
+    {
       "id": "missing-integrated-hda-successor",
       "subject": "scripts/validate.py",
       "old": "    \"scripts/validate_human_decision_assurance_successor.py\",\n",
@@ -317,25 +331,69 @@
       "expected": "integrated architecture evidence executable bytes must be exact"
     }
   ],
+  "foundation_timeout_policy_mutations": [
+    {
+      "id": "widen-default-foundation-timeout",
+      "subject": "scripts/validate.py",
+      "old": "DEFAULT_FOUNDATION_CHILD_TIMEOUT_SECONDS = 30\n",
+      "new": "DEFAULT_FOUNDATION_CHILD_TIMEOUT_SECONDS = 60\n",
+      "expected": "Foundation timeout policy must retain the exact 30-second default and path-specific 90/60-second overrides"
+    },
+    {
+      "id": "rebind-foundation-timeout-maps",
+      "subject": "scripts/validate.py",
+      "old": "ARCHITECTURE_EVIDENCE_CHECK_TIMEOUT_SECONDS = {\n    \"tests/product-identity-profile-0.3-candidate/check.py\": 60,\n}\nMARKDOWN_LINK =",
+      "new": "ARCHITECTURE_EVIDENCE_CHECK_TIMEOUT_SECONDS = {\n    \"tests/product-identity-profile-0.3-candidate/check.py\": 60,\n}\nISOLATED_CONTRACT_SUITE_TIMEOUT_SECONDS[\n    \"tests/product-identity-profile-candidate/check.py\"\n] = 60\nARCHITECTURE_EVIDENCE_CHECK_TIMEOUT_SECONDS[\n    \"tests/product-identity-profile-0.3-candidate/check.py\"\n] = 30\nMARKDOWN_LINK =",
+      "expected": "Foundation timeout policy bindings must remain immutable and have only their exact executable references"
+    },
+    {
+      "id": "bypass-prq-002e-timeout-policy",
+      "subject": "scripts/validate.py",
+      "old": "                timeout=ARCHITECTURE_EVIDENCE_CHECK_TIMEOUT_SECONDS.get(\n                    relative, DEFAULT_FOUNDATION_CHILD_TIMEOUT_SECONDS\n                ),\n",
+      "new": "                timeout=30,\n",
+      "expected": "Foundation timeout consumers must use the exact path-specific bounded policy"
+    },
+    {
+      "id": "rebind-nested-prq-002e-timeout",
+      "subject": "tests/product-identity-profile-candidate/check.py",
+      "old": "POST_PRQ_002B_CHECK_TIMEOUT_SECONDS = 60\nALLOWED_SUITE_JSON_PATHS =",
+      "new": "POST_PRQ_002B_CHECK_TIMEOUT_SECONDS = 60\nglobals()[\"POST_PRQ_002B_CHECK_TIMEOUT_SECONDS\"] = 30\nALLOWED_SUITE_JSON_PATHS =",
+      "expected": "PRQ-002B nested successor timeout binding must remain immutable and have only its exact executable reference"
+    },
+    {
+      "id": "decorate-foundation-timeout-consumer",
+      "subject": "scripts/validate.py",
+      "old": "def validate_isolated_contract_suites(errors: list[str]) -> int:\n",
+      "new": "@(lambda _original: (lambda errors: 17))\ndef validate_isolated_contract_suites(errors: list[str]) -> int:\n",
+      "expected": "Foundation timeout consumers must use the exact path-specific bounded policy"
+    },
+    {
+      "id": "rebind-predecessor-main-under-control-flow",
+      "subject": "tests/product-identity-profile-candidate/check.py",
+      "old": "\n\nif __name__ == \"__main__\":\n    raise SystemExit(main())\n",
+      "new": "\n\nif True:\n    def main() -> int:\n        return 0\n\n\nif __name__ == \"__main__\":\n    raise SystemExit(main())\n",
+      "expected": "PRQ-002B nested successor timeout must remain exactly 60 seconds"
+    }
+  ],
   "release_contract": "docs/REPOSITORY_RELEASE.md",
   "release_contract_mutations": [
     {
       "id": "stale-architecture-evidence-counts",
-      "old": "Reproduce nine dedicated prerequisite/member checks: Gate A prerequisites, PRQ-009 order, schema reissue, module manifest, first-slice scope, the PRQ-002A identity probe, the PRQ-002C raw-number prerequisite, the PRQ-002D prehash registry replay, and human-decision-assurance successor recomputation. `Foundation` separately runs the complete integrated fourteen-check census",
+      "old": "Reproduce ten dedicated prerequisite/member checks: Gate A prerequisites, PRQ-009 order, schema reissue, module manifest, first-slice scope, the PRQ-002A identity probe, the PRQ-002C raw-number prerequisite, the PRQ-002D prehash registry replay, the PRQ-002E profile-0.3 construction, and human-decision-assurance successor recomputation. `Foundation` separately runs the complete integrated fifteen-check census",
       "new": "Reproduce five dedicated prerequisite/member checks: Gate A prerequisites, PRQ-009 order, schema reissue, module manifest, first-slice scope, and human-decision-assurance successor recomputation. `Foundation` separately runs the complete integrated ten-check census",
-      "expected": "Reproduce nine dedicated prerequisite/member checks"
+      "expected": "Reproduce ten dedicated prerequisite/member checks"
     },
     {
       "id": "stale-architecture-evidence-mutation-count",
-      "old": "The exact inventory contains twenty-five retained known-bad mutations",
+      "old": "The exact inventory contains twenty-seven retained known-bad mutations",
       "new": "The exact inventory contains seventeen retained known-bad mutations",
-      "expected": "The exact inventory contains twenty-five retained known-bad mutations"
+      "expected": "The exact inventory contains twenty-seven retained known-bad mutations"
     },
     {
       "id": "stale-architecture-evidence-run-counts",
-      "old": "The release checker compares the dedicated nine-command run body and the\nintegrated fourteen-member Python tuple",
+      "old": "The release checker compares the dedicated ten-command run body and the\nintegrated fifteen-member Python tuple",
       "new": "The release checker compares the dedicated eight-command run body and the\nintegrated fourteen-member Python tuple",
-      "expected": "The release checker compares the dedicated nine-command run body"
+      "expected": "The release checker compares the dedicated ten-command run body"
     },
     {
       "id": "future-private-remote-regression",
@@ -366,6 +424,64 @@
       "old": "It is\nhistory, not a procedure to rerun.",
       "new": "It is\nhistory, not a procedure to rerun. The canonical repository is private and no remote exists.",
       "expected": "forbidden contradictory statement 'canonical repository is private'"
+    },
+    {
+      "id": "stale-release-script-mutation-count",
+      "old": "Eleven separately retained release-script isolation mutations",
+      "new": "Seven separately retained release-script isolation mutations",
+      "expected": "Eleven separately retained release-script isolation mutations"
+    },
+    {
+      "id": "stale-foundation-timeout-policy-mutation-count",
+      "old": "Six Foundation timeout-policy mutations",
+      "new": "Seven Foundation timeout-policy mutations",
+      "expected": "Six Foundation timeout-policy mutations"
+    }
+  ],
+  "release_census_mutations": [
+    {
+      "id": "coherent-release-script-growth-with-stale-prose",
+      "target": "release_script_mutations",
+      "synthetic_id": "synthetic-twelfth-release-script-mutation",
+      "expected": "release-script expected and fixture censuses must each contain exactly 11 members"
+    },
+    {
+      "id": "coherent-release-contract-growth-with-stale-prose",
+      "target": "release_contract_mutations",
+      "synthetic_id": "synthetic-eleventh-release-contract-mutation",
+      "expected": "release-contract expected and fixture censuses must each contain exactly 10 members"
+    },
+    {
+      "id": "coherent-foundation-timeout-growth-with-stale-prose",
+      "target": "foundation_timeout_policy_mutations",
+      "synthetic_id": "synthetic-seventh-foundation-timeout-policy-mutation",
+      "expected": "foundation-timeout-policy expected and fixture censuses must each contain exactly 6 members"
+    }
+  ],
+  "release_fixture_readme_mutations": [
+    {
+      "id": "stale-architecture-evidence-fixture-readme-count",
+      "old": "Twenty-seven architecture-evidence inventory mutations",
+      "new": "Twenty-five architecture-evidence inventory mutations",
+      "expected": "repository-release fixture README must carry exactly the executable-derived boundary 'Twenty-seven architecture-evidence inventory mutations'"
+    },
+    {
+      "id": "stale-release-contract-fixture-readme-count",
+      "old": "Ten release-contract mutations",
+      "new": "Nine release-contract mutations",
+      "expected": "repository-release fixture README must carry exactly the executable-derived boundary 'Ten release-contract mutations'"
+    },
+    {
+      "id": "stale-release-script-fixture-readme-count",
+      "old": "Eleven release-script isolation mutations",
+      "new": "Seven release-script isolation mutations",
+      "expected": "repository-release fixture README must carry exactly the executable-derived boundary 'Eleven release-script isolation mutations'"
+    },
+    {
+      "id": "stale-foundation-timeout-fixture-readme-count",
+      "old": "Six Foundation timeout-policy mutations",
+      "new": "Seven Foundation timeout-policy mutations",
+      "expected": "repository-release fixture README must carry exactly the executable-derived boundary 'Six Foundation timeout-policy mutations'"
     }
   ],
   "release_script_mutations": [
@@ -417,6 +533,34 @@
       "old": "OWN_TOOL_CACHE=0\nif [[ -z \"${ODEYA_TOOL_CACHE:-}\" ]]; then\n  ODEYA_TOOL_CACHE=\"$(mktemp -d \"${TMPDIR:-/tmp}/odeya-release-tools.XXXXXX\")\"\n  OWN_TOOL_CACHE=1\nfi\nreadonly ODEYA_TOOL_CACHE\nreadonly OWN_TOOL_CACHE\nexport ODEYA_TOOL_CACHE\n",
       "new": "ODEYA_TOOL_CACHE=\"${TMPDIR:-/tmp}/odeya-release-tools\"\nreadonly ODEYA_TOOL_CACHE\nexport ODEYA_TOOL_CACHE\n",
       "expected": "standalone release check must allocate a unique tool cache"
+    },
+    {
+      "id": "weaken-mermaid-render-count",
+      "subject": "scripts/ci/render-readme-architecture.sh",
+      "old": "readonly EXPECTED_DIAGRAM_COUNT=\"7\"",
+      "new": "readonly EXPECTED_DIAGRAM_COUNT=\"1\"",
+      "expected": "Mermaid renderer exact-byte contract drifted"
+    },
+    {
+      "id": "skip-non-readme-mermaid-renders",
+      "subject": "scripts/ci/render-readme-architecture.sh",
+      "old": "  rendered_count=$((rendered_count + 1))\n  printf 'Rendered governed Mermaid map: %s\\n' \"$base\"\ndone",
+      "new": "  rendered_count=$((rendered_count + 1))\n  printf 'Rendered governed Mermaid map: %s\\n' \"$base\"\n  break\ndone",
+      "expected": "Mermaid renderer exact-byte contract drifted"
+    },
+    {
+      "id": "remove-mermaid-image-signature-assertion",
+      "subject": "scripts/ci/render-readme-architecture.sh",
+      "old": "  assert_image \"$rendered\"\n",
+      "new": "  test -s \"$rendered\"\n",
+      "expected": "Mermaid renderer exact-byte contract drifted"
+    },
+    {
+      "id": "renderer-crlf-byte-substitution",
+      "subject": "scripts/ci/render-readme-architecture.sh",
+      "old": "#!/usr/bin/env bash\n",
+      "new": "#!/usr/bin/env bash\r\n",
+      "expected": "Mermaid renderer exact-byte contract drifted"
     }
   ]
 }

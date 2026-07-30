@@ -1,6 +1,10 @@
 # Odeya Standards Profile
 
-Status: proposed baseline, checked 2026-07-16. This document distinguishes external semantic standards from replaceable product choices. Exact frozen copies, digests, validators, and conformance vectors remain blocking work under the pre-implementation gate.
+Status: proposed baseline. The canonical-JSON construction pin was added
+2026-07-29; the remaining baseline was checked 2026-07-16. This document
+distinguishes external semantic standards from replaceable product choices.
+Exact frozen copies, digests, validators, and conformance vectors remain
+blocking work under the pre-implementation gate.
 
 ## Conformance record
 
@@ -149,7 +153,8 @@ trusted root—not a field smuggled into a timeless content digest.
 
 RFC 8785 is necessary but not sufficient. Odeya's profile must:
 
-- reject duplicate object keys before parsing;
+- reject duplicate decoded object names during the raw parse, before lossy
+  object-map materialization;
 - allow only valid UTF-8 and declare that Unicode is not normalized silently;
 - retain raw number-token provenance and the unique instance position before
   host numeric conversion or schema type evaluation;
@@ -181,8 +186,9 @@ and 44 suite-gate known-bads fire. It does not establish generic schema-path
 evaluation, number-position semantics, full RFC 8785 correctness, nine-domain
 framing, organizational independence, or full successor-profile conformance.
 The frozen `odeya-jcs-0.2` candidate remains unissued and blocked from
-conformance and issuance. The prospective `odeya-jcs-0.3` profile does not
-exist.
+conformance and issuance. ADR 0101 itself did not create
+`odeya-jcs-0.3`, and its bounded observations cannot be inherited as
+successor-profile conformance.
 
 [ADR 0102](decisions/0102-prove-non-product-prehash-schema-registry-replay.md)
 retains the next bounded PRQ-002D prerequisite before any structured or product
@@ -195,9 +201,124 @@ establish full RFC 8785 correctness, generic schema evaluation, complete
 offline resolution, dependency-closed product registries, cross-object product
 replay, organizational independence, profile conformance, product identity,
 admission, issuance, PRQ-002 closure, Gate A acceptance, or runtime authority.
-A complete side-by-side `odeya-jcs-0.3`
-core/evidence/migration and reissued twelve-resource cohort remains the next
-profile-level dependency.
+ADR 0102 itself did not create or test `odeya-jcs-0.3`; its bounded prehash
+result cannot be promoted into product identity or successor-profile
+conformance.
+
+### `odeya-jcs-0.3` bounded construction pin
+
+[ADR 0103](decisions/0103-construct-side-by-side-odeya-jcs-0-3-candidate.md)
+freezes an architecture-only construction graph for the unissued
+`urn:odeya:canonicalization:odeya-jcs-0.3`, version `0.3.0`. It is
+side-by-side with the exact frozen `odeya-jcs-0.2` bytes. It is not an alias,
+patch, redirect, implicit upcast, or authority to reinterpret a predecessor
+digest.
+
+The authoritative input boundary is a raw-octet adapter separate from the
+canonicalizer core. It binds raw SHA-256 and byte count, decodes strict [RFC
+3629 UTF-8](https://www.rfc-editor.org/rfc/rfc3629.html), rejects a byte order
+mark, accepts exactly one [RFC
+8259](https://www.rfc-editor.org/rfc/rfc8259.html) JSON value, detects
+duplicate decoded names before lossy map construction, enforces [I-JSON RFC
+7493 section
+2.1](https://www.rfc-editor.org/rfc/rfc7493.html#section-2.1) by
+deterministically refusing decoded surrogate or noncharacter code points, and
+retains each raw number lexeme with its unique [RFC
+6901](https://www.rfc-editor.org/rfc/rfc6901.html) instance pointer. A native
+host parser cannot supply authoritative duplicate-name, token-class, or
+numeric-conversion evidence.
+
+The canonicalization algorithm is [RFC
+8785](https://www.rfc-editor.org/rfc/rfc8785.html) with exactly verified [EID
+6292](https://www.rfc-editor.org/errata/eid6292) and [EID
+7920](https://www.rfc-editor.org/errata/eid7920). Its ECMAScript dependency is
+pinned to [ECMA-262, 10th edition,
+2019](https://tc39.es/ecma262/2019/): string serialization uses
+section 24.5.2.2 through EID 6292, and number serialization uses section
+7.1.12.1 including Note 2. Odeya makes every ADR 0101 lexical negative zero a
+deterministic refusal.
+
+RFC 8259 errata are selected individually, never inherited as a blanket set.
+The candidate does not apply [RFC 8259 EID
+5318](https://www.rfc-editor.org/errata/eid5318) to canonical output because
+the more specific RFC 8785 string rule controls: U+002F `/` may arrive escaped
+or unescaped and is always emitted unescaped. A retained slash vector must
+make that precedence load-bearing.
+
+Unicode scalar sequences are preserved exactly. No NFC, NFD, NFKC, NFKD,
+case, or locale normalization is allowed; canonically equivalent but
+code-point-distinct strings remain distinct. Object names sort recursively by
+unsigned UTF-16 code units, arrays retain order, and the final encoding is
+UTF-8 without inter-token whitespace.
+
+[JSON Schema Draft
+2020-12](https://json-schema.org/draft/2020-12/json-schema-core.html) has an
+arbitrary-precision base-10 mathematical number model; JCS emits IEEE-754
+binary64. The exact `0.3` cohort therefore uses two non-cyclic layers. A
+static schema-position inventory inside the final core is derived only from
+the twelve final schema byte strings and binds schema IDs, raw digests,
+resolved schema locations, and integer-type or recursively identified
+integer-valued-`const` rules. It carries no concrete subject digest. A
+downstream trace produced after each concrete subject is final binds the
+subject raw digest/count, every numeric lexeme/class and instance pointer, and
+the exact static schema rule that evaluated it.
+
+Numeric literals inside a schema document are schema-definition data, not
+automatically future instance positions; metaschema evaluation requires its
+own trace. The nine product schemas may govern later product subjects, while
+the three control schemas govern the core, evidence, and migration records.
+A trace about the evidence record remains downstream and cannot be bound by
+that same evidence record. A later conformance inventory/comparison receipt
+must bind those traces; the retained construction-observation receipt does
+not.
+
+Any `type: number`, number-admitting union, unresolved branch, missing or
+stale inventory/trace, or otherwise unclassified numeric position is refused.
+Admitted integer tokens follow ADR 0101's lexical and safe-integer limits;
+subsequent decimal-to-binary64 conversion uses [IEEE
+754-2019](https://ieeexplore.ieee.org/document/8766229)
+`roundTiesToEven`. This closes only the measured zero-`type:number` cohort,
+not generic number semantics.
+
+The exact product domains are:
+
+```text
+odeya-schema-resource-record-v2
+odeya-aggregate-state-subject-record-v2
+odeya-reducer-contract-record-v2
+odeya-event-contract-record-v2
+odeya-ordered-member-map-commitment-v2
+odeya-schema-registry-v3
+odeya-aggregate-state-subject-registry-v3
+odeya-reducer-registry-v3
+odeya-event-contract-registry-v3
+```
+
+The twelve exact schema paths and IDs are frozen in ADR 0103. The three
+final-only architecture records are
+`architecture/canonicalization-profile-core-0.3-candidate.json`,
+`architecture/canonicalization-profile-0.3-candidate-evidence.json`, and
+`architecture/canonicalization-profile-0.2-to-0.3-migration-candidate.json`.
+Required raw bindings cannot be placeholders or authoring-time `null`s. The
+acyclic order separates two retained transactions from later conformance. The
+product-authoring transaction stages exactly twelve schemas, nine
+structural-nonidentity fixtures, and three records; the migration record is
+installed last. Only after the fifteen schema-and-record subjects are final
+may the observation transaction stage two source manifests, two exact stdout
+results, two execution receipts, and a comparison receipt replaced last.
+Downstream per-subject traces follow in a later conformance unit; no artifact
+binds itself or a downstream artifact. Receipt-last ordering is insufficient
+alone: each authoring transaction must validate its complete graph in an
+isolated same-filesystem staging directory, fsync the candidate files and
+directory, install only validated final bytes, and make every missing,
+mixed-generation, stale, or mismatched subject refuse on readback.
+
+This construction pin establishes no RFC or Odeya-profile conformance,
+product digest, product member, ordered commitment, registry snapshot,
+identity, admission, profile or schema issuance, complete offline resolution,
+independent reproduction, accountable review, operator acceptance, PRQ-002
+closure, Gate A acceptance, runtime, deployment, publication, or external
+authority.
 
 ## JSON Schema validation profile
 

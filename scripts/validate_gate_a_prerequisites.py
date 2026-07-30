@@ -48,6 +48,21 @@ CANONICAL_PROFILE_SUCCESSOR_MIGRATION = (
 PRQ_002B_PREDECESSOR_MANIFEST = (
     ROOT / "tests/product-identity-profile-candidate/predecessor-schemas.json"
 )
+CANONICAL_PROFILE_0_3_CORE = (
+    ROOT / "architecture/canonicalization-profile-core-0.3-candidate.json"
+)
+CANONICAL_PROFILE_0_3_EVIDENCE = (
+    ROOT / "architecture/canonicalization-profile-0.3-candidate-evidence.json"
+)
+CANONICAL_PROFILE_0_3_MIGRATION = (
+    ROOT
+    / "architecture/canonicalization-profile-0.2-to-0.3-migration-candidate.json"
+)
+PRQ_002E_COMPARISON_RECEIPT = (
+    ROOT
+    / "tests/product-identity-profile-0.3-candidate/results/"
+    "comparison-receipt.json"
+)
 PRQ_002D_MANIFEST = (
     ROOT / "tests/schema-registry-prehash-replay/manifest.json"
 )
@@ -111,24 +126,24 @@ CURRENT_ASSURANCE_UNITS = (
     (
         "docs/ARCHITECTURE_STATUS.md", "## Readiness by Gate A area", None, "table_row", "| G3 security/authority |", None,
         "0f6604e35890637bb7c14a990f53468bc0a2274fa4a4a139e94dd3bb459ba8ed",
-        "e597a221a6878f312bf90266f3bd8083ed0d3446dfaa11765a100313080626a7",
+        "4db3c4f0a8da034c9f2c129171af5bf41e4207050eb50c79ce2ac554fcfb52e7",
     ),
     (
         "docs/ARCHITECTURE_STATUS.md", "## Critical blockers", None, "table_row", "| A-016 |", None,
         "c35e7cf3acee32233ab9216f4f317c48761465b490b9a0a36c56f5609931e11b",
-        "194ff69141b82daf9a01645c5113f33de413824f0fa7a412ba5644f777790db1",
+        "a0ab22854a91fbcd530e3fc6d786fa3497889bc5ba959b2e9fe1e83555201934",
     ),
     (
         "docs/SESSION_HANDOFF.md", "## What this lane established, and where to put pressure next", None,
         "bullet", "**PRQ-013 now has retained byte-bound/recomputation candidate evidence, not closure.**", 1,
-        "96db3a878a2aa66dfb3b33fbcf3466383deb9b5798972afc1c94da70293c1501",
-        "b3d2bc55884a1174d248842a7a8a4ee6d43f3e0ba23c9778ad2b3665aec6787d",
+        "160ed1c9184a0f91d4e8100e0105f5440944dafd3881b043c714191421d87c39",
+        "5c2bd69c2bbba5f9e64b83f867f85209ccd9429f518bbc6f75f20685abbc3570",
     ),
     (
         "docs/SESSION_HANDOFF.md", "## Active PRQ-013 candidate — resolve release status from Git", None,
         "paragraph", "Those are structural and bounded-semantic candidate measurements", 7,
         "e0e4fd58d204a82cbcc698f436818e390225733fd52474dd96f9f449d986852c",
-        "f8b419cc746f3f85b4d5d5fa33f6f7a2a12353745e07aec0b1e397aff767eae9",
+        "aa13c59034f2fc7022de09baacd452fbe263f56e79e3372406dfca15e1efc9ae",
     ),
     (
         "docs/decisions/0092-bind-human-decisions-through-an-external-assurance-wrapper.md",
@@ -145,19 +160,31 @@ CURRENT_ASSURANCE_UNITS = (
 
 RECOVERY_HANDOFF = "docs/SESSION_HANDOFF.md"
 RECOVERY_HEADING = (
-    "## Current repository recovery identity — authoritative 2026-07-29"
+    "## Current repository recovery identity — authoritative 2026-07-30"
 )
-RECOVERY_BASE = "d3ec64f3abfc64467c0bc3bfae330d86e2af89b2"
-RECOVERY_BASE_TREE = "69304534a61a7c5d085d183d847285a181eaabfc"
+RECOVERY_BASE = "617209ba480b854a00c6a15cd99ac1d5a18e90ad"
+RECOVERY_BASE_TREE = "67c38b895276bf2c804fe192339ce90a8c75ea97"
+RECOVERY_PUBLIC_ANCESTOR = "d3ec64f3abfc64467c0bc3bfae330d86e2af89b2"
+RECOVERY_FAILED_CANDIDATE = "d4b6a821ff9d83aca45a3573403930ab36923dfd"
+RECOVERY_FAILED_SECOND_CANDIDATE = (
+    "72c699cbd3d86d31af898de85f971e29e67b2d9f"
+)
+RECOVERY_FAILED_PUBLISHED_CANDIDATE = (
+    "f1bb98d36719c5d75fac0d84b222db7a0cd617e1"
+)
+RECOVERY_FAILED_PUBLISHED_CANDIDATE_TREE = (
+    "f6287a6131c28131a36ecc03b151fc9045dc8f27"
+)
 RECOVERY_SECTION_SHA256 = (
-    "817d1322078b929ae35fc6f3885b54208b7f58739f4e50bf71ad5ed823a7887a"
+    "685f19a5837b4a7fa78aed4c0f87f6f242850ce048cf83296eeca2c552133900"
 )
-# SHA-256 of the normalized 92-line recovery program. Its separately named
-# cardinality line keeps the single-parent invariant reviewable.
+# SHA-256 of the normalized recovery program. Its separately named
+# cleanliness and cardinality lines keep both invariants reviewable.
 EXPECTED_RECOVERY_PROGRAM_SHA256 = (
-    "12fba756eefe6e6202df6cdc53c729fa9cb1e2948476069f23a5ce5c29b4f730"
+    "a3895dcaee567a4be60eca7e89dc82dc7724ec9fa4c635f602ceb43523dddb78"
 )
 PARENT_CARDINALITY_LINE = 'test "$(git rev-list --parents -n 1 "$HEAD_COMMIT" | awk \'{print NF}\')" = 2'
+CLEAN_WORKTREE_LINE = 'test -z "$(git status --porcelain=v1 --untracked-files=all)"'
 EXPECTED_REFUSAL_KEYS = frozenset(
     {
         "gate_a_complete",
@@ -307,15 +334,15 @@ EXPECTED_HUMAN_DECISION_ASSURANCE = {
         "architecture/human-decision-assurance-consumer-census.json",
     "consumer_census_binding": {
         "raw_sha256":
-            "sha256:fab1014923da20003f4f8e99d96e6c1f981675ee54f39bb01ed0ddd53a3930e6",
-        "byte_count": 160603,
+            "sha256:7389d354366d13311fcd663274429d7331a62fa75151585504eabc35d624a53f",
+        "byte_count": 168882,
         "baseline_git_commit": "56e8062334fb81bba955ba137be690e085d4c88e",
         "baseline_git_tree": "d90ed6dd8c54b91a1e503358f98ecaa08c766fa3",
         "baseline_schema_count": 112,
-        "side_by_side_candidate_schema_count": 20,
+        "side_by_side_candidate_schema_count": 32,
         "hda_candidate_mechanism_schema_count": 8,
-        "non_hda_non_authority_candidate_schema_count": 12,
-        "current_union_schema_count": 132,
+        "non_hda_non_authority_candidate_schema_count": 24,
+        "current_union_schema_count": 144,
         "direct_or_policy_conditional_schema_count": 19,
         "pending_operator_acceptance_schema_count": 9,
     },
@@ -753,23 +780,36 @@ def recovery_truth_surface_errors(
     failures: list[str] = []
     labels = (
         (
-            "predecessor", RECOVERY_BASE,
-            r"(?m)^- Exact closed predecessor:[ \t]*\n"
+            "predecessor",
+            RECOVERY_BASE,
+            "Exact immediate PRQ-002D predecessor:",
+            r"(?m)^- Exact immediate PRQ-002D predecessor:[ \t]*\n"
             r"[ \t]+`([0-9a-f]{40})`[ \t]*$",
         ),
         (
-            "tree", RECOVERY_BASE_TREE,
+            "tree",
+            RECOVERY_BASE_TREE,
+            "Exact predecessor tree:",
             r"(?m)^- Exact predecessor tree:[ \t]*\n"
             r"[ \t]+`([0-9a-f]{40})`[ \t]*$",
         ),
+        (
+            "failed candidate",
+            RECOVERY_FAILED_PUBLISHED_CANDIDATE,
+            "Failed immutable PRQ-002E publication candidate:",
+            r"(?m)^- Failed immutable PRQ-002E publication candidate:[ \t]*\n"
+            r"[ \t]+`([0-9a-f]{40})`[ \t]*$",
+        ),
+        (
+            "failed candidate tree",
+            RECOVERY_FAILED_PUBLISHED_CANDIDATE_TREE,
+            "Exact failed candidate tree:",
+            r"(?m)^- Exact failed candidate tree:[ \t]*\n"
+            r"[ \t]+`([0-9a-f]{40})`[ \t]*$",
+        ),
     )
-    for label, expected, pattern in labels:
+    for label, expected, literal, pattern in labels:
         observed = re.findall(pattern, section)
-        literal = (
-            "Exact closed predecessor:"
-            if label == "predecessor"
-            else "Exact predecessor tree:"
-        )
         if observed != [expected] or section.count(literal) != 1:
             failures.append(
                 f"{prefix}: recovery {label} label must occur exactly once and "
@@ -777,7 +817,15 @@ def recovery_truth_surface_errors(
             )
     unexpected = sorted(
         set(re.findall(r"(?<![0-9a-f])[0-9a-f]{40}(?![0-9a-f])", section))
-        - {RECOVERY_BASE, RECOVERY_BASE_TREE}
+        - {
+            RECOVERY_BASE,
+            RECOVERY_BASE_TREE,
+            RECOVERY_PUBLIC_ANCESTOR,
+            RECOVERY_FAILED_CANDIDATE,
+            RECOVERY_FAILED_SECOND_CANDIDATE,
+            RECOVERY_FAILED_PUBLISHED_CANDIDATE,
+            RECOVERY_FAILED_PUBLISHED_CANDIDATE_TREE,
+        }
     )
     if unexpected:
         failures.append(f"{prefix}: unexpected full Git identities {unexpected!r}")
@@ -790,6 +838,8 @@ def recovery_truth_surface_errors(
             failures.append(f"{prefix}: recovery program does not equal pinned expected program")
         if program.count(PARENT_CARDINALITY_LINE) != 1:
             failures.append(f"{prefix}: recovery program lost its one-parent cardinality guard")
+        if program.count(CLEAN_WORKTREE_LINE) != 1:
+            failures.append(f"{prefix}: recovery program lost its clean-worktree guard")
     if (
         hashlib.sha256(normalize_prose(section).encode()).hexdigest()
         != RECOVERY_SECTION_SHA256
@@ -807,11 +857,32 @@ def recovery_truth_surface_known_bad_self_tests(errors: list[str]) -> int:
         errors.append(f"recovery truth-surface safe control failed: {safe!r}")
     prefix = f"{RECOVERY_HANDOFF} [{RECOVERY_HEADING}]"
     program_error = f"{prefix}: recovery program does not equal pinned expected program"
+    raw_current, _current, section_error = governed_section(
+        raw, RECOVERY_HEADING
+    )
+    if section_error is not None or raw_current is None:
+        errors.append("cannot isolate current recovery section for self-tests")
+        return 0
+
+    def replace_current_once(old: str, new: str, label: str) -> str:
+        if raw_current.count(old) != 1:
+            errors.append(
+                f"cannot construct truth-surface self-test {label!r}"
+            )
+            return raw
+        mutated_section = raw_current.replace(old, new, 1)
+        if raw.count(raw_current) != 1:
+            errors.append("current recovery section is not unique in handoff")
+            return raw
+        return raw.replace(raw_current, mutated_section, 1)
+
     mutations = (
         (
-            "inverted-remote-main", program_error,
-            'test "$REMOTE_MAIN" = "$BASE" || test "$REMOTE_MAIN" = "$HEAD_COMMIT"',
-            'test "$REMOTE_MAIN" != "$BASE" || test "$REMOTE_MAIN" != "$HEAD_COMMIT"',
+            "wrong-writer-branch", program_error,
+            'test "$(git symbolic-ref --short HEAD)" = \\\n'
+            '  agent/t0-prq-002-profile-0-3-replacement-20260730',
+            'test "$(git symbolic-ref --short HEAD)" = \\\n'
+            '  agent/t0-prq-002-profile-0-3-successor-20260729',
         ),
         (
             "two-commit-range", program_error,
@@ -821,32 +892,35 @@ def recovery_truth_surface_known_bad_self_tests(errors: list[str]) -> int:
         (
             "merge-parent-guard-removed",
             f"{prefix}: recovery program lost its one-parent cardinality guard",
-            '  test "$(git rev-parse "$HEAD_COMMIT^")" = "$BASE"\n'
-            '  test "$(git rev-list --parents -n 1 "$HEAD_COMMIT" | '
-            'awk \'{print NF}\')" = 2\n'
-            '  test "$(git rev-list --count "$BASE..$HEAD_COMMIT")" = 1',
-            '  test "$(git rev-parse "$HEAD_COMMIT^")" = "$BASE"\n'
-            '  test "$(git rev-list --count "$BASE..$HEAD_COMMIT")" = 1',
+            PARENT_CARDINALITY_LINE,
+            "",
+        ),
+        (
+            "clean-worktree-guard-removed",
+            f"{prefix}: recovery program lost its clean-worktree guard",
+            CLEAN_WORKTREE_LINE,
+            "",
         ),
     )
     count = 0
     for label, expected, old, new in mutations:
-        mutant = replace_once(raw, old, new, label, errors)
+        mutant = replace_current_once(old, new, label)
         count += expect_self_test(
             label, recovery_truth_surface_errors({RECOVERY_HANDOFF: mutant}),
             expected, errors,
         )
-    predecessor = f"- Exact closed predecessor:\n  `{RECOVERY_BASE}`"
+    predecessor = (
+        f"- Exact immediate PRQ-002D predecessor:\n  `{RECOVERY_BASE}`"
+    )
     duplicate = (
         predecessor
-        + f"\n- Exact closed predecessor:\n  `{RECOVERY_BASE_TREE}`"
+        + f"\n- Exact immediate PRQ-002D predecessor:\n"
+        f"  `{RECOVERY_BASE_TREE}`"
     )
-    mutant = replace_once(
-        raw,
+    mutant = replace_current_once(
         predecessor,
         duplicate,
         "duplicate-predecessor-label",
-        errors,
     )
     count += expect_self_test(
         "duplicate-predecessor-label",
@@ -857,13 +931,33 @@ def recovery_truth_surface_known_bad_self_tests(errors: list[str]) -> int:
         ),
         errors,
     )
-    invariant = (
-        "No merge, extra commit,\nsecond dirty Odeya lane, or path "
-        "substitution is an accepted recovery state."
+    failed_candidate = (
+        "- Failed immutable PRQ-002E publication candidate:\n"
+        f"  `{RECOVERY_FAILED_PUBLISHED_CANDIDATE}`"
     )
-    mutant = replace_once(
-        raw, invariant, invariant + " this statement is false;",
-        "recovery-section-suffix", errors,
+    mutant = replace_current_once(
+        failed_candidate,
+        "- Failed immutable PRQ-002E publication candidate:\n"
+        f"  `{RECOVERY_FAILED_SECOND_CANDIDATE}`",
+        "failed-published-candidate-substitution",
+    )
+    count += expect_self_test(
+        "failed-published-candidate-substitution",
+        recovery_truth_surface_errors({RECOVERY_HANDOFF: mutant}),
+        (
+            f"{prefix}: recovery failed candidate label must occur exactly once "
+            f"and equal {RECOVERY_FAILED_PUBLISHED_CANDIDATE}"
+        ),
+        errors,
+    )
+    invariant = (
+        "A dirty next-session state, merge, extra\n"
+        "commit, second dirty architecture lane, or path substitution requires "
+        "a new\nexact recovery audit; do not infer that it belongs to this tranche."
+    )
+    mutant = replace_current_once(
+        invariant, invariant + " this statement is false;",
+        "recovery-section-suffix",
     )
     count += expect_self_test(
         "recovery-section-suffix",
@@ -1396,6 +1490,91 @@ PRQ_002B_NONCLAIMS = {
     "runtime_authorized": False,
 }
 
+PRQ_002E_DECISION_REF = (
+    "docs/decisions/0103-construct-side-by-side-odeya-jcs-0-3-candidate.md"
+)
+PRQ_002E_ARTIFACT_BINDINGS = (
+    (
+        "profile_core_binding",
+        "architecture/canonicalization-profile-core-0.3-candidate.json",
+        "schemas/canonicalization-profile-core-v0-7.schema.json",
+        "urn:odeya:schema:canonicalization-profile-core:0.7.0",
+    ),
+    (
+        "profile_evidence_binding",
+        "architecture/canonicalization-profile-0.3-candidate-evidence.json",
+        "schemas/canonicalization-profile-candidate-evidence-v0-7.schema.json",
+        (
+            "urn:odeya:schema:canonicalization-profile-candidate-"
+            "evidence:0.7.0"
+        ),
+    ),
+    (
+        "migration_record_binding",
+        (
+            "architecture/canonicalization-profile-0.2-to-0.3-"
+            "migration-candidate.json"
+        ),
+        "schemas/canonicalization-profile-migration-v0-2.schema.json",
+        "urn:odeya:schema:canonicalization-profile-migration:0.2.0",
+    ),
+)
+PRQ_002E_CONSTRUCTION_ORDER = [
+    "verify_exact_frozen_0.2_inputs",
+    "freeze_twelve_final_only_0.3_schemas",
+    "derive_static_schema_position_inventory",
+    "write_core_without_self_digest",
+    "bind_core_externally_in_evidence",
+    "write_0.2_to_0.3_migration_after_evidence",
+]
+PRQ_002E_LATER_REQUIRED_ORDER = [
+    "produce_per_subject_traces_downstream",
+    "run_source_separated_full_profile_conformance",
+    "obtain_accountable_review_and_operator_acceptance",
+    "replace_external_receipt_last",
+]
+PRQ_002E_NONCLAIMS = {
+    "predecessor_profile_issued": False,
+    "successor_profile_issued": False,
+    "canonical_identity_issued": False,
+    "product_identity_computed": False,
+    "global_profile_replacement_claimed": False,
+    "current_consumer_migration_complete": False,
+    "per_subject_raw_applicability_traces_complete": False,
+    "source_separated_full_profile_conformance_complete": False,
+    "complete_offline_resolution": False,
+    "organizational_independence_proven": False,
+    "independent_host_reproduction_complete": False,
+    "schema_resources_admitted": False,
+    "product_members_constructed": False,
+    "product_snapshots_constructed": False,
+    "product_digests_computed": False,
+    "profile_core_canonical_digest": None,
+    "profile_registry_member_ref": None,
+    "schema_registry_snapshot_ref": None,
+    "engine_contract_root_ref": None,
+    "activation_ref": None,
+    "accountable_review_complete": False,
+    "operator_acceptance_complete": False,
+    "operator_acceptance_ref": None,
+    "prq_002_closed": False,
+    "gate_a_complete": False,
+    "runtime_authorized": False,
+    "deployment_authorized": False,
+    "external_effects_authorized": False,
+    "publication_authorized": False,
+}
+PRQ_002E_OBSERVER_NONCLAIMS = {
+    "strict_duplicate_detection_agreement_proven": False,
+    "static_schema_position_inventory_proved_by_this_observation": False,
+    "per_subject_raw_applicability_traces_complete": False,
+    "canonicalization_conformance_complete": False,
+    "organizational_independence_proven": False,
+    "independent_host_reproduction_complete": False,
+    "historical_process_independently_witnessed": False,
+    "coherent_peer_output_substitution_excluded": False,
+}
+
 
 def prq_002b_schema_binding_identity(value: Any) -> tuple[Any, ...]:
     if not isinstance(value, dict):
@@ -1449,7 +1628,7 @@ def prq_002b_census_errors(
 ) -> list[str]:
     reason = (
         "PRQ-002B predecessor/successor census must prove exact frozen 120 "
-        "plus exact 12 equals current 132"
+        "plus exact 12 equals scoped candidate 132"
     )
     valid = (
         prq_002b_safe_regular_file(
@@ -1552,6 +1731,7 @@ def prq_002b_census_errors(
     current_schema_paths = [
         path.relative_to(ROOT).as_posix() for path in current_schema_entries
     ]
+    scoped_candidate_paths = set(predecessor_paths) | set(successor_paths)
     valid = (
         valid
         and not (ROOT / "schemas").is_symlink()
@@ -1560,9 +1740,8 @@ def prq_002b_census_errors(
             for path_value in current_schema_paths
         )
         and not (set(predecessor_paths) & set(successor_paths))
-        and set(current_schema_paths)
-        == set(predecessor_paths) | set(successor_paths)
-        and len(current_schema_paths) == 132
+        and scoped_candidate_paths.issubset(set(current_schema_paths))
+        and len(scoped_candidate_paths) == 132
     )
 
     core_scope = core.get("scope")
@@ -3054,7 +3233,7 @@ def validate_prq_002b_successor_known_bad(
                 ),
                 (
                     "PRQ-002B predecessor/successor census must prove exact "
-                    "frozen 120 plus exact 12 equals current 132"
+                    "frozen 120 plus exact 12 equals scoped candidate 132"
                 )
             ],
         )
@@ -3238,7 +3417,7 @@ def validate_prq_002b_successor_known_bad(
                 ),
                 (
                     "PRQ-002B predecessor/successor census must prove exact "
-                    "frozen 120 plus exact 12 equals current 132"
+                    "frozen 120 plus exact 12 equals scoped candidate 132"
                 )
             ],
         )
@@ -3347,6 +3526,926 @@ def validate_prq_002b_successor_known_bad(
                 )
             else:
                 passed += 1
+    return passed
+
+
+def prq_002e_migration_binding_identity(value: Any) -> tuple[Any, ...]:
+    if not isinstance(value, dict) or not isinstance(value.get("successor"), dict):
+        return ()
+    successor = value["successor"]
+    return (
+        value.get("resource_id"),
+        successor.get("path"),
+        successor.get("schema_id"),
+        successor.get("raw_digest"),
+        successor.get("byte_count"),
+        value.get("classification"),
+    )
+
+
+def canonical_profile_0_3_construction_candidate_errors(
+    candidate: Any,
+    predecessor_candidate: Any,
+    core: dict[str, Any],
+    evidence: dict[str, Any],
+    migration: dict[str, Any],
+    comparison: dict[str, Any],
+) -> list[str]:
+    observed: list[str] = []
+    expected_keys = {
+        "scope_id",
+        "decision_ref",
+        "profile_id",
+        "profile_version",
+        "construction_status",
+        "profile_core_binding",
+        "profile_evidence_binding",
+        "migration_record_binding",
+        "schema_cohort_binding",
+        "retained_construction_order",
+        "later_required_order_not_executed_here",
+        "observer_evidence",
+        "nonclaims",
+    }
+    if not isinstance(candidate, dict):
+        return [
+            "canonical_profile_0_3_construction_candidate must be an object"
+        ]
+    require(
+        set(candidate) == expected_keys,
+        "PRQ-002E construction candidate members must be closed and exact",
+        observed,
+    )
+    require(
+        candidate.get("scope_id")
+        == "prq-002e-product-identity-profile-0.3-construction"
+        and candidate.get("decision_ref") == PRQ_002E_DECISION_REF
+        and candidate.get("profile_id")
+        == "urn:odeya:canonicalization:odeya-jcs-0.3"
+        and candidate.get("profile_version") == "0.3.0"
+        and candidate.get("construction_status")
+        == (
+            "exact_side_by_side_candidate_bytes_bound_profile_unissued_"
+            "gate_a_blocked"
+        )
+        and core.get("profile_id")
+        == "urn:odeya:canonicalization:odeya-jcs-0.3"
+        and core.get("profile_version") == "0.3.0"
+        and core.get("candidate_status")
+        == "scoped_successor_candidate_unissued_unadmitted_no_product_digests"
+        and evidence.get("candidate_status")
+        == "exact_candidate_bytes_bound_profile_unissued_gate_a_blocked"
+        and migration.get("status")
+        == (
+            "explicit_scoped_candidate_migration_incomplete_unissued_"
+            "unadmitted"
+        ),
+        "PRQ-002E identity and construction-only statuses must remain exact",
+        observed,
+    )
+    require(
+        candidate.get("decision_ref") == migration.get("decision_ref")
+        and isinstance(core.get("decision_refs"), list)
+        and PRQ_002E_DECISION_REF in core["decision_refs"],
+        "PRQ-002E must bind exact ADR 0103 across the ledger and records",
+        observed,
+    )
+
+    document_by_binding = {
+        "profile_core_binding": core,
+        "profile_evidence_binding": evidence,
+        "migration_record_binding": migration,
+    }
+    expected_binding_keys = {
+        "path",
+        "schema_path",
+        "schema_id",
+        "raw_sha256",
+        "byte_count",
+    }
+    for key, path_value, schema_path_value, schema_id in (
+        PRQ_002E_ARTIFACT_BINDINGS
+    ):
+        binding = candidate.get(key)
+        if not isinstance(binding, dict):
+            observed.append(f"PRQ-002E {key} must be an object")
+            continue
+        require(
+            set(binding) == expected_binding_keys
+            and binding.get("path") == path_value
+            and binding.get("schema_path") == schema_path_value
+            and binding.get("schema_id") == schema_id,
+            f"PRQ-002E {key} identity members must be closed and exact",
+            observed,
+        )
+        require(
+            prq_002b_safe_regular_file(path_value)
+            and prq_002b_safe_regular_file(schema_path_value),
+            f"PRQ-002E {key} artifact and schema must be regular files",
+            observed,
+        )
+        try:
+            digest, byte_count = raw_file_binding(ROOT / path_value)
+            schema = load(ROOT / schema_path_value)
+        except (
+            DuplicateKey,
+            OSError,
+            UnicodeError,
+            ValueError,
+            json.JSONDecodeError,
+        ) as exc:
+            observed.append(
+                f"PRQ-002E {key} cannot resolve exact current bytes: {exc}"
+            )
+            continue
+        require(
+            binding.get("raw_sha256") == digest
+            and json_type_sensitive_equal(
+                binding.get("byte_count"), byte_count
+            )
+            and schema.get("$id") == schema_id,
+            f"PRQ-002E {key} must bind exact current artifact and schema bytes",
+            observed,
+        )
+        require(
+            document_by_binding[key].get("schema_version")
+            == schema_id.rsplit(":", 1)[-1],
+            f"PRQ-002E {key} record schema version must match its schema ID",
+            observed,
+        )
+
+    core_rows = core.get("successor_schema_bindings")
+    evidence_rows = evidence.get("successor_schema_bindings")
+    migration_rows = migration.get("resource_dispositions")
+    normalized_core = (
+        [prq_002b_schema_binding_identity(row) for row in core_rows]
+        if isinstance(core_rows, list)
+        else []
+    )
+    normalized_evidence = (
+        [prq_002b_schema_binding_identity(row) for row in evidence_rows]
+        if isinstance(evidence_rows, list)
+        else []
+    )
+    normalized_migration = (
+        [prq_002e_migration_binding_identity(row) for row in migration_rows]
+        if isinstance(migration_rows, list)
+        else []
+    )
+    require(
+        len(normalized_core) == 12
+        and json_type_sensitive_equal(normalized_core, normalized_evidence)
+        and json_type_sensitive_equal(normalized_core, normalized_migration)
+        and len({row[0] for row in normalized_core if len(row) == 6}) == 12
+        and len({row[1] for row in normalized_core if len(row) == 6}) == 12
+        and len({row[2] for row in normalized_core if len(row) == 6}) == 12,
+        "PRQ-002E must retain one equal ordered 12-resource schema cohort",
+        observed,
+    )
+    for row in normalized_core:
+        if len(row) != 6 or not isinstance(row[1], str):
+            continue
+        path_value = row[1]
+        if not prq_002b_safe_regular_file(path_value):
+            observed.append(
+                "PRQ-002E successor schema must be a regular current file: "
+                f"{path_value!r}"
+            )
+            continue
+        try:
+            digest, byte_count = raw_file_binding(ROOT / path_value)
+            schema = load(ROOT / path_value)
+        except (
+            DuplicateKey,
+            OSError,
+            UnicodeError,
+            ValueError,
+            json.JSONDecodeError,
+        ) as exc:
+            observed.append(
+                f"PRQ-002E successor schema cannot resolve {path_value}: {exc}"
+            )
+            continue
+        require(
+            row[2] == schema.get("$id")
+            and row[3] == digest
+            and json_type_sensitive_equal(row[4], byte_count),
+            f"PRQ-002E successor schema binding drifted for {path_value}",
+            observed,
+        )
+
+    cohort = candidate.get("schema_cohort_binding")
+    expected_cohort = {
+        "original_schema_resource_count": 120,
+        "frozen_0_2_schema_resource_count": 12,
+        "candidate_0_3_schema_resource_count": 12,
+        "side_by_side_schema_resource_count": 144,
+        "product_identity_schema_count": 9,
+        "static_inventory_schema_count": 12,
+        "structural_nonidentity_fixture_count": 9,
+        "predecessor_bytes_preserved": True,
+        "exact_current_bytes_required": True,
+    }
+    current_schema_paths = sorted(
+        path.relative_to(ROOT).as_posix()
+        for path in (ROOT / "schemas").glob("*.schema.json")
+    )
+    core_scope = core.get("scope")
+    evidence_census = evidence.get("consumer_census_summary")
+    migration_baseline = migration.get("baseline_binding")
+    static_inventory = core.get("static_numeric_applicability_inventory")
+    evidence_static_inventory = evidence.get(
+        "static_numeric_applicability_inventory"
+    )
+    require(
+        json_type_sensitive_equal(cohort, expected_cohort)
+        and len(current_schema_paths) == 144
+        and isinstance(core_scope, dict)
+        and core_scope.get("original_schema_resource_count") == 120
+        and core_scope.get("retained_predecessor_schema_resource_count") == 12
+        and core_scope.get("successor_schema_resource_count") == 12
+        and core_scope.get("side_by_side_schema_resource_count") == 144
+        and core_scope.get("product_identity_schema_count") == 9
+        and core_scope.get("all_predecessor_bytes_preserved") is True
+        and isinstance(evidence_census, dict)
+        and evidence_census.get("original_schema_resource_count") == 120
+        and evidence_census.get("predecessor_0_2_schema_resource_count") == 12
+        and evidence_census.get("successor_0_3_schema_resource_count") == 12
+        and evidence_census.get("side_by_side_schema_resource_count") == 144
+        and isinstance(migration_baseline, dict)
+        and migration_baseline.get("original_schema_resource_count") == 120
+        and migration_baseline.get("frozen_0_2_schema_resource_count") == 12
+        and migration_baseline.get("candidate_0_3_schema_resource_count") == 12
+        and migration_baseline.get("side_by_side_schema_resource_count") == 144
+        and isinstance(static_inventory, dict)
+        and static_inventory.get("schema_count") == 12
+        and isinstance(static_inventory.get("schemas"), list)
+        and len(static_inventory["schemas"]) == 12
+        and json_type_sensitive_equal(
+            static_inventory, evidence_static_inventory
+        )
+        and isinstance(evidence.get("construction_observation"), dict)
+        and evidence["construction_observation"].get(
+            "structural_nonidentity_fixture_count"
+        )
+        == 9,
+        "PRQ-002E census must prove exact 120 + frozen 12 + candidate 12 "
+        "= live 144 without predecessor replacement",
+        observed,
+    )
+
+    predecessor = core.get("predecessor_binding")
+    predecessor_core = (
+        predecessor_candidate.get("profile_core_binding")
+        if isinstance(predecessor_candidate, dict)
+        else None
+    )
+    predecessor_evidence = (
+        predecessor_candidate.get("profile_evidence_binding")
+        if isinstance(predecessor_candidate, dict)
+        else None
+    )
+    predecessor_migration = (
+        predecessor_candidate.get("migration_record_binding")
+        if isinstance(predecessor_candidate, dict)
+        else None
+    )
+    require(
+        isinstance(predecessor_candidate, dict)
+        and predecessor_candidate.get("profile_id")
+        == "urn:odeya:canonicalization:odeya-jcs-0.2"
+        and predecessor_candidate.get("profile_version") == "0.2.0"
+        and isinstance(predecessor, dict)
+        and json_type_sensitive_equal(
+            predecessor, evidence.get("predecessor_binding")
+        )
+        and json_type_sensitive_equal(
+            predecessor, migration.get("predecessor_profile_binding")
+        )
+        and predecessor.get("profile_issued") is False
+        and isinstance(predecessor_core, dict)
+        and predecessor.get("profile_core_path")
+        == predecessor_core.get("path")
+        and predecessor.get("profile_core_raw_digest")
+        == predecessor_core.get("raw_sha256")
+        and json_type_sensitive_equal(
+            predecessor.get("profile_core_byte_count"),
+            predecessor_core.get("byte_count"),
+        )
+        and isinstance(predecessor_evidence, dict)
+        and predecessor.get("profile_evidence_path")
+        == predecessor_evidence.get("path")
+        and predecessor.get("profile_evidence_raw_digest")
+        == predecessor_evidence.get("raw_sha256")
+        and json_type_sensitive_equal(
+            predecessor.get("profile_evidence_byte_count"),
+            predecessor_evidence.get("byte_count"),
+        )
+        and isinstance(predecessor_migration, dict)
+        and predecessor.get("profile_migration_path")
+        == predecessor_migration.get("path")
+        and predecessor.get("profile_migration_raw_digest")
+        == predecessor_migration.get("raw_sha256")
+        and json_type_sensitive_equal(
+            predecessor.get("profile_migration_byte_count"),
+            predecessor_migration.get("byte_count"),
+        ),
+        "PRQ-002E must preserve the exact unissued odeya-jcs-0.2 predecessor",
+        observed,
+    )
+
+    ledger_core = candidate.get("profile_core_binding")
+    ledger_evidence = candidate.get("profile_evidence_binding")
+    ledger_migration = candidate.get("migration_record_binding")
+    evidence_core = evidence.get("profile_core_binding")
+    migration_successor = migration.get("successor_profile_binding")
+    migration_binding = evidence.get("migration_binding")
+    require(
+        isinstance(ledger_core, dict)
+        and isinstance(ledger_evidence, dict)
+        and isinstance(ledger_migration, dict)
+        and isinstance(evidence_core, dict)
+        and isinstance(migration_successor, dict)
+        and evidence_core.get("profile_core_path") == ledger_core.get("path")
+        and evidence_core.get("profile_core_schema_path")
+        == ledger_core.get("schema_path")
+        and evidence_core.get("profile_core_schema_id")
+        == ledger_core.get("schema_id")
+        and evidence_core.get("profile_core_raw_digest")
+        == ledger_core.get("raw_sha256")
+        and json_type_sensitive_equal(
+            evidence_core.get("profile_core_byte_count"),
+            ledger_core.get("byte_count"),
+        )
+        and migration_successor.get("profile_core_path")
+        == ledger_core.get("path")
+        and migration_successor.get("profile_core_raw_digest")
+        == ledger_core.get("raw_sha256")
+        and migration_successor.get("profile_evidence_path")
+        == ledger_evidence.get("path")
+        and migration_successor.get("profile_evidence_raw_digest")
+        == ledger_evidence.get("raw_sha256")
+        and json_type_sensitive_equal(
+            migration_successor.get("profile_evidence_byte_count"),
+            ledger_evidence.get("byte_count"),
+        )
+        and migration_successor.get("profile_issued") is False
+        and isinstance(migration_binding, dict)
+        and migration_binding.get("migration_candidate_path")
+        == ledger_migration.get("path")
+        and migration_binding.get(
+            "migration_record_digest_intentionally_absent"
+        )
+        is True
+        and migration_binding.get(
+            "migration_record_is_dependency_of_this_evidence"
+        )
+        is False,
+        "PRQ-002E core, evidence, and migration bindings must remain "
+        "transitive and one-way",
+        observed,
+    )
+
+    construction = evidence.get("construction_observation")
+    require(
+        json_type_sensitive_equal(
+            candidate.get("retained_construction_order"),
+            PRQ_002E_CONSTRUCTION_ORDER,
+        )
+        and isinstance(construction, dict)
+        and json_type_sensitive_equal(
+            construction.get("retained_construction_order"),
+            PRQ_002E_CONSTRUCTION_ORDER,
+        ),
+        "PRQ-002E retained construction order must remain exact",
+        observed,
+    )
+    require(
+        json_type_sensitive_equal(
+            candidate.get("later_required_order_not_executed_here"),
+            PRQ_002E_LATER_REQUIRED_ORDER,
+        )
+        and isinstance(construction, dict)
+        and json_type_sensitive_equal(
+            construction.get("later_required_order_not_executed_here"),
+            PRQ_002E_LATER_REQUIRED_ORDER,
+        ),
+        "PRQ-002E later required order must remain explicit and unexecuted",
+        observed,
+    )
+    construction_boundary_checks = (
+        (evidence, ("construction_observation", "downstream_subject_traces_produced"), False),
+        (evidence, ("construction_observation", "source_separated_full_profile_conformance_executed"), False),
+        (evidence, ("construction_observation", "accountable_review_executed"), False),
+        (evidence, ("construction_observation", "operator_acceptance_executed"), False),
+        (evidence, ("construction_observation", "schema_count"), 12),
+        (evidence, ("construction_observation", "static_inventory_schema_count"), 12),
+        (evidence, ("construction_observation", "schema_meta_validation_complete"), True),
+        (evidence, ("construction_observation", "structural_nonidentity_fixture_count"), 9),
+        (evidence, ("construction_observation", "product_member_instance_count"), 0),
+        (evidence, ("construction_observation", "product_snapshot_instance_count"), 0),
+        (evidence, ("construction_observation", "product_root_instance_count"), 0),
+        (evidence, ("construction_observation", "product_digest_count"), 0),
+        (evidence, ("construction_observation", "migration_record_is_dependency_of_this_evidence"), False),
+    )
+    require(
+        all(
+            prq_002b_nested_equals(document, path, expected)
+            for document, path, expected in construction_boundary_checks
+        ),
+        "PRQ-002E construction evidence must not imply later evidence or "
+        "product instances",
+        observed,
+    )
+
+    observer = candidate.get("observer_evidence")
+    expected_observer_keys = {
+        "comparison_receipt_binding",
+        "suite_id",
+        "observer_count",
+        "observer_ids",
+        "artifact_projection_count",
+        "complete_projection_agreement",
+        "bounded_15_row_artifact_projection_observed",
+        *PRQ_002E_OBSERVER_NONCLAIMS,
+    }
+    if not isinstance(observer, dict):
+        observed.append("PRQ-002E observer_evidence must be an object")
+    else:
+        require(
+            set(observer) == expected_observer_keys,
+            "PRQ-002E observer evidence members must be closed and exact",
+            observed,
+        )
+        comparison_binding = observer.get("comparison_receipt_binding")
+        comparison_path = (
+            "tests/product-identity-profile-0.3-candidate/results/"
+            "comparison-receipt.json"
+        )
+        if not isinstance(comparison_binding, dict):
+            observed.append(
+                "PRQ-002E comparison receipt binding must be an object"
+            )
+        else:
+            require(
+                set(comparison_binding)
+                == {"path", "raw_sha256", "byte_count"}
+                and comparison_binding.get("path") == comparison_path
+                and prq_002b_safe_regular_file(comparison_path),
+                "PRQ-002E comparison receipt identity must be closed and exact",
+                observed,
+            )
+            try:
+                comparison_digest, comparison_count = raw_file_binding(
+                    ROOT / comparison_path
+                )
+            except OSError as exc:
+                observed.append(
+                    "PRQ-002E comparison receipt cannot resolve exact bytes: "
+                    f"{exc}"
+                )
+            else:
+                require(
+                    comparison_binding.get("raw_sha256")
+                    == comparison_digest
+                    and json_type_sensitive_equal(
+                        comparison_binding.get("byte_count"),
+                        comparison_count,
+                    ),
+                    "PRQ-002E comparison receipt must bind exact current bytes",
+                    observed,
+                )
+        require(
+            observer.get("suite_id")
+            == "prq-002e-profile-0.3-construction.0001"
+            == comparison.get("suite_id")
+            and json_type_sensitive_equal(
+                observer.get("observer_count"),
+                comparison.get("observer_count"),
+            )
+            and json_type_sensitive_equal(
+                observer.get("observer_ids"),
+                comparison.get("observer_ids"),
+            )
+            and json_type_sensitive_equal(
+                observer.get("artifact_projection_count"),
+                comparison.get("artifact_count"),
+            )
+            and observer.get("artifact_projection_count") == 15
+            and observer.get("complete_projection_agreement") is True
+            and comparison.get("complete_projection_agreement") is True
+            and observer.get("bounded_15_row_artifact_projection_observed")
+            is True
+            and comparison.get(
+                "bounded_15_row_artifact_projection_observed"
+            )
+            is True,
+            "PRQ-002E observer evidence must bind exact two-observer "
+            "15-artifact construction agreement",
+            observed,
+        )
+        require(
+            all(
+                json_type_sensitive_equal(
+                    observer.get(key), expected
+                )
+                and json_type_sensitive_equal(
+                    comparison.get(key), expected
+                )
+                for key, expected in PRQ_002E_OBSERVER_NONCLAIMS.items()
+            ),
+            "PRQ-002E observer agreement must retain every bounded nonclaim",
+            observed,
+        )
+
+    nonclaims = candidate.get("nonclaims")
+    require(
+        json_type_sensitive_equal(nonclaims, PRQ_002E_NONCLAIMS),
+        "PRQ-002E construction nonclaims must be closed, exact, and typed",
+        observed,
+    )
+    authority_checks = (
+        (core, ("authority_boundary", "profile_issued"), False),
+        (core, ("authority_boundary", "canonical_identity_issued"), False),
+        (core, ("authority_boundary", "schema_resources_admitted"), False),
+        (core, ("authority_boundary", "product_members_constructed"), False),
+        (core, ("authority_boundary", "product_snapshots_constructed"), False),
+        (core, ("authority_boundary", "product_digests_computed"), False),
+        (core, ("authority_boundary", "operator_acceptance_ref"), None),
+        (core, ("authority_boundary", "gate_a_complete"), False),
+        (core, ("authority_boundary", "runtime_authorized"), False),
+        (core, ("authority_boundary", "deployment_authorized"), False),
+        (core, ("authority_boundary", "external_effects_authorized"), False),
+        (core, ("authority_boundary", "publication_authorized"), False),
+        (evidence, ("conformance_evidence", "successor_profile_conformance_complete"), False),
+        (evidence, ("conformance_evidence", "organizational_independence_proven"), False),
+        (evidence, ("conformance_evidence", "independent_host_reproduction_complete"), False),
+        (evidence, ("offline_resolver_observation", "complete_offline_schema_registry"), False),
+        (evidence, ("review_boundary", "accountable_canonicalization_review_complete"), False),
+        (evidence, ("review_boundary", "accountable_security_review_complete"), False),
+        (evidence, ("review_boundary", "accountable_distributed_systems_review_complete"), False),
+        (evidence, ("review_boundary", "operator_acceptance_complete"), False),
+        (evidence, ("review_boundary", "operator_acceptance_ref"), None),
+        (evidence, ("acceptance_boundary", "profile_core_canonical_digest"), None),
+        (evidence, ("acceptance_boundary", "profile_registry_member_ref"), None),
+        (evidence, ("acceptance_boundary", "schema_registry_snapshot_ref"), None),
+        (evidence, ("acceptance_boundary", "engine_contract_root_ref"), None),
+        (evidence, ("acceptance_boundary", "activation_ref"), None),
+        (evidence, ("acceptance_boundary", "canonical_identity_may_be_issued"), False),
+        (evidence, ("acceptance_boundary", "gate_a_complete"), False),
+        (evidence, ("acceptance_boundary", "runtime_authorized"), False),
+        (evidence, ("acceptance_boundary", "deployment_authorized"), False),
+        (evidence, ("acceptance_boundary", "external_effects_authorized"), False),
+        (evidence, ("acceptance_boundary", "publication_authorized"), False),
+        (migration, ("completion_boundary", "source_separated_conformance_complete"), False),
+        (migration, ("completion_boundary", "offline_resolution_complete"), False),
+        (migration, ("completion_boundary", "accountable_review_complete"), False),
+        (migration, ("completion_boundary", "operator_acceptance_complete"), False),
+        (migration, ("completion_boundary", "operator_acceptance_ref"), None),
+        (migration, ("completion_boundary", "profile_issued"), False),
+        (migration, ("completion_boundary", "schema_resources_admitted"), False),
+        (migration, ("completion_boundary", "product_members_constructed"), False),
+        (migration, ("completion_boundary", "product_snapshots_constructed"), False),
+        (migration, ("completion_boundary", "product_digest_count"), 0),
+        (migration, ("completion_boundary", "gate_a_complete"), False),
+        (migration, ("completion_boundary", "runtime_authorized"), False),
+        (migration, ("completion_boundary", "deployment_authorized"), False),
+        (migration, ("completion_boundary", "external_effects_authorized"), False),
+        (migration, ("completion_boundary", "publication_authorized"), False),
+        (comparison, ("per_subject_raw_applicability_traces_complete",), False),
+        (comparison, ("canonicalization_conformance_complete",), False),
+        (comparison, ("product_identity_computed",), False),
+        (comparison, ("profile_issued",), False),
+        (comparison, ("schema_resources_admitted",), False),
+        (comparison, ("gate_a_complete",), False),
+        (comparison, ("runtime_authorized",), False),
+        (comparison, ("publication_authorized",), False),
+    )
+    require(
+        all(
+            prq_002b_nested_equals(document, path, expected)
+            for document, path, expected in authority_checks
+        ),
+        "PRQ-002E retained records must substantiate every construction "
+        "nonclaim and keep Gate A blocked",
+        observed,
+    )
+    return observed
+
+
+def validate_prq_002e_construction_known_bads(
+    candidate: Any,
+    predecessor_candidate: Any,
+    core: dict[str, Any],
+    evidence: dict[str, Any],
+    migration: dict[str, Any],
+    comparison: dict[str, Any],
+    errors: list[str],
+) -> int:
+    safe_errors = canonical_profile_0_3_construction_candidate_errors(
+        candidate,
+        predecessor_candidate,
+        core,
+        evidence,
+        migration,
+        comparison,
+    )
+    if safe_errors:
+        errors.append(
+            "PRQ-002E construction known-bad safe control failed: "
+            + "; ".join(safe_errors)
+        )
+        return 0
+
+    cases: list[
+        tuple[
+            str,
+            Any,
+            Any,
+            dict[str, Any],
+            dict[str, Any],
+            dict[str, Any],
+            dict[str, Any],
+            str,
+        ]
+    ] = []
+
+    extra_member = json.loads(json.dumps(candidate))
+    extra_member["unreviewed_claim"] = False
+    cases.append(
+        (
+            "candidate-open-shape",
+            extra_member,
+            predecessor_candidate,
+            core,
+            evidence,
+            migration,
+            comparison,
+            "PRQ-002E construction candidate members must be closed and exact",
+        )
+    )
+
+    decision_drift = json.loads(json.dumps(candidate))
+    decision_drift["decision_ref"] = (
+        "docs/decisions/0102-prove-non-product-prehash-schema-registry-replay.md"
+    )
+    cases.append(
+        (
+            "decision-drift",
+            decision_drift,
+            predecessor_candidate,
+            core,
+            evidence,
+            migration,
+            comparison,
+            "PRQ-002E identity and construction-only statuses must remain exact",
+        )
+    )
+
+    stale_binding = json.loads(json.dumps(candidate))
+    stale_binding["profile_core_binding"]["raw_sha256"] = (
+        "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+    )
+    cases.append(
+        (
+            "stale-core-binding",
+            stale_binding,
+            predecessor_candidate,
+            core,
+            evidence,
+            migration,
+            comparison,
+            (
+                "PRQ-002E profile_core_binding must bind exact current "
+                "artifact and schema bytes"
+            ),
+        )
+    )
+
+    integral_float_count = json.loads(json.dumps(candidate))
+    integral_float_count["schema_cohort_binding"][
+        "side_by_side_schema_resource_count"
+    ] = 144.0
+    cases.append(
+        (
+            "cohort-integral-float",
+            integral_float_count,
+            predecessor_candidate,
+            core,
+            evidence,
+            migration,
+            comparison,
+            (
+                "PRQ-002E census must prove exact 120 + frozen 12 + "
+                "candidate 12 = live 144 without predecessor replacement"
+            ),
+        )
+    )
+
+    construction_reorder = json.loads(json.dumps(candidate))
+    construction_reorder["retained_construction_order"][0:2] = reversed(
+        construction_reorder["retained_construction_order"][0:2]
+    )
+    cases.append(
+        (
+            "construction-reorder",
+            construction_reorder,
+            predecessor_candidate,
+            core,
+            evidence,
+            migration,
+            comparison,
+            "PRQ-002E retained construction order must remain exact",
+        )
+    )
+
+    later_step_omitted = json.loads(json.dumps(candidate))
+    later_step_omitted["later_required_order_not_executed_here"].pop()
+    cases.append(
+        (
+            "later-step-omission",
+            later_step_omitted,
+            predecessor_candidate,
+            core,
+            evidence,
+            migration,
+            comparison,
+            "PRQ-002E later required order must remain explicit and unexecuted",
+        )
+    )
+
+    observer_agreement = json.loads(json.dumps(candidate))
+    observer_agreement["observer_evidence"][
+        "complete_projection_agreement"
+    ] = False
+    cases.append(
+        (
+            "observer-agreement-downgrade",
+            observer_agreement,
+            predecessor_candidate,
+            core,
+            evidence,
+            migration,
+            comparison,
+            (
+                "PRQ-002E observer evidence must bind exact two-observer "
+                "15-artifact construction agreement"
+            ),
+        )
+    )
+
+    observer_escalation = json.loads(json.dumps(candidate))
+    observer_escalation["observer_evidence"][
+        "canonicalization_conformance_complete"
+    ] = True
+    cases.append(
+        (
+            "observer-conformance-escalation",
+            observer_escalation,
+            predecessor_candidate,
+            core,
+            evidence,
+            migration,
+            comparison,
+            "PRQ-002E observer agreement must retain every bounded nonclaim",
+        )
+    )
+
+    nonclaim_type = json.loads(json.dumps(candidate))
+    nonclaim_type["nonclaims"]["runtime_authorized"] = 0
+    cases.append(
+        (
+            "nonclaim-boolean-as-integer",
+            nonclaim_type,
+            predecessor_candidate,
+            core,
+            evidence,
+            migration,
+            comparison,
+            (
+                "PRQ-002E construction nonclaims must be closed, exact, "
+                "and typed"
+            ),
+        )
+    )
+
+    invented_acceptance = json.loads(json.dumps(candidate))
+    invented_acceptance["nonclaims"]["operator_acceptance_ref"] = (
+        "architecture/invented-acceptance.json"
+    )
+    cases.append(
+        (
+            "invented-operator-acceptance",
+            invented_acceptance,
+            predecessor_candidate,
+            core,
+            evidence,
+            migration,
+            comparison,
+            (
+                "PRQ-002E construction nonclaims must be closed, exact, "
+                "and typed"
+            ),
+        )
+    )
+
+    predecessor_drift = json.loads(json.dumps(core))
+    predecessor_drift["predecessor_binding"]["profile_issued"] = True
+    cases.append(
+        (
+            "predecessor-issuance-escalation",
+            candidate,
+            predecessor_candidate,
+            predecessor_drift,
+            evidence,
+            migration,
+            comparison,
+            (
+                "PRQ-002E must preserve the exact unissued odeya-jcs-0.2 "
+                "predecessor"
+            ),
+        )
+    )
+
+    trace_escalation = json.loads(json.dumps(evidence))
+    trace_escalation["construction_observation"][
+        "downstream_subject_traces_produced"
+    ] = True
+    cases.append(
+        (
+            "trace-escalation",
+            candidate,
+            predecessor_candidate,
+            core,
+            trace_escalation,
+            migration,
+            comparison,
+            (
+                "PRQ-002E construction evidence must not imply later "
+                "evidence or product instances"
+            ),
+        )
+    )
+
+    runtime_escalation = json.loads(json.dumps(core))
+    runtime_escalation["authority_boundary"]["runtime_authorized"] = True
+    cases.append(
+        (
+            "runtime-authority-escalation",
+            candidate,
+            predecessor_candidate,
+            runtime_escalation,
+            evidence,
+            migration,
+            comparison,
+            (
+                "PRQ-002E retained records must substantiate every "
+                "construction nonclaim and keep Gate A blocked"
+            ),
+        )
+    )
+
+    comparison_escalation = json.loads(json.dumps(comparison))
+    comparison_escalation["canonicalization_conformance_complete"] = True
+    cases.append(
+        (
+            "comparison-conformance-escalation",
+            candidate,
+            predecessor_candidate,
+            core,
+            evidence,
+            migration,
+            comparison_escalation,
+            "PRQ-002E observer agreement must retain every bounded nonclaim",
+        )
+    )
+
+    passed = 0
+    for (
+        case_id,
+        case_candidate,
+        case_predecessor,
+        case_core,
+        case_evidence,
+        case_migration,
+        case_comparison,
+        expected_reason,
+    ) in cases:
+        mutation_errors = canonical_profile_0_3_construction_candidate_errors(
+            case_candidate,
+            case_predecessor,
+            case_core,
+            case_evidence,
+            case_migration,
+            case_comparison,
+        )
+        if expected_reason in mutation_errors:
+            passed += 1
+        else:
+            errors.append(
+                f"PRQ-002E construction known-bad {case_id} did not fire "
+                f"{expected_reason!r}; got {mutation_errors!r}"
+            )
     return passed
 
 
@@ -7620,7 +8719,7 @@ def validate_human_decision_assurance_known_bads(errors: list[str]) -> int:
                 **EXPECTED_HUMAN_DECISION_ASSURANCE[
                     "consumer_census_binding"
                 ],
-                "byte_count": 160603.0,
+                "byte_count": 168882.0,
             },
         ),
         (
@@ -7865,11 +8964,12 @@ def prq_002_closure_errors(value: Any) -> list[str]:
         or "PRQ-002B" not in closure
         or "PRQ-002C" not in closure
         or "PRQ-002D" not in closure
+        or "PRQ-002E" not in closure
         or "zero product identities" not in closure
         or "PRQ-002 remains open" not in closure
     ):
         errors.append(
-            "PRQ-002 must expose the bounded A/B/C/D evidence without "
+            "PRQ-002 must expose the bounded A/B/C/D/E evidence without "
             "claiming closure"
         )
     if (
@@ -7914,11 +9014,41 @@ def prq_002_closure_errors(value: Any) -> list[str]:
     if (
         "odeya-jcs-0.2 bytes remain frozen, unissued, and blocked"
         not in closure
-        or "odeya-jcs-0.3 does not exist" not in closure
+        or (
+            "odeya-jcs-0.3 exists only as an unissued, unadmitted "
+            "construction candidate"
+        )
+        not in closure
     ):
         errors.append(
-            "PRQ-002 closure must retain the frozen 0.2 and absent 0.3 "
-            "lineage boundary"
+            "PRQ-002 closure must retain the frozen 0.2 and construction-only "
+            "0.3 lineage boundary"
+        )
+    if (
+        "12 new successor schema resources" not in closure
+        or "frozen 12-resource odeya-jcs-0.2 cohort" not in closure
+        or "original 120-resource corpus" not in closure
+        or "exact 144-schema live inventory" not in closure
+        or "complete bounded 15-artifact projection" not in closure
+    ):
+        errors.append(
+            "PRQ-002 closure must retain the exact bounded PRQ-002E "
+            "construction census"
+        )
+    if (
+        "observer receipt is construction evidence only" not in closure
+        or "per-subject raw applicability traces" not in closure
+        or "full successor-profile conformance" not in closure
+        or "accountable review" not in closure
+        or "operator acceptance" not in closure
+        or "canonical or product identity" not in closure
+        or "runtime, deployment, external effects, and publication authority "
+        "remain absent"
+        not in closure
+    ):
+        errors.append(
+            "PRQ-002 closure must retain the PRQ-002E trace, conformance, "
+            "review, acceptance, identity, and authority nonclaims"
         )
     return errors
 
@@ -7974,12 +9104,15 @@ def validate_prq_002_closure_known_bads(
             ),
         ),
         (
-            "prospective-profile-invention",
-            "odeya-jcs-0.3 does not exist",
-            "odeya-jcs-0.3 exists",
+            "construction-candidate-issuance-escalation",
             (
-                "PRQ-002 closure must retain the frozen 0.2 and absent 0.3 "
-                "lineage boundary"
+                "odeya-jcs-0.3 exists only as an unissued, unadmitted "
+                "construction candidate"
+            ),
+            "odeya-jcs-0.3 exists as an issued, admitted profile",
+            (
+                "PRQ-002 closure must retain the frozen 0.2 and "
+                "construction-only 0.3 lineage boundary"
             ),
         ),
         (
@@ -7987,7 +9120,7 @@ def validate_prq_002_closure_known_bads(
             "PRQ-002D",
             "fourth bounded replay tranche",
             (
-                "PRQ-002 must expose the bounded A/B/C/D evidence without "
+                "PRQ-002 must expose the bounded A/B/C/D/E evidence without "
                 "claiming closure"
             ),
         ),
@@ -8011,6 +9144,34 @@ def validate_prq_002_closure_known_bads(
             (
                 "PRQ-002 closure must retain the bounded PRQ-002D "
                 "non-product/nonclaim boundary"
+            ),
+        ),
+        (
+            "prq-002e-omission",
+            "PRQ-002E",
+            "fifth bounded construction tranche",
+            (
+                "PRQ-002 must expose the bounded A/B/C/D/E evidence without "
+                "claiming closure"
+            ),
+        ),
+        (
+            "prq-002e-census-substitution",
+            "exact 144-schema live inventory",
+            "exact 143-schema live inventory",
+            (
+                "PRQ-002 closure must retain the exact bounded PRQ-002E "
+                "construction census"
+            ),
+        ),
+        (
+            "prq-002e-authority-escalation",
+            "observer receipt is construction evidence only",
+            "observer receipt proves conformance and authority",
+            (
+                "PRQ-002 closure must retain the PRQ-002E trace, "
+                "conformance, review, acceptance, identity, and authority "
+                "nonclaims"
             ),
         ),
     )
@@ -8322,6 +9483,14 @@ def main() -> int:
         prq_002b_predecessor_manifest = load(
             PRQ_002B_PREDECESSOR_MANIFEST
         )
+        canonical_profile_0_3_core = load(CANONICAL_PROFILE_0_3_CORE)
+        canonical_profile_0_3_evidence = load(
+            CANONICAL_PROFILE_0_3_EVIDENCE
+        )
+        canonical_profile_0_3_migration = load(
+            CANONICAL_PROFILE_0_3_MIGRATION
+        )
+        prq_002e_comparison_receipt = load(PRQ_002E_COMPARISON_RECEIPT)
         prq_002d_manifest = load(PRQ_002D_MANIFEST)
         prq_002d_cases = load(PRQ_002D_CASES)
     except (OSError, json.JSONDecodeError, DuplicateKey, ValueError) as exc:
@@ -8570,6 +9739,19 @@ def main() -> int:
             prq_002b_predecessor_manifest,
         )
     )
+    profile_0_3_construction_candidate = inventory.get(
+        "canonical_profile_0_3_construction_candidate"
+    )
+    errors.extend(
+        canonical_profile_0_3_construction_candidate_errors(
+            profile_0_3_construction_candidate,
+            profile_successor_candidate,
+            canonical_profile_0_3_core,
+            canonical_profile_0_3_evidence,
+            canonical_profile_0_3_migration,
+            prq_002e_comparison_receipt,
+        )
+    )
     errors.extend(prq_002d_evidence_errors(prq_002d_manifest, prq_002d_cases))
 
     findings = inventory.get("findings")
@@ -8789,7 +9971,14 @@ def main() -> int:
             errors,
         )
 
-    for decision_ref in inventory.get("decision_refs", []):
+    decision_refs = inventory.get("decision_refs")
+    require(
+        isinstance(decision_refs, list)
+        and decision_refs.count(PRQ_002E_DECISION_REF) == 1,
+        "Gate A ledger must retain exactly one PRQ-002E ADR 0103 reference",
+        errors,
+    )
+    for decision_ref in decision_refs if isinstance(decision_refs, list) else []:
         require(
             isinstance(decision_ref, str) and (ROOT / decision_ref).is_file(),
             f"missing decision record {decision_ref!r}",
@@ -8837,6 +10026,17 @@ def main() -> int:
         canonical_profile_successor_migration,
         prq_002b_predecessor_manifest,
         errors,
+    )
+    prq_002e_construction_known_bads = (
+        validate_prq_002e_construction_known_bads(
+            profile_0_3_construction_candidate,
+            profile_successor_candidate,
+            canonical_profile_0_3_core,
+            canonical_profile_0_3_evidence,
+            canonical_profile_0_3_migration,
+            prq_002e_comparison_receipt,
+            errors,
+        )
     )
     try:
         closure_observation = load(HDA_CONTEXT_CLOSURE_OBSERVATION)
@@ -8906,6 +10106,8 @@ def main() -> int:
         f"and {human_decision_assurance_known_bads} "
         "human-decision-assurance known-bads "
         f"and {prq_002b_successor_known_bads} PRQ-002B successor known-bad "
+        f"and {prq_002e_construction_known_bads} PRQ-002E construction "
+        "known-bads "
         f"and {context_review_known_bads} context-review known-bads "
         f"and {closure_observation_known_bads} closure-observation known-bads "
         f"and {python_install_known_bads} locked-install known-bads "

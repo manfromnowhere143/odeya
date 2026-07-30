@@ -280,6 +280,18 @@ EXPECTED_SIDE_BY_SIDE_CANDIDATE_SCHEMA_PATHS = [
     "schemas/reducer-registry-v0-7.schema.json",
     "schemas/schema-registry-v0-8.schema.json",
     "schemas/schema-resource-record.schema.json",
+    "schemas/schema-resource-record-v0-2.schema.json",
+    "schemas/aggregate-state-subject-record-v0-2.schema.json",
+    "schemas/reducer-contract-record-v0-2.schema.json",
+    "schemas/event-contract-record-v0-2.schema.json",
+    "schemas/ordered-member-map-commitment-v0-2.schema.json",
+    "schemas/schema-registry-v0-9.schema.json",
+    "schemas/aggregate-state-subject-registry-v0-8.schema.json",
+    "schemas/reducer-registry-v0-8.schema.json",
+    "schemas/event-contract-registry-v0-8.schema.json",
+    "schemas/canonicalization-profile-core-v0-7.schema.json",
+    "schemas/canonicalization-profile-candidate-evidence-v0-7.schema.json",
+    "schemas/canonicalization-profile-migration-v0-2.schema.json",
 ]
 EXPECTED_NON_HDA_NON_AUTHORITY_CANDIDATE_SCHEMA_PATHS = {
     "schemas/aggregate-state-subject-record.schema.json",
@@ -294,6 +306,18 @@ EXPECTED_NON_HDA_NON_AUTHORITY_CANDIDATE_SCHEMA_PATHS = {
     "schemas/reducer-registry-v0-7.schema.json",
     "schemas/schema-registry-v0-8.schema.json",
     "schemas/schema-resource-record.schema.json",
+    "schemas/schema-resource-record-v0-2.schema.json",
+    "schemas/aggregate-state-subject-record-v0-2.schema.json",
+    "schemas/reducer-contract-record-v0-2.schema.json",
+    "schemas/event-contract-record-v0-2.schema.json",
+    "schemas/ordered-member-map-commitment-v0-2.schema.json",
+    "schemas/schema-registry-v0-9.schema.json",
+    "schemas/aggregate-state-subject-registry-v0-8.schema.json",
+    "schemas/reducer-registry-v0-8.schema.json",
+    "schemas/event-contract-registry-v0-8.schema.json",
+    "schemas/canonicalization-profile-core-v0-7.schema.json",
+    "schemas/canonicalization-profile-candidate-evidence-v0-7.schema.json",
+    "schemas/canonicalization-profile-migration-v0-2.schema.json",
 }
 EXPECTED_HDA_CANDIDATE_MECHANISM_SCHEMA_PATHS = {
     "schemas/human-decision-assurance-backing-byte-verification-receipt.schema.json",
@@ -493,10 +517,10 @@ EXPECTED_CENSUS_SUBJECT = {
     "baseline_git_commit": "56e8062334fb81bba955ba137be690e085d4c88e",
     "baseline_git_tree": "d90ed6dd8c54b91a1e503358f98ecaa08c766fa3",
     "baseline_schema_count": 112,
-    "side_by_side_candidate_schema_count": 20,
+    "side_by_side_candidate_schema_count": 32,
     "hda_candidate_mechanism_schema_count": 8,
-    "non_hda_non_authority_candidate_schema_count": 12,
-    "current_union_schema_count": 132,
+    "non_hda_non_authority_candidate_schema_count": 24,
+    "current_union_schema_count": 144,
     "authority_matrix_ref": "docs/AUTHORITY_MATRIX.md",
     "baseline_authority_matrix_raw_sha256": (
         "sha256:5c1ffc01e8cafd84b2d761c53fb598aa159ba585ac743184a9a83872cce0b6be"
@@ -515,7 +539,7 @@ EXPECTED_CENSUS_SCOPE_BOUNDARY = {
     "side_by_side_candidate_rows_are_not_part_of_baseline_partition": True,
     (
         "side_by_side_candidate_partition_is_exactly_eight_hda_candidate_"
-        "mechanisms_and_twelve_non_hda_non_authority_candidates"
+        "mechanisms_and_twenty_four_non_hda_non_authority_candidates"
     ): True,
     "all_current_consumer_schemas_remain_byte_identical_to_baseline": True,
     "complete_means_complete_only_for_the_named_frozen_source_corpus": True,
@@ -531,7 +555,7 @@ EXPECTED_CENSUS_SEMANTIC_SHA256 = {
         "sha256:0c602b6a11762e19e6926a5e9f069ae0e67cf4e81c0427cbafbf448db5d75d20"
     ),
     "class_definitions": (
-        "sha256:1028a2143658201abc66aec10e07ce1cd6429e2175a6031e18650b0a3d4ae130"
+        "sha256:2826b148aff122a7aafe63b000ca685f0635c9b883980b98d205925d4e0a85f9"
     ),
     "command_type_partition": (
         "sha256:663c333c7e42a2c63cdc754130a4e15a0c88e20c75283958f7bee22ed1960cef"
@@ -543,7 +567,7 @@ EXPECTED_CENSUS_SEMANTIC_SHA256 = {
         "sha256:ae5200cf5ffc8944cb5bd2297fab1a6e26187eb397a3d7891c78a9432ec23bf1"
     ),
     "candidate_status_projection": (
-        "sha256:388a82698e523b3e79a9367ecdcd5ed4646d9bdb018c7b31f21aa9c45ba513c3"
+        "sha256:04f03bae4bfaa935b09c81546b388671dfd60a20b1f743aefa43869d629a1989"
     ),
     "human_decision_families": (
         "sha256:145ba5502980c358a0710df70fcd1289770fe539699080ce9fece3dc37f68681"
@@ -558,7 +582,7 @@ EXPECTED_CENSUS_SEMANTIC_SHA256 = {
         "sha256:4dadf5ed2c2dfa0925aca40a44fa792c40959491e6d87f7703c36ea35340be89"
     ),
     "dynamic_completeness_rule": (
-        "sha256:63363406f506a79c7077d4f781008a8d36212c56fccdc4763922d345d252cbdf"
+        "sha256:2e743745d0680db2cc36161a4808a17edf8300087ca0cedf2a3542012ccb7e05"
     ),
     "migration": (
         "sha256:cced163ea2617444cf3348c497ace7ea9ad9c956c8668162dc9af2c8ade826eb"
@@ -3949,12 +3973,12 @@ def evaluate_census(
             "all_non_authoritative",
             "rows",
         }
-        or not type_sensitive_equal(side_by_side.get("expected_count"), 20)
+        or not type_sensitive_equal(side_by_side.get("expected_count"), 32)
         or not type_sensitive_equal(
             side_by_side.get("hda_candidate_mechanism_count"), 8
         )
         or not type_sensitive_equal(
-            side_by_side.get("non_hda_non_authority_candidate_count"), 12
+            side_by_side.get("non_hda_non_authority_candidate_count"), 24
         )
         or not type_sensitive_equal(
             side_by_side.get("partition_is_disjoint_and_complete"), True

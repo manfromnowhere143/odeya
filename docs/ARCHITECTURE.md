@@ -1,6 +1,6 @@
 # Odeya Architecture
 
-Status: proposed foundation, 2026-07-15. Components in this document are design targets unless explicitly marked implemented.
+Status: proposed foundation authored 2026-07-15 and reviewed 2026-07-29. Components in this document are unimplemented design targets unless explicitly marked implemented.
 
 ## Verdict
 
@@ -9,21 +9,38 @@ Odeya should be an evidence-native scientific operating system: a deterministic,
 The kernel must never depend on an agent remembering the mission. It owns the legal state transition, immutable protocol version, work graph, authority, budget, artifact lineage, and claim eligibility. Agents operate inside those boundaries and return proposals or artifacts.
 
 ```mermaid
-flowchart LR
+flowchart TB
     T[Thesis intake] --> C[Mission contract]
     C --> P[Frozen protocol]
     P --> K[Research kernel]
-    K --> I[Specialist intelligence]
-    K --> X[Isolated execution]
-    I --> E[Evidence and artifact store]
-    X --> E
-    E --> V[Independent verifier]
-    V --> A[Adjudication and claim compiler]
-    A --> U[Private cockpit]
-    A --> R[Release gate]
-    R --> O[Bounded research output]
-    A --> L[Grounded learning lab]
-    L -->|evaluated promotion only| K
+    K --> W[Typed exposure-bounded work contract]
+    W --> I[Specialist intelligence]
+    W --> X[Isolated execution]
+    I --> CA[Candidate proposals and artifacts]
+    X --> CA
+    CA --> G{Deterministic kernel admission<br/>and artifact promotion}
+    G -->|reject · retain-only · commit event| K
+    K --> E[(Canonical event + evidence ledger)]
+    E --> V[Separately assigned verifier<br/>isolation + independence vector retained]
+    V --> VR[Verification record]
+    VR --> G
+    E --> A[Rule-bound adjudicator + claim compiler]
+    A --> AD[Determination or refusal]
+    AD --> G
+    K -->|disposable projection| U[Private cockpit]
+    E --> L[Grounded learning evidence]
+    L --> LC[Strategy or configuration change candidate]
+    LC --> Q{Evaluation + review<br/>+ human promotion decision}
+    Q -->|authorized versioned proposal| G
+    K -->|eligible exact claim projection| PC[Publication candidate]
+    PC --> HD{Human publication decision<br/>PRQ-013 remains blocking}
+    HD -->|authorized exact candidate| PM[Deterministically sealed manifest]
+    HD -->|denied · absent · indeterminate<br/>invalid · expired · superseded| NR[Retained · not released]
+    PM --> PG[Exact single-use publication grant]
+    PG --> EE[Effect intent + dispatch]
+    EE --> OO[Separately authorized observation<br/>and reconciliation]
+    OO --> RS[Applied · not applied · completion unknown]
+    RS --> G
 ```
 
 ## Architectural invariants
@@ -142,7 +159,7 @@ The adjudicator is a pure derivation over retained facts wherever possible. It e
 The policy plane resolves who may do what, with which resource, under which contract, for how long. It separates:
 
 | Authority | Question |
-|---|---|
+| --- | --- |
 | Proposal | What action or hypothesis is worth considering? |
 | Protocol | What test is frozen and what would it imply? |
 | Safety | May this action be attempted under current controls? |
@@ -172,26 +189,33 @@ The later public surface and contribution surface are separate projections with 
 ## Mission lifecycle
 
 ```mermaid
-stateDiagram-v2
-    [*] --> Intake
-    Intake --> Orient: admitted
-    Intake --> Closed: decline/defer
-    Orient --> Contract
-    Contract --> Preregister
-    Preregister --> Preflight
-    Preflight --> Execute: authorized
-    Execute --> Verify
-    Verify --> AdversarialReview
-    AdversarialReview --> Adjudicate
-    Adjudicate --> Handoff
-    Handoff --> Learn
-    Learn --> [*]
-    Contract --> Blocked
-    Preflight --> Blocked
-    Execute --> Blocked
-    Verify --> Invalid
-    Blocked --> Handoff
-    Invalid --> Handoff
+flowchart TB
+    subgraph PH["SCIENTIFIC PHASE SPINE"]
+        direction TB
+        Intake[Proposal intake] --> Admit{Admitted?}
+        Admit -->|yes| Orient[Orient]
+        Admit -->|defer or decline| ProposalDisposition[Proposal disposition retained<br/>no mission phase inferred]
+        Orient --> Contract[Contract]
+        Contract --> Preregister[Preregister]
+        Preregister --> Preflight[Preflight]
+        Preflight -->|authorized| Execute[Execute]
+        Execute --> Verify[Verify]
+        Verify --> Review[Adversarial review]
+        Review --> Adjudicate[Adjudicate]
+        Adjudicate --> Handoff[Mandatory handoff]
+        Handoff --> Learn[Learn]
+        Learn --> Complete[Phase sequence complete]
+    end
+
+    subgraph AX["ORTHOGONAL RETAINED AXES · NEVER SCIENTIFIC PHASES"]
+        direction TB
+        Operational["Operational condition<br/>active · blocked · interrupted · failed · recovering<br/>resume the same phase; preserve unknowns"]
+        Validity["Validity<br/>pending · valid · invalid"]
+        Outcome["Scientific outcome<br/>pending · supported_within_scope · contradicted<br/>falsified · null_result · inconclusive"]
+        Release["Release aggregate<br/>separate decision · seal · grant · effect<br/>observation · correction"]
+    end
+
+    PH ~~~ AX
 ```
 
 The scientific lifecycle stages are:
@@ -201,18 +225,24 @@ The scientific lifecycle stages are:
 Release is a separate aggregate governed by the [noncircular publication protocol](PUBLICATION_PROTOCOL.md). It may be requested after adjudication and may proceed, be denied, time out ambiguously, be withdrawn, or be corrected without changing the scientific phase history. `handoff` is mandatory. Interruptions are resumable states, not null findings. Amendments, corrections, and replications form linked prospective branches.
 
 ```mermaid
-stateDiagram-v2
-    [*] --> NotRequested
-    NotRequested --> Requested
-    Requested --> Denied
-    Requested --> Authorized
-    Authorized --> Sealed
-    Sealed --> Releasing
-    Releasing --> Released
-    Releasing --> CompletionUnknown
-    CompletionUnknown --> Released: reconciled applied
-    CompletionUnknown --> Sealed: reconciled not applied
-    Released --> Withdrawn
+flowchart TB
+    PC[Exact PublicationCandidate] --> RQ[ReleaseRequest]
+    RQ --> D{Human PublicationDecision<br/>exact candidate digest}
+    D -->|denied · invalid · absent · indeterminate<br/>expired · superseded| NR[Retained · not released]
+    D -->|authorized| M[PublicationManifest<br/>deterministically sealed from candidate + decision]
+    M --> G[Single-use PublicationGrant<br/>bound to final manifest digest]
+    G --> E[External-effect intent + reservation]
+    E --> DS[Dispatch claim + external call]
+    DS --> O[External observation]
+    O --> RC[Separately authorized reconciliation<br/>exact destination + visibility oracle]
+    RC -->|confirmed applied + exact visible| REL[Released]
+    RC -->|confirmed not applied| CNA[Confirmed not released]
+    RC -->|cannot settle| UNK[Completion unknown]
+    UNK -->|new retained evidence| RC
+    REL --> CW[Correction · replacement · withdrawal<br/>new governed effects; history preserved]
+
+    AX["Orthogonal retained axes<br/>decision · manifest · effect<br/>visibility observation · correction"]
+    AX ~~~ RC
 ```
 
 ## Canonical objects
@@ -263,7 +293,7 @@ services/
 Leading reversible candidates (not frozen products):
 
 | Concern | Candidate | Boundary |
-|---|---|---|
+| --- | --- | --- |
 | Research runtime | Python | Scientific libraries and agent/tool adapters |
 | Cockpit and typed client | TypeScript + Next.js | Projection only; no scientific authority |
 | Durable workflows | Temporal | Scheduling and recovery below Odeya's lifecycle semantics |

@@ -55,23 +55,49 @@ named by a release manifest.
 | `Semantic contracts` | Admit the safe semantic partition, then execute all eight complete paired contract harnesses | Profile inventory and per-suite output | Not proof beyond the retained bounded subjects |
 | `Adversarial controls` | Admit the known-bad partition, then execute the same paired harnesses so negative controls cannot drift from their baselines | Profile inventory and expected-rejection output | Not an exhaustive threat proof |
 | `Canonical identity` | Reconcile the two retained `odeya-jcs-0.1` implementations and verify the frozen 120-schema/216-fixture predecessor audit is exact. `Foundation` separately checks the scoped, unissued PRQ-002B `odeya-jcs-0.2` successor candidate | Comparison receipt, predecessor-audit check output, and bounded successor-suite output | Not profile issuance, successor conformance, product identity, admission, PRQ-002 closure, or Gate A acceptance |
-| `Architecture evidence` | Reproduce nine dedicated prerequisite/member checks: Gate A prerequisites, PRQ-009 order, schema reissue, module manifest, first-slice scope, the PRQ-002A identity probe, the PRQ-002C raw-number prerequisite, the PRQ-002D prehash registry replay, and human-decision-assurance successor recomputation. `Foundation` separately runs the complete integrated fourteen-check census, including canonicalization-evaluator integrity, lifecycle/suite guard and condition audits, schema-rule ablation, refusal attribution, the PRQ-002C raw-number observation, the PRQ-002D replay, and the human-decision-assurance successor check | Dedicated evidence log plus the integrated Foundation log and pinned safe/known-bad inventories | Not profile issuance or conformance, product identity, registry admission, activation, or an acceptance decision |
+| `Architecture evidence` | Reproduce ten dedicated prerequisite/member checks: Gate A prerequisites, PRQ-009 order, schema reissue, module manifest, first-slice scope, the PRQ-002A identity probe, the PRQ-002C raw-number prerequisite, the PRQ-002D prehash registry replay, the PRQ-002E profile-0.3 construction, and human-decision-assurance successor recomputation. `Foundation` separately runs the complete integrated fifteen-check census, including canonicalization-evaluator integrity, lifecycle/suite guard and condition audits, schema-rule ablation, refusal attribution, the PRQ-002C raw-number observation, the PRQ-002D replay, the PRQ-002E construction check, and the human-decision-assurance successor check | Dedicated evidence log plus the integrated Foundation log and pinned safe/known-bad inventories | Not profile issuance or conformance, product identity, registry admission, activation, or an acceptance decision |
 | `Repository / Release Surface` | Validate the README contract, action pins, least-privilege workflow shape, Dependabot scope, Markdown, Action syntax, and Mermaid rendering | Release-check log and rendered SVG | Not UI acceptance, deployment evidence, or a publication decision |
 | `Architecture / Bounded Formal Models` | Reproduce seven safe TLA+ models, the alternate cognitive fingerprint run, and all thirty intended counterexamples | Full TLC log and pinned toolchain manifest | Bounded safety evidence only; not liveness, implementation conformance, or a physical safety case |
 | `Publication sequence` | On a governed push, verify the exact checked-out SHA, ref, single-parent/direct-child range, and event before/after boundary | Exact push log and remote run identity | Not a summary of the other checks, an independent verifier, or publication authority by itself |
 
-The release checker compares the dedicated nine-command run body and the
-integrated fourteen-member Python tuple to exact inventories, pins the complete
+The release checker compares the dedicated ten-command run body and the
+integrated fifteen-member Python tuple to exact inventories, pins the complete
 dedicated job and integrated-validator bytes, and binds the one executable
 consumption loop.
-The exact inventory contains twenty-five retained known-bad mutations:
-each member is removed once, then an out-of-body tenth workflow step and a
+The exact inventory contains twenty-seven retained known-bad mutations:
+each member is removed once, then an out-of-body eleventh workflow step and a
 post-assignment same-cardinality Python rebinding are separately refused. The
 counts above therefore cannot remain green after executable inventory drift.
-Seven separately retained release-script isolation mutations bind the exact
-PRQ-002A, PRQ-002C, and PRQ-002D rehearsal sequence, interpreter selection, isolated tool
-caches, and verified TLA+ jar. They are bounded structural controls, not
-fresh-clone execution evidence or Gate A acceptance.
+Foundation child processes retain a 30-second default timeout. Only the
+measured PRQ-002E construction checker receives 60 seconds and its predecessor
+wrapper receives 90 seconds; the wrapper's nested PRQ-002E invocation is
+bounded to 60 seconds, preserving 30 seconds for wrapper diagnostics.
+Six Foundation timeout-policy mutations separately refuse widening the
+30-second default, post-assignment rebinding that restores both brittle path
+limits, bypassing the path-aware consumer, dynamically restoring the
+30-second nested limit, replacing a consumer through a decorator, or rebinding
+the predecessor `main` under top-level control flow. The bounded semantic
+checker requires literal declarations, immutable bindings, undecorated sole
+executable functions, and exact references. These mutations are evaluated by
+that checker alone, so whole-file digest drift cannot earn incidental credit.
+Eleven separately retained release-script isolation mutations bind the exact
+PRQ-002A, PRQ-002C, and PRQ-002D rehearsal sequence, interpreter selection,
+isolated tool caches, verified TLA+ jar, and raw Mermaid renderer bytes. Seven
+controls cover rehearsal and standalone release isolation; four renderer
+controls refuse a weakened render count, early loop termination, removal of the
+per-image signature assertion, and CRLF substitution of the pinned script
+bytes. They are bounded structural controls, not fresh-clone execution evidence
+or Gate A acceptance.
+Three additional census-coherence mutations grow an executable expected
+matrix and its JSON fixture inventory together while leaving the release
+contract and fixture README unchanged. The derived cardinality gate refuses
+the synthetic seventh Foundation timeout-policy mutation, synthetic twelfth
+release-script mutation, and synthetic eleventh release-contract mutation, so
+lockstep executable/fixture growth cannot leave published counts stale. Four
+separate fixture-README mutations replace each of the derived
+`27`/`6`/`10`/`11` claims and prove that the cross-surface prose gate fires
+directly rather than receiving incidental credit from a different census
+failure.
 
 At the completed first-activation checkpoint, public `main` carried the
 four-workflow/ten-job inventory at
@@ -137,7 +163,11 @@ The script:
 2. installs the exact Node toolchain with lifecycle scripts disabled;
 3. audits the npm release-tool dependency graph and lints the release Markdown;
 4. installs and runs pinned ShellCheck, Actionlint, and Zizmor binaries, with Zizmor deliberately offline and uncredentialed;
-5. renders the exact Mermaid block from `README.md` through the bounded Chrome major; and
+5. scans every tracked Markdown file, requires the exact seven-block Mermaid
+   census only across `README.md`,
+   `docs/ARCHITECTURE.md`, `docs/COGNITIVE_ARCHITECTURE.md`, and
+   `docs/HUMAN_DECISION_ASSURANCE.md`, and renders every admitted block through
+   the exact-byte-bound renderer and bounded Chrome major;
 6. runs the publication-sequence, live-GitHub-verifier, and rehearsal-comparator
    known-bad self-tests; and
 7. leaves only ignored diagnostic output under `artifacts/repository-release/`.
@@ -389,7 +419,8 @@ is retained:
    `Schema contracts`, `Semantic contracts`, `Adversarial controls`,
    `Canonical identity`, `Architecture evidence`, `Release surface`, and
    `Bounded formal models`, plus the push-only `Publication sequence`, all
-   completed with conclusion `success` on `CANDIDATE_COMMIT`;
+   completed with conclusion `success` on `CANDIDATE_COMMIT` and
+   `run_attempt=1`;
 10. a live read-back shows the active no-bypass `main exact-SHA fast-forward`
    ruleset blocks deletion and non-fast-forward updates and requires those ten
    exact GitHub Actions contexts with strict current-base enforcement and
@@ -400,16 +431,20 @@ is retained:
 12. promotion is one ordinary same-SHA fast-forward from `BASE_COMMIT` to
     `CANDIDATE_COMMIT`; no pull-request merge is a publication path;
 13. the four newly created post-main workflow runs and all ten jobs complete
-    successfully on `CANDIDATE_COMMIT`, and remote `main` still equals it; and
+    successfully on `CANDIDATE_COMMIT` with `run_attempt=1`, and remote `main`
+    still equals it;
 14. a remote-main fresh-clone rehearsal requires
-   `refs/heads/main == CANDIDATE_COMMIT` and produces a passing
-   invariant-profile comparison receipt against the local rehearsal; and
-15. the first activation cycle additionally validates the immutable mutation
-   journal and bootstrap checks, re-reads zero open pull requests, both
-   configured rulesets, exact effective rules and protected branch state, and
-   retains `github-activation-C2.json`. The helper then re-reads both
-   `main == CANDIDATE_COMMIT` and
-   `RELEASE_REF == CANDIDATE_COMMIT` before it records `COMPLETE`.
+    `refs/heads/main == CANDIDATE_COMMIT` and produces a passing
+    invariant-profile comparison receipt against the local rehearsal;
+15. after that comparison, every ordinary publication helper separately
+    re-reads both `main == CANDIDATE_COMMIT` and
+    `RELEASE_REF == CANDIDATE_COMMIT` before it records `COMPLETE`. This is a
+    final live observation; the ordinary helper emits no dedicated final-ref
+    receipt; and
+16. the first activation cycle additionally validates the immutable mutation
+    journal and bootstrap checks, re-reads zero open pull requests, both
+    configured rulesets, exact effective rules and protected branch state, and
+    retains `github-activation-C2.json`.
 
 Both rulesets require GitHub's `required_linear_history` rule. GitHub requires
 at least one compatible pull-request merge method to remain enabled before it
