@@ -136,7 +136,7 @@ They are requirements sources and bounded proof missions—not runtime dependenc
 
 The current retained foundation contains 144 Draft 2020-12 schemas, 908
 shared-manifest cases (244 valid and 664 known-bad), 17 isolated contract
-suites, 18 architecture-evidence checks, and 7 bounded TLA+ models with
+suites, 19 architecture-evidence checks, and 7 bounded TLA+ models with
 30 mutation controls. These counts are bound to the validator run that
 measures them; the README previously stated four of them as fact while all four
 had drifted.
@@ -424,13 +424,15 @@ carries the PRQ-002G profile-bounded JCS serialization conformance tranche
 (ADR 0107): a 61-frame answer-free corpus through two source-separated
 zero-dependency serializers with byte-identical projections, a retained
 UTF-16-versus-code-point ordering discriminator, and a third-path validator.
-The lane now also carries the PRQ-002H nine-domain frame governance
-tranche (ADR 0108): the nine frozen structural-nonidentity fixtures traced
-as governed instances of their product-domain schemas, with each domain's
-refusal surface exercised as data through both implementations. The next
-smallest PRQ-002 architecture unit is dependency-closed offline resolution
-and cross-object product replay, then accountable review and the operator's
-exact-byte decision. No
+The lane's machine chain is now complete through PRQ-002I (ADR 0109):
+nine-domain frame governance over the frozen fixtures, and a declared
+199-member universe proven dependency-closed — 6,456 schema reference edges
+resolved offline and 241 declared digest bindings replayed from repository
+bytes, with four historical residue identities named rather than resolved.
+Every current machine-buildable PRQ-002 unit is retained. What remains
+before a Gate A candidate is deliberately human: an accountable non-author
+review of the open findings, and the operator's exact-byte decision on the
+`odeya-jcs-0.3` profile. No
 observer agreement,
 structural vector, or green validator may be promoted into conformance, product
 identity, profile issuance, PRQ-002 closure, Gate A acceptance, or runtime

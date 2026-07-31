@@ -347,6 +347,15 @@ DEDICATED_ARCHITECTURE_EVIDENCE_COMMANDS = (
         '--python-executable "$ODEYA_PRQ002_PYTHON" '
         '--node-executable "$ODEYA_PRQ002_NODE"',
     ),
+    (
+        "prq-002i-offline-resolution",
+        "python tests/profile-0-3-offline-resolution/authoring/"
+        "generate_universe.py --check && "
+        "python scripts/validate_profile_0_3_offline_resolution.py "
+        "--recompute-all "
+        '--python-executable "$ODEYA_PRQ002_PYTHON" '
+        '--node-executable "$ODEYA_PRQ002_NODE"',
+    ),
 )
 INTEGRATED_ARCHITECTURE_EVIDENCE_CHECKS = (
     ("gate-a-prerequisites", "scripts/validate_gate_a_prerequisites.py"),
@@ -397,6 +406,10 @@ INTEGRATED_ARCHITECTURE_EVIDENCE_CHECKS = (
         "prq-002h-product-domain-frames",
         "scripts/validate_profile_0_3_product_domain_frames.py",
     ),
+    (
+        "prq-002i-offline-resolution",
+        "scripts/validate_profile_0_3_offline_resolution.py",
+    ),
 )
 CARDINAL_WORDS = (
     "zero",
@@ -433,6 +446,8 @@ CARDINAL_WORDS = (
     "thirty-one",
     "thirty-two",
     "thirty-three",
+    "thirty-four",
+    "thirty-five",
 )
 ARCHITECTURE_EVIDENCE_COUNT_BOUNDARY = (
     f"Reproduce {CARDINAL_WORDS[len(DEDICATED_ARCHITECTURE_EVIDENCE_COMMANDS)]} "
@@ -441,8 +456,9 @@ ARCHITECTURE_EVIDENCE_COUNT_BOUNDARY = (
     "the PRQ-002C raw-number prerequisite, the PRQ-002D prehash registry replay, "
     "the PRQ-002E profile-0.3 construction, human-decision-assurance successor "
     "recomputation, the PRQ-002F numeric-trace conformance recomputation, the "
-    "PRQ-002G JCS serialization conformance recomputation, and the PRQ-002H "
-    "product-domain frame governance recomputation. "
+    "PRQ-002G JCS serialization conformance recomputation, the PRQ-002H "
+    "product-domain frame governance recomputation, and the PRQ-002I "
+    "offline-resolution recomputation. "
     "`Foundation` separately "
     "runs the complete integrated "
     f"{CARDINAL_WORDS[len(INTEGRATED_ARCHITECTURE_EVIDENCE_CHECKS)]}-check census"
@@ -463,10 +479,10 @@ EXPECTED_ARCHITECTURE_EVIDENCE_RUN_BODY = (
     + "          } 2>&1 | tee artifacts/ci/architecture-evidence.log"
 )
 EXPECTED_ARCHITECTURE_EVIDENCE_JOB_SHA256 = (
-    "f4baecc1de7f9795b14ff84551d3a518ee5871fd5eb8e174b3e2914438980064"
+    "b6bd9c1246a411dde371b4c48cf31f51b4a14a76463175f979b293f94030cff5"
 )
 EXPECTED_INTEGRATED_VALIDATOR_SHA256 = (
-    "1168652ab17ad3e38b7bb1d2c82cdf7f7dee1f613f31ab90afa5b97198ac6c87"
+    "dcb6df40d33ee33e8c399e73918eb31a9b14c2a27010796b74249c31af79531c"
 )
 FOUNDATION_TIMEOUT_MAP_ERROR = (
     "Foundation timeout policy must retain the exact 30-second default and "
@@ -500,6 +516,7 @@ EXPECTED_FOUNDATION_TIMEOUT_POLICY_MUTATIONS = {
         '    "scripts/validate_profile_0_3_numeric_trace_conformance.py": 120,\n'
         '    "scripts/validate_profile_0_3_jcs_conformance.py": 60,\n'
         '    "scripts/validate_profile_0_3_product_domain_frames.py": 60,\n'
+        '    "scripts/validate_profile_0_3_offline_resolution.py": 120,\n'
         "}\n"
         "MARKDOWN_LINK =",
         "ARCHITECTURE_EVIDENCE_CHECK_TIMEOUT_SECONDS = {\n"
@@ -507,6 +524,7 @@ EXPECTED_FOUNDATION_TIMEOUT_POLICY_MUTATIONS = {
         '    "scripts/validate_profile_0_3_numeric_trace_conformance.py": 120,\n'
         '    "scripts/validate_profile_0_3_jcs_conformance.py": 60,\n'
         '    "scripts/validate_profile_0_3_product_domain_frames.py": 60,\n'
+        '    "scripts/validate_profile_0_3_offline_resolution.py": 120,\n'
         "}\n"
         "ISOLATED_CONTRACT_SUITE_TIMEOUT_SECONDS[\n"
         '    "tests/product-identity-profile-candidate/check.py"\n'
@@ -792,6 +810,18 @@ REHEARSAL_PRQ002H_RECOMPUTATION_BLOCK = (
     '  --node-executable "$PRQ002_NODE_BIN" \\\n'
     "  2>&1 | tee -a artifacts/rehearsal/foundation.log\n"
 )
+REHEARSAL_PRQ002I_RECOMPUTATION_BLOCK = (
+    'CURRENT_STAGE="prq-002i-offline-resolution"\n'
+    ".venv-architecture/bin/python \\\n"
+    "  tests/profile-0-3-offline-resolution/authoring/generate_universe.py --check \\\n"
+    "  2>&1 | tee -a artifacts/rehearsal/foundation.log\n"
+    ".venv-architecture/bin/python \\\n"
+    "  scripts/validate_profile_0_3_offline_resolution.py \\\n"
+    "  --recompute-all \\\n"
+    '  --python-executable "$PRQ002_PYTHON_BIN" \\\n'
+    '  --node-executable "$PRQ002_NODE_BIN" \\\n'
+    "  2>&1 | tee -a artifacts/rehearsal/foundation.log\n"
+)
 REHEARSAL_PRQ002_RECOMPUTATION_BLOCK = (
     'CURRENT_STAGE="prq-002-identity-probe"\n'
     ".venv-architecture/bin/python -m pip install \\\n"
@@ -829,6 +859,7 @@ REHEARSAL_PRQ002_RECOMPUTATION_BLOCK = (
     + REHEARSAL_PRQ002F_RECOMPUTATION_BLOCK
     + REHEARSAL_PRQ002G_RECOMPUTATION_BLOCK
     + REHEARSAL_PRQ002H_RECOMPUTATION_BLOCK
+    + REHEARSAL_PRQ002I_RECOMPUTATION_BLOCK
     + "record_stage foundation passed\n"
 )
 STANDALONE_TOOL_CACHE_BLOCK = (
@@ -930,7 +961,7 @@ EXPECTED_RELEASE_CONTRACT_MUTATIONS = {
         "PRQ-009 order, schema reissue, module manifest, first-slice scope, and "
         "human-decision-assurance successor recomputation. `Foundation` separately "
         "runs the complete integrated ten-check census",
-        "Reproduce thirteen dedicated prerequisite/member checks",
+        "Reproduce fourteen dedicated prerequisite/member checks",
     ),
     "stale-architecture-evidence-mutation-count": (
         ARCHITECTURE_EVIDENCE_MUTATION_COUNT_BOUNDARY,
@@ -941,7 +972,7 @@ EXPECTED_RELEASE_CONTRACT_MUTATIONS = {
         ARCHITECTURE_EVIDENCE_RUN_COUNT_BOUNDARY,
         "The release checker compares the dedicated eight-command run body and "
         "the\nintegrated fourteen-member Python tuple",
-        "The release checker compares the dedicated thirteen-command run body",
+        "The release checker compares the dedicated fourteen-command run body",
     ),
     "future-private-remote-regression": (
         "The public canonical remote already exists at\n"
@@ -1004,10 +1035,10 @@ EXPECTED_RELEASE_CENSUS_MUTATIONS = {
 }
 EXPECTED_RELEASE_FIXTURE_README_MUTATIONS = {
     "stale-architecture-evidence-fixture-readme-count": (
+        "Thirty-five architecture-evidence inventory mutations",
         "Thirty-three architecture-evidence inventory mutations",
-        "Thirty-one architecture-evidence inventory mutations",
         "repository-release fixture README must carry exactly the "
-        "executable-derived boundary 'Thirty-three architecture-evidence "
+        "executable-derived boundary 'Thirty-five architecture-evidence "
         "inventory mutations'",
     ),
     "stale-release-contract-fixture-readme-count": (
@@ -2044,6 +2075,7 @@ def foundation_timeout_policy_errors(
             "scripts/validate_profile_0_3_numeric_trace_conformance.py": 120,
             "scripts/validate_profile_0_3_jcs_conformance.py": 60,
             "scripts/validate_profile_0_3_product_domain_frames.py": 60,
+            "scripts/validate_profile_0_3_offline_resolution.py": 120,
         }
         and all(
             type(value) is int

@@ -262,6 +262,16 @@ CURRENT_STAGE="prq-002h-product-domain-frames"
   --python-executable "$PRQ002_PYTHON_BIN" \
   --node-executable "$PRQ002_NODE_BIN" \
   2>&1 | tee -a artifacts/rehearsal/foundation.log
+CURRENT_STAGE="prq-002i-offline-resolution"
+.venv-architecture/bin/python \
+  tests/profile-0-3-offline-resolution/authoring/generate_universe.py --check \
+  2>&1 | tee -a artifacts/rehearsal/foundation.log
+.venv-architecture/bin/python \
+  scripts/validate_profile_0_3_offline_resolution.py \
+  --recompute-all \
+  --python-executable "$PRQ002_PYTHON_BIN" \
+  --node-executable "$PRQ002_NODE_BIN" \
+  2>&1 | tee -a artifacts/rehearsal/foundation.log
 record_stage foundation passed
 
 # The cheap gate inside validate.py binds the guard-coverage record to the

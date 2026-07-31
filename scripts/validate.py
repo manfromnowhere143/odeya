@@ -287,6 +287,26 @@ REQUIRED_FILES = (
     "tests/profile-0-3-product-domain-frames/results/python-execution-receipt.json",
     "tests/profile-0-3-product-domain-frames/results/node-execution-receipt.json",
     "tests/profile-0-3-product-domain-frames/results/comparison-receipt.json",
+    "docs/decisions/0109-prove-dependency-closed-offline-resolution.md",
+    "scripts/validate_profile_0_3_offline_resolution.py",
+    "tests/profile-0-3-offline-resolution/README.md",
+    "tests/profile-0-3-offline-resolution/manifest.json",
+    "tests/profile-0-3-offline-resolution/universe-manifest.json",
+    "tests/profile-0-3-offline-resolution/authoring/generate_universe.py",
+    "tests/profile-0-3-offline-resolution/authoring/generate_suite_metadata.py",
+    "tests/profile-0-3-offline-resolution/authoring/retain_results.py",
+    "tests/profile-0-3-offline-resolution/python/runner.py",
+    "tests/profile-0-3-offline-resolution/python/dependency-lock.json",
+    "tests/profile-0-3-offline-resolution/python/source-manifest.json",
+    "tests/profile-0-3-offline-resolution/node/runner.mjs",
+    "tests/profile-0-3-offline-resolution/node/package.json",
+    "tests/profile-0-3-offline-resolution/node/package-lock.json",
+    "tests/profile-0-3-offline-resolution/node/source-manifest.json",
+    "tests/profile-0-3-offline-resolution/results/python-resolution-result.json",
+    "tests/profile-0-3-offline-resolution/results/node-resolution-result.json",
+    "tests/profile-0-3-offline-resolution/results/python-execution-receipt.json",
+    "tests/profile-0-3-offline-resolution/results/node-execution-receipt.json",
+    "tests/profile-0-3-offline-resolution/results/comparison-receipt.json",
     "architecture/work-intent-core-candidate.json",
     "architecture/work-intent-identity-candidate-evidence.json",
     "architecture/work-intent-profile-bound-candidate.json",
@@ -607,6 +627,7 @@ ARCHITECTURE_EVIDENCE_CHECKS = (
     "scripts/validate_profile_0_3_numeric_trace_conformance.py",
     "scripts/validate_profile_0_3_jcs_conformance.py",
     "scripts/validate_profile_0_3_product_domain_frames.py",
+    "scripts/validate_profile_0_3_offline_resolution.py",
 )
 REPOSITORY_RELEASE_CHECKS = (
     "scripts/validate_repository_release.py",
@@ -620,6 +641,7 @@ ARCHITECTURE_EVIDENCE_CHECK_TIMEOUT_SECONDS = {
     "scripts/validate_profile_0_3_numeric_trace_conformance.py": 120,
     "scripts/validate_profile_0_3_jcs_conformance.py": 60,
     "scripts/validate_profile_0_3_product_domain_frames.py": 60,
+    "scripts/validate_profile_0_3_offline_resolution.py": 120,
 }
 MARKDOWN_LINK = re.compile(r"!?\[[^\]]*\]\(([^)]+)\)")
 EXTERNAL_PREFIXES = ("http://", "https://", "mailto:", "urn:", "data:")

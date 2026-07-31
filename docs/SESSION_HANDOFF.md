@@ -10,13 +10,14 @@ PRQ-002F, and PRQ-002G tranches are published and settled in sequence: live
 `main` and each permanent release ref carried complete subject-bound
 governance, checks, promotion, remote-replay, and comparison receipts at its
 own settlement. The active architecture lane now carries the bounded
-PRQ-002H nine-product-domain frame governance tranche (ADR 0108) as one
-ordinary single-parent direct child of the exact PRQ-002G predecessor: the
-nine frozen structural-nonidentity fixtures traced as governed instances of
-their nine product-domain schemas through two source-separated
-implementations, with each domain's refusal surface exercised as data. It
-amends no frozen byte, issues nothing, computes no digest, and constructs no
-product identity.
+PRQ-002I dependency-closed offline-resolution tranche (ADR 0109) as one
+ordinary single-parent direct child of the exact PRQ-002H predecessor: the
+declared 199-member universe proven dependency-closed — 6,456 schema
+reference edges resolved offline and 241 declared digest bindings replayed
+from repository bytes — through two source-separated implementations and a
+third-path validator, with four historical residue identities named rather
+than resolved. It amends no frozen byte, issues nothing, computes no
+digest, and constructs no product identity.
 This file cannot contain the
 commit that
 contains itself; resolve the candidate's exact commit, rehearsal, publication,
@@ -446,6 +447,24 @@ item here.
   The fixtures remain structural nonidentity evidence: no member, digest,
   identity, admission, issuance, PRQ-002 closure, Gate A acceptance, or any
   authority follows.
+- **PRQ-002I now has bounded dependency-closure evidence, not complete
+  historical resolution.** ADR 0109 retains a declared 199-member universe —
+  the full 144-schema corpus, the canonicalization candidate records and
+  raw-number contract, the nine frozen fixtures, and the PRQ-002F/G/H
+  retained artifacts — proven dependency-closed by two source-separated
+  implementations and a third-path validator that each re-derive all 6,456
+  schema reference edges (in-document fragments by exact pointer, absolute
+  URN references against the registry with recorded target digests,
+  everything else refusing, including `$dynamicRef`) and replay all 241
+  declared digest bindings across three declared shapes from repository
+  bytes. The three projections agree exactly; 26 known-bads fire with
+  declared codes, including injected HTTP and unknown-URN references and a
+  bound-target byte drift. Four historical resource identities remain
+  outside the universe by design and are named in the manifest:
+  `command-contract-registry:0.1.0`, `command-receipt:0.3.0`,
+  `work-contract:0.1.0`, and `command-envelope:0.4.0`. Undeclared binding
+  shapes are not claimed. No product identity, issuance, PRQ-002 closure,
+  Gate A acceptance, or authority follows.
 - **Where to put pressure.** The remaining bulk is the per-case domain-logic
   layer: guards inside per-case checkers that no retained case exercises. They
   close by targeted, ablation-verified cases in the ADR 0071 style — one
@@ -517,7 +536,7 @@ that deserves to carry the mission forward.
 12. Start with the smallest dependency-complete vertical slice. Complexity is
     admitted only when evidence shows it is required.
 
-## Current repository recovery identity — authoritative 2026-07-31, PRQ-002H
+## Current repository recovery identity — authoritative 2026-08-01, PRQ-002I
 
 - Canonical workspace:
   `/Users/danielwahnich/workspace/odeya`; it remains the protected concurrent
@@ -527,7 +546,740 @@ that deserves to carry the mission forward.
   `/Users/danielwahnich/workspace/odeya-prq-002-profile-0-3-replacement-20260730`
 - Sole architecture branch:
   `agent/t0-prq-002-profile-0-3-replacement-20260730`
-- Exact immediate PRQ-002G predecessor:
+- Exact immediate PRQ-002H predecessor:
+  `1cf0524744b194515964b708d75ae1b8bd39fb2c`
+- Exact predecessor tree:
+  `c9e733b3222f02fc12d9e2d15d9e81ec98491581`
+- Exact closed public ancestor:
+  `3ada167aae4ec7f6855de395ba7636dbae78ed57`
+- Canonical remote: `https://github.com/manfromnowhere143/odeya.git`.
+  The PRQ-002H settlement is complete: live `main` and the permanent release
+  ref for the exact predecessor were independently observed equal at
+  settlement, its four candidate and four post-main workflows each completed
+  ten attempt-1 jobs successfully, and its local and remote-main rehearsal
+  manifests compare equal. The complete subject-bound receipts live under
+  `/Users/danielwahnich/workspace/odeya-release-evidence/` keyed by the exact
+  predecessor hash; revalidate them from bytes rather than from this prose.
+- The active tranche is the bounded PRQ-002I dependency-closed
+  offline-resolution candidate (ADR 0109): one ordinary single-parent direct
+  child of the exact predecessor on the named branch, containing the declared
+  universe manifest, its dual-implementation retained results, the dedicated
+  third-path validator, and the complete registration cascade.
+- Architecture-repository publication authority for the PRQ-002I candidate
+  was granted by the operator during the retaining session and is consumed by
+  one candidate-and-promotion sequence; any later candidate requires fresh
+  explicit operator authority. Profile issuance, scientific publication,
+  runtime, application, infrastructure, deployment, external-effect,
+  spending, credential, and Gate A authority: not granted.
+
+Run first:
+
+```bash
+bash -euo pipefail <<'BASH'
+cd /Users/danielwahnich/workspace/odeya-prq-002-profile-0-3-replacement-20260730
+source scripts/ci/sanitize-git-environment.sh
+BASE=1cf0524744b194515964b708d75ae1b8bd39fb2c
+BASE_TREE=c9e733b3222f02fc12d9e2d15d9e81ec98491581
+HEAD_COMMIT="$(git rev-parse HEAD)"
+test "$(git symbolic-ref --short HEAD)" = \
+  agent/t0-prq-002-profile-0-3-replacement-20260730
+test "$(git remote)" = origin
+test "$(git remote get-url origin)" = \
+  https://github.com/manfromnowhere143/odeya.git
+test "$(git rev-parse "$BASE^{tree}")" = "$BASE_TREE"
+test -z "$(git status --porcelain=v1 --untracked-files=all)"
+test "$(git rev-parse "$HEAD_COMMIT^")" = "$BASE"
+test "$(git rev-list --parents -n 1 "$HEAD_COMMIT" | awk '{print NF}')" = 2
+test "$(git rev-list --count "$BASE..$HEAD_COMMIT")" = 1
+git status --short --branch
+git diff --check "$BASE..$HEAD_COMMIT"
+test "$(git -C /Users/danielwahnich/workspace/odeya \
+  symbolic-ref --short HEAD)" = agent/repository-release
+REMOTE_URL=https://github.com/manfromnowhere143/odeya.git
+REMOTE_MAIN="$(git ls-remote --refs "$REMOTE_URL" refs/heads/main |
+  awk '$2 == "refs/heads/main" {print $1}')"
+test "$REMOTE_MAIN" = "$BASE" || test "$REMOTE_MAIN" = "$HEAD_COMMIT"
+test "$(git ls-remote --refs "$REMOTE_URL" "refs/heads/release/$BASE" |
+  awk -v ref="refs/heads/release/$BASE" '$2 == ref {print $1}')" = "$BASE"
+PYTHONDONTWRITEBYTECODE=1 .venv-architecture/bin/python \
+  tests/profile-0-3-offline-resolution/authoring/generate_universe.py --check
+PYTHONDONTWRITEBYTECODE=1 .venv-architecture/bin/python \
+  scripts/validate_profile_0_3_offline_resolution.py
+PYTHONDONTWRITEBYTECODE=1 .venv-architecture/bin/python scripts/validate.py
+PYTHONDONTWRITEBYTECODE=1 .venv-architecture/bin/python \
+  scripts/validate_repository_release.py
+EVIDENCE_ROOT="/Users/danielwahnich/workspace/odeya-release-evidence/$HEAD_COMMIT"
+test -d "$EVIDENCE_ROOT"
+python3 - "$EVIDENCE_ROOT" "$HEAD_COMMIT" <<'PY'
+import sys
+from pathlib import Path
+
+sys.path.insert(0, "scripts")
+from compare_rehearsal_manifests import load_manifest
+
+document, _ = load_manifest(Path(sys.argv[1]))
+assert document["subject_commit"] == sys.argv[2]
+assert document["source_class"] == "local"
+assert document["remote_main_commit"] is None
+assert document["canonical_scientific_evidence"] is False
+assert len(document["files"]) == 19
+assert set(document["pass_dispositions"].values()) == {"passed"}
+PY
+BASH
+```
+
+These commands validate repository and live lineage, run the dedicated and
+full validators, and check the exact-subject local rehearsal manifest.
+`load_manifest` takes the evidence root directory, never the manifest file
+path, and a remote-main rehearsal manifest spells its `source_class` as
+`remote-main`. A missing or invalid local manifest keeps the sole mission at
+PRQ-002I validation and rehearsal. A successful local manifest still does not
+establish remote settlement. The intended continuation
+state is one clean ordinary single-parent direct child of the exact immediate
+predecessor on the named branch. A dirty next-session state, merge, extra
+commit, second dirty architecture lane, or path substitution requires a new
+exact recovery audit; do not infer that it belongs to this tranche.
+
+## Superseded PRQ-002H repository recovery identity — retained chronology
+
+The block below described the PRQ-002H authoring state before its
+publication settled. It is retained as chronology only. Do not execute its
+restart program or use it to select the current writer.
+
+### Superseded authoritative 2026-07-31 PRQ-002H identity
+
+- Canonical workspace:
+  `/Users/danielwahnich/workspace/odeya`; it remains the protected concurrent
+  UI/UX and quarantined-collision lane on `agent/repository-release`. Do not
+  edit, stage, normalize, or discard its dirty paths.
+- Sole architecture writer:
+  `/Users/danielwahnich/workspace/odeya-prq-002-profile-0-3-replacement-20260730`
+- Sole architecture branch:
+  `agent/t0-prq-002-profile-0-3-replacement-20260730`
+- Superseded immediate PRQ-002G predecessor:
+  `3ada167aae4ec7f6855de395ba7636dbae78ed57`
+- Exact predecessor tree:
+  `b157a829ea0b8ccea85b8c87c956045b12264030`
+- Exact closed public ancestor:
+  `741b7b6283eb17a3dfac2abed92e84344f20f19d`
+- Canonical remote: `https://github.com/manfromnowhere143/odeya.git`.
+  The PRQ-002G settlement is complete: live `main` and the permanent release
+  ref for the exact predecessor were independently observed equal at
+  settlement, its four candidate and four post-main workflows each completed
+  ten attempt-1 jobs successfully, and its local and remote-main rehearsal
+  manifests compare equal. The complete subject-bound receipts live under
+  `/Users/danielwahnich/workspace/odeya-release-evidence/` keyed by the exact
+  predecessor hash; revalidate them from bytes rather than from this prose.
+- The active tranche is the bounded PRQ-002H nine-product-domain frame
+  governance candidate (ADR 0108): one ordinary single-parent direct child
+  of the exact predecessor on the named branch, containing the answer-free
+  54-frame corpus, its dual-implementation retained results, the dedicated
+  parent binding validator, and the complete registration cascade.
+- Architecture-repository publication authority for the PRQ-002H candidate
+  was granted by the operator during the retaining session and is consumed by
+  one candidate-and-promotion sequence; any later candidate requires fresh
+  explicit operator authority. Profile issuance, scientific publication,
+  runtime, application, infrastructure, deployment, external-effect,
+  spending, credential, and Gate A authority: not granted.
+
+Run first:
+
+```bash
+bash -euo pipefail <<'BASH'
+cd /Users/danielwahnich/workspace/odeya-prq-002-profile-0-3-replacement-20260730
+source scripts/ci/sanitize-git-environment.sh
+BASE=3ada167aae4ec7f6855de395ba7636dbae78ed57
+BASE_TREE=b157a829ea0b8ccea85b8c87c956045b12264030
+HEAD_COMMIT="$(git rev-parse HEAD)"
+test "$(git symbolic-ref --short HEAD)" = \
+  agent/t0-prq-002-profile-0-3-replacement-20260730
+test "$(git remote)" = origin
+test "$(git remote get-url origin)" = \
+  https://github.com/manfromnowhere143/odeya.git
+test "$(git rev-parse "$BASE^{tree}")" = "$BASE_TREE"
+test -z "$(git status --porcelain=v1 --untracked-files=all)"
+test "$(git rev-parse "$HEAD_COMMIT^")" = "$BASE"
+test "$(git rev-list --parents -n 1 "$HEAD_COMMIT" | awk '{print NF}')" = 2
+test "$(git rev-list --count "$BASE..$HEAD_COMMIT")" = 1
+git status --short --branch
+git diff --check "$BASE..$HEAD_COMMIT"
+test "$(git -C /Users/danielwahnich/workspace/odeya \
+  symbolic-ref --short HEAD)" = agent/repository-release
+REMOTE_URL=https://github.com/manfromnowhere143/odeya.git
+REMOTE_MAIN="$(git ls-remote --refs "$REMOTE_URL" refs/heads/main |
+  awk '$2 == "refs/heads/main" {print $1}')"
+test "$REMOTE_MAIN" = "$BASE" || test "$REMOTE_MAIN" = "$HEAD_COMMIT"
+test "$(git ls-remote --refs "$REMOTE_URL" "refs/heads/release/$BASE" |
+  awk -v ref="refs/heads/release/$BASE" '$2 == ref {print $1}')" = "$BASE"
+PYTHONDONTWRITEBYTECODE=1 .venv-architecture/bin/python \
+  tests/profile-0-3-product-domain-frames/authoring/generate_vectors.py --check
+PYTHONDONTWRITEBYTECODE=1 .venv-architecture/bin/python \
+  scripts/validate_profile_0_3_product_domain_frames.py
+PYTHONDONTWRITEBYTECODE=1 .venv-architecture/bin/python scripts/validate.py
+PYTHONDONTWRITEBYTECODE=1 .venv-architecture/bin/python \
+  scripts/validate_repository_release.py
+EVIDENCE_ROOT="/Users/danielwahnich/workspace/odeya-release-evidence/$HEAD_COMMIT"
+test -d "$EVIDENCE_ROOT"
+python3 - "$EVIDENCE_ROOT" "$HEAD_COMMIT" <<'PY'
+import sys
+from pathlib import Path
+
+sys.path.insert(0, "scripts")
+from compare_rehearsal_manifests import load_manifest
+
+document, _ = load_manifest(Path(sys.argv[1]))
+assert document["subject_commit"] == sys.argv[2]
+assert document["source_class"] == "local"
+assert document["remote_main_commit"] is None
+assert document["canonical_scientific_evidence"] is False
+assert len(document["files"]) == 19
+assert set(document["pass_dispositions"].values()) == {"passed"}
+PY
+BASH
+```
+
+These commands validate repository and live lineage, run the dedicated and
+full validators, and check the exact-subject local rehearsal manifest.
+`load_manifest` takes the evidence root directory, never the manifest file
+path, and a remote-main rehearsal manifest spells its `source_class` as
+`remote-main`. A missing or invalid local manifest keeps the sole mission at
+PRQ-002H validation and rehearsal. A successful local manifest still does not
+establish remote settlement. The intended continuation
+state is one clean ordinary single-parent direct child of the exact immediate
+predecessor on the named branch. A dirty next-session state, merge, extra
+commit, second dirty architecture lane, or path substitution requires a new
+exact recovery audit; do not infer that it belongs to this tranche.
+
+## Superseded PRQ-002G repository recovery identity — retained chronology
+
+The block below described the PRQ-002G authoring state before its
+publication settled. It is retained as chronology only. Do not execute its
+restart program or use it to select the current writer.
+
+### Superseded authoritative 2026-07-31 PRQ-002G identity
+
+- Canonical workspace:
+  `/Users/danielwahnich/workspace/odeya`; it remains the protected concurrent
+  UI/UX and quarantined-collision lane on `agent/repository-release`. Do not
+  edit, stage, normalize, or discard its dirty paths.
+- Sole architecture writer:
+  `/Users/danielwahnich/workspace/odeya-prq-002-profile-0-3-replacement-20260730`
+- Sole architecture branch:
+  `agent/t0-prq-002-profile-0-3-replacement-20260730`
+- Superseded immediate PRQ-002F predecessor:
+  `741b7b6283eb17a3dfac2abed92e84344f20f19d`
+- Exact predecessor tree:
+  `407ab1ef25d088dff82034ec183b98323843a836`
+- Exact closed public ancestor:
+  `1c6fb114b71ca4e095389b33869d5faf2bd7c65a`
+- Canonical remote: `https://github.com/manfromnowhere143/odeya.git`.
+  The PRQ-002F settlement is complete: live `main` and the permanent release
+  ref for the exact predecessor were independently observed equal at
+  settlement, its four candidate and four post-main workflows each completed
+  ten attempt-1 jobs successfully, and its local and remote-main rehearsal
+  manifests compare equal. The complete subject-bound receipts live under
+  `/Users/danielwahnich/workspace/odeya-release-evidence/` keyed by the exact
+  predecessor hash; revalidate them from bytes rather than from this prose.
+- The active tranche is the bounded PRQ-002G profile-scoped JCS serialization
+  conformance candidate (ADR 0107): one ordinary single-parent direct child
+  of the exact predecessor on the named branch, containing the answer-free
+  corpus, its dual-implementation retained results, the dedicated third-path
+  validator, and the complete registration cascade.
+- Architecture-repository publication authority for the PRQ-002G candidate
+  was granted by the operator during the retaining session and is consumed by
+  one candidate-and-promotion sequence; any later candidate requires fresh
+  explicit operator authority. Profile issuance, scientific publication,
+  runtime, application, infrastructure, deployment, external-effect,
+  spending, credential, and Gate A authority: not granted.
+
+Run first:
+
+```bash
+bash -euo pipefail <<'BASH'
+cd /Users/danielwahnich/workspace/odeya-prq-002-profile-0-3-replacement-20260730
+source scripts/ci/sanitize-git-environment.sh
+BASE=741b7b6283eb17a3dfac2abed92e84344f20f19d
+BASE_TREE=407ab1ef25d088dff82034ec183b98323843a836
+HEAD_COMMIT="$(git rev-parse HEAD)"
+test "$(git symbolic-ref --short HEAD)" = \
+  agent/t0-prq-002-profile-0-3-replacement-20260730
+test "$(git remote)" = origin
+test "$(git remote get-url origin)" = \
+  https://github.com/manfromnowhere143/odeya.git
+test "$(git rev-parse "$BASE^{tree}")" = "$BASE_TREE"
+test -z "$(git status --porcelain=v1 --untracked-files=all)"
+test "$(git rev-parse "$HEAD_COMMIT^")" = "$BASE"
+test "$(git rev-list --parents -n 1 "$HEAD_COMMIT" | awk '{print NF}')" = 2
+test "$(git rev-list --count "$BASE..$HEAD_COMMIT")" = 1
+git status --short --branch
+git diff --check "$BASE..$HEAD_COMMIT"
+test "$(git -C /Users/danielwahnich/workspace/odeya \
+  symbolic-ref --short HEAD)" = agent/repository-release
+REMOTE_URL=https://github.com/manfromnowhere143/odeya.git
+REMOTE_MAIN="$(git ls-remote --refs "$REMOTE_URL" refs/heads/main |
+  awk '$2 == "refs/heads/main" {print $1}')"
+test "$REMOTE_MAIN" = "$BASE" || test "$REMOTE_MAIN" = "$HEAD_COMMIT"
+test "$(git ls-remote --refs "$REMOTE_URL" "refs/heads/release/$BASE" |
+  awk -v ref="refs/heads/release/$BASE" '$2 == ref {print $1}')" = "$BASE"
+PYTHONDONTWRITEBYTECODE=1 .venv-architecture/bin/python \
+  tests/profile-0-3-jcs-conformance/authoring/generate_vectors.py --check
+PYTHONDONTWRITEBYTECODE=1 .venv-architecture/bin/python \
+  scripts/validate_profile_0_3_jcs_conformance.py
+PYTHONDONTWRITEBYTECODE=1 .venv-architecture/bin/python scripts/validate.py
+PYTHONDONTWRITEBYTECODE=1 .venv-architecture/bin/python \
+  scripts/validate_repository_release.py
+EVIDENCE_ROOT="/Users/danielwahnich/workspace/odeya-release-evidence/$HEAD_COMMIT"
+test -d "$EVIDENCE_ROOT"
+python3 - "$EVIDENCE_ROOT" "$HEAD_COMMIT" <<'PY'
+import sys
+from pathlib import Path
+
+sys.path.insert(0, "scripts")
+from compare_rehearsal_manifests import load_manifest
+
+document, _ = load_manifest(Path(sys.argv[1]))
+assert document["subject_commit"] == sys.argv[2]
+assert document["source_class"] == "local"
+assert document["remote_main_commit"] is None
+assert document["canonical_scientific_evidence"] is False
+assert len(document["files"]) == 19
+assert set(document["pass_dispositions"].values()) == {"passed"}
+PY
+BASH
+```
+
+These commands validate repository and live lineage, run the dedicated and
+full validators, and check the exact-subject local rehearsal manifest.
+`load_manifest` takes the evidence root directory, never the manifest file
+path, and a remote-main rehearsal manifest spells its `source_class` as
+`remote-main`. A missing or invalid local manifest keeps the sole mission at
+PRQ-002G validation and rehearsal. A successful local manifest still does not
+establish remote settlement. The intended continuation
+state is one clean ordinary single-parent direct child of the exact immediate
+predecessor on the named branch. A dirty next-session state, merge, extra
+commit, second dirty architecture lane, or path substitution requires a new
+exact recovery audit; do not infer that it belongs to this tranche.
+
+## Superseded PRQ-002F repository recovery identity — retained chronology
+
+The block below described the PRQ-002F authoring state before its
+publication settled. It is retained as chronology only. Do not execute its
+restart program or use it to select the current writer.
+
+### Superseded authoritative 2026-07-31 PRQ-002F identity
+
+- Canonical workspace:
+  `/Users/danielwahnich/workspace/odeya`; it remains the protected concurrent
+  UI/UX and quarantined-collision lane on `agent/repository-release`. Do not
+  edit, stage, normalize, or discard its dirty paths.
+- Sole architecture writer:
+  `/Users/danielwahnich/workspace/odeya-prq-002-profile-0-3-replacement-20260730`
+- Sole architecture branch:
+  `agent/t0-prq-002-profile-0-3-replacement-20260730`
+- Superseded immediate PRQ-002E predecessor:
+  `1c6fb114b71ca4e095389b33869d5faf2bd7c65a`
+- Exact predecessor tree:
+  `066b9ac564e145791daa536e8ee94f97a797a27f`
+- Exact closed public ancestor:
+  `617209ba480b854a00c6a15cd99ac1d5a18e90ad`
+- Canonical remote: `https://github.com/manfromnowhere143/odeya.git`.
+  The PRQ-002E replacement settlement is complete: live `main` and the
+  permanent release ref for the exact predecessor were independently observed
+  equal at settlement, its four candidate and four post-main workflows each
+  completed ten attempt-1 jobs successfully, and its local and remote-main
+  rehearsal manifests compare equal. The complete subject-bound receipts live
+  under `/Users/danielwahnich/workspace/odeya-release-evidence/` keyed by the
+  exact predecessor hash; revalidate them from bytes rather than from this
+  prose.
+- The active tranche is the bounded PRQ-002F raw-aware numeric-trace
+  conformance candidate (ADR 0106): one ordinary single-parent direct child
+  of the exact predecessor on the named branch, containing the suite, its
+  dual-implementation retained results, the dedicated third-path validator,
+  and the complete registration cascade.
+- Current architecture-repository publication authority for the PRQ-002F
+  candidate: not granted. The tranche exit is local validation and an
+  exact-commit fresh-clone rehearsal only. Creating a candidate ref,
+  promoting, or pushing requires fresh explicit operator authority.
+- Profile issuance, scientific publication, runtime, application,
+  infrastructure, deployment, external-effect, spending, credential, and
+  Gate A authority: not granted.
+
+Run first:
+
+```bash
+bash -euo pipefail <<'BASH'
+cd /Users/danielwahnich/workspace/odeya-prq-002-profile-0-3-replacement-20260730
+source scripts/ci/sanitize-git-environment.sh
+BASE=1c6fb114b71ca4e095389b33869d5faf2bd7c65a
+BASE_TREE=066b9ac564e145791daa536e8ee94f97a797a27f
+HEAD_COMMIT="$(git rev-parse HEAD)"
+test "$(git symbolic-ref --short HEAD)" = \
+  agent/t0-prq-002-profile-0-3-replacement-20260730
+test "$(git remote)" = origin
+test "$(git remote get-url origin)" = \
+  https://github.com/manfromnowhere143/odeya.git
+test "$(git rev-parse "$BASE^{tree}")" = "$BASE_TREE"
+test -z "$(git status --porcelain=v1 --untracked-files=all)"
+test "$(git rev-parse "$HEAD_COMMIT^")" = "$BASE"
+test "$(git rev-list --parents -n 1 "$HEAD_COMMIT" | awk '{print NF}')" = 2
+test "$(git rev-list --count "$BASE..$HEAD_COMMIT")" = 1
+git status --short --branch
+git diff --check "$BASE..$HEAD_COMMIT"
+test "$(git -C /Users/danielwahnich/workspace/odeya \
+  symbolic-ref --short HEAD)" = agent/repository-release
+REMOTE_URL=https://github.com/manfromnowhere143/odeya.git
+REMOTE_MAIN="$(git ls-remote --refs "$REMOTE_URL" refs/heads/main |
+  awk '$2 == "refs/heads/main" {print $1}')"
+test "$REMOTE_MAIN" = "$BASE" || test "$REMOTE_MAIN" = "$HEAD_COMMIT"
+test "$(git ls-remote --refs "$REMOTE_URL" "refs/heads/release/$BASE" |
+  awk -v ref="refs/heads/release/$BASE" '$2 == ref {print $1}')" = "$BASE"
+PYTHONDONTWRITEBYTECODE=1 .venv-architecture/bin/python \
+  scripts/validate_profile_0_3_numeric_trace_conformance.py
+PYTHONDONTWRITEBYTECODE=1 .venv-architecture/bin/python scripts/validate.py
+PYTHONDONTWRITEBYTECODE=1 .venv-architecture/bin/python \
+  scripts/validate_repository_release.py
+EVIDENCE_ROOT="/Users/danielwahnich/workspace/odeya-release-evidence/$HEAD_COMMIT"
+test -d "$EVIDENCE_ROOT"
+python3 - "$EVIDENCE_ROOT" "$HEAD_COMMIT" <<'PY'
+import sys
+from pathlib import Path
+
+sys.path.insert(0, "scripts")
+from compare_rehearsal_manifests import load_manifest
+
+document, _ = load_manifest(Path(sys.argv[1]))
+assert document["subject_commit"] == sys.argv[2]
+assert document["source_class"] == "local"
+assert document["remote_main_commit"] is None
+assert document["canonical_scientific_evidence"] is False
+assert len(document["files"]) == 19
+assert set(document["pass_dispositions"].values()) == {"passed"}
+PY
+BASH
+```
+
+These commands validate repository and live lineage, run the full validators,
+and check the exact-subject local rehearsal manifest. `load_manifest` takes
+the evidence root directory, never the manifest file path, and a remote-main
+rehearsal manifest spells its `source_class` as `remote-main`; an earlier
+revision of this program passed the file path and compared `profile_files` —
+a path-to-digest mapping in manifest schema 0.2.0 — to a bare list, and could
+not pass as written. A missing or invalid local manifest keeps the sole
+mission at PRQ-002F validation and rehearsal. A successful local manifest
+still does not establish remote settlement or grant any publication
+authority. The intended continuation
+state is one clean ordinary single-parent direct child of the exact immediate
+predecessor on the named branch. A dirty next-session state, merge, extra
+commit, second dirty architecture lane, or path substitution requires a new
+exact recovery audit; do not infer that it belongs to this tranche.
+
+## Superseded PRQ-002E repository recovery identity — retained chronology
+
+The block below describes the PRQ-002E replacement authoring state before
+its publication settled. It is retained as chronology only. Do not execute
+its restart program or use it to select the current writer.
+
+### Superseded authoritative 2026-07-30 identity
+
+- Canonical workspace:
+  `/Users/danielwahnich/workspace/odeya`; it remains the protected concurrent
+  UI/UX and quarantined-collision lane on `agent/repository-release`. Do not
+  edit, stage, normalize, or discard its dirty paths.
+- Sole architecture writer:
+  `/Users/danielwahnich/workspace/odeya-prq-002-profile-0-3-replacement-20260730`
+- Sole architecture branch:
+  `agent/t0-prq-002-profile-0-3-replacement-20260730`
+- Exact immediate PRQ-002D predecessor:
+  `617209ba480b854a00c6a15cd99ac1d5a18e90ad`
+- Exact predecessor tree:
+  `67c38b895276bf2c804fe192339ce90a8c75ea97`
+- Exact closed public ancestor:
+  `d3ec64f3abfc64467c0bc3bfae330d86e2af89b2`
+- Canonical remote: `https://github.com/manfromnowhere143/odeya.git`.
+  The first required settlement is complete: live `main` and permanent
+  `release/617209ba…` were independently observed at the exact predecessor.
+  Its local rehearsal manifest is
+  `/Users/danielwahnich/workspace/odeya-release-evidence/617209ba480b854a00c6a15cd99ac1d5a18e90ad/rehearsal-evidence-manifest.json`,
+  raw SHA-256
+  `aa3a6a626735449f83e5ba99efb2fe42accc219749af43e72a244ba87981671e`.
+  Its remote-main rehearsal manifest is
+  `/Users/danielwahnich/workspace/odeya-release-evidence/remote-main-617209ba480b854a00c6a15cd99ac1d5a18e90ad/rehearsal-evidence-manifest.json`,
+  raw SHA-256
+  `ae8327f2ea1bb447203b8b1293925522fc742cca4a8fa85ce80b48abbd8888f7`;
+  its comparison receipt is
+  `/Users/danielwahnich/workspace/odeya-release-evidence/remote-main-comparison-617209ba480b854a00c6a15cd99ac1d5a18e90ad.json`,
+  raw SHA-256
+  `9d7e65d891921e27cca43695d956edc50d4296f23de063f03c469cd219b293ee`.
+  Its candidate-governance receipt is
+  `/Users/danielwahnich/workspace/odeya-release-evidence/github-candidate-governance-617209ba480b854a00c6a15cd99ac1d5a18e90ad.json`,
+  raw SHA-256
+  `b867fbe4a6d09880f630b6525a72837a716dec0c4c179b10264c9332eb92b707`;
+  its candidate-checks receipt is
+  `/Users/danielwahnich/workspace/odeya-release-evidence/github-candidate-checks-617209ba480b854a00c6a15cd99ac1d5a18e90ad.json`,
+  raw SHA-256
+  `0cc6e28296a9c8d0aa49fde2465298751804548fe3d41eb074659f82c49b1a4f`;
+  its promotion-governance receipt is
+  `/Users/danielwahnich/workspace/odeya-release-evidence/github-promotion-governance-617209ba480b854a00c6a15cd99ac1d5a18e90ad.json`,
+  raw SHA-256
+  `2e29ea0da0dc5db93dc388720d9c7ce20658c911f144a3be77d24802b3d99160`;
+  and its main-checks receipt is
+  `/Users/danielwahnich/workspace/odeya-release-evidence/github-main-checks-617209ba480b854a00c6a15cd99ac1d5a18e90ad.json`,
+  raw SHA-256
+  `0640fd832280dba6df3c056fe57fdead60f9c3f448b79eff36854604d2b88ec1`.
+- Superseded unpublished PRQ-002E rehearsal attempt:
+  `d4b6a821ff9d83aca45a3573403930ab36923dfd`. Its retained failure receipt is
+  `/Users/danielwahnich/workspace/odeya-release-evidence/d4b6a821ff9d83aca45a3573403930ab36923dfd/failure-receipt.txt`,
+  raw SHA-256
+  `e8d0e66b19c1b6832f5f734e6644eef90a6aa93f9f78bf6700940ee7c3a0d23a`;
+  it proves the failed stage, not a generalized-coverage count or cause.
+- Superseded second unpublished PRQ-002E candidate:
+  `72c699cbd3d86d31af898de85f971e29e67b2d9f`. Its toolchain-preflight receipt
+  is
+  `/Users/danielwahnich/workspace/odeya-release-evidence/72c699cbd3d86d31af898de85f971e29e67b2d9f-failure-toolchain-preflight-python3-3.12.2/failure-receipt.txt`,
+  raw SHA-256
+  `4666801c5d72e48356e682a302dddc28e90406cc9c3146fa0d1b6225e741bbbb`
+  and its interrupted suite-guard receipt is
+  `/Users/danielwahnich/workspace/odeya-release-evidence/72c699cbd3d86d31af898de85f971e29e67b2d9f/failure-receipt.txt`,
+  raw SHA-256
+  `560b01563ca7e500397afaa62ef1bbf33f71fe085ee2af2f0bddfee967c99d80`.
+  Neither receipt is successful evidence.
+- Failed immutable PRQ-002E publication candidate:
+  `f1bb98d36719c5d75fac0d84b222db7a0cd617e1`
+- Exact failed candidate tree:
+  `f6287a6131c28131a36ecc03b151fc9045dc8f27`
+  Its exact local rehearsal manifest passed:
+  `/Users/danielwahnich/workspace/odeya-release-evidence/f1bb98d36719c5d75fac0d84b222db7a0cd617e1/rehearsal-evidence-manifest.json`,
+  raw SHA-256
+  `4ff4fa6f8ff48fbb83370c437e49101d0508f55eb456e6946a9f5820ab667415`;
+  candidate governance passed:
+  `/Users/danielwahnich/workspace/odeya-release-evidence/github-candidate-governance-f1bb98d36719c5d75fac0d84b222db7a0cd617e1.json`,
+  raw SHA-256
+  `76c6d1b10108a3c2af7859642387ce0382e65903e629f7a61522b6c836b482c7`.
+  The permanent `release/f1bb98d…` ref then produced four attempt-1 workflows
+  and ten jobs: nine succeeded, but Foundation run `30501914773`, job
+  `90743207032`, failed after the predecessor wrapper and PRQ-002E checker each
+  reported an internal child-process `TimeoutExpired` at its 30-second limit.
+  The workflow and job were not reported as GitHub timeouts. No successful
+  candidate-checks, promotion-governance, main-checks, remote-main, or
+  comparison receipt exists for this subject, and no rerun can repair attempt
+  1. The retained noncanonical diagnostic receipt is
+  `/Users/danielwahnich/workspace/odeya-release-evidence/github-candidate-failure-f1bb98d36719c5d75fac0d84b222db7a0cd617e1.json`,
+  raw SHA-256
+  `ebe65d500b2b546b3791e2695abb1e493c407ea552a3648ba65877514879df13`.
+  Its downloaded Foundation log is
+  `/Users/danielwahnich/workspace/odeya-release-evidence/f1bb98d36719c5d75fac0d84b222db7a0cd617e1-failed-candidate/github-artifact-8743868052/foundation.log`,
+  raw SHA-256
+  `a7d5a652c6eecbfe6c225a517d53252f5f649ad46777d7e9324ac98f5874da24`;
+  its pip report is
+  `/Users/danielwahnich/workspace/odeya-release-evidence/f1bb98d36719c5d75fac0d84b222db7a0cd617e1-failed-candidate/github-artifact-8743868052/pip-install-report.json`,
+  raw SHA-256
+  `470d8ccbe81d955f6af0e7a4751eda60e6505c942121dceff687094fbe62200c`.
+- Current architecture-repository publication authority is conditional and
+  narrowly scoped to exactly one new immutable release-ref creation for the
+  corrected replacement sibling and, only if every candidate gate passes, its
+  same-SHA promotion and settlement. If that candidate fails or its outcome is
+  unknown, preserve its permanent ref and evidence and stop; any later
+  candidate-ref creation or promotion requires fresh explicit operator
+  authority. Profile issuance and scientific publication remain unauthorized.
+- Runtime, application, infrastructure, deployment, external-effect, spending,
+  credential, and Gate A authority: not granted.
+
+The remaining publication order is exact:
+
+1. Do not rerun the completed predecessor settlement, rewrite either permanent
+   release ref, or promote the failed candidate.
+2. Construct one replacement whose sole parent is
+   `617209ba480b854a00c6a15cd99ac1d5a18e90ad`. It must be a sibling of the
+   failed candidate, not its child; the predecessor-to-replacement range must
+   contain exactly one commit.
+3. Generate a new exact-subject local rehearsal;
+   `github-candidate-governance-$HEAD_COMMIT.json`,
+   `github-candidate-checks-$HEAD_COMMIT.json`,
+   `github-promotion-governance-$HEAD_COMMIT.json`, and
+   `github-main-checks-$HEAD_COMMIT.json`; remote-main rehearsal and
+   comparison; and a separate final live exact-ref read-back. The ordinary
+   publication helper retains no dedicated final-ref receipt. No
+   candidate-specific artifact from either earlier subject transfers.
+
+If live `main` is neither the predecessor nor the exact replacement `HEAD`,
+stop and perform a new read-only recovery audit. If the replacement candidate
+fails or its outcome is unknown, preserve its permanent ref and evidence and
+stop. Creating another candidate ref or attempting a promotion requires fresh
+explicit operator authority; never add a descendant on top of a failed
+candidate.
+
+Only the sole writer named above may be mutated for PRQ-002E. The canonical
+checkout, both retired PRQ-002E worktrees, the publication clones, and every
+other Odeya worktree are evidence sources only. The intended continuation
+state is one clean ordinary single-parent direct child of the exact immediate
+predecessor on the named branch. A dirty next-session state, merge, extra
+commit, second dirty architecture lane, or path substitution requires a new
+exact recovery audit; do not infer that it belongs to this tranche.
+
+Run first:
+
+```bash
+bash -euo pipefail <<'BASH'
+cd /Users/danielwahnich/workspace/odeya-prq-002-profile-0-3-replacement-20260730
+source scripts/ci/sanitize-git-environment.sh
+BASE=617209ba480b854a00c6a15cd99ac1d5a18e90ad
+BASE_TREE=67c38b895276bf2c804fe192339ce90a8c75ea97
+FAILED_CANDIDATE=f1bb98d36719c5d75fac0d84b222db7a0cd617e1
+FAILED_CANDIDATE_TREE=f6287a6131c28131a36ecc03b151fc9045dc8f27
+HEAD_COMMIT="$(git rev-parse HEAD)"
+test "$(git symbolic-ref --short HEAD)" = \
+  agent/t0-prq-002-profile-0-3-replacement-20260730
+test "$(git remote)" = origin
+test "$(git remote get-url origin)" = \
+  https://github.com/manfromnowhere143/odeya.git
+test "$(git rev-parse "$BASE^{tree}")" = "$BASE_TREE"
+test "$(git rev-parse "$FAILED_CANDIDATE^{tree}")" = "$FAILED_CANDIDATE_TREE"
+test -z "$(git status --porcelain=v1 --untracked-files=all)"
+test "$HEAD_COMMIT" != "$FAILED_CANDIDATE"
+test "$(git rev-parse "$HEAD_COMMIT^")" = "$BASE"
+test "$(git rev-list --parents -n 1 "$HEAD_COMMIT" | awk '{print NF}')" = 2
+test "$(git rev-list --count "$BASE..$HEAD_COMMIT")" = 1
+git status --short --branch
+git diff --check "$BASE..$HEAD_COMMIT"
+test "$(git -C /Users/danielwahnich/workspace/odeya \
+  symbolic-ref --short HEAD)" = agent/repository-release
+git -C /Users/danielwahnich/workspace/odeya status --short --branch
+REMOTE_URL=https://github.com/manfromnowhere143/odeya.git
+REMOTE_MAIN="$(git ls-remote --refs "$REMOTE_URL" refs/heads/main |
+  awk '$2 == "refs/heads/main" {print $1}')"
+test "$REMOTE_MAIN" = "$BASE" || test "$REMOTE_MAIN" = "$HEAD_COMMIT"
+test "$(git ls-remote --refs "$REMOTE_URL" "refs/heads/release/$BASE" |
+  awk -v ref="refs/heads/release/$BASE" '$2 == ref {print $1}')" = "$BASE"
+test "$(git ls-remote --refs "$REMOTE_URL" \
+  "refs/heads/release/$FAILED_CANDIDATE" |
+  awk -v ref="refs/heads/release/$FAILED_CANDIDATE" \
+    '$2 == ref {print $1}')" = "$FAILED_CANDIDATE"
+if test "$REMOTE_MAIN" = "$HEAD_COMMIT"; then
+  test "$(git ls-remote --refs "$REMOTE_URL" \
+    "refs/heads/release/$HEAD_COMMIT" |
+    awk -v ref="refs/heads/release/$HEAD_COMMIT" \
+      '$2 == ref {print $1}')" = "$HEAD_COMMIT"
+fi
+PYTHONDONTWRITEBYTECODE=1 .venv-architecture/bin/python \
+  tests/product-identity-profile-0.3-candidate/authoring/generate_candidate.py \
+  --check
+PYTHONDONTWRITEBYTECODE=1 .venv-architecture/bin/python \
+  tests/product-identity-profile-0.3-candidate/check.py
+PYTHONDONTWRITEBYTECODE=1 .venv-architecture/bin/python scripts/validate.py
+PYTHONDONTWRITEBYTECODE=1 .venv-architecture/bin/python \
+  scripts/validate_repository_release.py
+EVIDENCE="/Users/danielwahnich/workspace/odeya-release-evidence/$HEAD_COMMIT/rehearsal-evidence-manifest.json"
+test -f "$EVIDENCE"
+python3 - "$EVIDENCE" "$HEAD_COMMIT" <<'PY'
+import sys
+from pathlib import Path
+
+sys.path.insert(0, "scripts")
+from compare_rehearsal_manifests import load_manifest
+
+document, _ = load_manifest(Path(sys.argv[1]))
+expected_profile = [
+    ".github/workflows/architecture.yml",
+    ".github/workflows/formal.yml",
+    ".github/workflows/publication-sequence.yml",
+    ".github/workflows/release-surface.yml",
+    ".gitleaks.toml",
+    ".java-version",
+    ".python-version",
+    "formal/tla/results-manifest.json",
+    "tools/repository-release/.node-version",
+    "tools/repository-release/package-lock.json",
+    "tools/repository-release/requirements-architecture.lock",
+    "tools/repository-release/toolchain.lock.json",
+]
+expected_dispositions = {
+    "bounded_formal_models",
+    "foundation",
+    "ignored_output_allowlist",
+    "repository_release_surface",
+    "retained_evidence_secret_scan",
+    "tracked_and_nonignored_mutation_audit",
+}
+assert document["schema_version"] == "0.2.0"
+assert document["artifact_class"] == "fresh_clone_rehearsal_evidence_manifest"
+assert document["subject_commit"] == sys.argv[2]
+assert document["source_class"] == "local"
+assert document["remote_main_commit"] is None
+assert document["canonical_scientific_evidence"] is False
+assert document["profile_files"] == expected_profile
+assert len(document["files"]) == 19
+assert set(document["pass_dispositions"]) == expected_dispositions
+assert set(document["pass_dispositions"].values()) == {"passed"}
+PY
+BASH
+```
+
+These commands validate repository, live lineage, and retained
+architecture-evidence bytes. A missing or invalid local manifest keeps the
+sole mission at PRQ-002E recovery. A successful local manifest still does not
+establish remote settlement. Before successor work, require complete
+subject-bound `github-candidate-governance-$HEAD_COMMIT.json`,
+`github-candidate-checks-$HEAD_COMMIT.json`,
+`github-promotion-governance-$HEAD_COMMIT.json`, and
+`github-main-checks-$HEAD_COMMIT.json` receipts; four attempt-1 candidate
+workflow runs with ten successful attempt-1 jobs; same-SHA promotion; four
+newly created attempt-1 post-main workflow runs with ten successful attempt-1
+jobs; remote-main rehearsal and local/remote comparison; and live
+`main==HEAD` plus permanent `release/HEAD==HEAD` in a separate final exact-ref
+read-back. The ordinary publication helper retains no dedicated final-ref
+receipt. If live `main` still equals the predecessor, publication is
+incomplete. Never infer closure from this handoff, a local pass, or an earlier
+subject's evidence.
+
+## Sole next mission after PRQ-002I retention
+
+**Entry gate.** The named branch must be clean and contain exactly one
+ordinary single-parent direct child of the exact PRQ-002H predecessor; the
+dedicated PRQ-002I validator, the full foundation validator, and the
+repository-release validator must all pass from current bytes; and the
+external evidence root must contain a successful local exact-subject
+fresh-clone rehearsal manifest for that `HEAD`, with settlement receipts if
+publication completed. If any condition fails, the sole mission remains
+PRQ-002I validation, correction, rehearsal, or settlement.
+
+**The machine chain is at its designed boundary.** With PRQ-002F through
+PRQ-002I retained, every current machine-buildable unit of the PRQ-002
+dependency order is closed: raw-aware traces, serialization conformance,
+nine-domain governance, and dependency-closed offline resolution. What
+remains before a Gate A candidate is deliberately outside any session's
+authority:
+
+1. an accountable non-author human review of the open `HDA-CTX` findings
+   and the A-001–A-016 tracked findings, retained as a signed
+   `ReviewDetermination` with `reviewer.principal_type` fixed to `human`;
+2. the operator's exact-byte decision on the `odeya-jcs-0.3` profile and
+   its evidence chain — accept, reject, or amend, on a named commit; and
+3. any secondary evidence-quality backlog the operator selects (guard
+   coverage beyond 501/1260, condition-level mutation, commit signing and
+   its disclosure, remote-CI execution of the heavy audits).
+
+A future session may prepare review packets, comparison summaries, or
+backlog tranches, but must not simulate, substitute, or self-supply either
+human prerequisite. Publication of any new commit requires fresh explicit
+operator authority.
+
+## Superseded PRQ-002H repository recovery identity — retained chronology
+
+The block below described the PRQ-002H authoring state before its
+publication settled. It is retained as chronology only. Do not execute its
+restart program or use it to select the current writer.
+
+### Superseded authoritative 2026-07-31 PRQ-002H identity
+
+- Canonical workspace:
+  `/Users/danielwahnich/workspace/odeya`; it remains the protected concurrent
+  UI/UX and quarantined-collision lane on `agent/repository-release`. Do not
+  edit, stage, normalize, or discard its dirty paths.
+- Sole architecture writer:
+  `/Users/danielwahnich/workspace/odeya-prq-002-profile-0-3-replacement-20260730`
+- Sole architecture branch:
+  `agent/t0-prq-002-profile-0-3-replacement-20260730`
+- Superseded immediate PRQ-002G predecessor:
   `3ada167aae4ec7f6855de395ba7636dbae78ed57`
 - Exact predecessor tree:
   `b157a829ea0b8ccea85b8c87c956045b12264030`
