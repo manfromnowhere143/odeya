@@ -137,7 +137,7 @@ CURRENT_ASSURANCE_UNITS = (
         "docs/SESSION_HANDOFF.md", "## What this lane established, and where to put pressure next", None,
         "bullet", "**PRQ-013 now has retained byte-bound/recomputation candidate evidence, not closure.**", 1,
         "160ed1c9184a0f91d4e8100e0105f5440944dafd3881b043c714191421d87c39",
-        "5c2bd69c2bbba5f9e64b83f867f85209ccd9429f518bbc6f75f20685abbc3570",
+        "6feec9438ab393ff26f630b5ec4622608d321e8bd5666f6d3ce1ec84e4c39c7c",
     ),
     (
         "docs/SESSION_HANDOFF.md", "## Active PRQ-013 candidate — resolve release status from Git", None,
@@ -160,28 +160,18 @@ CURRENT_ASSURANCE_UNITS = (
 
 RECOVERY_HANDOFF = "docs/SESSION_HANDOFF.md"
 RECOVERY_HEADING = (
-    "## Current repository recovery identity — authoritative 2026-07-30"
+    "## Current repository recovery identity — authoritative 2026-07-31"
 )
-RECOVERY_BASE = "617209ba480b854a00c6a15cd99ac1d5a18e90ad"
-RECOVERY_BASE_TREE = "67c38b895276bf2c804fe192339ce90a8c75ea97"
-RECOVERY_PUBLIC_ANCESTOR = "d3ec64f3abfc64467c0bc3bfae330d86e2af89b2"
-RECOVERY_FAILED_CANDIDATE = "d4b6a821ff9d83aca45a3573403930ab36923dfd"
-RECOVERY_FAILED_SECOND_CANDIDATE = (
-    "72c699cbd3d86d31af898de85f971e29e67b2d9f"
-)
-RECOVERY_FAILED_PUBLISHED_CANDIDATE = (
-    "f1bb98d36719c5d75fac0d84b222db7a0cd617e1"
-)
-RECOVERY_FAILED_PUBLISHED_CANDIDATE_TREE = (
-    "f6287a6131c28131a36ecc03b151fc9045dc8f27"
-)
+RECOVERY_BASE = "1c6fb114b71ca4e095389b33869d5faf2bd7c65a"
+RECOVERY_BASE_TREE = "066b9ac564e145791daa536e8ee94f97a797a27f"
+RECOVERY_PUBLIC_ANCESTOR = "617209ba480b854a00c6a15cd99ac1d5a18e90ad"
 RECOVERY_SECTION_SHA256 = (
-    "685f19a5837b4a7fa78aed4c0f87f6f242850ce048cf83296eeca2c552133900"
+    "a0293ab3b48ceec7ce64f79dfe5ab26c40ceb0d31ef31f97a327c01bd9db289e"
 )
 # SHA-256 of the normalized recovery program. Its separately named
 # cleanliness and cardinality lines keep both invariants reviewable.
 EXPECTED_RECOVERY_PROGRAM_SHA256 = (
-    "a3895dcaee567a4be60eca7e89dc82dc7724ec9fa4c635f602ceb43523dddb78"
+    "bd61d9e89c9ff4c6b2b851b298fb1d0163a4a00e6fbecbe247feea6d4c6bf809"
 )
 PARENT_CARDINALITY_LINE = 'test "$(git rev-list --parents -n 1 "$HEAD_COMMIT" | awk \'{print NF}\')" = 2'
 CLEAN_WORKTREE_LINE = 'test -z "$(git status --porcelain=v1 --untracked-files=all)"'
@@ -782,8 +772,8 @@ def recovery_truth_surface_errors(
         (
             "predecessor",
             RECOVERY_BASE,
-            "Exact immediate PRQ-002D predecessor:",
-            r"(?m)^- Exact immediate PRQ-002D predecessor:[ \t]*\n"
+            "Exact immediate PRQ-002E predecessor:",
+            r"(?m)^- Exact immediate PRQ-002E predecessor:[ \t]*\n"
             r"[ \t]+`([0-9a-f]{40})`[ \t]*$",
         ),
         (
@@ -791,20 +781,6 @@ def recovery_truth_surface_errors(
             RECOVERY_BASE_TREE,
             "Exact predecessor tree:",
             r"(?m)^- Exact predecessor tree:[ \t]*\n"
-            r"[ \t]+`([0-9a-f]{40})`[ \t]*$",
-        ),
-        (
-            "failed candidate",
-            RECOVERY_FAILED_PUBLISHED_CANDIDATE,
-            "Failed immutable PRQ-002E publication candidate:",
-            r"(?m)^- Failed immutable PRQ-002E publication candidate:[ \t]*\n"
-            r"[ \t]+`([0-9a-f]{40})`[ \t]*$",
-        ),
-        (
-            "failed candidate tree",
-            RECOVERY_FAILED_PUBLISHED_CANDIDATE_TREE,
-            "Exact failed candidate tree:",
-            r"(?m)^- Exact failed candidate tree:[ \t]*\n"
             r"[ \t]+`([0-9a-f]{40})`[ \t]*$",
         ),
     )
@@ -821,10 +797,6 @@ def recovery_truth_surface_errors(
             RECOVERY_BASE,
             RECOVERY_BASE_TREE,
             RECOVERY_PUBLIC_ANCESTOR,
-            RECOVERY_FAILED_CANDIDATE,
-            RECOVERY_FAILED_SECOND_CANDIDATE,
-            RECOVERY_FAILED_PUBLISHED_CANDIDATE,
-            RECOVERY_FAILED_PUBLISHED_CANDIDATE_TREE,
         }
     )
     if unexpected:
@@ -910,11 +882,11 @@ def recovery_truth_surface_known_bad_self_tests(errors: list[str]) -> int:
             expected, errors,
         )
     predecessor = (
-        f"- Exact immediate PRQ-002D predecessor:\n  `{RECOVERY_BASE}`"
+        f"- Exact immediate PRQ-002E predecessor:\n  `{RECOVERY_BASE}`"
     )
     duplicate = (
         predecessor
-        + f"\n- Exact immediate PRQ-002D predecessor:\n"
+        + f"\n- Exact immediate PRQ-002E predecessor:\n"
         f"  `{RECOVERY_BASE_TREE}`"
     )
     mutant = replace_current_once(
@@ -928,25 +900,6 @@ def recovery_truth_surface_known_bad_self_tests(errors: list[str]) -> int:
         (
             f"{prefix}: recovery predecessor label must occur exactly once "
             f"and equal {RECOVERY_BASE}"
-        ),
-        errors,
-    )
-    failed_candidate = (
-        "- Failed immutable PRQ-002E publication candidate:\n"
-        f"  `{RECOVERY_FAILED_PUBLISHED_CANDIDATE}`"
-    )
-    mutant = replace_current_once(
-        failed_candidate,
-        "- Failed immutable PRQ-002E publication candidate:\n"
-        f"  `{RECOVERY_FAILED_SECOND_CANDIDATE}`",
-        "failed-published-candidate-substitution",
-    )
-    count += expect_self_test(
-        "failed-published-candidate-substitution",
-        recovery_truth_surface_errors({RECOVERY_HANDOFF: mutant}),
-        (
-            f"{prefix}: recovery failed candidate label must occur exactly once "
-            f"and equal {RECOVERY_FAILED_PUBLISHED_CANDIDATE}"
         ),
         errors,
     )

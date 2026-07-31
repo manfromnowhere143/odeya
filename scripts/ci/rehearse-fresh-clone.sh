@@ -235,6 +235,13 @@ CURRENT_STAGE="prq-002d-schema-registry-prehash-replay"
   --node-executable "$PRQ002_NODE_BIN" \
   2>&1 | tee -a artifacts/rehearsal/foundation.log
 rm -rf -- "$CLONE/tests/schema-registry-prehash-replay/node/node_modules"
+CURRENT_STAGE="prq-002f-numeric-trace-conformance"
+.venv-architecture/bin/python \
+  scripts/validate_profile_0_3_numeric_trace_conformance.py \
+  --recompute-all \
+  --python-executable "$PRQ002_PYTHON_BIN" \
+  --node-executable "$PRQ002_NODE_BIN" \
+  2>&1 | tee -a artifacts/rehearsal/foundation.log
 record_stage foundation passed
 
 # The cheap gate inside validate.py binds the guard-coverage record to the

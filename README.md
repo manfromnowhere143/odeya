@@ -2,7 +2,7 @@
 
 Odeya is the architecture foundation for a private research engine that turns a thesis into a governed, replayable chain from question to evidence to warranted claim.
 
-> **Current state — 2026-07-30:** architecture foundation only. No executable research engine, autonomous-science capability, production deployment, or automatic publication is claimed. Gate A remains blocked; runtime stays prohibited until Gate A is accepted, any separately authorized Gate B probes are settled, and Gate C explicitly authorizes one bounded increment.
+> **Current state — 2026-07-31:** architecture foundation only. No executable research engine, autonomous-science capability, production deployment, or automatic publication is claimed. Gate A remains blocked; runtime stays prohibited until Gate A is accepted, any separately authorized Gate B probes are settled, and Gate C explicitly authorizes one bounded increment.
 
 The provisional web address is `odeya.danielwahnich.dev`. The apex domain, company, trademark, and scientific-publication decisions remain separate.
 
@@ -136,7 +136,7 @@ They are requirements sources and bounded proof missions—not runtime dependenc
 
 The current retained foundation contains 144 Draft 2020-12 schemas, 908
 shared-manifest cases (244 valid and 664 known-bad), 17 isolated contract
-suites, 15 architecture-evidence checks, and 7 bounded TLA+ models with
+suites, 16 architecture-evidence checks, and 7 bounded TLA+ models with
 30 mutation controls. These counts are bound to the validator run that
 measures them; the README previously stated four of them as fact while all four
 had drifted.
@@ -402,25 +402,30 @@ permanent candidate ref, but its attempt-1 census stopped at nine of ten
 successful jobs. The Foundation job reported two internal child-process
 `TimeoutExpired` diagnostics; the workflow and job were not reported as
 GitHub timeouts. It was not promoted and has no successful candidate-checks or
-remote-main evidence. The current replacement is a new sibling of that failed
-candidate, not its descendant, and must generate every subject-bound artifact
-again.
+remote-main evidence. The corrected replacement sibling then completed the
+ordinary exact-SHA sequence in full: its own local rehearsal, candidate
+governance, four candidate workflows with ten attempt-1 jobs at its permanent
+release ref, same-SHA fast-forward promotion, four new attempt-1 post-main
+runs, remote-main replay and comparison, and a final live exact-ref
+read-back. That settlement belongs to that exact commit alone; no descendant
+inherits it.
 
 ## Next
 
-The immediate continuation is deliberately singular. First resolve and
-reproduce, and fully settle the current PRQ-002E replacement direct child of
-exact published predecessor `617209ba`; never inherit the predecessor's or
-failed candidate's receipts. Closure requires its own clean rehearsal; four
-attempt-1 candidate workflow runs with ten successful attempt-1 jobs; four
-newly created attempt-1 post-main workflow runs with ten successful attempt-1
-jobs; remote-main replay and comparison; and a separate final live exact-ref
-read-back. Once that exact subject is settled, the next smallest PRQ-002
-architecture unit is complete raw-aware, per-subject applicability traces plus
-full source-separated cross-object conformance over the frozen
-`odeya-jcs-0.3` bytes. Only then proceed to complete offline resolution,
-dependency-closed product members and registries, accountable review, and the
-operator's exact-byte decision. No observer agreement,
+The immediate continuation is deliberately singular. The settled PRQ-002E
+replacement now carries the PRQ-002F raw-aware numeric-trace conformance
+tranche (ADR 0106): dual-implementation recomputation of the static numeric
+inventory, an explicit typed schema-document/metaschema settlement, complete
+raw-aware traces for the fifteen frozen construction subjects, and two
+source-separated cross-object conformance paths, validated by a dedicated
+third-path parent with an embedded known-bad corpus. Publishing that
+candidate requires fresh explicit operator authority and the ordinary
+exact-SHA two-ref sequence with new subject-bound receipts. The next smallest
+PRQ-002 architecture unit after settlement is retained source-separated RFC
+8785 serialization conformance and the nine product-domain frames, then
+complete offline resolution, dependency-closed product members and
+registries, accountable review, and the operator's exact-byte decision. No
+observer agreement,
 structural vector, or green validator may be promoted into conformance, product
 identity, profile issuance, PRQ-002 closure, Gate A acceptance, or runtime
 authority.

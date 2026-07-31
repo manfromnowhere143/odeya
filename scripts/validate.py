@@ -223,6 +223,28 @@ REQUIRED_FILES = (
     "tests/product-identity-profile-0.3-candidate/results/python-execution-receipt.json",
     "tests/product-identity-profile-0.3-candidate/results/node-execution-receipt.json",
     "tests/product-identity-profile-0.3-candidate/results/comparison-receipt.json",
+    "docs/decisions/0106-prove-raw-aware-numeric-trace-conformance-for-the-0-3-cohort.md",
+    "architecture/prq-002f-numeric-trace-conformance-contract.schema.json",
+    "architecture/prq-002f-numeric-trace-conformance-contract-v1-candidate.json",
+    "scripts/validate_profile_0_3_numeric_trace_conformance.py",
+    "tests/profile-0-3-numeric-trace-conformance/README.md",
+    "tests/profile-0-3-numeric-trace-conformance/manifest.json",
+    "tests/profile-0-3-numeric-trace-conformance/input-manifest.json",
+    "tests/profile-0-3-numeric-trace-conformance/cases.json",
+    "tests/profile-0-3-numeric-trace-conformance/authoring/generate_suite_metadata.py",
+    "tests/profile-0-3-numeric-trace-conformance/authoring/retain_results.py",
+    "tests/profile-0-3-numeric-trace-conformance/python/runner.py",
+    "tests/profile-0-3-numeric-trace-conformance/python/dependency-lock.json",
+    "tests/profile-0-3-numeric-trace-conformance/python/source-manifest.json",
+    "tests/profile-0-3-numeric-trace-conformance/node/runner.mjs",
+    "tests/profile-0-3-numeric-trace-conformance/node/package.json",
+    "tests/profile-0-3-numeric-trace-conformance/node/package-lock.json",
+    "tests/profile-0-3-numeric-trace-conformance/node/source-manifest.json",
+    "tests/profile-0-3-numeric-trace-conformance/results/python-trace-result.json",
+    "tests/profile-0-3-numeric-trace-conformance/results/node-trace-result.json",
+    "tests/profile-0-3-numeric-trace-conformance/results/python-execution-receipt.json",
+    "tests/profile-0-3-numeric-trace-conformance/results/node-execution-receipt.json",
+    "tests/profile-0-3-numeric-trace-conformance/results/comparison-receipt.json",
     "architecture/work-intent-core-candidate.json",
     "architecture/work-intent-identity-candidate-evidence.json",
     "architecture/work-intent-profile-bound-candidate.json",
@@ -540,6 +562,7 @@ ARCHITECTURE_EVIDENCE_CHECKS = (
     "scripts/validate_schema_registry_prehash_replay.py",
     "tests/product-identity-profile-0.3-candidate/check.py",
     "scripts/validate_human_decision_assurance_successor.py",
+    "scripts/validate_profile_0_3_numeric_trace_conformance.py",
 )
 REPOSITORY_RELEASE_CHECKS = (
     "scripts/validate_repository_release.py",
@@ -550,6 +573,7 @@ ISOLATED_CONTRACT_SUITE_TIMEOUT_SECONDS = {
 }
 ARCHITECTURE_EVIDENCE_CHECK_TIMEOUT_SECONDS = {
     "tests/product-identity-profile-0.3-candidate/check.py": 60,
+    "scripts/validate_profile_0_3_numeric_trace_conformance.py": 120,
 }
 MARKDOWN_LINK = re.compile(r"!?\[[^\]]*\]\(([^)]+)\)")
 EXTERNAL_PREFIXES = ("http://", "https://", "mailto:", "urn:", "data:")
