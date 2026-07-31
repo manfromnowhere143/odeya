@@ -136,7 +136,7 @@ They are requirements sources and bounded proof missions—not runtime dependenc
 
 The current retained foundation contains 144 Draft 2020-12 schemas, 908
 shared-manifest cases (244 valid and 664 known-bad), 17 isolated contract
-suites, 17 architecture-evidence checks, and 7 bounded TLA+ models with
+suites, 18 architecture-evidence checks, and 7 bounded TLA+ models with
 30 mutation controls. These counts are bound to the validator run that
 measures them; the README previously stated four of them as fact while all four
 had drifted.
@@ -424,9 +424,13 @@ carries the PRQ-002G profile-bounded JCS serialization conformance tranche
 (ADR 0107): a 61-frame answer-free corpus through two source-separated
 zero-dependency serializers with byte-identical projections, a retained
 UTF-16-versus-code-point ordering discriminator, and a third-path validator.
-The next smallest PRQ-002 architecture unit is the nine product-domain
-frames, then complete offline resolution, dependency-closed product members
-and registries, accountable review, and the operator's exact-byte decision. No
+The lane now also carries the PRQ-002H nine-domain frame governance
+tranche (ADR 0108): the nine frozen structural-nonidentity fixtures traced
+as governed instances of their product-domain schemas, with each domain's
+refusal surface exercised as data through both implementations. The next
+smallest PRQ-002 architecture unit is dependency-closed offline resolution
+and cross-object product replay, then accountable review and the operator's
+exact-byte decision. No
 observer agreement,
 structural vector, or green validator may be promoted into conformance, product
 identity, profile issuance, PRQ-002 closure, Gate A acceptance, or runtime

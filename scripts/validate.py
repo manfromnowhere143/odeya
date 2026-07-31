@@ -266,6 +266,27 @@ REQUIRED_FILES = (
     "tests/profile-0-3-jcs-conformance/results/python-execution-receipt.json",
     "tests/profile-0-3-jcs-conformance/results/node-execution-receipt.json",
     "tests/profile-0-3-jcs-conformance/results/comparison-receipt.json",
+    "docs/decisions/0108-prove-nine-product-domain-frame-governance.md",
+    "scripts/validate_profile_0_3_product_domain_frames.py",
+    "tests/profile-0-3-product-domain-frames/README.md",
+    "tests/profile-0-3-product-domain-frames/manifest.json",
+    "tests/profile-0-3-product-domain-frames/vectors.json",
+    "tests/profile-0-3-product-domain-frames/cases.json",
+    "tests/profile-0-3-product-domain-frames/authoring/generate_vectors.py",
+    "tests/profile-0-3-product-domain-frames/authoring/generate_suite_metadata.py",
+    "tests/profile-0-3-product-domain-frames/authoring/retain_results.py",
+    "tests/profile-0-3-product-domain-frames/python/runner.py",
+    "tests/profile-0-3-product-domain-frames/python/dependency-lock.json",
+    "tests/profile-0-3-product-domain-frames/python/source-manifest.json",
+    "tests/profile-0-3-product-domain-frames/node/runner.mjs",
+    "tests/profile-0-3-product-domain-frames/node/package.json",
+    "tests/profile-0-3-product-domain-frames/node/package-lock.json",
+    "tests/profile-0-3-product-domain-frames/node/source-manifest.json",
+    "tests/profile-0-3-product-domain-frames/results/python-frames-result.json",
+    "tests/profile-0-3-product-domain-frames/results/node-frames-result.json",
+    "tests/profile-0-3-product-domain-frames/results/python-execution-receipt.json",
+    "tests/profile-0-3-product-domain-frames/results/node-execution-receipt.json",
+    "tests/profile-0-3-product-domain-frames/results/comparison-receipt.json",
     "architecture/work-intent-core-candidate.json",
     "architecture/work-intent-identity-candidate-evidence.json",
     "architecture/work-intent-profile-bound-candidate.json",
@@ -585,6 +606,7 @@ ARCHITECTURE_EVIDENCE_CHECKS = (
     "scripts/validate_human_decision_assurance_successor.py",
     "scripts/validate_profile_0_3_numeric_trace_conformance.py",
     "scripts/validate_profile_0_3_jcs_conformance.py",
+    "scripts/validate_profile_0_3_product_domain_frames.py",
 )
 REPOSITORY_RELEASE_CHECKS = (
     "scripts/validate_repository_release.py",
@@ -597,6 +619,7 @@ ARCHITECTURE_EVIDENCE_CHECK_TIMEOUT_SECONDS = {
     "tests/product-identity-profile-0.3-candidate/check.py": 60,
     "scripts/validate_profile_0_3_numeric_trace_conformance.py": 120,
     "scripts/validate_profile_0_3_jcs_conformance.py": 60,
+    "scripts/validate_profile_0_3_product_domain_frames.py": 60,
 }
 MARKDOWN_LINK = re.compile(r"!?\[[^\]]*\]\(([^)]+)\)")
 EXTERNAL_PREFIXES = ("http://", "https://", "mailto:", "urn:", "data:")

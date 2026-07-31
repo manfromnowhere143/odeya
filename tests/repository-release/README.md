@@ -23,12 +23,12 @@ security proof.
 
 The exact mutations are in [cases.json](cases.json).
 
-Thirty-one architecture-evidence inventory mutations include twenty-nine
-that remove each of the twelve dedicated workflow commands and each of the
-seventeen integrated Foundation checks in turn. Two additional probes insert
-an out-of-body thirteenth workflow step and rebind the integrated tuple after
+Thirty-three architecture-evidence inventory mutations include thirty-one
+that remove each of the thirteen dedicated workflow commands and each of the
+eighteen integrated Foundation checks in turn. Two additional probes insert
+an out-of-body fourteenth workflow step and rebind the integrated tuple after
 its literal assignment without changing the count. The release checker must
-reject all thirty-one. This binds the published `twelve`/`seventeen` count
+reject all thirty-three. This binds the published `thirteen`/`eighteen` count
 boundary to executable bytes rather than to prose, a single favored member,
 or count-only validation.
 
