@@ -242,6 +242,16 @@ CURRENT_STAGE="prq-002f-numeric-trace-conformance"
   --python-executable "$PRQ002_PYTHON_BIN" \
   --node-executable "$PRQ002_NODE_BIN" \
   2>&1 | tee -a artifacts/rehearsal/foundation.log
+CURRENT_STAGE="prq-002g-jcs-conformance"
+.venv-architecture/bin/python \
+  tests/profile-0-3-jcs-conformance/authoring/generate_vectors.py --check \
+  2>&1 | tee -a artifacts/rehearsal/foundation.log
+.venv-architecture/bin/python \
+  scripts/validate_profile_0_3_jcs_conformance.py \
+  --recompute-all \
+  --python-executable "$PRQ002_PYTHON_BIN" \
+  --node-executable "$PRQ002_NODE_BIN" \
+  2>&1 | tee -a artifacts/rehearsal/foundation.log
 record_stage foundation passed
 
 # The cheap gate inside validate.py binds the guard-coverage record to the

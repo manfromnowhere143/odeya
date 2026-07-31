@@ -329,6 +329,15 @@ DEDICATED_ARCHITECTURE_EVIDENCE_COMMANDS = (
         '--python-executable "$ODEYA_PRQ002_PYTHON" '
         '--node-executable "$ODEYA_PRQ002_NODE"',
     ),
+    (
+        "prq-002g-jcs-conformance",
+        "python tests/profile-0-3-jcs-conformance/authoring/generate_vectors.py "
+        "--check && "
+        "python scripts/validate_profile_0_3_jcs_conformance.py "
+        "--recompute-all "
+        '--python-executable "$ODEYA_PRQ002_PYTHON" '
+        '--node-executable "$ODEYA_PRQ002_NODE"',
+    ),
 )
 INTEGRATED_ARCHITECTURE_EVIDENCE_CHECKS = (
     ("gate-a-prerequisites", "scripts/validate_gate_a_prerequisites.py"),
@@ -371,6 +380,10 @@ INTEGRATED_ARCHITECTURE_EVIDENCE_CHECKS = (
         "prq-002f-numeric-trace-conformance",
         "scripts/validate_profile_0_3_numeric_trace_conformance.py",
     ),
+    (
+        "prq-002g-jcs-conformance",
+        "scripts/validate_profile_0_3_jcs_conformance.py",
+    ),
 )
 CARDINAL_WORDS = (
     "zero",
@@ -403,6 +416,8 @@ CARDINAL_WORDS = (
     "twenty-seven",
     "twenty-eight",
     "twenty-nine",
+    "thirty",
+    "thirty-one",
 )
 ARCHITECTURE_EVIDENCE_COUNT_BOUNDARY = (
     f"Reproduce {CARDINAL_WORDS[len(DEDICATED_ARCHITECTURE_EVIDENCE_COMMANDS)]} "
@@ -410,7 +425,8 @@ ARCHITECTURE_EVIDENCE_COUNT_BOUNDARY = (
     "schema reissue, module manifest, first-slice scope, the PRQ-002A identity probe, "
     "the PRQ-002C raw-number prerequisite, the PRQ-002D prehash registry replay, "
     "the PRQ-002E profile-0.3 construction, human-decision-assurance successor "
-    "recomputation, and the PRQ-002F numeric-trace conformance recomputation. "
+    "recomputation, the PRQ-002F numeric-trace conformance recomputation, and "
+    "the PRQ-002G JCS serialization conformance recomputation. "
     "`Foundation` separately "
     "runs the complete integrated "
     f"{CARDINAL_WORDS[len(INTEGRATED_ARCHITECTURE_EVIDENCE_CHECKS)]}-check census"
@@ -431,10 +447,10 @@ EXPECTED_ARCHITECTURE_EVIDENCE_RUN_BODY = (
     + "          } 2>&1 | tee artifacts/ci/architecture-evidence.log"
 )
 EXPECTED_ARCHITECTURE_EVIDENCE_JOB_SHA256 = (
-    "5ab22e753ce43f21002cd2d94c98984d686e96ea7fd157bf5f32e43ea2c426fb"
+    "45af01550727cde7dc16709c4af826fadd1a60859d0e1ed2e5d3bcaf2a7cec62"
 )
 EXPECTED_INTEGRATED_VALIDATOR_SHA256 = (
-    "c09f01aafaaf6d6e2ce389dd53a5972235b6f45f5aa19f2030aac11c54894f9b"
+    "1c46d9b3dc665a7c137b744a7840e274bc9293c620f0be219654498d12317541"
 )
 FOUNDATION_TIMEOUT_MAP_ERROR = (
     "Foundation timeout policy must retain the exact 30-second default and "
@@ -466,11 +482,13 @@ EXPECTED_FOUNDATION_TIMEOUT_POLICY_MUTATIONS = {
         "ARCHITECTURE_EVIDENCE_CHECK_TIMEOUT_SECONDS = {\n"
         '    "tests/product-identity-profile-0.3-candidate/check.py": 60,\n'
         '    "scripts/validate_profile_0_3_numeric_trace_conformance.py": 120,\n'
+        '    "scripts/validate_profile_0_3_jcs_conformance.py": 60,\n'
         "}\n"
         "MARKDOWN_LINK =",
         "ARCHITECTURE_EVIDENCE_CHECK_TIMEOUT_SECONDS = {\n"
         '    "tests/product-identity-profile-0.3-candidate/check.py": 60,\n'
         '    "scripts/validate_profile_0_3_numeric_trace_conformance.py": 120,\n'
+        '    "scripts/validate_profile_0_3_jcs_conformance.py": 60,\n'
         "}\n"
         "ISOLATED_CONTRACT_SUITE_TIMEOUT_SECONDS[\n"
         '    "tests/product-identity-profile-candidate/check.py"\n'
@@ -732,6 +750,18 @@ REHEARSAL_PRQ002F_RECOMPUTATION_BLOCK = (
     '  --node-executable "$PRQ002_NODE_BIN" \\\n'
     "  2>&1 | tee -a artifacts/rehearsal/foundation.log\n"
 )
+REHEARSAL_PRQ002G_RECOMPUTATION_BLOCK = (
+    'CURRENT_STAGE="prq-002g-jcs-conformance"\n'
+    ".venv-architecture/bin/python \\\n"
+    "  tests/profile-0-3-jcs-conformance/authoring/generate_vectors.py --check \\\n"
+    "  2>&1 | tee -a artifacts/rehearsal/foundation.log\n"
+    ".venv-architecture/bin/python \\\n"
+    "  scripts/validate_profile_0_3_jcs_conformance.py \\\n"
+    "  --recompute-all \\\n"
+    '  --python-executable "$PRQ002_PYTHON_BIN" \\\n'
+    '  --node-executable "$PRQ002_NODE_BIN" \\\n'
+    "  2>&1 | tee -a artifacts/rehearsal/foundation.log\n"
+)
 REHEARSAL_PRQ002_RECOMPUTATION_BLOCK = (
     'CURRENT_STAGE="prq-002-identity-probe"\n'
     ".venv-architecture/bin/python -m pip install \\\n"
@@ -767,6 +797,7 @@ REHEARSAL_PRQ002_RECOMPUTATION_BLOCK = (
     + REHEARSAL_PRQ002C_RECOMPUTATION_BLOCK
     + REHEARSAL_PRQ002D_RECOMPUTATION_BLOCK
     + REHEARSAL_PRQ002F_RECOMPUTATION_BLOCK
+    + REHEARSAL_PRQ002G_RECOMPUTATION_BLOCK
     + "record_stage foundation passed\n"
 )
 STANDALONE_TOOL_CACHE_BLOCK = (
@@ -868,7 +899,7 @@ EXPECTED_RELEASE_CONTRACT_MUTATIONS = {
         "PRQ-009 order, schema reissue, module manifest, first-slice scope, and "
         "human-decision-assurance successor recomputation. `Foundation` separately "
         "runs the complete integrated ten-check census",
-        "Reproduce eleven dedicated prerequisite/member checks",
+        "Reproduce twelve dedicated prerequisite/member checks",
     ),
     "stale-architecture-evidence-mutation-count": (
         ARCHITECTURE_EVIDENCE_MUTATION_COUNT_BOUNDARY,
@@ -879,7 +910,7 @@ EXPECTED_RELEASE_CONTRACT_MUTATIONS = {
         ARCHITECTURE_EVIDENCE_RUN_COUNT_BOUNDARY,
         "The release checker compares the dedicated eight-command run body and "
         "the\nintegrated fourteen-member Python tuple",
-        "The release checker compares the dedicated eleven-command run body",
+        "The release checker compares the dedicated twelve-command run body",
     ),
     "future-private-remote-regression": (
         "The public canonical remote already exists at\n"
@@ -942,10 +973,10 @@ EXPECTED_RELEASE_CENSUS_MUTATIONS = {
 }
 EXPECTED_RELEASE_FIXTURE_README_MUTATIONS = {
     "stale-architecture-evidence-fixture-readme-count": (
+        "Thirty-one architecture-evidence inventory mutations",
         "Twenty-nine architecture-evidence inventory mutations",
-        "Twenty-seven architecture-evidence inventory mutations",
         "repository-release fixture README must carry exactly the "
-        "executable-derived boundary 'Twenty-nine architecture-evidence "
+        "executable-derived boundary 'Thirty-one architecture-evidence "
         "inventory mutations'",
     ),
     "stale-release-contract-fixture-readme-count": (
@@ -1980,6 +2011,7 @@ def foundation_timeout_policy_errors(
         == {
             "tests/product-identity-profile-0.3-candidate/check.py": 60,
             "scripts/validate_profile_0_3_numeric_trace_conformance.py": 120,
+            "scripts/validate_profile_0_3_jcs_conformance.py": 60,
         }
         and all(
             type(value) is int

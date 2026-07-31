@@ -136,7 +136,7 @@ They are requirements sources and bounded proof missions—not runtime dependenc
 
 The current retained foundation contains 144 Draft 2020-12 schemas, 908
 shared-manifest cases (244 valid and 664 known-bad), 17 isolated contract
-suites, 16 architecture-evidence checks, and 7 bounded TLA+ models with
+suites, 17 architecture-evidence checks, and 7 bounded TLA+ models with
 30 mutation controls. These counts are bound to the validator run that
 measures them; the README previously stated four of them as fact while all four
 had drifted.
@@ -418,13 +418,15 @@ tranche (ADR 0106): dual-implementation recomputation of the static numeric
 inventory, an explicit typed schema-document/metaschema settlement, complete
 raw-aware traces for the fifteen frozen construction subjects, and two
 source-separated cross-object conformance paths, validated by a dedicated
-third-path parent with an embedded known-bad corpus. Publishing that
-candidate requires fresh explicit operator authority and the ordinary
-exact-SHA two-ref sequence with new subject-bound receipts. The next smallest
-PRQ-002 architecture unit after settlement is retained source-separated RFC
-8785 serialization conformance and the nine product-domain frames, then
-complete offline resolution, dependency-closed product members and
-registries, accountable review, and the operator's exact-byte decision. No
+third-path parent with an embedded known-bad corpus. Its settlement
+completed under the ordinary exact-SHA two-ref sequence, and the lane now
+carries the PRQ-002G profile-bounded JCS serialization conformance tranche
+(ADR 0107): a 61-frame answer-free corpus through two source-separated
+zero-dependency serializers with byte-identical projections, a retained
+UTF-16-versus-code-point ordering discriminator, and a third-path validator.
+The next smallest PRQ-002 architecture unit is the nine product-domain
+frames, then complete offline resolution, dependency-closed product members
+and registries, accountable review, and the operator's exact-byte decision. No
 observer agreement,
 structural vector, or green validator may be promoted into conformance, product
 identity, profile issuance, PRQ-002 closure, Gate A acceptance, or runtime

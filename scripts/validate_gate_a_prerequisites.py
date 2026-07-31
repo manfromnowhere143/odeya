@@ -137,7 +137,7 @@ CURRENT_ASSURANCE_UNITS = (
         "docs/SESSION_HANDOFF.md", "## What this lane established, and where to put pressure next", None,
         "bullet", "**PRQ-013 now has retained byte-bound/recomputation candidate evidence, not closure.**", 1,
         "160ed1c9184a0f91d4e8100e0105f5440944dafd3881b043c714191421d87c39",
-        "6feec9438ab393ff26f630b5ec4622608d321e8bd5666f6d3ce1ec84e4c39c7c",
+        "d7eacde46e9f23aa616ba5400fba68faa47055c9d911bcdbafd565d9ac236fae",
     ),
     (
         "docs/SESSION_HANDOFF.md", "## Active PRQ-013 candidate — resolve release status from Git", None,
@@ -160,18 +160,19 @@ CURRENT_ASSURANCE_UNITS = (
 
 RECOVERY_HANDOFF = "docs/SESSION_HANDOFF.md"
 RECOVERY_HEADING = (
-    "## Current repository recovery identity — authoritative 2026-07-31"
+    "## Current repository recovery identity — authoritative 2026-07-31, "
+    "PRQ-002G"
 )
-RECOVERY_BASE = "1c6fb114b71ca4e095389b33869d5faf2bd7c65a"
-RECOVERY_BASE_TREE = "066b9ac564e145791daa536e8ee94f97a797a27f"
-RECOVERY_PUBLIC_ANCESTOR = "617209ba480b854a00c6a15cd99ac1d5a18e90ad"
+RECOVERY_BASE = "741b7b6283eb17a3dfac2abed92e84344f20f19d"
+RECOVERY_BASE_TREE = "407ab1ef25d088dff82034ec183b98323843a836"
+RECOVERY_PUBLIC_ANCESTOR = "1c6fb114b71ca4e095389b33869d5faf2bd7c65a"
 RECOVERY_SECTION_SHA256 = (
-    "a0293ab3b48ceec7ce64f79dfe5ab26c40ceb0d31ef31f97a327c01bd9db289e"
+    "b7e898a08064cfe61e00014321211387ad53a4ac35a5d4824396b2d5b6cde701"
 )
 # SHA-256 of the normalized recovery program. Its separately named
 # cleanliness and cardinality lines keep both invariants reviewable.
 EXPECTED_RECOVERY_PROGRAM_SHA256 = (
-    "bd61d9e89c9ff4c6b2b851b298fb1d0163a4a00e6fbecbe247feea6d4c6bf809"
+    "109a93a89254245bf993cad98e214e66d0c9aed0649c9d1830ef9372ea0ae89c"
 )
 PARENT_CARDINALITY_LINE = 'test "$(git rev-list --parents -n 1 "$HEAD_COMMIT" | awk \'{print NF}\')" = 2'
 CLEAN_WORKTREE_LINE = 'test -z "$(git status --porcelain=v1 --untracked-files=all)"'
@@ -772,8 +773,8 @@ def recovery_truth_surface_errors(
         (
             "predecessor",
             RECOVERY_BASE,
-            "Exact immediate PRQ-002E predecessor:",
-            r"(?m)^- Exact immediate PRQ-002E predecessor:[ \t]*\n"
+            "Exact immediate PRQ-002F predecessor:",
+            r"(?m)^- Exact immediate PRQ-002F predecessor:[ \t]*\n"
             r"[ \t]+`([0-9a-f]{40})`[ \t]*$",
         ),
         (
@@ -882,11 +883,11 @@ def recovery_truth_surface_known_bad_self_tests(errors: list[str]) -> int:
             expected, errors,
         )
     predecessor = (
-        f"- Exact immediate PRQ-002E predecessor:\n  `{RECOVERY_BASE}`"
+        f"- Exact immediate PRQ-002F predecessor:\n  `{RECOVERY_BASE}`"
     )
     duplicate = (
         predecessor
-        + f"\n- Exact immediate PRQ-002E predecessor:\n"
+        + f"\n- Exact immediate PRQ-002F predecessor:\n"
         f"  `{RECOVERY_BASE_TREE}`"
     )
     mutant = replace_current_once(

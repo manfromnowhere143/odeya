@@ -23,14 +23,14 @@ security proof.
 
 The exact mutations are in [cases.json](cases.json).
 
-Twenty-nine architecture-evidence inventory mutations include twenty-seven
-that remove each of the eleven dedicated workflow commands and each of the
-sixteen integrated Foundation checks in turn. Two additional probes insert an
-out-of-body twelfth workflow step and rebind the integrated tuple after its
-literal assignment without changing the count. The release checker must reject
-all twenty-nine. This binds the published `eleven`/`sixteen` count boundary to
-executable bytes rather than to prose, a single favored member, or count-only
-validation.
+Thirty-one architecture-evidence inventory mutations include twenty-nine
+that remove each of the twelve dedicated workflow commands and each of the
+seventeen integrated Foundation checks in turn. Two additional probes insert
+an out-of-body thirteenth workflow step and rebind the integrated tuple after
+its literal assignment without changing the count. The release checker must
+reject all thirty-one. This binds the published `twelve`/`seventeen` count
+boundary to executable bytes rather than to prose, a single favored member,
+or count-only validation.
 
 Six Foundation timeout-policy mutations independently widen the 30-second
 default, rebind both measured path overrides after their literal declarations,
