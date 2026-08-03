@@ -47,6 +47,9 @@ they bind. No artifact digests itself.
 
 ```mermaid
 flowchart TB
+    accTitle: Nonrecursive human-decision assurance candidate construction
+    accDescr: Synthetic decision and candidate bytes bind an unissued assurance core, two-phase challenge, evidence, backing-byte receipt, source-separated recomputation results, comparison, and unissued seal without a self-digest cycle. Future AssuredDecision and policy evaluation remain unimplemented and unissued.
+
     D["Synthetic source-decision bytes<br/>source schema retains meaning"]
     M["Synthetic candidate bytes"]
     C["Unissued Assurance Core candidate<br/>one later-ratification request<br/>no challenge output · no self-digest"]
@@ -75,9 +78,13 @@ flowchart TB
     S -.-> W
     W -.-> P
 
-    classDef retainedCandidate fill:#E0F2FE,stroke:#0369A1,color:#0C4A6E
+    classDef synthetic fill:#F5F3FF,stroke:#7C3AED,stroke-width:1.5px,color:#4C1D95
+    classDef unissued fill:#E0F2FE,stroke:#0369A1,stroke-width:1.5px,color:#0C4A6E
+    classDef retained fill:#ECFDF5,stroke:#047857,stroke-width:1.5px,color:#064E3B
     classDef later fill:#F1F5F9,stroke:#64748B,color:#334155,stroke-dasharray: 5 5
-    class D,M,C,H,E,B,R,X,S retainedCandidate
+    class D,M synthetic
+    class C,E,S unissued
+    class H,B,R,X retained
     class W,P later
 ```
 
@@ -268,6 +275,9 @@ Each required observation is explicit:
 
 ```mermaid
 flowchart TB
+    accTitle: Human-decision assurance evidence disposition and precedence
+    accDescr: Each required member is retained as supported, unknown, not applicable, or contradicted. Contradiction yields invalid; otherwise unknown or not applicable yields indeterminate; only all-supported evidence with every required condition satisfied is individually eligible, never approval or authority.
+
     O[Each member of the closed required<br/>observation + condition set] --> C{Retained member disposition}
     C -->|supported under applicable profile| S[Supported]
     C -->|missing · unavailable · not verified| U[Unknown]
@@ -277,19 +287,32 @@ flowchart TB
     U --> A
     NA --> A
     X --> A
-    A -->|any Contradicted or failed required condition| INV[Invalid retained]
-    A -->|otherwise any Unknown or Not applicable| IND[Indeterminate retained]
-    A -->|otherwise all Supported<br/>and all required conditions satisfied| IE[Individually eligible]
+
+    A -->|1 · any Contradicted or failed required condition| INV[Invalid retained]
+    A -->|2 · otherwise any Unknown or Not applicable| IND[Indeterminate retained]
+    A -->|3 · otherwise all Supported<br/>and all required conditions satisfied| IE[Individually eligible]
     IND --> RI[Wrapper assembly refused<br/>indeterminate is not approval]
     INV --> RV[Wrapper assembly refused<br/>invalid is not approval]
     IE -.-> W[Future AssuredDecision assembly<br/>unimplemented]
     W -.-> CE[Future controlled evaluation<br/>currentness · authority · quorum]
     CE -.-> B[Current boundary<br/>wrapper + profile unissued<br/>no authority]
 
-    classDef retainedCandidate fill:#E0F2FE,stroke:#0369A1,color:#0C4A6E
+    classDef supported fill:#ECFDF5,stroke:#047857,stroke-width:1.5px,color:#064E3B
+    classDef unknown fill:#F1F5F9,stroke:#64748B,stroke-width:1px,color:#334155
+    classDef contradicted fill:#FFE4E6,stroke:#BE123C,stroke-width:1.5px,color:#881337
+    classDef gate fill:#0F172A,stroke:#0F172A,stroke-width:1.5px,color:#FFFFFF
+    classDef invalid fill:#9F1239,stroke:#881337,stroke-width:1.5px,color:#FFFFFF
+    classDef indeterminate fill:#FEF3C7,stroke:#B45309,stroke-width:1.5px,color:#78350F
+    classDef eligible fill:#E0F2FE,stroke:#0369A1,stroke-width:1.5px,color:#0C4A6E
     classDef refused fill:#FFF7ED,stroke:#9A3412,color:#7C2D12
     classDef later fill:#F1F5F9,stroke:#64748B,color:#334155,stroke-dasharray: 5 5
-    class S,U,NA,X,A,IE,IND,INV retainedCandidate
+    class O,C,A gate
+    class S supported
+    class U,NA unknown
+    class X contradicted
+    class INV invalid
+    class IND indeterminate
+    class IE eligible
     class RI,RV refused
     class W,CE,B later
 ```

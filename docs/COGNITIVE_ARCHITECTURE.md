@@ -13,30 +13,64 @@ They communicate only through typed proposals and retained artifacts.
 
 ```mermaid
 flowchart TB
-    M[Mission contract] --> K[Deterministic lifecycle kernel]
-    K --> F[Legal work frontier]
-    K -->|versioned read-only projection| G[Hypothesis / epistemic graph]
-    F --> C[Research-State Compiler]
+    accTitle: Odeya dual-loop cognitive control architecture
+    accDescr: A deterministic outer loop owns mission state, work admission, verification, and adjudication. An inner model-driven loop compiles bounded state, proposes work, executes in isolation, and returns candidate artifacts to deterministic admission without truth or canonical-state authority.
+
+    M["Mission contract"]
+
+    subgraph OUTER["OUTER DETERMINISTIC SCIENTIFIC CONTROL · STATE + AUTHORITY + ADMISSION"]
+        direction LR
+        K["Deterministic lifecycle kernel"]
+        F["Legal work frontier"]
+        G["Hypothesis / epistemic graph<br/>versioned read-only projection"]
+        WA{"Deterministic work admission"}
+        N{"Deterministic kernel admission<br/>reject · retain-only · commit"}
+        V["Separately assigned verification fabric<br/>isolation + measured independence vector retained"]
+        VR["Verification record"]
+        D["Deterministic adjudicator<br/>and claim compiler"]
+        DR["Determination or refusal"]
+
+        K --> F
+        K -->|versioned read-only projection| G
+        WA -->|reject or retain proposal| K
+        N --> K
+        K --> V --> VR --> N
+        K --> D --> DR --> N
+    end
+
+    subgraph INNER["INNER EPISTEMIC SEARCH + ISOLATED EXECUTION · NO TRUTH OR CANONICAL-STATE AUTHORITY"]
+        direction LR
+        C["Research-State Compiler"]
+        S["Epistemic supervisor"]
+        Q["Proposed specialist coalition"]
+        P["Proposed graph deltas<br/>and experiment / VOI frontier"]
+        WP["Proposed bounded work"]
+        WC["Admitted WorkContract + lease"]
+        R["Isolated model / tool / compute execution"]
+        A["Candidate artifacts and graph deltas"]
+
+        C --> S
+        S --> Q --> WP
+        S --> P --> WP
+        WC --> R --> A
+    end
+
+    M --> K
+    F --> C
     G --> C
-    C --> S[Epistemic supervisor]
-    S --> Q[Proposed specialist coalition]
-    S --> P[Proposed graph deltas<br/>and experiment / VOI frontier]
-    Q --> WP[Proposed bounded work]
-    P --> WP
-    K --> WA{Deterministic work admission}
     WP --> WA
-    WA -->|admit exact scope| WC[Admitted WorkContract + lease]
-    WA -->|reject or retain proposal| K
-    WC --> R[Isolated model / tool / compute execution]
-    R --> A[Candidate artifacts and graph deltas]
-    A --> N{Deterministic kernel admission<br/>reject · retain-only · commit}
-    N --> K
-    K --> V[Separately assigned verification fabric<br/>isolation + measured independence vector retained]
-    V --> VR[Verification record]
-    VR --> N
-    K --> D[Deterministic adjudicator and claim compiler]
-    D --> DR[Determination or refusal]
-    DR --> N
+    WA -->|admit exact scope| WC
+    A --> N
+    OUTER ~~~ INNER
+
+    classDef deterministic fill:#E0F2FE,stroke:#0369A1,stroke-width:1.5px,color:#0C4A6E
+    classDef model fill:#F5F3FF,stroke:#7C3AED,stroke-width:1.5px,color:#4C1D95
+    classDef gate fill:#0F172A,stroke:#0F172A,stroke-width:1.5px,color:#FFFFFF
+    class K,F,G,V,VR,D,DR,WC deterministic
+    class C,S,Q,P,WP,R,A model
+    class WA,N gate
+    style OUTER fill:#F0F9FF,stroke:#0369A1,stroke-width:2px
+    style INNER fill:#FAF5FF,stroke:#7C3AED,stroke-width:2px
 ```
 
 No model, including the epistemic supervisor, owns truth or mission state.

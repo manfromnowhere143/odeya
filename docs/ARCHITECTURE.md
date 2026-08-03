@@ -10,6 +10,9 @@ The kernel must never depend on an agent remembering the mission. It owns the le
 
 ```mermaid
 flowchart TB
+    accTitle: Proposed Odeya research control architecture
+    accDescr: Thesis intake and a frozen protocol enter a deterministic kernel. Typed work yields candidate artifacts; separately assigned verification and rule-bound adjudication feed kernel admission; grounded learning requires human promotion; and publication uses a separately governed single-use release path.
+
     T[Thesis intake] --> C[Mission contract]
     C --> P[Frozen protocol]
     P --> K[Research kernel]
@@ -33,14 +36,31 @@ flowchart TB
     LC --> Q{Evaluation + review<br/>+ human promotion decision}
     Q -->|authorized versioned proposal| G
     K -->|eligible exact claim projection| PC[Publication candidate]
-    PC --> HD{Human publication decision<br/>PRQ-013 remains blocking}
+    PC --> HD{Current human publication-decision gate<br/>assurance wrapper required · PRQ-013 blocking}
     HD -->|authorized exact candidate| PM[Deterministically sealed manifest]
-    HD -->|denied · absent · indeterminate<br/>invalid · expired · superseded| NR[Retained · not released]
+    HD -->|denied or no current valid decision<br/>absent · indeterminate · invalid · expired · superseded| NR[Retained · not released]
     PM --> PG[Exact single-use publication grant]
     PG --> EE[Effect intent + dispatch]
     EE --> OO[Separately authorized observation<br/>and reconciliation]
     OO --> RS[Applied · not applied · completion unknown]
     RS --> G
+
+    classDef contract fill:#ECFDF5,stroke:#047857,stroke-width:1.5px,color:#064E3B
+    classDef kernel fill:#082F49,stroke:#0369A1,stroke-width:1.5px,color:#FFFFFF
+    classDef proposal fill:#F5F3FF,stroke:#7C3AED,stroke-width:1.5px,color:#4C1D95
+    classDef evidence fill:#E0F2FE,stroke:#0369A1,stroke-width:1.5px,color:#0C4A6E
+    classDef decision fill:#0F172A,stroke:#0F172A,stroke-width:1.5px,color:#FFFFFF
+    classDef projection fill:#F1F5F9,stroke:#64748B,stroke-width:1px,color:#334155
+    classDef release fill:#FFF7ED,stroke:#9A3412,stroke-width:1.5px,color:#7C2D12
+    classDef blocked fill:#9F1239,stroke:#881337,stroke-width:1.5px,color:#FFFFFF
+    class T,C,P contract
+    class K,G kernel
+    class W,I,X,CA,LC proposal
+    class E,V,VR,A,AD,L evidence
+    class Q decision
+    class U,NR projection
+    class PC,PM,PG,EE,OO,RS release
+    class HD blocked
 ```
 
 ## Architectural invariants
@@ -190,6 +210,9 @@ The later public surface and contribution surface are separate projections with 
 
 ```mermaid
 flowchart TB
+    accTitle: Odeya scientific mission lifecycle and orthogonal state axes
+    accDescr: The scientific phase sequence runs from proposal intake through mandatory handoff and learning. Operational condition, validity, scientific outcome, and release remain orthogonal retained axes and are never scientific phases.
+
     subgraph PH["SCIENTIFIC PHASE SPINE"]
         direction TB
         Intake[Proposal intake] --> Admit{Admitted?}
@@ -216,6 +239,15 @@ flowchart TB
     end
 
     PH ~~~ AX
+
+    classDef phase fill:#E0F2FE,stroke:#0369A1,stroke-width:1.5px,color:#0C4A6E
+    classDef disposition fill:#FFF7ED,stroke:#9A3412,stroke-width:1.5px,color:#7C2D12
+    classDef axis fill:#F1F5F9,stroke:#64748B,stroke-width:1px,color:#334155
+    class Intake,Admit,Orient,Contract,Preregister,Preflight,Execute,Verify,Review,Adjudicate,Handoff,Learn,Complete phase
+    class ProposalDisposition disposition
+    class Operational,Validity,Outcome,Release axis
+    style PH fill:#F0F9FF,stroke:#0369A1,stroke-width:2px
+    style AX fill:#F8FAFC,stroke:#64748B,stroke-width:1.5px
 ```
 
 The scientific lifecycle stages are:
@@ -226,10 +258,13 @@ Release is a separate aggregate governed by the [noncircular publication protoco
 
 ```mermaid
 flowchart TB
+    accTitle: Governed publication and external-release sequence
+    accDescr: An exact publication candidate passes a current human publication-decision gate before deterministic sealing, a single-use grant, dispatch, observation, and separately authorized reconciliation. Settlement remains released, confirmed not released, or completion unknown, with corrections handled as new governed effects.
+
     PC[Exact PublicationCandidate] --> RQ[ReleaseRequest]
-    RQ --> D{Human PublicationDecision<br/>exact candidate digest}
-    D -->|denied · invalid · absent · indeterminate<br/>expired · superseded| NR[Retained · not released]
-    D -->|authorized| M[PublicationManifest<br/>deterministically sealed from candidate + decision]
+    RQ --> D{Current human publication-decision gate<br/>exact candidate digest · assurance required}
+    D -->|denied or no current valid decision<br/>absent · indeterminate · invalid · expired · superseded| NR[Retained · not released]
+    D -->|authorized exact candidate| M[PublicationManifest<br/>deterministically sealed from candidate + decision]
     M --> G[Single-use PublicationGrant<br/>bound to final manifest digest]
     G --> E[External-effect intent + reservation]
     E --> DS[Dispatch claim + external call]
@@ -243,6 +278,19 @@ flowchart TB
 
     AX["Orthogonal retained axes<br/>decision · manifest · effect<br/>visibility observation · correction"]
     AX ~~~ RC
+
+    classDef candidate fill:#E0F2FE,stroke:#0369A1,stroke-width:1.5px,color:#0C4A6E
+    classDef gate fill:#9F1239,stroke:#881337,stroke-width:1.5px,color:#FFFFFF
+    classDef release fill:#FFF7ED,stroke:#9A3412,stroke-width:1.5px,color:#7C2D12
+    classDef settled fill:#ECFDF5,stroke:#047857,stroke-width:1.5px,color:#064E3B
+    classDef unknown fill:#FEF3C7,stroke:#B45309,stroke-width:1.5px,color:#78350F
+    classDef retained fill:#F1F5F9,stroke:#64748B,stroke-width:1px,color:#334155
+    class PC,RQ candidate
+    class D gate
+    class M,G,E,DS,O,RC,CW release
+    class REL,CNA settled
+    class UNK unknown
+    class NR,AX retained
 ```
 
 ## Canonical objects

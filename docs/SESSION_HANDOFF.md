@@ -1,26 +1,28 @@
 # Odeya Session Handoff
 
 Status: canonical recovery entrypoint for the current Odeya architecture and
-repository-release mission. Last updated 2026-07-31, Asia/Jerusalem. This is a
+repository-release mission. Last updated 2026-08-03, Asia/Jerusalem. This is a
 handoff contract, not Gate A acceptance, implementation authorization, or
 scientific evidence; repository-publication authority comes only from the
 named decisions and release contract. The exact-SHA two-ref publication
 activation is complete at the exact public baseline named below. The PRQ-002E,
-PRQ-002F, and PRQ-002G tranches are published and settled in sequence: live
-`main` and each permanent release ref carried complete subject-bound
-governance, checks, promotion, remote-replay, and comparison receipts at its
-own settlement. The active architecture lane now carries the bounded
-PRQ-002I dependency-closed offline-resolution tranche (ADR 0109) as one
-ordinary single-parent direct child of the exact PRQ-002H predecessor: the
-declared 199-member universe proven dependency-closed — 6,456 schema
-reference edges resolved offline and 241 declared digest bindings replayed
-from repository bytes — through two source-separated implementations and a
-third-path validator, with four historical residue identities named rather
-than resolved. It amends no frozen byte, issues nothing, computes no
-digest, and constructs no product identity.
-This file cannot contain the
-commit that
-contains itself; resolve the candidate's exact commit, rehearsal, publication,
+PRQ-002F, PRQ-002G, PRQ-002H, and PRQ-002I tranches are published and settled
+in sequence: live `main` and each permanent release ref carried complete
+subject-bound governance, checks, promotion, remote-replay, and comparison
+receipts at its own settlement. The settled public architecture baseline is
+the bounded PRQ-002I dependency-closed offline-resolution tranche (ADR 0109):
+its declared 199-member universe is dependency-closed under the declared forms
+— 6,456 schema-reference edges resolve offline and 241 declared digest bindings
+replay from repository bytes — through two source-separated implementations
+and a third-path validator, with four historical residue identities named
+rather than resolved. The active local architecture lane is now one bounded
+G0/G5 architecture-review and truth-surface-validation candidate: it
+reconciles stale current-truth surfaces and proposes ADR 0110 plus a
+matched-budget frontier-value evaluation protocol. It changes no profile,
+schema, product, or runtime byte, reports no Odeya result, and has no
+repository-publication authority.
+This file cannot contain the commit that contains itself; resolve the
+candidate's exact commit, rehearsal, publication,
 workflow, and remote replay status from Git plus the external subject-bound
 receipts before acting.
 
@@ -42,6 +44,191 @@ machine-readable manifests; current architecture status and gate contracts;
 this operational handoff; then dated historical packets and chat. A newer
 document does not silently overrule an accepted decision, and an older count or
 hash does not silently describe a descendant commit.
+
+## Current repository recovery identity — authoritative 2026-08-03, G0/G5 frontier-value review candidate
+
+- Canonical workspace:
+  `/Users/danielwahnich/workspace/odeya`; it remains the protected concurrent
+  UI/UX and quarantined-collision lane on `agent/repository-release`. Do not
+  edit, stage, normalize, or discard its dirty paths.
+- Sole architecture writer:
+  `/Users/danielwahnich/workspace/odeya-prq-002-profile-0-3-replacement-20260730`
+- Sole architecture branch:
+  `agent/g5-frontier-value-evaluation-20260803`
+- Exact settled PRQ-002I parent/public baseline:
+  `1d5cfe8c232928bbfdb8f9893cb601838e987b4f`
+- Exact parent tree:
+  `9704622c79e8248781b9623c4a3ff47db21c83f5`
+- Canonical remote: `https://github.com/manfromnowhere143/odeya.git`.
+  At the 2026-08-03 entry audit, live `main` and permanent
+  `release/1d5cfe8c232928bbfdb8f9893cb601838e987b4f` both resolved to the
+  exact parent. Revalidate them live; do not trust this prose.
+- The active tranche is architecture-review and truth-surface-validation work
+  only. It reconciles README, architecture status, the pre-implementation
+  gate, standards/registry/closure surfaces, and this handoff with the settled
+  PRQ-002F–I evidence. It also adds the proposed Frontier Research Value
+  Evaluation Protocol Candidate and ADR 0110, reissues the exact current
+  truth-surface bindings, and updates the existing Gate A ledger without
+  changing its 43 required / 78 outside commands, 60 events, 25
+  aggregate/state/reducer families, 11 owners, and one P0 prerequisite. It adds
+  no schema, product/runtime path, profile byte, product identity, evaluation
+  result, or authority.
+- Architecture-repository publication authority for this candidate: **not
+  granted**. Do not push a release ref or `main` without a new explicit operator
+  grant. Profile issuance, scientific publication, runtime, application,
+  infrastructure, deployment, external-effect, spending, credential, and Gate
+  A authority are also not granted.
+
+Run first after this local candidate is committed and its local rehearsal
+completes:
+
+```bash
+bash -euo pipefail <<'BASH'
+cd /Users/danielwahnich/workspace/odeya-prq-002-profile-0-3-replacement-20260730
+source scripts/ci/sanitize-git-environment.sh
+BASE=1d5cfe8c232928bbfdb8f9893cb601838e987b4f
+BASE_TREE=9704622c79e8248781b9623c4a3ff47db21c83f5
+HEAD_COMMIT="$(git rev-parse HEAD)"
+test "$(git symbolic-ref --short HEAD)" = \
+  agent/g5-frontier-value-evaluation-20260803
+test "$(git remote)" = origin
+test "$(git remote get-url origin)" = \
+  https://github.com/manfromnowhere143/odeya.git
+test "$(git rev-parse "$BASE^{tree}")" = "$BASE_TREE"
+test -z "$(git status --porcelain=v1 --untracked-files=all)"
+test "$(git rev-parse "$HEAD_COMMIT^")" = "$BASE"
+test "$(git rev-list --parents -n 1 "$HEAD_COMMIT" | awk '{print NF}')" = 2
+test "$(git rev-list --count "$BASE..$HEAD_COMMIT")" = 1
+git status --short --branch
+git diff --check "$BASE..$HEAD_COMMIT"
+git diff --name-status "$BASE..$HEAD_COMMIT"
+test "$(git -C /Users/danielwahnich/workspace/odeya \
+  symbolic-ref --short HEAD)" = agent/repository-release
+REMOTE_URL=https://github.com/manfromnowhere143/odeya.git
+REMOTE_MAIN="$(git ls-remote --refs "$REMOTE_URL" refs/heads/main |
+  awk '$2 == "refs/heads/main" {print $1}')"
+test "$REMOTE_MAIN" = "$BASE" || test "$REMOTE_MAIN" = "$HEAD_COMMIT"
+test "$(git ls-remote --refs "$REMOTE_URL" "refs/heads/release/$BASE" |
+  awk -v ref="refs/heads/release/$BASE" '$2 == ref {print $1}')" = "$BASE"
+PYTHONDONTWRITEBYTECODE=1 .venv-architecture/bin/python \
+  tests/profile-0-3-offline-resolution/authoring/generate_universe.py --check
+PYTHONDONTWRITEBYTECODE=1 .venv-architecture/bin/python \
+  scripts/validate_profile_0_3_offline_resolution.py
+PYTHONDONTWRITEBYTECODE=1 .venv-architecture/bin/python scripts/validate.py
+PYTHONDONTWRITEBYTECODE=1 .venv-architecture/bin/python \
+  scripts/validate_repository_release.py
+EVIDENCE_ROOT="/Users/danielwahnich/workspace/odeya-release-evidence/$HEAD_COMMIT"
+test -d "$EVIDENCE_ROOT"
+PYTHONDONTWRITEBYTECODE=1 .venv-architecture/bin/python \
+  - "$EVIDENCE_ROOT" "$HEAD_COMMIT" <<'PY'
+import sys
+from pathlib import Path
+
+sys.path.insert(0, "scripts")
+from compare_rehearsal_manifests import load_manifest
+
+document, _ = load_manifest(Path(sys.argv[1]))
+expected_profile = {
+    ".github/workflows/architecture.yml",
+    ".github/workflows/formal.yml",
+    ".github/workflows/publication-sequence.yml",
+    ".github/workflows/release-surface.yml",
+    ".gitleaks.toml",
+    ".java-version",
+    ".python-version",
+    "formal/tla/results-manifest.json",
+    "tools/repository-release/.node-version",
+    "tools/repository-release/package-lock.json",
+    "tools/repository-release/requirements-architecture.lock",
+    "tools/repository-release/toolchain.lock.json",
+}
+expected_dispositions = {
+    "bounded_formal_models",
+    "foundation",
+    "ignored_output_allowlist",
+    "repository_release_surface",
+    "retained_evidence_secret_scan",
+    "tracked_and_nonignored_mutation_audit",
+}
+assert document["schema_version"] == "0.2.0"
+assert document["artifact_class"] == "fresh_clone_rehearsal_evidence_manifest"
+assert document["subject_commit"] == sys.argv[2]
+assert document["source_class"] == "local"
+assert document["remote_main_commit"] is None
+assert document["canonical_scientific_evidence"] is False
+assert set(document["profile_files"]) == expected_profile
+assert len(document["files"]) == 19
+assert set(document["pass_dispositions"]) == expected_dispositions
+assert set(document["pass_dispositions"].values()) == {"passed"}
+PY
+BASH
+```
+
+These commands validate repository and live lineage, run the dedicated and
+full validators, and verify the exact-subject local rehearsal manifest and its
+complete retained file graph. A missing or invalid manifest keeps the mission
+at candidate correction or rehearsal; it never implies settlement.
+
+The exact candidate commit cannot be named inside itself. Resolve it from Git.
+The intended local continuation state is one clean ordinary single-parent
+direct child of the exact settled baseline. A dirty next-session state, merge,
+extra commit, second dirty architecture lane, schema/profile change, or path
+substitution requires a fresh recovery audit. Any publication requires a
+separate explicit operator decision and the complete exact-SHA release
+contract; a local fresh-clone rehearsal does not grant that authority.
+
+## Current mission after PRQ-002I retention
+
+**Entry gate.** The named G0/G5 branch must resolve from the exact settled
+PRQ-002I parent, change no profile/schema or product/runtime byte, and contain
+at most one ordinary single-parent direct-child commit. Architecture-executable
+changes are limited to reissuing the existing current-truth validators and
+their intent-bound known-bads; the existing Gate A ledger may be reconciled
+without changing its 43 required / 78 outside commands, 60 events, 25
+aggregate/state/reducer families, 11 owners, and one P0 prerequisite. The
+dedicated PRQ-002I, full foundation, and repository-release validators must
+pass from the current bytes. If that lineage or scope fails, stop and recover;
+do not reinterpret the change as a PRQ-002 successor.
+
+**Bounded mission.** The current candidate does two architecture-only things:
+
+1. reconcile reviewer-facing status surfaces with the settled PRQ-002F–I
+   evidence while retaining every nonclaim and four unresolved historical
+   identities; and
+2. propose a falsifiable G0/G5 frontier-value claim contract: exact comparator
+   arms, componentwise resource matching, post-cutoff/sealed contamination
+   controls, separate outcome/process/integrity measures, candidate thresholds,
+   claim expiry, prospective expert-team value evidence, and protocol
+   known-bads.
+
+It must leave G0 and G5 `Partial`, report no Odeya capability or value result,
+add no evaluation schema before the exact profile decision, change no frozen
+PRQ-002 profile-universe member, and preserve the hard pre-implementation
+gate.
+
+**Human and operator boundary.** With PRQ-002F through PRQ-002I retained, the
+current T0 machine units are closed within their declared scope. Remaining
+prerequisites include:
+
+1. an accountable non-author human review of the open `HDA-CTX` findings and
+   A-001–A-016, retained as a signed `ReviewDetermination` with
+   `reviewer.principal_type` fixed to `human`;
+2. an architecture rule and proof for admission-evidence completeness and
+   commitment: every stable member-content digest must map non-omittably to the
+   exact conformance, trace, and review bundle used for admission, with
+   existing root/C0/activation evidence commitments retained; accountable
+   reviewers assess the rule and the operator decides the exact profile;
+3. the operator's exact-byte decision on the `odeya-jcs-0.3` profile and its
+   evidence chain — accept, reject, or amend, on a named commit; and
+4. for G0/G5, the operator's selection of one rights-cleared first research
+   wedge plus accountable domain/statistical review of the proposed tasks,
+   comparators, budgets, graders, thresholds, and consequence rules.
+
+No session may simulate or substitute the human/operator decisions in items 1,
+3, or 4, or self-accept the architecture rule in item 2. Architecture work may
+specify and prove that rule only for accountable review and operator decision.
+Publication of this or any later commit requires fresh explicit operator
+authority.
 
 ## Live GitHub activation checkpoint
 
@@ -217,9 +404,9 @@ foundation evidence. The exact published predecessor for the live bounded
 PRQ-013 correction is `86c0f1ed8ba20d74324d64529bf5435a0524f4cd`.
 
 The guard work in this section is a secondary evidence-quality backlog, not
-the immediate dependency order. Recover PRQ-002E and follow the sole next
-mission in the authoritative recovery section before selecting any backlog
-item here.
+the immediate dependency order. Recover the exact settled PRQ-002I baseline
+and follow the current G0/G5 mission in the authoritative recovery section
+before selecting any backlog item here.
 
 - **Guard coverage has explicit denominators, not whole-repository coverage.**
   The lifecycle checker has dedicated statement (222/229) and condition
@@ -312,8 +499,10 @@ item here.
   integers cannot satisfy Boolean authority/nonclaim fields. Structural
   vectors are explicit nonidentity fixtures. No member,
   commitment, snapshot, digest, profile member, root, or activation exists;
-  both profiles remain unissued, full successor-profile conformance and
-  complete offline resolution remain absent, PRQ-002 and Gate A remain
+  both profiles remain unissued. This PRQ-002B tranche itself provides no full
+  successor-profile conformance or offline resolution; later PRQ-002F–I
+  evidence is separately scoped, leaves complete historical resolution and
+  identity absent, and does not promote PRQ-002B. PRQ-002 and Gate A remain
   blocked, and runtime remains unauthorized.
 - **PRQ-002C now has bounded raw-number microframe evidence, not profile
   conformance.** ADR 0101 retains an architecture-only raw-token contract and
@@ -536,7 +725,13 @@ that deserves to carry the mission forward.
 12. Start with the smallest dependency-complete vertical slice. Complexity is
     admitted only when evidence shows it is required.
 
-## Current repository recovery identity — authoritative 2026-08-01, PRQ-002I
+## Superseded PRQ-002I repository recovery identity — retained chronology
+
+The block below described PRQ-002I before its publication settled. It is
+retained as chronology only. Do not use its branch or predecessor assertions
+to select the current writer.
+
+### Superseded authoritative 2026-08-01 PRQ-002I identity
 
 - Canonical workspace:
   `/Users/danielwahnich/workspace/odeya`; it remains the protected concurrent
@@ -1231,38 +1426,6 @@ receipt. If live `main` still equals the predecessor, publication is
 incomplete. Never infer closure from this handoff, a local pass, or an earlier
 subject's evidence.
 
-## Sole next mission after PRQ-002I retention
-
-**Entry gate.** The named branch must be clean and contain exactly one
-ordinary single-parent direct child of the exact PRQ-002H predecessor; the
-dedicated PRQ-002I validator, the full foundation validator, and the
-repository-release validator must all pass from current bytes; and the
-external evidence root must contain a successful local exact-subject
-fresh-clone rehearsal manifest for that `HEAD`, with settlement receipts if
-publication completed. If any condition fails, the sole mission remains
-PRQ-002I validation, correction, rehearsal, or settlement.
-
-**The machine chain is at its designed boundary.** With PRQ-002F through
-PRQ-002I retained, every current machine-buildable unit of the PRQ-002
-dependency order is closed: raw-aware traces, serialization conformance,
-nine-domain governance, and dependency-closed offline resolution. What
-remains before a Gate A candidate is deliberately outside any session's
-authority:
-
-1. an accountable non-author human review of the open `HDA-CTX` findings
-   and the A-001–A-016 tracked findings, retained as a signed
-   `ReviewDetermination` with `reviewer.principal_type` fixed to `human`;
-2. the operator's exact-byte decision on the `odeya-jcs-0.3` profile and
-   its evidence chain — accept, reject, or amend, on a named commit; and
-3. any secondary evidence-quality backlog the operator selects (guard
-   coverage beyond 501/1260, condition-level mutation, commit signing and
-   its disclosure, remote-CI execution of the heavy audits).
-
-A future session may prepare review packets, comparison summaries, or
-backlog tranches, but must not simulate, substitute, or self-supply either
-human prerequisite. Publication of any new commit requires fresh explicit
-operator authority.
-
 ## Superseded PRQ-002H repository recovery identity — retained chronology
 
 The block below described the PRQ-002H authoring state before its
@@ -1854,7 +2017,7 @@ receipt. If live `main` still equals the predecessor, publication is
 incomplete. Never infer closure from this handoff, a local pass, or an earlier
 subject's evidence.
 
-## Sole next mission after PRQ-002H retention
+## Superseded next mission after PRQ-002H retention — retained chronology
 
 **Entry gate.** The named branch must be clean and contain exactly one
 ordinary single-parent direct child of the exact PRQ-002G predecessor; the
@@ -2366,7 +2529,7 @@ receipt. If live `main` still equals the predecessor, publication is
 incomplete. Never infer closure from this handoff, a local pass, or an earlier
 subject's evidence.
 
-## Sole next mission after PRQ-002G retention
+## Superseded next mission after PRQ-002G retention — retained chronology
 
 **Entry gate.** The named branch must be clean and contain exactly one
 ordinary single-parent direct child of the exact PRQ-002F predecessor; the
@@ -2768,7 +2931,7 @@ receipt. If live `main` still equals the predecessor, publication is
 incomplete. Never infer closure from this handoff, a local pass, or an earlier
 subject's evidence.
 
-## Sole next mission after PRQ-002F retention
+## Superseded next mission after PRQ-002F retention — retained chronology
 
 **Entry gate.** The named branch must be clean and contain exactly one
 ordinary single-parent direct child of the exact PRQ-002E predecessor; the
@@ -4406,13 +4569,11 @@ one-mutation known-bads and 146 to 155 refusal rules; generalized guard
 coverage went 458/927 to 469/958, so 31 new guards exist and 11 of them are
 proved. The other 20 are explicitly unproved, not silently covered.
 
-## Long-range dependency map after the sole continuation
+## Historical long-range dependency map after the PRQ-002E continuation — superseded
 
-This list is not the restart program and does not authorize selecting a later
-item. The authoritative recovery block and **Sole next mission after PRQ-002E
-closure** above govern the immediate continuation. This map records what
-remains after that bounded tranche so future sessions preserve the destination
-without skipping dependencies.
+This dated list is retained chronology only. It does not authorize a
+continuation or override the current recovery identity and G0/G5 mission
+above.
 
 1. Resolve the current `HEAD` from Git. The exact immediate published predecessor
    is `617209ba480b854a00c6a15cd99ac1d5a18e90ad`, with tree
@@ -4656,10 +4817,11 @@ Before ending a future session:
    worktree;
 4. create a scoped local commit with an intentional message;
 5. rerun the exact-commit fresh-clone rehearsal when release bytes changed;
-6. record the branch, commit, tree, evidence location, checks, open blockers,
-   exact public-repository publication authority, absence of runtime and Gate A
-   authority, and—if publication occurred—verify the pushed head's remote
-   workflows are green;
+6. retain a dynamic Git/evidence resolution recipe in this tracked handoff, and
+   record the exact post-commit branch, commit, tree, evidence location,
+   manifest digest, checks, open blockers, exact publication authority, and the
+   absence of runtime and Gate A authority in external session evidence; if
+   publication occurred, verify the pushed head's remote workflows are green;
 7. update this handoff when mission state or decisions materially change; and
 8. leave every unsupported claim and incomplete item explicit.
 

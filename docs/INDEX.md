@@ -80,11 +80,19 @@ a concurrent design lane). Entry points by theme:
   [0100](decisions/0100-introduce-an-unissued-scoped-product-identity-profile-successor.md)
   scoped unissued product-identity profile successor,
   [0101](decisions/0101-require-raw-number-token-provenance-before-profile-conformance.md)
-  raw-number token provenance before profile conformance, and
+  raw-number token provenance before profile conformance,
   [0102](decisions/0102-prove-non-product-prehash-schema-registry-replay.md)
-  non-product prehash schema-registry replay, and
+  non-product prehash schema-registry replay,
   [0103](decisions/0103-construct-side-by-side-odeya-jcs-0-3-candidate.md)
-  side-by-side `odeya-jcs-0.3` construction.
+  side-by-side `odeya-jcs-0.3` construction,
+  [0106](decisions/0106-prove-raw-aware-numeric-trace-conformance-for-the-0-3-cohort.md)
+  raw-aware trace conformance,
+  [0107](decisions/0107-prove-profile-bounded-jcs-serialization-conformance.md)
+  profile-bounded serialization,
+  [0108](decisions/0108-prove-nine-product-domain-frame-governance.md)
+  nine-domain governance, and
+  [0109](decisions/0109-prove-dependency-closed-offline-resolution.md)
+  dependency-closed offline resolution.
 - **Canonical migration wave** —
   [0032](decisions/0032-partition-the-canonical-migration-findings.md)
   partition the findings,
@@ -136,6 +144,10 @@ a concurrent design lane). Entry points by theme:
 - **Evaluator integrity** —
   [0097](decisions/0097-adversarially-validate-the-canonicalization-evaluator.md)
   adversarially validate the canonicalization evaluator.
+- **Frontier-value claims** —
+  [0110](decisions/0110-require-matched-budget-frontier-value-evidence-before-superiority-claims.md)
+  require matched-budget evidence before any usefulness, frontier, or
+  superiority claim.
 
 ## Where the machine evidence lives
 
@@ -219,6 +231,9 @@ prose, none is runtime documentation.
   — retained internal finding ledger from pre-freeze review.
 - [FRONTIER_REVIEW_2026-07-15.md](FRONTIER_REVIEW_2026-07-15.md) — dated
   survey of frontier research systems; re-verify before reuse.
+- [FRONTIER_RESEARCH_VALUE_EVALUATION_PROTOCOL_2026-08-03.md](FRONTIER_RESEARCH_VALUE_EVALUATION_PROTOCOL_2026-08-03.md)
+  — proposed, unexecuted matched-budget claim contract and prospective
+  expert-outcome protocol; it reports no Odeya result and passes no gate.
 - [CROSS_PROGRAM_PROCESS_EVIDENCE_ABSORPTION_2026-07-19.md](CROSS_PROGRAM_PROCESS_EVIDENCE_ABSORPTION_2026-07-19.md)
   — bounded audit of the sibling proof missions as requirements evidence.
 

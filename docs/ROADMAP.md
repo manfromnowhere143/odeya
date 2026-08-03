@@ -13,7 +13,8 @@ Deliverables:
 - architecture, research protocol, authority, memory, evaluation, UI/UX, and thesis-intake specifications;
 - typed mission, event, and claim schemas;
 - bounded proof-layer snapshot for Sentinel, Telos, and Inbar;
-- current frontier research review and explicit architecture decisions;
+- current frontier research review, a falsifiable matched-budget value-claim
+  protocol, and explicit architecture decisions;
 - no-code mission cockpit information architecture;
 - naming, company, trademark, domain, package, and public-release work tracked separately.
 

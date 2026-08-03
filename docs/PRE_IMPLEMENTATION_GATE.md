@@ -52,28 +52,33 @@ No item passes because a document sounds complete. Gate A accepts meanings, cont
 - [ ] Corrections and dependency invalidation are replayable and visible.
 - [ ] Research-state view, compilation receipt, epistemic graph delta, experiment candidate, planning epoch, work contract, candidate artifact, and epistemic-transition meanings are frozen without granting model authority.
 
-ADR 0102 now retains bounded PRQ-002D candidate evidence for one synthetic
-two-member, prehash schema-registry replay: 68 opaque virtual-file frames,
-complete source- and language-separated Python and Node projections, and 77
-single-attributed parent-gate known-bads. One frame is accepted and 67 are
-refused under one fixed private oracle. This evidence precedes every structured
-or product identity and does not satisfy the unchecked G2 canonical
-serialization item. It is not canonicalization-profile conformance, complete
-offline resolution, dependency-closed product registries, cross-object product
-replay, an independent process witness, organizational independence, profile
-issuance, product identity, admission, PRQ-002 closure, or Gate A acceptance.
-The frozen `odeya-jcs-0.2` bytes remain unissued. [ADR
-0103](decisions/0103-construct-side-by-side-odeya-jcs-0-3-candidate.md)
-retains the complete side-by-side `odeya-jcs-0.3` construction graph: twelve
-final-only successor schemas, nine structural-nonidentity fixtures, three
-ordered candidate records, and a separate seven-output observation
-transaction whose two source- and language-separated observers agree on the
-exact-byte fifteen-subject projection. This satisfies only the construction
-dependency. The static numeric-applicability inventory has not been proved by
-those observations, complete raw-aware per-subject traces and full successor
-conformance have not been produced, and offline dependency-closed resolution,
-accountable review, operator acceptance, identity, issuance, admission,
-PRQ-002 closure, and Gate A acceptance remain absent.
+[ADR 0102](decisions/0102-prove-non-product-prehash-schema-registry-replay.md)
+retains bounded PRQ-002D evidence for one synthetic two-member prehash replay;
+[ADR 0103](decisions/0103-construct-side-by-side-odeya-jcs-0-3-candidate.md)
+retains the exact side-by-side `odeya-jcs-0.3` construction. The later bounded
+PRQ-002F through PRQ-002I sequence now retains the previously missing current
+machine units: [raw-aware traces and cross-object
+conformance](decisions/0106-prove-raw-aware-numeric-trace-conformance-for-the-0-3-cohort.md)
+over the fifteen frozen construction subjects, [profile-bounded JCS
+serialization conformance](decisions/0107-prove-profile-bounded-jcs-serialization-conformance.md),
+[nine-product-domain frame governance](decisions/0108-prove-nine-product-domain-frame-governance.md),
+and [dependency-closed offline
+resolution](decisions/0109-prove-dependency-closed-offline-resolution.md) for
+the declared 199-member universe, its 6,456 schema-reference edges, and 241
+declared digest bindings. Two source-separated implementations agree in each
+tranche and a third-path validator retains named known-bad refusal evidence.
+
+That sequence closes only its declared architecture-evidence scope. It does not
+resolve the four named historical residue identities, compute a product
+identity, issue or admit the `odeya-jcs-0.3` profile or any resource, complete
+consumer migration, establish organizational independence or independent-host
+reproduction, close PRQ-002, accept Gate A, or authorize implementation.
+A complete, non-omittable admission mapping from every stable member-content
+digest to the exact conformance, trace, and review bundle used for admission
+must be specified, committed, and proved; the four historical identities must
+be resolved or explicitly retained outside an accepted scope. Accountable
+non-author review and the operator's exact-byte profile decision remain
+mandatory.
 
 ## G3 — Authority, security, and privacy
 
@@ -162,6 +167,17 @@ which extends [ADR 0089](decisions/0089-a-valid-human-signature-is-not-a-human-d
 - [ ] Grounded outcome and observable epistemic conduct are evaluated separately; hidden chain-of-thought and self-report are never proof.
 - [ ] Material evidence disposition, refutation response, contradiction retention, selection accounting, and valid stop/escalation have anti-gaming fixtures.
 - [ ] Claim-bearing generation is constrained by separately reserved deterministic, compute, expert, physical, and safety verification capacity.
+
+The [Frontier Research Value Evaluation Protocol
+Candidate](FRONTIER_RESEARCH_VALUE_EVALUATION_PROTOCOL_2026-08-03.md) and
+[ADR 0110](decisions/0110-require-matched-budget-frontier-value-evidence-before-superiority-claims.md)
+now make the comparison claim, comparator ladder, resource matching,
+contamination boundary, candidate thresholds, prospective expert-outcome
+study, expiry rule, and protocol known-bads explicit for review. They are prose
+candidate artifacts, not an accepted or executable evaluation contract. G5
+remains unchecked pending operator/statistical/domain review, exact record
+contracts, rights-cleared task and holdout manifests, validated graders,
+retained known-bad execution, and later matched-budget results.
 
 ## G6 — Module and interface architecture
 

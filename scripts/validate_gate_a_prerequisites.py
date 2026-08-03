@@ -126,18 +126,18 @@ CURRENT_ASSURANCE_UNITS = (
     (
         "docs/ARCHITECTURE_STATUS.md", "## Readiness by Gate A area", None, "table_row", "| G3 security/authority |", None,
         "0f6604e35890637bb7c14a990f53468bc0a2274fa4a4a139e94dd3bb459ba8ed",
-        "4db3c4f0a8da034c9f2c129171af5bf41e4207050eb50c79ce2ac554fcfb52e7",
+        "90e88947512112dce19c218888352037d4e6761b37808dd59f2ba085051dfdcb",
     ),
     (
         "docs/ARCHITECTURE_STATUS.md", "## Critical blockers", None, "table_row", "| A-016 |", None,
         "c35e7cf3acee32233ab9216f4f317c48761465b490b9a0a36c56f5609931e11b",
-        "a0ab22854a91fbcd530e3fc6d786fa3497889bc5ba959b2e9fe1e83555201934",
+        "a5ebd301be32b09b6cc8e2a5600a0d26964413e8e901f78c16ec3e3f9a7c390c",
     ),
     (
         "docs/SESSION_HANDOFF.md", "## What this lane established, and where to put pressure next", None,
         "bullet", "**PRQ-013 now has retained byte-bound/recomputation candidate evidence, not closure.**", 1,
         "160ed1c9184a0f91d4e8100e0105f5440944dafd3881b043c714191421d87c39",
-        "6fd4c64c97d11ac8889957b1201b6edd1fd7262d4e98e77922a6c6d95589c0ab",
+        "07236020dc240b6a6c0cadcde384e542ed65f0b5db2f437283f14fba257b4054",
     ),
     (
         "docs/SESSION_HANDOFF.md", "## Active PRQ-013 candidate — resolve release status from Git", None,
@@ -158,24 +158,85 @@ CURRENT_ASSURANCE_UNITS = (
     ),
 )
 
+FRONTIER_VALUE_PROTOCOL = (
+    "docs/FRONTIER_RESEARCH_VALUE_EVALUATION_PROTOCOL_2026-08-03.md"
+)
+# Govern the proposal/non-result status and the complete current Gate-effect
+# section independently of the broader status surfaces.
+FRONTIER_VALUE_UNITS = (
+    (
+        "# Frontier Research Value Evaluation Protocol Candidate",
+        None,
+        "15e880857ac6a3ca5dafd0bf61db392e18729492bea9bb01cde36f704b49a86c",
+        "whole-protocol",
+    ),
+    (
+        "# Frontier Research Value Evaluation Protocol Candidate",
+        "## Honest starting verdict",
+        "70e20e1554f81849ee7edd5e47851f3f2a7a14a6f7f8f5206e168eb9a0a91f45",
+        "status",
+    ),
+    (
+        "## Gate effect and next decisions",
+        None,
+        "5b15ec76f4c9444c9201d05240b76ff8a545a6d52733a59563fce8aa49b30da2",
+        "gate-effect",
+    ),
+)
+FRONTIER_VALUE_ADR = (
+    "docs/decisions/0110-require-matched-budget-frontier-value-evidence-"
+    "before-superiority-claims.md"
+)
+FRONTIER_VALUE_ADR_UNITS = (
+    (
+        "# ADR 0110: Require matched-budget frontier-value evidence before superiority claims",
+        None,
+        "0c9cd2422a3115ab218fd1ec79e5f1a158a6a07b7758415b9b1c6b040ee4c43e",
+        "whole-ADR",
+    ),
+    (
+        "# ADR 0110: Require matched-budget frontier-value evidence before superiority claims",
+        "## Context",
+        "e95133018a1fc6f94bd4043359bbd1d5eab8b5e26e208e52f1a34e54bc833cdc",
+        "ADR-status",
+    ),
+    (
+        "## Non-decisions",
+        None,
+        "900a2b694f9cd69ba0d0a0b7b6cd617a80cd4647d0ae4bfd8f3525cdfc67fb8e",
+        "ADR-non-decisions",
+    ),
+)
+CURRENT_DECISION_REF_SUFFIX = (
+    "docs/decisions/0103-construct-side-by-side-odeya-jcs-0-3-candidate.md",
+    "docs/decisions/0104-require-stable-suite-reported-refusal-for-generalized-guard-proof.md",
+    "docs/decisions/0105-govern-all-current-architecture-diagrams-as-rendered-release-evidence.md",
+    "docs/decisions/0106-prove-raw-aware-numeric-trace-conformance-for-the-0-3-cohort.md",
+    "docs/decisions/0107-prove-profile-bounded-jcs-serialization-conformance.md",
+    "docs/decisions/0108-prove-nine-product-domain-frame-governance.md",
+    "docs/decisions/0109-prove-dependency-closed-offline-resolution.md",
+    "docs/decisions/0110-require-matched-budget-frontier-value-evidence-before-superiority-claims.md",
+)
+
 RECOVERY_HANDOFF = "docs/SESSION_HANDOFF.md"
 RECOVERY_HEADING = (
-    "## Current repository recovery identity — authoritative 2026-08-01, "
-    "PRQ-002I"
+    "## Current repository recovery identity — authoritative 2026-08-03, "
+    "G0/G5 frontier-value review candidate"
 )
-RECOVERY_BASE = "1cf0524744b194515964b708d75ae1b8bd39fb2c"
-RECOVERY_BASE_TREE = "c9e733b3222f02fc12d9e2d15d9e81ec98491581"
-RECOVERY_PUBLIC_ANCESTOR = "3ada167aae4ec7f6855de395ba7636dbae78ed57"
+RECOVERY_BASE = "1d5cfe8c232928bbfdb8f9893cb601838e987b4f"
+RECOVERY_BASE_TREE = "9704622c79e8248781b9623c4a3ff47db21c83f5"
 RECOVERY_SECTION_SHA256 = (
-    "1c2b634269c50294691fe46ea59acf9a87a5cfd32a73a60a0235887d15ef5c88"
+    "6b4a7381f02b79bd33d267bd2ee3ae1dd524b6f2992457ee6206b47ac4b400dc"
 )
 # SHA-256 of the normalized recovery program. Its separately named
 # cleanliness and cardinality lines keep both invariants reviewable.
 EXPECTED_RECOVERY_PROGRAM_SHA256 = (
-    "1a08f215cd47f05349d204395a2c6410d4f29cdca65e8f27af0a8281598ca4af"
+    "5f1bcb6c5c46599af4e67b58f22149bf37dab5a1663f6e31d74c47b680199b92"
 )
 PARENT_CARDINALITY_LINE = 'test "$(git rev-list --parents -n 1 "$HEAD_COMMIT" | awk \'{print NF}\')" = 2'
 CLEAN_WORKTREE_LINE = 'test -z "$(git status --porcelain=v1 --untracked-files=all)"'
+REHEARSAL_MANIFEST_LOAD_LINE = "document, _ = load_manifest(Path(sys.argv[1]))"
+REHEARSAL_SUBJECT_BINDING_LINE = 'assert document["subject_commit"] == sys.argv[2]'
 EXPECTED_REFUSAL_KEYS = frozenset(
     {
         "gate_a_complete",
@@ -190,6 +251,8 @@ EXPECTED_REPOSITORY_PUBLICATION = {
     "canonical_remote": "https://github.com/manfromnowhere143/odeya",
     "visibility": "public",
     "architecture_repository_authorized": True,
+    "authorization_scope": "architecture_repository_class_and_contract_only",
+    "current_candidate_publication_authorized": False,
     "authority_decision_ref":
         "docs/decisions/0047-create-the-public-remote-and-publish.md",
     "reconciliation_decision_ref":
@@ -738,6 +801,242 @@ def assurance_truth_surface_known_bad_self_tests(errors: list[str]) -> int:
     )
 
 
+def frontier_value_truth_surface_errors(
+    overrides: dict[str, str | None] | None = None,
+) -> list[str]:
+    raw = current_file_text(FRONTIER_VALUE_PROTOCOL, overrides)
+    if raw is None:
+        failures = [
+            f"{FRONTIER_VALUE_PROTOCOL}: required frontier-value protocol is missing"
+        ]
+    else:
+        failures = []
+        for heading, endpoint, expected_digest, label in FRONTIER_VALUE_UNITS:
+            prefix = f"{FRONTIER_VALUE_PROTOCOL} [{heading}]"
+            _, section, section_error = governed_section(raw, heading, endpoint)
+            if section_error is not None:
+                failures.append(f"{prefix}: {section_error}")
+                continue
+            assert section is not None
+            observed = hashlib.sha256(normalize_prose(section).encode()).hexdigest()
+            if observed != expected_digest:
+                failures.append(
+                    f"{prefix}: {label} section does not match its pinned exact "
+                    "current unit"
+                )
+
+    adr = current_file_text(FRONTIER_VALUE_ADR, overrides)
+    if adr is None:
+        failures.append(f"{FRONTIER_VALUE_ADR}: required ADR 0110 is missing")
+        return failures
+    for heading, endpoint, expected_digest, label in FRONTIER_VALUE_ADR_UNITS:
+        prefix = f"{FRONTIER_VALUE_ADR} [{heading}]"
+        _, section, section_error = governed_section(adr, heading, endpoint)
+        if section_error is not None:
+            failures.append(f"{prefix}: {section_error}")
+            continue
+        assert section is not None
+        observed = hashlib.sha256(normalize_prose(section).encode()).hexdigest()
+        if observed != expected_digest:
+            failures.append(
+                f"{prefix}: {label} section does not match its pinned exact "
+                "current unit"
+            )
+    return failures
+
+
+def frontier_value_truth_surface_known_bad_self_tests(
+    errors: list[str],
+) -> int:
+    raw = (ROOT / FRONTIER_VALUE_PROTOCOL).read_text(encoding="utf-8")
+    if safe := frontier_value_truth_surface_errors(
+        {FRONTIER_VALUE_PROTOCOL: raw}
+    ):
+        errors.append(f"frontier-value truth-surface safe control failed: {safe!r}")
+
+    status_error = (
+        f"{FRONTIER_VALUE_PROTOCOL} "
+        "[# Frontier Research Value Evaluation Protocol Candidate]: status "
+        "section does not match its pinned exact current unit"
+    )
+    gate_error = (
+        f"{FRONTIER_VALUE_PROTOCOL} [## Gate effect and next decisions]: "
+        "gate-effect section does not match its pinned exact current unit"
+    )
+    whole_error = (
+        f"{FRONTIER_VALUE_PROTOCOL} "
+        "[# Frontier Research Value Evaluation Protocol Candidate]: "
+        "whole-protocol section does not match its pinned exact current unit"
+    )
+    adr_status_error = (
+        f"{FRONTIER_VALUE_ADR} "
+        "[# ADR 0110: Require matched-budget frontier-value evidence before "
+        "superiority claims]: ADR-status section does not match its pinned "
+        "exact current unit"
+    )
+    adr_non_decisions_error = (
+        f"{FRONTIER_VALUE_ADR} [## Non-decisions]: ADR-non-decisions section "
+        "does not match its pinned exact current unit"
+    )
+    mutants: tuple[tuple[str, dict[str, str | None], str], ...] = (
+        (
+            "missing-protocol",
+            {FRONTIER_VALUE_PROTOCOL: None},
+            f"{FRONTIER_VALUE_PROTOCOL}: required frontier-value protocol is missing",
+        ),
+        (
+            "operator-accepted-escalation",
+            {
+                FRONTIER_VALUE_PROTOCOL: replace_once(
+                    raw,
+                    "not\noperator accepted",
+                    "operator accepted",
+                    "frontier-operator-accepted",
+                    errors,
+                )
+            },
+            status_error,
+        ),
+        (
+            "executed-escalation",
+            {
+                FRONTIER_VALUE_PROTOCOL: replace_once(
+                    raw,
+                    "not preregistered, not executed",
+                    "preregistered and executed",
+                    "frontier-executed",
+                    errors,
+                )
+            },
+            status_error,
+        ),
+        (
+            "g5-pass-escalation",
+            {
+                FRONTIER_VALUE_PROTOCOL: replace_once(
+                    raw,
+                    "It does not\npass G0 or G5.",
+                    "It passes G0 and G5.",
+                    "frontier-g5-pass",
+                    errors,
+                )
+            },
+            gate_error,
+        ),
+        (
+            "fabricated-result",
+            {
+                FRONTIER_VALUE_PROTOCOL: replace_once(
+                    raw,
+                    "No comparative research-value result has been measured.",
+                    "A superior research-value result has been measured.",
+                    "frontier-fabricated-result",
+                    errors,
+                )
+            },
+            gate_error,
+        ),
+        (
+            "false-reproduction-independence",
+            {
+                FRONTIER_VALUE_PROTOCOL: replace_once(
+                    raw,
+                    "reproduction_independence_false",
+                    "reproduction_independence_assumed",
+                    "frontier-false-independence",
+                    errors,
+                )
+            },
+            whole_error,
+        ),
+        (
+            "missing-adr-0110",
+            {FRONTIER_VALUE_ADR: None},
+            f"{FRONTIER_VALUE_ADR}: required ADR 0110 is missing",
+        ),
+        (
+            "adr-accepted-escalation",
+            {
+                FRONTIER_VALUE_ADR: replace_once(
+                    (ROOT / FRONTIER_VALUE_ADR).read_text(encoding="utf-8"),
+                    "- Status: Proposed architecture candidate; not operator accepted",
+                    "- Status: Accepted",
+                    "frontier-adr-accepted",
+                    errors,
+                )
+            },
+            adr_status_error,
+        ),
+        (
+            "adr-authority-escalation",
+            {
+                FRONTIER_VALUE_ADR: replace_once(
+                    (ROOT / FRONTIER_VALUE_ADR).read_text(encoding="utf-8"),
+                    "This ADR does not:",
+                    "This ADR does:",
+                    "frontier-adr-authority",
+                    errors,
+                )
+            },
+            adr_non_decisions_error,
+        ),
+    )
+    return sum(
+        expect_self_test(
+            label,
+            frontier_value_truth_surface_errors(override),
+            expected,
+            errors,
+        )
+        for label, override, expected in mutants
+    )
+
+
+def current_decision_ref_errors(value: Any) -> list[str]:
+    if not isinstance(value, list) or not all(
+        isinstance(item, str) for item in value
+    ):
+        return ["Gate A ledger decision refs must be a string array"]
+    if len(value) != len(set(value)):
+        return ["Gate A ledger decision refs must be unique"]
+    if tuple(value[-len(CURRENT_DECISION_REF_SUFFIX):]) != CURRENT_DECISION_REF_SUFFIX:
+        return [
+            "Gate A ledger decision refs must retain the exact ordered current "
+            "suffix through ADR 0110"
+        ]
+    return []
+
+
+def current_decision_ref_known_bad_self_tests(
+    value: Any,
+    errors: list[str],
+) -> int:
+    safe = current_decision_ref_errors(value)
+    if safe:
+        errors.append(f"decision-ref safe control failed: {safe!r}")
+        return 0
+    assert isinstance(value, list)
+    wanted = (
+        "Gate A ledger decision refs must retain the exact ordered current "
+        "suffix through ADR 0110"
+    )
+    mutants = (
+        ("missing-adr-0110", value[:-1]),
+        ("reordered-current-suffix", [*value[:-2], value[-1], value[-2]]),
+    )
+    passed = 0
+    for label, mutant in mutants:
+        observed = current_decision_ref_errors(mutant)
+        if observed == [wanted]:
+            passed += 1
+        else:
+            errors.append(
+                f"decision-ref known-bad {label!r} expected {wanted!r}; "
+                f"got {observed!r}"
+            )
+    return passed
+
+
 def fenced_blocks(value: str) -> list[tuple[str, str]]:
     blocks: list[tuple[str, str]] = []
     fence: str | None = None
@@ -771,17 +1070,17 @@ def recovery_truth_surface_errors(
     failures: list[str] = []
     labels = (
         (
-            "predecessor",
+            "parent",
             RECOVERY_BASE,
-            "Exact immediate PRQ-002H predecessor:",
-            r"(?m)^- Exact immediate PRQ-002H predecessor:[ \t]*\n"
+            "Exact settled PRQ-002I parent/public baseline:",
+            r"(?m)^- Exact settled PRQ-002I parent/public baseline:[ \t]*\n"
             r"[ \t]+`([0-9a-f]{40})`[ \t]*$",
         ),
         (
             "tree",
             RECOVERY_BASE_TREE,
-            "Exact predecessor tree:",
-            r"(?m)^- Exact predecessor tree:[ \t]*\n"
+            "Exact parent tree:",
+            r"(?m)^- Exact parent tree:[ \t]*\n"
             r"[ \t]+`([0-9a-f]{40})`[ \t]*$",
         ),
     )
@@ -797,7 +1096,6 @@ def recovery_truth_surface_errors(
         - {
             RECOVERY_BASE,
             RECOVERY_BASE_TREE,
-            RECOVERY_PUBLIC_ANCESTOR,
         }
     )
     if unexpected:
@@ -813,6 +1111,14 @@ def recovery_truth_surface_errors(
             failures.append(f"{prefix}: recovery program lost its one-parent cardinality guard")
         if program.count(CLEAN_WORKTREE_LINE) != 1:
             failures.append(f"{prefix}: recovery program lost its clean-worktree guard")
+        if program.count(REHEARSAL_MANIFEST_LOAD_LINE) != 1:
+            failures.append(
+                f"{prefix}: recovery program lost exact rehearsal-manifest validation"
+            )
+        if program.count(REHEARSAL_SUBJECT_BINDING_LINE) != 1:
+            failures.append(
+                f"{prefix}: recovery program lost exact-subject rehearsal binding"
+            )
     if (
         hashlib.sha256(normalize_prose(section).encode()).hexdigest()
         != RECOVERY_SECTION_SHA256
@@ -851,11 +1157,38 @@ def recovery_truth_surface_known_bad_self_tests(errors: list[str]) -> int:
 
     mutations = (
         (
+            "stale-parent",
+            (
+                f"{prefix}: recovery parent label must occur exactly once "
+                f"and equal {RECOVERY_BASE}"
+            ),
+            (
+                "- Exact settled PRQ-002I parent/public baseline:\n"
+                f"  `{RECOVERY_BASE}`"
+            ),
+            (
+                "- Exact settled PRQ-002I parent/public baseline:\n"
+                "  `1cf0524744b194515964b708d75ae1b8bd39fb2c`"
+            ),
+        ),
+        (
+            "stale-parent-tree",
+            (
+                f"{prefix}: recovery tree label must occur exactly once "
+                f"and equal {RECOVERY_BASE_TREE}"
+            ),
+            f"- Exact parent tree:\n  `{RECOVERY_BASE_TREE}`",
+            (
+                "- Exact parent tree:\n"
+                "  `c9e733b3222f02fc12d9e2d15d9e81ec98491581`"
+            ),
+        ),
+        (
             "wrong-writer-branch", program_error,
             'test "$(git symbolic-ref --short HEAD)" = \\\n'
-            '  agent/t0-prq-002-profile-0-3-replacement-20260730',
+            '  agent/g5-frontier-value-evaluation-20260803',
             'test "$(git symbolic-ref --short HEAD)" = \\\n'
-            '  agent/t0-prq-002-profile-0-3-successor-20260729',
+            '  agent/g5-frontier-value-evaluation-20260802',
         ),
         (
             "two-commit-range", program_error,
@@ -874,6 +1207,18 @@ def recovery_truth_surface_known_bad_self_tests(errors: list[str]) -> int:
             CLEAN_WORKTREE_LINE,
             "",
         ),
+        (
+            "rehearsal-manifest-load-removed",
+            f"{prefix}: recovery program lost exact rehearsal-manifest validation",
+            REHEARSAL_MANIFEST_LOAD_LINE,
+            "",
+        ),
+        (
+            "rehearsal-subject-binding-removed",
+            f"{prefix}: recovery program lost exact-subject rehearsal binding",
+            REHEARSAL_SUBJECT_BINDING_LINE,
+            "",
+        ),
     )
     count = 0
     for label, expected, old, new in mutations:
@@ -882,33 +1227,29 @@ def recovery_truth_surface_known_bad_self_tests(errors: list[str]) -> int:
             label, recovery_truth_surface_errors({RECOVERY_HANDOFF: mutant}),
             expected, errors,
         )
-    predecessor = (
-        f"- Exact immediate PRQ-002H predecessor:\n  `{RECOVERY_BASE}`"
+    parent = (
+        f"- Exact settled PRQ-002I parent/public baseline:\n  `{RECOVERY_BASE}`"
     )
     duplicate = (
-        predecessor
-        + f"\n- Exact immediate PRQ-002H predecessor:\n"
+        parent
+        + f"\n- Exact settled PRQ-002I parent/public baseline:\n"
         f"  `{RECOVERY_BASE_TREE}`"
     )
     mutant = replace_current_once(
-        predecessor,
+        parent,
         duplicate,
-        "duplicate-predecessor-label",
+        "duplicate-parent-label",
     )
     count += expect_self_test(
-        "duplicate-predecessor-label",
+        "duplicate-parent-label",
         recovery_truth_surface_errors({RECOVERY_HANDOFF: mutant}),
         (
-            f"{prefix}: recovery predecessor label must occur exactly once "
+            f"{prefix}: recovery parent label must occur exactly once "
             f"and equal {RECOVERY_BASE}"
         ),
         errors,
     )
-    invariant = (
-        "A dirty next-session state, merge, extra\n"
-        "commit, second dirty architecture lane, or path substitution requires "
-        "a new\nexact recovery audit; do not infer that it belongs to this tranche."
-    )
+    invariant = "a local fresh-clone rehearsal does not grant that authority."
     mutant = replace_current_once(
         invariant, invariant + " this statement is false;",
         "recovery-section-suffix",
@@ -1133,6 +1474,13 @@ def validate_repository_publication_known_bads(errors: list[str]) -> int:
             "runtime_authorized",
             True,
             "repository_publication.runtime_authorized must equal False",
+        ),
+        (
+            "current-candidate-publication-authority-escalation",
+            "current_candidate_publication_authorized",
+            True,
+            "repository_publication.current_candidate_publication_authorized "
+            "must equal False",
         ),
         (
             "gate-a-self-acceptance",
@@ -8919,11 +9267,15 @@ def prq_002_closure_errors(value: Any) -> list[str]:
         or "PRQ-002C" not in closure
         or "PRQ-002D" not in closure
         or "PRQ-002E" not in closure
+        or "PRQ-002F" not in closure
+        or "PRQ-002G" not in closure
+        or "PRQ-002H" not in closure
+        or "PRQ-002I" not in closure
         or "zero product identities" not in closure
         or "PRQ-002 remains open" not in closure
     ):
         errors.append(
-            "PRQ-002 must expose the bounded A/B/C/D/E evidence without "
+            "PRQ-002 must expose the bounded A/B/C/D/E/F/G/H/I evidence without "
             "claiming closure"
         )
     if (
@@ -9004,6 +9356,47 @@ def prq_002_closure_errors(value: Any) -> list[str]:
             "PRQ-002 closure must retain the PRQ-002E trace, conformance, "
             "review, acceptance, identity, and authority nonclaims"
         )
+    if (
+        "exact 15-subject construction cohort" not in closure
+        or "61 answer-free frames" not in closure
+        or "nine-domain governance over 54 frames" not in closure
+        or "declared 199-member universe" not in closure
+        or "6,456 schema-reference edges" not in closure
+        or "241 declared digest bindings" not in closure
+    ):
+        errors.append(
+            "PRQ-002 closure must retain the exact bounded PRQ-002F-I censuses"
+        )
+    if (
+        "two source-separated implementations plus a third-path validator"
+        not in closure
+        or "four named historical resource identities remain unresolved"
+        not in closure
+        or "not organizational independence, complete historical resolution, "
+        "accountable review, product identity, profile or resource "
+        "issuance/admission, PRQ-002 closure, Gate A acceptance, or runtime "
+        "authority"
+        not in closure
+    ):
+        errors.append(
+            "PRQ-002 closure must retain the PRQ-002F-I method, residue, and "
+            "authority boundaries"
+        )
+    if (
+        "complete non-omittable admission mapping from every stable "
+        "member-content digest to the exact conformance, trace, and review "
+        "bundle used for admission is specified, committed, and proved"
+        not in closure
+        or "dependency-closed product members and root-compatible registry "
+        "snapshots are constructed and admitted"
+        not in closure
+        or "accountable non-author review closes the findings" not in closure
+        or "operator decides the exact profile bytes" not in closure
+    ):
+        errors.append(
+            "PRQ-002 closure must retain the current admission-evidence, "
+            "product, review, and operator obligations"
+        )
     return errors
 
 
@@ -9074,7 +9467,7 @@ def validate_prq_002_closure_known_bads(
             "PRQ-002D",
             "fourth bounded replay tranche",
             (
-                "PRQ-002 must expose the bounded A/B/C/D/E evidence without "
+                "PRQ-002 must expose the bounded A/B/C/D/E/F/G/H/I evidence without "
                 "claiming closure"
             ),
         ),
@@ -9105,7 +9498,7 @@ def validate_prq_002_closure_known_bads(
             "PRQ-002E",
             "fifth bounded construction tranche",
             (
-                "PRQ-002 must expose the bounded A/B/C/D/E evidence without "
+                "PRQ-002 must expose the bounded A/B/C/D/E/F/G/H/I evidence without "
                 "claiming closure"
             ),
         ),
@@ -9126,6 +9519,79 @@ def validate_prq_002_closure_known_bads(
                 "PRQ-002 closure must retain the PRQ-002E trace, "
                 "conformance, review, acceptance, identity, and authority "
                 "nonclaims"
+            ),
+        ),
+        (
+            "prq-002i-omission",
+            "PRQ-002I",
+            "ninth bounded resolution tranche",
+            (
+                "PRQ-002 must expose the bounded A/B/C/D/E/F/G/H/I evidence "
+                "without claiming closure"
+            ),
+        ),
+        (
+            "prq-002i-census-substitution",
+            "declared 199-member universe",
+            "declared 198-member universe",
+            "PRQ-002 closure must retain the exact bounded PRQ-002F-I censuses",
+        ),
+        (
+            "prq-002f-census-substitution",
+            "exact 15-subject construction cohort",
+            "exact 14-subject construction cohort",
+            "PRQ-002 closure must retain the exact bounded PRQ-002F-I censuses",
+        ),
+        (
+            "prq-002g-census-substitution",
+            "61 answer-free frames",
+            "60 answer-free frames",
+            "PRQ-002 closure must retain the exact bounded PRQ-002F-I censuses",
+        ),
+        (
+            "prq-002h-census-substitution",
+            "nine-domain governance over 54 frames",
+            "nine-domain governance over 53 frames",
+            "PRQ-002 closure must retain the exact bounded PRQ-002F-I censuses",
+        ),
+        (
+            "prq-002i-reference-census-substitution",
+            "6,456 schema-reference edges",
+            "6,455 schema-reference edges",
+            "PRQ-002 closure must retain the exact bounded PRQ-002F-I censuses",
+        ),
+        (
+            "prq-002i-binding-census-substitution",
+            "241 declared digest bindings",
+            "240 declared digest bindings",
+            "PRQ-002 closure must retain the exact bounded PRQ-002F-I censuses",
+        ),
+        (
+            "prq-002f-i-authority-escalation",
+            (
+                "not organizational independence, complete historical "
+                "resolution, accountable review, product identity, profile or "
+                "resource issuance/admission, PRQ-002 closure, Gate A "
+                "acceptance, or runtime authority"
+            ),
+            "proof of identity, admission, Gate A acceptance, and runtime authority",
+            (
+                "PRQ-002 closure must retain the PRQ-002F-I method, residue, "
+                "and authority boundaries"
+            ),
+        ),
+        (
+            "admission-evidence-obligation-removed",
+            (
+                "complete non-omittable admission mapping from every stable "
+                "member-content digest to the exact conformance, trace, and "
+                "review bundle used for admission is specified, committed, "
+                "and proved"
+            ),
+            "admission evidence needs no completeness or commitment rule",
+            (
+                "PRQ-002 closure must retain the current admission-evidence, "
+                "product, review, and operator obligations"
             ),
         ),
     )
@@ -9926,10 +10392,9 @@ def main() -> int:
         )
 
     decision_refs = inventory.get("decision_refs")
-    require(
-        isinstance(decision_refs, list)
-        and decision_refs.count(PRQ_002E_DECISION_REF) == 1,
-        "Gate A ledger must retain exactly one PRQ-002E ADR 0103 reference",
+    errors.extend(current_decision_ref_errors(decision_refs))
+    decision_ref_known_bads = current_decision_ref_known_bad_self_tests(
+        decision_refs,
         errors,
     )
     for decision_ref in decision_refs if isinstance(decision_refs, list) else []:
@@ -10036,6 +10501,10 @@ def main() -> int:
     assurance_truth_surface_known_bads = (
         assurance_truth_surface_known_bad_self_tests(errors)
     )
+    errors.extend(frontier_value_truth_surface_errors())
+    frontier_value_truth_surface_known_bads = (
+        frontier_value_truth_surface_known_bad_self_tests(errors)
+    )
     errors.extend(recovery_truth_surface_errors())
     recovery_truth_surface_known_bads = (
         recovery_truth_surface_known_bad_self_tests(errors)
@@ -10069,8 +10538,11 @@ def main() -> int:
         f"and {prq_009_boundary_known_bads} PRQ-009 boundary known-bads "
         f"and {prq_013_closure_known_bads} PRQ-013 closure known-bads "
         f"and {next_tranche_known_bads} next-tranche known-bad "
+        f"and {decision_ref_known_bads} current decision-ref known-bads "
         f"and {assurance_truth_surface_known_bads} assurance truth-surface "
-        f"known-bads and {recovery_truth_surface_known_bads} recovery "
+        f"known-bads and {frontier_value_truth_surface_known_bads} "
+        "frontier-value truth-surface known-bads and "
+        f"{recovery_truth_surface_known_bads} recovery "
         "truth-surface known-bads "
         "rejected; candidate remains blocked and inactive"
     )

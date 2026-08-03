@@ -9,7 +9,7 @@ bash -euo pipefail <<'BASH'
 cd /Users/danielwahnich/workspace/odeya
 source scripts/ci/sanitize-git-environment.sh
 git status --short --branch
-awk '1; /^## Superseded PRQ-002D repository recovery identity/{found=1; exit} END{exit !found}' \
+awk '1; /^## Superseded .* repository recovery identity/{found=1; exit} END{exit !found}' \
   docs/SESSION_HANDOFF.md
 python3 -m venv .venv-architecture
 .venv-architecture/bin/python -m pip install \

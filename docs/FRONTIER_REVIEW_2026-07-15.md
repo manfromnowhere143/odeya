@@ -2,6 +2,13 @@
 
 Date: 2026-07-15. Scope: architecture evidence relevant to Odeya, prioritizing primary papers, engineering reports, specifications, and benchmark owners. Product behavior and benchmarks will change; re-verify before using this review as a current market claim.
 
+Current comparison delta: the proposed, unexecuted
+[Frontier Research Value Evaluation Protocol
+Candidate](FRONTIER_RESEARCH_VALUE_EVALUATION_PROTOCOL_2026-08-03.md) records
+the 2026-08-03 frontier update and the exact evidence burden for any future
+Odeya capability, workflow-value, or frontier claim. This dated review remains
+historical context; the newer packet does not report a comparative result.
+
 ## Executive verdict
 
 No cited system establishes reliable, general, fully autonomous science. The strongest current systems succeed in bounded settings with human framing, executable objectives, deterministic tools, expert review, or physical-lab partners.

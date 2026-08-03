@@ -293,12 +293,19 @@ is not inferred from those cases: resolve this checker's exact current row only
 from `architecture/suite-guard-coverage.json`. Every unproved row is explicit
 open evidence work, not positive coverage or correctness evidence.
 
-The profile and every successor resource remain unissued and unadmitted.
-Source-separated full-profile conformance, complete offline resolution,
-accountable review, and operator acceptance remain false or absent. The
-tranche constructs zero product identities, members, commitments, snapshots,
-roots, or activations; it does not close PRQ-002, accept Gate A, or authorize
-runtime work.
+The profile and every successor resource remain unissued and unadmitted. This
+PRQ-002B tranche itself provides no source-separated full-profile conformance,
+complete offline resolution, accountable review, or operator acceptance. It
+constructs zero product identities, members, commitments, snapshots, roots, or
+activations; it does not close PRQ-002, accept Gate A, or authorize runtime
+work.
+
+That paragraph states the PRQ-002B tranche boundary, not the current end of the
+successor evidence chain. PRQ-002F–I later retain bounded two-implementation
+numeric-trace/cross-object, profile-bounded serialization, nine-domain
+governance, and declared-universe offline-resolution evidence. They do not
+promote PRQ-002B, issue the profile, construct a member, or satisfy accountable
+review and operator acceptance.
 
 ## PRQ-002C bounded raw-number prerequisite
 
@@ -475,6 +482,10 @@ publication; or external authority.
 The following remain blocking:
 
 - name the exact dependency-closed Gate A admitted command set;
+- specify and prove a complete, non-omittable admission mapping from every
+  stable member-content digest to the exact conformance, trace, and review
+  bundle used for admission, while retaining the existing root/C0/activation
+  evidence commitments and making any additional commitment layer explicit;
 - create real schema, command, event, reducer, and state member instances from
   the frozen source bytes;
 - prove map-key/member-key equality, count commitments, ordering, and every

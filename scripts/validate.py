@@ -1827,7 +1827,7 @@ README_CHECKPOINT = re.compile(
     r"schemas,\s+(\d+)\s+shared-manifest\s+cases\s+\((\d+)\s+valid\s+and\s+"
     r"(\d+)\s+known-bad\),\s+(\w+)\s+isolated\s+contract\s+suites,\s+(\w+)\s+"
     r"architecture-evidence\s+checks,\s+and\s+(\w+)\s+bounded\s+TLA\+\s+"
-    r"models\s+with\s+(\w+)\s+mutation\s+controls",
+    r"models\s+with\s+(\w+)\s+intended\s+counterexamples",
     re.MULTILINE,
 )
 WORD_NUMBERS = {
@@ -1860,7 +1860,7 @@ def readme_checkpoint_errors(
         return [
             "README architecture checkpoint sentence is absent or reworded; it must "
             "state the exact schema, case, suite, evidence-check, TLA-model, and "
-            "mutation-control counts so they can be bound to a measurement"
+            "intended-counterexample counts so they can be bound to a measurement"
         ]
     if len(matches) > 1:
         # Independent review defeated the first-match version of this gate with a
@@ -1893,7 +1893,7 @@ def readme_checkpoint_errors(
         ("isolated contract suites", resolve(match.group(5)), suite_count),
         ("architecture-evidence checks", resolve(match.group(6)), evidence_check_count),
         ("bounded TLA+ models", resolve(match.group(7)), tla_models),
-        ("mutation controls", resolve(match.group(8)), mutation_controls),
+        ("intended counterexamples", resolve(match.group(8)), mutation_controls),
     )
     for label, stated, actual in declared:
         if stated is None:

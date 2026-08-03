@@ -8,6 +8,20 @@ The primary question is not “did the agent produce a convincing report?” It 
 
 > Under a declared resource budget, did this system produce a reproducible, correctly bounded reduction in uncertainty or a verified outcome without violating authority, safety, or evidence requirements?
 
+## Frontier-value claim boundary
+
+Feature presence, architecture sophistication, model activity, and vendor
+comparison prose do not answer that question. The proposed
+[Frontier Research Value Evaluation Protocol
+Candidate](FRONTIER_RESEARCH_VALUE_EVALUATION_PROTOCOL_2026-08-03.md) and
+[ADR 0110](decisions/0110-require-matched-budget-frontier-value-evidence-before-superiority-claims.md)
+define the missing claim contract: separate mechanism and current-product
+comparisons, qualified human/current-practice baselines, multidimensional
+resource matching, claim expiry, sealed post-cutoff holdouts, candidate
+thresholds, a prospective expert-workflow study, and protocol known-bads.
+They are not accepted, preregistered, executable, or results. G5 remains
+partial.
+
 ## Evaluation stack
 
 ### Component evaluations

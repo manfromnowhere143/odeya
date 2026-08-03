@@ -320,6 +320,18 @@ independent reproduction, accountable review, operator acceptance, PRQ-002
 closure, Gate A acceptance, runtime, deployment, publication, or external
 authority.
 
+Current bounded successor evidence is downstream rather than inherited by that
+construction observation. ADRs 0106–0109 now retain complete raw-aware traces
+and cross-object conformance over the fifteen frozen subjects, the exact
+profile-bounded JCS serialization/refusal surface, governance evidence for the
+nine frozen product-domain frames, and offline resolution of 6,456 schema
+reference edges plus replay of 241 declared digest bindings inside one declared
+199-member universe. Those results leave four historical identities unresolved
+and establish no product identity, profile/resource issuance or admission,
+organizational independence, independent-host reproduction, accountable
+review, operator acceptance, PRQ-002 closure, Gate A acceptance, or runtime
+authority.
+
 ## JSON Schema validation profile
 
 JSON Schema `format` is annotation-only unless assertion behavior is enabled. Odeya must pin:

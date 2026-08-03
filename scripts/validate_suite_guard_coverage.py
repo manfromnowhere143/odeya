@@ -82,10 +82,10 @@ RECORD_BOUNDARY = (
 # checkpoint, status/handoff row/bullet plus sections, and all current plan units.
 # Numeric truth remains derived from RECORD; contradictory sibling prose cannot pass.
 UNIT_SHA256 = {
-    "readme.current-section": "6fcd8698e9dd3e771d3968a76484f1d07b321a71c0fda99fed9b158fb78bc903",
-    "status.current-section": "685951e0b5eabe710b8d565be6751d3b3d586aaab8946135bd7ed81dc7bf4fa5",
+    "readme.current-section": "119f912f5cfe901567547bc2d2b8a9c7d79f362e7bbd506435d9cd2ef8688885",
+    "status.current-section": "3ab7bb56efc1bd9af8ef15bde49af06c5682426bd8fbf5484360b656de16b822",
     "status.guard-row": "9460c3e0541fde57fd350de923c76f40fe11bae99c5f1e82970e33c5f9a690fe",
-    "handoff.current-section": "6fd4c64c97d11ac8889957b1201b6edd1fd7262d4e98e77922a6c6d95589c0ab",
+    "handoff.current-section": "07236020dc240b6a6c0cadcde384e542ed65f0b5db2f437283f14fba257b4054",
     "handoff.guard-bullet": "9156fb3a41a695caac94eae7d4533a7de8def1abe56d131bcb6870047b39b70d",
     "plan.current-units": "732edac76e3f2ef88a484712470a806541ca551851dcaee1cb36994f666ac24a",
 }

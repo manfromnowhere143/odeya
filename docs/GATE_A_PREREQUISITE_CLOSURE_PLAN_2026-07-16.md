@@ -164,10 +164,24 @@ The `odeya-jcs-0.2` core, evidence, migration, and twelve-resource cohort
 remain byte-for-byte frozen, unissued, and blocked from conformance and
 issuance. PRQ-002C, PRQ-002D, and PRQ-002E do not amend those bytes. PRQ-002E
 is construction evidence, not static numeric-applicability proof or
-successor-profile conformance: complete per-subject raw-aware traces,
-dependency-closed offline resolution, full source-separated cross-object
-conformance, accountable review, operator acceptance, PRQ-002 closure, Gate A
-acceptance, and runtime authority remain absent.
+successor-profile conformance by itself. The later PRQ-002F–I tranches now
+retain the bounded raw-aware trace/cross-object, profile-bounded serialization,
+nine-domain governance, and declared-universe offline-resolution evidence that
+the construction left downstream. They do not amend either profile. Four
+historical identities, admission-evidence completeness and commitment,
+organizational independence, accountable review, operator acceptance,
+identity, issuance, admission, PRQ-002 closure, Gate A acceptance, and runtime
+authority remain absent.
+
+The admission-evidence question is load-bearing. Current product-member
+schemas require conformance, trace, or review references while excluding those
+fields from stable member-content digest projections, and the existing
+root/C0/activation candidates can digest evidence references. What is not yet
+retained is a complete, non-omittable mapping from every admitted
+member-content digest to the exact conformance, trace, and review bundle used
+for admission. The architecture must specify and prove that completeness and
+commitment invariant; accountable reviewers assess it and the operator decides
+the exact profile bytes.
 
 ### PRQ-003 — Logical payload identity is not bound to schema bytes
 
